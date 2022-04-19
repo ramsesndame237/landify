@@ -7,7 +7,6 @@
     <component :is="layout">
       <router-view />
     </component>
-
   </div>
 </template>
 
@@ -29,12 +28,10 @@ const LayoutFull = () => import('@/layouts/full/LayoutFull.vue')
 
 export default {
   components: {
-
     // Layouts
     LayoutHorizontal,
     LayoutVertical,
     LayoutFull,
-
   },
   // ! We can move this computed: layout & contentLayoutType once we get to use Vue 3
   // Currently, router.currentRoute is not reactive and doesn't trigger any change
