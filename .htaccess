@@ -1,4 +1,0 @@
-AuthType Basic
-AuthName "restricted area"
-AuthUserFile /var/www/html/kim_pro_frontend.htpasswd
-require valid-user

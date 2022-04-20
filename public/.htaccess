@@ -1,0 +1,13 @@
+AuthType Basic
+AuthName "restricted area"
+AuthUserFile /var/www/html/kim_pro_frontend.htpasswd
+require valid-user
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /kim_pro_frontend
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>

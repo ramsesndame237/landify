@@ -26,31 +26,38 @@
           >
 
             <!-- email -->
-            <b-form-group
-              label-for="email"
-              label="Email"
-            >
+            <b-form-group>
               <validation-provider
                 #default="{ errors }"
                 name="Email"
                 rules="required|email"
               >
-                <b-form-input
-                  id="email"
-                  v-model="userEmail"
-                  name="login-email"
-                  :state="errors.length > 0 ? false:null"
-                  placeholder="john@example.com"
-                  autofocus
-                />
+                <b-input-group
+                    class="input-group-merge"
+                    :class="errors.length > 0 ? 'is-invalid':null"
+                >
+                  <b-input-group-prepend is-text>
+                    <feather-icon
+                        class="cursor-pointer"
+                        icon="UserIcon"
+                    />
+                  </b-input-group-prepend>
+                  <b-form-input
+                      id="email"
+                      v-model="userEmail"
+                      name="login-email"
+                      :state="errors.length > 0 ? false:null"
+                      placeholder="john@example.com"
+                      autofocus
+                  />
+                </b-input-group>
+
                 <small class="text-danger">{{ errors[0] }}</small>
               </validation-provider>
             </b-form-group>
 
             <!-- password -->
-            <b-form-group
-                label-for="password"
-                label="Password">
+            <b-form-group>
               <validation-provider
                 #default="{ errors }"
                 name="Password"
@@ -60,6 +67,12 @@
                   class="input-group-merge"
                   :class="errors.length > 0 ? 'is-invalid':null"
                 >
+                  <b-input-group-prepend is-text>
+                    <feather-icon
+                        class="cursor-pointer"
+                        icon="LockIcon"
+                    />
+                  </b-input-group-prepend>
                   <b-form-input
                     id="password"
                     v-model="password"
@@ -104,7 +117,6 @@
                   variant="primary"
                   type="submit"
                   pill
-
                   @click="validationForm"
               >
                 <span style="line-height: 24px" class="mr-1">Login</span>
@@ -121,40 +133,6 @@
             <span>Sign Up</span>
           </b-link>
         </b-card-text>
-
-<!--        <div class="divider my-2">-->
-<!--          <div class="divider-text">-->
-<!--            or-->
-<!--          </div>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; social button &ndash;&gt;-->
-<!--        <div class="auth-footer-btn d-flex justify-content-center">-->
-<!--          <b-button-->
-<!--            href="javascript:void(0)"-->
-<!--            variant="facebook"-->
-<!--          >-->
-<!--            <feather-icon icon="FacebookIcon" />-->
-<!--          </b-button>-->
-<!--          <b-button-->
-<!--            href="javascript:void(0)"-->
-<!--            variant="twitter"-->
-<!--          >-->
-<!--            <feather-icon icon="TwitterIcon" />-->
-<!--          </b-button>-->
-<!--          <b-button-->
-<!--            href="javascript:void(0)"-->
-<!--            variant="google"-->
-<!--          >-->
-<!--            <feather-icon icon="MailIcon" />-->
-<!--          </b-button>-->
-<!--          <b-button-->
-<!--            href="javascript:void(0)"-->
-<!--            variant="github"-->
-<!--          >-->
-<!--            <feather-icon icon="GithubIcon" />-->
-<!--          </b-button>-->
-<!--        </div>-->
       </b-card>
       <!-- /Login v1 -->
     </div>
@@ -164,7 +142,7 @@
 <script>
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
-  BButton, BForm, BFormInput, BFormGroup, BCard, BLink, BCardTitle, BCardText, BInputGroup, BInputGroupAppend, BFormCheckbox,
+  BButton, BForm, BFormInput, BFormGroup, BCard, BLink, BCardTitle, BCardText, BInputGroup, BInputGroupAppend, BInputGroupPrepend, BFormCheckbox,
 } from 'bootstrap-vue'
 import VuexyLogo from '@core/layouts/components/Logo.vue'
 import { required, email } from '@validations'
@@ -185,6 +163,7 @@ export default {
     BCardText,
     BInputGroup,
     BInputGroupAppend,
+    BInputGroupPrepend,
     BFormCheckbox,
     ValidationProvider,
     ValidationObserver,
