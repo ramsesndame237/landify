@@ -8,7 +8,7 @@ export default [
     icon: 'HomeIcon',
   },
   {
-    title: 'Vorgänge',
+    title: 'Tasks & Tickets',
     route: 'vorgange',
     icon: 'CheckSquareIcon',
     children: [
@@ -23,39 +23,86 @@ export default [
     ],
   },
   {
-    title: 'Fristen',
-    route: 'fristen',
+    title: 'Deadlines',
+    route: 'deadlines',
     icon: 'CalendarIcon',
   },
   {
-    title: 'Dokumente',
-    route: 'dokumente',
+    title: 'Documents',
+    route: 'documents',
     icon: 'FileTextIcon',
   },
   {
-    title: 'Prozessansicht',
-    route: 'prozessansicht',
+    title: 'Point of Sales',
+    route: 'pos',
     icon: 'GridIcon',
   },
+
   {
-    header: 'VERWALTUNG',
+    title: 'Administration',
+    route: 'vorgange',
+    icon: 'UserIcon',
+    children: [
+      {
+        title: 'Gestion des utilisateurs',
+        route: '/',
+      },
+      {
+        title: 'Base de données d\'adresses',
+        route: '/',
+      },
+      {
+        title: 'Types de coûts\n',
+        route: '/',
+      },
+      {
+        title: 'Éléments de texte Waderspruch',
+        route: '/',
+      },
+      {
+        title: 'Base de données clients',
+        route: '/',
+      },
+      {
+        title: 'Contrats',
+        route: '/',
+      },
+      {
+        title: 'Processus',
+        route: '/',
+      },
+      {
+        title: 'Pays / Monnaies',
+        route: '/',
+      },
+      {
+        title: 'Protocole d\'accès',
+        route: '/',
+      },
+      {
+        title: 'Modèles de texte',
+        route: '/',
+      },
+    ],
   },
   {
-    title: 'Einstellungen',
-    route: 'einstellungen',
+    title: 'Properties',
+    route: 'properties',
     icon: 'GitCommitIcon',
   },
   {
-    title: 'Benutzer & Rechte',
-    route: 'benutzer-bechte',
+    title: 'Users & Rights',
+    route: 'users-lists',
     icon: 'UserIcon',
   },
   {
-    title: 'Vorlagen',
-    route: 'vorlagen',
+    title: 'Templates',
+    route: 'templates',
     icon: 'FeatherIcon',
   },
   {
-    header: 'WECHSELN ZU KIM',
+    title: 'Master Data',
+    route: 'master-data',
+    icon: 'GridIcon',
   },
 ]
