@@ -37,22 +37,22 @@
           </li>
 
           <!-- Toggler Button -->
-          <li class="nav-item nav-toggle">
-            <b-link class="nav-link modern-nav-toggle">
-              <feather-icon
-                icon="XIcon"
-                size="20"
-                class="d-block d-xl-none"
-                @click="toggleVerticalMenuActive"
-              />
-              <feather-icon
-                :icon="collapseTogglerIconFeather"
-                size="20"
-                class="d-none d-xl-block collapse-toggle-icon"
-                @click="toggleCollapsed"
-              />
-            </b-link>
-          </li>
+<!--          <li class="nav-item nav-toggle">-->
+<!--            <b-link class="nav-link modern-nav-toggle">-->
+<!--              <feather-icon-->
+<!--                icon="XIcon"-->
+<!--                size="20"-->
+<!--                class="d-block d-xl-none"-->
+<!--                @click="toggleVerticalMenuActive"-->
+<!--              />-->
+<!--              <feather-icon-->
+<!--                :icon="collapseTogglerIconFeather"-->
+<!--                size="20"-->
+<!--                class="d-none d-xl-block collapse-toggle-icon"-->
+<!--                @click="toggleCollapsed"-->
+<!--              />-->
+<!--            </b-link>-->
+<!--          </li>-->
         </ul>
       </slot>
     </div>

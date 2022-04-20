@@ -25,19 +25,104 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/second-page',
-      name: 'second-page',
-      component: () => import('@/views/SecondPage.vue'),
+      path: '/benutzer-bechte',
+      name: 'benutzer-bechte',
+      component: () => import('@/views/BenutzerRechte.vue'),
       meta: {
-        pageTitle: 'Second Page',
+        pageTitle: 'Benutzer & Bechte',
         breadcrumb: [
           {
-            text: 'Second Page',
+            text: 'Benutzer & Bechte',
             active: true,
           },
         ],
       },
     },
+    {
+      path: '/vorgange',
+      name: 'vorgange',
+      component: () => import('@/views/Vorgange.vue'),
+      meta: {
+        pageTitle: 'Vorgänge',
+        breadcrumb: [
+          {
+            text: 'Vorgänge',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/fristen',
+      name: 'fristen',
+      component: () => import('@/views/Fristen.vue'),
+      meta: {
+        pageTitle: 'Fristen',
+        breadcrumb: [
+          {
+            text: 'Fristen',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/dokumente',
+      name: 'dokumente',
+      component: () => import('@/views/Dokumente.vue'),
+      meta: {
+        pageTitle: 'Dokumente',
+        breadcrumb: [
+          {
+            text: 'Dokumente',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/prozessansicht',
+      name: 'prozessansicht',
+      component: () => import('@/views/Prozessansicht.vue'),
+      meta: {
+        pageTitle: 'Prozessansicht',
+        breadcrumb: [
+          {
+            text: 'Prozessansicht',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/einstellungen',
+      name: 'einstellungen',
+      component: () => import('@/views/Einstellungen.vue'),
+      meta: {
+        pageTitle: 'Einstellungen',
+        breadcrumb: [
+          {
+            text: 'Einstellungen',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/vorlagen',
+      name: 'vorlagen',
+      component: () => import('@/views/Vorlagen.vue'),
+      meta: {
+        pageTitle: 'Vorlagen',
+        breadcrumb: [
+          {
+            text: 'Vorlagen',
+            active: true,
+          },
+        ],
+      },
+    },
+
     {
       path: '/login',
       name: 'login',
