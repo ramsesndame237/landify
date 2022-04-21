@@ -1,7 +1,8 @@
 const path = require('path')
 
+const prodPath = process.env.CI_PROJECT_NAME ?? 'kim_pro_frontend'
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production' ? '/kim_pro_frontend/' : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? `/${prodPath}/` : '/',
   lintOnSave: false,
   css: {
     loaderOptions: {

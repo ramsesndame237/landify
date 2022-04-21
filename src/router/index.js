@@ -156,6 +156,7 @@ const router = new VueRouter({
         layout: 'full',
       },
     },
+    {path:'/',redirect:'/app'},
     {
       path: '*',
       redirect: 'error-404',
