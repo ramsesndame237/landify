@@ -105,7 +105,7 @@
                 >
                   Remember Me
                 </b-form-checkbox>
-                <b-link :to="{name:'auth-forgot-password-v1'}">
+                <b-link :to="{name:'forgot-password'}">
                   <small>Forgot Password?</small>
                 </b-link>
               </div>
@@ -129,7 +129,7 @@
 
         <b-card-text class="text-center mt-2">
           <span>Dont have an account? </span>
-          <b-link :to="{name:'auth-register-v1'}">
+          <b-link :to="{name:'register'}">
             <span>Sign Up</span>
           </b-link>
         </b-card-text>
@@ -186,7 +186,7 @@ export default {
   },
   methods: {
     validationForm() {
-      this.$refs.loginValidation.validate().then(success => {
+      this.$refs.loginForm.validate().then(success => {
         if (success) {
           this.$toast({
             component: ToastificationContent,
@@ -196,6 +196,7 @@ export default {
               variant: 'success',
             },
           })
+          this.$router.push('/app')
         }
       })
     },
