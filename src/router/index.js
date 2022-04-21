@@ -11,118 +11,118 @@ const router = new VueRouter({
   },
   routes: [
     {
-      path: '/',
+      path: '/app',
       name: 'home',
-      component: () => import('@/views/Home.vue'),
+      component: () => import('@/views/app/Dashboard.vue'),
       meta: {
-        pageTitle: 'Home',
+        pageTitle: 'Dashboard',
         breadcrumb: [
           {
-            text: 'Home',
+            text: 'Dashboard',
             active: true,
           },
         ],
       },
     },
     {
-      path: '/benutzer-bechte',
-      name: 'benutzer-bechte',
-      component: () => import('@/views/BenutzerRechte.vue'),
+      path: '/app/deadlines',
+      name: 'deadlines',
+      component: () => import('@/views/app/Deadlines.vue'),
       meta: {
-        pageTitle: 'Benutzer & Bechte',
+        pageTitle: 'Deadlines',
         breadcrumb: [
           {
-            text: 'Benutzer & Bechte',
+            text: 'Deadlines',
             active: true,
           },
         ],
       },
     },
     {
-      path: '/vorgange',
-      name: 'vorgange',
-      component: () => import('@/views/Vorgange.vue'),
+      path: '/app/documents',
+      name: 'documents',
+      component: () => import('@/views/app/Documents.vue'),
       meta: {
-        pageTitle: 'Vorgänge',
+        pageTitle: 'Documents',
         breadcrumb: [
           {
-            text: 'Vorgänge',
+            text: 'Documents',
             active: true,
           },
         ],
       },
     },
     {
-      path: '/fristen',
-      name: 'fristen',
-      component: () => import('@/views/Fristen.vue'),
+      path: '/app/pos',
+      name: 'pos',
+      component: () => import('@/views/app/POS.vue'),
       meta: {
-        pageTitle: 'Fristen',
+        pageTitle: 'POS',
         breadcrumb: [
           {
-            text: 'Fristen',
+            text: 'POS',
             active: true,
           },
         ],
       },
     },
     {
-      path: '/dokumente',
-      name: 'dokumente',
-      component: () => import('@/views/Dokumente.vue'),
+      path: '/app/properties',
+      name: 'properties',
+      component: () => import('@/views/app/Properties.vue'),
       meta: {
-        pageTitle: 'Dokumente',
+        pageTitle: 'Properties',
         breadcrumb: [
           {
-            text: 'Dokumente',
+            text: 'Properties',
             active: true,
           },
         ],
       },
     },
     {
-      path: '/prozessansicht',
-      name: 'prozessansicht',
-      component: () => import('@/views/Prozessansicht.vue'),
+      path: '/app/users-lists',
+      name: 'users-lists',
+      component: () => import('@/views/app/users-lists.vue'),
       meta: {
-        pageTitle: 'Prozessansicht',
+        pageTitle: 'Overall list users',
         breadcrumb: [
           {
-            text: 'Prozessansicht',
+            text: 'Overall list users',
             active: true,
           },
         ],
       },
     },
     {
-      path: '/einstellungen',
-      name: 'einstellungen',
-      component: () => import('@/views/Einstellungen.vue'),
+      path: '/app/templates',
+      name: 'templates',
+      component: () => import('@/views/app/Templates.vue'),
       meta: {
-        pageTitle: 'Einstellungen',
+        pageTitle: 'Templates',
         breadcrumb: [
           {
-            text: 'Einstellungen',
+            text: 'Templates',
             active: true,
           },
         ],
       },
     },
     {
-      path: '/vorlagen',
-      name: 'vorlagen',
-      component: () => import('@/views/Vorlagen.vue'),
+      path: '/app/master-data',
+      name: 'master-data',
+      component: () => import('@/views/app/Master-data.vue'),
       meta: {
-        pageTitle: 'Vorlagen',
+        pageTitle: 'Master Data',
         breadcrumb: [
           {
-            text: 'Vorlagen',
+            text: 'Master Data',
             active: true,
           },
         ],
       },
     },
-
+    // authentication
     {
       path: '/login',
       name: 'login',
@@ -131,6 +131,23 @@ const router = new VueRouter({
         layout: 'full',
       },
     },
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: () => import('@/views/ForgotPassword.vue'),
+      meta: {
+        layout: 'full',
+      },
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: () => import('@/views/Register.vue'),
+      meta: {
+        layout: 'full',
+      },
+    },
+    // error
     {
       path: '/error-404',
       name: 'error-404',
