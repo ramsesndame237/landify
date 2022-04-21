@@ -170,6 +170,7 @@ const router = new VueRouter({
         layout: 'full',
       },
     },
+    {path:'/',redirect:'/login'},
     {
       path: '*',
       redirect: 'error-404',
