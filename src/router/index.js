@@ -81,14 +81,28 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/app/users-lists',
+      path: '/app/users',
       name: 'users-lists',
-      component: () => import('@/views/app/users-lists.vue'),
+      component: () => import('@/views/app/Users/index.vue'),
       meta: {
         pageTitle: 'Overall list users',
         breadcrumb: [
           {
             text: 'Overall list users',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/users/edit',
+      name: 'user-edit',
+      component: () => import('@/views/app/Users/Edit.vue'),
+      meta: {
+        pageTitle: 'Edit User',
+        breadcrumb: [
+          {
+            text: 'Edit User',
             active: true,
           },
         ],
