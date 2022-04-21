@@ -186,7 +186,7 @@ export default {
   },
   methods: {
     validationForm() {
-      this.$refs.loginValidation.validate().then(success => {
+      this.$refs.loginForm.validate().then(success => {
         if (success) {
           this.$toast({
             component: ToastificationContent,
@@ -196,6 +196,7 @@ export default {
               variant: 'success',
             },
           })
+          this.$router.push('/app')
         }
       })
     },
