@@ -1,22 +1,18 @@
 <template>
 <div>
-  <b-card>
-    <b-row class="mb-2">
-<!--      <b-col md="8">-->
-<!--        Josue nya-->
-<!--      </b-col>-->
-      <b-col md="-8">
-        <b-button variant="secondary" class="mr-1">Create new User</b-button>
-        <b-button variant="primary">Cancel</b-button>
-      </b-col>
-    </b-row>
+  <b-card class="">
+    <div class="header">
+        <div class="first-bloc">
+          <img src="../../../assets/images/icons/people.svg" alt="">
+          <span>Benutzer anlegen</span>
+        </div>
+        <div>
+          <b-button size="sm" variant="info" class="mr-1">Create new User</b-button>
+          <b-button size="sm" variant="primary">Cancel</b-button>
+        </div>
+      </div>
     <b-form>
       <b-row>
-        <b-col cols="12" md="12">
-          <b-form-group>
-            <b-form-input readonly id="name" value="Josue NYA"/>
-          </b-form-group>
-        </b-col>
         <!-- Field: email -->
         <b-col cols="12" md="6">
           <b-form-group label="E-mail*" label-for="username" placeholder="Enter here...">
@@ -85,19 +81,41 @@
     </b-form>
   </b-card>
 
-  <databases :displayOption="false" />
+  <b-card>
+    <b-tabs pills>
+        <b-tab title="Roles" active>
+          <databases />
+        </b-tab>
+        <b-tab title="Customers">
+          <databases />
+        </b-tab>
+        <b-tab title="Equipe">
+          <databases />
+        </b-tab>
+        <b-tab title="Point de vente">
+          <databases />
+        </b-tab>
+        <b-tab title="Partner">
+          <databases />
+        </b-tab>
+
+    </b-tabs>
+  </b-card>
 </div>
 </template>
 
 <script>
 const Databases = () => import('@/layouts/components/DataTables.vue')
 import {
-  BCard, BRow, BCol, BForm, BFormGroup, BFormInput, BButton,
+  BCard, BCardText, BTab, BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton,
 } from 'bootstrap-vue'
 
 export default {
   components: {
+    BCardText,
     BCard,
+    BTab,
+    BTabs,
     BRow,
     BFormGroup,
     BCol,
@@ -134,5 +152,5 @@ export default {
 </script>
 
 <style scoped>
-
+@import '../../../assets/scss/pages/page-users.scss';
 </style>

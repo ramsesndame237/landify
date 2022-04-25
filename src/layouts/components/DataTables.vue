@@ -1,136 +1,87 @@
 <template>
   <div>
-    <b-card>
-      <b-row>
-        <b-col v-if="displayOption" md="2" sm="4" class="my-1">
-          <b-form-group class="mb-0">
-            <label class="d-inline-block text-sm-left mr-50">Per page</label>
-            <b-form-select
-                id="perPageSelect"
-                v-model="perPage"
-                size="sm"
-                :options="pageOptions"
-                class="w-50"
-            />
-          </b-form-group>
-        </b-col>
-        <b-col v-if="displayOption" md="3" sm="8" class="my-1">
-          <b-form-group
-              label="Sort"
-              label-cols-sm="3"
-              label-align-sm="right"
-              label-size="sm"
-              label-for="sortBySelect"
-              class="mb-0"
-          >
-            <b-input-group size="sm">
-              <b-form-select
-                  id="sortBySelect"
-                  v-model="sortBy"
-                  :options="sortOptions"
-                  class="w-75"
-              >
-                <template v-slot:first>
-                  <option value="">
-                    -- none --
-                  </option>
-                </template>
-              </b-form-select>
-              <b-form-select
-                  v-model="sortDesc"
-                  size="sm"
-                  :disabled="!sortBy"
-                  class="w-25"
-              >
-                <option :value="false">
-                  Asc
-                </option>
-                <option :value="true">
-                  Desc
-                </option>
-              </b-form-select>
-            </b-input-group>
-          </b-form-group>
-        </b-col>
-        <b-col v-if="!displayOption" md="6" sm="4">
-          <b-tabs>
 
-            <b-tab>
-              <b-tab active>
-                <template #title>
-                  <span class="d-none d-sm-inline">Roles</span>
-                </template>
-                <!--                content tab -->
-              </b-tab>
-            </b-tab>
+<!--    <b-card>-->
+<!--      <b-row>-->
+<!--        <b-col md="2" sm="4" class="my-1">-->
+<!--          <b-form-group class="mb-0">-->
+<!--            <label class="d-inline-block text-sm-left mr-50">Per page</label>-->
+<!--            <b-form-select-->
+<!--                id="perPageSelect"-->
+<!--                v-model="perPage"-->
+<!--                size="sm"-->
+<!--                :options="pageOptions"-->
+<!--                class="w-50"-->
+<!--            />-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col md="3" sm="8" class="my-1">-->
+<!--          <b-form-group-->
+<!--              label="Sort"-->
+<!--              label-cols-sm="3"-->
+<!--              label-align-sm="right"-->
+<!--              label-size="sm"-->
+<!--              label-for="sortBySelect"-->
+<!--              class="mb-0"-->
+<!--          >-->
+<!--            <b-input-group size="sm">-->
+<!--              <b-form-select-->
+<!--                  id="sortBySelect"-->
+<!--                  v-model="sortBy"-->
+<!--                  :options="sortOptions"-->
+<!--                  class="w-75"-->
+<!--              >-->
+<!--                <template v-slot:first>-->
+<!--                  <option value="">-->
+<!--                    &#45;&#45; none &#45;&#45;-->
+<!--                  </option>-->
+<!--                </template>-->
+<!--              </b-form-select>-->
+<!--              <b-form-select-->
+<!--                  v-model="sortDesc"-->
+<!--                  size="sm"-->
+<!--                  :disabled="!sortBy"-->
+<!--                  class="w-25"-->
+<!--              >-->
+<!--                <option :value="false">-->
+<!--                  Asc-->
+<!--                </option>-->
+<!--                <option :value="true">-->
+<!--                  Desc-->
+<!--                </option>-->
+<!--              </b-form-select>-->
+<!--            </b-input-group>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col md="3" class="my-1">-->
+<!--          <b-button size="sm" v-b-modal.modal-primary class="mr-1" variant="gradient-info">New-->
+<!--          </b-button>-->
+<!--          <b-button size="sm" class="mr-1" variant="gradient-secondary">Edit-->
+<!--          </b-button>-->
+<!--          <b-button size="sm" class="mr-1" variant="gradient-primary">Delete-->
+<!--          </b-button>-->
+<!--        </b-col>-->
+<!--        <b-col md="3" class="my-1">-->
+<!--          <b-form-group-->
+<!--              label-cols-sm="3"-->
+<!--              label-align-sm="right"-->
+<!--              label-size="sm"-->
+<!--              label-for="filterInput"-->
+<!--              class="mb-0"-->
+<!--          >-->
+<!--            <b-input-group size="sm">-->
+<!--              <b-form-input-->
+<!--                  id="filterInput"-->
+<!--                  v-model="filter"-->
+<!--                  type="search"-->
+<!--                  placeholder="Type to Search"-->
+<!--              />-->
+<!--            </b-input-group>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--      </b-row>-->
+<!--    </b-card>-->
 
-            <b-tab>
-              <b-tab active>
-                <template #title>
-                  <span class="d-none d-sm-inline">Customers</span>
-                </template>
-                <p>customers tabs</p>
-              </b-tab>
-            </b-tab>
-
-            <b-tab>
-              <b-tab active>
-                <template #title>
-                  <span class="d-none d-sm-inline">Groupes</span>
-                </template>
-                <p>Groups tabs</p>
-              </b-tab>
-            </b-tab>
-
-            <b-tab>
-              <b-tab active>
-                <template #title>
-                  <span class="d-none d-sm-inline">Point of sales</span>
-                </template>
-                <p>Point of sales tabs</p>
-              </b-tab>
-            </b-tab>
-
-            <b-tab>
-              <b-tab active>
-                <template #title>
-                  <span class="d-none d-sm-inline">Partner</span>
-                </template>
-                <p>Partners tabs</p>
-              </b-tab>
-            </b-tab>
-
-          </b-tabs>
-        </b-col>
-
-        <b-col md="3" class="my-1">
-          <b-button v-b-modal.modal-primary class="mr-1" variant="gradient-info">New
-          </b-button>
-          <b-button class="mr-1" variant="gradient-secondary">Edit
-          </b-button>
-          <b-button class="mr-1" variant="gradient-primary">Delete
-          </b-button>
-        </b-col>
-        <b-col md="3" class="my-1">
-          <b-form-group
-              label-cols-sm="3"
-              label-align-sm="right"
-              label-size="sm"
-              label-for="filterInput"
-              class="mb-0"
-          >
-            <b-input-group size="sm">
-              <b-form-input
-                  id="filterInput"
-                  v-model="filter"
-                  type="search"
-                  placeholder="Type to Search"
-              />
-            </b-input-group>
-          </b-form-group>
-        </b-col>
-      </b-row>
-    </b-card>
     <b-card>
       <b-row>
         <b-col cols="12">
@@ -156,7 +107,7 @@
             <template #cell(...)="data" v-if="actions">
               <b-badge class="mr-1" variant="secondary">
                 <feather-icon
-                    class="cursor-pointer mr-1"
+                    class="cursor-pointer"
                     icon="EditIcon"
                 /> <b-link :to="{name: 'user-edit', params: { user: data.item }}">Edit</b-link> </b-badge>
               <b-badge variant="primary">
@@ -179,7 +130,7 @@
         </b-col>
       </b-row>
     </b-card>
-<!--     modal-->
+    <!--modal-->
     <b-modal
         id="modal-primary"
         ok-title="Save"
@@ -295,13 +246,13 @@
 </template>
 
 <script>
-const partners = () => import('@/views/app/Users/PartnerTab.vue');
+const partners = () => import('@/views/app/Users/PartnerTab.vue')
 import {
   BCard, BTab, BTabs, BForm, BLink, BTable, BBadge, BRow, BCol, BFormGroup, BFormSelect, BPagination, BInputGroup, BFormInput, BInputGroupAppend, BButton,
 } from 'bootstrap-vue'
 
 export default {
-  props: ['actions', 'displayOption'],
+  props: ['actions', 'displayOption', 'items', 'fields'],
   components: {
     BTable,
     BForm,
@@ -337,168 +288,6 @@ export default {
         title: '',
         content: '',
       },
-      fields: [
-        { key: 'id', label: 'Id' },
-        { key: 'full_name', label: 'Last Name', sortable: true },
-        { key: 'first_name', label: 'First Name', sortable: true },
-        { key: 'email', label: 'eMail', sortable: true },
-        { key: 'last_login', label: 'Last login', sortable: true },
-        { key: 'user_type', label: 'User type', sortable: true },
-        { key: 'company', label: 'Company', sortable: true },
-        '...',
-      ],
-      items: [
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 2,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 3,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 4,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 5,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 6,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 7,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 8,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 9,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 10,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 11,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 12,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 13,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 14,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 15,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-      ],
       selected: null,
       options: [
         { value: null, text: 'Please select an option' },
