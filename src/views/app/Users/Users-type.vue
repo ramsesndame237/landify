@@ -13,47 +13,47 @@
           />
         </b-form-group>
         <b-form-group
-          label="Trier"
-          label-cols-sm="3"
-          label-align-sm="right"
-          label-size="sm"
-          label-for="sortBySelect"
-          class="mb-0"
-      >
-        <b-input-group size="sm">
-          <b-form-select
-              id="sortBySelect"
-              v-model="sortBy"
-              :options="sortOptions"
-              class="w-75"
-          >
-            <template v-slot:first>
-              <option value="">
-                -- none --
+            label="Trier"
+            label-cols-sm="3"
+            label-align-sm="right"
+            label-size="sm"
+            label-for="sortBySelect"
+            class="mb-0"
+        >
+          <b-input-group size="sm">
+            <b-form-select
+                id="sortBySelect"
+                v-model="sortBy"
+                :options="sortOptions"
+                class="w-75"
+            >
+              <template v-slot:first>
+                <option value="">
+                  -- none --
+                </option>
+              </template>
+            </b-form-select>
+            <b-form-select
+                v-model="sortDesc"
+                size="sm"
+                :disabled="!sortBy"
+                class="w-25"
+            >
+              <option :value="false">
+                Asc
               </option>
-            </template>
-          </b-form-select>
-          <b-form-select
-              v-model="sortDesc"
-              size="sm"
-              :disabled="!sortBy"
-              class="w-25"
-          >
-            <option :value="false">
-              Asc
-            </option>
-            <option :value="true">
-              Desc
-            </option>
-          </b-form-select>
-        </b-input-group>
-      </b-form-group>
+              <option :value="true">
+                Desc
+              </option>
+            </b-form-select>
+          </b-input-group>
+        </b-form-group>
       </div>
       <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1">
-          <feather-icon
-              class="cursor-pointer"
-              icon="PlusIcon"
-          />New user</b-button>
+        <feather-icon
+            class="cursor-pointer"
+            icon="PlusIcon"
+        />New user</b-button>
     </div>
     <Databases :items="items" :fields="fields" ref="datatable" :displayOption="true" :actions="true" />
 

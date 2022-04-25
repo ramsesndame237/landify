@@ -100,11 +100,7 @@
               :filter-included-fields="filterOn"
               @filtered="onFiltered"
           >
-            <!--        <template #cell(avatar)="data">-->
-            <!--          <b-avatar :src="data.value" />-->
-            <!--        </template>-->
-
-            <template #cell(...)="data" v-if="actions">
+            <template #cell(Action)="data" v-if="actions">
               <b-badge class="mr-1" variant="secondary">
                 <feather-icon
                     class="cursor-pointer"
@@ -130,147 +126,24 @@
         </b-col>
       </b-row>
     </b-card>
-    <!--modal-->
-    <b-modal
-        id="modal-primary"
-        ok-title="Save"
-        cancel-title="Cancel"
-        modal-class="modal-primary"
-        centered
-        title="Create new user"
-        size="lg"
-    >
-      <b-form @submit.prevent>
-        <b-row>
-          <b-col cols="12">
-            <b-form-group
-                label="Name Company*"
-                label-for="company-name"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="company-name"
-                  type="text"
-                  placeholder="Please select ..."
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="eMail"
-                label-for="h-email"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="h-email"
-                  type="email"
-                  placeholder="Enter here..."
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Name / First name"
-                label-for="h-name"
-                label-cols-md="4"
-            >
-              <div class="d-flex">
-                <b-form-input
-                    class="mr-1"
-                    id="h-name"
-                    type="text"
-                    placeholder="Enter here..."
-                />
-                <b-form-input
-                    md="4"
-                    id="h-firstname"
-                    type="text"
-                    placeholder="Enter here..."
-                />
-              </div>
-
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Mobile"
-                label-for="h-mobile"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="h-mobile"
-                  type="number"
-                  placeholder="Enter here..."
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Fax"
-                label-for="h-fax"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="h-fax"
-                  type="text"
-                  placeholder="Enter here..."
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Deputy"
-                label-for="h-deputy"
-                label-cols-md="4">
-              <b-form-select
-                  v-model="selected"
-                  :options="options"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Type"
-                label-for="h-deputy"
-                label-cols-md="4">
-              <b-form-select
-                  v-model="selected"
-                  :options="options"
-              />
-            </b-form-group>
-          </b-col>
-        </b-row>
-      </b-form>
-    </b-modal>
   </div>
 </template>
 
 <script>
-const partners = () => import('@/views/app/Users/PartnerTab.vue')
 import {
-  BCard, BTab, BTabs, BForm, BLink, BTable, BBadge, BRow, BCol, BFormGroup, BFormSelect, BPagination, BInputGroup, BFormInput, BInputGroupAppend, BButton,
+  BCard, BLink, BTable, BBadge, BRow, BCol, BPagination,
 } from 'bootstrap-vue'
 
 export default {
-  props: ['actions', 'displayOption', 'items', 'fields'],
+  props: ['actions', 'items', 'fields'],
   components: {
     BTable,
-    BForm,
     BBadge,
     BRow,
     BCol,
-    BFormGroup,
-    BFormSelect,
     BPagination,
-    BInputGroup,
-    BFormInput,
-    BInputGroupAppend,
-    BButton,
     BCard,
     BLink,
-    BTab,
-    BTabs,
-    partners,
   },
   data() {
     return {
@@ -288,14 +161,6 @@ export default {
         title: '',
         content: '',
       },
-      selected: null,
-      options: [
-        { value: null, text: 'Please select an option' },
-        { value: 'a', text: 'This is First option' },
-        { value: 'b', text: 'Simple Option' },
-        { value: { C: '3PO' }, text: 'This is an option with object value' },
-        { value: 'd', text: 'Please select', disabled: true },
-      ],
     }
   },
   computed: {
