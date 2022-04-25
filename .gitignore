@@ -28,3 +28,4 @@ yarn-error.log*
 # Docs
 /docs/.temp
 package-lock.json
+yarn.lock
