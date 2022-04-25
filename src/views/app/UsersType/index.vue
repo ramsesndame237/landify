@@ -1,56 +1,56 @@
 <template>
   <div>
     <b-card body-class="p-0">
-        <div class="d-flex justify-content-between" style="padding: 10px">
-          <b-form-group class="mb-0">
-            <label class="d-inline-block text-sm-left mr-50">Show</label>
-            <b-form-select style="width: 60px"
-                id="perPageSelect"
-                v-model="perPage"
-                size="sm"
-                :options="pageOptions"
-                class="w-10"
-            />
-            <label class="d-inline-block text-sm-left ml-50">Entries</label>
-          </b-form-group>
-
-          <b-pagination
-              v-model="currentPage"
-              :total-rows="totalRows"
-              :per-page="perPage"
-              align="center"
-              class="my-0"
-              first-number
-              last-number
-              prev-class="prev-item"
-              next-class="next-item"
+      <div class="d-flex justify-content-between" style="padding: 10px">
+        <b-form-group class="mb-0">
+          <label class="d-inline-block text-sm-left mr-50">Show</label>
+          <b-form-select style="width: 60px"
+                         id="perPageSelect"
+                         v-model="perPage"
+                         size="sm"
+                         :options="pageOptions"
+                         class="w-10"
           />
+          <label class="d-inline-block text-sm-left ml-50">Entries</label>
+        </b-form-group>
 
-          <div class="d-flex align-items-center">
-            <div class="mr-1 d-flex">
-              <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
-                <img src="@/assets/images/pages/plusIcons.svg" alt="">
-                new </b-button>
-              <b-button size="sm" variant="secondary" class="mr-1 d-flex">
-                <img src="@/assets/images/pages/editIcons.svg" alt="">
-                Edit</b-button>
-              <b-button size="sm" class="d-flex" variant="primary">
-                <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-                Delete</b-button>
-            </div>
+        <b-pagination
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            align="center"
+            class="my-0"
+            first-number
+            last-number
+            prev-class="prev-item"
+            next-class="next-item"
+        />
 
-            <b-input-group size="sm" class="d-flex align-items-center">
-              <label class="d-inline-block text-sm-left mr-50">Search</label>
-              <b-form-input
-                  id="filterInput"
-                  type="search"
-                  placeholder="AJAX data source"
-              />
-            </b-input-group>
+        <div class="d-flex align-items-center">
+          <div class="mr-1 d-flex">
+            <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
+              <img src="@/assets/images/pages/plusIcons.svg" alt="">
+              new </b-button>
+            <b-button size="sm" variant="secondary" class="mr-1 d-flex">
+              <img src="@/assets/images/pages/editIcons.svg" alt="">
+              Edit</b-button>
+            <b-button size="sm" class="d-flex" variant="primary">
+              <img src="@/assets/images/pages/deleteIcons.svg" alt="">
+              Delete</b-button>
           </div>
 
+          <b-input-group size="sm" class="d-flex align-items-center">
+            <label class="d-inline-block text-sm-left mr-50">Search</label>
+            <b-form-input
+                id="filterInput"
+                type="search"
+                placeholder="AJAX data source"
+            />
+          </b-input-group>
         </div>
-      </b-card>
+
+      </div>
+    </b-card>
     <Databases link="user-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
 
     <!--modal-->
@@ -60,105 +60,47 @@
         cancel-title="Cancel"
         modal-class="modal-primary"
         centered
-        title="Create new user"
+        title="Create new User TYPE"
         size="lg"
     >
       <b-form @submit.prevent>
         <b-row>
           <b-col cols="12">
             <b-form-group
-                label="Name Company*"
-                label-for="company-name"
+                label="User Type ID"
+                label-for="type-id"
                 label-cols-md="4"
             >
               <b-form-input
-                  id="company-name"
-                  type="text"
-                  placeholder="Please select ..."
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="eMail"
-                label-for="h-email"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="h-email"
+                  id="type-id"
                   type="email"
-                  placeholder="Enter here..."
+                  placeholder="enter here..."
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="Name / First name"
-                label-for="h-name"
-                label-cols-md="4"
-            >
-              <div class="d-flex">
-                <b-form-input
-                    class="mr-1"
-                    id="h-name"
-                    type="text"
-                    placeholder="Enter here..."
-                />
-                <b-form-input
-                    md="4"
-                    id="h-firstname"
-                    type="text"
-                    placeholder="Enter here..."
-                />
-              </div>
-
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Mobile"
-                label-for="h-mobile"
+                label="Name User Type"
+                label-for="type-name"
                 label-cols-md="4"
             >
               <b-form-input
-                  id="h-mobile"
-                  type="number"
-                  placeholder="Enter here..."
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Fax"
-                label-for="h-fax"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="h-fax"
+                  id="type-name"
                   type="text"
-                  placeholder="Enter here..."
+                  placeholder="enter here..."
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="Deputy"
-                label-for="h-deputy"
-                label-cols-md="4">
-              <b-form-select
-                  v-model="selected"
-                  :options="options"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Type"
-                label-for="h-deputy"
-                label-cols-md="4">
-              <b-form-select
-                  v-model="selected"
-                  :options="options"
+                label="Description"
+                label-for="description"
+                label-cols-md="4"
+            >
+              <b-form-input
+                  id="description"
+                  type="text"
+                  placeholder="enter here..."
               />
             </b-form-group>
           </b-col>
@@ -363,13 +305,8 @@ export default {
       ],
       fields: [
         { key: 'id', label: 'Id' },
-        { key: 'full_name', label: 'Last Name', sortable: true },
-        { key: 'first_name', label: 'First Name', sortable: true },
-        { key: 'email', label: 'eMail', sortable: true },
-        { key: 'last_login', label: 'Last login', sortable: true },
-        { key: 'user_type', label: 'User type', sortable: true },
-        { key: 'company', label: 'Company', sortable: true },
-        'Action',
+        { key: 'name', label: 'Name User Type', sortable: true },
+        { key: 'description', label: 'User Type Description', sortable: true },
       ],
       selected: null,
       options: [
