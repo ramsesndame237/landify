@@ -84,19 +84,19 @@
   <b-card>
     <b-tabs pills>
         <b-tab title="Roles" active>
-          <databases />
+          <databases :items="items" :fields="fields" />
         </b-tab>
         <b-tab title="Customers">
-          <databases />
+          <databases :items="items" :fields="fields" />
         </b-tab>
         <b-tab title="Equipe">
-          <databases />
+          <databases :items="items" :fields="fields" />
         </b-tab>
         <b-tab title="Point de vente">
-          <databases />
+          <databases :items="items" :fields="fields" />
         </b-tab>
         <b-tab title="Partner">
-          <databases />
+          <databases :items="items" :fields="fields" />
         </b-tab>
 
     </b-tabs>
@@ -145,6 +145,168 @@ export default {
       options2: [
         { text: 'Mr.', value: 'first2', disabled: false },
         { text: 'Ms.', value: 'second2', disabled: false },
+      ],
+      items: [
+        {
+          id: 1,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          email: 'josue.nya@gohze.org',
+          last_login: '2022/04/20',
+          user_type: 'developer',
+          company: 'Gohze',
+        },
+        {
+          id: 2,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          email: 'josue.nya@gohze.org',
+          last_login: '2022/04/20',
+          user_type: 'developer',
+          company: 'Gohze',
+        },
+        {
+          id: 3,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          email: 'josue.nya@gohze.org',
+          last_login: '2022/04/20',
+          user_type: 'developer',
+          company: 'Gohze',
+        },
+        {
+          id: 4,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          email: 'josue.nya@gohze.org',
+          last_login: '2022/04/20',
+          user_type: 'developer',
+          company: 'Gohze',
+        },
+        {
+          id: 5,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          email: 'josue.nya@gohze.org',
+          last_login: '2022/04/20',
+          user_type: 'developer',
+          company: 'Gohze',
+        },
+        {
+          id: 6,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          email: 'josue.nya@gohze.org',
+          last_login: '2022/04/20',
+          user_type: 'developer',
+          company: 'Gohze',
+        },
+        {
+          id: 7,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          email: 'josue.nya@gohze.org',
+          last_login: '2022/04/20',
+          user_type: 'developer',
+          company: 'Gohze',
+        },
+        {
+          id: 8,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          email: 'josue.nya@gohze.org',
+          last_login: '2022/04/20',
+          user_type: 'developer',
+          company: 'Gohze',
+        },
+        {
+          id: 9,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          email: 'josue.nya@gohze.org',
+          last_login: '2022/04/20',
+          user_type: 'developer',
+          company: 'Gohze',
+        },
+        {
+          id: 10,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          email: 'josue.nya@gohze.org',
+          last_login: '2022/04/20',
+          user_type: 'developer',
+          company: 'Gohze',
+        },
+        {
+          id: 11,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          email: 'josue.nya@gohze.org',
+          last_login: '2022/04/20',
+          user_type: 'developer',
+          company: 'Gohze',
+        },
+        {
+          id: 12,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          email: 'josue.nya@gohze.org',
+          last_login: '2022/04/20',
+          user_type: 'developer',
+          company: 'Gohze',
+        },
+        {
+          id: 13,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          email: 'josue.nya@gohze.org',
+          last_login: '2022/04/20',
+          user_type: 'developer',
+          company: 'Gohze',
+        },
+        {
+          id: 14,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          email: 'josue.nya@gohze.org',
+          last_login: '2022/04/20',
+          user_type: 'developer',
+          company: 'Gohze',
+        },
+        {
+          id: 15,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          email: 'josue.nya@gohze.org',
+          last_login: '2022/04/20',
+          user_type: 'developer',
+          company: 'Gohze',
+        },
+      ],
+      fields: [
+        { key: 'id', label: 'Id' },
+        { key: 'full_name', label: 'Last Name', sortable: true },
+        { key: 'first_name', label: 'First Name', sortable: true },
+        { key: 'email', label: 'eMail', sortable: true },
+        { key: 'last_login', label: 'Last login', sortable: true },
+        { key: 'user_type', label: 'User type', sortable: true },
+        { key: 'company', label: 'Company', sortable: true },
+        '...',
       ],
     }
   },
