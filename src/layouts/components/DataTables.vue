@@ -1,157 +1,185 @@
 <template>
   <div>
-  <b-card>
-    <b-row>
-      <b-col md="2" sm="4" class="my-1">
-        <b-form-group class="mb-0">
-          <label class="d-inline-block text-sm-left mr-50">Per page</label>
-          <b-form-select
-              id="perPageSelect"
-              v-model="perPage"
-              size="sm"
-              :options="pageOptions"
-              class="w-50"
-          />
-        </b-form-group>
-      </b-col>
-      <b-col md="3" sm="8" class="my-1">
-        <b-form-group
-            label="Sort"
-            label-cols-sm="3"
-            label-align-sm="right"
-            label-size="sm"
-            label-for="sortBySelect"
-            class="mb-0"
-        >
-          <b-input-group size="sm">
+    <b-card>
+      <b-row>
+        <b-col v-if="displayOption" md="2" sm="4" class="my-1">
+          <b-form-group class="mb-0">
+            <label class="d-inline-block text-sm-left mr-50">Per page</label>
             <b-form-select
-                id="sortBySelect"
-                v-model="sortBy"
-                :options="sortOptions"
-                class="w-75"
-            >
-              <template v-slot:first>
-                <option value="">
-                  -- none --
-                </option>
-              </template>
-            </b-form-select>
-            <b-form-select
-                v-model="sortDesc"
+                id="perPageSelect"
+                v-model="perPage"
                 size="sm"
-                :disabled="!sortBy"
-                class="w-25"
-            >
-              <option :value="false">
-                Asc
-              </option>
-              <option :value="true">
-                Desc
-              </option>
-            </b-form-select>
-          </b-input-group>
-        </b-form-group>
-      </b-col>
-      <b-col md="4" class="my-1">
-        <b-button v-b-modal.modal-primary class="mr-1" variant="gradient-info">
-          <feather-icon
-              class="cursor-pointer mr-1"
-              icon="PlusIcon"
-          />New
-        </b-button>
-        <b-button class="mr-1" variant="gradient-secondary">
-          <feather-icon
-              class="cursor-pointer mr-1"
-              icon="EditIcon"
-          />Edit
-        </b-button>
-        <b-button class="mr-1" variant="gradient-primary">
-          <feather-icon
-              class="cursor-pointer mr-1"
-              icon="Trash2Icon"
-          />Delete
-        </b-button>
-      </b-col>
-      <b-col md="3" class="my-1">
-        <b-form-group
-            label="Filter"
-            label-cols-sm="3"
-            label-align-sm="right"
-            label-size="sm"
-            label-for="filterInput"
-            class="mb-0"
-        >
-          <b-input-group size="sm">
-            <b-form-input
-                id="filterInput"
-                v-model="filter"
-                type="search"
-                placeholder="Type to Search"
+                :options="pageOptions"
+                class="w-50"
             />
-            <b-input-group-append>
-              <b-button
-                  :disabled="!filter"
-                  @click="filter = ''"
+          </b-form-group>
+        </b-col>
+        <b-col v-if="displayOption" md="3" sm="8" class="my-1">
+          <b-form-group
+              label="Sort"
+              label-cols-sm="3"
+              label-align-sm="right"
+              label-size="sm"
+              label-for="sortBySelect"
+              class="mb-0"
+          >
+            <b-input-group size="sm">
+              <b-form-select
+                  id="sortBySelect"
+                  v-model="sortBy"
+                  :options="sortOptions"
+                  class="w-75"
               >
-                Clear
-              </b-button>
-            </b-input-group-append>
-          </b-input-group>
-        </b-form-group>
-      </b-col>
-    </b-row>
-  </b-card>
-  <b-card>
-    <b-row>
-    <b-col cols="12">
-      <b-table
-          striped
-          hover
-          responsive
-          :per-page="perPage"
-          :current-page="currentPage"
-          :items="items"
-          :fields="fields"
-          :sort-by.sync="sortBy"
-          :sort-desc.sync="sortDesc"
-          :sort-direction="sortDirection"
-          :filter="filter"
-          :filter-included-fields="filterOn"
-          @filtered="onFiltered"
-      >
-<!--        <template #cell(avatar)="data">-->
-<!--          <b-avatar :src="data.value" />-->
-<!--        </template>-->
+                <template v-slot:first>
+                  <option value="">
+                    -- none --
+                  </option>
+                </template>
+              </b-form-select>
+              <b-form-select
+                  v-model="sortDesc"
+                  size="sm"
+                  :disabled="!sortBy"
+                  class="w-25"
+              >
+                <option :value="false">
+                  Asc
+                </option>
+                <option :value="true">
+                  Desc
+                </option>
+              </b-form-select>
+            </b-input-group>
+          </b-form-group>
+        </b-col>
+        <b-col v-if="!displayOption" md="6" sm="4">
+          <b-tabs>
 
-        <template #cell(...)="data">
-          <b-badge class="mr-1" variant="secondary">
-            <feather-icon
-                class="cursor-pointer mr-1"
-                icon="EditIcon"
-            />Edit</b-badge>
-          <b-badge variant="primary">
-            <feather-icon
-                class="cursor-pointer mr-1"
-                icon="Trash2Icon"
-            />Delete</b-badge>
-        </template>
-      </b-table>
-    </b-col>
-    <b-col cols="12">
-      <b-pagination
-          v-model="currentPage"
-          :total-rows="totalRows"
-          :per-page="perPage"
-          align="center"
-          size="sm"
-          class="my-0"
-      />
-    </b-col>
-  </b-row>
-  </b-card>
+            <b-tab>
+              <b-tab active>
+                <template #title>
+                  <span class="d-none d-sm-inline">Roles</span>
+                </template>
+                <!--                content tab -->
+              </b-tab>
+            </b-tab>
 
+            <b-tab>
+              <b-tab active>
+                <template #title>
+                  <span class="d-none d-sm-inline">Customers</span>
+                </template>
+                <p>customers tabs</p>
+              </b-tab>
+            </b-tab>
 
-    <!-- modal -->
+            <b-tab>
+              <b-tab active>
+                <template #title>
+                  <span class="d-none d-sm-inline">Groupes</span>
+                </template>
+                <p>Groups tabs</p>
+              </b-tab>
+            </b-tab>
+
+            <b-tab>
+              <b-tab active>
+                <template #title>
+                  <span class="d-none d-sm-inline">Point of sales</span>
+                </template>
+                <p>Point of sales tabs</p>
+              </b-tab>
+            </b-tab>
+
+            <b-tab>
+              <b-tab active>
+                <template #title>
+                  <span class="d-none d-sm-inline">Partner</span>
+                </template>
+                <p>Partners tabs</p>
+              </b-tab>
+            </b-tab>
+
+          </b-tabs>
+        </b-col>
+
+        <b-col md="3" class="my-1">
+          <b-button v-b-modal.modal-primary class="mr-1" variant="gradient-info">New
+          </b-button>
+          <b-button class="mr-1" variant="gradient-secondary">Edit
+          </b-button>
+          <b-button class="mr-1" variant="gradient-primary">Delete
+          </b-button>
+        </b-col>
+        <b-col md="3" class="my-1">
+          <b-form-group
+              label-cols-sm="3"
+              label-align-sm="right"
+              label-size="sm"
+              label-for="filterInput"
+              class="mb-0"
+          >
+            <b-input-group size="sm">
+              <b-form-input
+                  id="filterInput"
+                  v-model="filter"
+                  type="search"
+                  placeholder="Type to Search"
+              />
+            </b-input-group>
+          </b-form-group>
+        </b-col>
+      </b-row>
+    </b-card>
+    <b-card>
+      <b-row>
+        <b-col cols="12">
+          <b-table
+              striped
+              hover
+              responsive
+              :per-page="perPage"
+              :current-page="currentPage"
+              :items="items"
+              :fields="fields"
+              :sort-by.sync="sortBy"
+              :sort-desc.sync="sortDesc"
+              :sort-direction="sortDirection"
+              :filter="filter"
+              :filter-included-fields="filterOn"
+              @filtered="onFiltered"
+          >
+            <!--        <template #cell(avatar)="data">-->
+            <!--          <b-avatar :src="data.value" />-->
+            <!--        </template>-->
+
+            <template #cell(...)="data" v-if="actions">
+              <b-badge class="mr-1" variant="secondary">
+                <feather-icon
+                    class="cursor-pointer mr-1"
+                    icon="EditIcon"
+                /> <b-link :to="{name: 'user-edit', params: { user: data.item }}">Edit</b-link> </b-badge>
+              <b-badge variant="primary">
+                <feather-icon
+                    class="cursor-pointer mr-1"
+                    icon="Trash2Icon"
+                />Delete</b-badge>
+            </template>
+          </b-table>
+        </b-col>
+        <b-col cols="12">
+          <b-pagination
+              v-model="currentPage"
+              :total-rows="totalRows"
+              :per-page="perPage"
+              align="center"
+              size="sm"
+              class="my-0"
+          />
+        </b-col>
+      </b-row>
+    </b-card>
+<!--     modal-->
     <b-modal
         id="modal-primary"
         ok-title="Save"
@@ -240,9 +268,9 @@
           </b-col>
           <b-col cols="12">
             <b-form-group
-              label="Deputy"
-              label-for="h-deputy"
-              label-cols-md="4">
+                label="Deputy"
+                label-for="h-deputy"
+                label-cols-md="4">
               <b-form-select
                   v-model="selected"
                   :options="options"
@@ -267,11 +295,13 @@
 </template>
 
 <script>
+const partners = () => import('@/views/app/Users/PartnerTab.vue');
 import {
-  BCard, BForm, BTable, BBadge, BRow, BCol, BFormGroup, BFormSelect, BPagination, BInputGroup, BFormInput, BInputGroupAppend, BButton,
+  BCard, BTab, BTabs, BForm, BLink, BTable, BBadge, BRow, BCol, BFormGroup, BFormSelect, BPagination, BInputGroup, BFormInput, BInputGroupAppend, BButton,
 } from 'bootstrap-vue'
 
 export default {
+  props: ['actions', 'displayOption'],
   components: {
     BTable,
     BForm,
@@ -286,6 +316,10 @@ export default {
     BInputGroupAppend,
     BButton,
     BCard,
+    BLink,
+    BTab,
+    BTabs,
+    partners,
   },
   data() {
     return {
