@@ -1,71 +1,37 @@
 <template>
   <div>
-      <div class="header">
-        <div class="first-bloc">
+      <b-card body-class="p-0">
+        <div class="d-flex" style="padding: 10px">
           <b-form-group class="mb-0">
-            <label class="d-inline-block text-sm-left mr-50">Per page</label>
-            <b-form-select
+            <label class="d-inline-block text-sm-left mr-50">Show</label>
+            <b-form-select style="width: 60px"
                 id="perPageSelect"
                 v-model="perPage"
                 size="sm"
                 :options="pageOptions"
-                class="w-50"
+                class="w-10"
             />
+            <label class="d-inline-block text-sm-left ml-50">Entries</label>
           </b-form-group>
-          <b-form-group
-            label="Trier"
-            label-cols-sm="3"
-            label-align-sm="right"
-            label-size="sm"
-            label-for="sortBySelect"
-            class="mb-0"
-        >
-          <b-input-group size="sm">
-            <b-form-select
-                id="sortBySelect"
-                v-model="sortBy"
-                :options="sortOptions"
-                class="w-75"
-            >
-              <template v-slot:first>
-                <option value="">
-                  -- none --
-                </option>
-              </template>
-            </b-form-select>
-            <b-form-select
-                v-model="sortDesc"
-                size="sm"
-                :disabled="!sortBy"
-                class="w-25"
-            >
-              <option :value="false">
-                Asc
-              </option>
-              <option :value="true">
-                Desc
-              </option>
-            </b-form-select>
-          </b-input-group>
-        </b-form-group>
-        </div>
-        <div>
-          <b-button size="sm" variant="info" class="mr-1">
-            <feather-icon
+
+          <div>
+            <b-button size="sm" variant="info" class="mr-1">
+              <feather-icon
+                  class="cursor-pointer"
+                  icon="PlusIcon"
+              />
+              new </b-button>
+            <b-button size="sm" variant="secondary" class="mr-1"><feather-icon
                 class="cursor-pointer"
-                icon="PlusIcon"
-            />
-            new </b-button>
-          <b-button size="sm" variant="secondary" class="mr-1"><feather-icon
-              class="cursor-pointer"
-              icon="EditIcon"
-          />Edit</b-button>
-          <b-button size="sm" variant="primary"><feather-icon
-              class="cursor-pointer"
-              icon="Trash2Icon"
-          />Delete</b-button>
+                icon="EditIcon"
+            />Edit</b-button>
+            <b-button size="sm" variant="primary"><feather-icon
+                class="cursor-pointer"
+                icon="Trash2Icon"
+            />Delete</b-button>
+          </div>
         </div>
-      </div>
+      </b-card>
     <Databases :items="items" :fields="fields" ref="datatable" :displayOption="true" :actions="true" />
   </div>
 </template>

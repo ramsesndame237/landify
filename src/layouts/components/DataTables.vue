@@ -126,6 +126,10 @@
               align="center"
               size="sm"
               class="my-0"
+              first-number
+              last-number
+              prev-class="prev-item"
+              next-class="next-item"
           />
         </b-col>
       </b-row>
