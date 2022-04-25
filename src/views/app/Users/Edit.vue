@@ -2,15 +2,15 @@
 <div>
   <b-card class="">
     <div class="header">
-        <div class="first-bloc">
-          <img src="../../../assets/images/icons/people.svg" alt="">
-          <span>Benutzer anlegen</span>
-        </div>
-        <div>
-          <b-button size="sm" variant="info" class="mr-1">Create new User</b-button>
-          <b-button size="sm" variant="primary">Cancel</b-button>
-        </div>
+      <div class="first-bloc">
+        <img src="../../../assets/images/icons/people.svg" alt="">
+        <span>Benutzer anlegen</span>
       </div>
+      <div>
+        <b-button size="sm" variant="info" class="mr-1">Create new User</b-button>
+        <b-button size="sm" variant="primary">Cancel</b-button>
+      </div>
+    </div>
     <b-form>
       <b-row>
         <!-- Field: email -->
@@ -82,37 +82,127 @@
   </b-card>
 
   <b-card>
+    <div class="first-bloc d-flex mb-2">
+      <b-form-group class="mr-2">
+<!--        <label class="d-inline-block text-sm-left mr-50">Per page</label>-->
+        <b-form-select
+            id="perPageSelect"
+            v-model="perPage"
+            size="sm"
+            :options="pageOptions"
+            class="w-50"
+        />
+      </b-form-group>
+      <b-button class="mr-1" size="sm" variant="info"><feather-icon
+          class="cursor-pointer"
+          icon="PlusIcon"
+      />New</b-button>
+      <b-input-group size="sm">
+          <b-form-input
+              id="filterInput"
+              v-model="filter"
+              type="search"
+              placeholder="Type to Search"
+          />
+        </b-input-group>
+    </div>
     <b-tabs pills>
-        <b-tab title="Roles" active>
-          <databases :items="items" :fields="fields" />
-        </b-tab>
-        <b-tab title="Customers">
-          <databases :items="items" :fields="fields" />
-        </b-tab>
-        <b-tab title="Equipe">
-          <databases :items="items" :fields="fields" />
-        </b-tab>
-        <b-tab title="Point de vente">
-          <databases :items="items" :fields="fields" />
-        </b-tab>
-        <b-tab title="Partner">
-          <databases :items="items" :fields="fields" />
-        </b-tab>
-
+      <b-tab title="Roles" active>
+        <databases :actions="true" :items="items" :fields="fields" />
+      </b-tab>
+      <b-tab title="Customers">
+        <databases :items="items" :fields="fields" />
+      </b-tab>
+      <b-tab title="Equipe">
+        <databases :items="items" :fields="fields" />
+      </b-tab>
+      <b-tab title="Point de vente">
+        <databases :items="items" :fields="fields" />
+      </b-tab>
+      <b-tab title="Partner">
+        <databases :items="items" :fields="fields" />
+      </b-tab>
     </b-tabs>
   </b-card>
+
+  <!--modal-->
+  <b-modal
+      id="modal-primary"
+      ok-title="Save"
+      cancel-title="Cancel"
+      modal-class="modal-primary"
+      centered
+      title="Create new user"
+      size="lg"
+  >
+    <b-form @submit.prevent>
+      <b-row>
+        <b-col cols="12">
+          <b-form-group
+              label="Role ID"
+              label-for="role-id"
+              label-cols-md="4"
+          >
+            <b-form-input
+                id="company-name"
+                type="text"
+                placeholder="Enter here ..."
+            />
+          </b-form-group>
+        </b-col>
+        <b-col cols="12">
+          <b-form-group
+              label="Name"
+              label-for="name"
+              label-cols-md="4"
+          >
+            <b-form-input
+                id="h-email"
+                type="email"
+                placeholder="Enter here..."
+            />
+          </b-form-group>
+        </b-col>
+        <b-col cols="12">
+          <b-form-group
+              label="Name / First name"
+              label-for="h-name"
+              label-cols-md="4"
+          >
+            <div class="d-flex">
+              <b-form-input
+                  class="mr-1"
+                  id="h-name"
+                  type="text"
+                  placeholder="Enter here..."
+              />
+              <b-form-input
+                  md="4"
+                  id="h-firstname"
+                  type="text"
+                  placeholder="Enter here..."
+              />
+            </div>
+
+          </b-form-group>
+        </b-col>
+      </b-row>
+    </b-form>
+  </b-modal>
+
 </div>
 </template>
 
 <script>
 const Databases = () => import('@/layouts/components/DataTables.vue')
 import {
-  BCard, BCardText, BTab, BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton,
+  BCard,
+  BTab,
+  BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton, BFormSelect, BModal,
 } from 'bootstrap-vue'
 
 export default {
   components: {
-    BCardText,
     BCard,
     BTab,
     BTabs,
@@ -123,9 +213,12 @@ export default {
     BFormInput,
     BButton,
     Databases,
+    BFormSelect,
   },
   data() {
     return {
+      perPage: 10,
+      pageOptions: [3, 5, 10],
       user: [
         {
           id: 1,
@@ -306,7 +399,7 @@ export default {
         { key: 'last_login', label: 'Last login', sortable: true },
         { key: 'user_type', label: 'User type', sortable: true },
         { key: 'company', label: 'Company', sortable: true },
-        '...',
+        'Action',
       ],
     }
   },
