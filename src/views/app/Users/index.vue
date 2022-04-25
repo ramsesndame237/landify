@@ -1,7 +1,7 @@
 <template>
   <div>
       <b-card body-class="p-0">
-        <div class="d-flex" style="padding: 10px">
+        <div class="d-flex justify-content-between" style="padding: 10px">
           <b-form-group class="mb-0">
             <label class="d-inline-block text-sm-left mr-50">Show</label>
             <b-form-select style="width: 60px"
@@ -162,6 +162,7 @@ import {
   BRow,
   BCol,
   BFormInput,
+    BCard,
 } from 'bootstrap-vue'
 
 export default {
@@ -170,6 +171,7 @@ export default {
     BButton,
     BFormGroup,
     BInputGroup,
+    BCard,
     BFormSelect,
     BModal,
     BForm,

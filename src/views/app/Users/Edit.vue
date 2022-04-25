@@ -82,30 +82,6 @@
   </b-card>
 
   <b-card>
-    <div class="first-bloc d-flex mb-2">
-      <b-form-group class="mr-2">
-<!--        <label class="d-inline-block text-sm-left mr-50">Per page</label>-->
-        <b-form-select
-            id="perPageSelect"
-            v-model="perPage"
-            size="sm"
-            :options="pageOptions"
-            class="w-50"
-        />
-      </b-form-group>
-      <b-button class="mr-1" size="sm" variant="info"><feather-icon
-          class="cursor-pointer"
-          icon="PlusIcon"
-      />New</b-button>
-      <b-input-group size="sm">
-          <b-form-input
-              id="filterInput"
-              v-model="filter"
-              type="search"
-              placeholder="Type to Search"
-          />
-        </b-input-group>
-    </div>
     <b-tabs pills>
       <b-tab title="Roles" active>
         <databases :actions="true" :items="items" :fields="fields" />
@@ -122,6 +98,31 @@
       <b-tab title="Partner">
         <databases :items="items" :fields="fields" />
       </b-tab>
+      <template #tabs-end>
+        <div class="first-bloc d-flex mb-2">
+          <b-form-group class="mr-2">
+            <b-form-select
+                id="perPageSelect"
+                v-model="perPage"
+                size="sm"
+                :options="pageOptions"
+                class="w-50"
+            />
+          </b-form-group>
+          <b-button class="mr-1" size="sm" variant="info"><feather-icon
+              class="cursor-pointer"
+              icon="PlusIcon"
+          />New</b-button>
+          <b-input-group size="sm">
+            <b-form-input
+                id="filterInput"
+                v-model="filter"
+                type="search"
+                placeholder="Type to Search"
+            />
+          </b-input-group>
+        </div>
+      </template>
     </b-tabs>
   </b-card>
 

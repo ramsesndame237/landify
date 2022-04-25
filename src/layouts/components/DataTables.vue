@@ -120,7 +120,6 @@
               :total-rows="totalRows"
               :per-page="perPage"
               align="center"
-              size="sm"
               class="my-0"
               first-number
               last-number
