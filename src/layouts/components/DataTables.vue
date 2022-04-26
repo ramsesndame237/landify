@@ -39,7 +39,7 @@ import {
 } from 'bootstrap-vue'
 
 export default {
-  props: ['items', 'fields', 'perPage', 'pageOptions', 'currentPage', 'link'],
+  props: ['items', 'fields', 'perPage', 'pageOptions', 'currentPage', 'link', 'filter'],
   components: {
     BTable,
     BBadge,
@@ -54,7 +54,6 @@ export default {
       sortBy: '',
       sortDesc: false,
       sortDirection: 'asc',
-      filter: null,
       filterOn: [],
       infoModal: {
         id: 'info-modal',

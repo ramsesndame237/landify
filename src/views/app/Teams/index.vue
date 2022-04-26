@@ -14,17 +14,20 @@
           <label class="d-inline-block text-sm-left ml-50">Entries</label>
         </b-form-group>
 
-        <b-pagination
-            v-model="currentPage"
-            :total-rows="totalRows"
-            :per-page="perPage"
-            align="center"
-            class="my-0"
-            first-number
-            last-number
-            prev-class="prev-item"
-            next-class="next-item"
-        />
+        <div class="d-flex align-items-center">
+          <span class="mr-1">show 1 to {{ perPage }} of {{ totalRows }} entires</span>
+          <b-pagination
+              v-model="currentPage"
+              :total-rows="totalRows"
+              :per-page="perPage"
+              align="center"
+              class="my-0"
+              first-number
+              last-number
+              prev-class="prev-item"
+              next-class="next-item"
+          />
+        </div>
 
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
@@ -36,19 +39,22 @@
               Delete</b-button>
           </div>
 
-          <b-input-group size="sm" class="d-flex align-items-center">
+          <div size="sm" class="d-flex align-items-center">
             <label class="d-inline-block text-sm-left mr-50">Search</label>
             <b-form-input
                 id="filterInput"
                 type="search"
                 placeholder="AJAX data source"
+                v-model="filter"
             />
-          </b-input-group>
+          </div>
         </div>
 
       </div>
     </b-card>
-    <Databases link="teams-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+    <b-card>
+      <Databases :filter="filter" link="teams-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+    </b-card>
 
     <!--modal-->
     <b-modal
@@ -145,6 +151,7 @@ export default {
   },
   data() {
     return {
+      filter: null,
       currentPage: 1,
       totalRows: 1,
       perPage: 10,
