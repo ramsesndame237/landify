@@ -1,41 +1,36 @@
 <template>
-  <b-card>
-    <b-row>
-      <b-col cols="12">
-        <b-table
-            striped
-            hover
-            responsive
-            :per-page="perPage"
-            :current-page="currentPage"
-            :items="items"
-            :fields="fields"
-            :sort-by.sync="sortBy"
-            :sort-desc.sync="sortDesc"
-            :sort-direction="sortDirection"
-            :filter="filter"
-            :filter-included-fields="filterOn"
-            @filtered="onFiltered"
-        >
-          <template #cell(Action)="data">
-            <b-link :to="{name: link}">
-            <b-badge class="mr-1" variant="secondary">
-              <img src="@/assets/images/pages/editIcons.svg" alt="">
-              <span>Edit</span>
-            </b-badge>
-            </b-link>
-            <b-badge variant="primary">
-              <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-              Delete</b-badge>
-          </template>
+  <b-table
+      striped
+      hover
+      responsive
+      :per-page="perPage"
+      :current-page="currentPage"
+      :items="items"
+      :fields="fields"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
+      :sort-direction="sortDirection"
+      :filter="filter"
+      :filter-included-fields="filterOn"
+      @filtered="onFiltered"
+  >
+    <template #cell(Action)="data">
+      <b-link :to="{name: link}">
+        <b-badge class="mr-1" variant="secondary">
+          <img src="@/assets/images/pages/editIcons.svg" alt="">
+          <span>Edit</span>
+        </b-badge>
+      </b-link>
+      <b-badge variant="primary">
+        <img src="@/assets/images/pages/deleteIcons.svg" alt="">
+        Delete
+      </b-badge>
+    </template>
 
-          <template #cell(id)>
-            <b-form-checkbox />
-          </template>
-        </b-table>
-      </b-col>
-    </b-row>
-  </b-card>
+    <template #cell(id)>
+      <b-form-checkbox/>
+    </template>
+  </b-table>
 </template>
 
 <script>
@@ -54,7 +49,7 @@ export default {
     BLink,
     BFormCheckbox,
   },
-  data() {
+  data () {
     return {
       sortBy: '',
       sortDesc: false,
@@ -69,28 +64,28 @@ export default {
     }
   },
   computed: {
-    sortOptions() {
+    sortOptions () {
       // Create an options list from our fields
       return this.fields
-        .filter(f => f.sortable)
-        .map(f => ({ text: f.label, value: f.key }))
+          .filter(f => f.sortable)
+          .map(f => ({text: f.label, value: f.key}))
     },
   },
-  mounted() {
+  mounted () {
     // Set the initial number of items
     this.totalRows = this.items.length
   },
   methods: {
-    info(item, index, button) {
+    info (item, index, button) {
       this.infoModal.title = `Row index: ${index}`
       this.infoModal.content = JSON.stringify(item, null, 2)
       this.$root.$emit('bv::show::modal', this.infoModal.id, button)
     },
-    resetInfoModal() {
+    resetInfoModal () {
       this.infoModal.title = ''
       this.infoModal.content = ''
     },
-    onFiltered(filteredItems) {
+    onFiltered (filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length
       this.currentPage = 1
