@@ -1,5 +1,19 @@
 # KIM PRO frontend
 
+## todo
+
+### backend comm
+
+check the backend communication 
+
+### https certificate
+
+https://de.wikipedia.org/wiki/Same-Origin-Policy
+
+Maybe we need
+
+https://certbot.eff.org/instructions?ws=apache&os=debianbuster
+
 ## auto checkout
 Changes in this directory will we auto checked out to the Webservers page:
 
@@ -44,3 +58,27 @@ Keep an eye on this variable, if the server sets it, the
 > GIT_DIR=.git/
 
 > git update-server-info
+
+# gitlab.io
+
+https://trivialman.gitlab.io/kimpro/login
+
+less .gitlab-ci.yml
+```yaml
+pages: # the job must be named pages
+  image: node:14
+  stage: deploy
+  script:
+    - npm i
+    - npm run build
+    - mv public public-vue # GitLab Pages hooks on the public folder
+    - mv dist public # rename the dist folder (result of npm run build)
+    # optionally, you can activate gzip support with the following line:
+    - find public -type f -regex '.*\.\(htm\|html\|txt\|text\|js\|css\)$' -exec gzip -f -k {} \;
+  artifacts:
+    paths:
+      - public # artifact path must be /public for GitLab Pages to pick it up
+  only:
+    - develop
+    ./.gitlab-ci.yml     END     (1-15/15)     [436/547] --> no files left
+```
