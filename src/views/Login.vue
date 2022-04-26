@@ -12,7 +12,7 @@
           Login
         </b-card-title>
         <b-card-text class="mb-2">
-          Welcome,  enter your login credentials to proceed
+          Welcome,  enter your login credentials to proceed (Hello World)
         </b-card-text>
 
         <!-- form -->
