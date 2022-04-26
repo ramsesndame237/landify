@@ -40,7 +40,7 @@ export default [
 
   {
     title: 'Administration',
-    route: 'vorgange',
+    route: '',
     icon: 'UserIcon',
     children: [
       {
@@ -94,6 +94,21 @@ export default [
     title: 'Users & Rights',
     route: 'users-lists',
     icon: 'UserIcon',
+  },
+  {
+    title: 'Authorization',
+    route: 'authorization',
+    icon: 'KeyIcon',
+  },
+  {
+    title: 'Teams',
+    route: 'teams',
+    icon: 'UsersIcon',
+  },
+  {
+    title: 'User Type',
+    route: 'users-type',
+    icon: 'UsersIcon',
   },
   {
     title: 'Templates',

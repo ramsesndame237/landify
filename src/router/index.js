@@ -136,6 +136,80 @@ const router = new VueRouter({
         ],
       },
     },
+
+    {
+      path: '/app/Authorization',
+      name: 'authorization',
+      component: () => import('@/views/app/Authorization/index.vue'),
+      meta: {
+        pageTitle: 'Documents',
+        breadcrumb: [
+          {
+            text: 'Authorization Management list view',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/authorization/edit',
+      name: 'authorization-edit',
+      component: () => import('@/views/app/Authorization/Edit.vue'),
+      meta: {
+        pageTitle: 'Authorization User',
+        breadcrumb: [
+          {
+            text: 'Authorization User',
+            active: true,
+          },
+        ],
+      },
+    },
+
+    {
+      path: '/app/Teams',
+      name: 'teams',
+      component: () => import('@/views/app/Teams/index.vue'),
+      meta: {
+        pageTitle: 'Teams',
+        breadcrumb: [
+          {
+            text: 'Teams',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/Teams/edit',
+      name: 'teams-edit',
+      component: () => import('@/views/app/Teams/Edit.vue'),
+      meta: {
+        pageTitle: 'Teams User',
+        breadcrumb: [
+          {
+            text: 'Teams User',
+            active: true,
+          },
+        ],
+      },
+    },
+
+    {
+      path: '/app/users-type',
+      name: 'users-type',
+      component: () => import('@/views/app/UsersType/index.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST USER TYPE',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST USER TYPE',
+            active: true,
+          },
+        ],
+      },
+    },
+
     // authentication
     {
       path: '/login',
@@ -161,6 +235,7 @@ const router = new VueRouter({
         layout: 'full',
       },
     },
+
     // error
     {
       path: '/error-404',
@@ -171,6 +246,7 @@ const router = new VueRouter({
       },
     },
     {path:'/',redirect:'/login'},
+
     {
       path: '*',
       redirect: 'error-404',
