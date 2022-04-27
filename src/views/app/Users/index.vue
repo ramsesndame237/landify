@@ -14,17 +14,22 @@
             <label class="d-inline-block text-sm-left ml-50">Entries</label>
           </b-form-group>
 
-          <b-pagination
-              v-model="currentPage"
-              :total-rows="totalRows"
-              :per-page="perPage"
-              align="center"
-              class="my-0"
-              first-number
-              last-number
-              prev-class="prev-item"
-              next-class="next-item"
-          />
+          <div class="d-flex align-items-center">
+            <span class="mr-1">show 1 to {{ perPage }} of {{ totalRows }} entires</span>
+            <b-pagination
+                v-model="currentPage"
+                :total-rows="totalRows"
+                :per-page="perPage"
+                align="center"
+                class="my-0"
+                first-number
+                last-number
+                prev-class="prev-item"
+                next-class="next-item"
+            />
+          </div>
+
+
 
           <div class="d-flex align-items-center">
             <div class="mr-1 d-flex">
@@ -39,19 +44,22 @@
                 Delete</b-button>
             </div>
 
-            <b-input-group size="sm" class="d-flex align-items-center">
+            <div size="sm" class="d-flex align-items-center">
               <label class="d-inline-block text-sm-left mr-50">Search</label>
               <b-form-input
+                  v-model="filter"
                   id="filterInput"
                   type="search"
-                  placeholder="AJAX data source"
+                  placeholder="rechercher.."
               />
-            </b-input-group>
+            </div>
           </div>
 
         </div>
       </b-card>
-    <Databases link="user-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+    <b-card>
+      <Databases :filter="filter" link="user-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+    </b-card>
 
     <!--modal-->
     <b-modal
@@ -261,6 +269,16 @@ export default {
           company: 'Gohze',
         },
         {
+          id: 5,
+          // eslint-disable-next-line global-require
+          full_name: 'test recherche',
+          first_name: 'recherche',
+          email: 'text@gmail.com',
+          last_login: '2022/04/20',
+          user_type: 'test',
+          company: 'test',
+        },
+        {
           id: 6,
           // eslint-disable-next-line global-require
           full_name: 'NYA',
@@ -379,6 +397,7 @@ export default {
         { value: { C: '3PO' }, text: 'This is an option with object value' },
         { value: 'd', text: 'Please select', disabled: true },
       ],
+      filter: null,
     }
   },
   computed: {

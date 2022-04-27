@@ -138,14 +138,14 @@
         <div class="first-bloc ml-auto d-flex align-items-center">
           <b-button v-b-modal.modal-role class="mr-1" size="sm" variant="info">New</b-button>
           <b-button class="mr-1" size="sm" variant="primary">Delete</b-button>
-          <b-input-group size="sm" class="d-flex align-items-center">
+          <div size="sm" class="d-flex align-items-center">
             <label class="d-inline-block text-sm-left mr-50">Search</label>
             <b-form-input
                 id="filterInput"
                 type="search"
                 placeholder="rechercher.."
             />
-          </b-input-group>
+          </div>
         </div>
       </template>
     </b-tabs>
@@ -335,7 +335,7 @@
 const Databases = () => import('@/layouts/components/DataTables.vue')
 import {
   BCard,
-  BTab, BFormCheckbox, BFormRadio,
+  BTab, BFormCheckbox, BFormRadio,BInputGroup,
   BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton, BFormSelect, BModal,
 } from 'bootstrap-vue'
 
@@ -355,6 +355,7 @@ export default {
     BFormSelect,
     BFormCheckbox,
     BFormRadio,
+    BInputGroup,
   },
   data() {
     return {
