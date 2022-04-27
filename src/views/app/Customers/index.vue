@@ -148,162 +148,23 @@ export default {
         {
           id: 1,
           // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
+          group_id: '12',
+          group_name: 'Fictive Group',
+          number: '200',
         },
         {
-          id: 2,
+          id: 1,
           // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
+          group_id: '12',
+          group_name: 'Fictive Group',
+          number: '200',
         },
         {
-          id: 3,
+          id: 1,
           // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 4,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 5,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 5,
-          // eslint-disable-next-line global-require
-          full_name: 'test recherche',
-          first_name: 'recherche',
-          email: 'text@gmail.com',
-          last_login: '2022/04/20',
-          user_type: 'test',
-          company: 'test',
-        },
-        {
-          id: 6,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 7,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 8,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 9,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 10,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 11,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 12,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 13,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 14,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 15,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
+          group_id: '12',
+          group_name: 'Fictive Group',
+          number: '200',
         },
       ],
       fields: [
