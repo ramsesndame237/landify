@@ -251,6 +251,37 @@ const router = new VueRouter({
       path: '*',
       redirect: 'error-404',
     },
+
+      // workpackage 2
+    {
+      path: '/app/customer-groups',
+      name: 'customer-groups',
+      component: () => import('@/views/app/Customers/index.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST CUSTOMER GROUPS',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST CUSTOMER GROUPS',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/customer-groups-edit',
+      name: 'customer-groups-edit',
+      component: () => import('@/views/app/Customers/Edit.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST CUSTOMER GROUPS',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST CUSTOMER GROUPS',
+            active: true,
+          },
+        ],
+      },
+    },
+
   ],
 })
 

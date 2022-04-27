@@ -120,4 +120,85 @@ export default [
     route: 'master-data',
     icon: 'GridIcon',
   },
+
+
+  {
+    title: 'Work package 2',
+    route: 'work package',
+    icon: 'CheckSquareIcon',
+    children: [
+      {
+        title: 'Customer Group',
+        route: 'customer-groups',
+      },
+      {
+        title: 'Company',
+        route: '/',
+      },
+      {
+        title: 'Contact person',
+        route: '/',
+      },
+      {
+        title: 'Payment',
+        route: '/',
+      },
+      {
+        title: 'Partner Company',
+        route: '/',
+      },
+      {
+        title: 'Partner Company Group',
+        route: '/',
+      },
+      {
+        title: 'Address',
+        route: '/',
+      },
+      {
+        title: 'Contact Title',
+        route: '/',
+      },
+      {
+        title: 'Salutation',
+        route: '/',
+      },
+      {
+        title: 'City',
+        route: '/',
+      },
+      {
+        title: 'Currrency',
+        route: '/',
+      },
+      {
+        title: 'Country',
+        route: '/',
+      },
+      {
+        title: 'Language',
+        route: '/',
+      },
+      {
+        title: 'Partner Type',
+        route: '/',
+      },
+      {
+        title: 'Standart path new Business',
+        route: '/',
+      },
+    ],
+  },
+
+  {
+    title: 'Work package 3',
+    route: 'work package',
+    icon: 'CheckSquareIcon',
+    children: [
+      {
+        title: 'Customer Group',
+        route: '/',
+      },
+    ]
+  }
 ]

@@ -29,8 +29,6 @@
             />
           </div>
 
-
-
           <div class="d-flex align-items-center">
             <div class="mr-1 d-flex">
               <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
