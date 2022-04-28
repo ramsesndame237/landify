@@ -3,7 +3,7 @@
     <b-card body-class="p-0">
         <div class="d-flex justify-content-between" style="padding: 10px">
           <b-form-group class="mb-0">
-            <label class="d-inline-block text-sm-left mr-50">Show</label>
+            <label class="d-inline-block text-sm-left mr-50">{{ $t('app.content.show') }}</label>
             <b-form-select style="width: 60px"
                 id="perPageSelect"
                 v-model="perPage"
@@ -11,7 +11,7 @@
                 :options="pageOptions"
                 class="w-10"
             />
-            <label class="d-inline-block text-sm-left ml-50">Entries</label>
+            <label class="d-inline-block text-sm-left ml-50">{{ $t('app.content.entries') }}</label>
           </b-form-group>
 
           <div class="d-flex align-items-center">
