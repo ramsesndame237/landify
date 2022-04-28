@@ -1,62 +1,62 @@
 <template>
   <div>
     <b-card body-class="p-0">
-        <div class="d-flex justify-content-between" style="padding: 10px">
-          <b-form-group class="mb-0">
-            <label class="d-inline-block text-sm-left mr-50">Show</label>
-            <b-form-select style="width: 60px"
-                id="perPageSelect"
-                v-model="perPage"
-                size="sm"
-                :options="pageOptions"
-                class="w-10"
-            />
-            <label class="d-inline-block text-sm-left ml-50">Entries</label>
-          </b-form-group>
+      <div class="d-flex justify-content-between" style="padding: 10px">
+        <b-form-group class="mb-0">
+          <label class="d-inline-block text-sm-left mr-50">Show</label>
+          <b-form-select style="width: 60px"
+                         id="perPageSelect"
+                         v-model="perPage"
+                         size="sm"
+                         :options="pageOptions"
+                         class="w-10"
+          />
+          <label class="d-inline-block text-sm-left ml-50">Entries</label>
+        </b-form-group>
 
-          <div class="d-flex align-items-center">
-            <span class="mr-1">show 1 to {{ perPage }} of {{ totalRows }} entires</span>
-            <b-pagination
-                v-model="currentPage"
-                :total-rows="totalRows"
-                :per-page="perPage"
-                align="center"
-                class="my-0"
-                first-number
-                last-number
-                prev-class="prev-item"
-                next-class="next-item"
-            />
-          </div>
-
-          <div class="d-flex align-items-center">
-            <div class="mr-1 d-flex">
-              <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
-                <img src="@/assets/images/pages/plusIcons.svg" alt="">
-                new </b-button>
-              <b-button size="sm" variant="secondary" class="mr-1 d-flex">
-                <img src="@/assets/images/pages/editIcons.svg" alt="">
-                Edit</b-button>
-              <b-button size="sm" class="d-flex" variant="primary">
-                <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-                Delete</b-button>
-            </div>
-
-            <div size="sm" class="d-flex align-items-center">
-              <label class="d-inline-block text-sm-left mr-50">Search</label>
-              <b-form-input
-                  v-model="filter"
-                  id="filterInput"
-                  type="search"
-                  placeholder="rechercher.."
-              />
-            </div>
-          </div>
-
+        <div class="d-flex align-items-center">
+          <span class="mr-1">show 1 to {{ perPage }} of {{ totalRows }} entires</span>
+          <b-pagination
+              v-model="currentPage"
+              :total-rows="totalRows"
+              :per-page="perPage"
+              align="center"
+              class="my-0"
+              first-number
+              last-number
+              prev-class="prev-item"
+              next-class="next-item"
+          />
         </div>
-      </b-card>
+
+        <div class="d-flex align-items-center">
+          <div class="mr-1 d-flex">
+            <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
+              <img src="@/assets/images/pages/plusIcons.svg" alt="">
+              new </b-button>
+            <b-button size="sm" variant="secondary" class="mr-1 d-flex">
+              <img src="@/assets/images/pages/editIcons.svg" alt="">
+              Edit</b-button>
+            <b-button size="sm" class="d-flex" variant="primary">
+              <img src="@/assets/images/pages/deleteIcons.svg" alt="">
+              Delete</b-button>
+          </div>
+
+          <div size="sm" class="d-flex align-items-center">
+            <label class="d-inline-block text-sm-left mr-50">Search</label>
+            <b-form-input
+                v-model="filter"
+                id="filterInput"
+                type="search"
+                placeholder="rechercher.."
+            />
+          </div>
+        </div>
+
+      </div>
+    </b-card>
     <b-card>
-      <Databases :filter="filter" link="user-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases :filter="filter" link="customer-groups-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
     </b-card>
 
     <!--modal-->
@@ -66,105 +66,34 @@
         cancel-title="Cancel"
         modal-class="modal-primary"
         centered
-        title="Create new user"
+        title="Create new Customer group"
         size="lg"
     >
       <b-form @submit.prevent>
         <b-row>
           <b-col cols="12">
             <b-form-group
-                label="Name Company*"
-                label-for="company-name"
+                label="Group ID"
+                label-for="group-id"
                 label-cols-md="4"
             >
               <b-form-input
-                  id="company-name"
+                  id="group-id"
                   type="text"
-                  placeholder="Please select ..."
+                  placeholder="Automaticaly created..."
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="eMail"
-                label-for="h-email"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="h-email"
-                  type="email"
-                  placeholder="Enter here..."
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Name / First name"
+                label="Name"
                 label-for="h-name"
                 label-cols-md="4"
             >
-              <div class="d-flex">
-                <b-form-input
-                    class="mr-1"
-                    id="h-name"
-                    type="text"
-                    placeholder="Enter here..."
-                />
-                <b-form-input
-                    md="4"
-                    id="h-firstname"
-                    type="text"
-                    placeholder="Enter here..."
-                />
-              </div>
-
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Mobile"
-                label-for="h-mobile"
-                label-cols-md="4"
-            >
               <b-form-input
-                  id="h-mobile"
-                  type="number"
-                  placeholder="Enter here..."
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Fax"
-                label-for="h-fax"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="h-fax"
+                  id="i-name"
                   type="text"
                   placeholder="Enter here..."
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Deputy"
-                label-for="h-deputy"
-                label-cols-md="4">
-              <b-form-select
-                  v-model="selected"
-                  :options="options"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Type"
-                label-for="h-deputy"
-                label-cols-md="4">
-              <b-form-select
-                  v-model="selected"
-                  :options="options"
               />
             </b-form-group>
           </b-col>
@@ -379,12 +308,9 @@ export default {
       ],
       fields: [
         { key: 'id', label: 'Id' },
-        { key: 'full_name', label: 'Last Name', sortable: true },
-        { key: 'first_name', label: 'First Name', sortable: true },
-        { key: 'email', label: 'eMail', sortable: true },
-        { key: 'last_login', label: 'Last login', sortable: true },
-        { key: 'user_type', label: 'User type', sortable: true },
-        { key: 'company', label: 'Company', sortable: true },
+        { key: 'group_id', label: 'ID Groupe', sortable: true },
+        { key: 'group_name', label: 'Name Groupe', sortable: true },
+        { key: 'number', label: 'number of companies', sortable: true },
         'Action',
       ],
       selected: null,
@@ -402,8 +328,8 @@ export default {
     sortOptions() {
       // Create an options list from our fields
       return this.fields
-        .filter(f => f.sortable)
-        .map(f => ({ text: f.label, value: f.key }))
+          .filter(f => f.sortable)
+          .map(f => ({ text: f.label, value: f.key }))
     },
   },
   mounted() {
@@ -429,7 +355,4 @@ export default {
 </script>
 
 <style scoped>
-.first-bloc img {
-  margin-right: 4px;
-}
 </style>
