@@ -1,27 +1,26 @@
 {
   "app": {
     "sidebar": {
-      "dashboard": "Tableau de bord",
-      "tasks": "Taches & Tickets",
-      "deadlines": "Dates limites",
-      "doc": "Documents",
-      "pos": "Point de vente"
+      "dashboard": "Armaturenbrett",
+      "tasks": "Aufgaben & Tickets",
+      "deadlines": "Fristen",
+      "doc": "Dokumente",
+      "pos": "Verkaufsstelle"
     },
     "content": {
-      "users": {
-        "show": "Afficher",
-        "entries": "Entrées",
-        "to": "de"
-      }
+      "show": "anzeigen",
+      "entries": "Eingaben",
+      "to": "zu"
     },
     "btn": {
-      "new": "Nouveau",
-      "edit": "Modifier",
-      "delete": "Supprimer"
+      "new": "neu",
+      "edit": "bearbeiten",
+      "delete": "Löschen"
     },
     "search": {
-      "label": "Rechercher",
-      "palceholder": "ajax data source"
+      "label": "Suche",
+      "palceholder": "Ajax-Datenquelle"
     }
+    
   }
 }

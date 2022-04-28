@@ -26,15 +26,15 @@
       >
         <template #button-content>
           <b-img class="dropdown-language" height="14" width="22" :src="require('@/assets/images/flags/en.png')" />
-          <span class="ml-50 text-body">English</span>
+          <span class="ml-50 text-body"> {{ $t('app.lang.en') }} </span>
         </template>
         <b-dropdown-item>
           <b-img class="dropdown-language" height="14" width="22" :src="require('@/assets/images/flags/de.png')" />
-          <span class="ml-50 text-body">Allemand</span>
+          <span class="ml-50 text-body">{{ $t('app.lang.de') }}</span>
         </b-dropdown-item>
         <b-dropdown-item>
           <b-img class="dropdown-language" height="14" width="22" :src="require('@/assets/images/flags/fr.png')" />
-          <span class="ml-50 text-body">Francais</span>
+          <span class="ml-50 text-body">{{ $t('app.lang.fr') }}</span>
         </b-dropdown-item>
       </b-nav-item-dropdown>
       <svg class="mr-1" width="22" height="21" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -86,7 +86,7 @@
             icon="UserIcon"
             class="mr-50"
           />
-          <span>Profile</span>
+          <span> {{$t('app.navbar.profile')}} </span>
         </b-dropdown-item>
 
         <b-dropdown-item link-class="d-flex align-items-center">
@@ -95,7 +95,7 @@
             icon="MailIcon"
             class="mr-50"
           />
-          <span>Inbox</span>
+          <span>{{$t('app.navbar.inbox')}} </span>
         </b-dropdown-item>
 
         <b-dropdown-item link-class="d-flex align-items-center">
@@ -104,7 +104,7 @@
             icon="CheckSquareIcon"
             class="mr-50"
           />
-          <span>Task</span>
+          <span>{{$t('app.navbar.task')}} </span>
         </b-dropdown-item>
 
         <b-dropdown-item link-class="d-flex align-items-center">
@@ -113,7 +113,7 @@
             icon="MessageSquareIcon"
             class="mr-50"
           />
-          <span>Chat</span>
+          <span>{{$t('app.navbar.chat')}} </span>
         </b-dropdown-item>
 
         <b-dropdown-divider />
@@ -124,7 +124,7 @@
             icon="LogOutIcon"
             class="mr-50"
           />
-          <span>Logout</span>
+          <span>{{$t('app.navbar.logout')}} </span>
         </b-dropdown-item>
       </b-nav-item-dropdown>
     </b-navbar-nav>

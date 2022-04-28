@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h3>Overall list without registers</h3>
-    <b-card title="Dashboard 🚀">
-      <b-card-text>All the best for your new project.</b-card-text>
+    <h3>{{ $t('app.content.dashboard.sub_title') }}</h3>
+    <b-card :title="` ${$t('app.sidebar.dashboard')} 🚀`">
+      <b-card-text>{{ $t('app.content.dashboard.card_text') }} </b-card-text>
     </b-card>
   </div>
 </template>

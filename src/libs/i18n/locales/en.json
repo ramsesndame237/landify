@@ -1,25 +1,120 @@
 {
   "app": {
     "sidebar": {
-      "dashboard": "Armaturenbrett",
-      "tasks": "Aufgaben & Tickets",
-      "deadlines": "Fristen",
-      "doc": "Dokumente",
-      "pos": "Verkaufsstelle"
+      "dashboard": "Dashboard",
+      "tasks": "Tasks & Tickets",
+      "deadlines": "Deadlines",
+      "doc": "Documents",
+      "pos": "Point of sales"
+    },
+    "lang": {
+      "fr": "French",
+      "de": "French",
+      "en": "French"
+    },
+    "navbar" : {
+      "profile": "Profile",
+      "inbox": "Inbox",
+      "task": "Task",
+      "chat": "Chat",
+      "logout": "Logout"
     },
     "content": {
-      "show": "anzeigen",
-      "entries": "Eingaben",
-      "to": "zu"
+      "show": "Show",
+      "entries": "Entries",
+      "to": "to",
+      "of": "of",
+      "create_user": "Create new User",
+      "create_user_type": "Create new User Type",
+      "create_team": "Create new Team",
+      "create_customer_group": "Create new Customer Group",
+      "edit_user": "Edit  user",
+
+      "dashboard": {
+        "sub_title": "Overall list without registers",
+        "card_text": "All the best for your new project."
+      },
+      "deadlines": {
+        "sub_title": "Overall list without registers",
+        "card_text": "All the best for your new project."
+      }
+
+
     },
     "btn": {
-      "new": "neu",
-      "edit": "bearbeiten",
-      "delete": "Löschen"
+      "new": "New",
+      "edit": "Edit",
+      "delete": "Delete",
+      "save": "Save",
+      "cancel": "Cancel"
     },
     "search": {
-      "label": "Suche",
-      "palceholder": "Ajax-Datenquelle"
+      "label": "Search",
+      "palceholder": "search..."
+    },
+    "form" : {
+      "placeholder": {
+        "default" : "Type Here...",
+        "email" : "Enter E-mail...",
+        "password" : "Enter Your password...",
+        "password_confirm" : "Confirm password...",
+        "select" : "Please select an option."
+      },
+      "label": {
+        "company_name": "Comapany Name",
+        "email": "E-Mail",
+        "name": "Name",
+        "firstname": "First name",
+        "mobile": "Mobile",
+        "fax": "Fax",
+        "deputy": "Deputy",
+        "type": "Type",
+        "password": "Password",
+        "password_confirm": "Confirm password",
+        "user_must_change_pass": "User must change his password at next login",
+        "user_locked": "User locked",
+        "name_abreviation": "Name abbreviation",
+        "address": "Address",
+        "function": "Function",
+        "customer_name": "Customer name",
+        "customer_group": "Customer group",
+        "contact_person": "Contact person",
+        "title": "Title",
+        "action": "Action",
+        "id": "Id",
+        "id_group": "Id Group",
+        "last_name": "Last Name",
+        "last_login": "Last Login",
+        "user_type": "User Type",
+        "user_type_id": "User Type ID",
+        "description": "Description",
+        "company": "Company",
+        "roles": "Roles",
+        "customers": "Customers",
+        "team": "Team",
+        "number_of_companies": "Number Of Companies",
+        "team_id": "Team ID",
+        "pos": "Point Of Sale",
+        "partner": "Partner",
+        "role_id": "Role ID",
+        "role_name": "Role Name",
+        "role_permission": "Role Permission",
+        "gender": {
+          "male": "Mr",
+          "female": "Ms"
+        }
+
+      }
+    },
+
+    "pages": {
+      "users": {
+        "title": "",
+        "modal": {
+          "title": "Create new user"
+        }
+      }
     }
+
   }
 }

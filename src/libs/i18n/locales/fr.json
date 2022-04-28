@@ -2,26 +2,57 @@
   "app": {
     "sidebar": {
       "dashboard": "Tableau de bord",
-      "tasks": "Taches & Tickets",
-      "deadlines": "Dates limites",
+      "tasks": "Taches et tickets",
+      "deadlines": "Délais",
       "doc": "Documents",
       "pos": "Point de vente"
     },
     "content": {
-      "users": {
-        "show": "Afficher",
-        "entries": "Entrées",
-        "to": "de"
-      }
+      "show": "Afficher",
+      "entries": "Entrées",
+      "to": "à",
+      "of": "sur"
+
+
     },
     "btn": {
       "new": "Nouveau",
-      "edit": "Modifier",
-      "delete": "Supprimer"
+      "edit": "Editer",
+      "delete": "Supprimer",
+      "save": "Sauvegarder",
+      "cancel": "Annuler"
     },
     "search": {
       "label": "Rechercher",
-      "palceholder": "ajax data source"
+      "palceholder": "Rechercher..."
+    },
+    "form" : {
+      "placeholder": {
+        "default" : "Saisir ici...",
+        "email" : "Entrer un  E-mail...",
+        "select" : "Veuillez sélectionner une option."
+      },
+      "label": {
+        "company_name": "Nom de Entreprise",
+        "email": "E-Mail",
+        "name": "Nom",
+        "firstname": "Prénom",
+        "mobile": "Mobile",
+        "fax": "Fax",
+        "deputy": "Adjoint",
+        "type": "Type"
+
+      }
+    },
+
+    "pages": {
+      "users": {
+        "title": "",
+        "modal": {
+          "title": "Crer un nouvel utilisateur"
+        }
+      }
     }
+
   }
 }
