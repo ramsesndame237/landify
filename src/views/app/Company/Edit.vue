@@ -13,7 +13,7 @@
             </b-button>
             <b-button v-b-modal.modal-user size="sm" variant="warning" class="mr-1 d-flex align-items-center">
               <img src="@/assets/images/pages/editIcons.svg" alt="">
-              Edit 
+              Edit
             </b-button>
             <b-button size="sm" class="d-flex align-items-center" variant="primary">
               <img src="@/assets/images/pages/deleteIcons.svg" alt="">
@@ -38,7 +38,7 @@
               <b-form-input id="group-name" placeholder="Enter here..." v-model="user.name" type="text"/>
             </b-form-group>
           </b-col>
-          
+
           <b-col cols="12" md="6">
             <b-form-group label="STREET" label-for="street">
               <b-form-input id="street" placeholder="Enter here..." v-model="user.name"/>
