@@ -272,10 +272,38 @@ const router = new VueRouter({
       name: 'customer-groups-edit',
       component: () => import('@/views/app/Customers/Edit.vue'),
       meta: {
-        pageTitle: 'OVERALL LIST CUSTOMER GROUPS',
+        pageTitle: 'EDIT GROUP',
         breadcrumb: [
           {
-            text: 'OVERALL LIST CUSTOMER GROUPS',
+            text: 'EDIT',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/companies',
+      name: 'companies',
+      component: () => import('@/views/app/Company/index.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST COMPANIES',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST COMPANIES',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/company-edit',
+      name: 'company-edit',
+      component: () => import('@/views/app/Company/Edit.vue'),
+      meta: {
+        pageTitle: 'COMPANY EDIT',
+        breadcrumb: [
+          {
+            text: 'COMPANY EDIT',
             active: true,
           },
         ],

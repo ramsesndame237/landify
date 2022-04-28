@@ -49,20 +49,17 @@
 
     <b-card>
       <b-tabs pills>
-        <b-tab title="Roles" active>
-          <databases :actions="true" :items="rowsRoles" :fields="columnRoles" />
+        <b-tab title="Company" active>
+          <databases :actions="true" :items="rowsCompany" :fields="columnCompany" />
         </b-tab>
-        <b-tab title="Customers">
-          <databases :items="items" :fields="fields" />
+        <b-tab title="Contact Person">
+          <databases :items="rowsPerson" :fields="columnPerson" />
         </b-tab>
-        <b-tab title="Equipe">
-          <databases :items="items" :fields="fields" />
+        <b-tab title="Group Ticket/Package">
+          <databases :items="rowsTicketPackage" :fields="columnTicketPackage" />
         </b-tab>
-        <b-tab title="Point de vente">
-          <databases :items="items" :fields="fields" />
-        </b-tab>
-        <b-tab title="Partner">
-          <databases :items="items" :fields="fields" />
+        <b-tab title="Users">
+          <databases :items="rowsUsers" :fields="columnUsers" />
         </b-tab>
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
@@ -311,203 +308,274 @@ export default {
         { text: 'Mr.', value: 'first2', disabled: false },
         { text: 'Ms.', value: 'second2', disabled: false },
       ],
-      items: [
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 2,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 3,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 4,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 5,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 6,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 7,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 8,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 9,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 10,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 11,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 12,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 13,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 14,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 15,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
+      columnCompany: [
+        { key: 'id', label: 'Company Id' },
+        { key: 'company_name', label: 'Company Name', sortable: true },
+        { key: 'company_address_zip', label: 'Company Address ZIP', sortable: true },
+        { key: 'company_address_city', label: 'Company Address City', sortable: true },
+        { key: 'company_address_country', label: 'Company Address Country', sortable: true },
+        { key: 'pos_filial', label: 'PoS/Filiale', sortable: true },
+        'Action',
       ],
-      fields: [
+      columnPerson: [
+        { key: 'id', label: 'ID', sortable: true },
+        { key: 'name', label: 'Name', sortable: true },
+        { key: 'first_name', label: 'First name', sortable: true },
+        { key: 'address', label: 'Address', sortable: true },
+        { key: 'title', label: 'Title', sortable: true },
+        { key: 'department', label: 'Department', sortable: true },
+        { key: 'email', label: 'E-Mail', sortable: true },
+        { key: 'phone', label: 'Phone', sortable: true },
+        { key: 'mobile', label: 'Mobile', sortable: true },
+        { key: 'address_city', label: 'Address city', sortable: true },
+        'Action',
+      ],
+
+      columnTicketPackage: [
+        { key: 'id', label: 'Group ticket ID' },
+        { key: 'deadline', label: 'Deadline', sortable: true },
+        { key: 'group_ticket_name', label: 'Group ticket name', sortable: true },
+        { key: 'group_ticket_description', label: 'Group ticket description', sortable: true },
+        { key: 'contradiction_packages_including', label: 'Contradiction Packages including', sortable: true },
+        { key: 'sum', label: 'Sum', sortable: true },
+        { key: 'ticket_id_with_ticket_name', label: 'Ticket ID with Ticket name', sortable: true },
+        'Action',
+      ],
+      columnUsers: [
         { key: 'id', label: 'Id' },
         { key: 'full_name', label: 'Last Name', sortable: true },
         { key: 'first_name', label: 'First Name', sortable: true },
-        { key: 'email', label: 'eMail', sortable: true },
-        { key: 'last_login', label: 'Last login', sortable: true },
-        { key: 'user_type', label: 'User type', sortable: true },
-        { key: 'company', label: 'Company', sortable: true },
+        { key: 'user_team', label: 'User team', sortable: true },
+        { key: 'last_role', label: 'User Role', sortable: true },
+        { key: 'user_pos', label: 'User PoS', sortable: true },
         'Action',
       ],
-      columnRoles: [
-        { key: 'id', label: 'Id' },
-        { key: 'role_id', label: 'Role-ID', sortable: true },
-        { key: 'role_name', label: 'Role name', sortable: true },
-        { key: 'role_permission', label: 'Role permission', sortable: true },
-        'Action',
+      
+
+      /*Rows placeholders's values */
+      rowsUsers: [
+        {
+          id: 1,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          user_team: 'josue.nya@gohze.org',
+          last_role: 'Admin',
+          user_pos: 'sdfs sdf',
+        },
+                {
+          id: 1,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          user_team: 'josue.nya@gohze.org',
+          last_role: 'Admin',
+          user_pos: 'sdfs sdf',
+        },
+                {
+          id: 1,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          user_team: 'josue.nya@gohze.org',
+          last_role: 'Admin',
+          user_pos: 'sdfs sdf',
+        },
+                {
+          id: 1,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          user_team: 'josue.nya@gohze.org',
+          last_role: 'Admin',
+          user_pos: 'sdfs sdf',
+        },
+                {
+          id: 1,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          user_team: 'josue.nya@gohze.org',
+          last_role: 'Admin',
+          user_pos: 'sdfs sdf',
+        },
+                {
+          id: 1,
+          // eslint-disable-next-line global-require
+          full_name: 'NYA',
+          first_name: 'Josue',
+          user_team: 'josue.nya@gohze.org',
+          last_role: 'Admin',
+          user_pos: 'sdfs sdf',
+        },
+  
       ],
-      rowsRoles: [
+      rowsCompany: [
         {
           id: 1,
           // eslint-disable-next-line global-require
-          role_id: '1',
-          role_name: 'ADMIN',
-          role_permission: 'ADMIN',
+          company_name: 'Fictive Enterprise',
+          company_address_zip: 'Bp 123 Test',
+          company_address_city: 'Yaoundé',
+          company_address_country: 'Cameroon',
+          pos_filial: 'Something',
         },
-        {
+                {
           id: 1,
           // eslint-disable-next-line global-require
-          role_id: '2',
-          role_name: 'CUSTOMERS',
-          role_permission: 'ADMIN',
+          company_name: 'Fictive Enterprise',
+          company_address_zip: 'Bp 123 Test',
+          company_address_city: 'Yaoundé',
+          company_address_country: 'Cameroon',
+          pos_filial: 'Something',
         },
-        {
+                {
           id: 1,
           // eslint-disable-next-line global-require
-          role_id: '2',
-          role_name: 'CUSTOMERS',
-          role_permission: 'ADMIN',
+          company_name: 'Fictive Enterprise',
+          company_address_zip: 'Bp 123 Test',
+          company_address_city: 'Yaoundé',
+          company_address_country: 'Cameroon',
+          pos_filial: 'Something',
         },
+                {
+          id: 1,
+          // eslint-disable-next-line global-require
+          company_name: 'Fictive Enterprise',
+          company_address_zip: 'Bp 123 Test',
+          company_address_city: 'Yaoundé',
+          company_address_country: 'Cameroon',
+          pos_filial: 'Something',
+        },
+                {
+          id: 1,
+          // eslint-disable-next-line global-require
+          company_name: 'Fictive Enterprise',
+          company_address_zip: 'Bp 123 Test',
+          company_address_city: 'Yaoundé',
+          company_address_country: 'Cameroon',
+          pos_filial: 'Something',
+        },
+
+      ],
+      rowsPerson: [
+        {
+          id:1,
+          name: " Doe",
+          first_name: " John",
+          address: " 123 street",
+          title: " Somthing",
+          department: " ICT",
+          email: " johndoe@gmail.com",
+          phone: " +237 123 465 789",
+          mobile: " +237 123 465 789",
+          address_city: " Bp 123 Yde",
+        },
+                {
+          id:1,
+          name: " Doe",
+          first_name: " John",
+          address: " 123 street",
+          title: " Somthing",
+          department: " ICT",
+          email: " johndoe@gmail.com",
+          phone: " +237 123 465 789",
+          mobile: " +237 123 465 789",
+          address_city: " Bp 123 Yde",
+        },
+                {
+          id:1,
+          name: " Doe",
+          first_name: " John",
+          address: " 123 street",
+          title: " Somthing",
+          department: " ICT",
+          email: " johndoe@gmail.com",
+          phone: " +237 123 465 789",
+          mobile: " +237 123 465 789",
+          address_city: " Bp 123 Yde",
+        },
+                {
+          id:1,
+          name: " Doe",
+          first_name: " John",
+          address: " 123 street",
+          title: " Somthing",
+          department: " ICT",
+          email: " johndoe@gmail.com",
+          phone: " +237 123 465 789",
+          mobile: " +237 123 465 789",
+          address_city: " Bp 123 Yde",
+        },
+                {
+          id:1,
+          name: " Doe",
+          first_name: " John",
+          address: " 123 street",
+          title: " Somthing",
+          department: " ICT",
+          email: " johndoe@gmail.com",
+          phone: " +237 123 465 789",
+          mobile: " +237 123 465 789",
+          address_city: " Bp 123 Yde",
+        },
+
+      ],
+      rowsTicketPackage: [
         {
           id: 1,
           // eslint-disable-next-line global-require
-          role_id: '2',
-          role_name: 'CUSTOMERS',
-          role_permission: 'ADMIN',
+          group_ticket_id: '1',
+          deadline: '12 Nov 2022',
+          group_ticket_name: 'somthing',
+          group_ticket_description: 'A little description here',
+          contradiction_packages_including: 'Something',
+          sum: '15',
+          ticket_id_with_ticket_name: '12',
+        },
+                {
+          id: 1,
+          // eslint-disable-next-line global-require
+          group_ticket_id: '1',
+          deadline: '12 Nov 2022',
+          group_ticket_name: 'somthing',
+          group_ticket_description: 'A little description here',
+          contradiction_packages_including: 'Something',
+          sum: '15',
+          ticket_id_with_ticket_name: '12',
+        },
+                {
+          id: 1,
+          // eslint-disable-next-line global-require
+          group_ticket_id: '1',
+          deadline: '12 Nov 2022',
+          group_ticket_name: 'somthing',
+          group_ticket_description: 'A little description here',
+          contradiction_packages_including: 'Something',
+          sum: '15',
+          ticket_id_with_ticket_name: '12',
+        },
+                {
+          id: 1,
+          // eslint-disable-next-line global-require
+          group_ticket_id: '1',
+          deadline: '12 Nov 2022',
+          group_ticket_name: 'somthing',
+          group_ticket_description: 'A little description here',
+          contradiction_packages_including: 'Something',
+          sum: '15',
+          ticket_id_with_ticket_name: '12',
+        },
+                {
+          id: 1,
+          // eslint-disable-next-line global-require
+          group_ticket_id: '1',
+          deadline: '12 Nov 2022',
+          group_ticket_name: 'somthing',
+          group_ticket_description: 'A little description here',
+          contradiction_packages_including: 'Something',
+          sum: '15',
+          ticket_id_with_ticket_name: '12',
         },
       ],
     }

@@ -133,7 +133,7 @@ export default [
       },
       {
         title: 'Company',
-        route: '/',
+        route: 'companies',
       },
       {
         title: 'Contact person',
