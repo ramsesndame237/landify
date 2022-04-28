@@ -15,7 +15,8 @@
           </b-form-group>
 
           <div class="d-flex align-items-center">
-            <span class="mr-1">show 1 to {{ perPage }} of {{ totalRows }} entires</span>
+
+            <span class="mr-1">{{ $t('app.content.show') }} 1 {{ $t('app.content.to') }} {{ perPage }} of {{ totalRows }} {{ $t('app.content.entries') }}</span>
             <b-pagination
                 v-model="currentPage"
                 :total-rows="totalRows"
@@ -33,13 +34,13 @@
             <div class="mr-1 d-flex">
               <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
                 <img src="@/assets/images/pages/plusIcons.svg" alt="">
-                new </b-button>
+                {{ $t('app.btn.new') }} </b-button>
               <b-button size="sm" variant="secondary" class="mr-1 d-flex">
                 <img src="@/assets/images/pages/editIcons.svg" alt="">
-                Edit</b-button>
+                {{ $t('app.btn.edit') }}</b-button>
               <b-button size="sm" class="d-flex" variant="primary">
                 <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-                Delete</b-button>
+                {{ $t('app.btn.delete') }}</b-button>
             </div>
 
             <div size="sm" class="d-flex align-items-center">
