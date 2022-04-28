@@ -5,7 +5,19 @@
       "tasks": "Taches et tickets",
       "deadlines": "Délais",
       "doc": "Documents",
-      "pos": "Point de vente"
+      "pos": "Point de vente",
+      "admin": {
+        "parent": "Administration",
+        "children": {
+          "user_manager": "Gestion des utilisateurs",
+          "bd": "Base de données d'adresses",
+          "costs": "Types de coûts",
+          "elt": "Éléments de texte Waderspruch",
+          "bdc": "Base de données clients",
+          "contract": "Contrats",
+          "process": "Processus"
+        }
+      }
     },
     "content": {
       "show": "Afficher",

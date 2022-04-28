@@ -3,12 +3,12 @@ export default [
     header: 'Apps',
   },
   {
-    title: 'Dashboard',
+    title: 'app.sidebar.dashboard',
     route: 'home',
     icon: 'HomeIcon',
   },
   {
-    title: 'Tasks & Tickets',
+    title: 'app.sidebar.tasks',
     route: 'vorgange',
     icon: 'CheckSquareIcon',
     children: [
@@ -23,52 +23,52 @@ export default [
     ],
   },
   {
-    title: 'Deadlines',
+    title: 'app.sidebar.deadlines',
     route: 'deadlines',
     icon: 'CalendarIcon',
   },
   {
-    title: 'Documents',
+    title: 'app.sidebar.doc',
     route: 'documents',
     icon: 'FileTextIcon',
   },
   {
-    title: 'Point of Sales',
+    title: 'app.sidebar.pos',
     route: 'pos',
     icon: 'GridIcon',
   },
 
   {
-    title: 'Administration',
+    title: 'app.sidebar.admin.parent',
     route: '',
     icon: 'UserIcon',
     children: [
       {
-        title: 'Gestion des utilisateurs',
+        title: 'app.sidebar.admin.children.user_manager',
         route: '/',
       },
       {
-        title: 'Base de données d\'adresses',
+        title: 'app.sidebar.admin.children.bd',
         route: '/',
       },
       {
-        title: 'Types de coûts\n',
+        title: 'app.sidebar.admin.children.costs',
         route: '/',
       },
       {
-        title: 'Éléments de texte Waderspruch',
+        title: 'app.sidebar.admin.children.elt',
         route: '/',
       },
       {
-        title: 'Base de données clients',
+        title: 'app.sidebar.admin.children.bdc',
         route: '/',
       },
       {
-        title: 'Contrats',
+        title: 'app.sidebar.admin.children.contract',
         route: '/',
       },
       {
-        title: 'Processus',
+        title: 'app.sidebar.admin.children.process',
         route: '/',
       },
       {

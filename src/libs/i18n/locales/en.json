@@ -5,7 +5,19 @@
       "tasks": "Tasks & Tickets",
       "deadlines": "Deadlines",
       "doc": "Documents",
-      "pos": "Point of sales"
+      "pos": "Point of sales",
+      "admin": {
+        "parent": "Administration",
+        "children": {
+          "user_manager": "User management",
+          "bd": "Address database",
+          "costs": "Types of costs",
+          "elt": "Text elements Waderspruch",
+          "bdc": "Customer database",
+          "contract": "Contracts",
+          "process": "Process"
+        }
+      }
     },
     "lang": {
       "fr": "French",

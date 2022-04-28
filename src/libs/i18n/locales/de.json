@@ -5,7 +5,19 @@
       "tasks": "Aufgaben & Tickets",
       "deadlines": "Fristen",
       "doc": "Dokumente",
-      "pos": "Verkaufsstelle"
+      "pos": "Verkaufsstelle",
+      "admin": {
+        "parent": "Verwaltung",
+        "children": {
+          "user_manager": "Verwaltung von Nutzern",
+          "bd": "Adressdatenbank",
+          "costs": "Arten von Kosten",
+          "elt": "Textbausteine Waderspruch",
+          "bdc": "Kundendatenbank",
+          "contract": "Verträge",
+          "process": "Prozess"
+        }
+      }
     },
     "content": {
       "show": "anzeigen",
