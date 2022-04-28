@@ -12,8 +12,6 @@
       "entries": "Entrées",
       "to": "à",
       "of": "sur"
-
-
     },
     "btn": {
       "new": "Nouveau",
@@ -53,6 +51,5 @@
         }
       }
     }
-
   }
 }
