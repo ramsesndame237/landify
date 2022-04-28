@@ -136,12 +136,12 @@ export default [
         route: 'companies',
       },
       {
-        title: 'Contact person',
-        route: '/',
+        title: 'Contact Person',
+        route: 'contact-person',
       },
       {
         title: 'Payment',
-        route: '/',
+        route: 'payment',
       },
       {
         title: 'Partner Company',

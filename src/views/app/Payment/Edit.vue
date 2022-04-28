@@ -1,0 +1,232 @@
+<template>
+  <div>
+    <b-card body-class="p-0">
+      <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
+        <div class="d-flex align-items-center">
+          <img src="@/assets/images/icons/customerGroup.svg" alt="">
+          <span>Create contact peron </span>
+        </div>
+        <div class="d-flex align-items-center">
+          <div class="mr-1 d-flex">
+            <b-button v-b-modal.modal-user size="sm" variant="info" class="mr-1 d-flex align-items-center">
+              <img src="@/assets/images/pages/plusIcons.svg" alt="">
+              Create new contactperson
+            </b-button>
+            <b-button size="sm" class="d-flex align-items-center" variant="primary">
+              <img src="@/assets/images/icons/cancel.svg" alt="">
+              Cancel
+            </b-button>
+          </div>
+        </div>
+      </div>
+    </b-card>
+
+    <b-card class="">
+      <b-form>
+        <b-row>
+          <b-col cols="12" >
+            <b-form-group label="NAME OF CUSTOMER GROUP OR PARTNER GROUP*" label-for="group">
+              <b-row class="">
+                <b-col cols="12" md="9" class="">
+                  <b-row>
+                    <b-col cols="11">
+                      <b-form-input id="group" placeholder="Enter here..."  />
+                    </b-col>
+                      <b-button size="sm" class="d-flex align-items-center border" variant="light">
+                        <img src="@/assets/images/icons/team.svg" alt="">
+                      </b-button>
+                  </b-row>
+                </b-col>
+                <b-col cols="12" md="3" >
+                  <b-form-group label="SALUTATION :" label-cols="5" content-cols="7" class="bg-light px-2 rounded">
+                       <b-form-radio-group
+                        v-model="salutation.selected"
+                        :options="salutation.options"
+                        class="align-items-center sm:m-0 justify-content-end d-flex"
+                        style="margin-top: 7px"
+                        value-field="item"
+                        text-field="name"
+                        disabled-field="notEnabled"
+                      ></b-form-radio-group>
+                  </b-form-group>
+                </b-col>
+              </b-row>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="12" md="6">
+            <b-form-group label="TITLE" label-for="title">
+              <b-form-input id="title" placeholder="Enter here..."   type="text"/>
+            </b-form-group>
+          </b-col>
+          
+          <b-col cols="12" md="6">
+            <b-form-group label="SURNAME" label-for="surname">
+              <b-form-input id="surname" placeholder="Enter here..."  />
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="12" md="6">
+            <b-form-group label="SHORTNAME (ABBREVIATION)" label-for="shortname">
+              <b-form-input id="shortname" placeholder="Enter here..."   type="text"/>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="6">
+            <b-form-group label="FIRST NAME" label-for="firstname">
+              <b-form-input id="firstname" placeholder="Enter here..."  />
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="12" md="6">
+            <b-form-group label="FUNCTION" label-for="function">
+              <b-form-input id="function" placeholder="Enter here..."   type="text"/>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="6">
+            <b-form-group label="DEPARTMENT" label-for="department">
+              <b-form-input id="department" placeholder="Enter here..."   type="text"/>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="6">
+            <b-form-group label="TYPE" label-for="type">
+              <b-form-tags id="type" placeholder="Enter here..." />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="6">
+            <b-form-group label="USER ID" label-for="user_id">
+              <b-form-select id="user_id" placeholder="Enter here..." type="text" />
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="12" md="6">
+            <b-form-group label="POSTCODE, PLACE">
+              <b-row>
+                <b-col cols="3" md="3">
+                  <b-form-input id="f" placeholder="Enter here..."   type="text"/>
+                </b-col>
+                <b-col cols="9" md="9">
+                  <b-form-input id="full-name" placeholder="Enter here..."   type="text"/>
+                </b-col>
+              </b-row>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="12" md="6">
+            <b-form-group label="COUNTRY" label-for="country">
+              <b-form-select id="country" placeholder="Enter here..."   />
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="12" md="6">
+            <b-form-group label="PHONE" label-for="phone">
+              <b-form-input id="phone" placeholder="Enter here..."   type="text"/>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="12" md="6">
+            <b-form-group label="MOBILE" label-for="mobile">
+              <b-form-input id="mobile" placeholder="Enter here..."   type="text"/>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="6">
+            <b-form-group label="E-MAIL" label-for="email">
+              <b-form-input id="email" placeholder="Enter here..."   type="text"/>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="6">
+            <b-form-group label="FAX" label-for="fax">
+              <b-form-input id="fax" placeholder="Enter here..."   type="text"/>
+            </b-form-group>
+          </b-col>
+
+        </b-row>
+      </b-form>
+    </b-card>
+    <!--  New Contact Person modal -->
+    <b-modal
+        id="modal-user"
+        ok-title="Save"
+        cancel-title="Cancel"
+        modal-class="modal-primary"
+        centered
+        title="Create Contact Person"
+        size="lg"
+    >
+      <b-form @submit.prevent>
+        <b-row>
+
+        </b-row>
+      </b-form>
+    </b-modal>
+  </div>
+</template>
+
+<script>
+const Databases = () => import('@/layouts/components/DataTables.vue')
+import {
+  BCard,
+  BTab, BFormCheckbox, BFormRadio,BInputGroup,
+  BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton, BFormSelect, BModal, BFormRadioGroup,BFormTags,
+} from 'bootstrap-vue'
+
+export default {
+  components: {
+    BCard,
+    BTab,
+    BTabs,
+    BRow,
+    BFormGroup,
+    BCol,
+    BForm,
+    BFormInput,
+    BButton,
+    Databases,
+    BModal,
+    BFormSelect,
+    BFormCheckbox,
+    BFormRadio,
+    BInputGroup,
+    BFormRadioGroup,
+    BFormTags
+  },
+  data() {
+    return {
+      perPage: 10,
+      pageOptions: [3, 5, 10],
+      user: [
+        {
+          id: 1,
+          full_name: 'NYA',
+          first_name: 'Josue',
+          email: 'josue.nya@gohze.org',
+          last_login: '2022/04/20',
+          user_type: 'developer',
+          company: 'Gohze',
+        },
+      ],
+      selected: 'first',
+      options: [
+        { text: 'Benutzer muss bei nachster Anmeldung sein Passwort andern', value: 'first', disabled: false },
+        { text: 'Benutzer gesperrt', value: 'second', disabled: false },
+      ],
+      options2: [
+        { text: 'Mr.', value: 'first2', disabled: false },
+        { text: 'Ms.', value: 'second2', disabled: false },
+      ],
+      salutation:{
+        selected: 'mr',
+        options: [
+          { item: 'mr', name: 'Mr' },
+          { item: 'ms', name: 'Ms' },
+        ]
+      } 
+
+    }
+  },
+}
+</script>
+
+<style scoped>
+@import '../../../assets/scss/pages/page-users.scss';
+
+</style>

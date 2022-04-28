@@ -309,6 +309,48 @@ const router = new VueRouter({
         ],
       },
     },
+    {
+      path: '/app/contact-person',
+      name: 'contact-person',
+      component: () => import('@/views/app/Contact_Person/index.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST CONTACT PERSONS',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST CONTACT PERSONS',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/contact-person-edit',
+      name: 'contact-person-edit',
+      component: () => import('@/views/app/Contact_Person/Edit.vue'),
+      meta: {
+        pageTitle: 'CONTACT PERSON',
+        breadcrumb: [
+          {
+            text: 'CONTACT PERSON',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/payment',
+      name: 'payment',
+      component: () => import('@/views/app/Payment/index.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST PAYMENT Data',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST PAYMENT Data',
+            active: true,
+          },
+        ],
+      },
+    },
 
   ],
 })
