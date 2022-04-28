@@ -3,7 +3,7 @@
     <b-card body-class="p-0">
         <div class="d-flex justify-content-between" style="padding: 10px">
           <b-form-group class="mb-0">
-            <label class="d-inline-block text-sm-left mr-50">Show</label>
+            <label class="d-inline-block text-sm-left mr-50">{{ $t('app.content.show') }}</label>
             <b-form-select style="width: 60px"
                 id="perPageSelect"
                 v-model="perPage"
@@ -11,11 +11,12 @@
                 :options="pageOptions"
                 class="w-10"
             />
-            <label class="d-inline-block text-sm-left ml-50">Entries</label>
+            <label class="d-inline-block text-sm-left ml-50">{{ $t('app.content.entries') }}</label>
           </b-form-group>
 
           <div class="d-flex align-items-center">
-            <span class="mr-1">show 1 to {{ perPage }} of {{ totalRows }} entires</span>
+
+            <span class="mr-1">{{ $t('app.content.show') }} 1 {{ $t('app.content.to') }} {{ perPage }} of {{ totalRows }} {{ $t('app.content.entries') }}</span>
             <b-pagination
                 v-model="currentPage"
                 :total-rows="totalRows"
@@ -33,13 +34,13 @@
             <div class="mr-1 d-flex">
               <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
                 <img src="@/assets/images/pages/plusIcons.svg" alt="">
-                new </b-button>
+                {{ $t('app.btn.new') }} </b-button>
               <b-button size="sm" variant="secondary" class="mr-1 d-flex">
                 <img src="@/assets/images/pages/editIcons.svg" alt="">
-                Edit</b-button>
+                {{ $t('app.btn.edit') }}</b-button>
               <b-button size="sm" class="d-flex" variant="primary">
                 <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-                Delete</b-button>
+                {{ $t('app.btn.delete') }}</b-button>
             </div>
 
             <div size="sm" class="d-flex align-items-center">
