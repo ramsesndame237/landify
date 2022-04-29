@@ -134,19 +134,19 @@
         "phone": "Phone",
         "post_code": "Post Code",
         "place": "Place",
-        "country": "Pays"
+        "country": "Pays",
+        "company_id": "Company ID"
 
 
       }
     },
 
-    "pages": {
-      "users": {
-        "title": "",
-        "modal": {
-          "title": "Create new user"
-        }
-      }
+    "tab": {
+      "company": "Company",
+      "contact_person": "Contact Person",
+      "group_ticket": "Group Ticket",
+      "package": "Package",
+      "users": "Users"
     }
 
   }

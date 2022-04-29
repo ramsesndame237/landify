@@ -31,15 +31,15 @@
 
           <!-- Field: customer group name -->
           <b-col cols="12" md="6">
-            <b-form-group label="CUSTOMER GROUP NAME" label-for="full-name">
-              <b-form-input id="full-name" placeholder="Enter here..." v-model="user.name" type="text"/>
+            <b-form-group :label="$t('app.form.label.name')" label-for="full-name">
+              <b-form-input id="full-name"  :placeholder="$t('app.form.placeholder.default')" v-model="user.name" type="text"/>
             </b-form-group>
           </b-col>
 
           <!-- Field: Name -->
           <b-col cols="12" md="12">
-            <b-form-group label="Brief description" label-for="name">
-              <b-form-input placeholder="Enter here..." id="nameu" v-model="user.email" type="text"/>
+            <b-form-group :label="$t('app.form.label.description')" label-for="name">
+              <b-form-input  :placeholder="$t('app.form.placeholder.default')" id="nameu" v-model="user.email" type="text"/>
             </b-form-group>
           </b-col>
 
@@ -49,28 +49,28 @@
 
     <b-card>
       <b-tabs pills>
-        <b-tab title="Company" active>
+        <b-tab :title="$t('app.tab.company')" active>
           <databases :actions="true" :items="rowsCompany" :fields="columnCompany" />
         </b-tab>
-        <b-tab title="Contact Person">
+        <b-tab :title="$t('app.tab.contact_person')">
           <databases :items="rowsPerson" :fields="columnPerson" />
         </b-tab>
-        <b-tab title="Group Ticket/Package">
+        <b-tab :title="`${$t('app.tab.group_ticket')} / ${$t('app.tab.package')}`">
           <databases :items="rowsTicketPackage" :fields="columnTicketPackage" />
         </b-tab>
-        <b-tab title="Users">
+        <b-tab :title="$t('app.tab.users')">
           <databases :items="rowsUsers" :fields="columnUsers" />
         </b-tab>
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
-            <b-button v-b-modal.modal-role class="mr-1" size="sm" variant="info">New</b-button>
-            <b-button class="mr-1" size="sm" variant="primary">Delete</b-button>
+            <b-button v-b-modal.modal-role class="mr-1" size="sm" variant="info">{{$t('app.btn.new')}}</b-button>
+            <b-button class="mr-1" size="sm" variant="primary">{{$t('app.btn.cancel')}}</b-button>
             <div size="sm" class="d-flex align-items-center">
-              <label class="d-inline-block text-sm-left mr-50">Search</label>
+              <label class="d-inline-block text-sm-left mr-50">{{$t('app.search.label')}}</label>
               <b-form-input
                   id="filterInput"
                   type="search"
-                  placeholder="rechercher.."
+                  :placeholder="$t('app.search.placeholder')"
               />
             </div>
           </div>
@@ -78,112 +78,47 @@
       </b-tabs>
     </b-card>
 
-    <!--modal-->
-    <b-modal
-        id="modal-role"
-        ok-title="Save"
-        cancel-title="Cancel"
-        modal-class="modal-primary"
-        centered
-        title="Create new user"
-        size="lg"
-    >
-      <b-form @submit.prevent>
-        <b-row>
-          <b-col cols="12">
-            <b-form-group
-                label="Role ID"
-                label-for="role-id"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="company-name"
-                  type="text"
-                  placeholder="Enter here ..."
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Name"
-                label-for="name"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="h-email"
-                  type="email"
-                  placeholder="Enter here..."
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Name / First name"
-                label-for="h-name"
-                label-cols-md="4"
-            >
-              <div class="d-flex">
-                <b-form-input
-                    class="mr-1"
-                    id="h-name"
-                    type="text"
-                    placeholder="Enter here..."
-                />
-                <b-form-input
-                    md="4"
-                    id="h-firstname"
-                    type="text"
-                    placeholder="Enter here..."
-                />
-              </div>
-
-            </b-form-group>
-          </b-col>
-        </b-row>
-      </b-form>
-    </b-modal>
-
     <!--  user modal -->
     <b-modal
-        id="modal-user"
-        ok-title="Save"
-        cancel-title="Cancel"
+        id="modal-primary"
+        :ok-title="$t('app.btn.save')"
+        :cancel-title="$t('app.btn.cancel')"
         modal-class="modal-primary"
         centered
-        title="Create new user"
+        :title="$t('app.content.create_user')"
         size="lg"
     >
       <b-form @submit.prevent>
         <b-row>
           <b-col cols="12">
             <b-form-group
-                label="Name Company*"
+                :label="`${$t('app.form.label.company_name')} *`"
                 label-for="company-name"
                 label-cols-md="4"
             >
               <b-form-input
                   id="company-name"
                   type="text"
-                  placeholder="Please select ..."
+                  :placeholder="$t('app.form.placeholder.default')" 
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="eMail"
+                :label="`${$t('app.form.label.email')} *`"
                 label-for="h-email"
                 label-cols-md="4"
             >
               <b-form-input
                   id="h-email"
                   type="email"
-                  placeholder="Enter here..."
+                  :placeholder="$t('app.form.placeholder.default')" 
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="Name / First name"
+                :label="`${$t('app.form.label.name')} / ${$t('app.form.label.firstname')}`"
                 label-for="h-name"
                 label-cols-md="4"
             >
@@ -192,13 +127,13 @@
                     class="mr-1"
                     id="h-name"
                     type="text"
-                    placeholder="Enter here..."
+                  :placeholder="$t('app.form.placeholder.default')" 
                 />
                 <b-form-input
                     md="4"
                     id="h-firstname"
                     type="text"
-                    placeholder="Enter here..."
+                  :placeholder="$t('app.form.placeholder.default')" 
                 />
               </div>
 
@@ -206,33 +141,33 @@
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="Mobile"
+                :label="`${$t('app.form.label.mobile')}`"
                 label-for="h-mobile"
                 label-cols-md="4"
             >
               <b-form-input
                   id="h-mobile"
                   type="number"
-                  placeholder="Enter here..."
+                  :placeholder="$t('app.form.placeholder.default')" 
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="Fax"
+                :label="`${$t('app.form.label.fax')}`"
                 label-for="h-fax"
                 label-cols-md="4"
             >
               <b-form-input
                   id="h-fax"
                   type="text"
-                  placeholder="Enter here..."
+                  :placeholder="$t('app.form.placeholder.default')" 
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="Deputy"
+                :label="`${$t('app.form.label.deputy')}`"
                 label-for="h-deputy"
                 label-cols-md="4">
               <b-form-select
@@ -243,7 +178,7 @@
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="Type"
+                :label="`${$t('app.form.label.type')}`"
                 label-for="h-deputy"
                 label-cols-md="4">
               <b-form-select

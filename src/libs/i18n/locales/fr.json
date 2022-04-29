@@ -121,18 +121,19 @@
         "phone": "Telephone",
         "post_code": "Code Postal",
         "place": "Lieu",
-        "country": "Pays"
+        "country": "Pays",
+        "company_id": "Company ID"
+
 
       }
     },
 
-    "pages": {
-      "users": {
-        "title": "",
-        "modal": {
-          "title": "Crer un nouvel utilisateur"
-        }
-      }
+    "tab": {
+      "company": "Entreprise",
+      "contact_person": "Personne de contact",
+      "group_ticket": "Ticket de groupe",
+      "package": "Paquet",
+      "users": "Utilisateurs"
     }
   }
 }
