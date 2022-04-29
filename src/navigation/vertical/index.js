@@ -92,7 +92,7 @@ export default [
   },
   {
     title: 'Users & Rights',
-    route: 'users-lists',
+    route: 'users-list',
     icon: 'UserIcon',
   },
   {
@@ -120,8 +120,6 @@ export default [
     route: 'master-data',
     icon: 'GridIcon',
   },
-
-
   {
     title: 'Work package 2',
     route: 'work package',
