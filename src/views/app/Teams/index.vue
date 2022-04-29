@@ -219,7 +219,7 @@ export default {
         { key: 'role_id', label: this.$t('app.form.label.team_id'), sortable: true },
         { key: 'role_name', label: this.$t('app.form.label.name'), sortable: true },
         { key: 'permission', label: this.$t('app.form.label.description'), sortable: true },
-        'Action',
+        this.$t('app.form.label.action'),
       ],
       selected: null,
       options: [

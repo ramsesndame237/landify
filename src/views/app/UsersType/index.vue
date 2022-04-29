@@ -313,8 +313,8 @@ export default {
       ],
       fields: [
         { key: 'id', label: 'Id' },
-        { key: 'name', label: 'Name User Type', sortable: true },
-        { key: 'description', label: 'User Type Description', sortable: true },
+        { key: 'name', label: this.$t('app.form.label.name'), sortable: true },
+        { key: 'description', label: this.$t('app.form.label.description'), sortable: true },
       ],
       selected: null,
       options: [

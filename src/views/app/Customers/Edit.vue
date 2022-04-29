@@ -2,18 +2,18 @@
   <div>
     <b-card body-class="p-0">
       <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
-        <div class="d-flex align-items-center">
-          <img class="mr-1" src="@/assets/images/icons/people.svg" alt="">
-          <span>Create Group</span>
+        <div class="d-flex">
+          <img src="@/assets/images/icons/team.svg" alt="" class="mr-1">
+          <span>{{ $t('app.content.create_customer_group') }}</span>
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
-            <b-button v-b-modal.modal-user size="sm" variant="info" class="mr-1 d-flex align-items-center">
-              <img src="@/assets/images/icons/group.svg" alt="">
-              Create new group </b-button>
-            <b-button size="sm" class="d-flex align-items-center" variant="primary">
-              <img src="@/assets/images/icons/cancel.svg" alt="">
-              Cancel</b-button>
+            <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
+              <img src="@/assets/images/pages/plusIcons.svg" alt="">
+              {{ $t('app.content.create_customer_group') }}</b-button>
+            <b-button size="sm" class="d-flex" variant="primary">
+              <img src="@/assets/images/pages/deleteIcons.svg" alt="">
+              {{ $t('app.btn.cancel') }}</b-button>
           </div>
         </div>
       </div>
@@ -24,8 +24,8 @@
         <b-row>
           <!-- Field: group id -->
           <b-col cols="12" md="6">
-            <b-form-group label="ID" label-for="id">
-              <b-form-input id="id" placeholder="Enter here..." v-model="user.name"/>
+            <b-form-group :label="$t('app.form.label.id')" label-for="id">
+              <b-form-input id="id" :placeholder="$t('app.form.placeholder.default')" v-model="user.name"/>
             </b-form-group>
           </b-col>
 

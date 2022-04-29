@@ -21,8 +21,8 @@
     },
     "lang": {
       "fr": "French",
-      "de": "French",
-      "en": "French"
+      "de": "German",
+      "en": "English"
     },
     "navbar" : {
       "profile": "Profile",
@@ -40,7 +40,9 @@
       "create_user_type": "Create new User Type",
       "create_team": "Create new Team",
       "create_customer_group": "Create new Customer Group",
+      "create_company": "Create new Company",
       "edit_user": "Edit  user",
+      "create_contact_person": "Create Contact Person",
 
       "dashboard": {
         "sub_title": "Overall list without registers",
@@ -70,7 +72,9 @@
         "email" : "Enter E-mail...",
         "password" : "Enter Your password...",
         "password_confirm" : "Confirm password...",
-        "select" : "Please select an option."
+        "select" : "Please select an option.",
+        "automatic_based_on_id" : "(automatically based on selected id)",
+        "automatic" : "(automatically)"
       },
       "label": {
         "company_name": "Comapany Name",
@@ -114,7 +118,24 @@
         "gender": {
           "male": "Mr",
           "female": "Ms"
-        }
+        },
+        "partner_group_id": "Partner group ID",
+        "customer_group_id": "Customer group ID",
+        "partner_group_name": "Partner group Name",
+        "partner_group": "Partner group",
+        "customer_group_name": "Customer group Name",
+        "contact_person_id": "Contact person ID",
+        "salutation": "Salutation",
+        "shortname": "Shortname",
+        "department": "Department",
+        "city": "City",
+        "user_id": "User Id",
+        "surname": "Surname",
+        "phone": "Phone",
+        "post_code": "Post Code",
+        "place": "Place",
+        "country": "Pays"
+
 
       }
     },

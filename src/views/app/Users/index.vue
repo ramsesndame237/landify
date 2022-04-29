@@ -381,7 +381,7 @@ export default {
       fields: [
         { key: 'id', label: this.$t('app.form.label.id') },
         { key: 'last_name', label: this.$t('app.form.label.last_name'), sortable: true },
-        { key: 'first_name', label: this.$t('app.form.label.first_name'), sortable: true },
+        { key: 'first_name', label: this.$t('app.form.label.firstname'), sortable: true },
         { key: 'email', label: this.$t('app.form.label.email'), sortable: true },
         { key: 'last_login', label: this.$t('app.form.label.last_login'), sortable: true },
         { key: 'user_type', label: this.$t('app.form.label.user_type'), sortable: true },
