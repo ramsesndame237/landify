@@ -80,7 +80,6 @@
             >
             <b-form-select
               id="group-id"
-                
               v-model="newCompany.customerGroupId"
               :options="customerGroupOptions"
             >

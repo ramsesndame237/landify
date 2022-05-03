@@ -357,6 +357,48 @@ const router = new VueRouter({
         ],
       },
     },
+    {
+      path: '/app/payment/edit',
+      name: 'payment-edit',
+      component: () => import('@/views/app/Payment/Edit.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST PAYMENT Data',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST PAYMENT Data',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/partner-company',
+      name: 'partner-company',
+      component: () => import('@/views/app/Partner_Company/Edit.vue'),
+      meta: {
+        pageTitle: 'COMPANY EDIT',
+        breadcrumb: [
+          {
+            text: 'COMPANY EDIT',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/partner-company/edit',
+      name: 'partner-company-edit',
+      component: () => import('@/views/app/Partner_Company/Edit.vue'),
+      meta: {
+        pageTitle: 'COMPANY EDIT',
+        breadcrumb: [
+          {
+            text: 'COMPANY EDIT',
+            active: true,
+          },
+        ],
+      },
+    },
 
   ],
 })

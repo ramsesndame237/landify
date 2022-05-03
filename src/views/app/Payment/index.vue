@@ -57,7 +57,7 @@
         </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" link="contact-person-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases :filter="filter" link="payment-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
     </b-card>
 
     <!--modal-->
@@ -72,148 +72,107 @@
     >
       <b-form @submit.prevent>
         <b-row> 
-          <b-col cols="6">
+          <b-col cols="12" md="10">
             <b-form-group
-              :label="`${$t('app.form.label.partner_group_id')} / ${$t('app.form.label.customer_group_id')}`"
+              :label="`${$t('app.form.label.id')}`"
               label-for="group-id"
-              label-cols-md="12"
+              label-cols-md="3"
             >
-            <b-form-select
+            <b-form-input
               id="group-id"
+              :placeholder="$t('app.form.placeholder.automatic')"
                 
               v-model="newCompany.customerGroupId"
-              :options="customerGroupOptions"
-            >
-            </b-form-select>
+           />
             </b-form-group>
           </b-col>
-          <b-col cols="6">
+          <b-col cols="12" md="10">
             <b-form-group
-              :label="`${$t('app.form.label.partner_group_name')} / ${$t('app.form.label.customer_group_name')}`"
+              :label="`${$t('app.form.label.company_id')}`"
               label-for="group-name"
-              label-cols-md="12"
+              label-cols-md="3"
             >
-              <b-form-input
+              <b-form-select
                 id="group-name"
-                  
                 v-model="newCompany.companyId"
-                :placeholder="$t('app.form.placeholder.automatic_based_on_id')"
               />
             </b-form-group>
           </b-col>
-          <b-col cols="12">
+          <b-col cols="12" md="10">
             <b-form-group
-              :label="$t('app.form.label.contact_person_id')"
-              label-for="Contactperson_ID"
-              label-cols-md="12"
+              :label="$t('app.form.label.payment_info')"
+              label-for="payment_info"
+              label-cols-md="3"
             >
-            <b-row>
-              <b-col cols="6">
                 <b-form-input
-                  id="Contactperson_ID"
-                   
-                  v-model="newCompany.companyName"
-                  :placeholder="$t('app.form.placeholder.automatic')"
-                />
-              </b-col>
-            </b-row>
-            </b-form-group>
-          </b-col>
-          <b-col cols="6">
-            <b-form-group
-              :label="$t('app.form.label.last_name')"
-              label-for="group-id"
-              label-cols-md="12"
-            >
-            <b-form-input
-              id="group-id"
-              v-model="newCompany.customerGroupId"
-              :placeholder="$t('app.form.placeholder.default')"
-            />
-            </b-form-group>
-          </b-col>
-          <b-col cols="6">
-            <b-form-group
-              :label="$t('app.form.label.title')"
-              label-for="group-name"
-              label-cols-md="12"
-            >
-              <b-form-select
-                id="group-name"
-                v-model="newCompany.companyId"
-              >
-              </b-form-select>
-            </b-form-group>
-          </b-col>
-          <b-col cols="6">
-            <b-form-group
-              :label="$t('app.form.label.firstname')"
-              label-for="Firstname"
-              label-cols-md="12"
-            >
-            <b-form-input
-              id="Firstname"
-              v-model="newCompany.customerGroupId"
-              :placeholder="$t('app.form.placeholder.default')"
-            />
-            </b-form-group>
-          </b-col>
-          <b-col cols="6">
-            <b-form-group
-              :label="$t('app.form.label.salutation')"
-              label-for="Salutation"
-              label-cols-md="12"
-            >
-              <b-form-select
-                id="Salutation"
-                v-model="newCompany.companyId"
-              >
-              </b-form-select>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.shortname')"
-              label-for="Shortname"
-              label-cols-md="12"
-            >
-            <b-row>
-              <b-col cols="6">
-                <b-form-input
-                  id="Shortname"
-                   
+                  id="payment_info"
                   v-model="newCompany.companyName"
                   :placeholder="$t('app.form.placeholder.default')"
                 />
-              </b-col>
-            </b-row>
             </b-form-group>
           </b-col>
-          <b-col cols="6">
+          <b-col cols="12" md="10">
             <b-form-group
-              :label="$t('app.form.label.function')"
-              label-for="Function"
-              label-cols-md="12"
+              :label="$t('app.form.label.debitor')"
+              label-for="group-id"
+              label-cols-md="3"
             >
             <b-form-input
-              id="Function"
+              id="group-id"
               v-model="newCompany.customerGroupId"
               :placeholder="$t('app.form.placeholder.default')"
             />
             </b-form-group>
           </b-col>
-          <b-col cols="6">
+          <b-col cols="12" md="10">
             <b-form-group
-              :label="$t('app.form.label.department')"
-              label-for="Department"
-              label-cols-md="12"
+              :label="$t('app.form.label.object_reference')"
+              label-for="object_reference"
+              label-cols-md="3"
             >
               <b-form-input
-                id="Department"
-                v-model="newCompany.companyId"
+                id="object_reference"
                 :placeholder="$t('app.form.placeholder.default')"
               />
             </b-form-group>
+          </b-col>
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="$t('app.form.label.value')"
+              label-for="value"
+              label-cols-md="3"
+            >
+            <b-form-input
+              id="value"
+              v-model="newCompany.customerGroupId"
+              :placeholder="$t('app.form.placeholder.default')"
+            />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="$t('app.form.label.date')"
+              label-for="date"
+              label-cols-md="3"
+            >
+              <b-form-datepicker
+                id="date"
+              ></b-form-datepicker>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="$t('app.form.label.payment_type')"
+              label-for="payment_type"
+              label-cols-md="3"
+            >
+              <b-form-input
+                id="payment_type"
+                v-model="newCompany.companyName"
+                :placeholder="$t('app.form.placeholder.default')"
+              />
+            </b-form-group>
+          
           </b-col>
         </b-row>
       </b-form>
@@ -236,6 +195,7 @@ import {
   BCard,
   BPagination,
   BInputGroup,
+  BFormDatepicker,
 } from 'bootstrap-vue'
 
 export default {
@@ -252,6 +212,7 @@ export default {
     BCol,
     BFormInput,
     BInputGroup,
+    BFormDatepicker,
   },
   data() {
     return {
@@ -314,14 +275,15 @@ export default {
       ],
       fields: [
         { key: 'id', label: 'Id' },
-        { key: 'group', label: `${this.$t('app.form.label.partner_group')} / ${this.$t('app.form.label.customer_group')}`, sortable: true },
-        { key: 'last_name', label: this.$t('app.form.label.surname'), sortable: true },
-        { key: 'first_name', label: this.$t('app.form.label.firstname'), sortable: true },
-        { key: 'city', label: this.$t('app.form.label.city'), sortable: true },
-        { key: 'phone', label: this.$t('app.form.label.phone'), sortable: true },
-        { key: 'mail', label: this.$t('app.form.label.email'), sortable: true },
-        { key: 'function', label: this.$t('app.form.label.function'), sortable: true },
-        { key: 'user_id', label: this.$t('app.form.label.user_id'), sortable: true },
+        { key: 'group', label: "Payment ID", sortable: true },
+        { key: 'last_name', label: "Company ID", sortable: true },
+        { key: 'first_name', label: "Name Firma/Kunde", sortable: true },
+        { key: 'city', label: 'Zahlungsinformation', sortable: true },
+        { key: 'phone', label: 'Debitor', sortable: true },
+        { key: 'mail', label: "Value", sortable: true },
+        { key: 'function', label: "Object Reference", sortable: true },
+        { key: 'mail', label: "Date", sortable: true },
+        { key: 'mail', label: "Payment Type", sortable: true },
         'Action',
       ],
       selected: null,

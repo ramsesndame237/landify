@@ -43,6 +43,9 @@
       "create_company": "Create new Company",
       "edit_user": "Edit  user",
       "create_contact_person": "Create Contact Person",
+      "company_detail_view": "company Details View",
+      "auth_management_detail" : "Authorization Management detail",
+      "create_payment" : "Create Payment",
 
       "dashboard": {
         "sub_title": "Overall list without registers",
@@ -135,18 +138,45 @@
         "post_code": "Post Code",
         "place": "Place",
         "country": "Pays",
-        "company_id": "Company ID"
-
+        "company_id": "Company ID",
+        "address_suffix": "Address suffix",
+        "land": "Land",
+        "cell_phone_num": "Cell phone number",
+        "company_details": "Company details",
+        "tax_id": "Tax ID",
+        "tax": "Tax",
+        "hra_hrb": "HRA / HRB No",
+        "bankdata": "Bankdata",
+        "iban_account": "IBAN Account",
+        "bic" : "BIC",
+        "bank_name" : "Bank Name",
+        "street" : "Street",
+        "address_addition" : "Address Addition",
+        "preservation": "Preservation",
+        "group_name": "Group Name",
+        "payment_info": "Payment Info",
+        "debitor": "Debitor",
+        "object_reference": "Object Reference",
+        "value": "Value",
+        "date": "Date",
+        "payment_type" : "Payment Type"
 
       }
     },
-
     "tab": {
       "company": "Company",
       "contact_person": "Contact Person",
       "group_ticket": "Group Ticket",
       "package": "Package",
-      "users": "Users"
+      "users": "Users",
+      "customers": "Customers",
+      "tickets": "Tickets",
+      "payments": "Payments",
+      "appointment_track" : "Appointment track",
+      "sales_order_sfm" : "Sales Orders SFM",
+      "preview_invoices" : "Preview Invoices",
+      "contradictions": "Contradictions",
+      "rights": "Rights"
     }
 
   }

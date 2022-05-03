@@ -22,16 +22,150 @@
     "content": {
       "show": "anzeigen",
       "entries": "Eingaben",
-      "to": "zu"
+      "to": "zu",
+      "of": "auf",
+      "create_user": "Einen neuen Nutzer erstellen",
+      "create_user_type": "Einen neuen Nutzertyp erstellen",
+      "create_team": "Ein neues Team erstellen",
+      "create_customer_group": "Eine neue Klientengruppe erstellen",
+      "create_company": "Eine neue Firma gründen",
+      "edit_user": "Benutzer ändern",
+      "create_contact_person": "Eine Kontaktperson erstellen",
+      "company_detail_view": "Details zum Unternehmen",
+      "auth_management_detail" : "Details zur Verwaltung von Berechtigungen",
+      "create_payment" : "Eine Zahlung erstellen",
+
+
+      "dashboard": {
+        "sub_title": "Globale Liste ohne Register",
+        "card_text": "Viel Glück mit Ihrem neuen Projekt."
+      },
+      "deadlines": {
+        "sub_title": "Globale Liste ohne Register",
+        "card_text": "Viel Glück mit Ihrem neuen Projekt."
+      }
     },
     "btn": {
       "new": "neu",
       "edit": "bearbeiten",
-      "delete": "Löschen"
+      "delete": "Löschen",
+      "save": "Speichern",
+      "cancel": "Abbrechen"
     },
     "search": {
       "label": "Suche",
-      "palceholder": "Ajax-Datenquelle"
+      "palceholder": "Ajax..."
+    },
+    "form" : {
+      "placeholder": {
+        "default" : "Hier eingeben...",
+        "email" : "E-Mail eingeben...",
+        "select" : "Bitte wählen Sie eine Option.",
+        "password" : "Geben Sie Ihr Passwort ein...",
+        "password_confirm" : "Passwort bestätigen...",
+        "automatic_based_on_id" : "(automatisch entsprechend der ausgewählten ID)",
+        "automatic" : "(automatisch)"
+
+      },
+      "label": {
+        "company_name": "Name des Unternehmens",
+        "email": "E-Mail",
+        "name": "Name",
+        "firstname": "Vorname",
+        "mobile": "Handy",
+        "fax": "Fax",
+        "deputy": "Stellvertreter",
+        "type": "Typ ",
+        "password": "Passwort",
+        "password_confirm": "Passwort bestätigen",
+        "user_must_change_pass": "Der Nutzer muss bei der nächsten Anmeldung sein Passwort ändern.",
+        "user_locked": "Gesperrter Nutzer",
+        "name_abreviation": "Abkürzung des Namens",
+        "address": "Adresse",
+        "function": "Funktion",
+        "customer_name": "Name des Klienten",
+        "customer_group": "Gruppe des Klienten",
+        "contact_person": "Kontaktperson",
+        "title": "Titel",
+        "action": "Aktion",
+        "id": "Id",
+        "id_group": "Id der Gruppe",
+        "last_name": "Name",
+        "last_login": "Letzte Anmeldung",
+        "user_type": "Art des Nutzers",
+        "user_type_id": "ID des Nutzertyps",
+        "description": "Beschreibung",
+        "company": "Unternehmen",
+        "roles": "Rollen",
+        "customers": "Kunden",
+        "team": "Team",
+        "number_of_companies": "Anzahl der Unternehmen",
+        "team_id": "ID des Teams",
+        "pos": "Verkaufsstelle",
+        "partner": "Partner",
+        "role_id": "ID der Rolle",
+        "role_name": "Name der Rolle",
+        "role_permission": "Autorisierung von Rollen",
+        "gender": {
+          "male": "Herr",
+          "female": "Frau"
+        },
+        "partner_group_id": "ID der Partnergruppe",
+        "customer_group_id": "ID der Kundengruppe",
+        "partner_group_name": "Name der Partnergruppe",
+        "customer_group_name": "Name der Klientengruppe",
+        "contact_person_id": "ID der Kontaktperson",
+        "salutation": "Gruß",
+        "shortname": "Kurzer Name",
+        "department": "Abteilung",
+        "city": "Stadt",
+        "user_id": "Benutzer-ID",
+        "surname": "Nachname",
+        "phone": "Telefon",
+        "post_code": "Postleitzahl",
+        "place": "Ort",
+        "country": "Land",
+        "company_id": "ID des Unternehmens",
+        "address_suffix": "Suffix der Adresse",
+        "land": "Pays",
+        "cell_phone_num": "Mobiltelefonnummer",
+        "company_details": "Details zum Unternehmen",
+        "tax_id": "Steueridentifikationsnummer",
+        "tax": "Steuer",
+        "hra_hrb": "HRA / HRB No",
+        "bankdata": "Bankdaten",
+        "iban_account": "Konto IBAN",
+        "bic" : "BIC",
+        "bank_name" : "Name der Bank",
+        "street" : "Rue",
+        "address_addition" : "Adresse hinzufügen",
+        "preservation": "Bewahrung",
+        "group_name": " Name der Gruppe",
+        "payment_info": "Zahlungsinformationen",
+        "debitor": "Schuldner",
+        "object_reference": "Objektreferenz",
+        "value": "Wert",
+        "date": "Datum",
+        "payment_type" : "Art der Zahlung"
+
+      },
+
+      "tab": {
+        "company": "Unternehmen",
+        "contact_person": "Kontaktperson",
+        "group_ticket": "Gruppenticket",
+        "package": "Paket",
+        "users": "Nutzer",
+        "customers": "Kunden",
+        "tickets": "Tickets",
+        "payments": "Auszahlungen",
+        "appointment_track" : "Verfolgung von Terminen",
+        "sales_order_sfm" : "SFM-Verkaufsaufträge",
+        "preview_invoices" : "Rechnungsvorschau",
+        "contradictions": "Widersprüche",
+        "rights": "Rechte"
+  
+      }
     }
     
   }

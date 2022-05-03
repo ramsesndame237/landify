@@ -143,7 +143,7 @@ export default [
       },
       {
         title: 'Partner Company',
-        route: '/',
+        route: 'partner-company',
       },
       {
         title: 'Partner Company Group',

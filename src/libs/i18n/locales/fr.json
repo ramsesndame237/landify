@@ -31,6 +31,9 @@
       "create_company": "Créer une nouvelle companie",
       "edit_user": "Modifier l'utilisateur",
       "create_contact_person": "Créer une personne de contact",
+      "company_detail_view": "Détails de l'entreprise ",
+      "auth_management_detail" : "Détail de la gestion des autorisations",
+      "create_payment" : "Creer un payement",
 
 
       "dashboard": {
@@ -122,8 +125,28 @@
         "post_code": "Code Postal",
         "place": "Lieu",
         "country": "Pays",
-        "company_id": "Company ID"
-
+        "company_id": "ID de l'entreprise",
+        "address_suffix": "Suffixe de l'addresse",
+        "land": "Terre",
+        "cell_phone_num": "Numéro de téléphone portable",
+        "company_details": "Détails de l'entreprise",
+        "tax_id": "Numéro d'identification fiscale",
+        "tax": "Taxe",
+        "hra_hrb": "HRA / HRB No",
+        "bankdata": "Données bancaires",
+        "iban_account": "Compte IBAN",
+        "bic" : "BIC",
+        "bank_name" : "Nom de la Banque",
+        "street" : "Rue",
+        "address_addition" : "Ajout d'adresse",
+        "preservation": "Préservation",
+        "group_name": " Nom du Groupe",
+        "payment_info": "Informations de Payement",
+        "debitor": "Débiteur",
+        "object_reference": "Référence de l'objet",
+        "value": "Valeur",
+        "date": "Date",
+        "payment_type" : "Type de payement"
 
       }
     },
@@ -133,7 +156,16 @@
       "contact_person": "Personne de contact",
       "group_ticket": "Ticket de groupe",
       "package": "Paquet",
-      "users": "Utilisateurs"
+      "users": "Utilisateurs",
+      "customers": "Clients",
+      "tickets": "Tickets",
+      "payments": "Payements",
+      "appointment_track" : "Suivi des rendez-vous",
+      "sales_order_sfm" : "Ordres de vente SFM",
+      "preview_invoices" : "Prévisualisation des factures",
+      "contradictions": "Contradictions",
+      "rights": "Droits"
+
     }
   }
 }
