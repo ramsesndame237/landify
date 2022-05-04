@@ -3,7 +3,7 @@
     <b-card body-class="p-0">
       <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
         <div class="d-flex align-items-center">
-          <span>{{ $t('app.content.company_detail_view') }}</span>
+          <span>{{ $t('app.content.partner_company_detail_view') }}</span>
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
@@ -34,7 +34,7 @@
           </b-col>
 
           <b-col cols="12" md="6">
-            <b-form-group :label="$t('app.form.label.customer_group_name')"  label-for="group-name">
+            <b-form-group :label="$t('app.form.label.partner_company_group')"  label-for="group-name">
               <b-form-input id="group-name" :placeholder="$t('app.form.placeholder.default')" v-model="user.name" type="text"/>
             </b-form-group>
           </b-col>
@@ -46,19 +46,20 @@
           </b-col>
 
           <b-col cols="12" md="6">
-            <b-form-group :label="$t('app.form.label.email')" label-for="email">
-              <b-form-input id="email" :placeholder="$t('app.form.placeholder.email')" v-model="user.name" type="mail"/>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="6">
-            <b-form-group :label="$t('app.form.label.address_addition')" label-for="address_addition">
-              <b-form-input id="address_addition" :placeholder="$t('app.form.placeholder.default')" v-model="user.name"/>
+            <b-form-group :label="$t('app.form.label.partner_type')"  label-for="partner-type">
+              <b-form-input id="partner-type" :placeholder="$t('app.form.placeholder.default')" v-model="user.name" type="text"/>
             </b-form-group>
           </b-col>
 
           <b-col cols="12" md="6">
-            <b-form-group :label="$t('app.form.label.phone')" label-for="full-name">
-              <b-form-input id="full-name" :placeholder="$t('app.form.placeholder.default')" v-model="user.name" type="text"/>
+            <b-form-group :label="$t('app.form.label.address_addition')"  label-for="partner-address_addition">
+              <b-form-input id="partner-address_addition" :placeholder="$t('app.form.placeholder.default')" v-model="user.name" type="text"/>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="12" md="6">
+            <b-form-group :label="$t('app.form.label.email')" label-for="email">
+              <b-form-input id="email" :placeholder="$t('app.form.placeholder.email')" v-model="user.name" type="mail"/>
             </b-form-group>
           </b-col>
 
@@ -76,14 +77,20 @@
           </b-col>
 
           <b-col cols="12" md="6">
-            <b-form-group :label="$t('app.form.label.fax')"  label-for="tax">
-              <b-form-input id="tax" :placeholder="$t('app.form.placeholder.default')" v-model="user.name" type="text"/>
+            <b-form-group :label="$t('app.form.label.phone')" label-for="full-phone">
+              <b-form-input id="full-phone" :placeholder="$t('app.form.placeholder.default')" v-model="user.name" type="text"/>
             </b-form-group>
           </b-col>
 
           <b-col cols="12" md="6">
             <b-form-group  :label="$t('app.form.label.land')" label-for="land">
               <b-form-input id="land" :placeholder="$t('app.form.placeholder.default')" v-model="user.name" type="text"/>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="12" md="6">
+            <b-form-group :label="$t('app.form.label.fax')"  label-for="fax">
+              <b-form-input id="fax" :placeholder="$t('app.form.placeholder.default')" v-model="user.name" type="text"/>
             </b-form-group>
           </b-col>
 
@@ -118,23 +125,14 @@
         <b-tab :title="$t('app.tab.preview_invoices')" >
           <databases :items="rowsPreviewInvoices" :fields="columnPreviewInvoices" />
         </b-tab>
-        <b-tab  :title="$t('app.tab.sales_order_sfm')" >
-          <databases :items="rowsSalesOrders" :fields="columnSalesOrders" />
-        </b-tab>
         <b-tab :title="$t('app.tab.contact_person')" >
           <databases :items="rowsContactPersons" :fields="columnContactPersons" />
         </b-tab>
-        <b-tab :title="$t('app.tab.tickets')" >
+        <b-tab :title="$t('app.tab.appointment_track')" >
           <databases :items="rowsAppointment" :fields="columnAppointment" />
         </b-tab>
-        <b-tab  :title="$t('app.form.label.bankdata')" >
-          <databases :items="rowsBankdata" :fields="columnBankdata" />
-        </b-tab>
-        <b-tab  :title="$t('app.sidebar.pos')" >
-          <databases :items="rowsPointOfSales" :fields="columnPointOfSales" />
-        </b-tab>
-        <b-tab  :title="$t('app.tab.payments')" >
-          <databases :items="rowsPayments" :fields="columnPayments" />
+        <b-tab  :title="$t('app.tab.location')" >
+          <databases :items="[]" :fields="[]" />
         </b-tab>
         <b-tab  :title="$t('app.tab.users')" >
           <databases :items="rowsUsers" :fields="columnUsers" />
@@ -259,8 +257,9 @@ export default {
         { key: 'first_name', label: 'First Name', sortable: true },
         { key: 'user_team', label: 'City', sortable: true },
         { key: 'last_role', label: 'E-Mail', sortable: true },
-        { key: 'user_pos', label: 'Mobile', sortable: true },
-        { key: 'user_pos', label: 'Department', sortable: true },
+        { key: 'user_pos', label: 'Phone', sortable: true },
+        { key: 'mobile', label: 'Mobile', sortable: true },
+        { key: 'departement', label: 'Department', sortable: true },
         'Action',
       ],
       columnAppointment: [
@@ -320,15 +319,6 @@ export default {
       ],
       rowsAppointment: [],
       rowsContactPersons: [
-      {     
-         id: 1,
-        full_name: 'John',
-        first_name: 'Doe',
-        user_team: 'Team_1',
-        last_role: 'E-Mail',
-        user_pos: 'Mobile',
-        user_pos: 'Department',
-        },
       ],
       rowsSalesOrders: [],
       rowsPreviewInvoices: [],

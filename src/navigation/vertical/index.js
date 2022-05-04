@@ -72,129 +72,129 @@ export default [
         route: '/',
       },
       {
-        title: 'Pays / Monnaies',
+        title: 'app.sidebar.admin.children.country_currency',
         route: '/',
       },
       {
-        title: 'Protocole d\'accès',
+        title: 'app.sidebar.admin.children.access_protocol',
         route: '/',
       },
       {
-        title: 'Modèles de texte',
+        title: 'app.sidebar.admin.children.text_templates',
         route: '/',
       },
     ],
   },
   {
-    title: 'Properties',
+    title: 'app.sidebar.properties',
     route: 'properties',
     icon: 'GitCommitIcon',
   },
   {
-    title: 'Users & Rights',
+    title: 'app.sidebar.users_rights',
     route: 'users-list',
     icon: 'UserIcon',
   },
   {
-    title: 'Authorization',
+    title: 'app.sidebar.auth',
     route: 'authorization',
     icon: 'KeyIcon',
   },
   {
-    title: 'Teams',
+    title: 'app.sidebar.tams',
     route: 'teams',
     icon: 'UsersIcon',
   },
   {
-    title: 'User Type',
+    title: 'app.sidebar.user_type',
     route: 'users-type',
     icon: 'UsersIcon',
   },
   {
-    title: 'Templates',
+    title: 'app.sidebar.templates',
     route: 'templates',
     icon: 'FeatherIcon',
   },
   {
-    title: 'Master Data',
+    title: 'app.sidebar.master_data',
     route: 'master-data',
     icon: 'GridIcon',
   },
   {
-    title: 'Work package 2',
+    title: 'app.sidebar.work_pack_2.title',
     route: 'work package',
     icon: 'CheckSquareIcon',
     children: [
       {
-        title: 'Customer Group',
+        title: 'app.sidebar.work_pack_2.children.customer_group',
         route: 'customer-groups',
       },
       {
-        title: 'Company',
+        title: 'app.sidebar.work_pack_2.children.company',
         route: 'companies',
       },
       {
-        title: 'Contact Person',
+        title: 'app.sidebar.work_pack_2.children.contact_person',
         route: 'contact-person',
       },
       {
-        title: 'Payment',
+        title: 'app.sidebar.work_pack_2.children.payment',
         route: 'payment',
       },
       {
-        title: 'Partner Company',
+        title: 'app.sidebar.work_pack_2.children.partner_company',
         route: 'partner-company',
       },
       {
-        title: 'Partner Company Group',
+        title: 'app.sidebar.work_pack_2.children.partner_compan_group',
+        route: 'partner-company-group',
+      },
+      {
+        title: 'app.sidebar.work_pack_2.children.address',
         route: '/',
       },
       {
-        title: 'Address',
+        title: 'app.sidebar.work_pack_2.children.contact_title',
         route: '/',
       },
       {
-        title: 'Contact Title',
+        title: 'app.sidebar.work_pack_2.children.salutation',
         route: '/',
       },
       {
-        title: 'Salutation',
+        title: 'app.sidebar.work_pack_2.children.city',
         route: '/',
       },
       {
-        title: 'City',
+        title: 'app.sidebar.work_pack_2.children.currency',
         route: '/',
       },
       {
-        title: 'Currrency',
+        title: 'app.sidebar.work_pack_2.children.country',
         route: '/',
       },
       {
-        title: 'Country',
+        title: 'app.sidebar.work_pack_2.children.lang',
         route: '/',
       },
       {
-        title: 'Language',
+        title: 'app.sidebar.work_pack_2.children.partner_type',
         route: '/',
       },
       {
-        title: 'Partner Type',
-        route: '/',
-      },
-      {
-        title: 'Standart path new Business',
+        title: 'app.sidebar.work_pack_2.children.s_p_n_b',
         route: '/',
       },
     ],
   },
 
   {
-    title: 'Work package 3',
+    title: 'app.sidebar.work_pack_3.title',
     route: 'work package',
     icon: 'CheckSquareIcon',
     children: [
       {
-        title: 'Customer Group',
+        title: 'app.sidebar.work_pack_2.children.customer_group',
         route: '/',
       },
     ]

@@ -158,7 +158,7 @@
         <div class="" id="">
           <b-col cols="12">
             <b-form-group
-              :label="$t('app.form.label.company_name')"
+              :label="$t('app.form.label.street')"
               label-for="companyName"
               label-cols-md="12"
             >
@@ -239,7 +239,7 @@
         <b-row> 
           <b-col cols="12">
             <b-form-group
-              :label="$t('app.form.label.address')"
+              :label="$t('app.form.label.contact_details')"
               label-for="address"
               label-cols-md="12"
             >

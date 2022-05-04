@@ -15,9 +15,45 @@
           "elt": "Éléments de texte Waderspruch",
           "bdc": "Base de données clients",
           "contract": "Contrats",
-          "process": "Processus"
+          "process": "Processus",
+          "country_currency": "Pays / Monnaies",
+          "access_protocol": "Protocole d'accès",
+          "text_templates": "Modèles de texte"
         }
-      }
+      },
+      "properties": "Propriétés", 
+      "users_rights": "Utilisateurs & Droits", 
+      "auth": "Autorisations", 
+      "teams": "Équipes", 
+      "user_type": "Type d'utilisateur", 
+      "templates": "Modèles", 
+      "master_data": "Données de base", 
+      "work_pack_2": {
+        "title": "Paquet de travail 2",
+        "children" : {
+          "customer_group": "Groupe de clients",
+          "company":"Entreprise",
+          "contact_person":"Personne de contact",
+          "partner_compan_group": "Groupe de sociétés partenaires",
+          "address": "Adresse",
+          "contact_title": "Titre du contact",
+          "salutation": "Salutation",
+          "city": "Ville",
+          "currency": "Devise",
+          "country": "Pays",
+          "lang": "Langue",
+          "s_p_n_b": "Voie normale nouvelle activité",
+          "payment":"Paiement",
+          "partner_company":"Entreprise partenaire",
+          "partner_type": "Type de partenaire"
+        }
+      },
+      "work_pack_3": {
+        "title": "Work Package 3",
+        "children" : {
+          "customer_group": "Customer group"
+        }
+      } 
     },
     "content": {
       "show": "Afficher",
@@ -32,8 +68,11 @@
       "edit_user": "Modifier l'utilisateur",
       "create_contact_person": "Créer une personne de contact",
       "company_detail_view": "Détails de l'entreprise ",
+      "partner_company_detail_view": "Détails de l'entreprise partenaire ",
       "auth_management_detail" : "Détail de la gestion des autorisations",
-      "create_payment" : "Creer un payement",
+      "create_payment" : "Creer un paiement",
+      "create_customer": "Créer un nouveau client",
+      "create_partner_group": "Creer un groupe de partenaires",
 
 
       "dashboard": {
@@ -127,7 +166,7 @@
         "country": "Pays",
         "company_id": "ID de l'entreprise",
         "address_suffix": "Suffixe de l'addresse",
-        "land": "Terre",
+        "land": "Pays",
         "cell_phone_num": "Numéro de téléphone portable",
         "company_details": "Détails de l'entreprise",
         "tax_id": "Numéro d'identification fiscale",
@@ -141,12 +180,15 @@
         "address_addition" : "Ajout d'adresse",
         "preservation": "Préservation",
         "group_name": " Nom du Groupe",
-        "payment_info": "Informations de Payement",
+        "payment_info": "Informations de paiement",
         "debitor": "Débiteur",
         "object_reference": "Référence de l'objet",
         "value": "Valeur",
         "date": "Date",
-        "payment_type" : "Type de payement"
+        "payment_type" : "Type de paiement",
+        "contact_details" : "Détails du contact",
+        "partner_type" : "Type de partenaire",
+        "partner_company_group" : "Groupe de société partenaire"
 
       }
     },
@@ -159,12 +201,13 @@
       "users": "Utilisateurs",
       "customers": "Clients",
       "tickets": "Tickets",
-      "payments": "Payements",
+      "payments": "Paiements",
       "appointment_track" : "Suivi des rendez-vous",
       "sales_order_sfm" : "Ordres de vente SFM",
-      "preview_invoices" : "Prévisualisation des factures",
+      "preview_invoices" : "Examen des factures",
       "contradictions": "Contradictions",
-      "rights": "Droits"
+      "rights": "Droits",
+      "location": "Emplacement"
 
     }
   }

@@ -372,34 +372,61 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/app/partner-company',
+      path: '/app/partner/company',
       name: 'partner-company',
-      component: () => import('@/views/app/Partner_Company/Edit.vue'),
+      component: () => import('@/views/app/Partner_Company/index.vue'),
       meta: {
-        pageTitle: 'COMPANY EDIT',
+        pageTitle: 'OVERALL LIST PARTNER COMPANIES',
         breadcrumb: [
           {
-            text: 'COMPANY EDIT',
+            text: 'OVERALL LIST PARTNER COMPANIES',
             active: true,
           },
         ],
       },
     },
     {
-      path: '/app/partner-company/edit',
+      path: '/app/partner/company/edit',
       name: 'partner-company-edit',
       component: () => import('@/views/app/Partner_Company/Edit.vue'),
       meta: {
-        pageTitle: 'COMPANY EDIT',
+        pageTitle: 'PARTNER COMPANIES EDIT',
         breadcrumb: [
           {
-            text: 'COMPANY EDIT',
+            text: 'PARTNER COMPANIES EDIT',
             active: true,
           },
         ],
       },
     },
-
+    {
+      path: '/app/partner/company/group',
+      name: 'partner-company-group',
+      component: () => import('@/views/app/partner-company-group/index.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST PARTNER GROUP ',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST PARTNER GROUP',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/partner/company/group/edit',
+      name: 'partner-company-group-edit',
+      component: () => import('@/views/app/partner-company-group/Edit.vue'),
+      meta: {
+        pageTitle: 'PARTNER GROUP EDIT',
+        breadcrumb: [
+          {
+            text: 'PARTNER GROUP EDIT',
+            active: true,
+          },
+        ],
+      },
+    },
   ],
 })
 

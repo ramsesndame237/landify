@@ -15,9 +15,45 @@
           "elt": "Text elements Waderspruch",
           "bdc": "Customer database",
           "contract": "Contracts",
-          "process": "Process"
+          "process": "Process",
+          "country_currency": "Country / Currency",
+          "access_protocol": "Access Protocol",
+          "text_templates": "Text template"
         }
-      }
+      },
+      "properties": "Properties", 
+      "users_rights": "Users & Rights", 
+      "auth": "Authorization", 
+      "teams": "Teams", 
+      "user_type": "User Type", 
+      "templates": "Templates", 
+      "master_data": "Mater Data", 
+      "work_pack_2": {
+        "title": "Work Package 2",
+        "children" : {
+          "customer_group": "Customer group",
+          "company":"Company",
+          "contact_person":"Contact Person",
+          "payment":"Payment",
+          "partner_company":"Partner Company",
+          "partner_compan_group": "Partner Company Group",
+          "address": "Address",
+          "contact_title": "Contact Title",
+          "salutation": "Salutation",
+          "city": "City",
+          "currency": "Currency",
+          "country": "Country",
+          "lang": "Language",
+          "partner_type": "Partner Type",
+          "s_p_n_b": "Standart path new Business"
+        }
+      },
+      "work_pack_3": {
+        "title": "Work Package 3",
+        "children" : {
+          "customer_group": "Customer group"
+        }
+      } 
     },
     "lang": {
       "fr": "French",
@@ -44,8 +80,12 @@
       "edit_user": "Edit  user",
       "create_contact_person": "Create Contact Person",
       "company_detail_view": "company Details View",
+      "partner_company_detail_view": "Partner Company Details View",
       "auth_management_detail" : "Authorization Management detail",
       "create_payment" : "Create Payment",
+      "create_customer": "Create new Customer",
+      "create_partner_group": "Create Partner Group",
+      
 
       "dashboard": {
         "sub_title": "Overall list without registers",
@@ -140,7 +180,7 @@
         "country": "Pays",
         "company_id": "Company ID",
         "address_suffix": "Address suffix",
-        "land": "Land",
+        "land": "Country",
         "cell_phone_num": "Cell phone number",
         "company_details": "Company details",
         "tax_id": "Tax ID",
@@ -159,7 +199,10 @@
         "object_reference": "Object Reference",
         "value": "Value",
         "date": "Date",
-        "payment_type" : "Payment Type"
+        "payment_type" : "Payment Type",
+        "contact_details" : "Contact Details",
+        "partner_type" : "Partner Type",
+        "partner_company_group" : "Partner Company Group"
 
       }
     },
@@ -174,9 +217,10 @@
       "payments": "Payments",
       "appointment_track" : "Appointment track",
       "sales_order_sfm" : "Sales Orders SFM",
-      "preview_invoices" : "Preview Invoices",
+      "preview_invoices" : "Rreview Invoices",
       "contradictions": "Contradictions",
-      "rights": "Rights"
+      "rights": "Rights",
+      "location": "Location"
     }
 
   }
