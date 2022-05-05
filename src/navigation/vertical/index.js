@@ -131,7 +131,7 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_2.children.company',
-        route: 'companies',
+        route: 'company-list',
       },
       {
         title: 'app.sidebar.work_pack_2.children.contact_person',
@@ -197,6 +197,6 @@ export default [
         title: 'app.sidebar.work_pack_2.children.customer_group',
         route: '/',
       },
-    ]
-  }
+    ],
+  },
 ]
