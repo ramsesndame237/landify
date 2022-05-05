@@ -289,7 +289,7 @@ const router = new VueRouter({
     },
     {
       path: '/app/companies',
-      name: 'companies',
+      name: 'company-list',
       component: () => import('@/views/app/Company/index.vue'),
       meta: {
         pageTitle: 'OVERALL LIST COMPANIES',
@@ -302,12 +302,18 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/app/company-edit',
+      path: '/app/companies/edit',
       name: 'company-edit',
       component: () => import('@/views/app/Company/Edit.vue'),
       meta: {
         pageTitle: 'COMPANY EDIT',
+        navActiveLink: 'company-list',
         breadcrumb: [
+          {
+            text: 'List of companies',
+            to: {name: 'company-list'},
+            active: false,
+          },
           {
             text: 'COMPANY EDIT',
             active: true,
