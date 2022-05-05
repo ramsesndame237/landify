@@ -57,7 +57,7 @@
         </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" link="company-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases :filter="filter" link="partner-company-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
     </b-card>
 
     <!--modal-->
@@ -67,7 +67,7 @@
         :cancel-title="$t('app.btn.cancel')"
         modal-class="modal-primary"
         centered
-        :title="$t('app.content.create_company')"
+        :title="$t('app.content.create_customer')"
         size="lg"
     >
       <b-form @submit.prevent>
@@ -82,7 +82,6 @@
               <b-col cols="6">
                 <b-form-select
                   id="customer-group-id"
-                   
                   v-model="newCompany.customerGroupId"
                   :options="customerGroupOptions"
                 >
@@ -103,7 +102,6 @@
               <b-col cols="6">
                 <b-form-input
                   id="companyId"
-                   
                   v-model="newCompany.companyId"
                   :placeholder="$t('app.form.placeholder.automatic_based_on_id')"
                 />
@@ -123,9 +121,26 @@
               <b-col cols="6">
                 <b-form-input
                   id="companyName"
-                   
                   v-model="newCompany.companyName"
                   :placeholder="$t('app.form.placeholder.default')"
+                />
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+        </b-row>
+        <b-row> 
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.partner_type')"
+              label-for="companyName"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="6">
+                <b-form-select
+                  id="companyName"
+                  v-model="newCompany.companyName"
                 />
               </b-col>
             </b-row>
@@ -143,7 +158,6 @@
                 <b-col cols="5">
                   <b-form-select
                     id="address"
-                     
                     v-model="newCompany.companyAddres"
                     :options="customerGroupOptions"
                   />
@@ -303,23 +317,15 @@
             </b-row>
             </b-form-group>
           </b-col>
-          <b-col cols="12">
+          <b-col cols="6">
             <b-form-group
               :label="$t('app.form.label.fax')"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="5">
-                <b-form-select
-                   
-                  v-model="newCompany.companyAddres"
-                  :options="customerGroupOptions"
-                />
-              </b-col>
-              <b-button   variant="info" class="-pl-3">
-                {{ $t('app.btn.new') }} 
-              </b-button>
-            </b-row>
+            <b-form-input
+              :placeholder="$t('app.form.placeholder.automatic')"
+              v-model="newCompany.companyDetails"
+            />
             </b-form-group>
 
           </b-col>
@@ -332,13 +338,16 @@
               label-cols-md="12"
             >
             <b-row>
-              <b-col cols="6">
-                <b-form-input
+              <b-col cols="5">
+                <b-form-select
+                  v-model="newCompany.companyAddres"
                   id="companyDetails"
-                  :placeholder="$t('app.form.placeholder.automatic')"
-                  v-model="newCompany.companyDetails"
+                  :options="customerGroupOptions"
                 />
               </b-col>
+              <b-button   variant="info" class="-pl-3">
+                {{ $t('app.btn.new') }} 
+              </b-button>
             </b-row>
             </b-form-group>
           </b-col>
@@ -366,77 +375,6 @@
             <b-row>
               <b-col cols="6">
                <b-form-input
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-            </b-row>
-            </b-form-group>
-          </b-col>
-        </div>
-        <b-row> 
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.bankdata')"
-              label-for="bankData"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="5">
-                  <b-form-select
-                    id="bankData"
-                    :options="customerGroupOptions"
-                  :placeholder="$t('app.form.placeholder.default')"
-                  />
-                </b-col>
-                <b-button   variant="info" class="-pl-3">
-                  {{ $t('app.btn.new') }}
-                </b-button>
-              </b-row>
-            </b-form-group>
-          </b-col>
-        </b-row>
-        <div class="" id="">
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.iban_account')"
-              label-for="ibanAccount"
-              label-cols-md="12"
-            >
-            <b-row>
-              <b-col cols="6">
-                <b-form-input
-                  id="ibanAccount"
-                  v-model="newCompany.companyName"
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-            </b-row>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.bic')"
-              label-for="bic"
-              label-cols-md="12"
-            >
-            <b-row>
-              <b-col cols="6">
-                <b-form-input
-                  id="bic"
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-            </b-row>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.bank_name')"
-              label-cols-md="12"
-            >
-            <b-row>
-              <b-col cols="6">
-                <b-form-input
                   :placeholder="$t('app.form.placeholder.default')"
                 />
               </b-col>
@@ -525,13 +463,14 @@ export default {
       ],
       fields: [
         { key: 'id', label: 'Id' },
-        { key: 'company_id', label: 'Company ID', sortable: true },
-        { key: 'company_name', label: 'Name Company', sortable: true },
-        { key: 'group_name', label: 'Group Name', sortable: true },
-        { key: 'city', label: 'City', sortable: true },
-        { key: 'phone', label: 'Phone', sortable: true },
+        { key: 'company_id', label: 'Name Partnerfirma', sortable: true },
+        { key: 'company_name', label: 'Partnerfirma ID', sortable: true },
+        { key: 'group_name', label: 'NamePartnergruppe', sortable: true },
+        { key: 'city', label: 'Stadt', sortable: true },
+        { key: 'phone', label: 'Partner Type', sortable: true },
         { key: 'mail', label: 'E-mail', sortable: true },
         { key: 'contact_partner', label: '# Contact partner', sortable: true },
+        { key: 'contact_partner', label: '# Locations', sortable: true },
         'Action',
       ],
       selected: null,

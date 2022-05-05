@@ -82,7 +82,7 @@ const router = new VueRouter({
     },
     {
       path: '/app/users',
-      name: 'users-lists',
+      name: 'users-list',
       component: () => import('@/views/app/Users/index.vue'),
       meta: {
         pageTitle: 'Overall list users',
@@ -100,7 +100,13 @@ const router = new VueRouter({
       component: () => import('@/views/app/Users/Edit.vue'),
       meta: {
         pageTitle: 'Edit User',
+        navActiveLink: 'users-list',
         breadcrumb: [
+          {
+            text: 'Overall list users',
+            to: {name: 'users-list'},
+            active: false
+          },
           {
             text: 'Edit User',
             active: true,
@@ -309,7 +315,118 @@ const router = new VueRouter({
         ],
       },
     },
-
+    {
+      path: '/app/contact-person',
+      name: 'contact-person',
+      component: () => import('@/views/app/Contact_Person/index.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST CONTACT PERSONS',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST CONTACT PERSONS',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/contact-person-edit',
+      name: 'contact-person-edit',
+      component: () => import('@/views/app/Contact_Person/Edit.vue'),
+      meta: {
+        pageTitle: 'CONTACT PERSON',
+        breadcrumb: [
+          {
+            text: 'CONTACT PERSON',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/payment',
+      name: 'payment',
+      component: () => import('@/views/app/Payment/index.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST PAYMENT Data',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST PAYMENT Data',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/payment/edit',
+      name: 'payment-edit',
+      component: () => import('@/views/app/Payment/Edit.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST PAYMENT Data',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST PAYMENT Data',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/partner/company',
+      name: 'partner-company',
+      component: () => import('@/views/app/Partner_Company/index.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST PARTNER COMPANIES',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST PARTNER COMPANIES',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/partner/company/edit',
+      name: 'partner-company-edit',
+      component: () => import('@/views/app/Partner_Company/Edit.vue'),
+      meta: {
+        pageTitle: 'PARTNER COMPANIES EDIT',
+        breadcrumb: [
+          {
+            text: 'PARTNER COMPANIES EDIT',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/partner/company/group',
+      name: 'partner-company-group',
+      component: () => import('@/views/app/partner-company-group/index.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST PARTNER GROUP ',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST PARTNER GROUP',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/partner/company/group/edit',
+      name: 'partner-company-group-edit',
+      component: () => import('@/views/app/partner-company-group/Edit.vue'),
+      meta: {
+        pageTitle: 'PARTNER GROUP EDIT',
+        breadcrumb: [
+          {
+            text: 'PARTNER GROUP EDIT',
+            active: true,
+          },
+        ],
+      },
+    },
   ],
 })
 

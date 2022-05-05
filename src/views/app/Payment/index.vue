@@ -57,7 +57,7 @@
         </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" link="authorization-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases :filter="filter" link="payment-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
     </b-card>
 
     <!--modal-->
@@ -67,107 +67,112 @@
         :cancel-title="$t('app.btn.cancel')"
         modal-class="modal-primary"
         centered
-        :title="$t('app.content.create_user')"
+        :title="$t('app.content.create_company')"
         size="lg"
     >
       <b-form @submit.prevent>
-        <b-row>
-          <b-col cols="12">
+        <b-row> 
+          <b-col cols="12" md="10">
             <b-form-group
-                :label="$t('app.form.label.company_name')"
-                label-for="company-name"
-                label-cols-md="4"
+              :label="`${$t('app.form.label.id')}`"
+              label-for="group-id"
+              label-cols-md="3"
             >
-              <b-form-input
-                  id="company-name"
-                  type="text"
-                  :placeholder="$t('app.form.placeholder.default')"
-              />
+            <b-form-input
+              id="group-id"
+              :placeholder="$t('app.form.placeholder.automatic')"
+                
+              v-model="newCompany.customerGroupId"
+           />
             </b-form-group>
           </b-col>
-          <b-col cols="12">
+          <b-col cols="12" md="10">
             <b-form-group
-                :label="$t('app.form.label.email')"
-                label-for="h-email"
-                label-cols-md="4"
+              :label="`${$t('app.form.label.company_id')}`"
+              label-for="group-name"
+              label-cols-md="3"
             >
-              <b-form-input
-                  id="h-email"
-                  type="email"
-                  :placeholder="$t('app.form.placeholder.default')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                :label="`${$t('app.form.label.name')} / ${$t('app.form.label.firstname')}`"
-                label-for="h-name"
-                label-cols-md="4"
-            >
-              <div class="d-flex">
-                <b-form-input
-                    class="mr-1"
-                    id="h-name"
-                    type="text"
-                    :placeholder="$t('app.form.placeholder.default')"
-                />
-                <b-form-input
-                    md="4"
-                    id="h-firstname"
-                    type="text"
-                    :placeholder="$t('app.form.placeholder.default')"
-                />
-              </div>
-
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                :label="$t('app.form.label.mobile')"
-                label-for="h-mobile"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="h-mobile"
-                  type="number"
-                  :placeholder="$t('app.form.placeholder.default')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                :label="$t('app.form.label.fax')"
-                label-for="h-fax"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="h-fax"
-                  type="text"
-                  :placeholder="$t('app.form.placeholder.default')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                :label="$t('app.form.label.deputy')"
-                label-for="h-deputy"
-                label-cols-md="4">
               <b-form-select
-                  v-model="selected"
-                  :options="options"
+                id="group-name"
+                v-model="newCompany.companyId"
               />
             </b-form-group>
           </b-col>
-          <b-col cols="12">
+          <b-col cols="12" md="10">
             <b-form-group
-                :label="$t('app.form.label.type')"
-                label-for="h-deputy"
-                label-cols-md="4">
-              <b-form-select
-                  v-model="selected"
-                  :options="options"
+              :label="$t('app.form.label.payment_info')"
+              label-for="payment_info"
+              label-cols-md="3"
+            >
+                <b-form-input
+                  id="payment_info"
+                  v-model="newCompany.companyName"
+                  :placeholder="$t('app.form.placeholder.default')"
+                />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="$t('app.form.label.debitor')"
+              label-for="group-id"
+              label-cols-md="3"
+            >
+            <b-form-input
+              id="group-id"
+              v-model="newCompany.customerGroupId"
+              :placeholder="$t('app.form.placeholder.default')"
+            />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="$t('app.form.label.object_reference')"
+              label-for="object_reference"
+              label-cols-md="3"
+            >
+              <b-form-input
+                id="object_reference"
+                :placeholder="$t('app.form.placeholder.default')"
               />
             </b-form-group>
+          </b-col>
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="$t('app.form.label.value')"
+              label-for="value"
+              label-cols-md="3"
+            >
+            <b-form-input
+              id="value"
+              v-model="newCompany.customerGroupId"
+              :placeholder="$t('app.form.placeholder.default')"
+            />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="$t('app.form.label.date')"
+              label-for="date"
+              label-cols-md="3"
+            >
+              <b-form-datepicker
+                id="date"
+              ></b-form-datepicker>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="$t('app.form.label.payment_type')"
+              label-for="payment_type"
+              label-cols-md="3"
+            >
+              <b-form-input
+                id="payment_type"
+                v-model="newCompany.companyName"
+                :placeholder="$t('app.form.placeholder.default')"
+              />
+            </b-form-group>
+          
           </b-col>
         </b-row>
       </b-form>
@@ -190,6 +195,7 @@ import {
   BCard,
   BPagination,
   BInputGroup,
+  BFormDatepicker,
 } from 'bootstrap-vue'
 
 export default {
@@ -206,10 +212,10 @@ export default {
     BCol,
     BFormInput,
     BInputGroup,
+    BFormDatepicker,
   },
   data() {
     return {
-      filter: null,
       currentPage: 1,
       totalRows: 1,
       perPage: 10,
@@ -220,59 +226,64 @@ export default {
       items: [
         {
           id: 1,
-          // eslint-disable-next-line global-require
-          role_id: 1,
-          role_name: 'ADMIN',
-          permission: 'ADMIN',
+          group: '213',
+          company_name: 'Fictive Copany',
+          last_name: 'Fictive Group',
+          first_name: 'Fictive Group',
+          city: 'Yaoundé',
+          phone: '+237 132 645 987',
+          mail: 'johndoe@gmail.com',
+          function: "Something",
+          user_id: "1",
         },
         {
           id: 1,
-          // eslint-disable-next-line global-require
-          role_id: 1,
-          role_name: 'ADMIN',
-          permission: 'ADMIN',
+          group: '213',
+          company_name: 'Fictive Copany',
+          last_name: 'Fictive Group',
+          first_name: 'Fictive Group',
+          city: 'Yaoundé',
+          phone: '+237 132 645 987',
+          mail: 'johndoe@gmail.com',
+          function: "Something",
+          user_id: "1",
         },
         {
           id: 1,
-          // eslint-disable-next-line global-require
-          role_id: 1,
-          role_name: 'ADMIN',
-          permission: 'ADMIN',
+          group: '213',
+          company_name: 'Fictive Copany',
+          last_name: 'Fictive Group',
+          first_name: 'Fictive Group',
+          city: 'Yaoundé',
+          phone: '+237 132 645 987',
+          mail: 'johndoe@gmail.com',
+          function: "Something",
+          user_id: "1",
         },
         {
           id: 1,
-          // eslint-disable-next-line global-require
-          role_id: 1,
-          role_name: 'ADMIN',
-          permission: 'ADMIN',
-        },
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          role_id: 1,
-          role_name: 'ADMIN',
-          permission: 'ADMIN',
-        },
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          role_id: 1,
-          role_name: 'ADMIN',
-          permission: 'ADMIN',
-        },
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          role_id: 1,
-          role_name: 'ADMIN',
-          permission: 'ADMIN',
+          group: '213',
+          company_name: 'Fictive Copany',
+          last_name: 'Fictive Group',
+          first_name: 'Fictive Group',
+          city: 'Yaoundé',
+          phone: '+237 132 645 987',
+          mail: 'johndoe@gmail.com',
+          function: "Something",
+          user_id: "1",
         },
       ],
       fields: [
         { key: 'id', label: 'Id' },
-        { key: 'role_id', label: 'Role ID', sortable: true },
-        { key: 'role_name', label: 'Role name', sortable: true },
-        { key: 'permission', label: 'Permission', sortable: true },
+        { key: 'group', label: "Payment ID", sortable: true },
+        { key: 'last_name', label: "Company ID", sortable: true },
+        { key: 'first_name', label: "Name Firma/Kunde", sortable: true },
+        { key: 'city', label: 'Zahlungsinformation', sortable: true },
+        { key: 'phone', label: 'Debitor', sortable: true },
+        { key: 'mail', label: "Value", sortable: true },
+        { key: 'function', label: "Object Reference", sortable: true },
+        { key: 'mail', label: "Date", sortable: true },
+        { key: 'mail', label: "Payment Type", sortable: true },
         'Action',
       ],
       selected: null,
@@ -283,14 +294,28 @@ export default {
         { value: { C: '3PO' }, text: 'This is an option with object value' },
         { value: 'd', text: 'Please select', disabled: true },
       ],
+      filter: null,
+      customerGroupOptions: [
+        { value: null, text: this.$t('app.form.placeholder.select') },
+        { value: 'a', text: 'This is First option' },
+        { value: 'b', text: 'Selected Option' },
+      ],
+      newCompany: {
+        customerGroupId: null,
+        companyId: null,
+        companyName: null,
+        addressId: null,
+        contactDetailId: null,
+        bankDataId: null,
+      }
     }
   },
   computed: {
     sortOptions() {
       // Create an options list from our fields
       return this.fields
-        .filter(f => f.sortable)
-        .map(f => ({ text: f.label, value: f.key }))
+          .filter(f => f.sortable)
+          .map(f => ({ text: f.label, value: f.key }))
     },
   },
   mounted() {
@@ -316,7 +341,4 @@ export default {
 </script>
 
 <style scoped>
-.first-bloc img {
-  margin-right: 4px;
-}
 </style>

@@ -18,25 +18,8 @@
     </div>
 
     <b-navbar-nav class="nav align-items-center ml-auto">
-      <b-nav-item-dropdown
-          id="dropdown-grouped"
-          variant="link"
-          class="dropdown-language"
-          right
-      >
-        <template #button-content>
-          <b-img class="dropdown-language" height="14" width="22" :src="require('@/assets/images/flags/en.png')" />
-          <span class="ml-50 text-body">English</span>
-        </template>
-        <b-dropdown-item>
-          <b-img class="dropdown-language" height="14" width="22" :src="require('@/assets/images/flags/de.png')" />
-          <span class="ml-50 text-body">Allemand</span>
-        </b-dropdown-item>
-        <b-dropdown-item>
-          <b-img class="dropdown-language" height="14" width="22" :src="require('@/assets/images/flags/fr.png')" />
-          <span class="ml-50 text-body">Francais</span>
-        </b-dropdown-item>
-      </b-nav-item-dropdown>
+      <Locale />
+
       <svg class="mr-1" width="22" height="21" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M16.7303 19.036L10.8946 15.4557L5.12289 18.997L6.69512 12.4435L1.438 8.0678L8.24525 7.59794L10.7681 1.35227L13.4029 7.61528L20.2189 8.13101L15.0401 12.4716L16.7303 19.036Z" fill="#686C72" stroke="#686C72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
@@ -86,7 +69,7 @@
             icon="UserIcon"
             class="mr-50"
           />
-          <span>Profile</span>
+          <span> {{$t('app.navbar.profile')}} </span>
         </b-dropdown-item>
 
         <b-dropdown-item link-class="d-flex align-items-center">
@@ -95,7 +78,7 @@
             icon="MailIcon"
             class="mr-50"
           />
-          <span>Inbox</span>
+          <span>{{$t('app.navbar.inbox')}} </span>
         </b-dropdown-item>
 
         <b-dropdown-item link-class="d-flex align-items-center">
@@ -104,7 +87,7 @@
             icon="CheckSquareIcon"
             class="mr-50"
           />
-          <span>Task</span>
+          <span>{{$t('app.navbar.task')}} </span>
         </b-dropdown-item>
 
         <b-dropdown-item link-class="d-flex align-items-center">
@@ -113,7 +96,7 @@
             icon="MessageSquareIcon"
             class="mr-50"
           />
-          <span>Chat</span>
+          <span>{{$t('app.navbar.chat')}} </span>
         </b-dropdown-item>
 
         <b-dropdown-divider />
@@ -124,7 +107,7 @@
             icon="LogOutIcon"
             class="mr-50"
           />
-          <span>Logout</span>
+          <span>{{$t('app.navbar.logout')}} </span>
         </b-dropdown-item>
       </b-nav-item-dropdown>
     </b-navbar-nav>
@@ -136,7 +119,7 @@ import {
   BLink,BImg, BNavbarNav, BNavItemDropdown, BDropdownItem, BDropdownDivider, BAvatar,
 } from 'bootstrap-vue'
 import DarkToggler from '@core/layouts/components/app-navbar/components/DarkToggler.vue'
-
+import Locale from './Locale.vue'
 export default {
   components: {
     BLink,
@@ -146,6 +129,7 @@ export default {
     BDropdownDivider,
     BAvatar,
     BImg,
+    Locale,
     // Navbar Components
     DarkToggler,
   },

@@ -4,16 +4,16 @@
       <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
         <div class="d-flex">
           <img src="@/assets/images/icons/team.svg" alt="" class="mr-1">
-          <span>Create or update Team</span>
+          <span>{{ $t('app.content.create_team') }}</span>
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
             <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
               <img src="@/assets/images/pages/plusIcons.svg" alt="">
-              Create new team </b-button>
+              {{ $t('app.content.create_team') }}</b-button>
             <b-button size="sm" class="d-flex" variant="primary">
               <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-              Cancel</b-button>
+              {{ $t('app.btn.cancel') }}</b-button>
           </div>
         </div>
       </div>
@@ -23,23 +23,23 @@
         <b-row>
           <!-- Field: email -->
           <b-col cols="12" md="6">
-            <b-form-group label="TEAM ID" label-for="username">
-              <b-form-input placeholder="Enter here..." id="username" v-model="user.name"/>
+            <b-form-group :label="$t('app.form.label.team_id')" label-for="username">
+              <b-form-input :placeholder="$t('app.form.placeholder.default')" id="username" v-model="user.name"/>
             </b-form-group>
           </b-col>
 
           <b-col cols="12" md="6">
-            <b-form-group label="NAME*" label-for="full-name">
-              <b-form-input placeholder="Enter here..." id="full-name" v-model="user.name" type="email"/>
+            <b-form-group :label="$t('app.form.label.name')" label-for="full-name">
+              <b-form-input :placeholder="$t('app.form.placeholder.default')" id="full-name" v-model="user.name" type="email"/>
             </b-form-group>
           </b-col>
 
           <!-- Field: Name -->
           <b-col cols="12" md="12">
-            <label for="textarea-default">DESCRIPTION</label>
+            <label for="textarea-default"> {{ $t('app.form.label.description') }} </label>
             <b-form-textarea
                 id="textarea-default"
-                placeholder="Enter here..."
+                :placeholder="$t('app.form.placeholder.default')"
                 rows="3"
             />
           </b-col>
@@ -48,178 +48,58 @@
       </b-form>
     </b-card>
 
-    <!--modal-->
     <b-modal
-        id="modal-role"
-        ok-title="Save"
-        cancel-title="Cancel"
+        id="modal-primary"
+        :ok-title="$t('app.btn.save')"
+        :cancel-title="$t('app.btn.cancel')"
         modal-class="modal-primary"
         centered
-        title="Create new user"
+        :title="$t('app.content.create_team')"
         size="lg"
     >
       <b-form @submit.prevent>
         <b-row>
           <b-col cols="12">
             <b-form-group
-                label="Role ID"
-                label-for="role-id"
+                :label=" $t('app.form.label.team_id')"
+                label-for="team-id"
                 label-cols-md="4"
             >
               <b-form-input
-                  id="company-name"
+                  id="team-id"
                   type="text"
-                  placeholder="Enter here ..."
+                  :label=" $t('app.form.placeholder.default')"
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="Name"
-                label-for="name"
+                :label="$t('app.form.label.name')"
+                label-for="name-team"
                 label-cols-md="4"
             >
               <b-form-input
-                  id="h-email"
-                  type="email"
-                  placeholder="Enter here..."
+                  id="name-team"
+                  type="text"
+                  :placeholder=" $t('app.form.placeholder.default')"
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="Name / First name"
-                label-for="h-name"
+                :label=" $t('app.form.label.description')"
+                label-for="description"
                 label-cols-md="4"
             >
               <div class="d-flex">
                 <b-form-input
                     class="mr-1"
-                    id="h-name"
+                    id="description"
                     type="text"
-                    placeholder="Enter here..."
-                />
-                <b-form-input
-                    md="4"
-                    id="h-firstname"
-                    type="text"
-                    placeholder="Enter here..."
+                  :label=" $t('app.form.placeholder.default')"
                 />
               </div>
 
-            </b-form-group>
-          </b-col>
-        </b-row>
-      </b-form>
-    </b-modal>
-
-    <!--  user modal -->
-    <b-modal
-        id="modal-user"
-        ok-title="Save"
-        cancel-title="Cancel"
-        modal-class="modal-primary"
-        centered
-        title="Create new user"
-        size="lg"
-    >
-      <b-form @submit.prevent>
-        <b-row>
-          <b-col cols="12">
-            <b-form-group
-                label="Name Company*"
-                label-for="company-name"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="company-name"
-                  type="text"
-                  placeholder="Please select ..."
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="eMail"
-                label-for="h-email"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="h-email"
-                  type="email"
-                  placeholder="Enter here..."
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Name / First name"
-                label-for="h-name"
-                label-cols-md="4"
-            >
-              <div class="d-flex">
-                <b-form-input
-                    class="mr-1"
-                    id="h-name"
-                    type="text"
-                    placeholder="Enter here..."
-                />
-                <b-form-input
-                    md="4"
-                    id="h-firstname"
-                    type="text"
-                    placeholder="Enter here..."
-                />
-              </div>
-
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Mobile"
-                label-for="h-mobile"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="h-mobile"
-                  type="number"
-                  placeholder="Enter here..."
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Fax"
-                label-for="h-fax"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="h-fax"
-                  type="text"
-                  placeholder="Enter here..."
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Deputy"
-                label-for="h-deputy"
-                label-cols-md="4">
-              <b-form-select
-                  v-model="selected"
-                  :options="options"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                label="Type"
-                label-for="h-deputy"
-                label-cols-md="4">
-              <b-form-select
-                  v-model="selected"
-                  :options="options"
-              />
             </b-form-group>
           </b-col>
         </b-row>

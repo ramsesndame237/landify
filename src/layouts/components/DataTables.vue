@@ -18,12 +18,12 @@
       <b-link :to="{name: link}">
         <b-badge class="mr-1" variant="secondary">
           <img src="@/assets/images/pages/editIcons.svg" alt="">
-          <span>Edit</span>
+          <span>{{ $t('app.btn.edit') }}</span>
         </b-badge>
       </b-link>
       <b-badge variant="primary">
         <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-        Delete
+          <span>{{ $t('app.btn.delete') }}</span>
       </b-badge>
     </template>
 

@@ -57,7 +57,7 @@
         </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" link="authorization-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases :filter="filter" link="partner-company-group-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
     </b-card>
 
     <!--modal-->
@@ -67,105 +67,34 @@
         :cancel-title="$t('app.btn.cancel')"
         modal-class="modal-primary"
         centered
-        :title="$t('app.content.create_user')"
+        :title="$t('app.content.create_customer_group')"
         size="lg"
     >
       <b-form @submit.prevent>
         <b-row>
           <b-col cols="12">
             <b-form-group
-                :label="$t('app.form.label.company_name')"
-                label-for="company-name"
+                :label=" $t('app.form.label.id') "
+                label-for="group-id"
                 label-cols-md="4"
             >
               <b-form-input
-                  id="company-name"
+                  id="group-id"
                   type="text"
-                  :placeholder="$t('app.form.placeholder.default')"
+                  :placeholder="$t('app.form.placeholder.automatic')"
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label="$t('app.form.label.email')"
-                label-for="h-email"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="h-email"
-                  type="email"
-                  :placeholder="$t('app.form.placeholder.default')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                :label="`${$t('app.form.label.name')} / ${$t('app.form.label.firstname')}`"
+                :label=" $t('app.form.label.name') "
                 label-for="h-name"
                 label-cols-md="4"
             >
-              <div class="d-flex">
-                <b-form-input
-                    class="mr-1"
-                    id="h-name"
-                    type="text"
-                    :placeholder="$t('app.form.placeholder.default')"
-                />
-                <b-form-input
-                    md="4"
-                    id="h-firstname"
-                    type="text"
-                    :placeholder="$t('app.form.placeholder.default')"
-                />
-              </div>
-
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                :label="$t('app.form.label.mobile')"
-                label-for="h-mobile"
-                label-cols-md="4"
-            >
               <b-form-input
-                  id="h-mobile"
-                  type="number"
-                  :placeholder="$t('app.form.placeholder.default')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                :label="$t('app.form.label.fax')"
-                label-for="h-fax"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="h-fax"
+                  id="i-name"
                   type="text"
                   :placeholder="$t('app.form.placeholder.default')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                :label="$t('app.form.label.deputy')"
-                label-for="h-deputy"
-                label-cols-md="4">
-              <b-form-select
-                  v-model="selected"
-                  :options="options"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                :label="$t('app.form.label.type')"
-                label-for="h-deputy"
-                label-cols-md="4">
-              <b-form-select
-                  v-model="selected"
-                  :options="options"
               />
             </b-form-group>
           </b-col>
@@ -209,7 +138,6 @@ export default {
   },
   data() {
     return {
-      filter: null,
       currentPage: 1,
       totalRows: 1,
       perPage: 10,
@@ -221,76 +149,49 @@ export default {
         {
           id: 1,
           // eslint-disable-next-line global-require
-          role_id: 1,
-          role_name: 'ADMIN',
-          permission: 'ADMIN',
+          group_id: '12',
+          group_name: 'Fictive Group',
+          number: '200',
         },
         {
           id: 1,
           // eslint-disable-next-line global-require
-          role_id: 1,
-          role_name: 'ADMIN',
-          permission: 'ADMIN',
+          group_id: '12',
+          group_name: 'Fictive Group',
+          number: '200',
         },
         {
           id: 1,
           // eslint-disable-next-line global-require
-          role_id: 1,
-          role_name: 'ADMIN',
-          permission: 'ADMIN',
-        },
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          role_id: 1,
-          role_name: 'ADMIN',
-          permission: 'ADMIN',
-        },
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          role_id: 1,
-          role_name: 'ADMIN',
-          permission: 'ADMIN',
-        },
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          role_id: 1,
-          role_name: 'ADMIN',
-          permission: 'ADMIN',
-        },
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          role_id: 1,
-          role_name: 'ADMIN',
-          permission: 'ADMIN',
+          group_id: '12',
+          group_name: 'Fictive Group',
+          number: '200',
         },
       ],
       fields: [
         { key: 'id', label: 'Id' },
-        { key: 'role_id', label: 'Role ID', sortable: true },
-        { key: 'role_name', label: 'Role name', sortable: true },
-        { key: 'permission', label: 'Permission', sortable: true },
+        { key: 'group_id', label: this.$t('app.form.label.id_group'), sortable: true },
+        { key: 'group_name', label: this.$t('app.form.label.name'), sortable: true },
+        { key: 'number', label: this.$t('app.form.label.number_of_companies'), sortable: true },
         'Action',
       ],
       selected: null,
       options: [
-        { value: null, text: this.$t('app.form.placeholder.select') },
+        { value: null, text: 'Please select an option' },
         { value: 'a', text: 'This is First option' },
         { value: 'b', text: 'Simple Option' },
         { value: { C: '3PO' }, text: 'This is an option with object value' },
         { value: 'd', text: 'Please select', disabled: true },
       ],
+      filter: null,
     }
   },
   computed: {
     sortOptions() {
       // Create an options list from our fields
       return this.fields
-        .filter(f => f.sortable)
-        .map(f => ({ text: f.label, value: f.key }))
+          .filter(f => f.sortable)
+          .map(f => ({ text: f.label, value: f.key }))
     },
   },
   mounted() {
@@ -316,7 +217,4 @@ export default {
 </script>
 
 <style scoped>
-.first-bloc img {
-  margin-right: 4px;
-}
 </style>

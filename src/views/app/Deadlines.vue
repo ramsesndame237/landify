@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h3>Deadlines App</h3>
-    <b-card title="Deadlines 🚀">
-      <b-card-text>Deadlines.</b-card-text>
+    <h3>{{ $t('app.content.deadlines.sub_title') }}</h3>
+    <b-card :title="` ${$t('app.sidebar.deadlines')} 🚀`">
+      <b-card-text>{{ $t('app.content.deadlines.card_text') }} </b-card-text>
     </b-card>
   </div>
 </template>

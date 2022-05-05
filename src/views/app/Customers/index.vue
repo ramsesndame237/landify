@@ -1,59 +1,60 @@
 <template>
   <div>
     <b-card body-class="p-0">
-      <div class="d-flex justify-content-between" style="padding: 10px">
-        <b-form-group class="mb-0">
-          <label class="d-inline-block text-sm-left mr-50">Show</label>
-          <b-form-select style="width: 60px"
-                         id="perPageSelect"
-                         v-model="perPage"
-                         size="sm"
-                         :options="pageOptions"
-                         class="w-10"
-          />
-          <label class="d-inline-block text-sm-left ml-50">Entries</label>
-        </b-form-group>
+        <div class="d-flex justify-content-between" style="padding: 10px">
+          <b-form-group class="mb-0">
+            <label class="d-inline-block text-sm-left mr-50">{{ $t('app.content.show') }}</label>
+            <b-form-select style="width: 60px"
+                id="perPageSelect"
+                v-model="perPage"
+                size="sm"
+                :options="pageOptions"
+                class="w-10"
+            />
+            <label class="d-inline-block text-sm-left ml-50">{{ $t('app.content.entries') }}</label>
+          </b-form-group>
 
-        <div class="d-flex align-items-center">
-          <span class="mr-1">show 1 to {{ perPage }} of {{ totalRows }} entires</span>
-          <b-pagination
-              v-model="currentPage"
-              :total-rows="totalRows"
-              :per-page="perPage"
-              align="center"
-              class="my-0"
-              first-number
-              last-number
-              prev-class="prev-item"
-              next-class="next-item"
-          />
-        </div>
+          <div class="d-flex align-items-center">
 
-        <div class="d-flex align-items-center">
-          <div class="mr-1 d-flex">
-            <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
-              <img src="@/assets/images/pages/plusIcons.svg" alt="">
-              new </b-button>
-            <b-button size="sm" variant="secondary" class="mr-1 d-flex">
-              <img src="@/assets/images/pages/editIcons.svg" alt="">
-              Edit</b-button>
-            <b-button size="sm" class="d-flex" variant="primary">
-              <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-              Delete</b-button>
-          </div>
-
-          <div size="sm" class="d-flex align-items-center">
-            <label class="d-inline-block text-sm-left mr-50">Search</label>
-            <b-form-input
-                v-model="filter"
-                id="filterInput"
-                type="search"
-                placeholder="rechercher.."
+            <span class="mr-1">{{ $t('app.content.show') }} 1 {{ $t('app.content.to') }} {{ perPage }} {{ $t('app.content.of') }} {{ totalRows }} {{ $t('app.content.entries') }}</span>
+            <b-pagination
+                v-model="currentPage"
+                :total-rows="totalRows"
+                :per-page="perPage"
+                align="center"
+                class="my-0"
+                first-number
+                last-number
+                prev-class="prev-item"
+                next-class="next-item"
             />
           </div>
-        </div>
 
-      </div>
+          <div class="d-flex align-items-center">
+            <div class="mr-1 d-flex">
+              <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
+                <img src="@/assets/images/pages/plusIcons.svg" alt="">
+                {{ $t('app.btn.new') }} </b-button>
+              <b-button size="sm" variant="secondary" class="mr-1 d-flex">
+                <img src="@/assets/images/pages/editIcons.svg" alt="">
+                {{ $t('app.btn.edit') }}</b-button>
+              <b-button size="sm" class="d-flex" variant="primary">
+                <img src="@/assets/images/pages/deleteIcons.svg" alt="">
+                {{ $t('app.btn.delete') }}</b-button>
+            </div>
+
+            <div size="sm" class="d-flex align-items-center">
+              <label class="d-inline-block text-sm-left mr-50"> {{ $t('app.search.label') }}</label>
+              <b-form-input
+                  v-model="filter"
+                  id="filterInput"
+                  type="search"
+                  :placeholder="$t('app.search.palceholder')"
+              />
+            </div>
+          </div>
+
+        </div>
     </b-card>
     <b-card>
       <Databases :filter="filter" link="customer-groups-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
@@ -62,38 +63,38 @@
     <!--modal-->
     <b-modal
         id="modal-primary"
-        ok-title="Save"
-        cancel-title="Cancel"
+        :ok-title="$t('app.btn.save')"
+        :cancel-title="$t('app.btn.cancel')"
         modal-class="modal-primary"
         centered
-        title="Create new Customer group"
+        :title="$t('app.content.create_customer_group')"
         size="lg"
     >
       <b-form @submit.prevent>
         <b-row>
           <b-col cols="12">
             <b-form-group
-                label="Group ID"
+                :label=" $t('app.form.label.id') "
                 label-for="group-id"
                 label-cols-md="4"
             >
               <b-form-input
                   id="group-id"
                   type="text"
-                  placeholder="Automaticaly created..."
+                  :placeholder="$t('app.form.placeholder.default')"
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="Name"
+                :label=" $t('app.form.label.name') "
                 label-for="h-name"
                 label-cols-md="4"
             >
               <b-form-input
                   id="i-name"
                   type="text"
-                  placeholder="Enter here..."
+                  :placeholder="$t('app.form.placeholder.default')"
               />
             </b-form-group>
           </b-col>
@@ -169,9 +170,9 @@ export default {
       ],
       fields: [
         { key: 'id', label: 'Id' },
-        { key: 'group_id', label: 'ID Groupe', sortable: true },
-        { key: 'group_name', label: 'Name Groupe', sortable: true },
-        { key: 'number', label: 'number of companies', sortable: true },
+        { key: 'group_id', label: this.$t('app.form.label.id_group'), sortable: true },
+        { key: 'group_name', label: this.$t('app.form.label.name'), sortable: true },
+        { key: 'number', label: this.$t('app.form.label.number_of_companies'), sortable: true },
         'Action',
       ],
       selected: null,
