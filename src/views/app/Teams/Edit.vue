@@ -29,7 +29,7 @@
           </b-col>
 
           <b-col cols="12" md="6">
-            <b-form-group :label="('app.form.label.name')" label-for="full-name">
+            <b-form-group :label="$t('app.form.label.name')" label-for="full-name">
               <b-form-input :placeholder="$t('app.form.placeholder.default')" id="full-name" v-model="user.name" type="email"/>
             </b-form-group>
           </b-col>
@@ -74,14 +74,14 @@
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label=" $t('app.form.label.name')"
+                :label="$t('app.form.label.name')"
                 label-for="name-team"
                 label-cols-md="4"
             >
               <b-form-input
                   id="name-team"
                   type="text"
-                  :label=" $t('app.form.placeholder.default')"
+                  :placeholder=" $t('app.form.placeholder.default')"
               />
             </b-form-group>
           </b-col>

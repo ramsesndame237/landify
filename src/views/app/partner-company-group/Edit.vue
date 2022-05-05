@@ -31,12 +31,18 @@
 
           <!-- Field: customer group name -->
           <b-col cols="12" md="6">
-            <b-form-group :label="$t('app.form.label.name')" label-for="full-name">
+            <b-form-group :label="$t('app.form.label.partner_type')" label-for="full-name">
               <b-form-input id="full-name"  :placeholder="$t('app.form.placeholder.default')" v-model="user.name" type="text"/>
             </b-form-group>
           </b-col>
 
           <!-- Field: Name -->
+          <b-col cols="12" md="6">
+            <b-form-group :label="$t('app.form.label.partner_group_name')" label-for="name">
+              <b-form-input  :placeholder="$t('app.form.placeholder.default')" id="nameu" v-model="user.email" type="text"/>
+            </b-form-group>
+          </b-col>
+                    <!-- Field: Name -->
           <b-col cols="12" md="12">
             <b-form-group :label="$t('app.form.label.description')" label-for="name">
               <b-form-input  :placeholder="$t('app.form.placeholder.default')" id="nameu" v-model="user.email" type="text"/>
@@ -54,9 +60,6 @@
         </b-tab>
         <b-tab :title="$t('app.tab.contact_person')">
           <databases :items="rowsPerson" :fields="columnPerson" />
-        </b-tab>
-        <b-tab :title="`${$t('app.tab.group_ticket')} / ${$t('app.tab.package')}`">
-          <databases :items="rowsTicketPackage" :fields="columnTicketPackage" />
         </b-tab>
         <b-tab :title="$t('app.tab.users')">
           <databases :items="rowsUsers" :fields="columnUsers" />
@@ -280,9 +283,6 @@ export default {
         { key: 'id', label: 'Id' },
         { key: 'full_name', label: 'Last Name', sortable: true },
         { key: 'first_name', label: 'First Name', sortable: true },
-        { key: 'user_team', label: 'User team', sortable: true },
-        { key: 'last_role', label: 'User Role', sortable: true },
-        { key: 'user_pos', label: 'User PoS', sortable: true },
         'Action',
       ],
       

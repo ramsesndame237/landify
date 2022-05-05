@@ -1,218 +1,178 @@
 <template>
   <div>
     <b-card body-class="p-0">
-      <div class="d-flex justify-content-between" style="padding: 10px">
-        <b-form-group class="mb-0">
-          <label class="d-inline-block text-sm-left mr-50">Show</label>
-          <b-form-select style="width: 60px"
-                         id="perPageSelect"
-                         v-model="perPage"
-                         size="sm"
-                         :options="pageOptions"
-                         class="w-10"
-          />
-          <label class="d-inline-block text-sm-left ml-50">Entries</label>
-        </b-form-group>
+        <div class="d-flex justify-content-between" style="padding: 10px">
+          <b-form-group class="mb-0">
+            <label class="d-inline-block text-sm-left mr-50">{{ $t('app.content.show') }}</label>
+            <b-form-select style="width: 60px"
+                id="perPageSelect"
+                v-model="perPage"
+                size="sm"
+                :options="pageOptions"
+                class="w-10"
+            />
+            <label class="d-inline-block text-sm-left ml-50">{{ $t('app.content.entries') }}</label>
+          </b-form-group>
 
-        <div class="d-flex align-items-center">
-          <span class="mr-1">show 1 to {{ perPage }} of {{ totalRows }} entires</span>
-          <b-pagination
-              v-model="currentPage"
-              :total-rows="totalRows"
-              :per-page="perPage"
-              align="center"
-              class="my-0"
-              first-number
-              last-number
-              prev-class="prev-item"
-              next-class="next-item"
-          />
-        </div>
+          <div class="d-flex align-items-center">
 
-        <div class="d-flex align-items-center">
-          <div class="mr-1 d-flex">
-            <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
-              <img src="@/assets/images/pages/plusIcons.svg" alt="">
-              new </b-button>
-            <b-button size="sm" variant="secondary" class="mr-1 d-flex">
-              <img src="@/assets/images/pages/editIcons.svg" alt="">
-              Edit</b-button>
-            <b-button size="sm" class="d-flex" variant="primary">
-              <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-              Delete</b-button>
-          </div>
-
-          <div size="sm" class="d-flex align-items-center">
-            <label class="d-inline-block text-sm-left mr-50">Search</label>
-            <b-form-input
-                v-model="filter"
-                id="filterInput"
-                type="search"
-                placeholder="rechercher.."
+            <span class="mr-1">{{ $t('app.content.show') }} 1 {{ $t('app.content.to') }} {{ perPage }} {{ $t('app.content.of') }} {{ totalRows }} {{ $t('app.content.entries') }}</span>
+            <b-pagination
+                v-model="currentPage"
+                :total-rows="totalRows"
+                :per-page="perPage"
+                align="center"
+                class="my-0"
+                first-number
+                last-number
+                prev-class="prev-item"
+                next-class="next-item"
             />
           </div>
-        </div>
 
-      </div>
+          <div class="d-flex align-items-center">
+            <div class="mr-1 d-flex">
+              <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
+                <img src="@/assets/images/pages/plusIcons.svg" alt="">
+                {{ $t('app.btn.new') }} </b-button>
+              <b-button size="sm" variant="secondary" class="mr-1 d-flex">
+                <img src="@/assets/images/pages/editIcons.svg" alt="">
+                {{ $t('app.btn.edit') }}</b-button>
+              <b-button size="sm" class="d-flex" variant="primary">
+                <img src="@/assets/images/pages/deleteIcons.svg" alt="">
+                {{ $t('app.btn.delete') }}</b-button>
+            </div>
+
+            <div size="sm" class="d-flex align-items-center">
+              <label class="d-inline-block text-sm-left mr-50"> {{ $t('app.search.label') }}</label>
+              <b-form-input
+                  v-model="filter"
+                  id="filterInput"
+                  type="search"
+                  :placeholder="$t('app.search.palceholder')"
+              />
+            </div>
+          </div>
+
+        </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" link="contact-person-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases :filter="filter" link="payment-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
     </b-card>
 
     <!--modal-->
     <b-modal
         id="modal-primary"
-        ok-title="Save"
-        cancel-title="Cancel"
+        :ok-title="$t('app.btn.save')"
+        :cancel-title="$t('app.btn.cancel')"
         modal-class="modal-primary"
         centered
-        title="Create new Company"
+        :title="$t('app.content.create_company')"
         size="lg"
     >
       <b-form @submit.prevent>
         <b-row> 
-          <b-col cols="6">
+          <b-col cols="12" md="10">
             <b-form-group
-              label="CUstomer group ID or Partner group ID"
+              :label="`${$t('app.form.label.id')}`"
               label-for="group-id"
-              label-cols-md="12"
+              label-cols-md="3"
             >
-            <b-form-select
+            <b-form-input
               id="group-id"
+              :placeholder="$t('app.form.placeholder.automatic')"
                 
               v-model="newCompany.customerGroupId"
-              :options="customerGroupOptions"
-            >
-            </b-form-select>
+           />
             </b-form-group>
           </b-col>
-          <b-col cols="6">
+          <b-col cols="12" md="10">
             <b-form-group
-              label="Name Customer group or Name Partner group"
+              :label="`${$t('app.form.label.company_id')}`"
               label-for="group-name"
-              label-cols-md="12"
+              label-cols-md="3"
             >
-              <b-form-input
+              <b-form-select
                 id="group-name"
-                  
                 v-model="newCompany.companyId"
-                placeholder="(automatically based on selected id)"
               />
             </b-form-group>
           </b-col>
-          <b-col cols="12">
+          <b-col cols="12" md="10">
             <b-form-group
-              label="Contact person ID"
-              label-for="Contactperson_ID"
-              label-cols-md="12"
+              :label="$t('app.form.label.payment_info')"
+              label-for="payment_info"
+              label-cols-md="3"
             >
-            <b-row>
-              <b-col cols="6">
                 <b-form-input
-                  id="Contactperson_ID"
-                   
+                  id="payment_info"
                   v-model="newCompany.companyName"
-                  placeholder="(automatically)"
+                  :placeholder="$t('app.form.placeholder.default')"
                 />
-              </b-col>
-            </b-row>
             </b-form-group>
           </b-col>
-          <b-col cols="6">
+          <b-col cols="12" md="10">
             <b-form-group
-              label="Lastname"
+              :label="$t('app.form.label.debitor')"
               label-for="group-id"
-              label-cols-md="12"
+              label-cols-md="3"
             >
             <b-form-input
               id="group-id"
               v-model="newCompany.customerGroupId"
-              placeholder="Enter here..."
+              :placeholder="$t('app.form.placeholder.default')"
             />
             </b-form-group>
           </b-col>
-          <b-col cols="6">
+          <b-col cols="12" md="10">
             <b-form-group
-              label="Title"
-              label-for="group-name"
-              label-cols-md="12"
-            >
-              <b-form-select
-                id="group-name"
-                v-model="newCompany.companyId"
-              >
-              </b-form-select>
-            </b-form-group>
-          </b-col>
-          <b-col cols="6">
-            <b-form-group
-              label="Firstname"
-              label-for="Firstname"
-              label-cols-md="12"
-            >
-            <b-form-input
-              id="Firstname"
-              v-model="newCompany.customerGroupId"
-              placeholder="Enter here..."
-            />
-            </b-form-group>
-          </b-col>
-          <b-col cols="6">
-            <b-form-group
-              label="Salutation"
-              label-for="Salutation"
-              label-cols-md="12"
-            >
-              <b-form-select
-                id="Salutation"
-                v-model="newCompany.companyId"
-              >
-              </b-form-select>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              label="Shortname"
-              label-for="Shortname"
-              label-cols-md="12"
-            >
-            <b-row>
-              <b-col cols="6">
-                <b-form-input
-                  id="Shortname"
-                   
-                  v-model="newCompany.companyName"
-                  placeholder="Enter here"
-                />
-              </b-col>
-            </b-row>
-            </b-form-group>
-          </b-col>
-          <b-col cols="6">
-            <b-form-group
-              label="Function"
-              label-for="Function"
-              label-cols-md="12"
-            >
-            <b-form-input
-              id="Function"
-              v-model="newCompany.customerGroupId"
-              placeholder="Enter here..."
-            />
-            </b-form-group>
-          </b-col>
-          <b-col cols="6">
-            <b-form-group
-              label="Department"
-              label-for="Department"
-              label-cols-md="12"
+              :label="$t('app.form.label.object_reference')"
+              label-for="object_reference"
+              label-cols-md="3"
             >
               <b-form-input
-                id="Department"
-                v-model="newCompany.companyId"
-                placeholder="Enter here..."
+                id="object_reference"
+                :placeholder="$t('app.form.placeholder.default')"
               />
             </b-form-group>
+          </b-col>
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="$t('app.form.label.value')"
+              label-for="value"
+              label-cols-md="3"
+            >
+            <b-form-input
+              id="value"
+              v-model="newCompany.customerGroupId"
+              :placeholder="$t('app.form.placeholder.default')"
+            />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="$t('app.form.label.date')"
+              label-for="date"
+              label-cols-md="3"
+            >
+              <b-form-datepicker
+                id="date"
+              ></b-form-datepicker>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="$t('app.form.label.payment_type')"
+              label-for="payment_type"
+              label-cols-md="3"
+            >
+              <b-form-input
+                id="payment_type"
+                v-model="newCompany.companyName"
+                :placeholder="$t('app.form.placeholder.default')"
+              />
+            </b-form-group>
+          
           </b-col>
         </b-row>
       </b-form>
@@ -235,6 +195,7 @@ import {
   BCard,
   BPagination,
   BInputGroup,
+  BFormDatepicker,
 } from 'bootstrap-vue'
 
 export default {
@@ -251,6 +212,7 @@ export default {
     BCol,
     BFormInput,
     BInputGroup,
+    BFormDatepicker,
   },
   data() {
     return {
@@ -313,19 +275,20 @@ export default {
       ],
       fields: [
         { key: 'id', label: 'Id' },
-        { key: 'group', label: 'Customer group/ Partner group', sortable: true },
-        { key: 'last_name', label: 'Surname', sortable: true },
-        { key: 'first_name', label: 'Firstname', sortable: true },
-        { key: 'city', label: 'City', sortable: true },
-        { key: 'phone', label: 'Phone', sortable: true },
-        { key: 'mail', label: 'E-mail', sortable: true },
-        { key: 'function', label: 'Function', sortable: true },
-        { key: 'user_id', label: 'User_id', sortable: true },
+        { key: 'group', label: "Payment ID", sortable: true },
+        { key: 'last_name', label: "Company ID", sortable: true },
+        { key: 'first_name', label: "Name Firma/Kunde", sortable: true },
+        { key: 'city', label: 'Zahlungsinformation', sortable: true },
+        { key: 'phone', label: 'Debitor', sortable: true },
+        { key: 'mail', label: "Value", sortable: true },
+        { key: 'function', label: "Object Reference", sortable: true },
+        { key: 'mail', label: "Date", sortable: true },
+        { key: 'mail', label: "Payment Type", sortable: true },
         'Action',
       ],
       selected: null,
       options: [
-        { value: null, text: 'Please select an option' },
+        { value: null, text: this.$t('app.form.placeholder.select') },
         { value: 'a', text: 'This is First option' },
         { value: 'b', text: 'Simple Option' },
         { value: { C: '3PO' }, text: 'This is an option with object value' },
@@ -333,7 +296,7 @@ export default {
       ],
       filter: null,
       customerGroupOptions: [
-        { value: null, text: 'Please select an option' },
+        { value: null, text: this.$t('app.form.placeholder.select') },
         { value: 'a', text: 'This is First option' },
         { value: 'b', text: 'Selected Option' },
       ],
