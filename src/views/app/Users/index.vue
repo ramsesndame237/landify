@@ -3,7 +3,7 @@
     <b-card body-class="p-0">
         <div class="d-flex justify-content-between" style="padding: 10px">
           <b-form-group class="mb-0">
-            <label class="d-inline-block text-sm-left mr-50">{{ $t('app.content.show') }}</label>
+            <label class="d-inline-block text-sm-left mr-50">Show</label>
             <b-form-select style="width: 60px"
                 id="perPageSelect"
                 v-model="perPage"
@@ -11,12 +11,11 @@
                 :options="pageOptions"
                 class="w-10"
             />
-            <label class="d-inline-block text-sm-left ml-50">{{ $t('app.content.entries') }}</label>
+            <label class="d-inline-block text-sm-left ml-50">Entries</label>
           </b-form-group>
 
           <div class="d-flex align-items-center">
-
-            <span class="mr-1">{{ $t('app.content.show') }} 1 {{ $t('app.content.to') }} {{ perPage }} {{ $t('app.content.of') }} {{ totalRows }} {{ $t('app.content.entries') }}</span>
+            <span class="mr-1">show 1 to {{ perPage }} of {{ totalRows }} entires</span>
             <b-pagination
                 v-model="currentPage"
                 :total-rows="totalRows"
@@ -30,26 +29,28 @@
             />
           </div>
 
+
+
           <div class="d-flex align-items-center">
             <div class="mr-1 d-flex">
               <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
                 <img src="@/assets/images/pages/plusIcons.svg" alt="">
-                {{ $t('app.btn.new') }} </b-button>
+                new </b-button>
               <b-button size="sm" variant="secondary" class="mr-1 d-flex">
                 <img src="@/assets/images/pages/editIcons.svg" alt="">
-                {{ $t('app.btn.edit') }}</b-button>
+                Edit</b-button>
               <b-button size="sm" class="d-flex" variant="primary">
                 <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-                {{ $t('app.btn.delete') }}</b-button>
+                Delete</b-button>
             </div>
 
             <div size="sm" class="d-flex align-items-center">
-              <label class="d-inline-block text-sm-left mr-50"> {{ $t('app.search.label') }}</label>
+              <label class="d-inline-block text-sm-left mr-50">Search</label>
               <b-form-input
                   v-model="filter"
                   id="filterInput"
                   type="search"
-                  :placeholder="$t('app.search.palceholder')"
+                  placeholder="rechercher.."
               />
             </div>
           </div>
@@ -63,44 +64,44 @@
     <!--modal-->
     <b-modal
         id="modal-primary"
-        :ok-title="$t('app.btn.save')"
-        :cancel-title="$t('app.btn.cancel')"
+        ok-title="Save"
+        cancel-title="Cancel"
         modal-class="modal-primary"
         centered
-        :title="$t('app.content.create_user')"
+        title="Create new user"
         size="lg"
     >
       <b-form @submit.prevent>
         <b-row>
           <b-col cols="12">
             <b-form-group
-                :label="$t('app.form.label.company_name')"
+                label="Name Company*"
                 label-for="company-name"
                 label-cols-md="4"
             >
               <b-form-input
                   id="company-name"
                   type="text"
-                  :placeholder="$t('app.form.placeholder.default')"
+                  placeholder="Please select ..."
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label="$t('app.form.label.email')"
+                label="eMail"
                 label-for="h-email"
                 label-cols-md="4"
             >
               <b-form-input
                   id="h-email"
                   type="email"
-                  :placeholder="$t('app.form.placeholder.default')"
+                  placeholder="Enter here..."
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label="`${$t('app.form.label.name')} / ${$t('app.form.label.firstname')}`"
+                label="Name / First name"
                 label-for="h-name"
                 label-cols-md="4"
             >
@@ -109,13 +110,13 @@
                     class="mr-1"
                     id="h-name"
                     type="text"
-                  :placeholder="$t('app.form.placeholder.default')"
+                    placeholder="Enter here..."
                 />
                 <b-form-input
                     md="4"
                     id="h-firstname"
                     type="text"
-                   :placeholder="$t('app.form.placeholder.default')"
+                    placeholder="Enter here..."
                 />
               </div>
 
@@ -123,33 +124,33 @@
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label="$t('app.form.label.firstname')"
+                label="Mobile"
                 label-for="h-mobile"
                 label-cols-md="4"
             >
               <b-form-input
                   id="h-mobile"
                   type="number"
-                   :placeholder="$t('app.form.placeholder.default')"
+                  placeholder="Enter here..."
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label="$t('app.form.label.fax')"
+                label="Fax"
                 label-for="h-fax"
                 label-cols-md="4"
             >
               <b-form-input
                   id="h-fax"
                   type="text"
-                   :placeholder="$t('app.form.placeholder.default')"
+                  placeholder="Enter here..."
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label="$t('app.form.label.deputy')"
+                label="Deputy"
                 label-for="h-deputy"
                 label-cols-md="4">
               <b-form-select
@@ -160,7 +161,7 @@
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label="$t('app.form.label.type')"
+                label="Type"
                 label-for="h-deputy"
                 label-cols-md="4">
               <b-form-select
@@ -220,7 +221,7 @@ export default {
         {
           id: 1,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -230,7 +231,7 @@ export default {
         {
           id: 2,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -240,7 +241,7 @@ export default {
         {
           id: 3,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -250,7 +251,7 @@ export default {
         {
           id: 4,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -260,7 +261,7 @@ export default {
         {
           id: 5,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -270,7 +271,7 @@ export default {
         {
           id: 5,
           // eslint-disable-next-line global-require
-          last_name: 'test recherche',
+          full_name: 'test recherche',
           first_name: 'recherche',
           email: 'text@gmail.com',
           last_login: '2022/04/20',
@@ -280,7 +281,7 @@ export default {
         {
           id: 6,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -290,7 +291,7 @@ export default {
         {
           id: 7,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -300,7 +301,7 @@ export default {
         {
           id: 8,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -310,7 +311,7 @@ export default {
         {
           id: 9,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -320,7 +321,7 @@ export default {
         {
           id: 10,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -330,7 +331,7 @@ export default {
         {
           id: 11,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -340,7 +341,7 @@ export default {
         {
           id: 12,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -350,7 +351,7 @@ export default {
         {
           id: 13,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -360,7 +361,7 @@ export default {
         {
           id: 14,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -370,7 +371,7 @@ export default {
         {
           id: 15,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -379,18 +380,18 @@ export default {
         },
       ],
       fields: [
-        { key: 'id', label: this.$t('app.form.label.id') },
-        { key: 'last_name', label: this.$t('app.form.label.last_name'), sortable: true },
-        { key: 'first_name', label: this.$t('app.form.label.firstname'), sortable: true },
-        { key: 'email', label: this.$t('app.form.label.email'), sortable: true },
-        { key: 'last_login', label: this.$t('app.form.label.last_login'), sortable: true },
-        { key: 'user_type', label: this.$t('app.form.label.user_type'), sortable: true },
-        { key: 'company', label: this.$t('app.form.label.company'), sortable: true },
-        this.$t('app.form.label.action'),
+        { key: 'id', label: 'Id' },
+        { key: 'full_name', label: 'Last Name', sortable: true },
+        { key: 'first_name', label: 'First Name', sortable: true },
+        { key: 'email', label: 'eMail', sortable: true },
+        { key: 'last_login', label: 'Last login', sortable: true },
+        { key: 'user_type', label: 'User type', sortable: true },
+        { key: 'company', label: 'Company', sortable: true },
+        'Action',
       ],
       selected: null,
       options: [
-        { value: null, text: this.$t('app.form.placeholder.select') },
+        { value: null, text: 'Please select an option' },
         { value: 'a', text: 'This is First option' },
         { value: 'b', text: 'Simple Option' },
         { value: { C: '3PO' }, text: 'This is an option with object value' },

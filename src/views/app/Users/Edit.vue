@@ -4,18 +4,16 @@
     <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
       <div class="d-flex align-items-center">
         <img class="mr-1" src="@/assets/images/icons/people.svg" alt="">
-        <span>{{ $t('app.content.create_user') }}</span>
+        <span>Créer un utilisateur</span>
       </div>
       <div class="d-flex align-items-center">
         <div class="mr-1 d-flex">
           <b-button v-b-modal.modal-user size="sm" variant="info" class="mr-1 d-flex">
             <img src="@/assets/images/pages/plusIcons.svg" alt="">
-            {{ $t('app.content.create_user') }}  
-          </b-button>
+            Create new User </b-button>
           <b-button size="sm" class="d-flex" variant="primary">
             <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-            {{ $t('app.btn.cancel') }}  
-          </b-button>
+            Cancel</b-button>
         </div>
       </div>
     </div>
@@ -26,38 +24,38 @@
       <b-row>
         <!-- Field: email -->
         <b-col cols="12" md="6">
-          <b-form-group :label="`${ $t('app.form.label.email')}*`" label-for="username" >
-            <b-form-input id="username" :placeholder="$t('app.form.placeholder.email')" />
+          <b-form-group label="E-mail*" label-for="username" placeholder="Enter here...">
+            <b-form-input id="username" v-model="user.name"/>
           </b-form-group>
         </b-col>
 
         <!-- Field: password -->
         <b-col cols="12" md="6">
-          <b-form-group :label="`${ $t('app.form.label.password')} *`" label-for="full-name">
-            <b-form-input id="full-name" v-model="user.name" type="email" :placeholder="$t('app.form.placeholder.password')"  />
+          <b-form-group label="Password*" label-for="full-name" placeholder="Enter here...">
+            <b-form-input id="full-name" v-model="user.name" type="email"/>
           </b-form-group>
         </b-col>
 
 <!--        check box -->
         <b-col cols="12" md="7" class="d-flex mb-1">
           <div class="d-flex">
-            <span class="mr-1">{{ $t('app.form.label.user_must_change_pass') }}</span>
+            <span class="mr-1">User must change his password at next login</span>
             <b-form-checkbox />
           </div>
           <div class="d-flex ml-auto">
-            <span class="mr-1"> {{ $t('app.form.label.user_locked') }} </span>
+            <span class="mr-1">User locked</span>
             <b-form-checkbox />
           </div>
         </b-col>
 
         <b-col cols="12" md="5" class="d-flex mb-1">
-          <b-col cols="5" md-2><span>{{ $t('app.form.label.address') }}</span></b-col>
+          <b-col cols="5" md-2><span>Address</span></b-col>
           <div class="d-flex">
-            <span class="mr-1">{{ $t('app.form.label.gender.male') }}</span>
+            <span class="mr-1">Mr.</span>
             <b-form-radio name="some-radios" />
           </div>
           <div class="d-flex ml-auto">
-            <span class="mr-1">{{ $t('app.form.label.gender.female') }}</span>
+            <span class="mr-1">Ms.</span>
             <b-form-radio name="some-radios" />
           </div>
 
@@ -65,52 +63,52 @@
 
         <!-- Field: Name -->
         <b-col cols="12" md="6">
-          <b-form-group :label="`${ $t('app.form.label.name') } *`" label-for="name">
-            <b-form-input id="nameu" v-model="user.email" type="text" :placeholder="$t('app.form.placeholder.default')" />
+          <b-form-group label="NAME*" label-for="name">
+            <b-form-input id="nameu" v-model="user.email" type="text"/>
           </b-form-group>
         </b-col>
 
         <b-col cols="12" md="6">
-          <b-form-group :label="`${ $t('app.form.label.firstname') }`" label-for="firstname">
-            <b-form-input id="firstname" v-model="user.email" type="text" :placeholder="$t('app.form.placeholder.default')" />
+          <b-form-group label="First name" label-for="name">
+            <b-form-input id="firstname" v-model="user.email" type="text"/>
           </b-form-group>
         </b-col>
 
         <b-col cols="12" md="6">
-          <b-form-group :label="$t('app.form.label.name_abreviation')" label-for="abreviation">
-            <b-form-input id="abbreviation" v-model="user.email" type="text" :placeholder="$t('app.form.placeholder.default')" />
+          <b-form-group label="Name abbreviation*" label-for="name">
+            <b-form-input id="abbreviation" v-model="user.email" type="text"/>
           </b-form-group>
         </b-col>
 
         <b-col cols="12" md="6">
-          <b-form-group :label="$t('app.form.label.function')" label-for="function">
-            <b-form-input id="function" v-model="user.email" type="text" :placeholder="$t('app.form.placeholder.default')" />
+          <b-form-group label="Function" label-for="name">
+            <b-form-input id="firstname" v-model="user.email" type="text"/>
           </b-form-group>
         </b-col>
 
         <b-col cols="12" md="6">
-          <b-form-group :label="`${$t('app.form.label.customer_group')} * `" label-for="customer-group">
+          <b-form-group label="Customer Group*" label-for="name">
             <div class="d-flex">
-              <b-form-input class="mr-1" id="customer-group" v-model="user.email" type="text" :placeholder="$t('app.form.placeholder.default')"  />
+              <b-form-input placeholder="Please select ..." class="mr-1" id="customer-group" v-model="user.email" type="text"/>
               <img src="@/assets/images/icons/customerGroup.svg" alt="">
             </div>
           </b-form-group>
         </b-col>
 
         <b-col cols="12" md="6">
-          <b-form-group :label="$t('app.form.label.contact_person')" label-for="contact-person">
+          <b-form-group label="Contact person" label-for="name">
             <b-form-input id="contact-person" v-model="user.email" type="text"/>
           </b-form-group>
         </b-col>
 
         <b-col cols="12" md="6">
-          <b-form-group :label="$t('app.form.label.type')" label-for="user-type">
+          <b-form-group label="USER TYPE" label-for="name">
             <b-form-input id="user-type" v-model="user.email" type="text"/>
           </b-form-group>
         </b-col>
 
         <b-col cols="12" md="6">
-          <b-form-group :label="$t('app.form.label.title')" label-for="title">
+          <b-form-group label="Title" label-for="name">
             <b-form-input id="title" v-model="user.email" type="text"/>
           </b-form-group>
         </b-col>
@@ -121,32 +119,31 @@
 
   <b-card>
     <b-tabs pills>
-      <b-tab :title="$t('app.form.label.roles')" active>
+      <b-tab title="Roles" active>
         <databases :actions="true" :items="rowsRoles" :fields="columnRoles" />
       </b-tab>
-      <b-tab :title="$t('app.form.label.customers')">
+      <b-tab title="Customers">
         <databases :items="items" :fields="fields" />
       </b-tab>
-      <b-tab :title="$t('app.form.label.team')">
+      <b-tab title="Equipe">
         <databases :items="items" :fields="fields" />
       </b-tab>
-      <b-tab :title="$t('app.form.label.pos')">
+      <b-tab title="Point de vente">
         <databases :items="items" :fields="fields" />
       </b-tab>
-      <b-tab :title="$t('app.form.label.partner')">
+      <b-tab title="Partner">
         <databases :items="items" :fields="fields" />
       </b-tab>
       <template #tabs-end>
         <div class="first-bloc ml-auto d-flex align-items-center">
-          <b-button v-b-modal.modal-role class="mr-1" size="sm" variant="info">{{ $t('app.btn.new') }}</b-button>
-          <b-button class="mr-1" size="sm" variant="primary">{{ $t('app.btn.cancel') }}</b-button>
+          <b-button v-b-modal.modal-role class="mr-1" size="sm" variant="info">New</b-button>
+          <b-button class="mr-1" size="sm" variant="primary">Delete</b-button>
           <div size="sm" class="d-flex align-items-center">
-            <label class="d-inline-block text-sm-left mr-50">{{ $t('app.search.label') }}</label>
+            <label class="d-inline-block text-sm-left mr-50">Search</label>
             <b-form-input
                 id="filterInput"
                 type="search"
-                :aria-invalid="$t('app.search.label')"
-                :placeholder="$t('app.search.palceholder')"
+                placeholder="rechercher.."
             />
           </div>
         </div>
@@ -157,44 +154,45 @@
   <!--modal-->
   <b-modal
       id="modal-role"
-      :ok-title="$t('app.btn.save')"
-      :cancel-title="$t('app.btn.cancel')"
+      ok-title="Save"
+      cancel-title="Cancel"
       modal-class="modal-primary"
       centered
-      :title="$t('app.content.create_user')"
+      title="Create new user"
       size="lg"
   >
     <b-form @submit.prevent>
       <b-row>
         <b-col cols="12">
           <b-form-group
-              :label="$t('app.form.label.role_id')"
+              label="Role ID"
               label-for="role-id"
               label-cols-md="4"
           >
             <b-form-input
                 id="company-name"
                 type="text"
-                :placeholder="$t('app.form.placeholder.default')"
+                placeholder="Enter here ..."
             />
           </b-form-group>
         </b-col>
         <b-col cols="12">
           <b-form-group
-              :label="$t('app.form.label.email')"
-              label-for="h-email"
+              label="Name"
+              label-for="name"
               label-cols-md="4"
           >
             <b-form-input
                 id="h-email"
-                type="mail"
-                :placeholder="$t('app.form.placeholder.email')"
+                type="email"
+                placeholder="Enter here..."
             />
           </b-form-group>
         </b-col>
         <b-col cols="12">
           <b-form-group
-              :label="`${$t('app.form.label.name')} / ${$t('app.form.label.firstname')}`"
+              label="Name / First name"
+              label-for="h-name"
               label-cols-md="4"
           >
             <div class="d-flex">
@@ -202,13 +200,13 @@
                   class="mr-1"
                   id="h-name"
                   type="text"
-                :placeholder="$t('app.form.placeholder.default')"
+                  placeholder="Enter here..."
               />
               <b-form-input
                   md="4"
                   id="h-firstname"
                   type="text"
-                  :placeholder="$t('app.form.placeholder.default')"
+                  placeholder="Enter here..."
               />
             </div>
 
@@ -221,44 +219,44 @@
 <!--  user modal -->
   <b-modal
       id="modal-user"
-      :ok-title="$t('app.btn.save')"
-      :cancel-title="$t('app.btn.cancel')"
+      ok-title="Save"
+      cancel-title="Cancel"
       modal-class="modal-primary"
       centered
-      :title="$t('app.content.create_user')"
+      title="Create new user"
       size="lg"
   >
     <b-form @submit.prevent>
       <b-row>
         <b-col cols="12">
           <b-form-group
-              :label="`${$t('app.form.label.company_name')} *`"
+              label="Name Company*"
               label-for="company-name"
               label-cols-md="4"
           >
             <b-form-input
                 id="company-name"
                 type="text"
-                :placeholder="$t('app.form.placeholder.default')"
+                placeholder="Please select ..."
             />
           </b-form-group>
         </b-col>
         <b-col cols="12">
           <b-form-group
-              :label="`${$t('app.form.label.email')} *`"
+              label="eMail"
               label-for="h-email"
               label-cols-md="4"
           >
             <b-form-input
                 id="h-email"
                 type="email"
-                :placeholder="$t('app.form.placeholder.email')"
+                placeholder="Enter here..."
             />
           </b-form-group>
         </b-col>
         <b-col cols="12">
           <b-form-group
-              :label="`${$t('app.form.label.name')} / ${$t('app.form.label.firstname')}`"
+              label="Name / First name"
               label-for="h-name"
               label-cols-md="4"
           >
@@ -267,13 +265,13 @@
                   class="mr-1"
                   id="h-name"
                   type="text"
-                 :placeholder="$t('app.form.placeholder.default')"
+                  placeholder="Enter here..."
               />
               <b-form-input
                   md="4"
                   id="h-firstname"
                   type="text"
-                  :placeholder="$t('app.form.placeholder.default')"
+                  placeholder="Enter here..."
               />
             </div>
 
@@ -281,33 +279,33 @@
         </b-col>
         <b-col cols="12">
           <b-form-group
-              :label="`${$t('app.form.label.mobile')}`"
+              label="Mobile"
               label-for="h-mobile"
               label-cols-md="4"
           >
             <b-form-input
                 id="h-mobile"
                 type="number"
-                :placeholder="$t('app.form.placeholder.default')"
+                placeholder="Enter here..."
             />
           </b-form-group>
         </b-col>
         <b-col cols="12">
           <b-form-group
-              :label="`${$t('app.form.label.fax')}`"
+              label="Fax"
               label-for="h-fax"
               label-cols-md="4"
           >
             <b-form-input
                 id="h-fax"
                 type="text"
-                :placeholder="$t('app.form.placeholder.default')"
+                placeholder="Enter here..."
             />
           </b-form-group>
         </b-col>
         <b-col cols="12">
           <b-form-group
-              :label="`${$t('app.form.label.deputy')}`"
+              label="Deputy"
               label-for="h-deputy"
               label-cols-md="4">
             <b-form-select
@@ -318,7 +316,7 @@
         </b-col>
         <b-col cols="12">
           <b-form-group
-              :label="`${$t('app.form.label.type')}`"
+              label="Type"
               label-for="h-deputy"
               label-cols-md="4">
             <b-form-select
@@ -366,7 +364,7 @@ export default {
       user: [
         {
           id: 1,
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -380,14 +378,14 @@ export default {
         { text: 'Benutzer gesperrt', value: 'second', disabled: false },
       ],
       options2: [
-        { text: this.$t('app.form.label.gender.male'), value: 'first2', disabled: false },
-        { text: this.$t('app.form.label.gender.male'), value: 'second2', disabled: false },
+        { text: 'Mr.', value: 'first2', disabled: false },
+        { text: 'Ms.', value: 'second2', disabled: false },
       ],
       items: [
         {
           id: 1,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -397,7 +395,7 @@ export default {
         {
           id: 2,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -407,7 +405,7 @@ export default {
         {
           id: 3,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -417,7 +415,7 @@ export default {
         {
           id: 4,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -427,7 +425,7 @@ export default {
         {
           id: 5,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -437,7 +435,7 @@ export default {
         {
           id: 6,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -447,7 +445,7 @@ export default {
         {
           id: 7,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -457,7 +455,7 @@ export default {
         {
           id: 8,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -467,7 +465,7 @@ export default {
         {
           id: 9,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -477,7 +475,7 @@ export default {
         {
           id: 10,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -487,7 +485,7 @@ export default {
         {
           id: 11,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -497,7 +495,7 @@ export default {
         {
           id: 12,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -507,7 +505,7 @@ export default {
         {
           id: 13,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -517,7 +515,7 @@ export default {
         {
           id: 14,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -527,7 +525,7 @@ export default {
         {
           id: 15,
           // eslint-disable-next-line global-require
-          last_name: 'NYA',
+          full_name: 'NYA',
           first_name: 'Josue',
           email: 'josue.nya@gohze.org',
           last_login: '2022/04/20',
@@ -536,20 +534,20 @@ export default {
         },
       ],
       fields: [
-        { key: 'id', label: this.$t('app.form.label.id') },
-        { key: 'last_name', label: this.$t('app.form.label.last_name'), sortable: true },
-        { key: 'first_name', label: this.$t('app.form.label.firstname'), sortable: true },
-        { key: 'email', label: this.$t('app.form.label.email'), sortable: true },
-        { key: 'last_login', label: this.$t('app.form.label.last_login'), sortable: true },
-        { key: 'user_type', label: this.$t('app.form.label.user_type'), sortable: true },
-        { key: 'company', label: this.$t('app.form.label.company'), sortable: true },
-        this.$t('app.form.label.action'),
+        { key: 'id', label: 'Id' },
+        { key: 'full_name', label: 'Last Name', sortable: true },
+        { key: 'first_name', label: 'First Name', sortable: true },
+        { key: 'email', label: 'eMail', sortable: true },
+        { key: 'last_login', label: 'Last login', sortable: true },
+        { key: 'user_type', label: 'User type', sortable: true },
+        { key: 'company', label: 'Company', sortable: true },
+        'Action',
       ],
       columnRoles: [
-        { key: 'id', label: this.$t('app.form.label.id') },
-        { key: 'role_id', label: this.$t('app.form.label.role_id'), sortable: true },
-        { key: 'role_name', label: this.$t('app.form.label.role_name'), sortable: true },
-        { key: 'role_permission', label: this.$t('app.form.label.role_permission'), sortable: true },
+        { key: 'id', label: 'Id' },
+        { key: 'role_id', label: 'Role-ID', sortable: true },
+        { key: 'role_name', label: 'Role name', sortable: true },
+        { key: 'role_permission', label: 'Role permission', sortable: true },
         'Action',
       ],
       rowsRoles: [
