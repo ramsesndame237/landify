@@ -279,7 +279,13 @@ const router = new VueRouter({
       component: () => import('@/views/app/Customers/Edit.vue'),
       meta: {
         pageTitle: 'EDIT GROUP',
+        navActiveLink: "customer-groups",
         breadcrumb: [
+          {
+            text: 'List of Cusotmer Groups',
+            to: {name: 'customer-groups'},
+            active: false,
+          },
           {
             text: 'EDIT',
             active: true,
@@ -336,12 +342,18 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/app/contact-person-edit',
+      path: '/app/contact-person/edit',
       name: 'contact-person-edit',
       component: () => import('@/views/app/Contact_Person/Edit.vue'),
       meta: {
         pageTitle: 'CONTACT PERSON',
-        breadcrumb: [
+        navActiveLink:"contact-person",
+        breadcrumb: [         
+          {
+            text: 'Overall List Contact Person',
+            to: {name: 'company-list'},
+            active: false,
+          },
           {
             text: 'CONTACT PERSON',
             active: true,
@@ -368,10 +380,16 @@ const router = new VueRouter({
       name: 'payment-edit',
       component: () => import('@/views/app/Payment/Edit.vue'),
       meta: {
-        pageTitle: 'OVERALL LIST PAYMENT Data',
+        pageTitle: 'EDIT PAYMENT Data',
+        navActiveLink:'payment',
         breadcrumb: [
           {
-            text: 'OVERALL LIST PAYMENT Data',
+            text: 'Overall List Payment Data',
+            to: {name: 'company-list'},
+            active: false,
+          },
+          {
+            text: 'EDIT PAYMENT Data',
             active: true,
           },
         ],
@@ -397,7 +415,13 @@ const router = new VueRouter({
       component: () => import('@/views/app/Partner_Company/Edit.vue'),
       meta: {
         pageTitle: 'PARTNER COMPANIES EDIT',
+        navActiveLink:"partner-company",
         breadcrumb: [
+          {
+            text: 'Overall List Partner Companies',
+            to: {name: 'partner-company'},
+            active: false,
+          },
           {
             text: 'PARTNER COMPANIES EDIT',
             active: true,
@@ -425,9 +449,201 @@ const router = new VueRouter({
       component: () => import('@/views/app/partner-company-group/Edit.vue'),
       meta: {
         pageTitle: 'PARTNER GROUP EDIT',
+        navActiveLink:'partner-company-group',
         breadcrumb: [
           {
+            text: 'Overall List Partner Group',
+            to: {name: 'partner-company-group'},
+            active: false,
+          },
+          {
             text: 'PARTNER GROUP EDIT',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/address',
+      name: 'address-list',
+      component: () => import('@/views/app/Address/index.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST ADDRESS ',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST ADDRESS ',
+            active: true,
+          },
+        ],
+      },
+    },
+
+    {
+      path: '/app/address/edit',
+      name: 'address-edit',
+      component: () => import('@/views/app/Address/Edit.vue'),
+      meta: {
+        pageTitle: 'ADDRESS EDIT',
+        navActiveLink: 'address-list',
+        breadcrumb: [
+          {
+            text: 'Overall List Address',
+            to: {name: 'address-list'},
+            active: false,
+          },
+          {
+            text: 'ADDRESS EDIT',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/contact-title',
+      name: 'contact-title-list',
+      component: () => import('@/views/app/Contact_Title/index.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST CONTACT TITLE ',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST CONTACT TITLE ',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/contact-title/edit',
+      name: 'contact-title-edit',
+      component: () => import('@/views/app/Contact_Title/Edit.vue'),
+      meta: {
+        pageTitle: 'CONTACT TITLE EDIT',
+        navActiveLink: 'contact-title-list',
+        breadcrumb: [
+          {
+            text: 'Overall List Contact Title',
+            to: {name: 'contact-title-list'},
+            active: false,
+          },
+          {
+            text: 'CONTACT TITLE EDIT',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/salutation',
+      name: 'salutation-list',
+      component: () => import('@/views/app/Salutation/index.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST SALUTATION ',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST SALUTATION ',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/salutation/edit',
+      name: 'salutation-edit',
+      component: () => import('@/views/app/Salutation/Edit.vue'),
+      meta: {
+        pageTitle: 'SALUTATION EDIT',
+        navActiveLink: 'salutation-list',
+        breadcrumb: [
+          {
+            text: 'Overall List Salutation',
+            to: {name: 'salutation-list'},
+            active: false,
+          },
+          {
+            text: 'SALUTATION EDIT',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/city',
+      name: 'city-list',
+      component: () => import('@/views/app/City/index.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST CITIES ',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST CITIES ',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/city/edit',
+      name: 'city-edit',
+      component: () => import('@/views/app/City/Edit.vue'),
+      meta: {
+        pageTitle: 'CITY EDIT',
+        navActiveLink: 'city-list',
+        breadcrumb: [
+          {
+            text: 'Overall List Cities',
+            to: {name: 'city-list'},
+            active: false,
+          },
+          {
+            text: 'CITY EDIT',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/currency',
+      name: 'currency-list',
+      component: () => import('@/views/app/Currency/index.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST CURRENCIES ',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST CURRENCIES ',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/currency/edit',
+      name: 'currency-edit',
+      component: () => import('@/views/app/Currency/Edit.vue'),
+      meta: {
+        pageTitle: 'CURRENCY EDIT',
+        navActiveLink: 'currency-list',
+        breadcrumb: [
+          {
+            text: 'Overall List Currencies',
+            to: {name: 'currency-list'},
+            active: false,
+          },
+          {
+            text: 'CURRENCY EDIT',
+            active: true,
+          },
+        ],
+      },
+    },
+
+    {
+      path: '/app/new_business',
+      name: 'new-business',
+      component: () => import('@/views/app/SPNB/Index.vue'),
+      meta: {
+        pageTitle: 'NEW BUSINESS',
+        breadcrumb: [
+          {
+            text: 'NEW BUSINESS',
             active: true,
           },
         ],

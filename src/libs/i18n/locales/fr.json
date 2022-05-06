@@ -73,6 +73,13 @@
       "create_payment" : "Creer un paiement",
       "create_customer": "Créer un nouveau client",
       "create_partner_group": "Creer un groupe de partenaires",
+      "create_new_business": "Parcours de création d'un nouveau client et d'un nouveau contrat",
+      "create_location": "Créer un Emplacement",
+      "create_area": "Créer une Zone",
+      "create_pos": "Créer un point de vente",
+      "progress": "Progrès",
+      "create_contract": "Create un nouveau Contrat",
+      "new_busness_text_btn_msg":"Saisir les données d'un nouveau groupe de clients, d'un client, d'un emplacement, d'une zone, d'un PdV, d'un contrat, y compris les critères du contrat.",
 
 
       "dashboard": {
@@ -89,7 +96,10 @@
       "edit": "Editer",
       "delete": "Supprimer",
       "save": "Sauvegarder",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "prev": "Precedent",
+      "skip": "Passer",
+      "next": "Suivant"
     },
     "search": {
       "label": "Rechercher",
@@ -188,8 +198,56 @@
         "payment_type" : "Type de paiement",
         "contact_details" : "Détails du contact",
         "partner_type" : "Type de partenaire",
-        "partner_company_group" : "Groupe de société partenaire"
+        "partner_company_group" : "Groupe de société partenaire",
+        "ticket_id" : "ID de Ticket",
 
+        "location_id" : "ID de l'Emplacement",
+        "total_area" : "Superficie totale",
+        "opening_date" : "Date d'ouverture",
+        "owner" : "Propriétaire",
+        "owner_valid_from_date" : "Date de début de validité du Propriétaire",
+        "property_manager" : "Gestionnaire de propriété",
+        "property_manager_from_date" : "Gestionnaire des biens Date de début",
+        "location_type" : "Type d'emplacement",
+        "address_location" : "Emplacement de l'adresse",
+        "document_id" : "ID de Document ",
+        "area_id" : "ID de la zone",
+        "name_area" : "Nom de Zone",
+        "name_area_ext" : "Nom de la Zone EXT",
+        "space" : "Espace",
+        "main_usage" : "Utilisation principale",
+        "area_type" : "Type de zone",
+        "pos_id" : "ID de PdV",
+        "name_pos" : "Nom du PdV",
+        "pos_branch_number" : "Numéro de branche du PdV",
+        "tag" : "Étiquette (ligne verticale, affectation d'organisme)",
+        "responsible_sfm" : "Responsable GDF",
+        "existing_area_id" : "ID de la zone existante",
+        "contract_id": "ID du contrat",
+        "contract_name": "Nom du contrat",
+        "begin_date": "Date de début",
+        "end_date": "Date de fin",
+        "currency": "Monnaie",
+        "contract_type": "Type de contrat",
+        "usage_type": "Type d'utilisation",
+        "rental_space_unit": "Unité d'espace locatif",
+        "allocation_space_unit": "Unité d'espace d'allocation",
+        "unit": "Unité",
+        "valid_from": "Valide à Partir de",
+        "valid_to": "Valide Jusqu'à",
+        "document_contract_type": "Document Type de contrat",
+        "contract_criteria": "Critères contractuels",
+        "exists": "Existe",
+        "contract_special_rights": "Droits spéciaux du contrat",
+        "prior_notice_date": "Date de l'avis préalable",
+        "passive": "Passif",
+        "availed": "Disponible sur",
+        "contract_recurring_payment_id": "ID du paiement récurrent du contrat",
+        "recurring_payments_type": "Type de paiement récurrent",
+        "sum_per_moth": "Somme par mois",
+        "condition_percentage":"Condition Pourcentage",
+        "percentage": "Pourcentage",
+        "index_clause": "Clause d'indexation"
       }
     },
 
@@ -207,7 +265,11 @@
       "preview_invoices" : "Examen des factures",
       "contradictions": "Contradictions",
       "rights": "Droits",
-      "location": "Emplacement"
+      "location": "Emplacement",
+      "customer_group": "Groupe de Clients",
+      "area": "zone",
+      "pos": "PdV",
+      "contract": "Contrat"
 
     }
   }

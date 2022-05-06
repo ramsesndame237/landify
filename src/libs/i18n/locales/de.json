@@ -51,7 +51,7 @@
       "work_pack_3": {
         "title": "Arbeitspaket 3",
         "children" : {
-          "customer_group": "Customer group"
+          "customer_group": "Kundengruppe"
         }
       } 
     },
@@ -73,6 +73,13 @@
       "create_payment" : "Eine Zahlung erstellen",
       "create_customer": "Neuen Kunden anlegen",
       "create_partner_group": "Partnergruppe erstellen",
+      "create_new_business": "Erstellungspfad für einen neuen Kunden und Vertrag",
+      "create_location": "Neuen Standort erstellen",
+      "create_area": "Neuen Bereich erstellen",
+      "create_pos": "Neue Verkaufsstelle erstellen",
+      "create_contract": "Neuen Vertrag erstellen",
+      "progress": "Fortschritt",
+      "new_busness_text_btn_msg":"Erfassen Sie die Daten der neuen Kundengruppe, des Kunden, des Standorts, des Gebiets, des PoS, des Vertrags inkl. Vertragskriterien.",
 
 
       "dashboard": {
@@ -89,7 +96,10 @@
       "edit": "bearbeiten",
       "delete": "Löschen",
       "save": "Speichern",
-      "cancel": "Abbrechen"
+      "cancel": "Abbrechen",
+      "prev": "Prev",
+      "skip": "Überspringen",
+      "next": "Weiter"
     },
     "search": {
       "label": "Suche",
@@ -188,8 +198,55 @@
         "payment_type" : "Art der Zahlung",
         "contact_details" : "Kontakt Details",
         "partner_type" : "Partner-Typ",
-        "partner_company_group" : "Partner Unternehmensgruppe"
-
+        "partner_company_group" : "Partner Unternehmensgruppe",
+        "ticket_id" : "Ticket-ID",        
+        "location_id" : "Location-ID",
+        "total_area" : "Gesamtfläche",
+        "opening_date" : "Datum der Eröffnung",
+        "owner" : "Eigentümer",
+        "owner_valid_from_date" : "Eigentümer Gültig ab Datum",
+        "property_manager" : "Hausverwalter",
+        "property_manager_from_date" : "Hausverwalter von Datum",
+        "location_type" : "Standorttyp",
+        "address_location" : "Adresse Standort",
+        "document_id" : "Dokument-ID",
+        "area_id" : "Bereich ID",
+        "name_area" : "Name Gebiet",
+        "name_area_ext" : "Name Gebiet Ext",
+        "space" : "Weltraum",
+        "main_usage" : "Hauptverwendung",
+        "area_type" : "Bereich Typ",
+        "pos_id" : "PoS-ID",
+        "name_pos" : "PoS-Name",
+        "pos_branch_number" : "PoS-Branchennummer",
+        "tag" : "Tag (Vertikale Linie, Org-Zuordnung)",
+        "responsible_sfm" : "Verantwortliches SFM",
+        "existing_area_id" : "Bestehendes Gebiet ID",
+        "contract_id": "Vertrag ID",
+        "contract_name": "Vertrag Name",
+        "begin_date": "Datum des Beginns",
+        "end_date": "Enddatum",
+        "currency": "Währung",
+        "contract_type": "Vertragsart",
+        "usage_type": "Verwendungsart",
+        "rental_space_unit": "Mietfläche Einheit",
+        "allocation_space_unit": "Zuteilung Raumeinheit",
+        "unit": "Einheit",
+        "valid_from": "Gültige Form",
+        "valid_to": "Valid To",
+        "document_contract_type": "Dokument Vertragsart",
+        "contract_criteria": "Vertragskriterien",
+        "exists": "Existiert",
+        "contract_special_rights": "Vertrag Besonderheiten Rechte",
+        "prior_notice_date": "Datum der Vorankündigung",
+        "passive": "Passiv",
+        "availed": "Erreichbar unter",
+        "contract_recurring_payment_id": "Vertrag Wiederkehrende Zahlung ID",
+        "recurring_payments_type": "Art der wiederkehrenden Zahlung",
+        "sum_per_moth": "Summe pro Monat",
+        "condition_percentage":"Bedingung Prozentsatz",
+        "percentage": "Prozentsatz",
+        "index_clause": "Index-Klausel"
       },
 
       "tab": {
@@ -206,8 +263,11 @@
         "preview_invoices" : "Überprüft Rechnungen",
         "contradictions": "Widersprüche",
         "rights": "Rechte",
-        "location": "Standort"
-  
+        "location": "Standort",
+        "customer_group": "Kundengruppe",
+        "area": "Area",
+        "pos": "PoS",
+        "contract": "Vertrag"
       }
     }
     

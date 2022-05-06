@@ -151,23 +151,23 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_2.children.address',
-        route: '/',
+        route: 'address-list',
       },
       {
         title: 'app.sidebar.work_pack_2.children.contact_title',
-        route: '/',
+        route: 'contact-title-list',
       },
       {
         title: 'app.sidebar.work_pack_2.children.salutation',
-        route: '/',
+        route: 'salutation-list',
       },
       {
         title: 'app.sidebar.work_pack_2.children.city',
-        route: '/',
+        route: 'city-list',
       },
       {
         title: 'app.sidebar.work_pack_2.children.currency',
-        route: '/',
+        route: 'currency-list',
       },
       {
         title: 'app.sidebar.work_pack_2.children.country',
@@ -183,7 +183,7 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_2.children.s_p_n_b',
-        route: '/',
+        route: 'new-business',
       },
     ],
   },
