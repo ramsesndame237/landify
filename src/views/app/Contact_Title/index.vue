@@ -67,7 +67,7 @@
         :cancel-title="$t('app.btn.cancel')"
         modal-class="modal-primary"
         centered
-        :title="$t('app.content.create_new_payment_data')"
+        :title="$t('app.content.create_new_contact_title')"
         size="lg"
     >
       <b-form @submit.prevent>

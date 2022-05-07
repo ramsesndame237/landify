@@ -67,7 +67,7 @@
         :cancel-title="$t('app.btn.cancel')"
         modal-class="modal-primary"
         centered
-        :title="$t('app.content.create_new_city')"
+        :title="$t('app.content.create_new_currency')"
         size="lg"
     >
       <b-form @submit.prevent>

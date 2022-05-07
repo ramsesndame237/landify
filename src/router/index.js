@@ -634,6 +634,108 @@ const router = new VueRouter({
         ],
       },
     },
+    {
+      path: '/app/country',
+      name: 'country-list',
+      component: () => import('@/views/app/Country/index.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST COUNTRY ',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST COUNTRY ',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/country/edit',
+      name: 'country-edit',
+      component: () => import('@/views/app/Country/Edit.vue'),
+      meta: {
+        pageTitle: 'COUNTRY EDIT',
+        navActiveLink: 'country-list',
+        breadcrumb: [
+          {
+            text: 'Overall List Country',
+            to: {name: 'country-list'},
+            active: false,
+          },
+          {
+            text: 'COUNTRY EDIT',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/language',
+      name: 'language-list',
+      component: () => import('@/views/app/Language/index.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST LANGUAGE ',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST LANGUAGE ',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/language/edit',
+      name: 'language-edit',
+      component: () => import('@/views/app/Language/Edit.vue'),
+      meta: {
+        pageTitle: 'LANGUAGE EDIT',
+        navActiveLink: 'language-list',
+        breadcrumb: [
+          {
+            text: 'Overall List langauge',
+            to: {name: 'language-list'},
+            active: false,
+          },
+          {
+            text: 'LANGUAGE EDIT',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/partner-type',
+      name: 'partner-type-list',
+      component: () => import('@/views/app/Partner_Type/index.vue'),
+      meta: {
+        pageTitle: 'OVERALL LIST PARTNER TYPE ',
+        breadcrumb: [
+          {
+            text: 'OVERALL LIST PARTNER TYPE ',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/partner-type/edit',
+      name: 'partner-type-edit',
+      component: () => import('@/views/app/Partner_Type/Edit.vue'),
+      meta: {
+        pageTitle: 'PARTNER TYPE EDIT',
+        navActiveLink: 'partner-type-list',
+        breadcrumb: [
+          {
+            text: 'Overall List Partner Type',
+            to: {name: 'partner-type-list'},
+            active: false,
+          },
+          {
+            text: 'PARTNER TYPE EDIT',
+            active: true,
+          },
+        ],
+      },
+    },
 
     {
       path: '/app/new_business',

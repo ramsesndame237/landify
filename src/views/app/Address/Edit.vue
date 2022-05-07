@@ -4,13 +4,13 @@
       <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
         <div class="d-flex">
           <img src="@/assets/images/icons/team.svg" alt="" class="mr-1">
-          <span>{{ $t('app.form.label.address') }}</span>
+          <span>{{ $t('app.content.create_new_address') }}</span>
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
             <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
               <img src="@/assets/images/pages/plusIcons.svg" alt="">
-              {{ $t('app.content.create_payment') }}</b-button>
+              {{ $t('app.content.create_new_address') }}</b-button>
             <b-button size="sm" class="d-flex" variant="primary">
               <img src="@/assets/images/pages/deleteIcons.svg" alt="">
               {{ $t('app.btn.cancel') }}</b-button>

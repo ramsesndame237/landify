@@ -57,7 +57,7 @@
         </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" link="address-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases :filter="filter" link="country-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
     </b-card>
 
     <!--modal-->
@@ -67,7 +67,7 @@
         :cancel-title="$t('app.btn.cancel')"
         modal-class="modal-primary"
         centered
-        :title="$t('app.content.create_new_address')"
+        :title="$t('app.content.create_new_country')"
         size="lg"
     >
       <b-form @submit.prevent>
@@ -88,37 +88,12 @@
           </b-col>
           <b-col cols="12" md="10">
             <b-form-group
-              :label="`${$t('app.form.label.city')}`"
-              label-for="city"
-              label-cols-md="3"
-            >
-              <b-form-select
-                id="city"
-                v-model="newCompany.companyId"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="10">
-            <b-form-group
-              :label="$t('app.form.label.zip')"
-              label-for="zip"
-              label-cols-md="3"
-            >
-                <b-form-input
-                  id="zip"
-                  v-model="newCompany.companyName"
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="10">
-            <b-form-group
-              :label="$t('app.form.label.country')"
-              label-for="country"
+              :label="$t('app.form.label.currency_name')"
+              label-for="name"
               label-cols-md="3"
             >
             <b-form-input
-              id="country"
+              id="name"
               v-model="newCompany.customerGroupId"
               :placeholder="$t('app.form.placeholder.default')"
             />
@@ -126,34 +101,25 @@
           </b-col>
           <b-col cols="12" md="10">
             <b-form-group
-              :label="`${$t('app.form.label.street')} + ${$t('app.form.label.no')}`"
-              label-for="street"
+              :label="$t('app.form.label.currency')"
+              label-for="currency"
               label-cols-md="3"
             >
-            <b-row>
-              <b-col cols="9">
-                <b-form-input
-                  id="street"
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-              <b-col cols="3">
-                <b-form-input
-                  id="street"
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-            </b-row>
+            <b-form-input
+              id="currency"
+              v-model="newCompany.customerGroupId"
+              :placeholder="$t('app.form.placeholder.default')"
+            />
             </b-form-group>
           </b-col>
           <b-col cols="12" md="10">
             <b-form-group
-              :label="$t('app.form.label.address_extra')"
-              label-for="address_extra"
+              :label="$t('app.form.label.iso')"
+              label-for="iso"
               label-cols-md="3"
             >
-            <b-form-input
-              id="address_extra"
+            <b-form-select
+              id="iso"
               v-model="newCompany.customerGroupId"
               :placeholder="$t('app.form.placeholder.default')"
             />
@@ -181,6 +147,7 @@ import {
   BPagination,
   BInputGroup,
   BFormDatepicker,
+  BFormTextarea
 } from 'bootstrap-vue'
 
 export default {
@@ -198,6 +165,7 @@ export default {
     BFormInput,
     BInputGroup,
     BFormDatepicker,
+    BFormTextarea
   },
   data() {
     return {
@@ -260,15 +228,9 @@ export default {
       ],
       fields: [
         { key: 'id', label: 'Id' },
-        { key: 'group', label: "Address ID", sortable: true },
-        { key: 'last_name', label: "Country", sortable: true },
-        { key: 'first_name', label: "City", sortable: true },
-        { key: 'city', label: 'Zip', sortable: true },
-        { key: 'phone', label: 'Street', sortable: true },
-        { key: 'mail', label: "House No", sortable: true },
-        { key: 'function', label: "Address_Extra", sortable: true },
-        { key: 'mail', label: "Date", sortable: true },
-        { key: 'df', label: "entries per address", sortable: true },
+        { key: 'group', label: "Country Name", sortable: true },
+        { key: 'grodup', label: "Currency ", sortable: true },
+        { key: 'last_fname', label: "ISO 4217", sortable: true },
         'Action',
       ],
       selected: null,

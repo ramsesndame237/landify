@@ -57,7 +57,7 @@
         </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" link="address-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases :filter="filter" link="partner-type-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
     </b-card>
 
     <!--modal-->
@@ -67,7 +67,7 @@
         :cancel-title="$t('app.btn.cancel')"
         modal-class="modal-primary"
         centered
-        :title="$t('app.content.create_new_address')"
+        :title="$t('app.content.create_new_partner_type')"
         size="lg"
     >
       <b-form @submit.prevent>
@@ -88,37 +88,12 @@
           </b-col>
           <b-col cols="12" md="10">
             <b-form-group
-              :label="`${$t('app.form.label.city')}`"
-              label-for="city"
-              label-cols-md="3"
-            >
-              <b-form-select
-                id="city"
-                v-model="newCompany.companyId"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="10">
-            <b-form-group
-              :label="$t('app.form.label.zip')"
-              label-for="zip"
-              label-cols-md="3"
-            >
-                <b-form-input
-                  id="zip"
-                  v-model="newCompany.companyName"
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="10">
-            <b-form-group
-              :label="$t('app.form.label.country')"
-              label-for="country"
+              :label="$t('app.form.label.name')"
+              label-for="name"
               label-cols-md="3"
             >
             <b-form-input
-              id="country"
+              id="name"
               v-model="newCompany.customerGroupId"
               :placeholder="$t('app.form.placeholder.default')"
             />
@@ -126,34 +101,12 @@
           </b-col>
           <b-col cols="12" md="10">
             <b-form-group
-              :label="`${$t('app.form.label.street')} + ${$t('app.form.label.no')}`"
-              label-for="street"
+              :label="$t('app.form.label.description')"
+              label-for="description"
               label-cols-md="3"
             >
-            <b-row>
-              <b-col cols="9">
-                <b-form-input
-                  id="street"
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-              <b-col cols="3">
-                <b-form-input
-                  id="street"
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-            </b-row>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="10">
-            <b-form-group
-              :label="$t('app.form.label.address_extra')"
-              label-for="address_extra"
-              label-cols-md="3"
-            >
-            <b-form-input
-              id="address_extra"
+            <b-form-select
+              id="description"
               v-model="newCompany.customerGroupId"
               :placeholder="$t('app.form.placeholder.default')"
             />
@@ -181,6 +134,7 @@ import {
   BPagination,
   BInputGroup,
   BFormDatepicker,
+  BFormTextarea
 } from 'bootstrap-vue'
 
 export default {
@@ -198,6 +152,7 @@ export default {
     BFormInput,
     BInputGroup,
     BFormDatepicker,
+    BFormTextarea
   },
   data() {
     return {
@@ -260,15 +215,8 @@ export default {
       ],
       fields: [
         { key: 'id', label: 'Id' },
-        { key: 'group', label: "Address ID", sortable: true },
-        { key: 'last_name', label: "Country", sortable: true },
-        { key: 'first_name', label: "City", sortable: true },
-        { key: 'city', label: 'Zip', sortable: true },
-        { key: 'phone', label: 'Street', sortable: true },
-        { key: 'mail', label: "House No", sortable: true },
-        { key: 'function', label: "Address_Extra", sortable: true },
-        { key: 'mail', label: "Date", sortable: true },
-        { key: 'df', label: "entries per address", sortable: true },
+        { key: 'group', label: "Name", sortable: true },
+        { key: 'groudp', label: "Description", sortable: true },
         'Action',
       ],
       selected: null,

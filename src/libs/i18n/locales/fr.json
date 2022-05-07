@@ -78,9 +78,17 @@
       "create_area": "Créer une Zone",
       "create_pos": "Créer un point de vente",
       "progress": "Progrès",
-      "create_contract": "Create un nouveau Contrat",
+      "create_contract": "Créer un nouveau Contrat",
       "new_busness_text_btn_msg":"Saisir les données d'un nouveau groupe de clients, d'un client, d'un emplacement, d'une zone, d'un PdV, d'un contrat, y compris les critères du contrat.",
-
+      "create_new_payment_data":"Créer une Donnée de Paiement.",
+      "create_new_country" :"Créer un pays",
+      "create_new_language": "Créer une Langue",
+      "create_new_city": "Créer une Ville",
+      "create_new_salutation": "Créer une Salutation",
+      "create_new_contact_title": "Cr&er un Titre de Contact",
+      "create_new_address": "Créer une Addresse",
+      "create_new_currency": "Créer une Devise",
+      "create_new_partner_type":"Créer un Type de Partenaire",
 
       "dashboard": {
         "sub_title": "Liste globale sans registres",
@@ -99,7 +107,12 @@
       "cancel": "Annuler",
       "prev": "Precedent",
       "skip": "Passer",
-      "next": "Suivant"
+      "next": "Suivant",
+      "save_add_location":"Sauvegarder et ajouter un autre Emplacement",
+      "save_add_contact":"Sauvegarder et ajouter un autre Contact",
+      "save_add_contact_cirteria":"Sauvegarder et ajouter d'autres critères de contact",
+      "save_add_contact_special_right":"Sauvegarder et ajouter d'autres droits spéciaux de contact",
+      "save_add_contact_recuring_payment":"Sauvegarder et ajouter d'autres paiements récurrents"
     },
     "search": {
       "label": "Rechercher",
@@ -247,7 +260,22 @@
         "sum_per_moth": "Somme par mois",
         "condition_percentage":"Condition Pourcentage",
         "percentage": "Pourcentage",
-        "index_clause": "Clause d'indexation"
+        "index_clause": "Clause d'indexation",
+        "zip": "ZIP",
+        "no": "No.",
+        "address_extra": "Adresse Extra",
+        "house_number": "Numéro de maison",
+        "salutation_text": " Texte de Salutation",
+        "zip_code": "Code Zip",
+        "currency_name": "Nom de la devise",
+        "currency_short": "Monnaie courte",
+        "currency_symbol": "Symbole de la monnaie",
+        "iso": "ISO 4217",
+        "iso3166": "ISO 3166 Code pays",
+        "country_deposit": "Dépôt national*",
+        "iso6391": "ISO-639-1 Code Langue",
+        "language": "Langue"
+
       }
     },
 
@@ -269,7 +297,8 @@
       "customer_group": "Groupe de Clients",
       "area": "zone",
       "pos": "PdV",
-      "contract": "Contrat"
+      "contract": "Contrat",
+      "partner_company": "Entreprise Partenaire"
 
     }
   }

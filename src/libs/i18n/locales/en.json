@@ -97,6 +97,14 @@
       "progress": "Progress",
       "new_busness_text_btn_msg":"Enter data of new customergroup, customer, location, area, PoS, contract incl. contract criteria.",
       "create_new_payment_data":"Create new Payment Data.",
+      "create_new_country" :"Create new Country",
+      "create_new_currency": "Create New currency",
+      "create_new_city": "Create New City",
+      "create_new_salutation": "Create New Salutation",
+      "create_new_language": "Create New Language",
+      "create_new_address": "Create New Address",
+      "create_new_contact_title": "Create New Contact Title",
+      "create_new_partner_type":"Create New Partner Type",
 
       "dashboard": {
         "sub_title": "Overall list without registers",
@@ -279,7 +287,11 @@
         "currency_name": "Currency name",
         "currency_short": "Currency Short",
         "currency_symbol": "Currency Symbol",
-        "iso": "ISO 4217"
+        "iso": "ISO 4217",
+        "iso3166": "ISO 3166 Country Code",
+        "country_deposit": "Country Deposit*",
+        "iso6391": "ISO-639-1 Language Code",
+        "language": "Language"
 
       }
     },

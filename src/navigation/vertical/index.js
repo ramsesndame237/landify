@@ -171,15 +171,15 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_2.children.country',
-        route: '/',
+        route: 'country-list',
       },
       {
         title: 'app.sidebar.work_pack_2.children.lang',
-        route: '/',
+        route: 'language-list',
       },
       {
         title: 'app.sidebar.work_pack_2.children.partner_type',
-        route: '/',
+        route: 'partner-type-list',
       },
       {
         title: 'app.sidebar.work_pack_2.children.s_p_n_b',
