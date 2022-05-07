@@ -95,8 +95,9 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/app/users/edit',
+      path: '/app/users/edit/:id',
       name: 'user-edit',
+      props: true,
       component: () => import('@/views/app/Users/Edit.vue'),
       meta: {
         pageTitle: 'Edit User',
@@ -104,8 +105,8 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'Overall list users',
-            to: {name: 'users-list'},
-            active: false
+            to: { name: 'users-list' },
+            active: false,
           },
           {
             text: 'Edit User',
