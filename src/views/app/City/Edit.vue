@@ -22,84 +22,63 @@
       <b-form>
         <b-row>
           <b-col cols="12" md="6">
-            <b-form-group :label="$t('app.form.label.street')" label-for="street">
-              <b-form-select id="street" :placeholder="$t('app.form.placeholder.default')"   />
+            <b-form-group
+              :label="`${$t('app.form.label.id')}`"
+              label-for="group-id"
+              label-cols-md="12"
+            >
+            <b-form-input
+              id="group-id"
+              :placeholder="$t('app.form.placeholder.automatic')"
+                
+              v 
+           />
             </b-form-group>
           </b-col>
           <b-col cols="12" md="6">
-            <b-form-group :label="$t('app.form.label.house_number')" label-for="house_number">
-              <b-form-input id="house_number" :placeholder="$t('app.form.placeholder.default')"   type="text"/>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="6" >
-            <b-form-group :label="$t('app.form.label.address_extra')"  class="" label-for="address_extra">
-              <b-form-input id="address_extra" :placeholder="$t('app.form.placeholder.default')" type="text"/>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="6" />
-          <b-col cols="12" md="6">
-            <b-form-group :label="$t('app.form.label.city')" label-for="city">
-              <b-form-select id="city" :placeholder="$t('app.form.placeholder.default')"   type="text"/>
+            <b-form-group
+              :label="$t('app.form.label.name')"
+              label-for="name"
+              label-cols-md="12"
+            >
+            <b-form-input
+              id="name"
+              v 
+              :placeholder="$t('app.form.placeholder.default')"
+            />
             </b-form-group>
           </b-col>
           <b-col cols="12" md="6">
-            <b-form-group :label="$t('app.form.label.zip')" label-for="zip">
-              <b-form-input id="zip" :placeholder="$t('app.form.placeholder.default')"   type="text"/>
+            <b-form-group
+              :label="$t('app.form.label.zip_code')"
+              label-for="zip_code"
+              label-cols-md="12"
+            >
+            <b-form-input
+              id="zip_code"
+              v 
+              :placeholder="$t('app.form.placeholder.default')"
+            />
             </b-form-group>
           </b-col>
-
+          <b-col cols="12" md="6">
+            <b-form-group
+              :label="$t('app.form.label.country')"
+              label-for="country"
+              label-cols-md="12"
+            >
+            <b-form-select
+              id="country"
+              v 
+              :placeholder="$t('app.form.placeholder.default')"
+            />
+            </b-form-group>
+          </b-col>
         </b-row>
       </b-form>
     </b-card>
-    <b-card>
-      <b-tabs pills>
-        <b-tab :title="$t('app.tab.company')" active>
-          <databases :actions="true" :items="items" :fields="fields" />
-        </b-tab>
-        <b-tab :title="$t('app.tab.customer_group')">
-          <databases :items="items" :fields="fields" />
-        </b-tab>
-        <b-tab :title="`${$t('app.tab.partner_company')}`">
-          <databases :items="items" :fields="fields" />
-        </b-tab>
-        <b-tab :title="$t('app.form.label.partner_company_group')">
-          <databases :items="items" :fields="fields" />
-        </b-tab>
-        <b-tab :title="$t('app.tab.contact_person')">
-          <databases :items="items" :fields="fields" />
-        </b-tab>
-        <template #tabs-end>
-          <div class="first-bloc ml-auto d-flex align-items-center">
-            <b-button v-b-modal.modal-role class="mr-1" size="sm" variant="info">{{$t('app.btn.new')}}</b-button>
-            <b-button class="mr-1" size="sm" variant="primary">{{$t('app.btn.cancel')}}</b-button>
-            <div size="sm" class="d-flex align-items-center">
-              <label class="d-inline-block text-sm-left mr-50">{{$t('app.search.label')}}</label>
-              <b-form-input
-                  id="filterInput"
-                  type="search"
-                  :placeholder="$t('app.search.placeholder')"
-              />
-            </div>
-          </div>
-        </template>
-      </b-tabs>
-    </b-card>
-    <!--  New Contact Person modal -->
-    <b-modal
-        id="modal-user"
-        ok-title="Save"
-        cancel-title="Cancel"
-        modal-class="modal-primary"
-        centered
-        title="Create Contact Person"
-        size="lg"
-    >
-      <b-form @submit.prevent>
-        <b-row>
 
-        </b-row>
-      </b-form>
-    </b-modal>
+
   </div>
 </template>
 
@@ -164,62 +143,6 @@ export default {
           { item: 'ms', name: 'Ms' },
         ]
       },
-      items: [
-        {
-          id: 1,
-          group: '213',
-          company_name: 'Fictive Copany',
-          last_name: 'Fictive Group',
-          first_name: 'Fictive Group',
-          city: 'Yaoundé',
-          phone: '+237 132 645 987',
-          mail: 'johndoe@gmail.com',
-          function: "Something",
-          user_id: "1",
-        },
-        {
-          id: 1,
-          group: '213',
-          company_name: 'Fictive Copany',
-          last_name: 'Fictive Group',
-          first_name: 'Fictive Group',
-          city: 'Yaoundé',
-          phone: '+237 132 645 987',
-          mail: 'johndoe@gmail.com',
-          function: "Something",
-          user_id: "1",
-        },
-        {
-          id: 1,
-          group: '213',
-          company_name: 'Fictive Copany',
-          last_name: 'Fictive Group',
-          first_name: 'Fictive Group',
-          city: 'Yaoundé',
-          phone: '+237 132 645 987',
-          mail: 'johndoe@gmail.com',
-          function: "Something",
-          user_id: "1",
-        },
-        {
-          id: 1,
-          group: '213',
-          company_name: 'Fictive Copany',
-          last_name: 'Fictive Group',
-          first_name: 'Fictive Group',
-          city: 'Yaoundé',
-          phone: '+237 132 645 987',
-          mail: 'johndoe@gmail.com',
-          function: "Something",
-          user_id: "1",
-        },
-      ],
-      fields: [
-        { key: 'id', label: 'Id' },
-        { key: 'company_name', label: "Name", sortable: true },
-        'Action',
-      ], 
-
     }
   },
 }

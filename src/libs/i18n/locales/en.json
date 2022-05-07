@@ -96,6 +96,7 @@
       "contract_recurring_payments": "Contract Recuring Payments",
       "progress": "Progress",
       "new_busness_text_btn_msg":"Enter data of new customergroup, customer, location, area, PoS, contract incl. contract criteria.",
+      "new_busness_text_pos_msg":"All listed areas will be allocated to the POS.",
       "create_new_payment_data":"Create new Payment Data.",
       "create_new_country" :"Create new Country",
       "create_new_currency": "Create New currency",
@@ -130,7 +131,7 @@
       "save_add_contact":"Save and add further Contact",
       "save_add_contact_cirteria":"Save and add further Contact Criteria",
       "save_add_contact_special_right":"Save and add further Contact Special Right",
-      "save_add_contact_recuring_payment":"Save and add further Recuring Payment"
+      "save_add_contact_recuring_payment":"Save and add further Reccuring Payment"
     },
     "search": {
       "label": "Search",
@@ -291,7 +292,8 @@
         "iso3166": "ISO 3166 Country Code",
         "country_deposit": "Country Deposit*",
         "iso6391": "ISO-639-1 Language Code",
-        "language": "Language"
+        "language": "Language",
+        "invest_currency":"INVEST CURRENCY"
 
       }
     },

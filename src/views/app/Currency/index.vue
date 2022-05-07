@@ -57,7 +57,7 @@
         </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" link="salutation-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases :filter="filter" link="currency-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
     </b-card>
 
     <!--modal-->

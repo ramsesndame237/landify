@@ -80,6 +80,21 @@
       "create_contract": "Neuen Vertrag erstellen",
       "progress": "Fortschritt",
       "new_busness_text_btn_msg":"Erfassen Sie die Daten der neuen Kundengruppe, des Kunden, des Standorts, des Gebiets, des PoS, des Vertrags inkl. Vertragskriterien.",
+      "new_busness_text_pos_msg":"Alle aufgelisteten Gebiete werden dem POS zugewiesen.",
+
+      "contract_areas": "Vertragsgebiete",
+      "contract_criteria": "Vertragskriterien",
+      "contract_special_rights": "Vertrag Besonderheiten Rechte",
+      "contract_recurring_payments": "Vertrag Wiederkehrende Zahlungen",
+      "create_new_payment_data":"Erstellen Sie neue Zahlungsdaten.",
+      "create_new_country" :"Neues Land erstellen",
+      "create_new_currency": "Neue Währung erstellen",
+      "create_new_city": "Neue Stadt erstellen",
+      "create_new_salutation": "Neue Anrede erstellen",
+      "create_new_language": "Neue Sprache erstellen",
+      "create_new_address": "Neue Adresse erstellen",
+      "create_new_contact_title": "Neuen Kontakttitel erstellen",
+      "create_new_partner_type":"Neue Partnerart anlegen",
 
 
       "dashboard": {
@@ -99,7 +114,12 @@
       "cancel": "Abbrechen",
       "prev": "Prev",
       "skip": "Überspringen",
-      "next": "Weiter"
+      "next": "Weiter",
+      "save_add_location":"Speichern und weiteren Standort hinzufügen",
+      "save_add_contact":"Speichern und weitere Kontakte hinzufügen",
+      "save_add_contact_cirteria":"Speichern und weitere Kontaktkriterien hinzufügen",
+      "save_add_contact_special_right":"Speichern und hinzufügen weitere Kontakt Sonderrechtt",
+      "save_add_contact_recuring_payment":"Speichern und weitere Zahlungen hinzufügen"
     },
     "search": {
       "label": "Suche",
@@ -246,7 +266,22 @@
         "sum_per_moth": "Summe pro Monat",
         "condition_percentage":"Bedingung Prozentsatz",
         "percentage": "Prozentsatz",
-        "index_clause": "Index-Klausel"
+        "index_clause": "Index-Klausel",
+
+        "zip": "ZIP",
+        "no": "No.",
+        "address_extra": "Adresse Extra",
+        "house_number": "Hausnummer",
+        "salutation_text": "Begrüßungstext",
+        "zip_code": "Postleitzahl",
+        "currency_name": "Name der Währung",
+        "currency_short": "Währung Kurz",
+        "currency_symbol": "Währungssymbol",
+        "iso": "ISO 4217",
+        "iso3166": "ISO 3166 Ländercode",
+        "country_deposit": "Land Kaution*",
+        "iso6391": "ISO-639-1 Sprache Code",
+        "language": "Sprache"
       },
 
       "tab": {
@@ -267,7 +302,8 @@
         "customer_group": "Kundengruppe",
         "area": "Area",
         "pos": "PoS",
-        "contract": "Vertrag"
+        "contract": "Vertrag",
+        "partner_company": "Partnerunternehmen"
       }
     }
     
