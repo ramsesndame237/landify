@@ -101,7 +101,7 @@ export default [
     icon: 'KeyIcon',
   },
   {
-    title: 'app.sidebar.tams',
+    title: 'app.sidebar.teams',
     route: 'teams',
     icon: 'UsersIcon',
   },

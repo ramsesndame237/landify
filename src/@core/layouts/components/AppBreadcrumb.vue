@@ -12,8 +12,8 @@
     >
       <b-row class="breadcrumbs-top">
         <b-col cols="12">
-          <h2 class="content-header-title float-left pr-1 mb-0">
-            {{ $route.meta.pageTitle }}
+          <h2 class="content-header-title float-left pr-1 mb-0 text-uppercase">
+            {{$t( $route.meta.pageTitle) }}
           </h2>
           <div class="breadcrumb-wrapper">
             <b-breadcrumb>
@@ -30,7 +30,9 @@
                 :active="item.active"
                 :to="item.to"
               >
-                {{ item.text }}
+              <span class="text-capitalize">
+                {{ $t(item.text) }}
+              </span>
               </b-breadcrumb-item>
             </b-breadcrumb>
           </div>

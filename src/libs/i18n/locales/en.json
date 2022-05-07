@@ -292,8 +292,7 @@
         "iso3166": "ISO 3166 Country Code",
         "country_deposit": "Country Deposit*",
         "iso6391": "ISO-639-1 Language Code",
-        "language": "Language",
-        "invest_currency":"INVEST CURRENCY"
+        "language": "Language"
 
       }
     },
@@ -317,7 +316,52 @@
       "pos": "PoS",
       "contract": "Contract",
       "partner_company": "Partner Company"
+    },
+    "page_title": {
+      "dashboard": "Dashboard",
+      "tasks": "Tasks & Tickets",
+      "deadlines": "Deadlines",
+      "doc": "Documents",
+      "pos": "Point of sales",
+      "properties": "Properties", 
+      "users_rights": "Overall list users", 
+      "users_rights_edit": "Users Edit", 
+      "auth": "AUTHORIZATION USER", 
+      "auth_edit": "AUTHORIZATION USER Edit", 
+      "teams": "Teams", 
+      "team_edit": "Team Edit", 
+      "user_type": "User Type", 
+      "templates": "Templates", 
+      "master_data": "Master Data", 
+      "customer_group": "Overall ustomer groups List",
+      "customer_group_edit": "Customer group Edit",
+      "company":"Overall Companies List",
+      "company_edit":"Company Edit",
+      "contact_person":"Overall Contact Persons List",
+      "contact_person_edit":"Contact Person Edit",
+      "payment":"Overall Payments List",
+      "payment_edit":"Payment Edit",
+      "partner_company":"Overall Partner Companies List",
+      "partner_company_edit":"Partner Company Edit",
+      "partner_company_group": "Overall Partner Company Groups List",
+      "partner_company_group_edit": "Partner Company Group Edit",
+      "address": "Overall Addresses List",
+      "address_edit": "Address Edit",
+      "contact_title": "Overall Contact Titles List",
+      "contact_title_edit": "Contact Title Edit",
+      "salutation": "Overall Salutations List",
+      "salutation_edit": "Salutation Edit",
+      "city": "Overall Cities List",
+      "city_edit": "City Edit",
+      "currency": "Overall Currencies List",
+      "currency_edit": "Currency Edit",
+      "country": "Overall Countries List",
+      "country_edit": "Country Edit",
+      "lang": "Overall Languages List",
+      "lang_edit": "Language Edit",
+      "partner_type": "Overall Partner Types List",
+      "partner_type_edit": "Partner Type Edit",
+      "s_p_n_b": "new Business"
+      } 
     }
-
   }
-}
