@@ -15,7 +15,7 @@
       @filtered="onFiltered"
   >
     <template #cell(Action)="data">
-      <b-link :to="{name: link, params: data.item}">
+      <b-link :to="{name: link, params: {id: data.item.id}}">
         <b-badge class="mr-1" variant="secondary">
           <img src="@/assets/images/pages/editIcons.svg" alt="">
           <span>{{ $t('app.btn.edit') }}</span>
