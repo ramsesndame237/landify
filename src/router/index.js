@@ -95,8 +95,9 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/app/users/edit',
+      path: '/app/users/edit/:id',
       name: 'user-edit',
+      props: true,
       component: () => import('@/views/app/Users/Edit.vue'),
       meta: {
         pageTitle: 'app.page_title.users_rights_edit',
