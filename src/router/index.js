@@ -274,12 +274,12 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/app/customer-groups-edit',
+      path: '/app/customer-groups/edit',
       name: 'customer-groups-edit',
       component: () => import('@/views/app/Customers/Edit.vue'),
       meta: {
         pageTitle: 'app.page_title.customer_group',
-        navActiveLink: "app.page_title.customer_group",
+        navActiveLink: "customer-groups",
         breadcrumb: [
           {
             text: 'app.page_title.customer_group',
