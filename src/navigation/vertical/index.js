@@ -101,7 +101,7 @@ export default [
     icon: 'KeyIcon',
   },
   {
-    title: 'app.sidebar.tams',
+    title: 'app.sidebar.teams',
     route: 'teams',
     icon: 'UsersIcon',
   },
@@ -151,39 +151,39 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_2.children.address',
-        route: '/',
+        route: 'address-list',
       },
       {
         title: 'app.sidebar.work_pack_2.children.contact_title',
-        route: '/',
+        route: 'contact-title-list',
       },
       {
         title: 'app.sidebar.work_pack_2.children.salutation',
-        route: '/',
+        route: 'salutation-list',
       },
       {
         title: 'app.sidebar.work_pack_2.children.city',
-        route: '/',
+        route: 'city-list',
       },
       {
         title: 'app.sidebar.work_pack_2.children.currency',
-        route: '/',
+        route: 'currency-list',
       },
       {
         title: 'app.sidebar.work_pack_2.children.country',
-        route: '/',
+        route: 'country-list',
       },
       {
         title: 'app.sidebar.work_pack_2.children.lang',
-        route: '/',
+        route: 'language-list',
       },
       {
         title: 'app.sidebar.work_pack_2.children.partner_type',
-        route: '/',
+        route: 'partner-type-list',
       },
       {
         title: 'app.sidebar.work_pack_2.children.s_p_n_b',
-        route: '/',
+        route: 'new-business',
       },
     ],
   },
