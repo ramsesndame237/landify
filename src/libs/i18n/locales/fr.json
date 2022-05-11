@@ -359,7 +359,9 @@
       "partner_type_edit": "Modification du type de partenaire",
       "s_p_n_b": "nouvelle Entreprise",
       "pos_list": "Liste des PdV",
-      "pos_edit": "Edition des Points de Vente"
+      "pos_edit": "Edition des Points de Vente",
+      "area": "Liste globale des zones",
+      "area_edit": "Edition de Zone"
     }
   }
 }

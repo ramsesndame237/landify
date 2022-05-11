@@ -363,7 +363,9 @@
       "partner_type_edit": "Partnerart Bearbeiten",
       "s_p_n_b": "neues Geschäft",
       "pos_list": "POS-Übersichtsliste",
-      "pos_edit": "POS Bearbeiten"
+      "pos_edit": "POS Bearbeiten",
+      "area": "Liste der Gesamtbereiche",
+      "area_edit": "Bereich Bearbeiten"
     }
     
   }

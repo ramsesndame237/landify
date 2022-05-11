@@ -786,6 +786,40 @@ const router = new VueRouter({
         ],
       },
     },
+    {
+      path: '/app/area',
+      name: 'area-list',
+      component: () => import('@/views/app/Area/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.pos_list',
+        breadcrumb: [
+          {
+            text: 'app.page_title.pos_list',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/area/edit',
+      name: 'area-edit',
+      component: () => import('@/views/app/Area/Edit.vue'),
+      meta: {
+        pageTitle: 'app.page_title.pos_edit',
+        navActiveLink: 'pos-list',
+        breadcrumb: [
+          {
+            text: 'app.page_title.pos_list',
+            to: {name: 'pos-list'},
+            active: false,
+          },
+          {
+            text: 'app.page_title.pos_edit',
+            active: true,
+          },
+        ],
+      },
+    },
   ],
 })
 

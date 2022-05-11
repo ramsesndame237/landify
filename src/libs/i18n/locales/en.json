@@ -385,7 +385,9 @@
       "partner_type_edit": "Partner Type Edit",
       "s_p_n_b": "new Business",
       "pos_list": "POS overview list",
-      "pos_edit": "POS Edit"
+      "pos_edit": "POS Edit",
+      "area": "Overall areas list",
+      "area_edit": "Areas Edit"
       } 
     } 
   }
