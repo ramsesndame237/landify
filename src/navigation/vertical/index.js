@@ -194,9 +194,54 @@ export default [
     icon: 'CheckSquareIcon',
     children: [
       {
-        title: 'app.sidebar.work_pack_2.children.customer_group',
+        title: 'app.sidebar.work_pack_3.children.pos',
+        route: 'pos-list',
+      },
+      {
+        title: 'app.sidebar.work_pack_3.children.area',
+        route: 'area-list',
+      },
+      {
+        title: 'app.sidebar.work_pack_3.children.location',
         route: '/',
       },
+      {
+        title: 'app.sidebar.work_pack_3.children.contract',
+        route: '/',
+      },
+      {
+        title: 'app.sidebar.work_pack_3.children.lease_contract',
+        route: '/',
+      },
+      {
+        title: 'app.sidebar.work_pack_3.children.poservice_objects',
+        route: '/',
+      },
+      {
+        title: 'app.sidebar.work_pack_3.children.criteria',
+        route: '/',
+      },
+      {
+        title: 'app.sidebar.work_pack_3.children.index_clause',
+        route: '/',
+      },
+      {
+        title: 'app.sidebar.work_pack_3.children.special_right',
+        route: '/',
+      },
+      {
+        title: 'app.sidebar.work_pack_3.children.tag',
+        route: '/',
+      },
+      {
+        title: 'app.sidebar.work_pack_3.children.unit',
+        route: '/',
+      },
+      {
+        title: 'app.sidebar.work_pack_3.children.choice',
+        route: '/',
+      },
+      
     ],
   },
 ]

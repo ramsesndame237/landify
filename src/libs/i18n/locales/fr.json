@@ -89,6 +89,7 @@
       "create_new_contact_title": "Créer un Titre de Contact",
       "create_new_address": "Créer une Addresse",
       "create_new_currency": "Créer une Devise",
+      "create_new_pos":"Créer un nouveau Point de Vente",
       "create_new_partner_type":"Créer un Type de Partenaire",
 
       "dashboard": {
@@ -103,6 +104,7 @@
     "btn": {
       "new": "Nouveau",
       "edit": "Editer",
+      "view": "Voir",
       "delete": "Supprimer",
       "save": "Sauvegarder",
       "cancel": "Annuler",
@@ -275,7 +277,11 @@
         "iso3166": "ISO 3166 Code pays",
         "country_deposit": "Dépôt national*",
         "iso6391": "ISO-639-1 Code Langue",
-        "language": "Langue"
+        "language": "Langue",
+        "customer_pos_no": "N° de PdV du client",
+        "pos_name": "Nom du PdV",
+        "pos_branch_no":"No du PdV",
+        "first_year":"Première année"
 
       }
     },
@@ -299,7 +305,12 @@
       "area": "zone",
       "pos": "PdV",
       "contract": "Contrat",
-      "partner_company": "Entreprise Partenaire"
+      "partner_company": "Entreprise Partenaire",
+      "areas": "Zone",
+      "service_object": "Service Objects",
+      "tickects_and_groups": "Billets et billets de groupe",
+      "contradictions_package": "Contradictions et Forfaits",
+      "nk_accounts": "Comptes NK"
 
     },
     "page_title": {
@@ -346,7 +357,9 @@
       "lang_edit": "Édition de la langue",
       "partner_type": "Liste des types de partenaires",
       "partner_type_edit": "Modification du type de partenaire",
-      "s_p_n_b": "nouvelle Entreprise"
+      "s_p_n_b": "nouvelle Entreprise",
+      "pos_list": "Liste des PdV",
+      "pos_edit": "Edition des Points de Vente"
     }
   }
 }

@@ -95,6 +95,7 @@
       "create_new_address": "Neue Adresse erstellen",
       "create_new_contact_title": "Neuen Kontakttitel erstellen",
       "create_new_partner_type":"Neue Partnerart anlegen",
+      "create_new_pos":"Neue POS erstellen",
 
 
       "dashboard": {
@@ -107,6 +108,7 @@
       }
     },
     "btn": {
+      "view": "Siehe",
       "new": "neu",
       "edit": "bearbeiten",
       "delete": "Löschen",
@@ -281,7 +283,11 @@
         "iso3166": "ISO 3166 Ländercode",
         "country_deposit": "Land Kaution*",
         "iso6391": "ISO-639-1 Sprache Code",
-        "language": "Sprache"
+        "language": "Sprache",
+        "customer_pos_no": "Kunde POS-Nr.",
+        "pos_name": "POS Name",
+        "pos_branch_no":"POS-Filiale Nr.",
+        "first_year":"Erstes Jahr"
       },
 
       "tab": {
@@ -303,7 +309,12 @@
         "area": "Area",
         "pos": "PoS",
         "contract": "Vertrag",
-        "partner_company": "Partnerunternehmen"
+        "partner_company": "Partnerunternehmen",
+        "areas": "Bereiche",
+        "service_object": "Vertriebslinie",
+        "tickects_and_groups": "Tickets und Group Tickets",
+        "contradictions_package": "Widerspürche und Packages",
+        "nk_accounts": "NK-Abrech-nungen"
       }
     },
     "page_title": {
@@ -350,7 +361,9 @@
       "lang_edit": "Sprache bearbeiten",
       "partner_type": "Gesamtliste der Partnertypen",
       "partner_type_edit": "Partnerart Bearbeiten",
-      "s_p_n_b": "neues Geschäft"
+      "s_p_n_b": "neues Geschäft",
+      "pos_list": "POS-Übersichtsliste",
+      "pos_edit": "POS Bearbeiten"
     }
     
   }

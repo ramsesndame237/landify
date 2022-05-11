@@ -752,6 +752,40 @@ const router = new VueRouter({
         ],
       },
     },
+    {
+      path: '/app/p-o-s',
+      name: 'pos-list',
+      component: () => import('@/views/app/POS/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.pos_list',
+        breadcrumb: [
+          {
+            text: 'app.page_title.pos_list',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/p-o-s/edit',
+      name: 'pos-edit',
+      component: () => import('@/views/app/POS/Edit.vue'),
+      meta: {
+        pageTitle: 'app.page_title.pos_edit',
+        navActiveLink: 'pos-list',
+        breadcrumb: [
+          {
+            text: 'app.page_title.pos_list',
+            to: {name: 'pos-list'},
+            active: false,
+          },
+          {
+            text: 'app.page_title.pos_edit',
+            active: true,
+          },
+        ],
+      },
+    },
   ],
 })
 

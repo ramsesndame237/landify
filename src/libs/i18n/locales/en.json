@@ -51,7 +51,18 @@
       "work_pack_3": {
         "title": "Work Package 3",
         "children" : {
-          "customer_group": "Customer group"
+          "pos": "POS",
+          "area": "Areas",
+          "location": "Locations",
+          "contract": "Contracts",
+          "lease_contract": "Lease Contracts",
+          "service_object": "Services Object",
+          "criteria": "Criteria",
+          "index_clause": "Index Clause",
+          "special_right": "Special Rights",
+          "tag": "Recurrinf Payment",
+          "unit": "Recurrinf Payment",
+          "choice": "Recurrinf Payment"
         }
       } 
     },
@@ -106,6 +117,7 @@
       "create_new_address": "Create New Address",
       "create_new_contact_title": "Create New Contact Title",
       "create_new_partner_type":"Create New Partner Type",
+      "create_new_pos":"Create New POS",
 
       "dashboard": {
         "sub_title": "Overall list without registers",
@@ -119,6 +131,7 @@
 
     },
     "btn": {
+      "view": "View",
       "new": "New",
       "edit": "Edit",
       "delete": "Delete",
@@ -292,7 +305,11 @@
         "iso3166": "ISO 3166 Country Code",
         "country_deposit": "Country Deposit*",
         "iso6391": "ISO-639-1 Language Code",
-        "language": "Language"
+        "language": "Language",
+        "customer_pos_no": "Customer POS No",
+        "pos_name": "POS Name",
+        "pos_branch_no":"POS Branch No",
+        "first_year":"First Year"
 
       }
     },
@@ -315,7 +332,12 @@
       "area": "Area",
       "pos": "PoS",
       "contract": "Contract",
-      "partner_company": "Partner Company"
+      "partner_company": "Partner Company",
+      "areas": "Areas",
+      "service_object": "Service Objects",
+      "tickects_and_groups": "Tickets and group tickets",
+      "contradictions_package": "Contradictions and Packages",
+      "nk_accounts": "NK accounts"
     },
     "page_title": {
       "dashboard": "Dashboard",
@@ -333,7 +355,7 @@
       "user_type": "User Type", 
       "templates": "Templates", 
       "master_data": "Master Data", 
-      "customer_group": "Overall ustomer groups List",
+      "customer_group": "Overall customer groups List",
       "customer_group_edit": "Customer group Edit",
       "company":"Overall Companies List",
       "company_edit":"Company Edit",
@@ -361,7 +383,9 @@
       "lang_edit": "Language Edit",
       "partner_type": "Overall Partner Types List",
       "partner_type_edit": "Partner Type Edit",
-      "s_p_n_b": "new Business"
+      "s_p_n_b": "new Business",
+      "pos_list": "POS overview list",
+      "pos_edit": "POS Edit"
       } 
-    }
+    } 
   }
