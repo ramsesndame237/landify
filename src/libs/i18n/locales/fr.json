@@ -91,6 +91,7 @@
       "create_new_currency": "Créer une Devise",
       "create_new_pos":"Créer un nouveau Point de Vente",
       "create_new_partner_type":"Créer un Type de Partenaire",
+      "create_new_area": "Créer une Zonne",
 
       "dashboard": {
         "sub_title": "Liste globale sans registres",

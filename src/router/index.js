@@ -791,10 +791,10 @@ const router = new VueRouter({
       name: 'area-list',
       component: () => import('@/views/app/Area/index.vue'),
       meta: {
-        pageTitle: 'app.page_title.pos_list',
+        pageTitle: 'app.page_title.area',
         breadcrumb: [
           {
-            text: 'app.page_title.pos_list',
+            text: 'app.page_title.area',
             active: true,
           },
         ],
@@ -805,16 +805,16 @@ const router = new VueRouter({
       name: 'area-edit',
       component: () => import('@/views/app/Area/Edit.vue'),
       meta: {
-        pageTitle: 'app.page_title.pos_edit',
-        navActiveLink: 'pos-list',
+        pageTitle: 'app.page_title.area_edit',
+        navActiveLink: 'area-list',
         breadcrumb: [
           {
-            text: 'app.page_title.pos_list',
-            to: {name: 'pos-list'},
+            text: 'app.page_title.area_edit',
+            to: {name: 'area-list'},
             active: false,
           },
           {
-            text: 'app.page_title.pos_edit',
+            text: 'app.page_title.area_edit',
             active: true,
           },
         ],

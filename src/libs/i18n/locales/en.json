@@ -118,6 +118,7 @@
       "create_new_contact_title": "Create New Contact Title",
       "create_new_partner_type":"Create New Partner Type",
       "create_new_pos":"Create New POS",
+      "create_new_area": "Create New Area",
 
       "dashboard": {
         "sub_title": "Overall list without registers",
