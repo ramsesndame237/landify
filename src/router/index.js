@@ -275,12 +275,12 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/app/customer-groups-edit',
+      path: '/app/customer-groups/edit',
       name: 'customer-groups-edit',
       component: () => import('@/views/app/Customers/Edit.vue'),
       meta: {
         pageTitle: 'app.page_title.customer_group',
-        navActiveLink: "app.page_title.customer_group",
+        navActiveLink: "customer-groups",
         breadcrumb: [
           {
             text: 'app.page_title.customer_group',
@@ -747,6 +747,74 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.s_p_n_b',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/p-o-s',
+      name: 'pos-list',
+      component: () => import('@/views/app/POS/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.pos_list',
+        breadcrumb: [
+          {
+            text: 'app.page_title.pos_list',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/p-o-s/edit',
+      name: 'pos-edit',
+      component: () => import('@/views/app/POS/Edit.vue'),
+      meta: {
+        pageTitle: 'app.page_title.pos_edit',
+        navActiveLink: 'pos-list',
+        breadcrumb: [
+          {
+            text: 'app.page_title.pos_list',
+            to: {name: 'pos-list'},
+            active: false,
+          },
+          {
+            text: 'app.page_title.pos_edit',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/area',
+      name: 'area-list',
+      component: () => import('@/views/app/Area/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.area',
+        breadcrumb: [
+          {
+            text: 'app.page_title.area',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/area/edit',
+      name: 'area-edit',
+      component: () => import('@/views/app/Area/Edit.vue'),
+      meta: {
+        pageTitle: 'app.page_title.area_edit',
+        navActiveLink: 'area-list',
+        breadcrumb: [
+          {
+            text: 'app.page_title.area_edit',
+            to: {name: 'area-list'},
+            active: false,
+          },
+          {
+            text: 'app.page_title.area_edit',
             active: true,
           },
         ],
