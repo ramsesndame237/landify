@@ -5,8 +5,12 @@ export default {
   state: {
     windowWidth: 0,
     shallShowOverlay: false,
+    packageVersion: process.env.PACKAGE_VERSION || '0',
+    commitVersion: process.env.CI_VERSION || '',
+    commitDate: process.env.CI_DATE || '',
   },
   getters: {
+    fullVersion: state => `v${state.packageVersion} - ${state.commitVersion} - ${process.env.CI_DATE}`,
     currentBreakPoint: state => {
       const { windowWidth } = state
       if (windowWidth >= $themeBreakpoints.xl) return 'xl'
