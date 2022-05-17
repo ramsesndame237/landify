@@ -5,31 +5,50 @@
         class="d-flex align-items-center justify-content-between"
         style="padding: 10px"
       >
+        <!--              v-b-modal.modal-user-->
         <div class="d-flex align-items-center">
           <img
             class="mr-1"
             src="@/assets/images/icons/people.svg"
             alt=""
           >
-          <span>Créer un utilisateur</span>
+          <span>Editer un utilisateur</span>
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
             <b-button
-              v-b-modal.modal-user
+              v-if="view"
               size="sm"
               variant="info"
               class="mr-1 d-flex"
+              @click="changeMode"
             >
               <img
-                src="@/assets/images/pages/plusIcons.svg"
+                src="@/assets/images/pages/editIcons.svg"
                 alt=""
               >
-              Create new User </b-button>
+              Edit
+            </b-button>
             <b-button
+              v-else
+              size="sm"
+              variant="info"
+              class="mr-1 d-flex"
+              @click="Edit"
+            >
+              <img
+                src="@/assets/images/pages/editIcons.svg"
+                alt=""
+              >
+
+              Save
+            </b-button>
+            <b-button
+              v-if="!view"
               size="sm"
               class="d-flex"
               variant="primary"
+              @click="changeMode"
             >
               <img
                 src="@/assets/images/pages/deleteIcons.svg"
@@ -51,12 +70,13 @@
           >
             <b-form-group
               label="E-mail*"
-              label-for="username"
+              label-for="email"
               placeholder="Enter here..."
             >
               <b-form-input
-                id="username"
+                id="email"
                 v-model="user.email"
+                :disabled="view"
               />
             </b-form-group>
           </b-col>
@@ -68,13 +88,14 @@
           >
             <b-form-group
               label="Password*"
-              label-for="full-name"
+              label-for="password"
               placeholder="Enter here..."
             >
               <b-form-input
-                id="full-name"
-                v-model="user.name"
-                type="email"
+                id="password"
+                v-model="user.password"
+                type="password"
+                :disabled="view"
               />
             </b-form-group>
           </b-col>
@@ -87,11 +108,17 @@
           >
             <div class="d-flex">
               <span class="mr-1">User must change his password at next login</span>
-              <b-form-checkbox />
+              <b-form-checkbox
+                v-model="user.change_pwd"
+                :disabled="view"
+              />
             </div>
             <div class="d-flex ml-auto">
               <span class="mr-1">User locked</span>
-              <b-form-checkbox />
+              <b-form-checkbox
+                v-model="user.locked"
+                :disabled="view"
+              />
             </div>
           </b-col>
 
@@ -108,11 +135,21 @@
             </b-col>
             <div class="d-flex">
               <span class="mr-1">Mr.</span>
-              <b-form-radio name="some-radios" />
+              <b-form-radio
+                v-model="user.title"
+                name="some-radios"
+                value="Mr."
+                :disabled="view"
+              />
             </div>
             <div class="d-flex ml-auto">
               <span class="mr-1">Ms.</span>
-              <b-form-radio name="some-radios" />
+              <b-form-radio
+                v-model="user.title"
+                name="some-radios"
+                value="Ms."
+                :disabled="view"
+              />
             </div>
 
           </b-col>
@@ -129,6 +166,7 @@
               <b-form-input
                 id="first_name"
                 v-model="user.first_name"
+                :disabled="view"
                 type="text"
               />
             </b-form-group>
@@ -145,6 +183,7 @@
               <b-form-input
                 id="last_name"
                 v-model="user.full_name"
+                :disabled="view"
                 type="text"
               />
             </b-form-group>
@@ -160,7 +199,8 @@
             >
               <b-form-input
                 id="abbreviation"
-                v-model="user.full_name"
+                v-model="user.name_abrv"
+                :disabled="view"
                 type="text"
               />
             </b-form-group>
@@ -172,11 +212,12 @@
           >
             <b-form-group
               label="Function"
-              label-for="name"
+              label-for="function"
             >
               <b-form-input
-                id="firstname"
-                v-model="user.email"
+                id="function"
+                v-model="user.function"
+                :disabled="view"
                 type="text"
               />
             </b-form-group>
@@ -188,12 +229,13 @@
           >
             <b-form-group
               label="Customer Group*"
-              label-for="name"
+              label-for="group"
             >
               <div class="d-flex">
                 <b-form-input
                   id="customer-group"
-                  v-model="user.email"
+                  v-model="user.group"
+                  :disabled="view"
                   placeholder="Please select ..."
                   class="mr-1"
                   type="text"
@@ -212,11 +254,12 @@
           >
             <b-form-group
               label="Contact person"
-              label-for="name"
+              label-for="contact-person"
             >
               <b-form-input
                 id="contact-person"
-                v-model="user.email"
+                v-model="user.contact"
+                :disabled="view"
                 type="text"
               />
             </b-form-group>
@@ -233,6 +276,7 @@
               <b-form-input
                 id="user-type"
                 v-model="user.user_type"
+                :disabled="view"
                 type="text"
               />
             </b-form-group>
@@ -244,11 +288,12 @@
           >
             <b-form-group
               label="Title"
-              label-for="name"
+              label-for="title"
             >
               <b-form-input
                 id="title"
-                v-model="user.email"
+                v-model="user.title"
+                :disabled="view"
                 type="text"
               />
             </b-form-group>
@@ -516,6 +561,7 @@ import {
   BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton, BFormSelect, BModal,
 } from 'bootstrap-vue'
 import axios from 'axios'
+import { mapState } from 'vuex'
 
 const Databases = () => import('@/layouts/components/DataTables.vue')
 
@@ -540,6 +586,7 @@ export default {
   props: ['id'],
   data() {
     return {
+      view: true,
       perPage: 10,
       pageOptions: [3, 5, 10],
       user: {},
@@ -552,158 +599,6 @@ export default {
       options2: [
         { text: 'Mr.', value: 'first2', disabled: false },
         { text: 'Ms.', value: 'second2', disabled: false },
-      ],
-      items: [
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 2,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 3,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 4,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 5,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 6,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 7,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 8,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 9,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 10,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 11,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 12,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 13,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 14,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-        {
-          id: 15,
-          // eslint-disable-next-line global-require
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
       ],
       fields: [
         { key: 'id', label: 'Id' },
@@ -754,11 +649,44 @@ export default {
       ],
     }
   },
+  computed: {
+    ...mapState({
+      items: state => state.MockApi.items,
+    }),
+  },
   mounted() {
     axios.get(`https://627536d05dc4f5764ba0abcb.mockapi.io/api/users/${this.id}`)
       .then(response => {
         this.user = response.data
       })
+  },
+  methods: {
+    changeMode() {
+      this.view = !this.view
+    },
+    Edit() {
+      console.log(this.user)
+      axios.put(`https://627536d05dc4f5764ba0abcb.mockapi.io/api/users/${this.id}`,
+        {
+          change_pwd: this.user.change_pwd,
+          company: this.user.company,
+          contact: this.user.contact,
+          email: this.user.email,
+          first_name: this.user.first_name,
+          full_name: this.user.full_name,
+          function: this.user.function,
+          group: this.user.group,
+          locked: this.user.locked,
+          mobile: this.user.mobile,
+          name_abrv: this.user.name_abrv,
+          password: this.user.password,
+          title: this.user.title,
+          user_type: this.user.user_type,
+        }).then(response => {
+        this.user = response.data
+        this.view = true
+      })
+    },
   },
 }
 </script>
