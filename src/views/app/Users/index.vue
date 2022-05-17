@@ -298,7 +298,6 @@ export default {
     this.getUsers()
   },
   methods: {
-    ...mapActions('MockApi', ['getUsers']),
     info(item, index, button) {
       this.infoModal.title = `Row index: ${index}`
       this.infoModal.content = JSON.stringify(item, null, 2)
