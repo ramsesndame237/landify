@@ -203,7 +203,7 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_3.children.location',
-        route: '/',
+        route: 'location-list',
       },
       {
         title: 'app.sidebar.work_pack_3.children.contract',
@@ -241,7 +241,7 @@ export default [
         title: 'app.sidebar.work_pack_3.children.choice',
         route: '/',
       },
-      
+
     ],
   },
 ]

@@ -21,13 +21,13 @@
           "text_templates": "Textvorlagen"
         }
       },
-      "properties": "Eigenschaften", 
-      "users_rights": "Benutzer und Rechte", 
-      "auth": "Autorisierung", 
-      "teams": "Teams", 
-      "user_type": "Benutzertyp", 
-      "templates": "Schablonen", 
-      "master_data": "Stammdaten", 
+      "properties": "Eigenschaften",
+      "users_rights": "Benutzer und Rechte",
+      "auth": "Autorisierung",
+      "teams": "Teams",
+      "user_type": "Benutzertyp",
+      "templates": "Schablonen",
+      "master_data": "Stammdaten",
       "work_pack_2": {
         "title": "Arbeitspaket 2",
         "children" : {
@@ -53,7 +53,7 @@
         "children" : {
           "customer_group": "Kundengruppe"
         }
-      } 
+      }
     },
     "content": {
       "show": "anzeigen",
@@ -69,8 +69,8 @@
       "create_contact_person": "Eine Kontaktperson erstellen",
       "company_detail_view": "Details zum Unternehmen",
       "partner_company_detail_view": "Details zum Partnerunternehmen",
-      "auth_management_detail" : "Details zur Verwaltung von Berechtigungen",
-      "create_payment" : "Eine Zahlung erstellen",
+      "auth_management_detail": "Details zur Verwaltung von Berechtigungen",
+      "create_payment": "Eine Zahlung erstellen",
       "create_customer": "Neuen Kunden anlegen",
       "create_partner_group": "Partnergruppe erstellen",
       "create_new_business": "Erstellungspfad für einen neuen Kunden und Vertrag",
@@ -79,25 +79,30 @@
       "create_pos": "Neue Verkaufsstelle erstellen",
       "create_contract": "Neuen Vertrag erstellen",
       "progress": "Fortschritt",
-      "new_busness_text_btn_msg":"Erfassen Sie die Daten der neuen Kundengruppe, des Kunden, des Standorts, des Gebiets, des PoS, des Vertrags inkl. Vertragskriterien.",
-      "new_busness_text_pos_msg":"Alle aufgelisteten Gebiete werden dem POS zugewiesen.",
-
+      "new_busness_text_btn_msg": "Erfassen Sie die Daten der neuen Kundengruppe, des Kunden, des Standorts, des Gebiets, des PoS, des Vertrags inkl. Vertragskriterien.",
+      "new_busness_text_pos_msg": "Alle aufgelisteten Gebiete werden dem POS zugewiesen.",
       "contract_areas": "Vertragsgebiete",
       "contract_criteria": "Vertragskriterien",
       "contract_special_rights": "Vertrag Besonderheiten Rechte",
       "contract_recurring_payments": "Vertrag Wiederkehrende Zahlungen",
-      "create_new_payment_data":"Erstellen Sie neue Zahlungsdaten.",
-      "create_new_country" :"Neues Land erstellen",
+      "create_new_payment_data": "Erstellen Sie neue Zahlungsdaten.",
+      "create_new_country": "Neues Land erstellen",
       "create_new_currency": "Neue Währung erstellen",
       "create_new_city": "Neue Stadt erstellen",
       "create_new_salutation": "Neue Anrede erstellen",
       "create_new_language": "Neue Sprache erstellen",
       "create_new_address": "Neue Adresse erstellen",
       "create_new_contact_title": "Neuen Kontakttitel erstellen",
-      "create_new_partner_type":"Neue Partnerart anlegen",
-      "create_new_pos":"Neue POS erstellen",
+      "create_new_partner_type": "Neue Partnerart anlegen",
+      "create_new_pos": "Neue POS erstellen",
       "create_new_area": "Erstellen einer Zonne",
-
+      "create_new_location": "Neuen Standort erstellen",
+      "location_detail": "Location detail and care",
+      "location_edit": "Standortdetails und Pflege",
+      "location": {
+        "view_title": "Standortdetails und Pflege"
+      }
+    },
 
       "dashboard": {
         "sub_title": "Globale Liste ohne Register",
@@ -106,8 +111,7 @@
       "deadlines": {
         "sub_title": "Globale Liste ohne Register",
         "card_text": "Viel Glück mit Ihrem neuen Projekt."
-      }
-    },
+      },
     "btn": {
       "view": "Siehe",
       "new": "neu",
@@ -136,9 +140,22 @@
         "password" : "Geben Sie Ihr Passwort ein...",
         "password_confirm" : "Passwort bestätigen...",
         "automatic_based_on_id" : "(automatisch entsprechend der ausgewählten ID)",
-        "automatic" : "(automatisch)"
-
-      },
+        "automatic" : "(automatisch)",
+        "location" : {
+          "location_id": "location_id (automatisch)",
+          "object_description": "Beschreibung des Standortobjekts (hier eingeben ...)",
+          "standorttyp": "Standorttyp id",
+          "address_location": "Address_id (auswählen oder automatisch, wenn neu)",
+          "strabe": "Enter here...",
+          "address": "Hier eingeben...",
+          "plz_ort": "Hier eingeben...",
+          "land": "Hier eingeben...",
+          "location_name": "Ortsname (automatisch generiert (Ort, Straße, Hausnummer) oder hier eingeben ....)",
+          "total_space": "Standort Gesamtfläche (Platzzahlen eingeben ...)",
+          "opening_day": "Startdatum des Standorts (Datum eingeben ...)"
+        }
+      }
+    },
       "label": {
         "company_name": "Name des Unternehmens",
         "email": "E-Mail",
@@ -222,7 +239,7 @@
         "contact_details" : "Kontakt Details",
         "partner_type" : "Partner-Typ",
         "partner_company_group" : "Partner Unternehmensgruppe",
-        "ticket_id" : "Ticket-ID",        
+        "ticket_id" : "Ticket-ID",
         "location_id" : "Location-ID",
         "total_area" : "Gesamtfläche",
         "opening_date" : "Datum der Eröffnung",
@@ -288,7 +305,20 @@
         "customer_pos_no": "Kunde POS-Nr.",
         "pos_name": "POS Name",
         "pos_branch_no":"POS-Filiale Nr.",
-        "first_year":"Erstes Jahr"
+        "first_year":"Erstes Jahr",
+        "location": {
+          "location_id": "Standort-ID",
+          "object_description": "Beschreibung des Objekts",
+          "standorttyp": "Standorttyp",
+          "address_location": "Adresse Standort",
+          "strabe": "Strabe",
+          "address": "Adresse",
+          "plz_ort": "Postleitzahl, Stadt",
+          "land": "Land",
+          "location_name": "Name des Standorts",
+          "total_space": "Gesamtfläche",
+          "opening_day": "Datum der Eröffnung"
+        }
       },
 
       "tab": {
@@ -315,25 +345,29 @@
         "service_object": "Vertriebslinie",
         "tickects_and_groups": "Tickets und Group Tickets",
         "contradictions_package": "Widerspürche und Packages",
-        "nk_accounts": "NK-Abrech-nungen"
-      }
-    },
+        "nk_accounts": "NK-Abrech-nungen",
+        "location_tab": {
+          "tab1": "Flächen / Oberflächen",
+          "tab2": "Service-Objekte",
+          "tab3": "Verwalter/Eigentümer"
+        }
+      },
     "page_title": {
       "dashboard": "Armaturenbrett",
       "tasks": "Aufgaben & Tickets",
       "deadlines": "Fristen",
       "doc": "Dokumente",
       "pos": "Verkaufsstelle",
-      "properties": "Eigenschaften", 
-      "users_rights": "Benutzer und Rechte", 
-      "auth": "Autorisierung", 
-      "teams": "Teams", 
-      "user_type": "Benutzertyp", 
-      "templates": "Schablonen", 
-      "master_data": "Stammdaten", 
-      "users_rights_edit": "Benutzer Bearbeiten", 
-      "auth_edit": "AUTHORISIERUNG BENUTZER Bearbeiten", 
-      "team_edit": "Team Bearbeiten", 
+      "properties": "Eigenschaften",
+      "users_rights": "Benutzer und Rechte",
+      "auth": "Autorisierung",
+      "teams": "Teams",
+      "user_type": "Benutzertyp",
+      "templates": "Schablonen",
+      "master_data": "Stammdaten",
+      "users_rights_edit": "Benutzer Bearbeiten",
+      "auth_edit": "AUTHORISIERUNG BENUTZER Bearbeiten",
+      "team_edit": "Team Bearbeiten",
       "customer_group": "Gesamtkundengruppen Liste",
       "customer_group_edit": "Kundengruppe Bearbeiten",
       "company":"Liste der Gesamtunternehmen",
@@ -366,8 +400,10 @@
       "pos_list": "POS-Übersichtsliste",
       "pos_edit": "POS Bearbeiten",
       "area": "Liste der Gesamtbereiche",
-      "area_edit": "Bereich Bearbeiten"
+      "area_edit": "Bereich Bearbeiten",
+      "location": "Standort Übersichtsliste",
+      "location_edit": "Standortübersicht Bearbeiten",
+      "location_view": "Standort Detailansicht"
     }
-    
   }
 }

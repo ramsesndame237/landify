@@ -40,6 +40,23 @@
           >
           <span>{{ $t('app.btn.edit') }}</span>
         </b-badge></b-link>
+
+      <b-link
+        v-if="link_view!==undefined"
+        :to="{name: link_view, params: {id: data.item.id}}"
+      >
+        <b-badge
+          class="mr-1"
+          variant="info"
+        >
+          <img
+            src="@/assets/images/pages/plusIcons.svg"
+            alt=""
+            style="margin-right: 5px"
+          >
+          <span>{{ $t('app.btn.view') }}</span>
+        </b-badge>
+      </b-link>
       <b-badge
         variant="primary"
         @click="deleteButton(data.item.id)"
@@ -76,7 +93,7 @@ export default {
     BLink,
     BFormCheckbox,
   },
-  props: ['items', 'fields', 'perPage', 'pageOptions', 'currentPage', 'link', 'filter', 'modal'],
+  props: ['items', 'fields', 'perPage', 'pageOptions', 'currentPage', 'link', 'filter', 'modal', 'link_view'],
   data() {
     return {
       sortBy: '',
