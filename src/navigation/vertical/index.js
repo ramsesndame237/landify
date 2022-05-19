@@ -241,6 +241,45 @@ export default [
         title: 'app.sidebar.work_pack_3.children.choice',
         route: '/',
       },
+      {
+        title: 'app.sidebar.work_pack_3.children.types.title',
+        route: 'work package',
+        icon: 'CheckSquareIcon',
+        children: [
+          {
+            title: 'app.sidebar.work_pack_3.children.types.children.area_type',
+            route: 'area-type-list',
+          },
+          {
+            title: 'app.sidebar.work_pack_3.children.types.children.contract_type',
+            route: '/',
+          },
+          {
+            title: 'app.sidebar.work_pack_3.children.types.children.contract_criteria_type',
+            route: '/',
+          },
+          {
+            title: 'app.sidebar.work_pack_3.children.types.children.location_type',
+            route: '/',
+          },
+          {
+            title: 'app.sidebar.work_pack_3.children.types.children.maturity_type',
+            route: '/',
+          },
+          {
+            title: 'app.sidebar.work_pack_3.children.types.children.recurring_payment_type',
+            route: '/',
+          },
+          {
+            title: 'app.sidebar.work_pack_3.children.types.children.services_object_type',
+            route: '/',
+          },
+          {
+            title: 'app.sidebar.work_pack_3.children.types.children.usage_type',
+            route: '/',
+          }
+        ]
+      },
       
     ],
   },

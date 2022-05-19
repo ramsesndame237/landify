@@ -73,7 +73,7 @@
         </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" link="pos-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases :filter="filter" modal="modal-primary" link="pos-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
     </b-card>
 
     <!--modal-->

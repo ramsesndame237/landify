@@ -62,7 +62,20 @@
           "special_right": "Special Rights",
           "tag": "Recurrinf Payment",
           "unit": "Recurrinf Payment",
-          "choice": "Recurrinf Payment"
+          "choice": "Recurrinf Payment",
+          "types": {
+            "title": "Types",
+            "children":{
+              "area_type": "Area Type",
+              "contract_type": "Contract Type",
+              "contract_criteria_type": "Contract Criteria Type",
+              "location_type": "Location Type",
+              "maturity_type": "Maturity Type",
+              "recurring_payment_type": "Recurring Payment Type",
+              "services_object_type": "Services Object Type",
+              "usage_type": "Usage Type"
+            }
+          }
         }
       } 
     },
@@ -388,7 +401,8 @@
       "pos_list": "POS overview list",
       "pos_edit": "POS Edit",
       "area": "Overall areas list",
-      "area_edit": "Areas Edit"
+      "area_type": "OVERALL LIST Area Type",
+      "area_type_edit": "Area Type Edit"
       } 
     } 
   }

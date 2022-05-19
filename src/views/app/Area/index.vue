@@ -64,7 +64,7 @@
         </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" link="area-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases :filter="filter" link="area-edit" modal="modal-primary" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
     </b-card>
 
     <!--modal-->

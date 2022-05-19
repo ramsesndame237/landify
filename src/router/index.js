@@ -805,7 +805,7 @@ const router = new VueRouter({
       name: 'area-edit',
       component: () => import('@/views/app/Area/Edit.vue'),
       meta: {
-        pageTitle: 'app.page_title.area_edit',
+        pageTitle: 'app.page_title.area_type_edit',
         navActiveLink: 'area-list',
         breadcrumb: [
           {
@@ -815,6 +815,41 @@ const router = new VueRouter({
           },
           {
             text: 'app.page_title.area_edit',
+            active: true,
+          },
+        ],
+      },
+    },
+
+    {
+      path: '/app/types/area',
+      name: 'area-type-list',
+      component: () => import('@/views/app/AreaType/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.area_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.area_type',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/area/edit',
+      name: 'area-type-edit',
+      component: () => import('@/views/app/AreaType/Edit.vue'),
+      meta: {
+        pageTitle: 'app.page_title.area_type_edit',
+        navActiveLink: 'area-list',
+        breadcrumb: [
+          {
+            text: 'app.page_title.area_type',
+            to: {name: 'area-list'},
+            active: false,
+          },
+          {
+            text: 'app.page_title.area_type_edit',
             active: true,
           },
         ],

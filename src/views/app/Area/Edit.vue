@@ -8,7 +8,7 @@
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
-            <b-button v-b-modal.modal-primary size="sm" variant="primary" class="mr-1 d-flex align-items-center">
+            <b-button size="sm" variant="primary" class="mr-1 d-flex align-items-center">
               <img src="@/assets/images/icons/sort.svg" alt="">
             </b-button>
             <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex align-items-center">
@@ -108,13 +108,13 @@
     <b-card>
       <b-tabs pills>
         <b-tab :title="$t('app.tab.contract')" active>
-          <databases :actions="true" :items="rowsCompany" :fields="contractFields" />
+          <databases :actions="true" modal="modal-primary" :items="rowsCompany" :fields="contractFields" />
         </b-tab>
         <b-tab :title="$t('app.tab.pos')">
-          <databases :items="rowsPerson" :fields="posFields" />
+          <databases modal="modal-primary" :items="rowsPerson" :fields="posFields" />
         </b-tab>
         <b-tab :title="`${$t('app.tab.service_object')}`">
-          <databases :items="rowsTicketPackage" :fields="servicesFields" />
+          <databases modal="modal-primary" :items="rowsTicketPackage" :fields="servicesFields" />
         </b-tab>
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
@@ -132,6 +132,111 @@
         </template>
       </b-tabs>
     </b-card>
+    <!--modal-->
+    <b-modal
+        id="modal-primary"
+        :ok-title="$t('app.btn.save')"
+        :cancel-title="$t('app.btn.cancel')"
+        modal-class="modal-primary"
+        centered
+        :title="$t('app.content.create_new_area')"
+        size="lg"
+    >
+      <b-form @submit.prevent>
+        <b-row>
+          <b-col cols="12">
+            <b-form-group
+                :label=" $t('app.form.label.location_id') "
+                label-for="location_id"
+                label-cols-md="4"
+            >
+              <b-form-select
+                  id="location_id"
+                  type="text"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+                :label=" $t('app.form.label.area_id') "
+                label-for="area_id"
+                label-cols-md="4"
+            >
+              <b-form-input
+                  id="area_id"
+                  type="text"
+                  :placeholder="$t('app.form.placeholder.automatic')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+                :label=" $t('app.form.label.name_area') "
+                label-for="area_name"
+                label-cols-md="4"
+            >
+              <b-form-input
+                  id="area_name"
+                  type="text"
+                  :placeholder="$t('app.form.placeholder.default')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+                :label=" $t('app.form.label.name_area_ext') "
+                label-for="name_area_ext"
+                label-cols-md="4"
+            >
+              <b-form-input
+                  id="name_area_ext"
+                  type="text"
+                  :placeholder="$t('app.form.placeholder.default')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+                :label=" $t('app.form.label.space') "
+                label-for="space"
+                label-cols-md="4"
+            >
+              <b-form-input
+                  id="space"
+                  type="text"
+                  :placeholder="$t('app.form.placeholder.default')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+                :label=" $t('app.form.label.area_type') "
+                label-for="area_type"
+                label-cols-md="4"
+            >
+              <b-form-select
+                  id="area_type"
+                  type="text"
+                  :placeholder="$t('app.form.placeholder.default')"
+              />
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="12">
+            <b-form-group
+                :label=" $t('app.form.label.main_usage') "
+                label-for="main_usage"
+                label-cols-md="4"
+            >
+              <b-form-select
+                  id="main_usage"
+                  type="text"
+              />
+            </b-form-group>
+          </b-col>
+        </b-row>
+      </b-form>
+    </b-modal>
   </div>
 </template>
 
