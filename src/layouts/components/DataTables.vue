@@ -15,8 +15,16 @@
     @filtered="onFiltered"
   >
     <template #cell(Action)="data">
-      <b-badge v-if="modal" variant="info" class=" mr-1 mb-1" @click="$bvModal.show(modal)">
-        <img src="@/assets/images/pages/plusIcons.svg" alt="">
+      <b-badge
+        v-if="modal"
+        variant="info"
+        class=" mr-1 mb-1"
+        @click="$bvModal.show(modal)"
+      >
+        <img
+          src="@/assets/images/pages/plusIcons.svg"
+          alt=""
+        >
         <span> &nbsp;
           {{ $t('app.btn.new') }}
         </span>
@@ -31,14 +39,10 @@
             alt=""
           >
           <span>{{ $t('app.btn.edit') }}</span>
-        <b-badge class="mr-1 mb-1" variant="secondary">
-          <img src="@/assets/images/pages/editIcons.svg" alt="">
-          <span> &nbsp;{{ $t('app.btn.edit') }}</span>
-        </b-badge>
-      </b-link>
+        </b-badge></b-link>
       <b-badge
         variant="primary"
-        @click="deleteUser(data.item.id)"
+        @click="deleteButton(data.item.id)"
       >
         <img
           src="@/assets/images/pages/deleteIcons.svg"
@@ -47,11 +51,7 @@
         <span>
           {{ $t('app.btn.delete') }}
         </span>
-      <b-badge variant="primary">
-        <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-          <span> &nbsp;{{ $t('app.btn.delete') }}</span>
-      </b-badge>
-    </template>
+      </b-badge></template>
 
     <template #cell(id)>
       <b-form-checkbox />
@@ -64,10 +64,8 @@ import {
   BCard, BLink, BTable, BBadge, BRow, BCol, BFormCheckbox,
   BButton,
 } from 'bootstrap-vue'
-import { mapActions } from 'vuex'
 
 export default {
-  props: ['items', 'fields', 'perPage', 'pageOptions', 'currentPage', 'link', 'filter', 'modal'],
   components: {
     BTable,
     BButton,
@@ -78,7 +76,8 @@ export default {
     BLink,
     BFormCheckbox,
   },
-  data () {
+  props: ['items', 'fields', 'perPage', 'pageOptions', 'currentPage', 'link', 'filter', 'modal'],
+  data() {
     return {
       sortBy: '',
       sortDesc: false,
@@ -104,7 +103,9 @@ export default {
     this.totalRows = this.items.length
   },
   methods: {
-    ...mapActions('MockApi', ['deleteUser']),
+    deleteButton(id) {
+      this.$emit('deleteButton', id)
+    },
     info(item, index, button) {
       this.infoModal.title = `Row index: ${index}`
       this.infoModal.content = JSON.stringify(item, null, 2)
