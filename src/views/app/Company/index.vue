@@ -57,8 +57,9 @@
         </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" link="company-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases :filter="filter" link="company-edit" modal="modal-primary" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
     </b-card>
+
 
     <!--modal-->
     <b-modal
@@ -82,9 +83,6 @@
               <b-col cols="6">
                 <b-form-select
                   id="customer-group-id"
-                   
-                  v-model="newCompany.customerGroupId"
-                  :options="customerGroupOptions"
                 >
                 </b-form-select>
               </b-col>
@@ -101,10 +99,8 @@
             >
             <b-row>
               <b-col cols="6">
-                <b-form-input
+                <b-form-select
                   id="companyId"
-                   
-                  v-model="newCompany.companyId"
                   :placeholder="$t('app.form.placeholder.automatic_based_on_id')"
                 />
               </b-col>
@@ -123,8 +119,6 @@
               <b-col cols="6">
                 <b-form-input
                   id="companyName"
-                   
-                  v-model="newCompany.companyName"
                   :placeholder="$t('app.form.placeholder.default')"
                 />
               </b-col>
@@ -143,9 +137,6 @@
                 <b-col cols="5">
                   <b-form-select
                     id="address"
-                     
-                    v-model="newCompany.companyAddres"
-                    :options="customerGroupOptions"
                   />
                 </b-col>
                 <b-button   variant="info" class="-pl-3">
@@ -166,8 +157,6 @@
               <b-col cols="6">
                 <b-form-input
                   id="companyName"
-                   
-                  v-model="newCompany.companyName"
                   :placeholder="$t('app.form.placeholder.default')"
                 />
               </b-col>
@@ -185,8 +174,6 @@
                 <b-form-input
                   id="address_suffix"
                   :placeholder="$t('app.form.placeholder.default')"
-                   
-                  v-model="newCompany.companyName"
                 />
               </b-col>
             </b-row>
@@ -201,16 +188,12 @@
               <b-col cols="2">
                 <b-form-input
                   id="postcode"
-                   
-                  v-model="newCompany.companyName"
                   :placeholder="$t('app.form.placeholder.default')"
                 />
               </b-col>
               <b-col cols="4">
                <b-form-input
                   id="addressPlace"
-                   
-                  v-model="newCompany.companyName"
                   :placeholder="$t('app.form.placeholder.default')"
                 />
               </b-col>
@@ -226,8 +209,6 @@
               <b-col cols="6">
                <b-form-input
                   id="land"
-                   
-                  v-model="newCompany.companyName"
                   :placeholder="$t('app.form.placeholder.default')"
                 />
               </b-col>
@@ -247,8 +228,6 @@
                 <b-col cols="5">
                   <b-form-select
                     id="address"
-                    v-model="newCompany.companyAddres"
-                    :options="customerGroupOptions"
                   />
                 </b-col>
                 <b-button   variant="info" class="-pl-3">
@@ -267,7 +246,6 @@
             <b-row>
               <b-col cols="6">
                <b-form-input
-                   
                   :placeholder="$t('app.form.placeholder.email')"
                 />
               </b-col>
@@ -311,9 +289,6 @@
             <b-row>
               <b-col cols="5">
                 <b-form-select
-                   
-                  v-model="newCompany.companyAddres"
-                  :options="customerGroupOptions"
                 />
               </b-col>
               <b-button   variant="info" class="-pl-3">
@@ -333,10 +308,9 @@
             >
             <b-row>
               <b-col cols="6">
-                <b-form-input
+                <b-form-select
                   id="companyDetails"
                   :placeholder="$t('app.form.placeholder.automatic')"
-                  v-model="newCompany.companyDetails"
                 />
               </b-col>
             </b-row>
@@ -351,7 +325,7 @@
             >
             <b-row>
               <b-col cols="6">
-               <b-form-input
+               <b-form-select
                   :placeholder="$t('app.form.placeholder.default')"
                 />
               </b-col>
@@ -384,8 +358,7 @@
                 <b-col cols="5">
                   <b-form-select
                     id="bankData"
-                    :options="customerGroupOptions"
-                  :placeholder="$t('app.form.placeholder.default')"
+                    :placeholder="$t('app.form.placeholder.default')"
                   />
                 </b-col>
                 <b-button   variant="info" class="-pl-3">
@@ -406,7 +379,6 @@
               <b-col cols="6">
                 <b-form-input
                   id="ibanAccount"
-                  v-model="newCompany.companyName"
                   :placeholder="$t('app.form.placeholder.default')"
                 />
               </b-col>

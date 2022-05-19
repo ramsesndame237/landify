@@ -57,7 +57,7 @@
         </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" link="customer-groups-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases :filter="filter" link="customer-groups-edit" modal="modal-primary" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
     </b-card>
 
     <!--modal-->
@@ -78,10 +78,9 @@
                 label-for="group-id"
                 label-cols-md="4"
             >
-              <b-form-input
+              <b-form-select
                   id="group-id"
                   type="text"
-                  :placeholder="$t('app.form.placeholder.default')"
               />
             </b-form-group>
           </b-col>
@@ -93,6 +92,19 @@
             >
               <b-form-input
                   id="i-name"
+                  type="text"
+                  :placeholder="$t('app.form.placeholder.default')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+                :label=" $t('app.form.label.description') "
+                label-for="description"
+                label-cols-md="4"
+            >
+              <b-form-textarea
+                  id="descrption"
                   type="text"
                   :placeholder="$t('app.form.placeholder.default')"
               />
@@ -117,6 +129,7 @@ import {
   BCol,
   BFormInput,
   BCard,
+  BFormTextarea,
   BPagination,
   BInputGroup,
 } from 'bootstrap-vue'
@@ -125,6 +138,7 @@ export default {
   components: {
     Databases,
     BButton,
+    BFormTextarea,
     BFormGroup,
     BPagination,
     BCard,

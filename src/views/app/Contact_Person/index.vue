@@ -57,7 +57,7 @@
         </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" link="contact-person-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases :filter="filter" modal="modal-primary" link="contact-person-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
     </b-card>
 
     <!--modal-->
@@ -108,7 +108,7 @@
             >
             <b-row>
               <b-col cols="6">
-                <b-form-input
+                <b-form-select
                   id="Contactperson_ID"
                    
                   v-model="newCompany.companyName"
@@ -194,7 +194,7 @@
               label-for="Function"
               label-cols-md="12"
             >
-            <b-form-input
+            <b-form-select
               id="Function"
               v-model="newCompany.customerGroupId"
               :placeholder="$t('app.form.placeholder.default')"
@@ -207,7 +207,7 @@
               label-for="Department"
               label-cols-md="12"
             >
-              <b-form-input
+              <b-form-select
                 id="Department"
                 v-model="newCompany.companyId"
                 :placeholder="$t('app.form.placeholder.default')"
