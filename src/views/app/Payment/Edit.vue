@@ -70,19 +70,113 @@
         </b-row>
       </b-form>
     </b-card>
-    <!--  New Contact Person modal -->
+    <!--modal-->
     <b-modal
-        id="modal-user"
-        ok-title="Save"
-        cancel-title="Cancel"
+        id="modal-primary"
+        :ok-title="$t('app.btn.save')"
+        :cancel-title="$t('app.btn.cancel')"
         modal-class="modal-primary"
         centered
-        title="Create Contact Person"
+        :title="$t('app.content.create_company')"
         size="lg"
     >
       <b-form @submit.prevent>
-        <b-row>
-
+        <b-row> 
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="`${$t('app.form.label.id')}`"
+              label-for="group-id"
+              label-cols-md="3"
+            >
+            <b-form-select
+              id="group-id"
+              :placeholder="$t('app.form.placeholder.automatic')"
+           />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="`${$t('app.form.label.company_id')}`"
+              label-for="group-name"
+              label-cols-md="3"
+            >
+              <b-form-select
+                id="group-name"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="$t('app.form.label.payment_info')"
+              label-for="payment_info"
+              label-cols-md="3"
+            >
+                <b-form-input
+                  id="payment_info"
+                  :placeholder="$t('app.form.placeholder.default')"
+                />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="$t('app.form.label.debitor')"
+              label-for="group-id"
+              label-cols-md="3"
+            >
+            <b-form-select
+              id="group-id"
+              :placeholder="$t('app.form.placeholder.default')"
+            />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="$t('app.form.label.object_reference')"
+              label-for="object_reference"
+              label-cols-md="3"
+            >
+              <b-form-input
+                id="object_reference"
+                :placeholder="$t('app.form.placeholder.default')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="$t('app.form.label.value')"
+              label-for="value"
+              label-cols-md="3"
+            >
+            <b-form-input
+              id="value"
+              :placeholder="$t('app.form.placeholder.default')"
+            />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="$t('app.form.label.date')"
+              label-for="date"
+              label-cols-md="3"
+            >
+              <b-form-datepicker
+                id="date"
+              ></b-form-datepicker>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" md="10">
+            <b-form-group
+              :label="$t('app.form.label.payment_type')"
+              label-for="payment_type"
+              label-cols-md="3"
+            >
+              <b-form-input
+                id="payment_type"
+                :placeholder="$t('app.form.placeholder.default')"
+              />
+            </b-form-group>
+          
+          </b-col>
         </b-row>
       </b-form>
     </b-modal>

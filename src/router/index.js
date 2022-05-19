@@ -349,10 +349,10 @@ const router = new VueRouter({
       meta: {
         pageTitle: 'app.page_title.contact_person_edit',
         navActiveLink:"contact-person",
-        breadcrumb: [         
+        breadcrumb: [
           {
             text: 'app.page_title.contact_person',
-            to: {name: 'company-list'},
+            to: {name: 'contact-person'},
             active: false,
           },
           {
@@ -386,7 +386,7 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.payment',
-            to: {name: 'company-list'},
+            to: {name: 'payment'},
             active: false,
           },
           {
@@ -810,11 +810,67 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.area_edit',
-            to: {name: 'area-list'},
+            to: { name: 'area-list' },
             active: false,
           },
           {
             text: 'app.page_title.area_edit',
+            active: true,
+          },
+        ],
+      },
+    },
+
+    {
+      path: '/app/location',
+      name: 'location-list',
+      component: () => import('@/views/app/Location/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.location',
+        breadcrumb: [
+          {
+            text: 'app.page_title.location',
+            active: true,
+          },
+        ],
+      },
+    },
+
+    {
+      path: '/app/location/view',
+      name: 'location-view',
+      component: () => import('@/views/app/Location/View.vue'),
+      meta: {
+        pageTitle: 'app.page_title.location_view',
+        navActiveLink: 'location-view',
+        breadcrumb: [
+          {
+            text: 'app.page_title.location_view',
+            to: { name: 'location-list' },
+            active: false,
+          },
+          {
+            text: 'app.page_title.location_view',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/location/edit',
+      name: 'location-edit',
+      component: () => import('@/views/app/Location/Edit.vue'),
+      meta: {
+        pageTitle: 'app.page_title.location_edit',
+        navActiveLink: 'location-edit',
+        breadcrumb: [
+          {
+            text: 'app.page_title.location_edit',
+            to: { name: 'location-list' },
+            active: false,
+          },
+          {
+            text: 'app.page_title.location_edit',
             active: true,
           },
         ],

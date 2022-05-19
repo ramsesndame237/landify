@@ -7,11 +7,11 @@
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
-            <b-button v-b-modal.modal-user size="sm" variant="info" class="mr-1 d-flex align-items-center">
+            <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex align-items-center">
               <img src="@/assets/images/pages/plusIcons.svg" alt="">
               {{ $t('app.btn.new') }}
             </b-button>
-            <b-button v-b-modal.modal-user size="sm" variant="warning" class="mr-1 d-flex align-items-center">
+            <b-button size="sm" variant="warning" class="mr-1 d-flex align-items-center">
               <img src="@/assets/images/pages/editIcons.svg" alt="">
               {{ $t('app.btn.edit') }}
             </b-button>
@@ -99,7 +99,7 @@
           </b-col>
           <b-col cols="12" md="6">
             <b-form-group :label="$t('app.form.label.tax_id')"  label-for="taxID">
-              <b-form-input id="taxID" :placeholder="$t('app.form.placeholder.default')" v-model="user.name" type="text"/>
+              <b-form-select id="taxID" :placeholder="$t('app.form.placeholder.default')" v-model="user.name" type="text"/>
             </b-form-group>
           </b-col>
 
@@ -110,39 +110,39 @@
     <b-card>
       <b-tabs pills>
         <b-tab :title="$t('app.tab.tickets')" active>
-          <databases :actions="true" :items="rowsTickets" :fields="columnTicket" />
+          <databases :actions="true" modal="modal-primary" :items="rowsTickets" :fields="columnTicket" />
         </b-tab>
         <b-tab  :title="$t('app.tab.contradictions')" >
-          <databases :items="rowsContradictions" :fields="columnContradictions" />
+          <databases modal="modal-primary" :items="rowsContradictions" :fields="columnContradictions" />
         </b-tab>
         <b-tab :title="$t('app.tab.preview_invoices')" >
-          <databases :items="rowsPreviewInvoices" :fields="columnPreviewInvoices" />
+          <databases modal="modal-primary" :items="rowsPreviewInvoices" :fields="columnPreviewInvoices" />
         </b-tab>
         <b-tab  :title="$t('app.tab.sales_order_sfm')" >
-          <databases :items="rowsSalesOrders" :fields="columnSalesOrders" />
+          <databases modal="modal-primary" :items="rowsSalesOrders" :fields="columnSalesOrders" />
         </b-tab>
         <b-tab :title="$t('app.tab.contact_person')" >
-          <databases :items="rowsContactPersons" :fields="columnContactPersons" />
+          <databases modal="modal-primary" :items="rowsContactPersons" :fields="columnContactPersons" />
         </b-tab>
         <b-tab :title="$t('app.tab.tickets')" >
-          <databases :items="rowsAppointment" :fields="columnAppointment" />
+          <databases modal="modal-primary" :items="rowsAppointment" :fields="columnAppointment" />
         </b-tab>
         <b-tab  :title="$t('app.form.label.bankdata')" >
-          <databases :items="rowsBankdata" :fields="columnBankdata" />
+          <databases modal="modal-primary" :items="rowsBankdata" :fields="columnBankdata" />
         </b-tab>
         <b-tab  :title="$t('app.sidebar.pos')" >
-          <databases :items="rowsPointOfSales" :fields="columnPointOfSales" />
+          <databases modal="modal-primary" :items="rowsPointOfSales" :fields="columnPointOfSales" />
         </b-tab>
         <b-tab  :title="$t('app.tab.payments')" >
-          <databases :items="rowsPayments" :fields="columnPayments" />
+          <databases modal="modal-primary" :items="rowsPayments" :fields="columnPayments" />
         </b-tab>
         <b-tab  :title="$t('app.tab.users')" >
-          <databases :items="rowsUsers" :fields="columnUsers" />
+          <databases modal="modal-primary" :items="rowsUsers" :fields="columnUsers" />
         </b-tab>
 
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
-            <b-button v-b-modal.modal-role class="mr-1" size="sm" variant="info">{{ $t('app.btn.new') }}</b-button>
+            <b-button v-b-modal.modal-primary class="mr-1" size="sm" variant="info">{{ $t('app.btn.new') }}</b-button>
             <b-button class="mr-1" size="sm" variant="primary">{{ $t('app.btn.delete') }}</b-button>
             <div size="sm" class="d-flex align-items-center">
               <label class="d-inline-block text-sm-left mr-50">{{ $t('app.search.label') }}</label>
@@ -156,29 +156,362 @@
         </template>
       </b-tabs>
     </b-card>
-
     <!--modal-->
     <b-modal
-        id="modal-role"
-        ok-title="Save"
-        cancel-title="Cancel"
+        id="modal-primary"
+        :ok-title="$t('app.btn.save')"
+        :cancel-title="$t('app.btn.cancel')"
         modal-class="modal-primary"
         centered
-        title="Create new user"
+        :title="$t('app.content.create_company')"
         size="lg"
     >
-    </b-modal>
+      <b-form @submit.prevent>
+        <b-row> 
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.customer_group_id')"
+              label-for="customer-group-id"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="6">
+                <b-form-select
+                  id="customer-group-id"
+                >
+                </b-form-select>
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+        </b-row>
+        <b-row> 
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.company_id')"
+              label-for="companyId"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="6">
+                <b-form-select
+                  id="companyId"
+                  :placeholder="$t('app.form.placeholder.automatic_based_on_id')"
+                />
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+        </b-row>
+        <b-row> 
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.company_name')"
+              label-for="companyName"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="6">
+                <b-form-input
+                  id="companyName"
+                  :placeholder="$t('app.form.placeholder.default')"
+                />
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+        </b-row>
+        <b-row> 
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.address')"
+              label-for="address"
+              label-cols-md="12"
+            >
+              <b-row>
+                <b-col cols="5">
+                  <b-form-select
+                    id="address"
+                  />
+                </b-col>
+                <b-button   variant="info" class="-pl-3">
+                  {{ $t('app.btn.new') }}
+                </b-button>
+              </b-row>
+            </b-form-group>
+          </b-col>
+        </b-row>
+        <div class="" id="">
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.street')"
+              label-for="companyName"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="6">
+                <b-form-input
+                  id="companyName"
+                  :placeholder="$t('app.form.placeholder.default')"
+                />
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.address_suffix')"
+              label-for="address_suffix"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="6">
+                <b-form-input
+                  id="address_suffix"
+                  :placeholder="$t('app.form.placeholder.default')"
+                />
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label="`${$t('app.form.label.post_code')}, ${$t('app.form.label.place')} `"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="2">
+                <b-form-input
+                  id="postcode"
+                  :placeholder="$t('app.form.placeholder.default')"
+                />
+              </b-col>
+              <b-col cols="4">
+               <b-form-input
+                  id="addressPlace"
+                  :placeholder="$t('app.form.placeholder.default')"
+                />
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.land')"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="6">
+               <b-form-input
+                  id="land"
+                  :placeholder="$t('app.form.placeholder.default')"
+                />
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+          
+        </div>
+        <b-row> 
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.contact_details')"
+              label-for="address"
+              label-cols-md="12"
+            >
+              <b-row>
+                <b-col cols="5">
+                  <b-form-select
+                    id="address"
+                  />
+                </b-col>
+                <b-button   variant="info" class="-pl-3">
+                  {{ $t(('app.btn.new')) }}
+                </b-button>
+              </b-row>
+            </b-form-group>
+          </b-col>
+        </b-row>
+        <div class="" id="">
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.email')"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="6">
+               <b-form-input
+                  :placeholder="$t('app.form.placeholder.email')"
+                />
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.phone')"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="6">
+               <b-form-input
+                   
+                  :placeholder="$t('app.form.placeholder.default')"
+                />
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+            :label="`${$t('app.form.label.mobile')} / ${$t('app.form.label.cell_phone_num')}`"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="6">
+               <b-form-input
+                  :placeholder="$t('app.form.placeholder.default')"
+                />
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.fax')"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="5">
+                <b-form-select
+                />
+              </b-col>
+              <b-button   variant="info" class="-pl-3">
+                {{ $t('app.btn.new') }} 
+              </b-button>
+            </b-row>
+            </b-form-group>
 
-    <!--  user modal -->
-    <b-modal
-        id="modal-user"
-        ok-title="Save"
-        cancel-title="Cancel"
-        modal-class="modal-primary"
-        centered
-        title="Create new user"
-        size="lg"
-    >
+          </b-col>
+        </div>
+        <b-row> 
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.company_details')"
+              label-for="companyDetails"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="6">
+                <b-form-select
+                  id="companyDetails"
+                  :placeholder="$t('app.form.placeholder.automatic')"
+                />
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+        </b-row>
+        <div class="" id="">
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.tax_id')"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="6">
+               <b-form-select
+                  :placeholder="$t('app.form.placeholder.default')"
+                />
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.hra_hrb')"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="6">
+               <b-form-input
+                  :placeholder="$t('app.form.placeholder.default')"
+                />
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+        </div>
+        <b-row> 
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.bankdata')"
+              label-for="bankData"
+              label-cols-md="12"
+            >
+              <b-row>
+                <b-col cols="5">
+                  <b-form-select
+                    id="bankData"
+                    :placeholder="$t('app.form.placeholder.default')"
+                  />
+                </b-col>
+                <b-button   variant="info" class="-pl-3">
+                  {{ $t('app.btn.new') }}
+                </b-button>
+              </b-row>
+            </b-form-group>
+          </b-col>
+        </b-row>
+        <div class="" id="">
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.iban_account')"
+              label-for="ibanAccount"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="6">
+                <b-form-input
+                  id="ibanAccount"
+                  :placeholder="$t('app.form.placeholder.default')"
+                />
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.bic')"
+              label-for="bic"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="6">
+                <b-form-input
+                  id="bic"
+                  :placeholder="$t('app.form.placeholder.default')"
+                />
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.bank_name')"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="6">
+                <b-form-input
+                  :placeholder="$t('app.form.placeholder.default')"
+                />
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+        </div>
+      </b-form>
     </b-modal>
   </div>
 </template>

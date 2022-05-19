@@ -57,7 +57,7 @@
         </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" link="partner-company-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases :filter="filter" modal="modal-primary" link="partner-company-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
     </b-card>
 
     <!--modal-->
@@ -100,10 +100,10 @@
             >
             <b-row>
               <b-col cols="6">
-                <b-form-input
+                <b-form-select
+                  :options="customerGroupOptions"
                   id="companyId"
                   v-model="newCompany.companyId"
-                  :placeholder="$t('app.form.placeholder.automatic_based_on_id')"
                 />
               </b-col>
             </b-row>
@@ -322,7 +322,7 @@
               :label="$t('app.form.label.fax')"
               label-cols-md="12"
             >
-            <b-form-input
+            <b-form-select
               :placeholder="$t('app.form.placeholder.automatic')"
               v-model="newCompany.companyDetails"
             />
@@ -360,7 +360,7 @@
             >
             <b-row>
               <b-col cols="6">
-               <b-form-input
+               <b-form-select
                   :placeholder="$t('app.form.placeholder.default')"
                 />
               </b-col>
