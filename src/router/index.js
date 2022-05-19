@@ -352,7 +352,7 @@ const router = new VueRouter({
         breadcrumb: [         
           {
             text: 'app.page_title.contact_person',
-            to: {name: 'company-list'},
+            to: {name: 'contact-person'},
             active: false,
           },
           {
@@ -386,7 +386,7 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.payment',
-            to: {name: 'company-list'},
+            to: {name: 'payment'},
             active: false,
           },
           {

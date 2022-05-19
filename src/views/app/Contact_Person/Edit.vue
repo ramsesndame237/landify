@@ -130,7 +130,7 @@
           </b-col>
           <b-col cols="12" md="6">
             <b-form-group  :label="$t('app.form.label.email')" label-for="email">
-              <b-form-input id="email" :placeholder="$t('app.form.placeholder.default')"   type="text"/>
+              <b-form-input id="email" :placeholder="$t('app.form.placeholder.email')"   type="text"/>
             </b-form-group>
           </b-col>
           <b-col cols="12" md="6">
@@ -142,9 +142,9 @@
         </b-row>
       </b-form>
     </b-card>
-    <!--  New Contact Person modal -->
+    <!--modal-->
     <b-modal
-        id="modal-user"
+        id="modal-primary"
         :ok-title="$t('app.btn.save')"
         :cancel-title="$t('app.btn.cancel')"
         modal-class="modal-primary"
@@ -153,8 +153,136 @@
         size="lg"
     >
       <b-form @submit.prevent>
-        <b-row>
-
+        <b-row> 
+          <b-col cols="6">
+            <b-form-group
+              :label="`${$t('app.form.label.partner_group_id')} / ${$t('app.form.label.customer_group_id')}`"
+              label-for="group-id"
+              label-cols-md="12"
+            >
+            <b-form-select
+              id="group-id"
+              :options="customerGroupOptions"
+            >
+            </b-form-select>
+            </b-form-group>
+          </b-col>
+          <b-col cols="6">
+            <b-form-group
+              :label="`${$t('app.form.label.partner_group_name')} / ${$t('app.form.label.customer_group_name')}`"
+              label-for="group-name"
+              label-cols-md="12"
+            >
+              <b-form-input
+                id="group-name"
+                :placeholder="$t('app.form.placeholder.automatic_based_on_id')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.contact_person_id')"
+              label-for="Contactperson_ID"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="6">
+                <b-form-select
+                  id="Contactperson_ID"
+                  :placeholder="$t('app.form.placeholder.automatic')"
+                />
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+          <b-col cols="6">
+            <b-form-group
+              :label="$t('app.form.label.last_name')"
+              label-for="group-id"
+              label-cols-md="12"
+            >
+            <b-form-input
+              id="group-id"
+              :placeholder="$t('app.form.placeholder.default')"
+            />
+            </b-form-group>
+          </b-col>
+          <b-col cols="6">
+            <b-form-group
+              :label="$t('app.form.label.title')"
+              label-for="group-name"
+              label-cols-md="12"
+            >
+              <b-form-select
+                id="group-name"
+              >
+              </b-form-select>
+            </b-form-group>
+          </b-col>
+          <b-col cols="6">
+            <b-form-group
+              :label="$t('app.form.label.firstname')"
+              label-for="Firstname"
+              label-cols-md="12"
+            >
+            <b-form-input
+              id="Firstname"
+              :placeholder="$t('app.form.placeholder.default')"
+            />
+            </b-form-group>
+          </b-col>
+          <b-col cols="6">
+            <b-form-group
+              :label="$t('app.form.label.salutation')"
+              label-for="Salutation"
+              label-cols-md="12"
+            >
+              <b-form-select
+                id="Salutation"
+              >
+              </b-form-select>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label="$t('app.form.label.shortname')"
+              label-for="Shortname"
+              label-cols-md="12"
+            >
+            <b-row>
+              <b-col cols="6">
+                <b-form-input
+                  id="Shortname"
+                  :placeholder="$t('app.form.placeholder.default')"
+                />
+              </b-col>
+            </b-row>
+            </b-form-group>
+          </b-col>
+          <b-col cols="6">
+            <b-form-group
+              :label="$t('app.form.label.function')"
+              label-for="Function"
+              label-cols-md="12"
+            >
+            <b-form-select
+              id="Function"
+              :placeholder="$t('app.form.placeholder.default')"
+            />
+            </b-form-group>
+          </b-col>
+          <b-col cols="6">
+            <b-form-group
+              :label="$t('app.form.label.department')"
+              label-for="Department"
+              label-cols-md="12"
+            >
+              <b-form-select
+                id="Department"
+                :placeholder="$t('app.form.placeholder.default')"
+              />
+            </b-form-group>
+          </b-col>
         </b-row>
       </b-form>
     </b-modal>

@@ -15,6 +15,12 @@
     @filtered="onFiltered"
   >
     <template #cell(Action)="data">
+      <b-badge v-if="modal" variant="info" class=" mr-1 mb-1" @click="$bvModal.show(modal)">
+        <img src="@/assets/images/pages/plusIcons.svg" alt="">
+        <span> &nbsp;
+          {{ $t('app.btn.new') }}
+        </span>
+      </b-badge>
       <b-link :to="{name: link, params: {id: data.item.id}}">
         <b-badge
           class="mr-1"
@@ -25,6 +31,9 @@
             alt=""
           >
           <span>{{ $t('app.btn.edit') }}</span>
+        <b-badge class="mr-1 mb-1" variant="secondary">
+          <img src="@/assets/images/pages/editIcons.svg" alt="">
+          <span> &nbsp;{{ $t('app.btn.edit') }}</span>
         </b-badge>
       </b-link>
       <b-badge
@@ -38,6 +47,9 @@
         <span>
           {{ $t('app.btn.delete') }}
         </span>
+      <b-badge variant="primary">
+        <img src="@/assets/images/pages/deleteIcons.svg" alt="">
+          <span> &nbsp;{{ $t('app.btn.delete') }}</span>
       </b-badge>
     </template>
 
@@ -50,12 +62,15 @@
 <script>
 import {
   BCard, BLink, BTable, BBadge, BRow, BCol, BFormCheckbox,
+  BButton,
 } from 'bootstrap-vue'
 import { mapActions } from 'vuex'
 
 export default {
+  props: ['items', 'fields', 'perPage', 'pageOptions', 'currentPage', 'link', 'filter', 'modal'],
   components: {
     BTable,
+    BButton,
     BBadge,
     BRow,
     BCol,
@@ -63,8 +78,7 @@ export default {
     BLink,
     BFormCheckbox,
   },
-  props: ['items', 'fields', 'perPage', 'pageOptions', 'currentPage', 'link', 'filter'],
-  data() {
+  data () {
     return {
       sortBy: '',
       sortDesc: false,
