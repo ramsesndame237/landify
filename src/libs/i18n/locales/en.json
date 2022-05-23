@@ -21,13 +21,13 @@
           "text_templates": "Text template"
         }
       },
-      "properties": "Properties", 
-      "users_rights": "Users & Rights", 
-      "auth": "Authorization", 
-      "teams": "Teams", 
-      "user_type": "User Type", 
-      "templates": "Templates", 
-      "master_data": "Mater Data", 
+      "properties": "Properties",
+      "users_rights": "Users & Rights",
+      "auth": "Authorization",
+      "teams": "Teams",
+      "user_type": "User Type",
+      "templates": "Templates",
+      "master_data": "Mater Data",
       "work_pack_2": {
         "title": "Work Package 2",
         "children" : {
@@ -77,7 +77,7 @@
             }
           }
         }
-      } 
+      }
     },
     "lang": {
       "fr": "French",
@@ -132,6 +132,20 @@
       "create_new_partner_type":"Create New Partner Type",
       "create_new_pos":"Create New POS",
       "create_new_area": "Create New Area",
+      "create_new_area_type": "Create New Area Type",
+      "create_new_contract_type": "Create New Contract Type",
+      "create_new_C_C_type": "Create New Contract Criteria Type",
+      "create_new_location_type": "Create New Location Type",
+      "create_new_maturity_type": "Create New Maturity Type",
+      "create_new_R_P_type": "Create New Recurring Payment Type",
+      "create_new_S_O_type": "Create New Services Object Type",
+      "create_new_usage_type": "Create New Usage Type",
+      "create_new_location": "Create new Location",
+      "location_detail": "Location detail and care",
+      "location_edit": "Location Overview Edit",
+      "location": {
+        "view_title": "Location detail and care"
+      },
 
       "dashboard": {
         "sub_title": "Overall list without registers",
@@ -172,7 +186,20 @@
         "password_confirm" : "Confirm password...",
         "select" : "Please select an option.",
         "automatic_based_on_id" : "(automatically based on selected id)",
-        "automatic" : "(automatically)"
+        "automatic" : "(automatically)",
+        "location" : {
+          "location_id": "location_id (automatically)",
+          "object_description": "location object description (enter here ...)",
+          "standorttyp": "location type id",
+          "address_location": "Address_id (select or automatically if new)",
+          "strabe": "Enter here...",
+          "address": "Enter here...",
+          "plz_ort": "Enter here...",
+          "land": "Enter here...",
+          "location_name": "Location name (automatically generated (City, Street, HouseNo) or Enter here ....)",
+          "total_space": "Location Total Area (enter space figures ...)",
+          "opening_day": "location start date ( enter date ....)"
+        }
       },
       "label": {
         "company_name": "Comapany Name",
@@ -323,7 +350,20 @@
         "customer_pos_no": "Customer POS No",
         "pos_name": "POS Name",
         "pos_branch_no":"POS Branch No",
-        "first_year":"First Year"
+        "first_year":"First Year",
+        "location": {
+          "location_id": "Location ID",
+          "object_description": "Object description",
+          "standorttyp": "Location type",
+          "address_location": "Address location",
+          "strabe": "Strabe",
+          "address": "Address",
+          "plz_ort": "Zip code, city",
+          "land": "Land",
+          "location_name": "Location name",
+          "total_space": "Total Space",
+          "opening_day": "Opening date"
+        }
 
       }
     },
@@ -351,7 +391,12 @@
       "service_object": "Service Objects",
       "tickects_and_groups": "Tickets and group tickets",
       "contradictions_package": "Contradictions and Packages",
-      "nk_accounts": "NK accounts"
+      "nk_accounts": "NK accounts",
+      "location_tab": {
+        "tab1": "Areas / surfaces",
+        "tab2": "Service Objects",
+        "tab3": "Administrator/ owner"
+      }
     },
     "page_title": {
       "dashboard": "Dashboard",
@@ -359,16 +404,16 @@
       "deadlines": "Deadlines",
       "doc": "Documents",
       "pos": "Point of sales",
-      "properties": "Properties", 
-      "users_rights": "Overall list users", 
-      "users_rights_edit": "Users Edit", 
-      "auth": "AUTHORIZATION USER", 
-      "auth_edit": "AUTHORIZATION USER Edit", 
-      "teams": "Teams", 
-      "team_edit": "Team Edit", 
-      "user_type": "User Type", 
-      "templates": "Templates", 
-      "master_data": "Master Data", 
+      "properties": "Properties",
+      "users_rights": "Overall list users",
+      "users_rights_edit": "Users Edit",
+      "auth": "AUTHORIZATION USER",
+      "auth_edit": "AUTHORIZATION USER Edit",
+      "teams": "Teams",
+      "team_edit": "Team Edit",
+      "user_type": "User Type",
+      "templates": "Templates",
+      "master_data": "Master Data",
       "customer_group": "Overall customer groups List",
       "customer_group_edit": "Customer group Edit",
       "company":"Overall Companies List",
@@ -402,7 +447,12 @@
       "pos_edit": "POS Edit",
       "area": "Overall areas list",
       "area_type": "OVERALL LIST Area Type",
-      "area_type_edit": "Area Type Edit"
-      } 
-    } 
+      "contract_type": "OVERALL LIST Contract Type",
+      "area_type_edit": "Area Type Edit",     
+      "area_edit": "Areas Edit",
+      "location": "Location Overview List",
+      "location_edit": "Location Overview Edit",
+      "location_view": "Location Detail view"
+      }
+    }
   }

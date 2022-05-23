@@ -94,6 +94,7 @@
         :per-page="perPage"
         :items="items"
         :fields="fields"
+        @deleteButton="deleteUser"
       />
     </b-card>
 
@@ -106,6 +107,7 @@
       centered
       title="Create new user"
       size="lg"
+      @ok="createUser(user)"
     >
       <b-form @submit.prevent>
         <b-row>
@@ -117,6 +119,7 @@
             >
               <b-form-input
                 id="company-name"
+                v-model="user.company"
                 type="text"
                 placeholder="Please select ..."
               />
@@ -130,6 +133,7 @@
             >
               <b-form-input
                 id="h-email"
+                v-model="user.email"
                 type="email"
                 placeholder="Enter here..."
               />
@@ -144,12 +148,14 @@
               <div class="d-flex">
                 <b-form-input
                   id="h-name"
+                  v-model="user.first_name"
                   class="mr-1"
                   type="text"
                   placeholder="Enter here..."
                 />
                 <b-form-input
                   id="h-firstname"
+                  v-model="user.full_name"
                   md="4"
                   type="text"
                   placeholder="Enter here..."
@@ -166,6 +172,7 @@
             >
               <b-form-input
                 id="h-mobile"
+                v-model="user.mobile"
                 type="number"
                 placeholder="Enter here..."
               />
@@ -179,6 +186,7 @@
             >
               <b-form-input
                 id="h-fax"
+                v-model="user.fax"
                 type="text"
                 placeholder="Enter here..."
               />
@@ -191,8 +199,8 @@
               label-cols-md="4"
             >
               <b-form-select
-                v-model="selected"
-                :options="options"
+                v-model="user.deputy"
+                :options="deputy"
               />
             </b-form-group>
           </b-col>
@@ -203,7 +211,7 @@
               label-cols-md="4"
             >
               <b-form-select
-                v-model="selected"
+                v-model="user.user_type"
                 :options="options"
               />
             </b-form-group>
@@ -251,6 +259,7 @@ export default {
   },
   data() {
     return {
+      user: {},
       currentPage: 1,
       totalRows: 1,
       perPage: 10,
@@ -276,6 +285,13 @@ export default {
         { value: { C: '3PO' }, text: 'This is an option with object value' },
         { value: 'd', text: 'Please select', disabled: true },
       ],
+      deputy: [
+        { value: null, text: 'Please select an option' },
+        { value: 'a', text: 'This is First option' },
+        { value: 'b', text: 'Simple Option' },
+        { value: { C: '3PO' }, text: 'This is an option with object value' },
+        { value: 'd', text: 'Please select', disabled: true },
+      ],
       filter: null,
     }
   },
@@ -292,13 +308,12 @@ export default {
   },
   mounted() {
     this.totalRows = this.items.length
-    console.log(this.items)
   },
   beforeMount() {
     this.getUsers()
   },
   methods: {
-    ...mapActions('MockApi', ['getUsers']),
+    ...mapActions('MockApi', ['getUsers', 'createUser', 'deleteUser']),
     info(item, index, button) {
       this.infoModal.title = `Row index: ${index}`
       this.infoModal.content = JSON.stringify(item, null, 2)

@@ -203,7 +203,7 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_3.children.location',
-        route: '/',
+        route: 'location-list',
       },
       {
         title: 'app.sidebar.work_pack_3.children.contract',
@@ -252,31 +252,31 @@ export default [
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.contract_type',
-            route: '/',
+            route: 'contract-type-list',
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.contract_criteria_type',
-            route: '/',
+            route: 'contract-criteria-type',
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.location_type',
-            route: '/',
+            route: 'location-type',
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.maturity_type',
-            route: '/',
+            route: 'maturity-type',
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.recurring_payment_type',
-            route: '/',
+            route: 'recurring-payment-type',
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.services_object_type',
-            route: '/',
+            route: 'service-object-type',
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.usage_type',
-            route: '/',
+            route: 'usage-type',
           }
         ]
       },
