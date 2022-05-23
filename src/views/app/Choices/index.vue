@@ -43,9 +43,6 @@
                 <img src="@/assets/images/pages/plusIcons.svg" alt="">
                 {{ $t('app.btn.new') }} 
               </b-button>
-              <b-button size="sm" variant="secondary" class="mr-1 d-flex">
-                <img src="@/assets/images/pages/editIcons.svg" alt="">
-                {{ $t('app.btn.edit') }}</b-button>
               <b-button size="sm" class="d-flex" variant="primary">
                 <img src="@/assets/images/pages/deleteIcons.svg" alt="">
                 {{ $t('app.btn.delete') }}</b-button>
@@ -72,9 +69,10 @@
         id="modal-primary"
         :ok-title="ok || $t('app.btn.save')"
         :cancel-title="$t('app.btn.cancel')"
+        :ok-only="view"
         modal-class="modal-primary"
         centered
-        :title="$t('app.content.create_new_area')"
+        :title="$t($route.meta.formTitle)"
         size="lg"
         @hide="quitViewMode()"
     >
@@ -96,15 +94,15 @@
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label=" $t('app.form.label.area_type') "
-                label-for="area_type"
+                :label=" $t('app.form.label.name') "
+                label-for="name"
                 label-cols-md="4"
             >
-              <b-form-select
-                  id="area_type"
-                  type="text"
-                  :placeholder="$t('app.form.placeholder.default')"
-                  :disabled="view"
+              <b-form-input
+                id="name"
+                type="text"
+                :placeholder="$t('app.form.placeholder.default')"
+                :disabled="view"
               />
             </b-form-group>
           </b-col>
@@ -172,7 +170,7 @@ export default {
       items: ['', '', ''],
       fields: [
         { key: 'id', label: 'Id' },
-        { key: 'group_id', label: 'Type', sortable: true },
+        { key: 'group_id', label: 'Name', sortable: true },
         { key: 'group_name', label: 'Description', sortable: true },
         'Action',
       ],

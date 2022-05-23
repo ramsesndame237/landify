@@ -214,7 +214,7 @@ export default [
         route: '/',
       },
       {
-        title: 'app.sidebar.work_pack_3.children.poservice_objects',
+        title: 'app.sidebar.work_pack_3.children.service_object',
         route: '/',
       },
       {
@@ -231,15 +231,15 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_3.children.tag',
-        route: '/',
+        route: 'tags',
       },
       {
         title: 'app.sidebar.work_pack_3.children.unit',
-        route: '/',
+        route: 'units',
       },
       {
         title: 'app.sidebar.work_pack_3.children.choice',
-        route: '/',
+        route: 'choices',
       },
       {
         title: 'app.sidebar.work_pack_3.children.types.title',

@@ -824,7 +824,7 @@ const router = new VueRouter({
     {
       path: '/app/types/area',
       name: 'area-type-list',
-      component: () => import('@/views/app/AreaType/index.vue'),
+      component: () => import('@/views/app/Types/index.vue'),
       navActiveLink: 'area-type-list',
       meta: {
         pageTitle: 'app.page_title.area_type',
@@ -861,10 +861,10 @@ const router = new VueRouter({
       component: () => import('@/views/app/Types/index.vue'),
       navActiveLink: 'contract-criteria-type',
       meta: {
-        pageTitle: 'app.page_title.contract_type',
+        pageTitle: 'app.page_title.C_C_type',
         breadcrumb: [
           {
-            text: 'app.page_title.contract_type',
+            text: 'app.page_title.C_C_type',
             active: true,
           },
         ],
@@ -955,6 +955,70 @@ const router = new VueRouter({
         ],
       type: 'usages',
       formTitle: 'app.content.create_new_usage_type',
+      },
+    },
+    {
+      path: '/app/choices',
+      name: 'choices',
+      component: () => import('@/views/app/Choices/index.vue'),
+      navActiveLink: 'usage-type',
+      meta: {
+        pageTitle: 'app.page_title.choice',
+        breadcrumb: [
+          {
+            text: 'app.page_title.choice',
+            active: true,
+          },
+        ],
+      formTitle: 'app.content.create_new_choice',
+      },
+    },
+    {
+      path: '/app/units',
+      name: 'units',
+      component: () => import('@/views/app/Unit/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.unit',
+        breadcrumb: [
+          {
+            text: 'app.page_title.unit',
+            active: true,
+          },
+        ],
+      formTitle: 'app.content.create_new_unit',
+      },
+    },
+    {
+      path: '/app/tags',
+      name: 'tags',
+      component: () => import('@/views/app/Tag/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.tag',
+        breadcrumb: [
+          {
+            text: 'app.page_title.tag',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/tags/edit',
+      name: 'tag-edit',
+      component: () => import('@/views/app/Tag/Edit.vue'),
+      meta: {
+        navActiveLink: 'tags',
+        pageTitle: 'app.page_title.tag_edit',
+        breadcrumb: [
+          {
+            text: 'app.page_title.tag',
+            to: { name: 'tags' },
+          },
+          {
+            text: 'app.page_title.tag_edit',
+            active: true,
+          },
+        ],
       },
     },
     

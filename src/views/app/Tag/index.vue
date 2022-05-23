@@ -61,7 +61,7 @@
         </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" editModal="modal-primary" viewModal="modal-primary" @openViewModal="openViewModal()" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases :filter="filter" link="tag-edit" viewModal="modal-primary" @openViewModal="openViewModal()" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
     </b-card>
 
     <!--modal-->
@@ -72,9 +72,9 @@
         :ok-only="view"
         modal-class="modal-primary"
         centered
-        :title="$t($route.meta.formTitle)"
+        :title="$t('app.content.create_new_tag')"
         size="lg"
-        @hide="quitViewMode()"
+        @hide="quitViewMode()" 
     >
       <b-form @submit.prevent>
         <b-row>
@@ -94,12 +94,12 @@
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label=" $t('app.form.label.area_type') "
-                label-for="area_type"
+                :label=" $t('app.form.label.name') "
+                label-for="name"
                 label-cols-md="4"
             >
-              <b-form-select
-                  id="area_type"
+              <b-form-input
+                  id="name"
                   type="text"
                   :placeholder="$t('app.form.placeholder.default')"
                   :disabled="view"
@@ -170,8 +170,9 @@ export default {
       items: ['', '', ''],
       fields: [
         { key: 'id', label: 'Id' },
-        { key: 'group_id', label: 'Type', sortable: true },
-        { key: 'group_name', label: 'Description', sortable: true },
+        { key: 'name', label: 'Name', sortable: true },
+        { key: 'description', label: 'Description', sortable: true },
+        { key: 'pos', label: '# of POS', sortable: true },
         'Action',
       ],
       selected: null,
