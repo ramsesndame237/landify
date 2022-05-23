@@ -57,7 +57,7 @@
         </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" link="payment-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases :filter="filter" modal="modal-primary" link="payment-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
     </b-card>
 
     <!--modal-->
@@ -78,7 +78,7 @@
               label-for="group-id"
               label-cols-md="3"
             >
-            <b-form-input
+            <b-form-select
               id="group-id"
               :placeholder="$t('app.form.placeholder.automatic')"
                 
@@ -117,7 +117,7 @@
               label-for="group-id"
               label-cols-md="3"
             >
-            <b-form-input
+            <b-form-select
               id="group-id"
               v-model="newCompany.customerGroupId"
               :placeholder="$t('app.form.placeholder.default')"

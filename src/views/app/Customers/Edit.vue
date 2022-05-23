@@ -25,7 +25,7 @@
           <!-- Field: group id -->
           <b-col cols="12" md="6">
             <b-form-group :label="$t('app.form.label.id')" label-for="id">
-              <b-form-input id="id" :placeholder="$t('app.form.placeholder.default')" v-model="user.name"/>
+              <b-form-select id="id"  v-model="user.name"/>
             </b-form-group>
           </b-col>
 
@@ -39,7 +39,7 @@
           <!-- Field: Name -->
           <b-col cols="12" md="12">
             <b-form-group :label="$t('app.form.label.description')" label-for="name">
-              <b-form-input  :placeholder="$t('app.form.placeholder.default')" id="nameu" v-model="user.email" type="text"/>
+              <b-form-textarea  :placeholder="$t('app.form.placeholder.default')" id="nameu" v-model="user.email" type="text"/>
             </b-form-group>
           </b-col>
 
@@ -50,20 +50,20 @@
     <b-card>
       <b-tabs pills>
         <b-tab :title="$t('app.tab.company')" active>
-          <databases :actions="true" :items="rowsCompany" :fields="columnCompany" />
+          <databases :actions="true" modal="modal-primary" :items="rowsCompany" :fields="columnCompany" />
         </b-tab>
         <b-tab :title="$t('app.tab.contact_person')">
-          <databases :items="rowsPerson" :fields="columnPerson" />
+          <databases modal="modal-primary" :items="rowsPerson" :fields="columnPerson" />
         </b-tab>
         <b-tab :title="`${$t('app.tab.group_ticket')} / ${$t('app.tab.package')}`">
-          <databases :items="rowsTicketPackage" :fields="columnTicketPackage" />
+          <databases modal="modal-primary" :items="rowsTicketPackage" :fields="columnTicketPackage" />
         </b-tab>
         <b-tab :title="$t('app.tab.users')">
-          <databases :items="rowsUsers" :fields="columnUsers" />
+          <databases modal="modal-primary" :items="rowsUsers" :fields="columnUsers" />
         </b-tab>
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
-            <b-button v-b-modal.modal-role class="mr-1" size="sm" variant="info">{{$t('app.btn.new')}}</b-button>
+            <b-button v-b-modal.modal-primary class="mr-1" size="sm" variant="info">{{$t('app.btn.new')}}</b-button>
             <b-button class="mr-1" size="sm" variant="primary">{{$t('app.btn.cancel')}}</b-button>
             <div size="sm" class="d-flex align-items-center">
               <label class="d-inline-block text-sm-left mr-50">{{$t('app.search.label')}}</label>
@@ -78,112 +78,53 @@
       </b-tabs>
     </b-card>
 
-    <!--  user modal -->
+    <!--modal-->
     <b-modal
         id="modal-primary"
         :ok-title="$t('app.btn.save')"
         :cancel-title="$t('app.btn.cancel')"
         modal-class="modal-primary"
         centered
-        :title="$t('app.content.create_user')"
+        :title="$t('app.content.create_customer_group')"
         size="lg"
     >
       <b-form @submit.prevent>
         <b-row>
           <b-col cols="12">
             <b-form-group
-                :label="`${$t('app.form.label.company_name')} *`"
-                label-for="company-name"
+                :label=" $t('app.form.label.id') "
+                label-for="group-id"
                 label-cols-md="4"
             >
-              <b-form-input
-                  id="company-name"
+              <b-form-select
+                  id="group-id"
                   type="text"
-                  :placeholder="$t('app.form.placeholder.default')" 
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label="`${$t('app.form.label.email')} *`"
-                label-for="h-email"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="h-email"
-                  type="email"
-                  :placeholder="$t('app.form.placeholder.default')" 
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                :label="`${$t('app.form.label.name')} / ${$t('app.form.label.firstname')}`"
+                :label=" $t('app.form.label.name') "
                 label-for="h-name"
                 label-cols-md="4"
             >
-              <div class="d-flex">
-                <b-form-input
-                    class="mr-1"
-                    id="h-name"
-                    type="text"
-                  :placeholder="$t('app.form.placeholder.default')" 
-                />
-                <b-form-input
-                    md="4"
-                    id="h-firstname"
-                    type="text"
-                  :placeholder="$t('app.form.placeholder.default')" 
-                />
-              </div>
-
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                :label="`${$t('app.form.label.mobile')}`"
-                label-for="h-mobile"
-                label-cols-md="4"
-            >
               <b-form-input
-                  id="h-mobile"
-                  type="number"
-                  :placeholder="$t('app.form.placeholder.default')" 
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                :label="`${$t('app.form.label.fax')}`"
-                label-for="h-fax"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="h-fax"
+                  id="i-name"
                   type="text"
-                  :placeholder="$t('app.form.placeholder.default')" 
+                  :placeholder="$t('app.form.placeholder.default')"
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label="`${$t('app.form.label.deputy')}`"
-                label-for="h-deputy"
-                label-cols-md="4">
-              <b-form-select
-                  v-model="selected"
-                  :options="options"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                :label="`${$t('app.form.label.type')}`"
-                label-for="h-deputy"
-                label-cols-md="4">
-              <b-form-select
-                  v-model="selected"
-                  :options="options"
+                :label=" $t('app.form.label.description') "
+                label-for="description"
+                label-cols-md="4"
+            >
+              <b-form-textarea
+                  id="descrption"
+                  type="text"
+                  :placeholder="$t('app.form.placeholder.default')"
               />
             </b-form-group>
           </b-col>
@@ -196,6 +137,7 @@
 <script>
 const Databases = () => import('@/layouts/components/DataTables.vue')
 import {
+  BFormTextarea,
   BCard,
   BTab, BFormCheckbox, BFormRadio,BInputGroup,
   BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton, BFormSelect, BModal,
@@ -206,6 +148,7 @@ export default {
     BCard,
     BTab,
     BTabs,
+    BFormTextarea,
     BRow,
     BFormGroup,
     BCol,

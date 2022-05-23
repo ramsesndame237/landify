@@ -21,13 +21,13 @@
           "text_templates": "Modèles de texte"
         }
       },
-      "properties": "Propriétés", 
-      "users_rights": "Utilisateurs & Droits", 
-      "auth": "Autorisations", 
-      "teams": "Équipes", 
-      "user_type": "Type d'utilisateur", 
-      "templates": "Modèles", 
-      "master_data": "Données de base", 
+      "properties": "Propriétés",
+      "users_rights": "Utilisateurs & Droits",
+      "auth": "Autorisations",
+      "teams": "Équipes",
+      "user_type": "Type d'utilisateur",
+      "templates": "Modèles",
+      "master_data": "Données de base",
       "work_pack_2": {
         "title": "Paquet de travail 2",
         "children" : {
@@ -53,7 +53,7 @@
         "children" : {
           "customer_group": "Customer group"
         }
-      } 
+      }
     },
     "content": {
       "show": "Afficher",
@@ -92,6 +92,12 @@
       "create_new_pos":"Créer un nouveau Point de Vente",
       "create_new_partner_type":"Créer un Type de Partenaire",
       "create_new_area": "Créer une Zonne",
+      "create_new_location": "Créer un nouvel emplacement",
+      "location_detail": "Détail et soin de l'emplacement",
+      "location_edit": "Vue d'ensemble du lieu à Editer",
+      "location": {
+        "view_title": "Détail et soin de l'emplacement"
+      },
 
       "dashboard": {
         "sub_title": "Liste globale sans registres",
@@ -130,7 +136,20 @@
         "password" : "Entrez votre mot de passe...",
         "password_confirm" : "Confirmer mot de passe...",
         "automatic_based_on_id" : "(automatiquement en fonction de l'identifiant sélectionné)",
-        "automatic" : "(automatiquement)"
+        "automatic" : "(automatiquement)",
+        "location" : {
+          "location_id": "location_id (automatiquement)",
+          "object_description": "description de l'objet de la localisation (entrer ici ...)",
+          "standorttyp": "ID type d'emplacement",
+          "address_location": "Address_id (sélectionner ou automatiquement si nouveau)",
+          "strabe": "Entrez ici...",
+          "address": "Entrez ici....",
+          "plz_ort": "Entrez ici....",
+          "land": "Entrez ici...",
+          "location_name": "Nom du lieu (généré automatiquement (ville, rue, numéro de maison) ou à saisir ici ....)",
+          "total_space": "Superficie totale emplacement (entrez les chiffres de l'espace ...)",
+          "opening_day": "date de début de la location ( Saisir la date ....)"
+        }
 
       },
       "label": {
@@ -282,7 +301,20 @@
         "customer_pos_no": "N° de PdV du client",
         "pos_name": "Nom du PdV",
         "pos_branch_no":"No du PdV",
-        "first_year":"Première année"
+        "first_year":"Première année",
+        "location": {
+          "location_id": "ID du Emplacement",
+          "object_description": "Description de l'objet",
+          "standorttyp": "Type d'emplacement",
+          "address_location": "Adresse de l'emplacement",
+          "strabe": "Strabe",
+          "address": "Address",
+          "plz_ort": "Code postal, ville",
+          "land": "Terrain",
+          "location_name": "Nom de l'emplacement",
+          "total_space": "Espace total",
+          "opening_day": "Date d'ouverture"
+        }
 
       }
     },
@@ -311,7 +343,12 @@
       "service_object": "Service Objects",
       "tickects_and_groups": "Billets et billets de groupe",
       "contradictions_package": "Contradictions et Forfaits",
-      "nk_accounts": "Comptes NK"
+      "nk_accounts": "Comptes NK",
+      "location_tab": {
+        "tab1": "Zones / surfaces",
+        "tab2": "Objets du service",
+        "tab3": "Administrateur/ propriétaire"
+      }
 
     },
     "page_title": {
@@ -320,16 +357,16 @@
       "deadlines": "Délais",
       "doc": "Documents",
       "pos": "Point de vente",
-      "properties": "Propriétés", 
-      "users_rights": "Utilisateurs & Droits", 
-      "auth": "Autorisations", 
-      "teams": "Équipes", 
-      "user_type": "Type d'utilisateur", 
-      "templates": "Modèles", 
-      "master_data": "Données de base", 
-      "users_rights_edit": "Users Edit", 
-      "auth_edit": "Edition des autorisations", 
-      "team_edit": "Edition d'équipe", 
+      "properties": "Propriétés",
+      "users_rights": "Utilisateurs & Droits",
+      "auth": "Autorisations",
+      "teams": "Équipes",
+      "user_type": "Type d'utilisateur",
+      "templates": "Modèles",
+      "master_data": "Données de base",
+      "users_rights_edit": "Users Edit",
+      "auth_edit": "Edition des autorisations",
+      "team_edit": "Edition d'équipe",
       "customer_group": "liste de groupes de clients",
       "customer_group_edit": "Edition de groupes de clients",
       "company":"Liste d'entreprises",
@@ -362,7 +399,10 @@
       "pos_list": "Liste des PdV",
       "pos_edit": "Edition des Points de Vente",
       "area": "Liste globale des zones",
-      "area_edit": "Edition de Zone"
+      "area_edit": "Edition de Zone",
+      "location": "Liste des emplacements",
+      "location_edit": "Vue d'ensemble du lieu Editer",
+      "location_view": "Emplacement Vue détaillée"
     }
   }
 }

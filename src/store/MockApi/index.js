@@ -49,5 +49,20 @@ export default {
           commit('setUsers', response.data)
         })
     },
+    async deleteUser({ commit, dispatch }, id) {
+      await axios.delete(`https://627536d05dc4f5764ba0abcb.mockapi.io/api/users/${id}`)
+        // eslint-disable-next-line no-unused-vars
+        .then(response => {
+          dispatch('getUsers', { commit })
+        })
+    },
+
+    async createUser({ commit, dispatch }, user) {
+      await axios.post('https://627536d05dc4f5764ba0abcb.mockapi.io/api/users/', user)
+        // eslint-disable-next-line no-unused-vars
+        .then(response => {
+          dispatch('getUsers', { commit })
+        })
+    },
   },
 }
