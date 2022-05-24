@@ -105,8 +105,8 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.users_rights',
-            to: {name: 'users-list'},
-            active: false
+            to: { name: 'users-list' },
+            active: false,
           },
           {
             text: 'app.page_title.users_rights_edit',
@@ -252,14 +252,14 @@ const router = new VueRouter({
         layout: 'full',
       },
     },
-    {path:'/',redirect:'/login'},
+    { path: '/', redirect: '/login' },
 
     {
       path: '*',
       redirect: 'error-404',
     },
 
-      // workpackage 2
+    // workpackage 2
     {
       path: '/app/customer-groups',
       name: 'customer-groups',
@@ -280,11 +280,11 @@ const router = new VueRouter({
       component: () => import('@/views/app/Customers/Edit.vue'),
       meta: {
         pageTitle: 'app.page_title.customer_group',
-        navActiveLink: "customer-groups",
+        navActiveLink: 'customer-groups',
         breadcrumb: [
           {
             text: 'app.page_title.customer_group',
-            to: {name: 'customer-groups'},
+            to: { name: 'customer-groups' },
             active: false,
           },
           {
@@ -318,7 +318,7 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.company',
-            to: {name: 'company-list'},
+            to: { name: 'company-list' },
             active: false,
           },
           {
@@ -348,11 +348,11 @@ const router = new VueRouter({
       component: () => import('@/views/app/Contact_Person/Edit.vue'),
       meta: {
         pageTitle: 'app.page_title.contact_person_edit',
-        navActiveLink:"contact-person",
+        navActiveLink: 'contact-person',
         breadcrumb: [
           {
             text: 'app.page_title.contact_person',
-            to: {name: 'contact-person'},
+            to: { name: 'contact-person' },
             active: false,
           },
           {
@@ -382,11 +382,11 @@ const router = new VueRouter({
       component: () => import('@/views/app/Payment/Edit.vue'),
       meta: {
         pageTitle: 'app.page_title.payment_edit',
-        navActiveLink:'payment',
+        navActiveLink: 'payment',
         breadcrumb: [
           {
             text: 'app.page_title.payment',
-            to: {name: 'payment'},
+            to: { name: 'payment' },
             active: false,
           },
           {
@@ -416,11 +416,11 @@ const router = new VueRouter({
       component: () => import('@/views/app/Partner_Company/Edit.vue'),
       meta: {
         pageTitle: 'app.page_title.partner_company_edit',
-        navActiveLink:"partner-company",
+        navActiveLink: 'partner-company',
         breadcrumb: [
           {
             text: 'app.page_title.partner_company',
-            to: {name: 'partner-company'},
+            to: { name: 'partner-company' },
             active: false,
           },
           {
@@ -450,11 +450,11 @@ const router = new VueRouter({
       component: () => import('@/views/app/partner-company-group/Edit.vue'),
       meta: {
         pageTitle: 'app.page_title.partner_company_edit',
-        navActiveLink:'partner-company-group',
+        navActiveLink: 'partner-company-group',
         breadcrumb: [
           {
             text: 'app.page_title.partner_company_group',
-            to: {name: 'partner-company-group'},
+            to: { name: 'partner-company-group' },
             active: false,
           },
           {
@@ -489,7 +489,7 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.address',
-            to: {name: 'address-list'},
+            to: { name: 'address-list' },
             active: false,
           },
           {
@@ -523,7 +523,7 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.contact_title',
-            to: {name: 'contact-title-list'},
+            to: { name: 'contact-title-list' },
             active: false,
           },
           {
@@ -557,7 +557,7 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.salutation',
-            to: {name: 'salutation-list'},
+            to: { name: 'salutation-list' },
             active: false,
           },
           {
@@ -591,7 +591,7 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.city',
-            to: {name: 'city-list'},
+            to: { name: 'city-list' },
             active: false,
           },
           {
@@ -625,7 +625,7 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.currency',
-            to: {name: 'currency-list'},
+            to: { name: 'currency-list' },
             active: false,
           },
           {
@@ -659,7 +659,7 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.country',
-            to: {name: 'country-list'},
+            to: { name: 'country-list' },
             active: false,
           },
           {
@@ -693,7 +693,7 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.lang',
-            to: {name: 'language-list'},
+            to: { name: 'language-list' },
             active: false,
           },
           {
@@ -727,7 +727,7 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.partner_type',
-            to: {name: 'partner-type-list'},
+            to: { name: 'partner-type-list' },
             active: false,
           },
           {
@@ -776,7 +776,7 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.pos_list',
-            to: {name: 'pos-list'},
+            to: { name: 'pos-list' },
             active: false,
           },
           {
@@ -831,11 +831,11 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.area_type',
-    active: true,
+            active: true,
           },
         ],
-      type: 'area',
-      formTitle: 'app.content.create_new_area_type',
+        type: 'area',
+        formTitle: 'app.content.create_new_area_type',
       },
     },
     {
@@ -848,11 +848,11 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.contract_type',
-    active: true,
+            active: true,
           },
         ],
-      type: 'contract',
-      formTitle: 'app.content.create_new_contract_type',
+        type: 'contract',
+        formTitle: 'app.content.create_new_contract_type',
       },
     },
     {
@@ -868,8 +868,8 @@ const router = new VueRouter({
             active: true,
           },
         ],
-      type: 'contractCrieria',
-      formTitle: 'app.content.create_new_C_C_type',
+        type: 'contractCrieria',
+        formTitle: 'app.content.create_new_C_C_type',
       },
     },
     {
@@ -885,8 +885,8 @@ const router = new VueRouter({
             active: true,
           },
         ],
-      type: 'location',
-      formTitle: 'app.content.create_new_location_type',
+        type: 'location',
+        formTitle: 'app.content.create_new_location_type',
       },
     },
     {
@@ -902,8 +902,8 @@ const router = new VueRouter({
             active: true,
           },
         ],
-      type: 'maturity',
-      formTitle: 'app.content.create_new_maturity_type',
+        type: 'maturity',
+        formTitle: 'app.content.create_new_maturity_type',
       },
     },
     {
@@ -919,8 +919,8 @@ const router = new VueRouter({
             active: true,
           },
         ],
-      type: 'recurringPayment',
-      formTitle: 'app.content.create_new_R_P_type',
+        type: 'recurringPayment',
+        formTitle: 'app.content.create_new_R_P_type',
       },
     },
     {
@@ -936,8 +936,8 @@ const router = new VueRouter({
             active: true,
           },
         ],
-      type: 'serviceObject',
-      formTitle: 'app.content.create_new_S_O_type',
+        type: 'serviceObject',
+        formTitle: 'app.content.create_new_S_O_type',
       },
     },
     {
@@ -953,8 +953,8 @@ const router = new VueRouter({
             active: true,
           },
         ],
-      type: 'usages',
-      formTitle: 'app.content.create_new_usage_type',
+        type: 'usages',
+        formTitle: 'app.content.create_new_usage_type',
       },
     },
     {
@@ -970,7 +970,7 @@ const router = new VueRouter({
             active: true,
           },
         ],
-      formTitle: 'app.content.create_new_choice',
+        formTitle: 'app.content.create_new_choice',
       },
     },
     {
@@ -985,7 +985,7 @@ const router = new VueRouter({
             active: true,
           },
         ],
-      formTitle: 'app.content.create_new_unit',
+        formTitle: 'app.content.create_new_unit',
       },
     },
     {
@@ -1021,7 +1021,7 @@ const router = new VueRouter({
         ],
       },
     },
-    
+
     // {
     //   path: '/app/types/area/edit',
     //   name: 'area-type-edit',
@@ -1050,9 +1050,9 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.location',
-          }]
-        }
+          }],
       },
+    },
     {
       path: '/app/location/view',
       name: 'location-view',
@@ -1062,7 +1062,7 @@ const router = new VueRouter({
         navActiveLink: 'location-view',
         breadcrumb: [
           {
-            text: 'app.page_title.location_view',
+            text: 'app.page_title.location',
             to: { name: 'location-list' },
             active: false,
           },
@@ -1088,6 +1088,240 @@ const router = new VueRouter({
           },
           {
             text: 'app.page_title.location_edit',
+            active: true,
+          },
+        ],
+      },
+    },
+
+    {
+      path: '/app/contracts',
+      name: 'contracts-list',
+      component: () => import('@/views/app/Contracts/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.contract',
+        breadcrumb: [
+          {
+            text: 'app.page_title.contract',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/contract/edit',
+      name: 'contracts-view',
+      component: () => import('@/views/app/Contracts/View.vue'),
+      meta: {
+        pageTitle: 'app.page_title.contract_edit',
+        navActiveLink: 'contract-view',
+        breadcrumb: [
+          {
+            text: 'app.page_title.contract',
+            to: { name: 'contracts-list' },
+            active: false,
+          },
+          {
+            text: 'app.page_title.contract_edit',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/contract/lease',
+      name: 'contracts-lease',
+      component: () => import('@/views/app/Contracts/lease/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.contract_lease',
+        breadcrumb: [
+          {
+            text: 'app.page_title.contract_lease',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/contract/lease/edit',
+      name: 'contracts-lease-view',
+      component: () => import('@/views/app/Contracts/lease/View.vue'),
+      meta: {
+        pageTitle: 'app.page_title.contract_view',
+        breadcrumb: [
+          {
+            text: 'app.page_title.contract_lease',
+            to: { name: 'contracts-lease' },
+            active: false,
+          },
+          {
+            text: 'app.page_title.contract_view',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/services-object',
+      name: 'services-object-list',
+      component: () => import('@/views/app/Services_object/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.services',
+        breadcrumb: [
+          {
+            text: 'app.page_title.services',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/services-object/edit',
+      name: 'services-object-view',
+      component: () => import('@/views/app/Services_object/View.vue'),
+      meta: {
+        pageTitle: 'app.page_title.service_view',
+        breadcrumb: [
+          {
+            text: 'app.page_title.services',
+            to: { name: 'services-object-list' },
+            active: false,
+          },
+          {
+            text: 'app.page_title.service_view',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/criteria',
+      name: 'criteria-list',
+      component: () => import('@/views/app/Criteria/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.criteria',
+        breadcrumb: [
+          {
+            text: 'app.page_title.criteria',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/criteria/view',
+      name: 'criteria-view',
+      component: () => import('@/views/app/Criteria/View.vue'),
+      meta: {
+        pageTitle: 'app.page_title.criteria_view',
+        breadcrumb: [
+          {
+            text: 'app.page_title.criteria',
+            to: { name: 'criteria-list' },
+            active: false,
+          },
+          {
+            text: 'app.page_title.criteria_view',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/index_clause',
+      name: 'index-clause-list',
+      component: () => import('@/views/app/Index_clause/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.index_clause',
+        breadcrumb: [
+          {
+            text: 'app.page_title.index_clause',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/index_clause/view',
+      name: 'index-clause-view',
+      component: () => import('@/views/app/Index_clause/View.vue'),
+      meta: {
+        pageTitle: 'app.page_title.index_clause_view',
+        breadcrumb: [
+          {
+            text: 'app.page_title.index_clause',
+            to: { name: 'index-clause-list' },
+            active: false,
+          },
+          {
+            text: 'app.page_title.index_clause_view',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/special-right',
+      name: 'special-right-list',
+      component: () => import('@/views/app/Special_right/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.special_right',
+        breadcrumb: [
+          {
+            text: 'app.page_title.special_right',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/special-right/view',
+      name: 'special-right-view',
+      component: () => import('@/views/app/Special_right/View.vue'),
+      meta: {
+        pageTitle: 'app.page_title.special_right_view',
+        breadcrumb: [
+          {
+            text: 'app.page_title.special_right',
+            to: { name: 'special-right-list' },
+            active: false,
+          },
+          {
+            text: 'app.page_title.special_right_view',
+            active: true,
+          },
+        ],
+      },
+    },
+
+    {
+      path: '/app/recurring-payment',
+      name: 'recurring-payment-list',
+      component: () => import('@/views/app/Recurring_payment/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.recurring_payment',
+        breadcrumb: [
+          {
+            text: 'app.page_title.recurring_payment',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/recurring-payment/view',
+      name: 'recurring-payment-view',
+      component: () => import('@/views/app/Recurring_payment/View.vue'),
+      meta: {
+        pageTitle: 'app.page_title.recurring_payment_view',
+        breadcrumb: [
+          {
+            text: 'app.page_title.recurring_payment',
+            to: { name: 'recurring-payment-list' },
+            active: false,
+          },
+          {
+            text: 'app.page_title.recurring_payment_view',
             active: true,
           },
         ],

@@ -1,27 +1,63 @@
 <template>
   <div>
     <b-card body-class="p-0">
-      <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
+      <div
+          class="d-flex align-items-center justify-content-between"
+          style="padding: 10px"
+      >
         <div class="d-flex">
-          <img src="@/assets/images/icons/team.svg" alt="" class="mr-1">
-          <span>{{ $t('app.content.create_new_pos') }}</span>
+          <img
+              src="@/assets/images/icons/team.svg"
+              alt=""
+              class="mr-1"
+          >
+          <span>{{ $t('app.content.location.view_title') }}</span>
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
-            <b-button v-b-modal.modal-primary size="sm" variant="primary" class="mr-1 d-flex">
-              <img src="@/assets/images/icons/sort.svg" alt="">
+            <b-button
+                v-b-modal.modal-primary
+                size="sm"
+                variant="primary"
+                class="mr-1 d-flex justify-content-center align-items-center"
+            >
+              <img
+                  src="@/assets/images/icons/sort.svg"
+                  alt=""
+              >
             </b-button>
-            <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
-              <img src="@/assets/images/pages/plusIcons.svg" alt="">
-              {{ $t('app.content.create_new_pos') }}</b-button>
-            <b-button size="sm" class="d-flex" variant="primary">
-              <img src="@/assets/images/pages/deleteIcons.svg" alt="">
+            <b-button
+                v-b-modal.modal-primary
+                size="sm"
+                variant="info"
+                class="mr-1 d-flex justify-content-center align-items-center"
+            >
+              <img
+                  src="@/assets/images/pages/plusIcons.svg"
+                  alt=""
+              >
+              {{ $t('app.btn.new') }}</b-button>
+            <b-button
+                size="sm"
+                class="d-flex justify-content-center align-items-center"
+                variant="primary"
+            >
+              <img
+                  src="@/assets/images/pages/deleteIcons.svg"
+                  alt=""
+              >
               {{ $t('app.btn.cancel') }}
             </b-button>
-            <div size="sm" class="pl-1 d-flex align-items-center">
-              <b-form-datepicker
-                  size="sm"
-                  id="filterInput"
+            <div
+                size="sm"
+                class="ml-4 d-flex align-items-center"
+            >
+              <label class="d-inline-block text-sm-left mr-50"> {{ $t('app.search.label') }}</label>
+              <b-form-input
+                  id="search"
+                  v-model="filter"
+                  type="search"
+                  :placeholder="$t('app.search.palceholder')"
               />
             </div>
           </div>
@@ -32,104 +68,219 @@
     <b-card class="">
       <b-form>
         <b-row>
-          <b-col cols="12" md="5">
-           <b-row>
-             <b-col cols="12" md="6">
-              <b-form-group :label="$t('app.form.label.customer_group')" label-for="customer_group">
-                <b-form-select id="customer_group" v-model="selected"/>
-              </b-form-group>
+          <b-col
+              cols="12"
+              md="6"
+          >
+            <b-row>
+              <b-col cols="6">
+                <b-form-group
+                    :label=" $t('app.form.label.location.location_id') "
+                    label-for="location_id"
+                >
+                  <b-form-input
+                      id="location_id"
+                      type="text"
+                      readonly
+                      :placeholder="$t('app.form.placeholder.location.location_id')"
+                  />
+                </b-form-group>
               </b-col>
-              <b-col cols="12" md="6">
-                <b-form-group :label="$t('app.form.label.company')" label-for="company">
-                  <b-form-select id="company"  v-model="selected" type="text"/>
+              <b-col cols="6">
+                <b-form-group
+                    :label=" $t('app.form.label.location.total_space') "
+                    label-for="total_space"
+                >
+                  <b-form-input
+                      id="total_space"
+                      type="text"
+                      :placeholder="$t('app.form.placeholder.location.total_space')"
+                  />
+                </b-form-group>
+              </b-col>
+              <b-col cols="6">
+                <b-form-group
+                    :label=" $t('app.form.label.location.opening_day') "
+                    label-for="opening_date"
+                >
+                  <b-form-datepicker
+                      id="opening_date"
+                      size="sm"
+                  />
+                </b-form-group>
+              </b-col>
+              <b-col cols="6">
+                <b-form-group
+                    :label=" $t('app.form.label.location.location_name') "
+                    label-for="location_name"
+                >
+                  <b-form-input
+                      id="location_name"
+                      type="text"
+                      :placeholder="$t('app.form.placeholder.location.location_name')"
+                  />
+                </b-form-group>
+              </b-col>
+              <b-col cols="6">
+                <b-form-group
+                    :label=" $t('app.form.label.location.standorttyp') "
+                    label-for="standorttyp"
+                >
+                  <b-form-input
+                      id="standorttyp"
+                      type="text"
+                      :placeholder="$t('app.form.placeholder.location.standorttyp')"
+                  />
+                </b-form-group>
+              </b-col>
+              <b-col cols="6">
+                <b-form-group
+                    :label=" $t('app.form.label.location.object_description') "
+                    label-for="location_description"
+                >
+                  <b-form-input
+                      id="location_description"
+                      type="text"
+                      :placeholder="$t('app.form.placeholder.location.object_description')"
+                  />
+                </b-form-group>
+              </b-col>
+              <b-col cols="6">
+                <b-form-group
+                    :label=" $t('app.form.label.location.strabe') "
+                    label-for="strabe"
+                >
+                  <b-form-input
+                      id="strabe"
+                      type="text"
+                      :placeholder="$t('app.form.placeholder.location.strabe')"
+                  />
+                </b-form-group>
+              </b-col>
+              <b-col cols="6">
+                <b-form-group
+                    :label=" $t('app.form.label.location.address_location') "
+                    label-for="h-name"
+                >
+                  <div class="d-flex justify-content-between align-items-center">
+                    <b-form-select
+                        id=""
+                        size="sm"
+                        :options="addressOptions"
+                        class="w-10 mr-3"
+                    />
+                    <b-button variant="info">
+                      {{ $t('app.btn.new') }}
+                    </b-button>
+                  </div>
                 </b-form-group>
               </b-col>
 
-             <b-col cols="12" md="6">
-              <b-form-group :label="$t('app.form.label.customer_pos_no')" label-for="customer_pos_no">
-                <b-form-input id="customer_pos_no" :placeholder="$t('app.form.placeholder.default')" v-model="user.name"/>
-              </b-form-group>
-              </b-col>
-              <b-col cols="12" md="6">
-                <b-form-group :label="$t('app.form.label.first_year')" label-for="first_year">
-                  <b-form-input id="first_year"  :placeholder="$t('app.form.placeholder.default')" v-model="user.name" type="text"/>
+              <b-col cols="6">
+                <b-form-group
+                    :label=" $t('app.form.label.location.plz_ort') "
+                    label-for="plz_ort"
+                >
+                  <div class="row">
+                    <div class="col-4">
+                      <b-form-input
+                          type="text"
+                          class="mr-3"
+                      />
+                    </div>
+                    <div class="col-8">
+                      <b-form-input
+                          id="plz_ort"
+                          type="text"
+                          :placeholder="$t('app.form.placeholder.location.plz_ort')"
+                      />
+                    </div>
+
+                  </div>
                 </b-form-group>
               </b-col>
-             <b-col cols="12">
-              <b-form-group :label="$t('app.form.label.pos_name')" label-for="pos_name">
-                <b-form-input id="pos_name" :placeholder="$t('app.form.placeholder.default')" v-model="user.name"/>
-              </b-form-group>
-              </b-col>
-              <b-col cols="12">
-                <b-form-group :label="$t('app.form.label.pos_branch_no')" label-for="pos_branch_no">
-                  <b-form-input id="pos_branch_no"  :placeholder="$t('app.form.placeholder.default')" v-model="user.name" type="text"/>
+              <b-col cols="6">
+                <b-form-group
+                    :label=" $t('app.form.label.location.land') "
+                    label-for="land"
+                >
+                  <b-form-select
+                      id="land"
+                      size="sm"
+                      :options="landOptions"
+                      class="w-10 mr-3"
+                  />
                 </b-form-group>
               </b-col>
-           </b-row>
+
+            </b-row>
           </b-col>
-          <b-col cols="12" md="7">
+          <b-col
+              cols="12"
+              md="6"
+          >
             <b-row>
-              <b-col cols="12" class="mb-2">
-                <databases :items="[1,2,3,4]" :fields="columnForm" />
+              <b-col
+                  cols="12"
+                  class="mb-2"
+              >
+                <!--                <databases
+                                  :items="[1,2,3,4]"
+                                  :fields="columnForm"
+                                />-->
               </b-col>
-            <b-col cols="12" md="6">
-              <b-form-group :label="$t('app.form.label.address')" label-for="address">
-                <b-form-input id="address" v-model="selected"/>
-              </b-form-group>
-            </b-col>
-            <b-col cols="12" md="6">
-              <b-form-group :label="$t('app.form.label.street')" label-for="street">
-                <b-form-select id="street" v-model="selected"/>
-              </b-form-group>
-            </b-col>
-            <b-col cols="12" md="6">
-              <b-form-group :label="`${$t('app.form.label.post_code')} / ${$t('app.form.label.place')}`" label-for="customer_group">
-                <b-row>
-                  <b-col cols="4">
-                    <b-form-input  id="customer_group" v-model="selected"/>
-                  </b-col>
-                  <b-col  cols="8">
-                    <b-form-input  id="customer_group" v-model="selected"/>
-                  </b-col>
-                </b-row>
-              </b-form-group>
-            </b-col>
-            <b-col cols="12" md="6">
-              <b-form-group :label="$t('app.form.label.land')" label-for="land">
-                <b-form-input id="land" v-model="selected"/>
-              </b-form-group>
-            </b-col>
-          </b-row>
+            </b-row>
           </b-col>
         </b-row>
       </b-form>
     </b-card>
     <b-card>
       <b-tabs pills>
-        <b-tab :title="$t('app.tab.area')" active>
-          <databases :actions="true" :items="rowsCompany" :fields="columnFields" />
+        <b-tab
+            :title="$t('app.tab.location_tab.tab1')"
+            active
+        >
+          <databases
+              :actions="true"
+              :items="users"
+              :fields="rowsAreas"
+          />
         </b-tab>
-        <b-tab :title="$t('app.tab.contract')">
-          <databases :items="rowsPerson" :fields="columnFields" />
+        <b-tab :title="$t('app.tab.location_tab.tab2')">
+          <databases
+              :items="users"
+              :fields="rowsObject"
+          />
         </b-tab>
-        <b-tab :title="`${$t('app.tab.service_object')}`">
-          <databases :items="rowsTicketPackage" :fields="columnFields" />
+        <b-tab :title="`${$t('app.tab.location_tab.tab3')}`">
+          <databases
+              :items="users"
+              :fields="rowsOwner"
+          />
         </b-tab>
-        <b-tab :title="$t('app.tab.tickects_and_groups')">
-          <databases :items="rowsUsers" :fields="columnFields" />
-        </b-tab>
-        <b-tab :title="$t('app.tab.contradictions_package')">
-          <databases :items="rowsUsers" :fields="columnFields" />
-        </b-tab>
-        <b-tab :title="$t('app.tab.nk_accounts')">
-          <databases :items="rowsUsers" :fields="columnFields" />
-        </b-tab>
+
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
-            <b-button v-b-modal.modal-role class="mr-1" size="sm" variant="info">{{$t('app.btn.new')}}</b-button>
-            <b-button class="mr-1" size="sm" variant="primary">{{$t('app.btn.cancel')}}</b-button>
-            <div size="sm" class="d-flex align-items-center">
-              <label class="d-inline-block text-sm-left mr-50">{{$t('app.search.label')}}</label>
+            <b-button
+                v-b-modal.modal-role
+                class="mr-1"
+                size="sm"
+                variant="info"
+            >
+              {{ $t('app.btn.new') }}
+            </b-button>
+            <b-button
+                class="mr-1"
+                size="sm"
+                variant="primary"
+            >
+              {{ $t('app.btn.cancel') }}
+            </b-button>
+            <div
+                size="sm"
+                class="d-flex align-items-center"
+            >
+              <label class="d-inline-block text-sm-left mr-50">{{ $t('app.search.label') }}</label>
               <b-form-input
                   id="filterInput"
                   type="search"
@@ -144,12 +295,13 @@
 </template>
 
 <script>
-const Databases = () => import('@/layouts/components/DataTables.vue')
 import {
   BCard,
-  BTab, BFormCheckbox, BFormRadio,BInputGroup,
-  BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton, BFormSelect, BModal, BFormDatepicker
+  BTab, BFormCheckbox, BFormRadio, BInputGroup,
+  BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton, BFormSelect, BModal, BFormDatepicker,
 } from 'bootstrap-vue'
+
+const Databases = () => import('@/layouts/components/DataTables.vue')
 
 export default {
   components: {
@@ -168,61 +320,71 @@ export default {
     BFormCheckbox,
     BFormRadio,
     BInputGroup,
-    BFormDatepicker
+    BFormDatepicker,
   },
   data() {
     return {
       perPage: 10,
       pageOptions: [3, 5, 10],
-      user: [
+      users: [
         {
           id: 1,
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
+          full_name: 'Dev',
+          first_name: 'MAG',
+          email: 'gael.meli@gohze.org',
+          last_login: '2022/04/20',
+          user_type: 'developer',
+          company: 'Gohze',
+        },
+        {
+          id: 1,
+          full_name: 'Archile',
+          first_name: 'Dev',
+          email: 'dev.arc@gohze.org',
           last_login: '2022/04/20',
           user_type: 'developer',
           company: 'Gohze',
         },
       ],
       selected: 'first',
-      options: [
-        { text: 'Benutzer muss bei nachster Anmeldung sein Passwort andern', value: 'first', disabled: false },
-        { text: 'Benutzer gesperrt', value: 'second', disabled: false },
-      ],
-      options2: [
-        { text: 'Mr.', value: 'first2', disabled: false },
-        { text: 'Ms.', value: 'second2', disabled: false },
-      ],
-      columnForm: [
-        { key: 'id', label: '' },
-        { key: 'location', label: 'Location name' },
-        { key: 'group', label: 'Gruppe' },
-        { key: 'aze', label: 'Verwal-ter' },
-        { key: 'azer', label: 'Eigen-tümer' },
-        { key: 'eza', label: 'Name Fläche + Hauptnutzung' },
-        { key: 'ifred', label: 'Miet-fläche' },
-        { key: 'mlk', label: 'Umlage-fläche' },
-
-      ],
-
-      columnFields: [
-        { key: 'id', label: 'Id' },
-        { key: 'full_name', label: 'Contract ID ', sortable: true },
-        { key: 'fuame', label: 'Name Contract ', sortable: true },
-        { key: 'll_name', label: 'Vertrags-typ ', sortable: true },
-        { key: 'l_name', label: 'Area ID ', sortable: true },
-        { key: 'l_name', label: 'Area Name ', sortable: true },
-        { key: 'fulme', label: 'Contract Area Description ', sortable: true },
-        { key: 'l_name', label: 'Haupt-nutzung ', sortable: true },
-        { key: 'fuame', label: 'Beginn Datum ', sortable: true },
-        { key: 'full_n', label: 'Ende Datum ', sortable: true },
-        { key: 'sdf', label: 'Nächstes Ende ', sortable: true },
-        { key: 'sdfsdf', label: 'Miet-fläche ', sortable: true },
-        { key: 'dfvdf', label: 'Umlage-fläche ', sortable: true },
-        { key: 'sd', label: 'Vertrags-dokumente ', sortable: true },
+      rowsAreas: [
+        { key: 'id', label: 'Id', sortable: true },
+        { key: 'name', label: 'Area Name', sortable: true },
+        { key: 'area_id', label: 'Area ID', sortable: true },
+        { key: 'space', label: 'Proposed Space (qm)', sortable: true },
+        { key: 'pos_name', label: 'PoS name', sortable: true },
+        { key: 'contract_name', label: 'Contract name', sortable: true },
+        { key: 'rental_space', label: 'Rental space (contract)', sortable: true },
+        { key: 'apportionment', label: 'Apportionment area (contract)', sortable: true },
+        { key: 'unit', label: 'Unit (sqm/pc) (contract)', sortable: true },
+        { key: 'type', label: 'Type of use (contract)', sortable: true },
+        { key: 'valid_from', label: 'Valid from date (contract)', sortable: true },
+        { key: 'valid_until', label: 'Valid until date (contract)', sortable: true },
         'Action',
       ],
+      rowsObject: [
+        { key: 'id', label: 'Id' },
+        { key: 'area_id', label: 'Service Object ID', sortable: true },
+        { key: 'space', label: 'Service Object Name', sortable: true },
+        { key: 'pos_name', label: 'Service Object type', sortable: true },
+        { key: 'name', label: 'Area Name', sortable: true },
+        'Action',
+      ],
+      rowsOwner: [
+        { key: 'id', label: 'Id' },
+        { key: 'partner', label: 'Partner ID', sortable: true },
+        { key: 'partner_group', label: 'Partner group', sortable: true },
+        { key: 'partner_company', label: 'Partner company name', sortable: true },
+        { key: 'partner_type', label: 'Partner Type ', sortable: true },
+        { key: 'city', label: 'City', sortable: true },
+        { key: 'email', label: 'Email', sortable: true },
+        { key: 'phone', label: 'Phone', sortable: true },
+        { key: 'valid_till', label: 'Valid from date', sortable: true },
+        { key: 'valid_until', label: 'Valid until date', sortable: true },
+        'Action',
+      ],
+      addressOptions: ['Address 1', 'Address 2', 'Address 3'],
+      landOptions: ['Land 1', 'Land 2', 'Land 3'],
     }
   },
 }

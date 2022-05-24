@@ -51,7 +51,8 @@
       "work_pack_3": {
         "title": "Arbeitspaket 3",
         "children" : {
-          "customer_group": "Kundengruppe"
+          "customer_group": "Kundengruppe",
+          "payment": "Wiederkehrende Zahlung"
         }
       }
     },
@@ -101,9 +102,21 @@
       "location_edit": "Standortdetails und Pflege",
       "location": {
         "view_title": "Standortdetails und Pflege"
-      }
-    },
-
+      },
+      "contract": {
+        "view": "Vertrag Pflegen",
+        "view2": "Vertrag pflegen (Miete)",
+        "number": "Vertragsnummer"
+      },
+      "create_new_contract": "Einen neuen Vertrag erstellen",
+      "create_new_object": "Neues Serviceobjekt erstellen",
+      "service_view": "Serviceobjekt-Detailansicht und Pflege",
+      "criteria_view": "Vertragskriterien erstellen und pflegen",
+      "index_view": "Indexklausel erstellen und pflegen",
+      "create_new_criteria": "Neue Vertragskriterien erstellen",
+      "create_new_index_clause": "Neue Indexklausel erstellen",
+      "right_view": "Vertragssonderrecht anlegen und pflegen",
+      "create_new_recurring_pay": "Neue wiederkehrende Zahlung erstellen",
       "dashboard": {
         "sub_title": "Globale Liste ohne Register",
         "card_text": "Viel Glück mit Ihrem neuen Projekt."
@@ -111,7 +124,8 @@
       "deadlines": {
         "sub_title": "Globale Liste ohne Register",
         "card_text": "Viel Glück mit Ihrem neuen Projekt."
-      },
+      }
+    },
     "btn": {
       "view": "Siehe",
       "new": "neu",
@@ -153,6 +167,62 @@
           "location_name": "Ortsname (automatisch generiert (Ort, Straße, Hausnummer) oder hier eingeben ....)",
           "total_space": "Standort Gesamtfläche (Platzzahlen eingeben ...)",
           "opening_day": "Startdatum des Standorts (Datum eingeben ...)"
+        },
+        "contract": {
+          "id": "Vertrag_ID (automatisch)",
+          "name": "Vertragsname (automatisch generiert - tbd)",
+          "begin": "Datum des Vertragsbeginns",
+          "end": "Datum des Vertragsendes",
+          "currency": "Währung id",
+          "type": "Vertragsart",
+          "document": "Dokument Vertragsart id"
+        },
+        "service" : {
+          "id": "Dienstobjekt-ID (automatisch)",
+          "name": "Name des Serviceobjekts (hier eingeben ...)",
+          "description": "Beschreibung des Serviceobjekts",
+          "object": "Serviceobjekttyp-ID (bitte wählen Sie ....)",
+          "contract": "Vertragskennung (bitte nur einen Vertrag auswählen Vertragstyp = Dienstleistungsvertrag ....)",
+          "area": "Bereichsbezeichnung (bitte auswählen ...)",
+          "location": "Ortskennung (bitte auswählen ...)"
+        },
+        "criteria": {
+          "id": "Kriterien-ID (automatisch erstellt ...)",
+          "name": "Name des Kriteriums (Hier eingeben...)",
+          "description": "Beschreibung der Kriterien (hier eingeben ...)",
+          "has": "Kriterium hat Wert (Radio select...)",
+          "type": "Kriterienart ID (Bitte auswählen...)"
+        },
+        "index": {
+          "id": "Indexklausel id (Automatisch erstellt ...)",
+          "rule": "Indexklausel-Anpassungsregel (Hier eingeben...)",
+          "description": "Beschreibung der Indexklauselanpassung (hier eingeben ...)",
+          "year": "Indexklausel Basisjahr (select Jahr ... JJJJ )",
+          "date": "Datum des Beginns der Indexklausel (Bitte Datum auswählen ...)",
+          "change_per": "Indexklausel Indexübertragung Prozent (Dezimalwert setzen ...)",
+          "minimum": "Indexklausel minimale prozentuale Veränderung vereinbart (Dezimalwert setzen ...)",
+          "points": "Indexklausel Minimalpunktänderung vereinbart (Satznummer ...)"
+        },
+        "right": {
+          "id": "Sonderrecht id (Automatisch erstellt ...)",
+          "name": "Name des Sonderrechts (hier eingeben...)",
+          "description": "Name des Sonderrechts (hier eingeben...)"
+        },
+        "pay": {
+          "id": "id für wiederkehrende Zahlungen (automatisch erstellt ...)",
+          "contract": "Vertragsnummer (bitte auswählen...)",
+          "type": "ID der wiederkehrenden Zahlungsart (Bitte auswählen...)",
+          "sum": "Fall P1 - Wiederkehrender Zahlungsbetrag pro Monat (Werte eingeben ...)",
+          "cond": "Fall P2 - Kondition für wiederkehrende Zahlungen in Prozent (Prozentsatz eingeben ...)",
+          "percent": "Fall P2 - Prozentsatz für wiederkehrende Zahlungen (Prozentsatz eingeben ...)",
+          "begin": "Datum des Beginns der wiederkehrenden Zahlung (Datum auswählen ...)",
+          "end": "Enddatum der wiederkehrenden Zahlung (Datum auswählen ...)",
+          "description": "Beschreibung der wiederkehrenden Zahlung (hier eingeben ...)",
+          "m_type": "Fälligkeitsart_ID (Bitte auswählen...)",
+          "m_date": "Fall M1 - Fälligkeitsdatum der wiederkehrenden Zahlungen (Datum auswählen ...)",
+          "m_at": "Fall M2 - Wiederkehrende Zahlung Fälligkeit täglicher Bereich (Bitte wählen Sie die Anzahl ...)",
+          "m_rang": "Fall M2 - wiederkehrende Zahlung Fälligkeit monatlicher Bereich (Bitte Nummer auswählen...)",
+          "value": "wiederkehrende zahlung_wert_einzahlung (Radio select...)"
         }
       }
     },
@@ -318,6 +388,64 @@
           "location_name": "Name des Standorts",
           "total_space": "Gesamtfläche",
           "opening_day": "Datum der Eröffnung"
+        },
+        "contract": {
+          "id": "Vertragsnummer",
+          "name": "Vertragsname",
+          "begin": "Vertragsbeginn",
+          "end": "Vertragsende aktuell",
+          "currency": "Vertragswahrung",
+          "type": "Vertragstyp",
+          "document": "Dokument Vertragsart",
+          "end_contract_possible": "VERTRAGSENDE NÄCHSTMÖGLICH"
+        },
+        "service" : {
+          "id": "Dienst OBjekt-ID",
+          "name": "Name Serviceobjekt",
+          "description": "Beschreibung",
+          "object": "Dienstobjekt-Typ",
+          "contract": "Dienstvertrag",
+          "area": "Bereich (falls zutreffend)",
+          "location": "Standort (falls zutreffend)"
+        },
+        "criteria": {
+          "id": "ID",
+          "name": "Kriterium Name",
+          "description": "Beschreibung der Kriterien",
+          "has": "Hat Wert",
+          "type": "Kriterium Typ"
+        },
+        "index": {
+          "id": "ID",
+          "rule": "Anpassungsregel",
+          "description": "Beschreibung der Anpassung",
+          "year": "Basisjahr",
+          "date": "Datum des Beginns",
+          "change_per": "Indexänderung in Prozent",
+          "minimum": "Minimal vereinbarter Prozentwert",
+          "points": "Minimal vereinbarte Änderung der Indexpunkte "
+        },
+        "right": {
+          "id": "ID",
+          "name": "Sonderrecht Name",
+          "description": "Beschreibung des Sonderrechts"
+        },
+        "pay": {
+          "id": "ID",
+          "contract": "Vertrag ID",
+          "type": "Art der wiederkehrenden Zahlung",
+          "sum": "Summe pro Monat (Falltyp P1)",
+          "cond": "Prozentuale Bedingung (Fall Typ P2)",
+          "percent": "Prozentsatz (Falltyp P2)",
+          "begin": "Datum Beginn",
+          "end": "Datum Ende",
+          "description": "Beschreibung der wiederkehrenden Zahlung",
+          "m_type": "Fälligkeit Art",
+          "m_date": "Fälligkeitsdatum (Fall Typ M1)",
+          "m_at": "Fälligkeit am Tag x pro Monat (Typ M2 Fall)",
+          "m_range": "Fälligkeitsspanne x Monat (Fall M2)",
+          "value": "Wertabgabe",
+          "index": "Indexklausel Typ"
         }
       },
 
@@ -350,7 +478,30 @@
           "tab1": "Flächen / Oberflächen",
           "tab2": "Service-Objekte",
           "tab3": "Verwalter/Eigentümer"
-        }
+        },
+        "contract_tab": {
+          "tab1": "Kundengruppe",
+          "tab2": "Unternehmen",
+          "tab3": "Kontaktperson",
+          "tab4": "Dokumente",
+          "tab5": "Service-Objekte",
+          "tab6": "Besondere Rechte",
+          "tab7": "Vertragskriterien",
+          "tab8": "Rechnungen",
+          "tab9": "Infos zu Kostenarten",
+          "tab10": "Wiederkehrende Zahlungen"
+        },
+        "services": {
+          "area": "Gebiete / Flächen",
+          "location": "Standort",
+          "contract": "Vertrag"
+        },
+        "criteria": {
+          "contract": "Vertrag",
+          "choice": "Wahlmöglichkeit"
+        },
+        "index_pay": "Wiederkehrende Zahlungen",
+        "right_contract": "Vertrag"
       },
     "page_title": {
       "dashboard": "Armaturenbrett",
@@ -403,7 +554,21 @@
       "area_edit": "Bereich Bearbeiten",
       "location": "Standort Übersichtsliste",
       "location_edit": "Standortübersicht Bearbeiten",
-      "location_view": "Standort Detailansicht"
+      "location_view": "Standort Detailansicht",
+      "contract": "Übersichtsliste Verträge",
+      "contract_lease": "Übersichtsliste der Leasingverträge",
+      "contract_view": "Vertragsmanagement",
+      "contract_edit": "Vertragsmanagement",
+      "services": "Übersichtsliste Serviceobjekte",
+      "service_view": "Serviceobjekt-Detailansicht",
+      "criteria" : "Gesamtliste Vertragskriterien",
+      "criteria_view": "Vertragskriterien",
+      "index_clause": "Gesamtliste Indexklauseln",
+      "index_clause_view": "Index-Klausel",
+      "special_right": "Gesamtliste Vertrag Sonderrechte",
+      "special_right_view": "Vertrag Sonderrecht",
+      "recurring_payment": "Gesamtliste Vertragsbasierte wiederkehrende Zahlungen",
+      "recurring_payment_view": "vertragsbasierte wiederkehrende Zahlung"
     }
   }
 }
