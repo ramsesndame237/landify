@@ -51,7 +51,9 @@
       "work_pack_3": {
         "title": "Work Package 3",
         "children" : {
-          "customer_group": "Customer group"
+          "customer_group": "Customer group",
+          "choice": "Recurrinf Payment",
+          "poservice_objects": "Service Object"
         }
       }
     },
@@ -98,6 +100,20 @@
       "location": {
         "view_title": "Détail et soin de l'emplacement"
       },
+      "contract": {
+        "view": "Maintenir un contrat",
+        "view2": "Maintenir le contrat (de location)",
+        "number": "Numéro de contrat"
+      },
+      "create_new_contract": "Créer un nouveau contrat",
+      "create_new_object": "Créer un nouvel objet de service",
+      "service_view": "Vue détaillée des objets de service et soins",
+      "criteria_view": "Création et maintien des critères contractuels",
+      "index_view": "Création et maintien de la clause d'indexation",
+      "create_new_criteria": "Créer de nouveaux critères de contrat",
+      "create_new_index_clause": "Créer une nouvelle clause d'indexation",
+      "right_view": "Contrat droit spécial créer et maintenir",
+      "create_new_recurring_pay": "Créer un nouveau paiement récurrent",
 
       "dashboard": {
         "sub_title": "Liste globale sans registres",
@@ -149,8 +165,63 @@
           "location_name": "Nom du lieu (généré automatiquement (ville, rue, numéro de maison) ou à saisir ici ....)",
           "total_space": "Superficie totale emplacement (entrez les chiffres de l'espace ...)",
           "opening_day": "date de début de la location ( Saisir la date ....)"
+        },
+        "contract": {
+          "id": "Contract_ID (automatiquement)",
+          "name": "nom_du_contrat (généré automatiquement - à tbl)",
+          "begin": "Date de début du contrat",
+          "end": "Date de fin du contrat",
+          "currency": "Identité de la monnaie",
+          "type": "Type de contrat",
+          "document": "Document Type de contrat id"
+        },
+        "service" : {
+          "id": "id de l'objet du service (automatiquement)",
+          "name": "nom de l'objet du service (à saisir ici ...)",
+          "description": "description de l'objet du service",
+          "object": "id de type l'objet de service ( veuillez sélectionner ....)",
+          "contract": "contract_id ( veuillez sélectionner un contrat uniquement contracttype = Service-Contract ....)",
+          "area": "ID de la zone (veuillez sélectionner ...)",
+          "location": "ID de l'emplacement (veuillez sélectionner ...)"
+        },
+        "criteria": {
+          "id": "id du critère (créé automatiquement ...)",
+          "name": "nom_du_critère (Entrez ici...)",
+          "description": "description du critère (entrer ici ...)",
+          "has": "le critère a une valeur (Radio select...)",
+          "type": "ID du type de critère (Veuillez choisir...)"
+        },
+        "index": {
+          "id": "id index clause (créé automatiquement...)",
+          "rule": "règle d'ajustement de la clause d'indexation (Entrez ici...)",
+          "description": "description de l'ajustement de la clause d'indexation (entrer ici ...)",
+          "year": "index clause base year (select year ... YYYY )",
+          "date": "date de début de la clause d'indexation (Veuillez sélectionner la date ...)",
+          "change_per": "clause d'indexation transmission de l'index en pourcentage (Définir la valeur décimale ...)",
+          "minimum": "clause d'indexation variation minimale en pourcentage convenue (Définir la valeur décimale ...)",
+          "points": "clause d'indexation changement de point minimal convenu (numéro d'ensemble ...)"
+        },
+        "right": {
+          "id": "ID du droit spécial (créé automatiquement...)",
+          "name": "nom du droit spécial (Entrez ici...)",
+          "description": "Description du droit spécial (entrez ici ...)"
+        },
+        "pay": {
+          "id": "id de paiement récurrent (créé automatiquement ...)",
+          "contract": "id du contrat (veuillez sélectionner...)",
+          "type": "ID du type de paiement récurrent (Veuillez choisir...)",
+          "sum": "Cas P1 - montant du paiement récurrent par mois (entrer les valeurs ...)",
+          "cond": "Cas P2 - pourcentage de la condition de paiement périodique (entrer le pourcentage ...)",
+          "percent": "Cas P2 - pourcentage d'acompte (entrer le pourcentage ...)",
+          "begin": "date de début du paiement périodique (sélectionner la date ...)",
+          "end": "date de fin du paiement récurrent (sélectionner la date ...)",
+          "description": "description du paiement périodique (entrer ici ...)",
+          "m_type": "Type d'échéance_ID (Veuillez choisir...)",
+          "m_date": "Cas M1 - date d'échéance du paiement périodique (sélectionner la date ...)",
+          "m_at": "Cas M2 - Echéance de paiement récurrente - Fourchette journalière (Veuillez sélectionner le nombre ...)",
+          "m_rang": "Cas M2 - échéance du paiement récurrent fourchette mensuelle (Veuillez choisir le nombre...)",
+          "value": "dépôt de la valeur du paiement récurrent (Radio select...)"
         }
-
       },
       "label": {
         "company_name": "Nom de l'entreprise",
@@ -314,8 +385,65 @@
           "location_name": "Nom de l'emplacement",
           "total_space": "Espace total",
           "opening_day": "Date d'ouverture"
+        },
+        "contract": {
+          "id": "ID du contrat",
+          "name": "Nom du contrat",
+          "begin": "Date de début",
+          "end": "Date de fin",
+          "currency": "Monnaie",
+          "type": "Type de contrat",
+          "document": "Document Type de contrat",
+          "end_contract_possible": "FIN DU CONTRAT PROCHAIN POSSIBLE"
+        },
+        "service" : {
+          "id": "ID de l'objet du service",
+          "name": "Nom Objet du service",
+          "description": "Description",
+          "object": "Type d'objet de service",
+          "contract": "Contrat de service",
+          "area": "Zone (si applicable)",
+          "location": "Localisation (le cas échéant)"
+        },
+        "criteria": {
+          "id": "ID",
+          "name": "Nom du critère",
+          "description": "Description des critères",
+          "has": "A une valeur",
+          "type": "Type de critère"
+        },
+        "index": {
+          "id": "ID",
+          "rule": "Règle d'ajustement",
+          "description": "Description du réglage",
+          "year": "Année de base",
+          "date": "Date de début",
+          "change_per": "Variation de l'indice Pourcentage",
+          "minimum": "Valeur minimale convenue en pourcentage",
+          "points": "Modification minimale convenue des points d'indice "
+        },
+        "right": {
+          "id": "ID",
+          "name": "Nom du droit spécial",
+          "description": "Description du droit spécial"
+        },
+        "pay": {
+          "id": "ID",
+          "contract": "ID du contrat",
+          "type": "Type de paiement récurrent",
+          "sum": "Somme par mois (cas de type P1)",
+          "cond": "Condition de pourcentage (cas de type P2)",
+          "percent": "Pourcentage (cas de type P2)",
+          "begin": "Date de début",
+          "end": "Date de fin",
+          "description": "Description du paiement récurrent",
+          "m_type": "Type d'échéance",
+          "m_date": "Date d'échéance (cas du type M1)",
+          "m_at": "Échéance au jour x par mois (cas de type M2)",
+          "m_range": "Échelle des échéances x Mois (cas de type M2) ",
+          "value": "Dépôt de valeur",
+          "index": "Type de clause d'indexation"
         }
-
       }
     },
 
@@ -348,8 +476,30 @@
         "tab1": "Zones / surfaces",
         "tab2": "Objets du service",
         "tab3": "Administrateur/ propriétaire"
-      }
-
+      },
+      "contract_tab": {
+        "tab1": "Groupe de clients",
+        "tab2": "Entreprise",
+        "tab3": "contact person",
+        "tab4": "Documents",
+        "tab5": "Objets de service",
+        "tab6": "Droits spéciaux",
+        "tab7": "Critères contractuels",
+        "tab8": "Factures",
+        "tab9": "Informations sur les types de coûts",
+        "tab10": "Paiements récurrents"
+      },
+      "services": {
+        "area": "Zones / Flächen",
+        "location": "Localisation",
+        "contract": "Contrat"
+      },
+      "criteria": {
+        "contract": "Contrat",
+        "choice": "Choix"
+      },
+      "index_pay": "Paiements récurrents",
+      "right_contract": "Contrat"
     },
     "page_title": {
       "dashboard": "Tableau de bord",
@@ -402,7 +552,21 @@
       "area_edit": "Edition de Zone",
       "location": "Liste des emplacements",
       "location_edit": "Vue d'ensemble du lieu Editer",
-      "location_view": "Emplacement Vue détaillée"
+      "location_view": "Emplacement Vue détaillée",
+      "contract": "Liste récapitulative des contrats",
+      "contract_lease": "Liste récapitulative des contrats de location",
+      "contract_view": "Gestion des contrats",
+      "contract_edit": "Gestion des contrats",
+      "services": "Liste générale des objets de service",
+      "service_view": "Vue détaillée de l'objet de service",
+      "criteria" : "liste globale des critères du contrat",
+      "criteria_view": "Critères contractuels",
+      "index_clause": "liste globale Clauses de l'index",
+      "index_clause_view": "Clause d'indexation",
+      "special_right": "liste globale contrat Droits spéciaux",
+      "special_right_view": "Contrat Droit spécial",
+      "recurring_payment": "liste globale Paiements récurrents basés sur un contrat",
+      "recurring_payment_view": "Paiement récurrent basé sur un contrat"
     }
   }
 }

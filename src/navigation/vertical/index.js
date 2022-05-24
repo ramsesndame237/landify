@@ -207,31 +207,31 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_3.children.contract',
-        route: '/',
+        route: 'contracts-list',
       },
       {
         title: 'app.sidebar.work_pack_3.children.lease_contract',
-        route: '/',
+        route: 'contracts-lease',
       },
       {
         title: 'app.sidebar.work_pack_3.children.poservice_objects',
-        route: '/',
+        route: 'services-object-list',
       },
       {
         title: 'app.sidebar.work_pack_3.children.criteria',
-        route: '/',
+        route: 'criteria-list',
       },
       {
         title: 'app.sidebar.work_pack_3.children.index_clause',
-        route: '/',
+        route: 'index-clause-list',
       },
       {
         title: 'app.sidebar.work_pack_3.children.special_right',
-        route: '/',
+        route: 'special-right-list',
       },
       {
         title: 'app.sidebar.work_pack_3.children.tag',
-        route: '/',
+        route: 'recurring-payment-list',
       },
       {
         title: 'app.sidebar.work_pack_3.children.unit',

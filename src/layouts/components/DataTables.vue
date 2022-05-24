@@ -29,7 +29,10 @@
           {{ $t('app.btn.new') }}
         </span>
       </b-badge>
-      <b-link :to="{name: link, params: {id: data.item.id}}">
+      <b-link
+        v-if="link!==undefined"
+        :to="{name: link, params: {id: data.item.id}}"
+      >
         <b-badge
           class="mr-1"
           variant="secondary"

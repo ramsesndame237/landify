@@ -30,12 +30,12 @@
       "master_data": "Mater Data",
       "work_pack_2": {
         "title": "Work Package 2",
-        "children" : {
+        "children": {
           "customer_group": "Customer group",
-          "company":"Company",
-          "contact_person":"Contact Person",
-          "payment":"Payment",
-          "partner_company":"Partner Company",
+          "company": "Company",
+          "contact_person": "Contact Person",
+          "payment": "Payment",
+          "partner_company": "Partner Company",
           "partner_compan_group": "Partner Company Group",
           "address": "Address",
           "contact_title": "Contact Title",
@@ -50,7 +50,7 @@
       },
       "work_pack_3": {
         "title": "Work Package 3",
-        "children" : {
+        "children": {
           "pos": "POS",
           "area": "Areas",
           "location": "Locations",
@@ -62,7 +62,8 @@
           "special_right": "Special Rights",
           "tag": "Recurrinf Payment",
           "unit": "Recurrinf Payment",
-          "choice": "Recurrinf Payment"
+          "choice": "Recurrinf Payment",
+          "poservice_objects": "Service Object"
         }
       }
     },
@@ -71,7 +72,7 @@
       "de": "German",
       "en": "English"
     },
-    "navbar" : {
+    "navbar": {
       "profile": "Profile",
       "inbox": "Inbox",
       "task": "Task",
@@ -92,8 +93,8 @@
       "create_contact_person": "Create Contact Person",
       "company_detail_view": "company Details View",
       "partner_company_detail_view": "Partner Company Details View",
-      "auth_management_detail" : "Authorization Management detail",
-      "create_payment" : "Create Payment",
+      "auth_management_detail": "Authorization Management detail",
+      "create_payment": "Create Payment",
       "create_customer": "Create new Customer",
       "create_partner_group": "Create Partner Group",
       "create_new_business": "Creation path for a new customer and contract",
@@ -106,18 +107,18 @@
       "contract_special_rights": "Contract Specials Rights",
       "contract_recurring_payments": "Contract Recuring Payments",
       "progress": "Progress",
-      "new_busness_text_btn_msg":"Enter data of new customergroup, customer, location, area, PoS, contract incl. contract criteria.",
-      "new_busness_text_pos_msg":"All listed areas will be allocated to the POS.",
-      "create_new_payment_data":"Create new Payment Data.",
-      "create_new_country" :"Create new Country",
+      "new_busness_text_btn_msg": "Enter data of new customergroup, customer, location, area, PoS, contract incl. contract criteria.",
+      "new_busness_text_pos_msg": "All listed areas will be allocated to the POS.",
+      "create_new_payment_data": "Create new Payment Data.",
+      "create_new_country": "Create new Country",
       "create_new_currency": "Create New currency",
       "create_new_city": "Create New City",
       "create_new_salutation": "Create New Salutation",
       "create_new_language": "Create New Language",
       "create_new_address": "Create New Address",
       "create_new_contact_title": "Create New Contact Title",
-      "create_new_partner_type":"Create New Partner Type",
-      "create_new_pos":"Create New POS",
+      "create_new_partner_type": "Create New Partner Type",
+      "create_new_pos": "Create New POS",
       "create_new_area": "Create New Area",
       "create_new_location": "Create new Location",
       "location_detail": "Location detail and care",
@@ -125,7 +126,20 @@
       "location": {
         "view_title": "Location detail and care"
       },
-
+      "contract": {
+        "view": "Maintain contract",
+        "view2": "Maintain (rental) contract",
+        "number": "Contract number"
+      },
+      "create_new_contract": "Create a new Contract",
+      "create_new_object": "Create new Service Object",
+      "service_view": "Service Object Detail View and Care",
+      "criteria_view": "Contract Criteria create and Maintain",
+      "index_view": "Index Clause create and Maintain",
+      "create_new_criteria": "Create new contract criteria",
+      "create_new_index_clause": "Create new Index Clause",
+      "right_view": "Contract special right create and Maintain",
+      "create_new_recurring_pay": "Create new Recurring Payment",
       "dashboard": {
         "sub_title": "Overall list without registers",
         "card_text": "All the best for your new project."
@@ -134,8 +148,6 @@
         "sub_title": "Overall list without registers",
         "card_text": "All the best for your new project."
       }
-
-
     },
     "btn": {
       "view": "View",
@@ -147,26 +159,26 @@
       "skip": "Skip",
       "next": "Next",
       "cancel": "Cancel",
-      "save_add_location":"Save and add further location",
-      "save_add_contact":"Save and add further Contact",
-      "save_add_contact_cirteria":"Save and add further Contact Criteria",
-      "save_add_contact_special_right":"Save and add further Contact Special Right",
-      "save_add_contact_recuring_payment":"Save and add further Reccuring Payment"
+      "save_add_location": "Save and add further location",
+      "save_add_contact": "Save and add further Contact",
+      "save_add_contact_cirteria": "Save and add further Contact Criteria",
+      "save_add_contact_special_right": "Save and add further Contact Special Right",
+      "save_add_contact_recuring_payment": "Save and add further Reccuring Payment"
     },
     "search": {
       "label": "Search",
       "palceholder": "search..."
     },
-    "form" : {
+    "form": {
       "placeholder": {
-        "default" : "Type Here...",
-        "email" : "Enter E-mail...",
-        "password" : "Enter Your password...",
-        "password_confirm" : "Confirm password...",
-        "select" : "Please select an option.",
-        "automatic_based_on_id" : "(automatically based on selected id)",
-        "automatic" : "(automatically)",
-        "location" : {
+        "default": "Type Here...",
+        "email": "Enter E-mail...",
+        "password": "Enter Your password...",
+        "password_confirm": "Confirm password...",
+        "select": "Please select an option.",
+        "automatic_based_on_id": "(automatically based on selected id)",
+        "automatic": "(automatically)",
+        "location": {
           "location_id": "location_id (automatically)",
           "object_description": "location object description (enter here ...)",
           "standorttyp": "location type id",
@@ -178,10 +190,66 @@
           "location_name": "Location name (automatically generated (City, Street, HouseNo) or Enter here ....)",
           "total_space": "Location Total Area (enter space figures ...)",
           "opening_day": "location start date ( enter date ....)"
+        },
+        "contract": {
+          "id": "Contract_ID (automatically)",
+          "name": "contract_name (automatically generated - tbd)",
+          "begin": "Contract begin date",
+          "end": "Contract End Date",
+          "currency": "Currency id",
+          "type": "Contract Type",
+          "document": "Document Contract type id"
+        },
+        "service" : {
+          "id": "service object_id (automatically)",
+          "name": "service object_name (enter here ...)",
+          "description": "service object_description",
+          "object": "service object type_id ( please select ....)",
+          "contract": "contract_id ( please select a contract only contracttype = Service-Contract ....)",
+          "area": "area_id (please select ...)",
+          "location": "location_id (please select ...)"
+        },
+        "criteria": {
+          "id": "criteria_id (Automatically created ...)",
+          "name": "criteria_name (Enter here...)",
+          "description": "criteria description (enter here ...)",
+          "has": "criteria has value (Radio select...)",
+          "type": "criteria type ID (Please select...)"
+        },
+        "index": {
+          "id": "index clause _id (Automatically created ...)",
+          "rule": "index_clause_adjustment_rule (Enter here...)",
+          "description": "index_clause_adjustment_description (enter here ...)",
+          "year": "index_clause_base_year (select year ... YYYY )",
+          "date": "index_clause_begin_date (Please select date ...)",
+          "change_per": "index_clause_index_transmission_percent (Set decimal value ...)",
+          "minimum": "index_clause_minimal_percent_change_agreed (Set decimal value  ...)",
+          "points": "index_clause_minimal_point_change_agreed (Set number ...)"
+        },
+        "right": {
+          "id": "special right_id (Automatically created ...)",
+          "name": "special right_name (Enter here...)",
+          "description": "Special right description (enter here ...)"
+        },
+        "pay": {
+          "id": "recurring payment_id (Automatically created ...)",
+          "contract": "contract_id (please select...)",
+          "type": "recurring payment_type_ID (Please select...)",
+          "sum": "Case P1 - recurring payment_sum_per_month (enter values ...)",
+          "cond": "Case P2 - recurring payment_condition_percentage (enter percentage  ...)",
+          "percent": "Case P2 - recurring payment_percentage (enter percentage  ...)",
+          "begin": "recurring payment_begin_date (select date ...)",
+          "end": "recurring payment_end_date (select date ...)",
+          "description": "recurring payment_description (enter here ...)",
+          "m_type": "maturity type_ID (Please select...)",
+          "m_date": "Case M1 - recurring payment_maturity_date (select date ...)",
+          "m_at": "Case M2 - recurring payment_maturity_daily_range (Please select number ...)",
+          "m_rang": "Case M2 - recurring payment_maturity_monthly_range (Please select number...) ",
+          "value": "recurring payment_value_deposit (Radio select...)"
         }
       },
       "label": {
-        "company_name": "Comapany Name",
+        "company_name": "Company Name",
         "email": "E-Mail",
         "name": "Name",
         "firstname": "First name",
@@ -249,10 +317,10 @@
         "hra_hrb": "HRA / HRB No",
         "bankdata": "Bankdata",
         "iban_account": "IBAN Account",
-        "bic" : "BIC",
-        "bank_name" : "Bank Name",
-        "street" : "Street",
-        "address_addition" : "Address Addition",
+        "bic": "BIC",
+        "bank_name": "Bank Name",
+        "street": "Street",
+        "address_addition": "Address Addition",
         "preservation": "Preservation",
         "group_name": "Group Name",
         "payment_info": "Payment Info",
@@ -260,33 +328,33 @@
         "object_reference": "Object Reference",
         "value": "Value",
         "date": "Date",
-        "payment_type" : "Payment Type",
-        "contact_details" : "Contact Details",
-        "partner_type" : "Partner Type",
-        "partner_company_group" : "Partner Company Group",
-        "location_id" : "Location ID",
-        "total_area" : "Total Area",
-        "opening_date" : "Opening Date",
-        "owner" : "Owner",
-        "owner_valid_from_date" : "Owner Valid From Date",
-        "property_manager" : "Property Manager",
-        "property_manager_from_date" : "Property Manager From Date",
-        "location_type" : "Location type",
-        "address_location" : "Address Location",
-        "ticket_id" : "Ticket ID",
-        "area_id" : "Area ID",
-        "name_area" : "Name Area",
-        "name_area_ext" : "Name Area Ext",
-        "space" : "Space",
-        "main_usage" : "Main Usage",
-        "area_type" : "Area Type",
-        "pos_id" : "PoS ID",
-        "name_pos" : "PoS Name",
-        "pos_branch_number" : "PoS Branch Number",
-        "tag" : "Tag (Vertical Line, Org Assignment)",
-        "responsible_sfm" : "Responsible SFM",
-        "existing_area_id" : "Existing Area ID",
-        "document_id" : "Document ID",
+        "payment_type": "Payment Type",
+        "contact_details": "Contact Details",
+        "partner_type": "Partner Type",
+        "partner_company_group": "Partner Company Group",
+        "location_id": "Location ID",
+        "total_area": "Total Area",
+        "opening_date": "Opening Date",
+        "owner": "Owner",
+        "owner_valid_from_date": "Owner Valid From Date",
+        "property_manager": "Property Manager",
+        "property_manager_from_date": "Property Manager From Date",
+        "location_type": "Location type",
+        "address_location": "Address Location",
+        "ticket_id": "Ticket ID",
+        "area_id": "Area ID",
+        "name_area": "Name Area",
+        "name_area_ext": "Name Area Ext",
+        "space": "Space",
+        "main_usage": "Main Usage",
+        "area_type": "Area Type",
+        "pos_id": "PoS ID",
+        "name_pos": "PoS Name",
+        "pos_branch_number": "PoS Branch Number",
+        "tag": "Tag (Vertical Line, Org Assignment)",
+        "responsible_sfm": "Responsible SFM",
+        "existing_area_id": "Existing Area ID",
+        "document_id": "Document ID",
         "contract_id": "Contract ID",
         "contract_name": "Contract Name",
         "begin_date": "Begin Date",
@@ -309,7 +377,7 @@
         "contract_recurring_payment_id": "Contract Recurring Payment ID",
         "recurring_payments_type": "Recurring Payment Type",
         "sum_per_moth": "Sum Per Month",
-        "condition_percentage":"Condition Percentage",
+        "condition_percentage": "Condition Percentage",
         "percentage": "Percentage",
         "index_clause": "Index Clause",
         "zip": "ZIP",
@@ -328,8 +396,8 @@
         "language": "Language",
         "customer_pos_no": "Customer POS No",
         "pos_name": "POS Name",
-        "pos_branch_no":"POS Branch No",
-        "first_year":"First Year",
+        "pos_branch_no": "POS Branch No",
+        "first_year": "First Year",
         "location": {
           "location_id": "Location ID",
           "object_description": "Object description",
@@ -342,6 +410,64 @@
           "location_name": "Location name",
           "total_space": "Total Space",
           "opening_day": "Opening date"
+        },
+        "contract": {
+          "id": "Contract ID",
+          "name": "Name contract",
+          "begin": "Begin Date",
+          "end": "End Date",
+          "currency": "Currency",
+          "type": "Contract Type",
+          "document": "Document Contract type",
+          "end_contract_possible": "END OF CONTRACT NEXT POSSIBLE"
+        },
+        "service" : {
+          "id": "Service OBject ID",
+          "name": "Name Service Object",
+          "description": "Description",
+          "object": "Service Object Type",
+          "contract": "Service Contract",
+          "area": "Area (if applicable)",
+          "location": "Location (if applicable)"
+        },
+        "criteria": {
+          "id": "ID",
+          "name": "Criteria Name",
+          "description": "Criteria description",
+          "has": "Has Value",
+          "type": "Criteria Type"
+        },
+        "index": {
+          "id": "ID",
+          "rule": "Adjustment Rule",
+          "description": "Adjustment description",
+          "year": "Base year",
+          "date": "Begin Date",
+          "change_per": "Index Change Percentage",
+          "minimum": "Minimal agreed percentage value",
+          "points": "Minimal agreed change of index points "
+        },
+        "right": {
+          "id": "ID",
+          "name": "Special right Name",
+          "description": "Special right description"
+        },
+        "pay": {
+          "id": "ID",
+          "contract": "Contract ID",
+          "type": "Recurring Payment Type",
+          "sum": "Sum per month (Type P1 case)",
+          "cond": "Percentage condition (Type P2 case)",
+          "percent": "Percent (Type P2 case)",
+          "begin": "Date begin",
+          "end": "Date end",
+          "description": "Recurring Payment description",
+          "m_type": "Maturity Type",
+          "m_date": "Maturity date (Type M1 case)",
+          "m_at": "Maturity at Day x per month (Type M2 case)",
+          "m_range": "Maturity Range x Month (type M2 case) ",
+          "value": "Value deposit",
+          "index": "Index Clause Type"
         }
 
       }
@@ -355,9 +481,9 @@
       "customers": "Customers",
       "tickets": "Tickets",
       "payments": "Payments",
-      "appointment_track" : "Appointment track",
-      "sales_order_sfm" : "Sales Orders SFM",
-      "preview_invoices" : "Rreview Invoices",
+      "appointment_track": "Appointment track",
+      "sales_order_sfm": "Sales Orders SFM",
+      "preview_invoices": "Rreview Invoices",
       "contradictions": "Contradictions",
       "rights": "Rights",
       "location": "Location",
@@ -375,7 +501,30 @@
         "tab1": "Areas / surfaces",
         "tab2": "Service Objects",
         "tab3": "Administrator/ owner"
-      }
+      },
+      "contract_tab": {
+        "tab1": "Customer Group",
+        "tab2": "Company",
+        "tab3": "contact person",
+        "tab4": "Documents",
+        "tab5": "Service Objects",
+        "tab6": "Special rights",
+        "tab7": "Contract criteria",
+        "tab8": "Invoices",
+        "tab9": "Info to cost types",
+        "tab10": "Recurring Payments"
+      },
+      "services": {
+        "area": "Areas / Flächen",
+        "location": "Location",
+        "contract": "Contract"
+      },
+      "criteria": {
+        "contract": "Contract",
+        "choice": "Choice"
+      },
+      "index_pay": "Recurring Payments",
+      "right_contract": "Contract"
     },
     "page_title": {
       "dashboard": "Dashboard",
@@ -395,14 +544,14 @@
       "master_data": "Master Data",
       "customer_group": "Overall customer groups List",
       "customer_group_edit": "Customer group Edit",
-      "company":"Overall Companies List",
-      "company_edit":"Company Edit",
-      "contact_person":"Overall Contact Persons List",
-      "contact_person_edit":"Contact Person Edit",
-      "payment":"Overall Payments List",
-      "payment_edit":"Payment Edit",
-      "partner_company":"Overall Partner Companies List",
-      "partner_company_edit":"Partner Company Edit",
+      "company": "Overall Companies List",
+      "company_edit": "Company Edit",
+      "contact_person": "Overall Contact Persons List",
+      "contact_person_edit": "Contact Person Edit",
+      "payment": "Overall Payments List",
+      "payment_edit": "Payment Edit",
+      "partner_company": "Overall Partner Companies List",
+      "partner_company_edit": "Partner Company Edit",
       "partner_company_group": "Overall Partner Company Groups List",
       "partner_company_group_edit": "Partner Company Group Edit",
       "address": "Overall Addresses List",
@@ -428,7 +577,21 @@
       "area_edit": "Areas Edit",
       "location": "Location Overview List",
       "location_edit": "Location Overview Edit",
-      "location_view": "Location Detail view"
-      }
+      "location_view": "Location Detail view",
+      "contract": "Overview list contracts",
+      "contract_lease": "Overview list of LEASE contracts",
+      "contract_view": "Contract Management",
+      "contract_edit": "Contract Management",
+      "services": "Overview list Service Objects",
+      "service_view": "Service Object detail view",
+      "criteria" : "OVERALL LIST contract criteria",
+      "criteria_view": "Contract Criteria",
+      "index_clause": "OVERALL LIST Index clauses",
+      "index_clause_view": "Index Clause",
+      "special_right": "OVERALL LIST contract Special rights",
+      "special_right_view": "Contract Special right",
+      "recurring_payment": "OVERALL LIST Contract based recurring payments",
+      "recurring_payment_view": "contract based Recurring Payment"
     }
   }
+}
