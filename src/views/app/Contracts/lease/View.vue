@@ -16,38 +16,44 @@
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
             <b-button
-              v-b-modal.modal-primary
-              size="sm"
-              variant="primary"
-              class="mr-1 d-flex justify-content-center align-items-center"
-            >
-              <img
-                src="@/assets/images/icons/sort.svg"
-                alt=""
-              >
-            </b-button>
-            <b-button
-              v-b-modal.modal-primary
+              v-if="view"
               size="sm"
               variant="info"
               class="mr-1 d-flex justify-content-center align-items-center"
+              @click.prevent="view = !view"
             >
               <img
-                src="@/assets/images/pages/plusIcons.svg"
+                src="@/assets/images/pages/editIcons.svg"
                 alt=""
               >
-              {{ $t('app.btn.new') }}</b-button>
+              Edit
+            </b-button>
             <b-button
+              v-else
+              size="sm"
+              variant="info"
+              class="mr-1 d-flex justify-content-center align-items-center"
+              @click.prevent="view = !view"
+            >
+              <img
+                src="@/assets/images/pages/editIcons.svg"
+                alt=""
+              >
+
+              Save
+            </b-button>
+            <b-button
+              v-if="!view"
               size="sm"
               class="d-flex justify-content-center align-items-center"
               variant="primary"
+              @click="view = !view"
             >
               <img
                 src="@/assets/images/pages/deleteIcons.svg"
                 alt=""
               >
-              {{ $t('app.btn.cancel') }}
-            </b-button>
+              Cancel</b-button>
             <div
               size="sm"
               class="ml-4 d-flex align-items-center"
@@ -82,6 +88,7 @@
                     id="contract_id"
                     type="text"
                     readonly
+                    :disabled="view"
                     :placeholder="$t('app.form.placeholder.contract.id')"
                   />
                 </b-form-group>
@@ -94,6 +101,7 @@
                   <b-form-input
                     id="contract_name"
                     type="text"
+                    :disabled="view"
                     :placeholder="$t('app.form.placeholder.contract.name')"
                   />
                 </b-form-group>
@@ -106,6 +114,7 @@
                   <b-form-select
                     id="type"
                     size="sm"
+                    :disabled="view"
                     :options="typeContractOptions"
                     class="w-10 mr-3"
                   />
@@ -119,6 +128,7 @@
                 >
                   <b-form-datepicker
                     id="begin_date"
+                    :disabled="view"
                     size="sm"
                   />
                 </b-form-group>
@@ -131,6 +141,7 @@
                   <b-form-datepicker
                     id="end_date"
                     size="sm"
+                    :disabled="view"
                   />
                 </b-form-group>
               </b-col>
@@ -142,6 +153,7 @@
                   <b-form-datepicker
                     id="possible_end_date"
                     size="sm"
+                    :disabled="view"
                   />
                 </b-form-group>
               </b-col>
@@ -154,6 +166,7 @@
                     id="currency"
                     v-model="currency"
                     size="sm"
+                    :disabled="view"
                     :options="currencyOptions"
                     class="w-10 mr-3"
                   />
@@ -346,6 +359,7 @@ export default {
   },
   data() {
     return {
+      view: true,
       perPage: 10,
       pageOptions: [3, 5, 10],
       users: [

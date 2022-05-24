@@ -39,29 +39,6 @@
             <b-button
               v-b-modal.modal-primary
               size="sm"
-              variant="primary"
-              class="mr-1 d-flex"
-            >
-              <img
-                src="@/assets/images/icons/sort.svg"
-                alt=""
-              >
-            </b-button>
-            <b-button
-              v-b-modal.modal-primary
-              size="sm"
-              variant="success"
-              class="mr-1 d-flex"
-            >
-              <img
-                src="@/assets/images/pages/editIcons.svg"
-                alt=""
-              >
-              {{ $t('app.btn.view') }} </b-button>
-
-            <b-button
-              v-b-modal.modal-primary
-              size="sm"
               variant="info"
               class="mr-1 d-flex"
             >

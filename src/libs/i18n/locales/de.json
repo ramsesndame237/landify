@@ -51,7 +51,8 @@
       "work_pack_3": {
         "title": "Arbeitspaket 3",
         "children" : {
-          "customer_group": "Kundengruppe"
+          "customer_group": "Kundengruppe",
+          "payment": "Wiederkehrende Zahlung"
         }
       }
     },

@@ -831,11 +831,11 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.area_type',
-    active: true,
+            active: true,
           },
         ],
-      type: 'area',
-      formTitle: 'app.content.create_new_area_type',
+        type: 'area',
+        formTitle: 'app.content.create_new_area_type',
       },
     },
     {
@@ -848,11 +848,11 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.contract_type',
-    active: true,
+            active: true,
           },
         ],
-      type: 'contract',
-      formTitle: 'app.content.create_new_contract_type',
+        type: 'contract',
+        formTitle: 'app.content.create_new_contract_type',
       },
     },
     {
@@ -868,8 +868,8 @@ const router = new VueRouter({
             active: true,
           },
         ],
-      type: 'contractCrieria',
-      formTitle: 'app.content.create_new_C_C_type',
+        type: 'contractCrieria',
+        formTitle: 'app.content.create_new_C_C_type',
       },
     },
     {
@@ -885,8 +885,8 @@ const router = new VueRouter({
             active: true,
           },
         ],
-      type: 'location',
-      formTitle: 'app.content.create_new_location_type',
+        type: 'location',
+        formTitle: 'app.content.create_new_location_type',
       },
     },
     {
@@ -902,8 +902,8 @@ const router = new VueRouter({
             active: true,
           },
         ],
-      type: 'maturity',
-      formTitle: 'app.content.create_new_maturity_type',
+        type: 'maturity',
+        formTitle: 'app.content.create_new_maturity_type',
       },
     },
     {
@@ -919,8 +919,8 @@ const router = new VueRouter({
             active: true,
           },
         ],
-      type: 'recurringPayment',
-      formTitle: 'app.content.create_new_R_P_type',
+        type: 'recurringPayment',
+        formTitle: 'app.content.create_new_R_P_type',
       },
     },
     {
@@ -936,8 +936,8 @@ const router = new VueRouter({
             active: true,
           },
         ],
-      type: 'serviceObject',
-      formTitle: 'app.content.create_new_S_O_type',
+        type: 'serviceObject',
+        formTitle: 'app.content.create_new_S_O_type',
       },
     },
     {
@@ -953,8 +953,8 @@ const router = new VueRouter({
             active: true,
           },
         ],
-      type: 'usages',
-      formTitle: 'app.content.create_new_usage_type',
+        type: 'usages',
+        formTitle: 'app.content.create_new_usage_type',
       },
     },
     {
@@ -970,7 +970,7 @@ const router = new VueRouter({
             active: true,
           },
         ],
-      formTitle: 'app.content.create_new_choice',
+        formTitle: 'app.content.create_new_choice',
       },
     },
     {
@@ -985,7 +985,7 @@ const router = new VueRouter({
             active: true,
           },
         ],
-      formTitle: 'app.content.create_new_unit',
+        formTitle: 'app.content.create_new_unit',
       },
     },
     {
@@ -1021,7 +1021,7 @@ const router = new VueRouter({
         ],
       },
     },
-    
+
     // {
     //   path: '/app/types/area/edit',
     //   name: 'area-type-edit',
@@ -1050,9 +1050,9 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.location',
-          }]
-        }
+          }],
       },
+    },
     {
       path: '/app/location/view',
       name: 'location-view',

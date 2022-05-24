@@ -16,38 +16,44 @@
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
             <b-button
-              v-b-modal.modal-primary
-              size="sm"
-              variant="primary"
-              class="mr-1 d-flex justify-content-center align-items-center"
-            >
-              <img
-                src="@/assets/images/icons/sort.svg"
-                alt=""
-              >
-            </b-button>
-            <b-button
-              v-b-modal.modal-primary
+              v-if="view"
               size="sm"
               variant="info"
-              class="mr-1 d-flex justify-content-center align-items-center"
+              class="mr-1 d-flex"
+              @click.prevent="view = !view"
             >
               <img
-                src="@/assets/images/pages/plusIcons.svg"
+                src="@/assets/images/pages/editIcons.svg"
                 alt=""
               >
-              {{ $t('app.btn.new') }}</b-button>
+              Edit
+            </b-button>
             <b-button
+              v-else
               size="sm"
-              class="d-flex justify-content-center align-items-center"
+              variant="info"
+              class="mr-1 d-flex"
+              @click.prevent="view = !view"
+            >
+              <img
+                src="@/assets/images/pages/editIcons.svg"
+                alt=""
+              >
+
+              Save
+            </b-button>
+            <b-button
+              v-if="!view"
+              size="sm"
+              class="d-flex"
               variant="primary"
+              @click="view = !view"
             >
               <img
                 src="@/assets/images/pages/deleteIcons.svg"
                 alt=""
               >
-              {{ $t('app.btn.cancel') }}
-            </b-button>
+              Cancel</b-button>
             <div
               size="sm"
               class="ml-4 d-flex align-items-center"
@@ -81,6 +87,7 @@
                   <b-form-input
                     id="location_id"
                     type="text"
+                    :disabled="view"
                     readonly
                     :placeholder="$t('app.form.placeholder.location.location_id')"
                   />
@@ -93,6 +100,7 @@
                 >
                   <b-form-input
                     id="total_space"
+                    :disabled="view"
                     type="text"
                     :placeholder="$t('app.form.placeholder.location.total_space')"
                   />
@@ -105,6 +113,7 @@
                 >
                   <b-form-datepicker
                     id="opening_date"
+                    :disabled="view"
                     size="sm"
                   />
                 </b-form-group>
@@ -117,6 +126,7 @@
                   <b-form-input
                     id="location_name"
                     type="text"
+                    :disabled="view"
                     :placeholder="$t('app.form.placeholder.location.location_name')"
                   />
                 </b-form-group>
@@ -129,6 +139,7 @@
                   <b-form-input
                     id="standorttyp"
                     type="text"
+                    :disabled="view"
                     :placeholder="$t('app.form.placeholder.location.standorttyp')"
                   />
                 </b-form-group>
@@ -141,6 +152,7 @@
                   <b-form-input
                     id="location_description"
                     type="text"
+                    :disabled="view"
                     :placeholder="$t('app.form.placeholder.location.object_description')"
                   />
                 </b-form-group>
@@ -153,6 +165,7 @@
                   <b-form-input
                     id="strabe"
                     type="text"
+                    :disabled="view"
                     :placeholder="$t('app.form.placeholder.location.strabe')"
                   />
                 </b-form-group>
@@ -166,6 +179,7 @@
                     <b-form-select
                       id=""
                       size="sm"
+                      :disabled="view"
                       :options="addressOptions"
                       class="w-10 mr-3"
                     />
@@ -185,6 +199,7 @@
                     <div class="col-4">
                       <b-form-input
                         type="text"
+                        :disabled="view"
                         class="mr-3"
                       />
                     </div>
@@ -192,6 +207,7 @@
                       <b-form-input
                         id="plz_ort"
                         type="text"
+                        :disabled="view"
                         :placeholder="$t('app.form.placeholder.location.plz_ort')"
                       />
                     </div>
@@ -207,6 +223,7 @@
                   <b-form-select
                     id="land"
                     size="sm"
+                    :disabled="view"
                     :options="landOptions"
                     class="w-10 mr-3"
                   />
@@ -224,7 +241,7 @@
                 cols="12"
                 class="mb-2"
               >
-<!--                <databases
+                <!--                <databases
                   :items="[1,2,3,4]"
                   :fields="columnForm"
                 />-->
@@ -324,6 +341,7 @@ export default {
   },
   data() {
     return {
+      view: true,
       perPage: 10,
       pageOptions: [3, 5, 10],
       users: [

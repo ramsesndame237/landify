@@ -230,8 +230,12 @@ export default [
         route: 'special-right-list',
       },
       {
-        title: 'app.sidebar.work_pack_3.children.tag',
+        title: 'app.sidebar.work_pack_3.children.payment',
         route: 'recurring-payment-list',
+      },
+      {
+        title: 'app.sidebar.work_pack_3.children.tag',
+        route: 'tags',
       },
       {
         title: 'app.sidebar.work_pack_3.children.unit',

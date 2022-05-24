@@ -16,39 +16,44 @@
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
             <b-button
-              v-b-modal.modal-primary
-              size="sm"
-              variant="primary"
-              class="mr-1 d-flex justify-content-center align-items-center"
-            >
-              <img
-                src="@/assets/images/icons/sort.svg"
-                alt=""
-              >
-            </b-button>
-            <b-button
-              v-b-modal.modal-primary
+              v-if="view"
               size="sm"
               variant="info"
               class="mr-1 d-flex justify-content-center align-items-center"
+              @click.prevent="view = !view"
             >
               <img
-                src="@/assets/images/pages/plusIcons.svg"
+                src="@/assets/images/pages/editIcons.svg"
                 alt=""
               >
-              {{ $t('app.btn.new') }}
+              Edit
             </b-button>
             <b-button
+              v-else
+              size="sm"
+              variant="info"
+              class="mr-1 d-flex justify-content-center align-items-center"
+              @click.prevent="view = !view"
+            >
+              <img
+                src="@/assets/images/pages/editIcons.svg"
+                alt=""
+              >
+
+              Save
+            </b-button>
+            <b-button
+              v-if="!view"
               size="sm"
               class="d-flex justify-content-center align-items-center"
               variant="primary"
+              @click="view = !view"
             >
               <img
                 src="@/assets/images/pages/deleteIcons.svg"
                 alt=""
               >
-              {{ $t('app.btn.cancel') }}
-            </b-button>
+              Cancel</b-button>
             <div
               size="sm"
               class="ml-4 d-flex align-items-center"
@@ -77,6 +82,7 @@
               <b-form-input
                 id="id"
                 type="text"
+                :disabled="view"
                 readonly
                 :placeholder="$t('app.form.placeholder.pay.id')"
               />
@@ -91,6 +97,7 @@
               <b-form-textarea
                 id="textarea"
                 v-model="text"
+                :disabled="view"
                 :placeholder="$t('app.form.placeholder.right.description')"
                 rows="3"
                 max-rows="6"
@@ -105,6 +112,7 @@
               <b-form-select
                 id="type"
                 size="sm"
+                :disabled="view"
                 :options="typeOptions"
                 class="w-10 mr-3"
               />
@@ -117,6 +125,7 @@
             >
               <b-form-input
                 id="sum"
+                :disabled="view"
                 type="text"
                 :placeholder="$t('app.form.placeholder.pay.sum')"
               />
@@ -129,6 +138,7 @@
             >
               <b-form-input
                 id="cond"
+                :disabled="view"
                 type="text"
                 :placeholder="$t('app.form.placeholder.pay.cond')"
               />
@@ -141,6 +151,7 @@
             >
               <b-form-input
                 id="percent"
+                :disabled="view"
                 type="text"
                 :placeholder="$t('app.form.placeholder.pay.percent')"
               />
@@ -153,6 +164,7 @@
             >
               <b-form-input
                 id="begin"
+                :disabled="view"
                 type="text"
                 :placeholder="$t('app.form.placeholder.pay.begin')"
               />
@@ -165,6 +177,7 @@
             >
               <b-form-input
                 id="end"
+                :disabled="view"
                 type="text"
                 :placeholder="$t('app.form.placeholder.pay.end')"
               />
@@ -179,6 +192,7 @@
                 id="checkbox-1"
                 name="checkbox-1"
                 value="accepted"
+                :disabled="view"
                 unchecked-value="not_accepted"
               >
                 {{ $t('app.form.placeholder.pay.value') }}
@@ -195,6 +209,7 @@
               <b-form-select
                 id="m_type"
                 size="sm"
+                :disabled="view"
                 :options="typeOptions"
                 class="w-10"
               />
@@ -208,6 +223,7 @@
               <b-form-input
                 id="m_date"
                 type="text"
+                :disabled="view"
                 :placeholder="$t('app.form.placeholder.pay.m_date')"
               />
             </b-form-group>
@@ -219,6 +235,7 @@
             >
               <b-form-input
                 id="m_at"
+                :disabled="view"
                 type="text"
                 :placeholder="$t('app.form.placeholder.pay.m_at')"
               />
@@ -231,6 +248,7 @@
             >
               <b-form-input
                 id="m_range"
+                :disabled="view"
                 type="text"
                 :placeholder="$t('app.form.placeholder.pay.m_range')"
               />
@@ -244,6 +262,7 @@
               <b-form-input
                 id="index"
                 type="text"
+                :disabled="view"
                 :placeholder="$t('app.form.placeholder.pay.index')"
               />
             </b-form-group>
@@ -335,6 +354,7 @@ export default {
   },
   data() {
     return {
+      view: true,
       perPage: 10,
       pageOptions: [3, 5, 10],
       users: [

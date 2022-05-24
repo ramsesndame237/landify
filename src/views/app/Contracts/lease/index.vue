@@ -36,28 +36,6 @@
 
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
-            <b-button
-              v-b-modal.modal-primary
-              size="sm"
-              variant="primary"
-              class="mr-1 d-flex"
-            >
-              <img
-                src="@/assets/images/icons/sort.svg"
-                alt=""
-              >
-            </b-button>
-            <b-button
-              v-b-modal.modal-primary
-              size="sm"
-              variant="success"
-              class="mr-1 d-flex"
-            >
-              <img
-                src="@/assets/images/pages/editIcons.svg"
-                alt=""
-              >
-              {{ $t('app.btn.view') }} </b-button>
 
             <b-button
               v-b-modal.modal-primary
@@ -103,7 +81,6 @@
       <Databases
         ref="datatable"
         :filter="filter"
-        link="contracts-lease-view"
         link_view="contracts-lease-view"
         :current-page="currentPage"
         :page-options="pageOptions"

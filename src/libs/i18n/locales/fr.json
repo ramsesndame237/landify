@@ -53,7 +53,8 @@
         "children" : {
           "customer_group": "Customer group",
           "choice": "Recurrinf Payment",
-          "poservice_objects": "Service Object"
+          "poservice_objects": "Service Object",
+          "payment": "Paiement récurrent"
         }
       }
     },
