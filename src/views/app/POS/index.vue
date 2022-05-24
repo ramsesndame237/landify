@@ -37,7 +37,6 @@
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
             <b-button
-              v-b-modal.modal-primary
               size="sm"
               variant="primary"
               class="mr-1 d-flex"
@@ -47,17 +46,6 @@
                 alt=""
               >
             </b-button>
-            <b-button
-              v-b-modal.modal-primary
-              size="sm"
-              variant="success"
-              class="mr-1 d-flex"
-            >
-              <img
-                src="@/assets/images/pages/editIcons.svg"
-                alt=""
-              >
-              {{ $t('app.btn.view') }} </b-button>
 
             <b-button
               v-b-modal.modal-primary
@@ -71,16 +59,6 @@
               >
               {{ $t('app.btn.new') }}
             </b-button>
-            <b-button
-              size="sm"
-              variant="secondary"
-              class="mr-1 d-flex"
-            >
-              <img
-                src="@/assets/images/pages/editIcons.svg"
-                alt=""
-              >
-              {{ $t('app.btn.edit') }}</b-button>
             <b-button
               size="sm"
               class="d-flex"
@@ -118,9 +96,6 @@
       </div>
     </b-card>
     <b-card>
-<<<<<<< HEAD
-      <Databases :filter="filter" modal="modal-primary" link="pos-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
-=======
       <Databases
         ref="datatable"
         :filter="filter"
@@ -131,7 +106,6 @@
         :items="items"
         :fields="fields"
       />
->>>>>>> develop
     </b-card>
 
     <!--modal-->
