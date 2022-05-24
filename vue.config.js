@@ -1,7 +1,7 @@
 const path = require('path')
 // const fs = require('fs')
 // const webpack = require('webpack')
-
+//
 // const packageJson = fs.readFileSync('./package.json')
 // const version = JSON.parse(packageJson).version || 0
 
@@ -29,11 +29,9 @@ module.exports = {
     },
     plugins: [
       // new webpack.DefinePlugin({
-      //   'process.env': {
-      //     PACKAGE_VERSION: `${version}`,
-      //     CI_VERSION: process.env.CI_COMMIT_SHORT_SHA,
-      //     CI_DATE: process.env.CI_COMMIT_TIMESTAMP,
-      //   },
+      //   'process.env.PACKAGE_VERSION': `${version}`,
+      //   'process.env.CI_VERSION': process.env.CI_COMMIT_SHORT_SHA,
+      //   'process.env.CI_DATE': process.env.CI_COMMIT_TIMESTAMP,
       // }),
     ],
   },

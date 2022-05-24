@@ -1,5 +1,6 @@
 import { $themeBreakpoints } from '@themeConfig'
 
+console.log('env', process.env)
 export default {
   namespaced: true,
   state: {
