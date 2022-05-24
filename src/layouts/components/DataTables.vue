@@ -33,74 +33,77 @@
         v-if="link!==undefined"
         :to="{name: link, params: {id: data.item.id}}"
       >
-      <b-badge
-        v-if="viewModal"
-        variant="success"
-        class=" mr-1 mb-1"
-        @click="$bvModal.show(viewModal); $emit('openViewModal')"
-      >
-        <img
-          src="@/assets/images/pages/plusIcons.svg"
-          alt=""
-        >
-        <span> &nbsp;
-          {{ $t('app.btn.view') }}
-        </span>
-      </b-badge>
-      <b-badge
-        v-if="editModal"
-        variant="warning"
-        class=" mr-1 mb-1"
-        @click="$bvModal.show(editModal); $emit('openEditModal')"
-      >
-        <img
-          src="@/assets/images/pages/plusIcons.svg"
-          alt=""
-        >
-        <span> &nbsp;
-          {{ $t('app.btn.edit') }}
-        </span>
-      </b-badge>
-      <b-link v-if="link" :to="{name: link, params: {id: data.item.id}}">
         <b-badge
-          class="mr-1"
-          variant="secondary"
-        >
-          <img
-            src="@/assets/images/pages/editIcons.svg"
-            alt=""
-          >
-          <span>{{ $t('app.btn.edit') }}</span>
-        </b-badge>
-      </b-link>
-      <b-link
-        v-if="link_view!==undefined"
-        :to="{name: link_view, params: {id: data.item.id}}"
-      >
-        <b-badge
-          class="mr-1"
-          variant="info"
+          v-if="viewModal"
+          variant="success"
+          class=" mr-1 mb-1"
+          @click="$bvModal.show(viewModal); $emit('openViewModal')"
         >
           <img
             src="@/assets/images/pages/plusIcons.svg"
             alt=""
-            style="margin-right: 5px"
           >
-          <span>{{ $t('app.btn.view') }}</span>
+          <span> &nbsp;
+            {{ $t('app.btn.view') }}
+          </span>
         </b-badge>
-      </b-link>
-      <b-badge
-        variant="primary"
-        @click="deleteButton(data.item.id)"
-      >
-        <img
-          src="@/assets/images/pages/deleteIcons.svg"
-          alt=""
+        <b-badge
+          v-if="editModal"
+          variant="warning"
+          class=" mr-1 mb-1"
+          @click="$bvModal.show(editModal); $emit('openEditModal')"
         >
-        <span>
-          {{ $t('app.btn.delete') }}
-        </span>
-      </b-badge></template>
+          <img
+            src="@/assets/images/pages/plusIcons.svg"
+            alt=""
+          >
+          <span> &nbsp;
+            {{ $t('app.btn.edit') }}
+          </span>
+        </b-badge>
+        <b-link
+          v-if="link"
+          :to="{name: link, params: {id: data.item.id}}"
+        >
+          <b-badge
+            class="mr-1"
+            variant="secondary"
+          >
+            <img
+              src="@/assets/images/pages/editIcons.svg"
+              alt=""
+            >
+            <span>{{ $t('app.btn.edit') }}</span>
+          </b-badge>
+        </b-link>
+        <b-link
+          v-if="link_view!==undefined"
+          :to="{name: link_view, params: {id: data.item.id}}"
+        >
+          <b-badge
+            class="mr-1"
+            variant="info"
+          >
+            <img
+              src="@/assets/images/pages/plusIcons.svg"
+              alt=""
+              style="margin-right: 5px"
+            >
+            <span>{{ $t('app.btn.view') }}</span>
+          </b-badge>
+        </b-link>
+        <b-badge
+          variant="primary"
+          @click="deleteButton(data.item.id)"
+        >
+          <img
+            src="@/assets/images/pages/deleteIcons.svg"
+            alt=""
+          >
+          <span>
+            {{ $t('app.btn.delete') }}
+          </span>
+        </b-badge></b-link></template>
 
     <template #cell(id)>
       <b-form-checkbox />

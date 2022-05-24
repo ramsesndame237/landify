@@ -63,7 +63,7 @@
           "tag": "Recurrinf Payment",
           "unit": "Recurrinf Payment",
           "choice": "Recurrinf Payment",
-          "poservice_objects": "Service Object"
+          "poservice_objects": "Service Object",
           "tag": "Tags",
           "unit": "Units",
           "choice": "Choices",

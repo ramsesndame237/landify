@@ -216,8 +216,6 @@ export default [
       {
         title: 'app.sidebar.work_pack_3.children.poservice_objects',
         route: 'services-object-list',
-        title: 'app.sidebar.work_pack_3.children.service_object',
-        route: '/',
       },
       {
         title: 'app.sidebar.work_pack_3.children.criteria',
@@ -279,8 +277,8 @@ export default [
           {
             title: 'app.sidebar.work_pack_3.children.types.children.usage_type',
             route: 'usage-type',
-          }
-        ]
+          },
+        ],
       },
 
     ],
