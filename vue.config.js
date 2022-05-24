@@ -1,9 +1,9 @@
 const path = require('path')
-const fs = require('fs')
-const webpack = require('webpack')
+// const fs = require('fs')
+// const webpack = require('webpack')
 
-const packageJson = fs.readFileSync('./package.json')
-const version = JSON.parse(packageJson).version || 0
+// const packageJson = fs.readFileSync('./package.json')
+// const version = JSON.parse(packageJson).version || 0
 
 const prodPath = process.env.CI_PROJECT_NAME ?? 'kim_pro_frontend'
 module.exports = {
@@ -28,13 +28,13 @@ module.exports = {
       },
     },
     plugins: [
-      new webpack.DefinePlugin({
-        'process.env': {
-          PACKAGE_VERSION: `${version}`,
-          CI_VERSION: process.env.CI_COMMIT_SHORT_SHA,
-          CI_DATE: process.env.CI_COMMIT_TIMESTAMP,
-        },
-      }),
+      // new webpack.DefinePlugin({
+      //   'process.env': {
+      //     PACKAGE_VERSION: `${version}`,
+      //     CI_VERSION: process.env.CI_COMMIT_SHORT_SHA,
+      //     CI_DATE: process.env.CI_COMMIT_TIMESTAMP,
+      //   },
+      // }),
     ],
   },
   chainWebpack: config => {
