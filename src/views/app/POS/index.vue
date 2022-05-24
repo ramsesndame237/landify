@@ -40,7 +40,7 @@
               v-b-modal.modal-primary
               size="sm"
               variant="info"
-              class="mr-1 d-flex"
+              class="mr-1 d-flex justify-content-center"
             >
               <img
                 src="@/assets/images/pages/plusIcons.svg"
@@ -48,10 +48,9 @@
               >
               {{ $t('app.btn.new') }}
             </b-button>
-
             <b-button
               size="sm"
-              class="d-flex"
+              class="d-flex justify-content-center"
               variant="primary"
             >
               <img

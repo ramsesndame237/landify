@@ -67,7 +67,7 @@
           "choice": "Choices",
           "types": {
             "title": "Types",
-            "children":{
+            "children": {
               "area_type": "Area Type",
               "contract_type": "Contract Type",
               "contract_criteria_type": "Contract Criteria Type",
@@ -150,6 +150,7 @@
       "location": {
         "view_title": "Location detail and care"
       },
+
       "contract": {
         "view": "Maintain contract",
         "view2": "Maintain (rental) contract",
@@ -164,6 +165,7 @@
       "create_new_index_clause": "Create new Index Clause",
       "right_view": "Contract special right create and Maintain",
       "create_new_recurring_pay": "Create new Recurring Payment",
+
       "dashboard": {
         "sub_title": "Overall list without registers",
         "card_text": "All the best for your new project."
@@ -172,8 +174,6 @@
         "sub_title": "Overall list without registers",
         "card_text": "All the best for your new project."
       }
-
-
     },
     "btn": {
       "view": "View",
@@ -423,8 +423,6 @@
         "customer_pos_no": "Customer POS No",
         "pos_name": "POS Name",
         "pos_branch_no": "POS Branch No",
-        "first_year": "First Year",
-        "pos_branch_no":"POS Branch No",
         "first_year":"First Year",
         "symbol":"Symbol",
         "short":"Short",
@@ -499,7 +497,6 @@
           "value": "Value deposit",
           "index": "Index Clause Type"
         }
-
       }
     },
     "tab": {
