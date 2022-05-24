@@ -118,6 +118,9 @@
       </div>
     </b-card>
     <b-card>
+<<<<<<< HEAD
+      <Databases :filter="filter" modal="modal-primary" link="pos-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+=======
       <Databases
         ref="datatable"
         :filter="filter"
@@ -128,6 +131,7 @@
         :items="items"
         :fields="fields"
       />
+>>>>>>> develop
     </b-card>
 
     <!--modal-->

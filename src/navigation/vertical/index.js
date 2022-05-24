@@ -216,6 +216,8 @@ export default [
       {
         title: 'app.sidebar.work_pack_3.children.poservice_objects',
         route: 'services-object-list',
+        title: 'app.sidebar.work_pack_3.children.service_object',
+        route: '/',
       },
       {
         title: 'app.sidebar.work_pack_3.children.criteria',
@@ -235,11 +237,50 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_3.children.unit',
-        route: '/',
+        route: 'units',
       },
       {
         title: 'app.sidebar.work_pack_3.children.choice',
-        route: '/',
+        route: 'choices',
+      },
+      {
+        title: 'app.sidebar.work_pack_3.children.types.title',
+        route: 'work package',
+        icon: 'CheckSquareIcon',
+        children: [
+          {
+            title: 'app.sidebar.work_pack_3.children.types.children.area_type',
+            route: 'area-type-list',
+          },
+          {
+            title: 'app.sidebar.work_pack_3.children.types.children.contract_type',
+            route: 'contract-type-list',
+          },
+          {
+            title: 'app.sidebar.work_pack_3.children.types.children.contract_criteria_type',
+            route: 'contract-criteria-type',
+          },
+          {
+            title: 'app.sidebar.work_pack_3.children.types.children.location_type',
+            route: 'location-type',
+          },
+          {
+            title: 'app.sidebar.work_pack_3.children.types.children.maturity_type',
+            route: 'maturity-type',
+          },
+          {
+            title: 'app.sidebar.work_pack_3.children.types.children.recurring_payment_type',
+            route: 'recurring-payment-type',
+          },
+          {
+            title: 'app.sidebar.work_pack_3.children.types.children.services_object_type',
+            route: 'service-object-type',
+          },
+          {
+            title: 'app.sidebar.work_pack_3.children.types.children.usage_type',
+            route: 'usage-type',
+          }
+        ]
       },
 
     ],

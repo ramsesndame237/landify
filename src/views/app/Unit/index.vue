@@ -6,7 +6,7 @@
             <label class="d-inline-block text-sm-left mr-50">{{ $t('app.content.show') }}</label>
             <b-form-select style="width: 60px"
                 id="perPageSelect"
-                v-model="perPage"
+                v-model="perPage" 
                 size="sm"
                 :options="pageOptions"
                 class="w-10"
@@ -32,20 +32,17 @@
 
           <div class="d-flex align-items-center">
             <div class="mr-1 d-flex">
-              <b-button v-b-modal.modal-primary size="sm" variant="primary" class="mr-1 d-flex">
+              <!-- <b-button v-b-modal.modal-primary size="sm" variant="primary" class="mr-1 d-flex">
                 <img src="@/assets/images/icons/sort.svg" alt="">
-              </b-button>
-              <b-button v-b-modal.modal-primary size="sm" variant="success" class="mr-1 d-flex">
+              </b-button> -->
+              <!-- <b-button v-b-modal.modal-primary size="sm" variant="success" class="mr-1 d-flex">
                 <img src="@/assets/images/pages/editIcons.svg" alt="">
-                {{ $t('app.btn.view') }} </b-button>
-
+                {{ $t('app.btn.view') }} 
+              </b-button> -->
               <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
                 <img src="@/assets/images/pages/plusIcons.svg" alt="">
                 {{ $t('app.btn.new') }} 
               </b-button>
-              <b-button size="sm" variant="secondary" class="mr-1 d-flex">
-                <img src="@/assets/images/pages/editIcons.svg" alt="">
-                {{ $t('app.btn.edit') }}</b-button>
               <b-button size="sm" class="d-flex" variant="primary">
                 <img src="@/assets/images/pages/deleteIcons.svg" alt="">
                 {{ $t('app.btn.delete') }}</b-button>
@@ -64,108 +61,72 @@
         </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" link="area-edit" modal="modal-primary" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases :filter="filter" editModal="modal-primary" viewModal="modal-primary" @openViewModal="openViewModal()" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
     </b-card>
 
     <!--modal-->
     <b-modal
         id="modal-primary"
-        :ok-title="$t('app.btn.save')"
+        :ok-title="ok || $t('app.btn.save')"
         :cancel-title="$t('app.btn.cancel')"
+        :ok-only="view"
         modal-class="modal-primary"
         centered
-        :title="$t('app.content.create_new_area')"
+        :title="$t($route.meta.formTitle)"
         size="lg"
+        @hide="quitViewMode()"
     >
       <b-form @submit.prevent>
         <b-row>
-          <b-col cols="12">
+        <b-col cols="12">
             <b-form-group
-                :label=" $t('app.form.label.location_id') "
-                label-for="location_id"
-                label-cols-md="4"
-            >
-              <b-form-select
-                  id="location_id"
-                  type="text"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                :label=" $t('app.form.label.area_id') "
-                label-for="area_id"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="area_id"
-                  type="text"
-                  :placeholder="$t('app.form.placeholder.automatic')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                :label=" $t('app.form.label.name_area') "
-                label-for="area_name"
-                label-cols-md="4"
-            >
-              <b-form-input
-                  id="area_name"
-                  type="text"
-                  :placeholder="$t('app.form.placeholder.default')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-                :label=" $t('app.form.label.name_area_ext') "
-                label-for="name_area_ext"
+                :label=" $t('app.form.label.id') "
+                label-for="id"
                 label-cols-md="4"
             >
               <b-form-input
                   id="name_area_ext"
                   type="text"
+                  readonly
                   :placeholder="$t('app.form.placeholder.default')"
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label=" $t('app.form.label.space') "
-                label-for="space"
+                :label=" $t('app.form.label.name') "
+                label-for="name"
                 label-cols-md="4"
             >
               <b-form-input
-                  id="space"
-                  type="text"
-                  :placeholder="$t('app.form.placeholder.default')"
+                id="name"
+                type="text"
+                :placeholder="$t('app.form.placeholder.default')"
+                :disabled="view"
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label=" $t('app.form.label.area_type') "
-                label-for="area_type"
+                :label=" $t('app.form.label.short') "
+                label-for="short"
                 label-cols-md="4"
             >
-              <b-form-select
-                  id="area_type"
-                  type="text"
-                  :placeholder="$t('app.form.placeholder.default')"
+              <b-form-input
+                id="short"
+                :disabled="view"
               />
             </b-form-group>
           </b-col>
-
           <b-col cols="12">
             <b-form-group
-                :label=" $t('app.form.label.main_usage') "
-                label-for="main_usage"
+                :label=" $t('app.form.label.symbol') "
+                label-for="symbol"
                 label-cols-md="4"
             >
-              <b-form-select
-                  id="main_usage"
-                  type="text"
+              <b-form-input
+                id="symbol"
+                :disabled="view"
               />
             </b-form-group>
           </b-col>
@@ -190,6 +151,7 @@ import {
   BCard,
   BPagination,
   BInputGroup,
+  BFormTextarea
 } from 'bootstrap-vue'
 
 export default {
@@ -206,6 +168,7 @@ export default {
     BCol,
     BFormInput,
     BInputGroup,
+    BFormTextarea
   },
   data() {
     return {
@@ -219,21 +182,17 @@ export default {
       items: ['', '', ''],
       fields: [
         { key: 'id', label: 'Id' },
-        { key: 'group_id', label: 'Area Name', sortable: true },
-        { key: 'group_name', label: 'Area ID', sortable: true },
-        { key: 'group_fname', label: 'Location Name', sortable: true },
-        { key: 'grouphf_name', label: 'City', sortable: true },
-        { key: 'grohupf_name', label: 'Country', sortable: true },
-        { key: 'grouphf_nhame', label: 'Area Type', sortable: true },
-        { key: 'groufp_na me', label: 'Space(qm)', sortable: true },
-        { key: 'groufp_na fme', label: 'PoS Name', sortable: true },
+        { key: 'name', label: 'Name', sortable: true },
+        { key: 'short', label: 'Short', sortable: true },
+        { key: 'symbol', label: 'Symbol', sortable: true },
         'Action',
       ],
       selected: null,
       filter: null,
       navOptions: [
         { value: null, text: 'Tickets mit Zuordnung' },
-      ]
+      ],
+      view: false
     }
   },
   computed: {
@@ -262,6 +221,14 @@ export default {
       this.totalRows = filteredItems.length
       this.currentPage = 1
     },
+    openViewModal() {
+      this.view = true
+      this.ok = 'ok'
+    },
+    quitViewMode() {
+      this.ok = false
+      this.view = false
+    }
   },
 }
 </script>

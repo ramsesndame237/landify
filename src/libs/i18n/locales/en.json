@@ -64,6 +64,22 @@
           "unit": "Recurrinf Payment",
           "choice": "Recurrinf Payment",
           "poservice_objects": "Service Object"
+          "tag": "Tags",
+          "unit": "Units",
+          "choice": "Choices",
+          "types": {
+            "title": "Types",
+            "children":{
+              "area_type": "Area Type",
+              "contract_type": "Contract Type",
+              "contract_criteria_type": "Contract Criteria Type",
+              "location_type": "Location Type",
+              "maturity_type": "Maturity Type",
+              "recurring_payment_type": "Recurring Payment Type",
+              "services_object_type": "Services Object Type",
+              "usage_type": "Usage Type"
+            }
+          }
         }
       }
     },
@@ -120,6 +136,16 @@
       "create_new_partner_type": "Create New Partner Type",
       "create_new_pos": "Create New POS",
       "create_new_area": "Create New Area",
+      "create_new_area_type": "Create New Area Type",
+      "create_new_contract_type": "Create New Contract Type",
+      "create_new_C_C_type": "Create New Contract Criteria Type",
+      "create_new_location_type": "Create New Location Type",
+      "create_new_maturity_type": "Create New Maturity Type",
+      "create_new_R_P_type": "Create New Recurring Payment Type",
+      "create_new_S_O_type": "Create New Services Object Type",
+      "create_new_usage_type": "Create New Usage Type",
+      "create_new_choice": "Create New Choice",
+      "create_new_unit": "Create New Unit",
       "create_new_location": "Create new Location",
       "location_detail": "Location detail and care",
       "location_edit": "Location Overview Edit",
@@ -148,6 +174,8 @@
         "sub_title": "Overall list without registers",
         "card_text": "All the best for your new project."
       }
+
+
     },
     "btn": {
       "view": "View",
@@ -398,6 +426,10 @@
         "pos_name": "POS Name",
         "pos_branch_no": "POS Branch No",
         "first_year": "First Year",
+        "pos_branch_no":"POS Branch No",
+        "first_year":"First Year",
+        "symbol":"Symbol",
+        "short":"Short",
         "location": {
           "location_id": "Location ID",
           "object_description": "Object description",
@@ -573,7 +605,17 @@
       "s_p_n_b": "new Business",
       "pos_list": "POS overview list",
       "pos_edit": "POS Edit",
+      "unit": "Overall list of Units",
+      "choice": "Overall list of Choices",
       "area": "Overall areas list",
+      "area_type": "OVERALL LIST Area Type",
+      "contract_type": "OVERALL LIST Contract Type",
+      "C_C_type": "OVERALL LIST Contract Criteria Type",
+      "location_type": "OVERALL LIST Location Type",
+      "maturity_type": "OVERALL LIST Maturity Type",
+      "R_P_type": "OVERALL Recurring Payment Type",
+      "S_O_type": "OVERALL Service Object Type",
+      "usage_type": "OVERALL LIST Usage Type",
       "area_edit": "Areas Edit",
       "location": "Location Overview List",
       "location_edit": "Location Overview Edit",

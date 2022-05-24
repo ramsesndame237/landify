@@ -8,7 +8,7 @@
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
-            <b-button v-b-modal.modal-primary size="sm" variant="primary" class="mr-1 d-flex">
+            <b-button size="sm" variant="primary" class="mr-1 d-flex">
               <img src="@/assets/images/icons/sort.svg" alt="">
             </b-button>
             <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
@@ -107,26 +107,26 @@
     <b-card>
       <b-tabs pills>
         <b-tab :title="$t('app.tab.area')" active>
-          <databases :actions="true" :items="rowsCompany" :fields="columnFields" />
+          <databases :actions="true" modal="modal-primary" :items="rowsCompany" :fields="columnFields" />
         </b-tab>
         <b-tab :title="$t('app.tab.contract')">
-          <databases :items="rowsPerson" :fields="columnFields" />
+          <databases modal="modal-primary" :items="rowsPerson" :fields="columnFields" />
         </b-tab>
         <b-tab :title="`${$t('app.tab.service_object')}`">
-          <databases :items="rowsTicketPackage" :fields="columnFields" />
+          <databases modal="modal-primary" :items="rowsTicketPackage" :fields="columnFields" />
         </b-tab>
         <b-tab :title="$t('app.tab.tickects_and_groups')">
-          <databases :items="rowsUsers" :fields="columnFields" />
+          <databases modal="modal-primary" :items="rowsUsers" :fields="columnFields" />
         </b-tab>
         <b-tab :title="$t('app.tab.contradictions_package')">
-          <databases :items="rowsUsers" :fields="columnFields" />
+          <databases modal="modal-primary" :items="rowsUsers" :fields="columnFields" />
         </b-tab>
         <b-tab :title="$t('app.tab.nk_accounts')">
-          <databases :items="rowsUsers" :fields="columnFields" />
+          <databases modal="modal-primary" :items="rowsUsers" :fields="columnFields" />
         </b-tab>
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
-            <b-button v-b-modal.modal-role class="mr-1" size="sm" variant="info">{{$t('app.btn.new')}}</b-button>
+            <b-button v-b-modal.modal-primary class="mr-1" size="sm" variant="info">{{$t('app.btn.new')}}</b-button>
             <b-button class="mr-1" size="sm" variant="primary">{{$t('app.btn.cancel')}}</b-button>
             <div size="sm" class="d-flex align-items-center">
               <label class="d-inline-block text-sm-left mr-50">{{$t('app.search.label')}}</label>
@@ -140,6 +140,97 @@
         </template>
       </b-tabs>
     </b-card>
+        <!--modal-->
+    <b-modal
+        id="modal-primary"
+        :ok-title="$t('app.btn.save')"
+        :cancel-title="$t('app.btn.cancel')"
+        modal-class="modal-primary"
+        centered
+        :title="$t('app.content.create_new_pos')"
+        size="lg"
+    >
+      <b-form @submit.prevent>
+        <b-row>
+          <b-col cols="12">
+            <b-form-group
+                :label=" $t('app.form.label.customer_group') "
+                label-for="group"
+                label-cols-md="4"
+            >
+              <b-form-select
+                  id="group-id"
+                  type="text"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+                :label=" $t('app.form.label.company') "
+                label-for="h-name"
+                label-cols-md="4"
+            >
+              <b-form-select
+                  id="i-name"
+                  type="text"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+                :label=" $t('app.form.label.customer_pos_no') "
+                label-for="h-name"
+                label-cols-md="4"
+            >
+              <b-form-input
+                  id="i-name"
+                  type="text"
+                  :placeholder="$t('app.form.placeholder.default')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+                :label=" $t('app.form.label.pos_name') "
+                label-for="h-name"
+                label-cols-md="4"
+            >
+              <b-form-input
+                  id="i-name"
+                  type="text"
+                  :placeholder="$t('app.form.placeholder.default')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+                :label=" $t('app.form.label.pos_branch_no') "
+                label-for="h-name"
+                label-cols-md="4"
+            >
+              <b-form-input
+                  id="i-name"
+                  type="text"
+                  :placeholder="$t('app.form.placeholder.default')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+                :label=" $t('app.form.label.first_year') "
+                label-for="h-name"
+                label-cols-md="4"
+            >
+              <b-form-input
+                  id="i-name"
+                  type="text"
+                  :placeholder="$t('app.form.placeholder.default')"
+              />
+            </b-form-group>
+          </b-col>
+        </b-row>
+      </b-form>
+    </b-modal>
   </div>
 </template>
 

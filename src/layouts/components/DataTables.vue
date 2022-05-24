@@ -33,6 +33,35 @@
         v-if="link!==undefined"
         :to="{name: link, params: {id: data.item.id}}"
       >
+      <b-badge
+        v-if="viewModal"
+        variant="success"
+        class=" mr-1 mb-1"
+        @click="$bvModal.show(viewModal); $emit('openViewModal')"
+      >
+        <img
+          src="@/assets/images/pages/plusIcons.svg"
+          alt=""
+        >
+        <span> &nbsp;
+          {{ $t('app.btn.view') }}
+        </span>
+      </b-badge>
+      <b-badge
+        v-if="editModal"
+        variant="warning"
+        class=" mr-1 mb-1"
+        @click="$bvModal.show(editModal); $emit('openEditModal')"
+      >
+        <img
+          src="@/assets/images/pages/plusIcons.svg"
+          alt=""
+        >
+        <span> &nbsp;
+          {{ $t('app.btn.edit') }}
+        </span>
+      </b-badge>
+      <b-link v-if="link" :to="{name: link, params: {id: data.item.id}}">
         <b-badge
           class="mr-1"
           variant="secondary"
@@ -42,8 +71,8 @@
             alt=""
           >
           <span>{{ $t('app.btn.edit') }}</span>
-        </b-badge></b-link>
-
+        </b-badge>
+      </b-link>
       <b-link
         v-if="link_view!==undefined"
         :to="{name: link_view, params: {id: data.item.id}}"
@@ -96,7 +125,7 @@ export default {
     BLink,
     BFormCheckbox,
   },
-  props: ['items', 'fields', 'perPage', 'pageOptions', 'currentPage', 'link', 'filter', 'modal', 'link_view'],
+  props: ['items', 'fields', 'perPage', 'pageOptions', 'currentPage', 'link', 'filter', 'modal', 'viewModal', 'editModal', 'link_view'],
   data() {
     return {
       sortBy: '',
