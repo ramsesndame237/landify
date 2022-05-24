@@ -805,7 +805,7 @@ const router = new VueRouter({
       name: 'area-edit',
       component: () => import('@/views/app/Area/Edit.vue'),
       meta: {
-        pageTitle: 'app.page_title.area_edit',
+        pageTitle: 'app.page_title.area_type_edit',
         navActiveLink: 'area-list',
         breadcrumb: [
           {
@@ -822,6 +822,226 @@ const router = new VueRouter({
     },
 
     {
+      path: '/app/types/area',
+      name: 'area-type-list',
+      component: () => import('@/views/app/Types/index.vue'),
+      navActiveLink: 'area-type-list',
+      meta: {
+        pageTitle: 'app.page_title.area_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.area_type',
+    active: true,
+          },
+        ],
+      type: 'area',
+      formTitle: 'app.content.create_new_area_type',
+      },
+    },
+    {
+      path: '/app/types/contract',
+      name: 'contract-type-list',
+      component: () => import('@/views/app/Types/index.vue'),
+      navActiveLink: 'contract-type-list',
+      meta: {
+        pageTitle: 'app.page_title.contract_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.contract_type',
+    active: true,
+          },
+        ],
+      type: 'contract',
+      formTitle: 'app.content.create_new_contract_type',
+      },
+    },
+    {
+      path: '/app/types/contract/criteria-type',
+      name: 'contract-criteria-type',
+      component: () => import('@/views/app/Types/index.vue'),
+      navActiveLink: 'contract-criteria-type',
+      meta: {
+        pageTitle: 'app.page_title.C_C_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.C_C_type',
+            active: true,
+          },
+        ],
+      type: 'contractCrieria',
+      formTitle: 'app.content.create_new_C_C_type',
+      },
+    },
+    {
+      path: '/app/types/location',
+      name: 'location-type',
+      component: () => import('@/views/app/Types/index.vue'),
+      navActiveLink: 'location-type',
+      meta: {
+        pageTitle: 'app.page_title.location_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.location_type',
+            active: true,
+          },
+        ],
+      type: 'location',
+      formTitle: 'app.content.create_new_location_type',
+      },
+    },
+    {
+      path: '/app/types/maturity',
+      name: 'maturity-type',
+      component: () => import('@/views/app/Types/index.vue'),
+      navActiveLink: 'maturity-type',
+      meta: {
+        pageTitle: 'app.page_title.maturity_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.maturity_type',
+            active: true,
+          },
+        ],
+      type: 'maturity',
+      formTitle: 'app.content.create_new_maturity_type',
+      },
+    },
+    {
+      path: '/app/types/recurring-payment',
+      name: 'recurring-payment-type',
+      component: () => import('@/views/app/Types/index.vue'),
+      navActiveLink: 'recurring-payment-type',
+      meta: {
+        pageTitle: 'app.page_title.R_P_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.R_P_type',
+            active: true,
+          },
+        ],
+      type: 'recurringPayment',
+      formTitle: 'app.content.create_new_R_P_type',
+      },
+    },
+    {
+      path: '/app/types/services-objects',
+      name: 'service-object-type',
+      component: () => import('@/views/app/Types/index.vue'),
+      navActiveLink: 'services-object-type',
+      meta: {
+        pageTitle: 'app.page_title.S_O_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.S_O_type',
+            active: true,
+          },
+        ],
+      type: 'serviceObject',
+      formTitle: 'app.content.create_new_S_O_type',
+      },
+    },
+    {
+      path: '/app/types/usages',
+      name: 'usage-type',
+      component: () => import('@/views/app/Types/index.vue'),
+      navActiveLink: 'usage-type',
+      meta: {
+        pageTitle: 'app.page_title.usage_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.usage_type',
+            active: true,
+          },
+        ],
+      type: 'usages',
+      formTitle: 'app.content.create_new_usage_type',
+      },
+    },
+    {
+      path: '/app/choices',
+      name: 'choices',
+      component: () => import('@/views/app/Choices/index.vue'),
+      navActiveLink: 'usage-type',
+      meta: {
+        pageTitle: 'app.page_title.choice',
+        breadcrumb: [
+          {
+            text: 'app.page_title.choice',
+            active: true,
+          },
+        ],
+      formTitle: 'app.content.create_new_choice',
+      },
+    },
+    {
+      path: '/app/units',
+      name: 'units',
+      component: () => import('@/views/app/Unit/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.unit',
+        breadcrumb: [
+          {
+            text: 'app.page_title.unit',
+            active: true,
+          },
+        ],
+      formTitle: 'app.content.create_new_unit',
+      },
+    },
+    {
+      path: '/app/tags',
+      name: 'tags',
+      component: () => import('@/views/app/Tag/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.tag',
+        breadcrumb: [
+          {
+            text: 'app.page_title.tag',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/tags/edit',
+      name: 'tag-edit',
+      component: () => import('@/views/app/Tag/Edit.vue'),
+      meta: {
+        navActiveLink: 'tags',
+        pageTitle: 'app.page_title.tag_edit',
+        breadcrumb: [
+          {
+            text: 'app.page_title.tag',
+            to: { name: 'tags' },
+          },
+          {
+            text: 'app.page_title.tag_edit',
+            active: true,
+          },
+        ],
+      },
+    },
+    
+    // {
+    //   path: '/app/types/area/edit',
+    //   name: 'area-type-edit',
+    //   component: () => import('@/views/app/AreaType/Edit.vue'),
+    //   navActiveLink: 'area-type-list',
+    //   meta: {
+    //     pageTitle: 'app.page_title.area_type_edit',
+    //     breadcrumb: [
+    //       {
+    //         text: 'app.page_title.area_type',
+    //         to: { name: 'area-list' },
+    //       },
+    //       {
+    //         text: 'app.page_title.area_type_edit',
+    //         active: true
+    //       },
+    //     ],
+    //   },
+    // },
+    {
       path: '/app/location',
       name: 'location-list',
       component: () => import('@/views/app/Location/index.vue'),
@@ -830,12 +1050,9 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.location',
-            active: true,
-          },
-        ],
+          }]
+        }
       },
-    },
-
     {
       path: '/app/location/view',
       name: 'location-view',
