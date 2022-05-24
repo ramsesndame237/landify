@@ -19,7 +19,7 @@
               v-if="view"
               size="sm"
               variant="info"
-              class="mr-1 d-flex"
+              class="mr-1 d-flex justify-content-center align-items-center"
               @click.prevent="view = !view"
             >
               <img
@@ -32,7 +32,7 @@
               v-else
               size="sm"
               variant="info"
-              class="mr-1 d-flex"
+              class="mr-1 d-flex justify-content-center align-items-center"
               @click.prevent="view = !view"
             >
               <img
@@ -45,7 +45,7 @@
             <b-button
               v-if="!view"
               size="sm"
-              class="d-flex"
+              class="d-flex justify-content-center align-items-center"
               variant="primary"
               @click="view = !view"
             >
