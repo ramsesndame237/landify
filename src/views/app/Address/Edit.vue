@@ -1,19 +1,59 @@
 <template>
   <div>
     <b-card body-class="p-0">
-      <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
+      <div
+        class="d-flex align-items-center justify-content-between"
+        style="padding: 10px"
+      >
         <div class="d-flex">
-          <img src="@/assets/images/icons/team.svg" alt="" class="mr-1">
+          <img
+            src="@/assets/images/icons/team.svg"
+            alt=""
+            class="mr-1"
+          >
           <span>{{ $t('app.content.create_new_address') }}</span>
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
-            <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
-              <img src="@/assets/images/pages/plusIcons.svg" alt="">
-              {{ $t('app.content.create_new_address') }}</b-button>
-            <b-button size="sm" class="d-flex" variant="primary">
-              <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-              {{ $t('app.btn.cancel') }}</b-button>
+            <b-button
+              v-if="view"
+              size="sm"
+              variant="info"
+              class="mr-1 d-flex"
+              @click.prevent="view = !view"
+            >
+              <img
+                src="@/assets/images/pages/editIcons.svg"
+                alt=""
+              >
+              Edit
+            </b-button>
+            <b-button
+              v-else
+              size="sm"
+              variant="info"
+              class="mr-1 d-flex"
+              @click.prevent="view = !view"
+            >
+              <img
+                src="@/assets/images/pages/editIcons.svg"
+                alt=""
+              >
+
+              Save
+            </b-button>
+            <b-button
+              v-if="!view"
+              size="sm"
+              class="d-flex"
+              variant="primary"
+              @click="view = !view"
+            >
+              <img
+                src="@/assets/images/pages/deleteIcons.svg"
+                alt=""
+              >
+              Cancel</b-button>
           </div>
         </div>
       </div>
@@ -21,30 +61,88 @@
     <b-card class="">
       <b-form>
         <b-row>
-          <b-col cols="12" md="6">
-            <b-form-group :label="$t('app.form.label.street')" label-for="street">
-              <b-form-select id="street" :placeholder="$t('app.form.placeholder.default')"   />
+          <b-col
+            cols="12"
+            md="6"
+          >
+            <b-form-group
+              :label="$t('app.form.label.street')"
+              label-for="street"
+            >
+              <b-form-select
+                id="street"
+                :disabled="view"
+                :placeholder="$t('app.form.placeholder.default')"
+              />
             </b-form-group>
           </b-col>
-          <b-col cols="12" md="6">
-            <b-form-group :label="$t('app.form.label.house_number')" label-for="house_number">
-              <b-form-input id="house_number" :placeholder="$t('app.form.placeholder.default')"   type="text"/>
+          <b-col
+            cols="12"
+            md="6"
+          >
+            <b-form-group
+              :label="$t('app.form.label.house_number')"
+              label-for="house_number"
+            >
+              <b-form-input
+                id="house_number"
+                :disabled="view"
+                :placeholder="$t('app.form.placeholder.default')"
+                type="text"
+              />
             </b-form-group>
           </b-col>
-          <b-col cols="12" md="6" >
-            <b-form-group :label="$t('app.form.label.address_extra')"  class="" label-for="address_extra">
-              <b-form-input id="address_extra" :placeholder="$t('app.form.placeholder.default')" type="text"/>
+          <b-col
+            cols="12"
+            md="6"
+          >
+            <b-form-group
+              :label="$t('app.form.label.address_extra')"
+              class=""
+              label-for="address_extra"
+            >
+              <b-form-input
+                id="address_extra"
+                :disabled="view"
+                :placeholder="$t('app.form.placeholder.default')"
+                type="text"
+              />
             </b-form-group>
           </b-col>
-          <b-col cols="12" md="6" />
-          <b-col cols="12" md="6">
-            <b-form-group :label="$t('app.form.label.city')" label-for="city">
-              <b-form-select id="city" :placeholder="$t('app.form.placeholder.default')"   type="text"/>
+          <b-col
+            cols="12"
+            md="6"
+          />
+          <b-col
+            cols="12"
+            md="6"
+          >
+            <b-form-group
+              :label="$t('app.form.label.city')"
+              label-for="city"
+            >
+              <b-form-select
+                id="city"
+                :disabled="view"
+                :placeholder="$t('app.form.placeholder.default')"
+                type="text"
+              />
             </b-form-group>
           </b-col>
-          <b-col cols="12" md="6">
-            <b-form-group :label="$t('app.form.label.zip')" label-for="zip">
-              <b-form-input id="zip" :placeholder="$t('app.form.placeholder.default')"   type="text"/>
+          <b-col
+            cols="12"
+            md="6"
+          >
+            <b-form-group
+              :label="$t('app.form.label.zip')"
+              label-for="zip"
+            >
+              <b-form-input
+                id="zip"
+                :disabled="view"
+                :placeholder="$t('app.form.placeholder.default')"
+                type="text"
+              />
             </b-form-group>
           </b-col>
 
@@ -53,31 +151,66 @@
     </b-card>
     <b-card>
       <b-tabs pills>
-        <b-tab :title="$t('app.tab.company')" active>
-          <databases :actions="true" :items="items" :fields="fields" />
+        <b-tab
+          :title="$t('app.tab.company')"
+          active
+        >
+          <databases
+            :actions="true"
+            :items="items"
+            :fields="fields"
+          />
         </b-tab>
         <b-tab :title="$t('app.tab.customer_group')">
-          <databases :items="items" :fields="fields" />
+          <databases
+            :items="items"
+            :fields="fields"
+          />
         </b-tab>
         <b-tab :title="`${$t('app.tab.partner_company')}`">
-          <databases :items="items" :fields="fields" />
+          <databases
+            :items="items"
+            :fields="fields"
+          />
         </b-tab>
         <b-tab :title="$t('app.form.label.partner_company_group')">
-          <databases :items="items" :fields="fields" />
+          <databases
+            :items="items"
+            :fields="fields"
+          />
         </b-tab>
         <b-tab :title="$t('app.tab.contact_person')">
-          <databases :items="items" :fields="fields" />
+          <databases
+            :items="items"
+            :fields="fields"
+          />
         </b-tab>
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
-            <b-button v-b-modal.modal-role class="mr-1" size="sm" variant="info">{{$t('app.btn.new')}}</b-button>
-            <b-button class="mr-1" size="sm" variant="primary">{{$t('app.btn.cancel')}}</b-button>
-            <div size="sm" class="d-flex align-items-center">
-              <label class="d-inline-block text-sm-left mr-50">{{$t('app.search.label')}}</label>
+            <b-button
+              v-b-modal.modal-role
+              class="mr-1"
+              size="sm"
+              variant="info"
+            >
+              {{ $t('app.btn.new') }}
+            </b-button>
+            <b-button
+              class="mr-1"
+              size="sm"
+              variant="primary"
+            >
+              {{ $t('app.btn.cancel') }}
+            </b-button>
+            <div
+              size="sm"
+              class="d-flex align-items-center"
+            >
+              <label class="d-inline-block text-sm-left mr-50">{{ $t('app.search.label') }}</label>
               <b-form-input
-                  id="filterInput"
-                  type="search"
-                  :placeholder="$t('app.search.placeholder')"
+                id="filterInput"
+                type="search"
+                :placeholder="$t('app.search.placeholder')"
               />
             </div>
           </div>
@@ -86,31 +219,30 @@
     </b-card>
     <!--  New Contact Person modal -->
     <b-modal
-        id="modal-user"
-        ok-title="Save"
-        cancel-title="Cancel"
-        modal-class="modal-primary"
-        centered
-        title="Create Contact Person"
-        size="lg"
+      id="modal-user"
+      ok-title="Save"
+      cancel-title="Cancel"
+      modal-class="modal-primary"
+      centered
+      title="Create Contact Person"
+      size="lg"
     >
       <b-form @submit.prevent>
-        <b-row>
-
-        </b-row>
+        <b-row />
       </b-form>
     </b-modal>
   </div>
 </template>
 
 <script>
-const Databases = () => import('@/layouts/components/DataTables.vue')
 import {
   BCard,
-  BTab, BFormCheckbox, BFormRadio,BInputGroup,
+  BTab, BFormCheckbox, BFormRadio, BInputGroup,
   BFormDatepicker,
-  BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton, BFormSelect, BModal, BFormRadioGroup,BFormTags,
+  BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton, BFormSelect, BModal, BFormRadioGroup, BFormTags,
 } from 'bootstrap-vue'
+
+const Databases = () => import('@/layouts/components/DataTables.vue')
 
 export default {
   components: {
@@ -135,6 +267,7 @@ export default {
   },
   data() {
     return {
+      view: true,
       perPage: 10,
       pageOptions: [3, 5, 10],
       user: [
@@ -157,12 +290,12 @@ export default {
         { text: 'Mr.', value: 'first2', disabled: false },
         { text: 'Ms.', value: 'second2', disabled: false },
       ],
-      salutation:{
+      salutation: {
         selected: 'mr',
         options: [
           { item: 'mr', name: 'Mr' },
           { item: 'ms', name: 'Ms' },
-        ]
+        ],
       },
       items: [
         {
@@ -174,8 +307,8 @@ export default {
           city: 'Yaoundé',
           phone: '+237 132 645 987',
           mail: 'johndoe@gmail.com',
-          function: "Something",
-          user_id: "1",
+          function: 'Something',
+          user_id: '1',
         },
         {
           id: 1,
@@ -186,8 +319,8 @@ export default {
           city: 'Yaoundé',
           phone: '+237 132 645 987',
           mail: 'johndoe@gmail.com',
-          function: "Something",
-          user_id: "1",
+          function: 'Something',
+          user_id: '1',
         },
         {
           id: 1,
@@ -198,8 +331,8 @@ export default {
           city: 'Yaoundé',
           phone: '+237 132 645 987',
           mail: 'johndoe@gmail.com',
-          function: "Something",
-          user_id: "1",
+          function: 'Something',
+          user_id: '1',
         },
         {
           id: 1,
@@ -210,15 +343,15 @@ export default {
           city: 'Yaoundé',
           phone: '+237 132 645 987',
           mail: 'johndoe@gmail.com',
-          function: "Something",
-          user_id: "1",
+          function: 'Something',
+          user_id: '1',
         },
       ],
       fields: [
         { key: 'id', label: 'Id' },
-        { key: 'company_name', label: "Name", sortable: true },
+        { key: 'company_name', label: 'Name', sortable: true },
         'Action',
-      ], 
+      ],
 
     }
   },

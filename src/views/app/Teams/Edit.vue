@@ -1,19 +1,59 @@
 <template>
   <div>
     <b-card body-class="p-0">
-      <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
+      <div
+        class="d-flex align-items-center justify-content-between"
+        style="padding: 10px"
+      >
         <div class="d-flex">
-          <img src="@/assets/images/icons/team.svg" alt="" class="mr-1">
+          <img
+            src="@/assets/images/icons/team.svg"
+            alt=""
+            class="mr-1"
+          >
           <span>{{ $t('app.content.create_team') }}</span>
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
-            <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
-              <img src="@/assets/images/pages/plusIcons.svg" alt="">
-              {{ $t('app.content.create_team') }}</b-button>
-            <b-button size="sm" class="d-flex" variant="primary">
-              <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-              {{ $t('app.btn.cancel') }}</b-button>
+            <b-button
+              v-if="view"
+              size="sm"
+              variant="info"
+              class="mr-1 d-flex"
+              @click.prevent="view = !view"
+            >
+              <img
+                src="@/assets/images/pages/editIcons.svg"
+                alt=""
+              >
+              Edit
+            </b-button>
+            <b-button
+              v-else
+              size="sm"
+              variant="info"
+              class="mr-1 d-flex"
+              @click.prevent="view = !view"
+            >
+              <img
+                src="@/assets/images/pages/editIcons.svg"
+                alt=""
+              >
+
+              Save
+            </b-button>
+            <b-button
+              v-if="!view"
+              size="sm"
+              class="d-flex"
+              variant="primary"
+              @click="view = !view"
+            >
+              <img
+                src="@/assets/images/pages/deleteIcons.svg"
+                alt=""
+              >
+              Cancel</b-button>
           </div>
         </div>
       </div>
@@ -22,25 +62,52 @@
       <b-form>
         <b-row>
           <!-- Field: email -->
-          <b-col cols="12" md="6">
-            <b-form-group :label="$t('app.form.label.team_id')" label-for="username">
-              <b-form-input :placeholder="$t('app.form.placeholder.default')" id="username" v-model="user.name"/>
+          <b-col
+            cols="12"
+            md="6"
+          >
+            <b-form-group
+              :label="$t('app.form.label.team_id')"
+              label-for="username"
+            >
+              <b-form-input
+                id="username"
+                v-model="user.name"
+                :disabled="view"
+                :placeholder="$t('app.form.placeholder.default')"
+              />
             </b-form-group>
           </b-col>
 
-          <b-col cols="12" md="6">
-            <b-form-group :label="$t('app.form.label.name')" label-for="full-name">
-              <b-form-input :placeholder="$t('app.form.placeholder.default')" id="full-name" v-model="user.name" type="email"/>
+          <b-col
+            cols="12"
+            md="6"
+          >
+            <b-form-group
+              :label="$t('app.form.label.name')"
+              label-for="full-name"
+            >
+              <b-form-input
+                id="full-name"
+                v-model="user.name"
+                :disabled="view"
+                :placeholder="$t('app.form.placeholder.default')"
+                type="email"
+              />
             </b-form-group>
           </b-col>
 
           <!-- Field: Name -->
-          <b-col cols="12" md="12">
+          <b-col
+            cols="12"
+            md="12"
+          >
             <label for="textarea-default"> {{ $t('app.form.label.description') }} </label>
             <b-form-textarea
-                id="textarea-default"
-                :placeholder="$t('app.form.placeholder.default')"
-                rows="3"
+              id="textarea-default"
+              :disabled="view"
+              :placeholder="$t('app.form.placeholder.default')"
+              rows="3"
             />
           </b-col>
 
@@ -49,53 +116,53 @@
     </b-card>
 
     <b-modal
-        id="modal-primary"
-        :ok-title="$t('app.btn.save')"
-        :cancel-title="$t('app.btn.cancel')"
-        modal-class="modal-primary"
-        centered
-        :title="$t('app.content.create_team')"
-        size="lg"
+      id="modal-primary"
+      :ok-title="$t('app.btn.save')"
+      :cancel-title="$t('app.btn.cancel')"
+      modal-class="modal-primary"
+      centered
+      :title="$t('app.content.create_team')"
+      size="lg"
     >
       <b-form @submit.prevent>
         <b-row>
           <b-col cols="12">
             <b-form-group
-                :label=" $t('app.form.label.team_id')"
-                label-for="team-id"
-                label-cols-md="4"
+              :label=" $t('app.form.label.team_id')"
+              label-for="team-id"
+              label-cols-md="4"
             >
               <b-form-input
-                  id="team-id"
-                  type="text"
-                  :label=" $t('app.form.placeholder.default')"
+                id="team-id"
+                type="text"
+                :label=" $t('app.form.placeholder.default')"
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label="$t('app.form.label.name')"
-                label-for="name-team"
-                label-cols-md="4"
+              :label="$t('app.form.label.name')"
+              label-for="name-team"
+              label-cols-md="4"
             >
               <b-form-input
-                  id="name-team"
-                  type="text"
-                  :placeholder=" $t('app.form.placeholder.default')"
+                id="name-team"
+                type="text"
+                :placeholder=" $t('app.form.placeholder.default')"
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label=" $t('app.form.label.description')"
-                label-for="description"
-                label-cols-md="4"
+              :label=" $t('app.form.label.description')"
+              label-for="description"
+              label-cols-md="4"
             >
               <div class="d-flex">
                 <b-form-input
-                    class="mr-1"
-                    id="description"
-                    type="text"
+                  id="description"
+                  class="mr-1"
+                  type="text"
                   :label=" $t('app.form.placeholder.default')"
                 />
               </div>
@@ -109,12 +176,13 @@
 </template>
 
 <script>
-const Databases = () => import('@/layouts/components/DataTables.vue')
 import {
   BCard,
   BTab, BFormTextarea,
   BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton, BFormSelect, BModal,
 } from 'bootstrap-vue'
+
+const Databases = () => import('@/layouts/components/DataTables.vue')
 
 export default {
   components: {
@@ -130,10 +198,11 @@ export default {
     Databases,
     BModal,
     BFormSelect,
-    BFormTextarea
+    BFormTextarea,
   },
   data() {
     return {
+      view: true,
       perPage: 10,
       pageOptions: [3, 5, 10],
       user: [
