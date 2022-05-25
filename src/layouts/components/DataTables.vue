@@ -29,20 +29,26 @@
           {{ $t('app.btn.new') }}
         </span>
       </b-badge>
-      <b-badge
-        v-if="viewModal"
-        variant="success"
-        class=" mr-1 mb-1"
-        @click="$bvModal.show(viewModal); $emit('openViewModal')"
+      <b-link
+        v-if="link!==undefined"
+        :to="{name: link, params: {id: data.item.id}}"
       >
-        <img
-          src="@/assets/images/pages/plusIcons.svg"
-          alt=""
+        <b-badge
+          v-if="viewModal"
+          variant="success"
+          class=" mr-1 mb-1"
+          @click="$bvModal.show(viewModal); $emit('openViewModal')"
         >
-        <span> &nbsp;
-          {{ $t('app.btn.view') }}
-        </span>
-      </b-badge>
+          <img
+            src="@/assets/images/pages/plusIcons.svg"
+            alt=""
+          >
+          <span> &nbsp;
+            {{ $t('app.btn.view') }}
+          </span>
+        </b-badge>
+      </b-link>
+
       <b-badge
         v-if="editModal"
         variant="warning"
@@ -57,7 +63,10 @@
           {{ $t('app.btn.edit') }}
         </span>
       </b-badge>
-      <b-link v-if="link" :to="{name: link, params: {id: data.item.id}}">
+      <b-link
+        v-if="link"
+        :to="{name: link, params: {id: data.item.id}}"
+      >
         <b-badge
           class="mr-1"
           variant="secondary"
@@ -96,7 +105,9 @@
         <span>
           {{ $t('app.btn.delete') }}
         </span>
-      </b-badge></template>
+      </b-badge>
+    </template>
+
     <template #cell(id)>
       <b-form-checkbox />
     </template>

@@ -81,8 +81,8 @@
       <Databases
         ref="datatable"
         :filter="filter"
-        link="location-edit"
-        link_view="location-view"
+        link="index-clause-view"
+        link_view="index-clause-view"
         :current-page="currentPage"
         :page-options="pageOptions"
         :per-page="perPage"
@@ -98,157 +98,118 @@
       :cancel-title="$t('app.btn.cancel')"
       modal-class="modal-primary"
       centered
-      :title="$t('app.content.create_new_location')"
+      :title="$t('app.content.create_new_index_clause')"
       size="lg"
     >
       <b-form @submit.prevent>
         <b-row>
           <b-col cols="12">
             <b-form-group
-              :label=" $t('app.form.label.location.location_id') "
-              label-for="location_id"
+              :label=" $t('app.form.label.index.id') "
+              label-for="id"
               label-cols-md="4"
             >
               <b-form-input
-                id="location_id"
+                id="id"
                 type="text"
                 readonly
-                :placeholder="$t('app.form.placeholder.location.location_id')"
+                :placeholder="$t('app.form.placeholder.index.id')"
               />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label=" $t('app.form.label.location.object_description') "
-              label-for="location_description"
-              label-cols-md="4"
-            >
-              <b-form-input
-                id="location_description"
-                type="text"
-                :placeholder="$t('app.form.placeholder.location.object_description')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label=" $t('app.form.label.location.standorttyp') "
-              label-for="standorttyp"
-              label-cols-md="4"
-            >
-              <b-form-input
-                id="standorttyp"
-                type="text"
-                :placeholder="$t('app.form.placeholder.location.standorttyp')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label=" $t('app.form.label.location.address_location') "
-              label-for="h-name"
-              label-cols-md="4"
-            >
-              <div class="d-flex justify-content-between align-items-center">
-                <b-form-select
-                  id=""
-                  size="sm"
-                  :options="addressOptions"
-                  class="w-10 mr-3"
-                />
-                <b-button variant="info">
-                  {{ $t('app.btn.new') }}
-                </b-button>
-              </div>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label=" $t('app.form.label.location.strabe') "
-              label-for="strabe"
-              label-cols-md="4"
-            >
-              <b-form-input
-                id="strabe"
-                type="text"
-                :placeholder="$t('app.form.placeholder.location.strabe')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label=" $t('app.form.label.location.plz_ort') "
-              label-for="plz_ort"
-              label-cols-md="4"
-            >
-              <div class="row">
-                <div class="col-4">
-                  <b-form-input
-                    type="text"
-                    class="mr-3"
-                  />
-                </div>
-                <div class="col-8">
-                  <b-form-input
-                    id="plz_ort"
-                    type="text"
-                    :placeholder="$t('app.form.placeholder.location.plz_ort')"
-                  />
-                </div>
 
-              </div>
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-              :label=" $t('app.form.label.location.land') "
-              label-for="land"
+              :label=" $t('app.form.label.index.rule') "
+              label-for="name"
+              label-cols-md="4"
+            >
+              <b-form-input
+                id="name"
+                type="text"
+                :placeholder="$t('app.form.placeholder.index.rule')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label=" $t('app.form.label.index.description') "
+              label-for="desc"
+              label-cols-md="4"
+            >
+              <b-form-input
+                id="desc"
+                type="text"
+                :placeholder="$t('app.form.placeholder.index.description')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label=" $t('app.form.label.index.year') "
+              label-for="contract"
               label-cols-md="4"
             >
               <b-form-select
-                id="land"
+                id="contract"
                 size="sm"
-                :options="landOptions"
+                :options="yearOptions"
                 class="w-10 mr-3"
               />
             </b-form-group>
           </b-col>
-
           <b-col cols="12">
             <b-form-group
-              :label=" $t('app.form.label.location.location_name') "
-              label-for="location_name"
-              label-cols-md="4"
-            >
-              <b-form-input
-                id="location_name"
-                type="text"
-                :placeholder="$t('app.form.placeholder.location.location_name')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label=" $t('app.form.label.location.total_space') "
-              label-for="total_space"
-              label-cols-md="4"
-            >
-              <b-form-input
-                id="total_space"
-                type="text"
-                :placeholder="$t('app.form.placeholder.location.total_space')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label=" $t('app.form.label.location.opening_day') "
-              label-for="opening_date"
+              :label=" $t('app.form.label.index.date') "
+              label-for="date"
               label-cols-md="4"
             >
               <b-form-datepicker
-                id="opening_date"
+                id="date"
                 size="sm"
+                class="w-10 mr-3"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label=" $t('app.form.label.index.change_per') "
+              label-for="change_per"
+              label-cols-md="4"
+            >
+              <b-form-input
+                id="changer_per"
+                type="text"
+                class="w-10 mr-3"
+                :placeholder="$t('app.form.placeholder.index.change_per')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label=" $t('app.form.label.index.minimum') "
+              label-for="minimum"
+              label-cols-md="4"
+            >
+              <b-form-input
+                id="minimum"
+                type="text"
+                class="w-10 mr-3"
+                :placeholder="$t('app.form.placeholder.index.minimum')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label=" $t('app.form.label.index.points') "
+              label-for="points"
+              label-cols-md="4"
+            >
+              <b-form-input
+                id="points"
+                type="text"
+                class="w-10 mr-3"
+                :placeholder="$t('app.form.placeholder.index.points')"
               />
             </b-form-group>
           </b-col>
@@ -264,6 +225,7 @@ import {
   BButton,
   BFormGroup,
   BFormSelect,
+  BFormCheckbox,
   BModal,
   BForm,
   BRow,
@@ -284,6 +246,7 @@ export default {
     BPagination,
     BCard,
     BFormSelect,
+    BFormCheckbox,
     BModal,
     BForm,
     BRow,
@@ -303,21 +266,27 @@ export default {
       sortDesc: false,
       items: ['', '', ''],
       fields: [
-        { key: 'id', label: 'Id' },
-        { key: 'group_id', label: 'Name Standort', sortable: true },
-        { key: 'group_name', label: 'Standort ID', sortable: true },
-        { key: 'group_fname', label: 'Aktueller Verwalter (Name Partnerfirma)', sortable: true },
-        { key: 'grouphf_name', label: 'Aktueller Eigentümer (Name Partnerfirma)', sortable: true },
-        { key: 'grohupf_name', label: 'Standort-type', sortable: true },
-        { key: 'grouphf_nhame', label: 'Ort', sortable: true },
-        { key: 'groufp_na me', label: 'Land', sortable: true },
-        { key: 'groufp_na me', label: '# Anzahl Läden (untergeordnet)', sortable: true },
+        { key: 'id', label: 'Index Clause ID' },
+        { key: 'group_id', label: 'Index rule', sortable: false },
+        { key: 'group_name', label: 'Index begin date', sortable: true },
+        { key: 'group_fname', label: 'Index base year', sortable: true },
+        { key: 'grouphf_name', label: '# of Recurring payments', sortable: true },
         'Action',
       ],
       selected: null,
       filter: null,
-      addressOptions: ['Address 1', 'Address 2', 'Address 3'],
-      landOptions: ['Land 1', 'Land 2', 'Land 3'],
+      typeOptions: [
+        { value: null, text: 'Please select the Contract Service' },
+        { value: 'type1', text: 'Type 1' },
+        { value: 'type2', text: 'Type 2' },
+        { value: 'type3', text: 'Type 3' },
+      ],
+      yearOptions: [
+        { value: null, text: 'Please select the Contract Service' },
+        { value: 'type1', text: 'Year 1' },
+        { value: 'type2', text: 'Year 2' },
+        { value: 'type3', text: 'Year 3' },
+      ],
     }
   },
   computed: {

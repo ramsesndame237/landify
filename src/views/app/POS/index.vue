@@ -37,21 +37,10 @@
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
             <b-button
-              size="sm"
-              variant="primary"
-              class="mr-1 d-flex"
-            >
-              <img
-                src="@/assets/images/icons/sort.svg"
-                alt=""
-              >
-            </b-button>
-
-            <b-button
               v-b-modal.modal-primary
               size="sm"
               variant="info"
-              class="mr-1 d-flex"
+              class="mr-1 d-flex justify-content-center"
             >
               <img
                 src="@/assets/images/pages/plusIcons.svg"
@@ -61,7 +50,7 @@
             </b-button>
             <b-button
               size="sm"
-              class="d-flex"
+              class="d-flex justify-content-center"
               variant="primary"
             >
               <img
@@ -96,6 +85,7 @@
       </div>
     </b-card>
     <b-card>
+
       <Databases
         ref="datatable"
         :filter="filter"
@@ -164,7 +154,7 @@
               label-cols-md="4"
             >
               <b-form-input
-                id="i-name"
+                id="h-name"
                 type="text"
                 :placeholder="$t('app.form.placeholder.default')"
               />
@@ -177,7 +167,7 @@
               label-cols-md="4"
             >
               <b-form-input
-                id="i-name"
+                id="e-name"
                 type="text"
                 :placeholder="$t('app.form.placeholder.default')"
               />
