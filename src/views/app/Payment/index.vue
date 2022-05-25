@@ -49,16 +49,6 @@
               {{ $t('app.btn.new') }} </b-button>
             <b-button
               size="sm"
-              variant="secondary"
-              class="mr-1 d-flex"
-            >
-              <img
-                src="@/assets/images/pages/editIcons.svg"
-                alt=""
-              >
-              {{ $t('app.btn.edit') }}</b-button>
-            <b-button
-              size="sm"
               class="d-flex"
               variant="primary"
             >
@@ -87,15 +77,14 @@
     </b-card>
     <b-card>
       <Databases
-        :filter="filter"
         ref="datatable"
-        modal="modal-primary"
-        link="payment-edit"
+        :filter="filter"
+        link_view="payment-edit"
         :current-page="currentPage"
         :page-options="pageOptions"
         :per-page="perPage"
         :items="items"
-:fields="fields"
+        :fields="fields"
       />
     </b-card>
 

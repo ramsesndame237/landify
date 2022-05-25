@@ -48,16 +48,6 @@
               new </b-button>
             <b-button
               size="sm"
-              variant="secondary"
-              class="mr-1 d-flex"
-            >
-              <img
-                src="@/assets/images/pages/editIcons.svg"
-                alt=""
-              >
-              Edit</b-button>
-            <b-button
-              size="sm"
               class="d-flex"
               variant="primary"
             >

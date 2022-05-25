@@ -1,89 +1,117 @@
 <template>
   <div>
     <b-card body-class="p-0">
-        <div class="d-flex justify-content-between" style="padding: 10px">
-          <b-form-group class="mb-0">
-            <label class="d-inline-block text-sm-left mr-50">{{ $t('app.content.show') }}</label>
-            <b-form-select style="width: 60px"
-                id="perPageSelect"
-                v-model="perPage"
-                size="sm"
-                :options="pageOptions"
-                class="w-10"
-            />
-            <label class="d-inline-block text-sm-left ml-50">{{ $t('app.content.entries') }}</label>
-          </b-form-group>
+      <div
+        class="d-flex justify-content-between"
+        style="padding: 10px"
+      >
+        <b-form-group class="mb-0">
+          <label class="d-inline-block text-sm-left mr-50">{{ $t('app.content.show') }}</label>
+          <b-form-select
+            id="perPageSelect"
+            v-model="perPage"
+            style="width: 60px"
+            size="sm"
+            :options="pageOptions"
+            class="w-10"
+          />
+          <label class="d-inline-block text-sm-left ml-50">{{ $t('app.content.entries') }}</label>
+        </b-form-group>
 
-          <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center">
 
-            <span class="mr-1">{{ $t('app.content.show') }} 1 {{ $t('app.content.to') }} {{ perPage }} {{ $t('app.content.of') }} {{ totalRows }} {{ $t('app.content.entries') }}</span>
-            <b-pagination
-                v-model="currentPage"
-                :total-rows="totalRows"
-                :per-page="perPage"
-                align="center"
-                class="my-0"
-                first-number
-                last-number
-                prev-class="prev-item"
-                next-class="next-item"
-            />
-          </div>
-
-          <div class="d-flex align-items-center">
-            <div class="mr-1 d-flex">
-              <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
-                <img src="@/assets/images/pages/plusIcons.svg" alt="">
-                {{ $t('app.btn.new') }} </b-button>
-              <b-button size="sm" variant="secondary" class="mr-1 d-flex">
-                <img src="@/assets/images/pages/editIcons.svg" alt="">
-                {{ $t('app.btn.edit') }}</b-button>
-              <b-button size="sm" class="d-flex" variant="primary">
-                <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-                {{ $t('app.btn.delete') }}</b-button>
-            </div>
-
-            <div size="sm" class="d-flex align-items-center">
-              <label class="d-inline-block text-sm-left mr-50"> {{ $t('app.search.label') }}</label>
-              <b-form-input
-                  v-model="filter"
-                  id="filterInput"
-                  type="search"
-                  :placeholder="$t('app.search.palceholder')"
-              />
-            </div>
-          </div>
-
+          <span class="mr-1">{{ $t('app.content.show') }} 1 {{ $t('app.content.to') }} {{ perPage }} {{ $t('app.content.of') }} {{ totalRows }} {{ $t('app.content.entries') }}</span>
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            align="center"
+            class="my-0"
+            first-number
+            last-number
+            prev-class="prev-item"
+            next-class="next-item"
+          />
         </div>
+
+        <div class="d-flex align-items-center">
+          <div class="mr-1 d-flex">
+            <b-button
+              v-b-modal.modal-primary
+              size="sm"
+              variant="info"
+              class="mr-1 d-flex"
+            >
+              <img
+                src="@/assets/images/pages/plusIcons.svg"
+                alt=""
+              >
+              {{ $t('app.btn.new') }} </b-button>
+
+            <b-button
+              size="sm"
+              class="d-flex"
+              variant="primary"
+            >
+              <img
+                src="@/assets/images/pages/deleteIcons.svg"
+                alt=""
+              >
+              {{ $t('app.btn.delete') }}</b-button>
+          </div>
+
+          <div
+            size="sm"
+            class="d-flex align-items-center"
+          >
+            <label class="d-inline-block text-sm-left mr-50"> {{ $t('app.search.label') }}</label>
+            <b-form-input
+              id="filterInput"
+              v-model="filter"
+              type="search"
+              :placeholder="$t('app.search.palceholder')"
+            />
+          </div>
+        </div>
+
+      </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" modal="modal-primary" link="contact-person-edit" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases
+        ref="datatable"
+        :filter="filter"
+        link_view="contact-person-edit"
+        :current-page="currentPage"
+        :page-options="pageOptions"
+        :per-page="perPage"
+        :items="items"
+        :fields="fields"
+      />
     </b-card>
 
     <!--modal-->
     <b-modal
-        id="modal-primary"
-        :ok-title="$t('app.btn.save')"
-        :cancel-title="$t('app.btn.cancel')"
-        modal-class="modal-primary"
-        centered
-        :title="$t('app.content.create_contact_person')"
-        size="lg"
+      id="modal-primary"
+      :ok-title="$t('app.btn.save')"
+      :cancel-title="$t('app.btn.cancel')"
+      modal-class="modal-primary"
+      centered
+      :title="$t('app.content.create_contact_person')"
+      size="lg"
     >
       <b-form @submit.prevent>
-        <b-row> 
+        <b-row>
           <b-col cols="6">
             <b-form-group
               :label="`${$t('app.form.label.partner_group_id')} / ${$t('app.form.label.customer_group_id')}`"
               label-for="group-id"
               label-cols-md="12"
             >
-            <b-form-select
-              id="group-id"
-              v-model="newCompany.customerGroupId"
-              :options="customerGroupOptions"
-            >
-            </b-form-select>
+              <b-form-select
+                id="group-id"
+                v-model="newCompany.customerGroupId"
+                :options="customerGroupOptions"
+              />
             </b-form-group>
           </b-col>
           <b-col cols="6">
@@ -94,7 +122,7 @@
             >
               <b-form-input
                 id="group-name"
-                  
+
                 v-model="newCompany.companyId"
                 :placeholder="$t('app.form.placeholder.automatic_based_on_id')"
               />
@@ -106,16 +134,16 @@
               label-for="Contactperson_ID"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="6">
-                <b-form-select
-                  id="Contactperson_ID"
-                   
-                  v-model="newCompany.companyName"
-                  :placeholder="$t('app.form.placeholder.automatic')"
-                />
-              </b-col>
-            </b-row>
+              <b-row>
+                <b-col cols="6">
+                  <b-form-select
+                    id="Contactperson_ID"
+
+                    v-model="newCompany.companyName"
+                    :placeholder="$t('app.form.placeholder.automatic')"
+                  />
+                </b-col>
+              </b-row>
             </b-form-group>
           </b-col>
           <b-col cols="6">
@@ -124,11 +152,11 @@
               label-for="group-id"
               label-cols-md="12"
             >
-            <b-form-input
-              id="group-id"
-              v-model="newCompany.customerGroupId"
-              :placeholder="$t('app.form.placeholder.default')"
-            />
+              <b-form-input
+                id="group-id"
+                v-model="newCompany.customerGroupId"
+                :placeholder="$t('app.form.placeholder.default')"
+              />
             </b-form-group>
           </b-col>
           <b-col cols="6">
@@ -140,8 +168,7 @@
               <b-form-select
                 id="group-name"
                 v-model="newCompany.companyId"
-              >
-              </b-form-select>
+              />
             </b-form-group>
           </b-col>
           <b-col cols="6">
@@ -150,11 +177,11 @@
               label-for="Firstname"
               label-cols-md="12"
             >
-            <b-form-input
-              id="Firstname"
-              v-model="newCompany.customerGroupId"
-              :placeholder="$t('app.form.placeholder.default')"
-            />
+              <b-form-input
+                id="Firstname"
+                v-model="newCompany.customerGroupId"
+                :placeholder="$t('app.form.placeholder.default')"
+              />
             </b-form-group>
           </b-col>
           <b-col cols="6">
@@ -166,8 +193,7 @@
               <b-form-select
                 id="Salutation"
                 v-model="newCompany.companyId"
-              >
-              </b-form-select>
+              />
             </b-form-group>
           </b-col>
           <b-col cols="12">
@@ -176,16 +202,16 @@
               label-for="Shortname"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="6">
-                <b-form-input
-                  id="Shortname"
-                   
-                  v-model="newCompany.companyName"
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-            </b-row>
+              <b-row>
+                <b-col cols="6">
+                  <b-form-input
+                    id="Shortname"
+
+                    v-model="newCompany.companyName"
+                    :placeholder="$t('app.form.placeholder.default')"
+                  />
+                </b-col>
+              </b-row>
             </b-form-group>
           </b-col>
           <b-col cols="6">
@@ -194,11 +220,11 @@
               label-for="Function"
               label-cols-md="12"
             >
-            <b-form-select
-              id="Function"
-              v-model="newCompany.customerGroupId"
-              :placeholder="$t('app.form.placeholder.default')"
-            />
+              <b-form-select
+                id="Function"
+                v-model="newCompany.customerGroupId"
+                :placeholder="$t('app.form.placeholder.default')"
+              />
             </b-form-group>
           </b-col>
           <b-col cols="6">
@@ -222,7 +248,6 @@
 
 <script>
 
-const Databases = () => import('@/layouts/components/DataTables.vue')
 import {
   BButton,
   BFormGroup,
@@ -236,6 +261,8 @@ import {
   BPagination,
   BInputGroup,
 } from 'bootstrap-vue'
+
+const Databases = () => import('@/layouts/components/DataTables.vue')
 
 export default {
   components: {
@@ -271,8 +298,8 @@ export default {
           city: 'Yaoundé',
           phone: '+237 132 645 987',
           mail: 'johndoe@gmail.com',
-          function: "Something",
-          user_id: "1",
+          function: 'Something',
+          user_id: '1',
         },
         {
           id: 1,
@@ -283,8 +310,8 @@ export default {
           city: 'Yaoundé',
           phone: '+237 132 645 987',
           mail: 'johndoe@gmail.com',
-          function: "Something",
-          user_id: "1",
+          function: 'Something',
+          user_id: '1',
         },
         {
           id: 1,
@@ -295,8 +322,8 @@ export default {
           city: 'Yaoundé',
           phone: '+237 132 645 987',
           mail: 'johndoe@gmail.com',
-          function: "Something",
-          user_id: "1",
+          function: 'Something',
+          user_id: '1',
         },
         {
           id: 1,
@@ -307,8 +334,8 @@ export default {
           city: 'Yaoundé',
           phone: '+237 132 645 987',
           mail: 'johndoe@gmail.com',
-          function: "Something",
-          user_id: "1",
+          function: 'Something',
+          user_id: '1',
         },
       ],
       fields: [
@@ -344,15 +371,15 @@ export default {
         addressId: null,
         contactDetailId: null,
         bankDataId: null,
-      }
+      },
     }
   },
   computed: {
     sortOptions() {
       // Create an options list from our fields
       return this.fields
-          .filter(f => f.sortable)
-          .map(f => ({ text: f.label, value: f.key }))
+        .filter(f => f.sortable)
+        .map(f => ({ text: f.label, value: f.key }))
     },
   },
   mounted() {

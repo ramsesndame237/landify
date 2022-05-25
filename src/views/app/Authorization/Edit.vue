@@ -1,24 +1,54 @@
 <template>
   <div>
     <b-card body-class="p-0">
-      <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
+      <div
+        class="d-flex align-items-center justify-content-between"
+        style="padding: 10px"
+      >
         <div class="d-flex align-items-center">
           <span>{{ $t('app.content.auth_management_detail') }}</span>
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
-            <b-button v-b-modal.modal-user size="sm" variant="info" class="mr-1 d-flex align-items-center">
-              <img src="@/assets/images/pages/plusIcons.svg" alt="">
-              {{ $t('app.btn.new') }}
+            <b-button
+              v-if="view"
+              size="sm"
+              variant="info"
+              class="mr-1 d-flex"
+              @click.prevent="view = !view"
+            >
+              <img
+                src="@/assets/images/pages/editIcons.svg"
+                alt=""
+              >
+              Edit
             </b-button>
-            <b-button v-b-modal.modal-user size="sm" variant="warning" class="mr-1 d-flex align-items-center">
-              <img src="@/assets/images/pages/editIcons.svg" alt="">
-              {{ $t('app.btn.edit') }}
+            <b-button
+              v-else
+              size="sm"
+              variant="info"
+              class="mr-1 d-flex"
+              @click.prevent="view = !view"
+            >
+              <img
+                src="@/assets/images/pages/editIcons.svg"
+                alt=""
+              >
+
+              Save
             </b-button>
-            <b-button size="sm" class="d-flex align-items-center" variant="primary">
-              <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-              {{ $t('app.btn.delete') }}
-            </b-button>
+            <b-button
+              v-if="!view"
+              size="sm"
+              class="d-flex"
+              variant="primary"
+              @click="view = !view"
+            >
+              <img
+                src="@/assets/images/pages/deleteIcons.svg"
+                alt=""
+              >
+              Cancel</b-button>
           </div>
         </div>
       </div>
@@ -28,27 +58,54 @@
       <b-form>
         <b-row>
           <!-- Field: email -->
-          <b-col cols="12" md="4">
-            <b-form-group :label="$t('app.form.label.role_id')"  label-for="username">
-              <b-form-input :placeholder="$t('app.form.placeholder.default')" id="username" v-model="user.name"/>
+          <b-col
+            cols="12"
+            md="4"
+          >
+            <b-form-group
+              :label="$t('app.form.label.role_id')"
+              label-for="username"
+            >
+              <b-form-input
+                id="username"
+                v-model="user.name"
+                :disabled="view"
+                :placeholder="$t('app.form.placeholder.default')"
+              />
             </b-form-group>
           </b-col>
 
           <!-- Field: password -->
-          <b-col cols="12" md="4">
-            <b-form-group :label="$t('app.form.label.role_name')" label-for="full-name">
-              <b-form-input :placeholder="$t('app.form.placeholder.default')"  id="full-name" v-model="user.name" type="email"/>
+          <b-col
+            cols="12"
+            md="4"
+          >
+            <b-form-group
+              :label="$t('app.form.label.role_name')"
+              label-for="full-name"
+            >
+              <b-form-input
+                id="full-name"
+                v-model="user.name"
+                :disabled="view"
+                :placeholder="$t('app.form.placeholder.default')"
+                type="email"
+              />
             </b-form-group>
           </b-col>
           <!--        check box -->
 
           <!-- Field: Name -->
-          <b-col cols="12" md="12">
+          <b-col
+            cols="12"
+            md="12"
+          >
             <label for="textarea-default">{{ $t('app.form.label.description') }}</label>
             <b-form-textarea
-                id="textarea-default"
-                :placeholder="$t('app.form.placeholder.default')" 
-                rows="3"
+              id="textarea-default"
+              :disabled="view"
+              :placeholder="$t('app.form.placeholder.default')"
+              rows="3"
             />
           </b-col>
 
@@ -58,25 +115,54 @@
 
     <b-card>
       <b-tabs pills>
-        <b-tab :title="$t('app.tab.rights')" active>
-          <databases :actions="true" :items="rowsRoles" :fields="columnRoles" />
+        <b-tab
+          :title="$t('app.tab.rights')"
+          active
+        >
+          <databases
+            :actions="true"
+            :items="rowsRoles"
+            :fields="columnRoles"
+          />
         </b-tab>
         <b-tab :title="$t('app.tab.customers')">
-          <databases :items="items" :fields="fields" />
+          <databases
+            :items="items"
+            :fields="fields"
+          />
         </b-tab>
         <b-tab :title="$t('app.tab.users')">
-          <databases :items="items" :fields="fields" />
+          <databases
+            :items="items"
+            :fields="fields"
+          />
         </b-tab>
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
-            <b-button v-b-modal.modal-role class="mr-1" size="sm" variant="info">{{ $t('app.btn.new') }}</b-button>
-            <b-button class="mr-1" size="sm" variant="primary">{{ $t('app.btn.delete') }}</b-button>
-            <b-input-group size="sm" class="d-flex align-items-center">
+            <b-button
+              v-b-modal.modal-role
+              class="mr-1"
+              size="sm"
+              variant="info"
+            >
+              {{ $t('app.btn.new') }}
+            </b-button>
+            <b-button
+              class="mr-1"
+              size="sm"
+              variant="primary"
+            >
+              {{ $t('app.btn.delete') }}
+            </b-button>
+            <b-input-group
+              size="sm"
+              class="d-flex align-items-center"
+            >
               <label class="d-inline-block text-sm-left mr-50">{{ $t('app.search.label') }}</label>
               <b-form-input
-                  id="filterInput"
-                  type="search"
-                  :placeholder="$t('app.search.palceholder')"
+                id="filterInput"
+                type="search"
+                :placeholder="$t('app.search.palceholder')"
               />
             </b-input-group>
           </div>
@@ -86,60 +172,60 @@
 
     <!--  user modal -->
     <b-modal
-        id="modal-user"
-        :ok-title="$t('app.btn.save')"
-        :cancel-title="$t('app.btn.cancel')"
-        modal-class="modal-primary"
-        centered
-        :title="$t('app.content.create_user')"
-        size="lg"
+      id="modal-user"
+      :ok-title="$t('app.btn.save')"
+      :cancel-title="$t('app.btn.cancel')"
+      modal-class="modal-primary"
+      centered
+      :title="$t('app.content.create_user')"
+      size="lg"
     >
       <b-form @submit.prevent>
         <b-row>
           <b-col cols="12">
             <b-form-group
-                :label="$t('app.form.label.company_name')"
-                label-for="company-name"
-                label-cols-md="4"
+              :label="$t('app.form.label.company_name')"
+              label-for="company-name"
+              label-cols-md="4"
             >
               <b-form-input
-                  id="company-name"
-                  type="text"
-                  :placeholder="$t('app.form.placeholder.default')"
+                id="company-name"
+                type="text"
+                :placeholder="$t('app.form.placeholder.default')"
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label="$t('app.form.label.email')"
-                label-for="h-email"
-                label-cols-md="4"
+              :label="$t('app.form.label.email')"
+              label-for="h-email"
+              label-cols-md="4"
             >
               <b-form-input
-                  id="h-email"
-                  type="email"
-                  :placeholder="$t('app.form.placeholder.default')"
+                id="h-email"
+                type="email"
+                :placeholder="$t('app.form.placeholder.default')"
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label="`${$t('app.form.label.name')} / ${$t('app.form.label.firstname')}`"
-                label-for="h-name"
-                label-cols-md="4"
+              :label="`${$t('app.form.label.name')} / ${$t('app.form.label.firstname')}`"
+              label-for="h-name"
+              label-cols-md="4"
             >
               <div class="d-flex">
                 <b-form-input
-                    class="mr-1"
-                    id="h-name"
-                    type="text"
-                    :placeholder="$t('app.form.placeholder.default')"
+                  id="h-name"
+                  class="mr-1"
+                  type="text"
+                  :placeholder="$t('app.form.placeholder.default')"
                 />
                 <b-form-input
-                    md="4"
-                    id="h-firstname"
-                    type="text"
-                    :placeholder="$t('app.form.placeholder.default')"
+                  id="h-firstname"
+                  md="4"
+                  type="text"
+                  :placeholder="$t('app.form.placeholder.default')"
                 />
               </div>
 
@@ -147,49 +233,51 @@
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label="$t('app.form.label.mobile')"
-                label-for="h-mobile"
-                label-cols-md="4"
+              :label="$t('app.form.label.mobile')"
+              label-for="h-mobile"
+              label-cols-md="4"
             >
               <b-form-input
-                  id="h-mobile"
-                  type="number"
-                  :placeholder="$t('app.form.placeholder.default')"
+                id="h-mobile"
+                type="number"
+                :placeholder="$t('app.form.placeholder.default')"
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label="$t('app.form.label.fax')"
-                label-for="h-fax"
-                label-cols-md="4"
+              :label="$t('app.form.label.fax')"
+              label-for="h-fax"
+              label-cols-md="4"
             >
               <b-form-input
-                  id="h-fax"
-                  type="text"
-                  :placeholder="$t('app.form.placeholder.default')"
+                id="h-fax"
+                type="text"
+                :placeholder="$t('app.form.placeholder.default')"
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label="$t('app.form.label.deputy')"
-                label-for="h-deputy"
-                label-cols-md="4">
+              :label="$t('app.form.label.deputy')"
+              label-for="h-deputy"
+              label-cols-md="4"
+            >
               <b-form-select
-                  v-model="selected"
-                  :options="options"
+                v-model="selected"
+                :options="options"
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                :label="$t('app.form.label.type')"
-                label-for="h-deputy"
-                label-cols-md="4">
+              :label="$t('app.form.label.type')"
+              label-for="h-deputy"
+              label-cols-md="4"
+            >
               <b-form-select
-                  v-model="selected"
-                  :options="options"
+                v-model="selected"
+                :options="options"
               />
             </b-form-group>
           </b-col>
@@ -200,12 +288,13 @@
 </template>
 
 <script>
-const Databases = () => import('@/layouts/components/DataTables.vue')
 import {
   BCard,
   BTab, BFormTextarea,
   BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton, BFormSelect, BModal,
 } from 'bootstrap-vue'
+
+const Databases = () => import('@/layouts/components/DataTables.vue')
 
 export default {
   components: {
@@ -225,6 +314,7 @@ export default {
   },
   data() {
     return {
+      view: true,
       perPage: 10,
       pageOptions: [3, 5, 10],
       user: [

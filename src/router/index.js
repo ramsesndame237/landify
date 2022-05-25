@@ -164,6 +164,7 @@ const router = new VueRouter({
       component: () => import('@/views/app/Authorization/Edit.vue'),
       meta: {
         pageTitle: 'app.page_title.auth_edit',
+        navActiveLink: 'authorization',
         breadcrumb: [
           {
             text: 'app.page_title.auth_edit',
@@ -193,6 +194,7 @@ const router = new VueRouter({
       component: () => import('@/views/app/Teams/Edit.vue'),
       meta: {
         pageTitle: 'app.page_title.team_edit',
+        navActiveLink: 'teams',
         breadcrumb: [
           {
             text: 'app.page_title.team_edit',
@@ -620,7 +622,7 @@ const router = new VueRouter({
       name: 'currency-edit',
       component: () => import('@/views/app/Currency/Edit.vue'),
       meta: {
-        pageTitle: 'app.page_title.city_edit',
+        pageTitle: 'app.page_title.currency_edit',
         navActiveLink: 'currency-list',
         breadcrumb: [
           {
@@ -629,7 +631,7 @@ const router = new VueRouter({
             active: false,
           },
           {
-            text: 'app.page_title.city_edit',
+            text: 'app.page_title.currency_edit',
             active: true,
           },
         ],
@@ -1059,7 +1061,7 @@ const router = new VueRouter({
       component: () => import('@/views/app/Location/View.vue'),
       meta: {
         pageTitle: 'app.page_title.location_view',
-        navActiveLink: 'location-view',
+        navActiveLink: 'location-list',
         breadcrumb: [
           {
             text: 'app.page_title.location',
@@ -1114,7 +1116,7 @@ const router = new VueRouter({
       component: () => import('@/views/app/Contracts/View.vue'),
       meta: {
         pageTitle: 'app.page_title.contract_edit',
-        navActiveLink: 'contract-view',
+        navActiveLink: 'contracts-list',
         breadcrumb: [
           {
             text: 'app.page_title.contract',
@@ -1148,6 +1150,7 @@ const router = new VueRouter({
       component: () => import('@/views/app/Contracts/lease/View.vue'),
       meta: {
         pageTitle: 'app.page_title.contract_view',
+        navActiveLink: 'contracts-lease',
         breadcrumb: [
           {
             text: 'app.page_title.contract_lease',
@@ -1181,6 +1184,7 @@ const router = new VueRouter({
       component: () => import('@/views/app/Services_object/View.vue'),
       meta: {
         pageTitle: 'app.page_title.service_view',
+        navActiveLink: 'services-object-list',
         breadcrumb: [
           {
             text: 'app.page_title.services',
@@ -1214,6 +1218,7 @@ const router = new VueRouter({
       component: () => import('@/views/app/Criteria/View.vue'),
       meta: {
         pageTitle: 'app.page_title.criteria_view',
+        navActiveLink: 'criteria-list',
         breadcrumb: [
           {
             text: 'app.page_title.criteria',
@@ -1247,6 +1252,7 @@ const router = new VueRouter({
       component: () => import('@/views/app/Index_clause/View.vue'),
       meta: {
         pageTitle: 'app.page_title.index_clause_view',
+        navActiveLink: 'index-clause-list',
         breadcrumb: [
           {
             text: 'app.page_title.index_clause',
@@ -1280,6 +1286,7 @@ const router = new VueRouter({
       component: () => import('@/views/app/Special_right/View.vue'),
       meta: {
         pageTitle: 'app.page_title.special_right_view',
+        navActiveLink: 'special-right-list',
         breadcrumb: [
           {
             text: 'app.page_title.special_right',
@@ -1314,6 +1321,7 @@ const router = new VueRouter({
       component: () => import('@/views/app/Recurring_payment/View.vue'),
       meta: {
         pageTitle: 'app.page_title.recurring_payment_view',
+        navActiveLink: 'recurring-payment-list',
         breadcrumb: [
           {
             text: 'app.page_title.recurring_payment',

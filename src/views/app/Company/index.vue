@@ -1,132 +1,158 @@
 <template>
   <div>
     <b-card body-class="p-0">
-        <div class="d-flex justify-content-between" style="padding: 10px">
-          <b-form-group class="mb-0">
-            <label class="d-inline-block text-sm-left mr-50">{{ $t('app.content.show') }}</label>
-            <b-form-select style="width: 60px"
-                id="perPageSelect"
-                v-model="perPage"
-                size="sm"
-                :options="pageOptions"
-                class="w-10"
-            />
-            <label class="d-inline-block text-sm-left ml-50">{{ $t('app.content.entries') }}</label>
-          </b-form-group>
+      <div
+        class="d-flex justify-content-between"
+        style="padding: 10px"
+      >
+        <b-form-group class="mb-0">
+          <label class="d-inline-block text-sm-left mr-50">{{ $t('app.content.show') }}</label>
+          <b-form-select
+            id="perPageSelect"
+            v-model="perPage"
+            style="width: 60px"
+            size="sm"
+            :options="pageOptions"
+            class="w-10"
+          />
+          <label class="d-inline-block text-sm-left ml-50">{{ $t('app.content.entries') }}</label>
+        </b-form-group>
 
-          <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center">
 
-            <span class="mr-1">{{ $t('app.content.show') }} 1 {{ $t('app.content.to') }} {{ perPage }} {{ $t('app.content.of') }} {{ totalRows }} {{ $t('app.content.entries') }}</span>
-            <b-pagination
-                v-model="currentPage"
-                :total-rows="totalRows"
-                :per-page="perPage"
-                align="center"
-                class="my-0"
-                first-number
-                last-number
-                prev-class="prev-item"
-                next-class="next-item"
-            />
-          </div>
-
-          <div class="d-flex align-items-center">
-            <div class="mr-1 d-flex">
-              <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
-                <img src="@/assets/images/pages/plusIcons.svg" alt="">
-                {{ $t('app.btn.new') }} </b-button>
-              <b-button size="sm" variant="secondary" class="mr-1 d-flex">
-                <img src="@/assets/images/pages/editIcons.svg" alt="">
-                {{ $t('app.btn.edit') }}</b-button>
-              <b-button size="sm" class="d-flex" variant="primary">
-                <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-                {{ $t('app.btn.delete') }}</b-button>
-            </div>
-
-            <div size="sm" class="d-flex align-items-center">
-              <label class="d-inline-block text-sm-left mr-50"> {{ $t('app.search.label') }}</label>
-              <b-form-input
-                  v-model="filter"
-                  id="filterInput"
-                  type="search"
-                  :placeholder="$t('app.search.palceholder')"
-              />
-            </div>
-          </div>
-
+          <span class="mr-1">{{ $t('app.content.show') }} 1 {{ $t('app.content.to') }} {{ perPage }} {{ $t('app.content.of') }} {{ totalRows }} {{ $t('app.content.entries') }}</span>
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            align="center"
+            class="my-0"
+            first-number
+            last-number
+            prev-class="prev-item"
+            next-class="next-item"
+          />
         </div>
+
+        <div class="d-flex align-items-center">
+          <div class="mr-1 d-flex">
+            <b-button
+              v-b-modal.modal-primary
+              size="sm"
+              variant="info"
+              class="mr-1 d-flex"
+            >
+              <img
+                src="@/assets/images/pages/plusIcons.svg"
+                alt=""
+              >
+              {{ $t('app.btn.new') }} </b-button>
+            <b-button
+              size="sm"
+              class="d-flex"
+              variant="primary"
+            >
+              <img
+                src="@/assets/images/pages/deleteIcons.svg"
+                alt=""
+              >
+              {{ $t('app.btn.delete') }}</b-button>
+          </div>
+
+          <div
+            size="sm"
+            class="d-flex align-items-center"
+          >
+            <label class="d-inline-block text-sm-left mr-50"> {{ $t('app.search.label') }}</label>
+            <b-form-input
+              id="filterInput"
+              v-model="filter"
+              type="search"
+              :placeholder="$t('app.search.palceholder')"
+            />
+          </div>
+        </div>
+
+      </div>
     </b-card>
     <b-card>
-      <Databases :filter="filter" link="company-edit" modal="modal-primary" :currentPage="currentPage" :pageOptions="pageOptions" :perPage="perPage" :items="items" :fields="fields" ref="datatable" />
+      <Databases
+        ref="datatable"
+        :filter="filter"
+        link_view="company-edit"
+        :current-page="currentPage"
+        :page-options="pageOptions"
+        :per-page="perPage"
+        :items="items"
+        :fields="fields"
+      />
     </b-card>
-
 
     <!--modal-->
     <b-modal
-        id="modal-primary"
-        :ok-title="$t('app.btn.save')"
-        :cancel-title="$t('app.btn.cancel')"
-        modal-class="modal-primary"
-        centered
-        :title="$t('app.content.create_company')"
-        size="lg"
+      id="modal-primary"
+      :ok-title="$t('app.btn.save')"
+      :cancel-title="$t('app.btn.cancel')"
+      modal-class="modal-primary"
+      centered
+      :title="$t('app.content.create_company')"
+      size="lg"
     >
       <b-form @submit.prevent>
-        <b-row> 
+        <b-row>
           <b-col cols="12">
             <b-form-group
               :label="$t('app.form.label.customer_group_id')"
               label-for="customer-group-id"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="6">
-                <b-form-select
-                  id="customer-group-id"
-                >
-                </b-form-select>
-              </b-col>
-            </b-row>
+              <b-row>
+                <b-col cols="6">
+                  <b-form-select
+                    id="customer-group-id"
+                  />
+                </b-col>
+              </b-row>
             </b-form-group>
           </b-col>
         </b-row>
-        <b-row> 
+        <b-row>
           <b-col cols="12">
             <b-form-group
               :label="$t('app.form.label.company_id')"
               label-for="companyId"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="6">
-                <b-form-select
-                  id="companyId"
-                  :placeholder="$t('app.form.placeholder.automatic_based_on_id')"
-                />
-              </b-col>
-            </b-row>
+              <b-row>
+                <b-col cols="6">
+                  <b-form-select
+                    id="companyId"
+                    :placeholder="$t('app.form.placeholder.automatic_based_on_id')"
+                  />
+                </b-col>
+              </b-row>
             </b-form-group>
           </b-col>
         </b-row>
-        <b-row> 
+        <b-row>
           <b-col cols="12">
             <b-form-group
               :label="$t('app.form.label.company_name')"
               label-for="companyName"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="6">
-                <b-form-input
-                  id="companyName"
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-            </b-row>
+              <b-row>
+                <b-col cols="6">
+                  <b-form-input
+                    id="companyName"
+                    :placeholder="$t('app.form.placeholder.default')"
+                  />
+                </b-col>
+              </b-row>
             </b-form-group>
           </b-col>
         </b-row>
-        <b-row> 
+        <b-row>
           <b-col cols="12">
             <b-form-group
               :label="$t('app.form.label.address')"
@@ -139,28 +165,34 @@
                     id="address"
                   />
                 </b-col>
-                <b-button   variant="info" class="-pl-3">
+                <b-button
+                  variant="info"
+                  class="-pl-3"
+                >
                   {{ $t('app.btn.new') }}
                 </b-button>
               </b-row>
             </b-form-group>
           </b-col>
         </b-row>
-        <div class="" id="">
+        <div
+          id=""
+          class=""
+        >
           <b-col cols="12">
             <b-form-group
               :label="$t('app.form.label.street')"
               label-for="companyName"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="6">
-                <b-form-input
-                  id="companyName"
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-            </b-row>
+              <b-row>
+                <b-col cols="6">
+                  <b-form-input
+                    id="companyName"
+                    :placeholder="$t('app.form.placeholder.default')"
+                  />
+                </b-col>
+              </b-row>
             </b-form-group>
           </b-col>
           <b-col cols="12">
@@ -169,14 +201,14 @@
               label-for="address_suffix"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="6">
-                <b-form-input
-                  id="address_suffix"
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-            </b-row>
+              <b-row>
+                <b-col cols="6">
+                  <b-form-input
+                    id="address_suffix"
+                    :placeholder="$t('app.form.placeholder.default')"
+                  />
+                </b-col>
+              </b-row>
             </b-form-group>
           </b-col>
           <b-col cols="12">
@@ -184,20 +216,20 @@
               :label="`${$t('app.form.label.post_code')}, ${$t('app.form.label.place')} `"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="2">
-                <b-form-input
-                  id="postcode"
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-              <b-col cols="4">
-               <b-form-input
-                  id="addressPlace"
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-            </b-row>
+              <b-row>
+                <b-col cols="2">
+                  <b-form-input
+                    id="postcode"
+                    :placeholder="$t('app.form.placeholder.default')"
+                  />
+                </b-col>
+                <b-col cols="4">
+                  <b-form-input
+                    id="addressPlace"
+                    :placeholder="$t('app.form.placeholder.default')"
+                  />
+                </b-col>
+              </b-row>
             </b-form-group>
           </b-col>
           <b-col cols="12">
@@ -205,19 +237,19 @@
               :label="$t('app.form.label.land')"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="6">
-               <b-form-input
-                  id="land"
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-            </b-row>
+              <b-row>
+                <b-col cols="6">
+                  <b-form-input
+                    id="land"
+                    :placeholder="$t('app.form.placeholder.default')"
+                  />
+                </b-col>
+              </b-row>
             </b-form-group>
           </b-col>
-          
+
         </div>
-        <b-row> 
+        <b-row>
           <b-col cols="12">
             <b-form-group
               :label="$t('app.form.label.contact_details')"
@@ -230,26 +262,32 @@
                     id="address"
                   />
                 </b-col>
-                <b-button   variant="info" class="-pl-3">
+                <b-button
+                  variant="info"
+                  class="-pl-3"
+                >
                   {{ $t(('app.btn.new')) }}
                 </b-button>
               </b-row>
             </b-form-group>
           </b-col>
         </b-row>
-        <div class="" id="">
+        <div
+          id=""
+          class=""
+        >
           <b-col cols="12">
             <b-form-group
               :label="$t('app.form.label.email')"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="6">
-               <b-form-input
-                  :placeholder="$t('app.form.placeholder.email')"
-                />
-              </b-col>
-            </b-row>
+              <b-row>
+                <b-col cols="6">
+                  <b-form-input
+                    :placeholder="$t('app.form.placeholder.email')"
+                  />
+                </b-col>
+              </b-row>
             </b-form-group>
           </b-col>
           <b-col cols="12">
@@ -257,28 +295,28 @@
               :label="$t('app.form.label.phone')"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="6">
-               <b-form-input
-                   
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-            </b-row>
+              <b-row>
+                <b-col cols="6">
+                  <b-form-input
+
+                    :placeholder="$t('app.form.placeholder.default')"
+                  />
+                </b-col>
+              </b-row>
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-            :label="`${$t('app.form.label.mobile')} / ${$t('app.form.label.cell_phone_num')}`"
+              :label="`${$t('app.form.label.mobile')} / ${$t('app.form.label.cell_phone_num')}`"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="6">
-               <b-form-input
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-            </b-row>
+              <b-row>
+                <b-col cols="6">
+                  <b-form-input
+                    :placeholder="$t('app.form.placeholder.default')"
+                  />
+                </b-col>
+              </b-row>
             </b-form-group>
           </b-col>
           <b-col cols="12">
@@ -286,50 +324,55 @@
               :label="$t('app.form.label.fax')"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="5">
-                <b-form-select
-                />
-              </b-col>
-              <b-button   variant="info" class="-pl-3">
-                {{ $t('app.btn.new') }} 
-              </b-button>
-            </b-row>
+              <b-row>
+                <b-col cols="5">
+                  <b-form-select />
+                </b-col>
+                <b-button
+                  variant="info"
+                  class="-pl-3"
+                >
+                  {{ $t('app.btn.new') }}
+                </b-button>
+              </b-row>
             </b-form-group>
 
           </b-col>
         </div>
-        <b-row> 
+        <b-row>
           <b-col cols="12">
             <b-form-group
               :label="$t('app.form.label.company_details')"
               label-for="companyDetails"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="6">
-                <b-form-select
-                  id="companyDetails"
-                  :placeholder="$t('app.form.placeholder.automatic')"
-                />
-              </b-col>
-            </b-row>
+              <b-row>
+                <b-col cols="6">
+                  <b-form-select
+                    id="companyDetails"
+                    :placeholder="$t('app.form.placeholder.automatic')"
+                  />
+                </b-col>
+              </b-row>
             </b-form-group>
           </b-col>
         </b-row>
-        <div class="" id="">
+        <div
+          id=""
+          class=""
+        >
           <b-col cols="12">
             <b-form-group
               :label="$t('app.form.label.tax_id')"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="6">
-               <b-form-select
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-            </b-row>
+              <b-row>
+                <b-col cols="6">
+                  <b-form-select
+                    :placeholder="$t('app.form.placeholder.default')"
+                  />
+                </b-col>
+              </b-row>
             </b-form-group>
           </b-col>
           <b-col cols="12">
@@ -337,17 +380,17 @@
               :label="$t('app.form.label.hra_hrb')"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="6">
-               <b-form-input
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-            </b-row>
+              <b-row>
+                <b-col cols="6">
+                  <b-form-input
+                    :placeholder="$t('app.form.placeholder.default')"
+                  />
+                </b-col>
+              </b-row>
             </b-form-group>
           </b-col>
         </div>
-        <b-row> 
+        <b-row>
           <b-col cols="12">
             <b-form-group
               :label="$t('app.form.label.bankdata')"
@@ -361,28 +404,34 @@
                     :placeholder="$t('app.form.placeholder.default')"
                   />
                 </b-col>
-                <b-button   variant="info" class="-pl-3">
+                <b-button
+                  variant="info"
+                  class="-pl-3"
+                >
                   {{ $t('app.btn.new') }}
                 </b-button>
               </b-row>
             </b-form-group>
           </b-col>
         </b-row>
-        <div class="" id="">
+        <div
+          id=""
+          class=""
+        >
           <b-col cols="12">
             <b-form-group
               :label="$t('app.form.label.iban_account')"
               label-for="ibanAccount"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="6">
-                <b-form-input
-                  id="ibanAccount"
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-            </b-row>
+              <b-row>
+                <b-col cols="6">
+                  <b-form-input
+                    id="ibanAccount"
+                    :placeholder="$t('app.form.placeholder.default')"
+                  />
+                </b-col>
+              </b-row>
             </b-form-group>
           </b-col>
           <b-col cols="12">
@@ -391,14 +440,14 @@
               label-for="bic"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="6">
-                <b-form-input
-                  id="bic"
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-            </b-row>
+              <b-row>
+                <b-col cols="6">
+                  <b-form-input
+                    id="bic"
+                    :placeholder="$t('app.form.placeholder.default')"
+                  />
+                </b-col>
+              </b-row>
             </b-form-group>
           </b-col>
           <b-col cols="12">
@@ -406,13 +455,13 @@
               :label="$t('app.form.label.bank_name')"
               label-cols-md="12"
             >
-            <b-row>
-              <b-col cols="6">
-                <b-form-input
-                  :placeholder="$t('app.form.placeholder.default')"
-                />
-              </b-col>
-            </b-row>
+              <b-row>
+                <b-col cols="6">
+                  <b-form-input
+                    :placeholder="$t('app.form.placeholder.default')"
+                  />
+                </b-col>
+              </b-row>
             </b-form-group>
           </b-col>
         </div>
@@ -423,7 +472,6 @@
 
 <script>
 
-const Databases = () => import('@/layouts/components/DataTables.vue')
 import {
   BButton,
   BFormGroup,
@@ -437,6 +485,8 @@ import {
   BPagination,
   BInputGroup,
 } from 'bootstrap-vue'
+
+const Databases = () => import('@/layouts/components/DataTables.vue')
 
 export default {
   components: {
@@ -471,7 +521,7 @@ export default {
           city: 'Yaoundé',
           phone: '+237 132 645 987',
           mail: 'johndoe@gmail.com',
-          contact_partner: "Something",
+          contact_partner: 'Something',
         },
         {
           id: 1,
@@ -481,7 +531,7 @@ export default {
           city: 'Yaoundé',
           phone: '+237 132 645 987',
           mail: 'johndoe@gmail.com',
-          contact_partner: "Something",
+          contact_partner: 'Something',
         },
         {
           id: 1,
@@ -491,9 +541,9 @@ export default {
           city: 'Yaoundé',
           phone: '+237 132 645 987',
           mail: 'johndoe@gmail.com',
-          contact_partner: "Something",
+          contact_partner: 'Something',
         },
-        
+
       ],
       fields: [
         { key: 'id', label: 'Id' },
@@ -527,15 +577,15 @@ export default {
         addressId: null,
         contactDetailId: null,
         bankDataId: null,
-      }
+      },
     }
   },
   computed: {
     sortOptions() {
       // Create an options list from our fields
       return this.fields
-          .filter(f => f.sortable)
-          .map(f => ({ text: f.label, value: f.key }))
+        .filter(f => f.sortable)
+        .map(f => ({ text: f.label, value: f.key }))
     },
   },
   mounted() {

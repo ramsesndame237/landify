@@ -94,6 +94,7 @@
       "logout": "Logout"
     },
     "content": {
+      "create_new_tag": "TAG (Sales line, Organisational level)  Anlegen und Pflegen",
       "show": "Show",
       "entries": "Entries",
       "to": "to",
@@ -554,6 +555,8 @@
       "right_contract": "Contract"
     },
     "page_title": {
+      "tag_edit": "TAG (Sales line, Organisational level) ",
+      "tag": "OVERALL LIST Tags",
       "dashboard": "Dashboard",
       "tasks": "Tasks & Tickets",
       "deadlines": "Deadlines",
