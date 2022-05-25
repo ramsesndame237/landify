@@ -74,8 +74,9 @@
               <b-form-input
                 id="id"
                 v-model="user.name"
+                readonly
                 :disabled="view"
-                :placeholder="$t('app.form.placeholder.default')"
+                :placeholder="$t('app.form.placeholder.automatic')"
               />
             </b-form-group>
           </b-col>
@@ -89,13 +90,13 @@
               :label="$t('app.form.label.partner_type')"
               label-for="full-name"
             >
-              <b-form-input
+              <b-form-select
                 id="full-name"
                 v-model="user.name"
+                :options="options"
                 :disabled="view"
-                :placeholder="$t('app.form.placeholder.default')"
-                type="text"
               />
+
             </b-form-group>
           </b-col>
 
@@ -389,20 +390,13 @@ export default {
         'Action',
       ],
 
-      columnTicketPackage: [
-        { key: 'id', label: 'Group ticket ID' },
-        { key: 'deadline', label: 'Deadline', sortable: true },
-        { key: 'group_ticket_name', label: 'Group ticket name', sortable: true },
-        { key: 'group_ticket_description', label: 'Group ticket description', sortable: true },
-        { key: 'contradiction_packages_including', label: 'Contradiction Packages including', sortable: true },
-        { key: 'sum', label: 'Sum', sortable: true },
-        { key: 'ticket_id_with_ticket_name', label: 'Ticket ID with Ticket name', sortable: true },
-        'Action',
-      ],
       columnUsers: [
-        { key: 'id', label: 'Id' },
-        { key: 'full_name', label: 'Last Name', sortable: true },
+        { key: 'id', label: 'User Id' },
         { key: 'first_name', label: 'First Name', sortable: true },
+        { key: 'last_name', label: 'Last Name', sortable: true },
+        { key: 'user_mail', label: 'E-Mail', sortable: true },
+        { key: 'user_pos', label: 'User Last Login', sortable: true },
+        { key: 'user_team', label: 'User Locked', sortable: true },
         'Action',
       ],
 
@@ -574,63 +568,6 @@ export default {
           address_city: ' Bp 123 Yde',
         },
 
-      ],
-      rowsTicketPackage: [
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          group_ticket_id: '1',
-          deadline: '12 Nov 2022',
-          group_ticket_name: 'somthing',
-          group_ticket_description: 'A little description here',
-          contradiction_packages_including: 'Something',
-          sum: '15',
-          ticket_id_with_ticket_name: '12',
-        },
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          group_ticket_id: '1',
-          deadline: '12 Nov 2022',
-          group_ticket_name: 'somthing',
-          group_ticket_description: 'A little description here',
-          contradiction_packages_including: 'Something',
-          sum: '15',
-          ticket_id_with_ticket_name: '12',
-        },
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          group_ticket_id: '1',
-          deadline: '12 Nov 2022',
-          group_ticket_name: 'somthing',
-          group_ticket_description: 'A little description here',
-          contradiction_packages_including: 'Something',
-          sum: '15',
-          ticket_id_with_ticket_name: '12',
-        },
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          group_ticket_id: '1',
-          deadline: '12 Nov 2022',
-          group_ticket_name: 'somthing',
-          group_ticket_description: 'A little description here',
-          contradiction_packages_including: 'Something',
-          sum: '15',
-          ticket_id_with_ticket_name: '12',
-        },
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          group_ticket_id: '1',
-          deadline: '12 Nov 2022',
-          group_ticket_name: 'somthing',
-          group_ticket_description: 'A little description here',
-          contradiction_packages_including: 'Something',
-          sum: '15',
-          ticket_id_with_ticket_name: '12',
-        },
       ],
     }
   },

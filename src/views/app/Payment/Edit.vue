@@ -61,7 +61,22 @@
     <b-card class="">
       <b-form>
         <b-row>
-          <b-col cols="12">
+          <b-col
+            cols="4"
+            md="4"
+          >
+            <b-form-group
+              :label="$t('app.form.label.payment_id')"
+              label-for="payment_info"
+            >
+              <b-form-input
+                id="id"
+                readonly
+                :placeholder="$t('app.form.placeholder.automatic')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="8">
             <b-form-group
               :label="`${$t('app.form.label.payment_info')}`"
               label-for="group"
@@ -91,6 +106,7 @@
             >
               <b-form-select
                 id="debitor"
+                :options="options"
                 :disabled="view"
                 :placeholder="$t('app.form.placeholder.default')"
               />
@@ -104,11 +120,11 @@
               :label="$t('app.form.label.company_name')"
               label-for="company_name"
             >
-              <b-form-input
+              <b-form-select
                 id="company_name"
                 :disabled="view"
+                :options="options"
                 :placeholder="$t('app.form.placeholder.default')"
-                type="text"
               />
             </b-form-group>
           </b-col>
@@ -179,139 +195,6 @@
       </b-form>
     </b-card>
     <!--modal-->
-    <b-modal
-      id="modal-primary"
-      :ok-title="$t('app.btn.save')"
-      :cancel-title="$t('app.btn.cancel')"
-      modal-class="modal-primary"
-      centered
-      :title="$t('app.content.create_company')"
-      size="lg"
-    >
-      <b-form @submit.prevent>
-        <b-row>
-          <b-col
-            cols="12"
-            md="10"
-          >
-            <b-form-group
-              :label="`${$t('app.form.label.id')}`"
-              label-for="group-id"
-              label-cols-md="3"
-            >
-              <b-form-select
-                id="group-id"
-                :placeholder="$t('app.form.placeholder.automatic')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col
-            cols="12"
-            md="10"
-          >
-            <b-form-group
-              :label="`${$t('app.form.label.company_id')}`"
-              label-for="group-name"
-              label-cols-md="3"
-            >
-              <b-form-select
-                id="group-name"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col
-            cols="12"
-            md="10"
-          >
-            <b-form-group
-              :label="$t('app.form.label.payment_info')"
-              label-for="payment_info"
-              label-cols-md="3"
-            >
-              <b-form-input
-                id="payment_info"
-                :placeholder="$t('app.form.placeholder.default')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col
-            cols="12"
-            md="10"
-          >
-            <b-form-group
-              :label="$t('app.form.label.debitor')"
-              label-for="group-id"
-              label-cols-md="3"
-            >
-              <b-form-select
-                id="group-id"
-                :placeholder="$t('app.form.placeholder.default')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col
-            cols="12"
-            md="10"
-          >
-            <b-form-group
-              :label="$t('app.form.label.object_reference')"
-              label-for="object_reference"
-              label-cols-md="3"
-            >
-              <b-form-input
-                id="object_reference"
-                :placeholder="$t('app.form.placeholder.default')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col
-            cols="12"
-            md="10"
-          >
-            <b-form-group
-              :label="$t('app.form.label.value')"
-              label-for="value"
-              label-cols-md="3"
-            >
-              <b-form-input
-                id="value"
-                :placeholder="$t('app.form.placeholder.default')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col
-            cols="12"
-            md="10"
-          >
-            <b-form-group
-              :label="$t('app.form.label.date')"
-              label-for="date"
-              label-cols-md="3"
-            >
-              <b-form-datepicker
-                id="date"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col
-            cols="12"
-            md="10"
-          >
-            <b-form-group
-              :label="$t('app.form.label.payment_type')"
-              label-for="payment_type"
-              label-cols-md="3"
-            >
-              <b-form-input
-                id="payment_type"
-                :placeholder="$t('app.form.placeholder.default')"
-              />
-            </b-form-group>
-
-          </b-col>
-        </b-row>
-      </b-form>
-    </b-modal>
   </div>
 </template>
 

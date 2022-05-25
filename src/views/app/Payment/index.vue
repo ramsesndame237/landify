@@ -112,7 +112,7 @@
               <b-form-select
                 id="group-id"
                 v-model="newCompany.customerGroupId"
-
+                readonly
                 :placeholder="$t('app.form.placeholder.automatic')"
               />
             </b-form-group>
@@ -129,6 +129,7 @@
               <b-form-select
                 id="group-name"
                 v-model="newCompany.companyId"
+                :options="options"
               />
             </b-form-group>
           </b-col>
@@ -330,12 +331,12 @@ export default {
         { key: 'id', label: 'Id' },
         { key: 'group', label: 'Payment ID', sortable: true },
         { key: 'last_name', label: 'Company ID', sortable: true },
-        { key: 'first_name', label: 'Name Firma/Kunde', sortable: true },
-        { key: 'city', label: 'Zahlungsinformation', sortable: true },
-        { key: 'phone', label: 'Debitor', sortable: true },
-        { key: 'mail', label: 'Value', sortable: true },
-        { key: 'function', label: 'Object Reference', sortable: true },
-        { key: 'mail', label: 'Date', sortable: true },
+        { key: 'first_name', label: 'Company Name', sortable: true },
+        { key: 'city', label: 'Payment Information', sortable: true },
+        { key: 'phone', label: 'Payment Debitor', sortable: true },
+        { key: 'mail', label: 'Payment Value', sortable: true },
+        { key: 'function', label: 'Payment Object Reference', sortable: true },
+        { key: 'mail', label: 'Payment Date', sortable: true },
         { key: 'mail', label: 'Payment Type', sortable: true },
         'Action',
       ],

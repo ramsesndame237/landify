@@ -162,7 +162,7 @@
               <b-row>
                 <b-col cols="5">
                   <b-form-select
-                    id="address"
+                    id="address1"
                   />
                 </b-col>
                 <b-button
@@ -518,6 +518,7 @@ export default {
           company_id: '213',
           company_name: 'Fictive Copany',
           group_name: 'Fictive Group',
+          company_group: 'Fictive Group',
           city: 'Yaoundé',
           phone: '+237 132 645 987',
           mail: 'johndoe@gmail.com',
@@ -528,6 +529,7 @@ export default {
           company_id: '213',
           company_name: 'Fictive Copany',
           group_name: 'Fictive Group',
+          company_group: 'Fictive Group',
           city: 'Yaoundé',
           phone: '+237 132 645 987',
           mail: 'johndoe@gmail.com',
@@ -538,6 +540,7 @@ export default {
           company_id: '213',
           company_name: 'Fictive Copany',
           group_name: 'Fictive Group',
+          company_group: 'Fictive Group',
           city: 'Yaoundé',
           phone: '+237 132 645 987',
           mail: 'johndoe@gmail.com',
@@ -547,13 +550,13 @@ export default {
       ],
       fields: [
         { key: 'id', label: 'Id' },
+        { key: 'company_name', label: 'company_name', sortable: true },
         { key: 'company_id', label: 'Company ID', sortable: true },
-        { key: 'company_name', label: 'Name Company', sortable: true },
-        { key: 'group_name', label: 'Group Name', sortable: true },
-        { key: 'city', label: 'City', sortable: true },
-        { key: 'phone', label: 'Phone', sortable: true },
-        { key: 'mail', label: 'E-mail', sortable: true },
-        { key: 'contact_partner', label: '# Contact partner', sortable: true },
+        { key: 'company_group', label: 'Customer Group name', sortable: true },
+        { key: 'city', label: 'City Name', sortable: true },
+        { key: 'phone', label: 'Contact Details Phone', sortable: true },
+        { key: 'mail', label: 'Contact Details Email', sortable: true },
+        { key: 'contact_partner', label: '# Contact persons', sortable: true },
         'Action',
       ],
       selected: null,

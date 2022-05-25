@@ -109,13 +109,14 @@
               <b-form-input
                 id="group-id"
                 type="text"
+                readonly
                 :placeholder="$t('app.form.placeholder.automatic')"
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-              :label=" $t('app.form.label.name') "
+              :label=" $t('app.form.label.partner_name') "
               label-for="h-name"
               label-cols-md="4"
             >
@@ -123,6 +124,33 @@
                 id="i-name"
                 type="text"
                 :placeholder="$t('app.form.placeholder.default')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label=" $t('app.form.label.partner_type') "
+              label-for="h-name"
+              label-cols-md="4"
+            >
+              <b-form-select
+                id="companyDetails"
+                :options="options"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label=" $t('app.form.label.partner_description') "
+              label-for="h-name"
+              label-cols-md="4"
+            >
+              <b-form-textarea
+                id="textarea"
+                v-model="text"
+                :placeholder="$t('app.form.placeholder.default')"
+                rows="3"
+                max-rows="6"
               />
             </b-form-group>
           </b-col>
@@ -136,6 +164,7 @@
 
 import {
   BButton,
+  BFormTextarea,
   BFormGroup,
   BFormSelect,
   BModal,
@@ -154,6 +183,7 @@ export default {
   components: {
     Databases,
     BButton,
+    BFormTextarea,
     BFormGroup,
     BPagination,
     BCard,
@@ -199,9 +229,13 @@ export default {
       ],
       fields: [
         { key: 'id', label: 'Id' },
-        { key: 'group_id', label: this.$t('app.form.label.id_group'), sortable: true },
+        { key: 'group_id', label: 'Partner Group Id', sortable: true },
+        { key: 'group_name', label: 'Partner Group Name', sortable: true },
+        { key: 'type', label: 'Partner Type Id', sortable: true },
+        { key: 'number', label: '# Number of partner companies', sortable: true },
+        /* { key: 'group_id', label: this.$t('app.form.label.id_group'), sortable: true },
         { key: 'group_name', label: this.$t('app.form.label.name'), sortable: true },
-        { key: 'number', label: this.$t('app.form.label.number_of_companies'), sortable: true },
+        { key: 'number', label: this.$t('app.form.label.number_of_companies'), sortable: true }, */
         'Action',
       ],
       selected: null,

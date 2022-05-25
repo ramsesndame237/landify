@@ -59,7 +59,24 @@
         <b-row>
           <b-col
             cols="12"
-            md="6"
+            md="2"
+          >
+            <b-form-group
+              :label="$t('app.form.label.company_id')"
+              label-for="id"
+            >
+              <b-form-input
+                id="id"
+                v-model="user.name"
+                readonly
+                :disabled="view"
+                :placeholder="$t('app.form.placeholder.default')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col
+            cols="12"
+            md="4"
           >
             <b-form-group
               :label="$t('app.form.label.company_name')"
@@ -79,15 +96,16 @@
             md="6"
           >
             <b-form-group
-              :label="$t('app.form.label.customer_group_name')"
+              :label="$t('app.form.label.customer_group_id')"
               label-for="group-name"
             >
-              <b-form-input
+              <b-form-select
                 id="group-name"
                 v-model="user.name"
                 :disabled="view"
                 :placeholder="$t('app.form.placeholder.default')"
                 type="text"
+                :options="options"
               />
             </b-form-group>
           </b-col>
@@ -218,15 +236,16 @@
             md="6"
           >
             <b-form-group
-              :label="$t('app.form.label.land')"
+              :label="$t('app.form.label.land_id')"
               label-for="land"
             >
-              <b-form-input
-                id="land"
+              <b-form-select
+                id="land_id"
                 v-model="user.name"
                 :disabled="view"
                 :placeholder="$t('app.form.placeholder.default')"
                 type="text"
+                :options="options"
               />
             </b-form-group>
           </b-col>
@@ -236,15 +255,16 @@
             md="6"
           >
             <b-form-group
-              :label="$t('app.form.label.land')"
+              :label="$t('app.form.label.currency.id')"
               label-for="preservation"
             >
-              <b-form-input
-                id="preservation"
+              <b-form-select
+                id="currency_id"
                 v-model="user.name"
                 :disabled="view"
                 :placeholder="$t('app.form.placeholder.default')"
                 type="text"
+                :options="options"
               />
             </b-form-group>
           </b-col>
@@ -279,6 +299,7 @@
                 :disabled="view"
                 :placeholder="$t('app.form.placeholder.default')"
                 type="text"
+                :options="options"
               />
             </b-form-group>
           </b-col>
@@ -397,384 +418,6 @@
       </b-tabs>
     </b-card>
     <!--modal-->
-    <b-modal
-      id="modal-primary"
-      :ok-title="$t('app.btn.save')"
-      :cancel-title="$t('app.btn.cancel')"
-      modal-class="modal-primary"
-      centered
-      :title="$t('app.content.create_company')"
-      size="lg"
-    >
-      <b-form @submit.prevent>
-        <b-row>
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.customer_group_id')"
-              label-for="customer-group-id"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="6">
-                  <b-form-select
-                    id="customer-group-id"
-                  />
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.company_id')"
-              label-for="companyId"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="6">
-                  <b-form-select
-                    id="companyId"
-                    :placeholder="$t('app.form.placeholder.automatic_based_on_id')"
-                  />
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.company_name')"
-              label-for="companyName"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="6">
-                  <b-form-input
-                    id="companyName"
-                    :placeholder="$t('app.form.placeholder.default')"
-                  />
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.address')"
-              label-for="address"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="5">
-                  <b-form-select
-                    id="address"
-                  />
-                </b-col>
-                <b-button
-                  variant="info"
-                  class="-pl-3"
-                >
-                  {{ $t('app.btn.new') }}
-                </b-button>
-              </b-row>
-            </b-form-group>
-          </b-col>
-        </b-row>
-        <div
-          id=""
-          class=""
-        >
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.street')"
-              label-for="companyName"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="6">
-                  <b-form-input
-                    id="companyName"
-                    :placeholder="$t('app.form.placeholder.default')"
-                  />
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.address_suffix')"
-              label-for="address_suffix"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="6">
-                  <b-form-input
-                    id="address_suffix"
-                    :placeholder="$t('app.form.placeholder.default')"
-                  />
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label="`${$t('app.form.label.post_code')}, ${$t('app.form.label.place')} `"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="2">
-                  <b-form-input
-                    id="postcode"
-                    :placeholder="$t('app.form.placeholder.default')"
-                  />
-                </b-col>
-                <b-col cols="4">
-                  <b-form-input
-                    id="addressPlace"
-                    :placeholder="$t('app.form.placeholder.default')"
-                  />
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.land')"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="6">
-                  <b-form-input
-                    id="land"
-                    :placeholder="$t('app.form.placeholder.default')"
-                  />
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </b-col>
-
-        </div>
-        <b-row>
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.contact_details')"
-              label-for="address"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="5">
-                  <b-form-select
-                    id="address"
-                  />
-                </b-col>
-                <b-button
-                  variant="info"
-                  class="-pl-3"
-                >
-                  {{ $t(('app.btn.new')) }}
-                </b-button>
-              </b-row>
-            </b-form-group>
-          </b-col>
-        </b-row>
-        <div
-          id=""
-          class=""
-        >
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.email')"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="6">
-                  <b-form-input
-                    :placeholder="$t('app.form.placeholder.email')"
-                  />
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.phone')"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="6">
-                  <b-form-input
-
-                    :placeholder="$t('app.form.placeholder.default')"
-                  />
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label="`${$t('app.form.label.mobile')} / ${$t('app.form.label.cell_phone_num')}`"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="6">
-                  <b-form-input
-                    :placeholder="$t('app.form.placeholder.default')"
-                  />
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.fax')"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="5">
-                  <b-form-select />
-                </b-col>
-                <b-button
-                  variant="info"
-                  class="-pl-3"
-                >
-                  {{ $t('app.btn.new') }}
-                </b-button>
-              </b-row>
-            </b-form-group>
-
-          </b-col>
-        </div>
-        <b-row>
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.company_details')"
-              label-for="companyDetails"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="6">
-                  <b-form-select
-                    id="companyDetails"
-                    :placeholder="$t('app.form.placeholder.automatic')"
-                  />
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </b-col>
-        </b-row>
-        <div
-          id=""
-          class=""
-        >
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.tax_id')"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="6">
-                  <b-form-select
-                    :placeholder="$t('app.form.placeholder.default')"
-                  />
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.hra_hrb')"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="6">
-                  <b-form-input
-                    :placeholder="$t('app.form.placeholder.default')"
-                  />
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </b-col>
-        </div>
-        <b-row>
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.bankdata')"
-              label-for="bankData"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="5">
-                  <b-form-select
-                    id="bankData"
-                    :placeholder="$t('app.form.placeholder.default')"
-                  />
-                </b-col>
-                <b-button
-                  variant="info"
-                  class="-pl-3"
-                >
-                  {{ $t('app.btn.new') }}
-                </b-button>
-              </b-row>
-            </b-form-group>
-          </b-col>
-        </b-row>
-        <div
-          id=""
-          class=""
-        >
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.iban_account')"
-              label-for="ibanAccount"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="6">
-                  <b-form-input
-                    id="ibanAccount"
-                    :placeholder="$t('app.form.placeholder.default')"
-                  />
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.bic')"
-              label-for="bic"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="6">
-                  <b-form-input
-                    id="bic"
-                    :placeholder="$t('app.form.placeholder.default')"
-                  />
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :label="$t('app.form.label.bank_name')"
-              label-cols-md="12"
-            >
-              <b-row>
-                <b-col cols="6">
-                  <b-form-input
-                    :placeholder="$t('app.form.placeholder.default')"
-                  />
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </b-col>
-        </div>
-      </b-form>
-    </b-modal>
   </div>
 </template>
 
@@ -807,6 +450,7 @@ export default {
   },
   data() {
     return {
+      view: true,
       perPage: 10,
       pageOptions: [3, 5, 10],
       user: [

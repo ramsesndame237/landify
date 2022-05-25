@@ -166,8 +166,9 @@
               <b-row>
                 <b-col cols="6">
                   <b-form-select
-                    id="companyName"
+                    id="partnerType"
                     v-model="newCompany.companyName"
+                    :options="options"
                   />
                 </b-col>
               </b-row>
@@ -184,14 +185,17 @@
               <b-row>
                 <b-col cols="5">
                   <b-form-select
-                    id="address"
-                    v-model="newCompany.companyAddres"
-                    :options="customerGroupOptions"
+                    id="address1"
+                    v-model="address"
+                    :options="addressOptions"
+                    @on-change="showContact=false"
                   />
                 </b-col>
                 <b-button
                   variant="info"
                   class="-pl-3"
+                  :disabled="address || showAddress"
+                  @click="showAddress=true"
                 >
                   {{ $t('app.btn.new') }}
                 </b-button>
@@ -200,7 +204,7 @@
           </b-col>
         </b-row>
         <div
-          id=""
+          v-if="!address && showAddress"
           class=""
         >
           <b-col cols="12">
@@ -212,7 +216,7 @@
               <b-row>
                 <b-col cols="6">
                   <b-form-input
-                    id="companyName"
+                    id="street"
 
                     v-model="newCompany.companyName"
                     :placeholder="$t('app.form.placeholder.default')"
@@ -293,14 +297,17 @@
               <b-row>
                 <b-col cols="5">
                   <b-form-select
-                    id="address"
-                    v-model="newCompany.companyAddres"
-                    :options="customerGroupOptions"
+                    id="contact"
+                    v-model="contact"
+                    :options="contactOptions"
+                    @on-change="showContact=false"
                   />
                 </b-col>
                 <b-button
                   variant="info"
                   class="-pl-3"
+                  :disabled="contact || showContact"
+                  @click="showContact=true"
                 >
                   {{ $t(('app.btn.new')) }}
                 </b-button>
@@ -309,7 +316,7 @@
           </b-col>
         </b-row>
         <div
-          id=""
+          v-if="showContact && !contact"
           class=""
         >
           <b-col cols="12">
@@ -366,7 +373,6 @@
                 :placeholder="$t('app.form.placeholder.automatic')"
               />
             </b-form-group>
-
           </b-col>
         </div>
         <b-row>
@@ -380,13 +386,16 @@
                 <b-col cols="5">
                   <b-form-select
                     id="companyDetails"
-                    v-model="newCompany.companyAddres"
-                    :options="customerGroupOptions"
+                    v-model="company"
+                    :options="companyOptions"
+                    @on-change="showContact=false"
                   />
                 </b-col>
                 <b-button
                   variant="info"
                   class="-pl-3"
+                  :disabled="company || showCompany"
+                  @click="showCompany=true"
                 >
                   {{ $t('app.btn.new') }}
                 </b-button>
@@ -395,7 +404,7 @@
           </b-col>
         </b-row>
         <div
-          id=""
+          v-if="!company && showCompany"
           class=""
         >
           <b-col cols="12">
@@ -509,14 +518,14 @@ export default {
       ],
       fields: [
         { key: 'id', label: 'Id' },
-        { key: 'company_id', label: 'Name Partnerfirma', sortable: true },
-        { key: 'company_name', label: 'Partnerfirma ID', sortable: true },
-        { key: 'group_name', label: 'NamePartnergruppe', sortable: true },
-        { key: 'city', label: 'Stadt', sortable: true },
-        { key: 'phone', label: 'Partner Type', sortable: true },
-        { key: 'mail', label: 'E-mail', sortable: true },
-        { key: 'contact_partner', label: '# Contact partner', sortable: true },
-        { key: 'contact_partner', label: '# Locations', sortable: true },
+        { key: 'partnercompany_name', label: 'Partner Company Name', sortable: true },
+        { key: 'partnercompany_ID', label: 'Partner Company ID', sortable: true },
+        { key: 'group_name', label: 'Partner group name', sortable: true },
+        { key: 'city', label: 'City Name', sortable: true },
+        { key: 'phone', label: 'Partner Type Name', sortable: true },
+        { key: 'mail', label: 'Contract detail E-mail', sortable: true },
+        { key: 'contact_partner', label: '# amount of contact partner', sortable: true },
+        { key: 'contact_partner', label: '# amount of Locations', sortable: true },
         'Action',
       ],
       selected: null,
@@ -541,6 +550,36 @@ export default {
         contactDetailId: null,
         bankDataId: null,
       },
+
+      address: null,
+      contact: null,
+      company: null,
+
+      showAddress: false,
+      showContact: false,
+      showCompany: false,
+
+      addressOptions: [
+        { value: null, text: 'Please select an option' },
+        { value: 'a', text: 'This is First option' },
+        { value: 'b', text: 'Simple Option' },
+        { value: { C: '3PO' }, text: 'This is an option with object value' },
+        { value: 'd', text: 'Please select', disabled: true },
+      ],
+      contactOptions: [
+        { value: null, text: 'Please select an option' },
+        { value: 'a', text: 'This is First option' },
+        { value: 'b', text: 'Simple Option' },
+        { value: { C: '3PO' }, text: 'This is an option with object value' },
+        { value: 'd', text: 'Please select', disabled: true },
+      ],
+      companyOptions: [
+        { value: null, text: 'Please select an option' },
+        { value: 'a', text: 'This is First option' },
+        { value: 'b', text: 'Simple Option' },
+        { value: { C: '3PO' }, text: 'This is an option with object value' },
+        { value: 'd', text: 'Please select', disabled: true },
+      ],
     }
   },
   computed: {
