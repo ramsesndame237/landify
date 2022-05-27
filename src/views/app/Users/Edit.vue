@@ -2,15 +2,15 @@
   <div>
     <b-card body-class="p-0">
       <div
-          class="d-flex align-items-center justify-content-between"
-          style="padding: 10px"
+        class="d-flex align-items-center justify-content-between"
+        style="padding: 10px"
       >
         <!--              v-b-modal.modal-user-->
         <div class="d-flex align-items-center">
           <img
-              class="mr-1"
-              src="@/assets/images/icons/people.svg"
-              alt=""
+            class="mr-1"
+            src="@/assets/images/icons/people.svg"
+            alt=""
           >
           <span>Editer un utilisateur</span>
         </div>
@@ -51,8 +51,8 @@
               @click="changeMode"
             >
               <img
-                  src="@/assets/images/pages/deleteIcons.svg"
-                  alt=""
+                src="@/assets/images/pages/deleteIcons.svg"
+                alt=""
               >
               Cancel
             </b-button>
@@ -66,8 +66,8 @@
         <b-row>
           <!-- Field: user_email -->
           <b-col
-              cols="12"
-              md="6"
+            cols="12"
+            md="6"
           >
             <b-form-group
               label="E-mail*"
@@ -84,8 +84,8 @@
 
           <!-- Field: user_password -->
           <b-col
-              cols="12"
-              md="6"
+            cols="12"
+            md="6"
           >
             <b-form-group
               label="Password*"
@@ -103,9 +103,9 @@
 
           <!-- Field user_locked -->
           <b-col
-              cols="12"
-              md="7"
-              class="d-flex mb-1"
+            cols="12"
+            md="7"
+            class="d-flex mb-1"
           >
             <div class="d-flex">
               <span class="mr-1">User must change his password at next login</span>
@@ -125,13 +125,13 @@
 
           <!-- Field user_gender -->
           <b-col
-              cols="12"
-              md="5"
-              class="d-flex mb-1"
+            cols="12"
+            md="5"
+            class="d-flex mb-1"
           >
             <b-col
-                cols="5"
-                md-2
+              cols="5"
+              md-2
             >
               <span>Gender</span>
             </b-col>
@@ -158,12 +158,12 @@
 
           <!-- Field: user_firstname -->
           <b-col
-              cols="12"
-              md="6"
+            cols="12"
+            md="6"
           >
             <b-form-group
-                label="FIRST NAME*"
-                label-for="first_name"
+              label="FIRST NAME*"
+              label-for="first_name"
             >
               <b-form-input
                 id="first_name"
@@ -176,12 +176,12 @@
 
           <!-- Field: user_lastname -->
           <b-col
-              cols="12"
-              md="6"
+            cols="12"
+            md="6"
           >
             <b-form-group
-                label="Last Name"
-                label-for="last_name"
+              label="Last Name"
+              label-for="last_name"
             >
               <b-form-input
                 id="last_name"
@@ -192,14 +192,13 @@
             </b-form-group>
           </b-col>
 
-
           <b-col
-              cols="12"
-              md="6"
+            cols="12"
+            md="6"
           >
             <b-form-group
-                label="Name abbreviation*"
-                label-for="name"
+              label="Name abbreviation*"
+              label-for="name"
             >
               <b-form-input
                 id="abbreviation"
@@ -211,8 +210,8 @@
           </b-col>
 
           <b-col
-              cols="12"
-              md="6"
+            cols="12"
+            md="6"
           >
             <b-form-group
               label="Function"
@@ -228,8 +227,8 @@
           </b-col>
 
           <b-col
-              cols="12"
-              md="6"
+            cols="12"
+            md="6"
           >
             <b-form-group
               label="Customer Group*"
@@ -245,16 +244,16 @@
                   type="text"
                 />
                 <img
-                    src="@/assets/images/icons/customerGroup.svg"
-                    alt=""
+                  src="@/assets/images/icons/customerGroup.svg"
+                  alt=""
                 >
               </div>
             </b-form-group>
           </b-col>
 
           <b-col
-              cols="12"
-              md="6"
+            cols="12"
+            md="6"
           >
             <b-form-group
               label="Contact person"
@@ -270,12 +269,12 @@
           </b-col>
 
           <b-col
-              cols="12"
-              md="6"
+            cols="12"
+            md="6"
           >
             <b-form-group
-                label="USER TYPE"
-                label-for="name"
+              label="USER TYPE"
+              label-for="name"
             >
               <b-form-input
                 id="user-type"
@@ -287,8 +286,8 @@
           </b-col>
 
           <b-col
-              cols="12"
-              md="6"
+            cols="12"
+            md="6"
           >
             <b-form-group
               label="Title"
@@ -304,19 +303,19 @@
           </b-col>
 
           <b-col
-              cols="12"
-              md="6"
+            cols="12"
+            md="6"
           >
             <b-form-group
-                label="Roles"
-                label-for="name"
+              label="Roles"
+              label-for="name"
             >
               <v-select
-                  v-model="roles"
-                  multiple
-                  label="title"
-                  :options="availableRoles"
-                  placeholder="Select roles"
+                v-model="roles"
+                multiple
+                label="title"
+                :options="availableRoles"
+                placeholder="Select roles"
               />
             </b-form-group>
           </b-col>
@@ -328,65 +327,65 @@
     <b-card>
       <b-tabs pills>
         <b-tab
-            title="Roles"
-            active
+          title="Roles"
+          active
         >
           <databases
-              :actions="true"
-              :items="rowsRoles"
-              :fields="columnRoles"
+            :actions="true"
+            :items="rowsRoles"
+            :fields="columnRoles"
           />
         </b-tab>
         <b-tab title="Customers">
           <databases
-              :items="items"
-              :fields="fields"
+            :items="items"
+            :fields="fields"
           />
         </b-tab>
         <b-tab title="Equipe">
           <databases
-              :items="items"
-              :fields="fields"
+            :items="items"
+            :fields="fields"
           />
         </b-tab>
         <b-tab title="Point de vente">
           <databases
-              :items="items"
-              :fields="fields"
+            :items="items"
+            :fields="fields"
           />
         </b-tab>
         <b-tab title="Partner">
           <databases
-              :items="items"
-              :fields="fields"
+            :items="items"
+            :fields="fields"
           />
         </b-tab>
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
             <b-button
-                v-b-modal.modal-role
-                class="mr-1"
-                size="sm"
-                variant="info"
+              v-b-modal.modal-role
+              class="mr-1"
+              size="sm"
+              variant="info"
             >
               New
             </b-button>
             <b-button
-                class="mr-1"
-                size="sm"
-                variant="primary"
+              class="mr-1"
+              size="sm"
+              variant="primary"
             >
               Delete
             </b-button>
             <div
-                size="sm"
-                class="d-flex align-items-center"
+              size="sm"
+              class="d-flex align-items-center"
             >
               <label class="d-inline-block text-sm-left mr-50">Search</label>
               <b-form-input
-                  id="filterInput"
-                  type="search"
-                  placeholder="rechercher.."
+                id="filterInput"
+                type="search"
+                placeholder="rechercher.."
               />
             </div>
           </div>
@@ -396,60 +395,60 @@
 
     <!--modal-->
     <b-modal
-        id="modal-role"
-        ok-title="Save"
-        cancel-title="Cancel"
-        modal-class="modal-primary"
-        centered
-        title="Create new user"
-        size="lg"
+      id="modal-role"
+      ok-title="Save"
+      cancel-title="Cancel"
+      modal-class="modal-primary"
+      centered
+      title="Create new user"
+      size="lg"
     >
       <b-form @submit.prevent>
         <b-row>
           <b-col cols="12">
             <b-form-group
-                label="Role ID"
-                label-for="role-id"
-                label-cols-md="4"
+              label="Role ID"
+              label-for="role-id"
+              label-cols-md="4"
             >
               <b-form-input
-                  id="company-name"
-                  type="text"
-                  placeholder="Enter here ..."
+                id="company-name"
+                type="text"
+                placeholder="Enter here ..."
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="Name"
-                label-for="name"
-                label-cols-md="4"
+              label="Name"
+              label-for="name"
+              label-cols-md="4"
             >
               <b-form-input
-                  id="h-email"
-                  type="email"
-                  placeholder="Enter here..."
+                id="h-email"
+                type="email"
+                placeholder="Enter here..."
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="Name / First name"
-                label-for="h-name"
-                label-cols-md="4"
+              label="Name / First name"
+              label-for="h-name"
+              label-cols-md="4"
             >
               <div class="d-flex">
                 <b-form-input
-                    id="h-name"
-                    class="mr-1"
-                    type="text"
-                    placeholder="Enter here..."
+                  id="h-name"
+                  class="mr-1"
+                  type="text"
+                  placeholder="Enter here..."
                 />
                 <b-form-input
-                    id="h-firstname"
-                    md="4"
-                    type="text"
-                    placeholder="Enter here..."
+                  id="h-firstname"
+                  md="4"
+                  type="text"
+                  placeholder="Enter here..."
                 />
               </div>
 
@@ -461,60 +460,60 @@
 
     <!--  user modal -->
     <b-modal
-        id="modal-user"
-        ok-title="Save"
-        cancel-title="Cancel"
-        modal-class="modal-primary"
-        centered
-        title="Create new user"
-        size="lg"
+      id="modal-user"
+      ok-title="Save"
+      cancel-title="Cancel"
+      modal-class="modal-primary"
+      centered
+      title="Create new user"
+      size="lg"
     >
       <b-form @submit.prevent>
         <b-row>
           <b-col cols="12">
             <b-form-group
-                label="Name Company*"
-                label-for="company-name"
-                label-cols-md="4"
+              label="Name Company*"
+              label-for="company-name"
+              label-cols-md="4"
             >
               <b-form-input
-                  id="company-name"
-                  type="text"
-                  placeholder="Please select ..."
+                id="company-name"
+                type="text"
+                placeholder="Please select ..."
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="eMail"
-                label-for="h-email"
-                label-cols-md="4"
+              label="eMail"
+              label-for="h-email"
+              label-cols-md="4"
             >
               <b-form-input
-                  id="h-email"
-                  type="email"
-                  placeholder="Enter here..."
+                id="h-email"
+                type="email"
+                placeholder="Enter here..."
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="Name / First name"
-                label-for="h-name"
-                label-cols-md="4"
+              label="Name / First name"
+              label-for="h-name"
+              label-cols-md="4"
             >
               <div class="d-flex">
                 <b-form-input
-                    id="h-name"
-                    class="mr-1"
-                    type="text"
-                    placeholder="Enter here..."
+                  id="h-name"
+                  class="mr-1"
+                  type="text"
+                  placeholder="Enter here..."
                 />
                 <b-form-input
-                    id="h-firstname"
-                    md="4"
-                    type="text"
-                    placeholder="Enter here..."
+                  id="h-firstname"
+                  md="4"
+                  type="text"
+                  placeholder="Enter here..."
                 />
               </div>
 
@@ -522,51 +521,51 @@
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="Mobile"
-                label-for="h-mobile"
-                label-cols-md="4"
+              label="Mobile"
+              label-for="h-mobile"
+              label-cols-md="4"
             >
               <b-form-input
-                  id="h-mobile"
-                  type="number"
-                  placeholder="Enter here..."
+                id="h-mobile"
+                type="number"
+                placeholder="Enter here..."
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="Fax"
-                label-for="h-fax"
-                label-cols-md="4"
+              label="Fax"
+              label-for="h-fax"
+              label-cols-md="4"
             >
               <b-form-input
-                  id="h-fax"
-                  type="text"
-                  placeholder="Enter here..."
+                id="h-fax"
+                type="text"
+                placeholder="Enter here..."
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="Deputy"
-                label-for="h-deputy"
-                label-cols-md="4"
+              label="Deputy"
+              label-for="h-deputy"
+              label-cols-md="4"
             >
               <b-form-select
-                  v-model="selected"
-                  :options="options"
+                v-model="selected"
+                :options="options"
               />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group
-                label="Type"
-                label-for="h-deputy"
-                label-cols-md="4"
+              label="Type"
+              label-for="h-deputy"
+              label-cols-md="4"
             >
               <b-form-select
-                  v-model="selected"
-                  :options="options"
+                v-model="selected"
+                :options="options"
               />
             </b-form-group>
           </b-col>
@@ -589,7 +588,6 @@ const Databases = () => import('@/layouts/components/DataTables.vue')
 
 export default {
   components: {
-    vSelect,
     BCard,
     BTab,
     BTabs,
@@ -607,7 +605,7 @@ export default {
     BInputGroup,
   },
   props: ['id'],
-  data () {
+  data() {
     return {
       view: true,
       perPage: 10,
@@ -615,31 +613,31 @@ export default {
       user: {
         roles: [],
       },
-      availableRoles: [{title: "Administrator"}, {title: "Supervisor"}],
+      availableRoles: [{ title: 'Administrator' }, { title: 'Supervisor' }],
       selected: 'first',
       options: [
-        {text: 'Benutzer muss bei nachster Anmeldung sein Passwort andern', value: 'first', disabled: false},
-        {text: 'Benutzer gesperrt', value: 'second', disabled: false},
+        { text: 'Benutzer muss bei nachster Anmeldung sein Passwort andern', value: 'first', disabled: false },
+        { text: 'Benutzer gesperrt', value: 'second', disabled: false },
       ],
       options2: [
-        {text: 'Mr.', value: 'first2', disabled: false},
-        {text: 'Ms.', value: 'second2', disabled: false},
+        { text: 'Mr.', value: 'first2', disabled: false },
+        { text: 'Ms.', value: 'second2', disabled: false },
       ],
       fields: [
-        {key: 'id', label: 'Id'},
-        {key: 'full_name', label: 'Last Name', sortable: true},
-        {key: 'first_name', label: 'First Name', sortable: true},
-        {key: 'email', label: 'eMail', sortable: true},
-        {key: 'last_login', label: 'Last login', sortable: true},
-        {key: 'user_type', label: 'User type', sortable: true},
-        {key: 'company', label: 'Company', sortable: true},
+        { key: 'id', label: 'Id' },
+        { key: 'full_name', label: 'Last Name', sortable: true },
+        { key: 'first_name', label: 'First Name', sortable: true },
+        { key: 'email', label: 'eMail', sortable: true },
+        { key: 'last_login', label: 'Last login', sortable: true },
+        { key: 'user_type', label: 'User type', sortable: true },
+        { key: 'company', label: 'Company', sortable: true },
         'Action',
       ],
       columnRoles: [
-        {key: 'id', label: 'Id'},
-        {key: 'role_id', label: 'Role-ID', sortable: true},
-        {key: 'role_name', label: 'Role name', sortable: true},
-        {key: 'role_permission', label: 'Role permission', sortable: true},
+        { key: 'id', label: 'Id' },
+        { key: 'role_id', label: 'Role-ID', sortable: true },
+        { key: 'role_name', label: 'Role name', sortable: true },
+        { key: 'role_permission', label: 'Role permission', sortable: true },
         'Action',
       ],
       rowsRoles: [
@@ -681,9 +679,9 @@ export default {
   },
   mounted() {
     axios.get(`https://627536d05dc4f5764ba0abcb.mockapi.io/api/users/${this.id}`)
-        .then(response => {
-          this.user = response.data
-        })
+      .then(response => {
+        this.user = response.data
+      })
   },
   methods: {
     changeMode() {

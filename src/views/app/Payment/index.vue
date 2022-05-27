@@ -49,16 +49,6 @@
               {{ $t('app.btn.new') }} </b-button>
             <b-button
               size="sm"
-              variant="secondary"
-              class="mr-1 d-flex"
-            >
-              <img
-                src="@/assets/images/pages/editIcons.svg"
-                alt=""
-              >
-              {{ $t('app.btn.edit') }}</b-button>
-            <b-button
-              size="sm"
               class="d-flex"
               variant="primary"
             >
@@ -87,15 +77,14 @@
     </b-card>
     <b-card>
       <Databases
-        :filter="filter"
         ref="datatable"
-        modal="modal-primary"
-        link="payment-edit"
+        :filter="filter"
+        link_view="payment-edit"
         :current-page="currentPage"
         :page-options="pageOptions"
         :per-page="perPage"
         :items="items"
-:fields="fields"
+        :fields="fields"
       />
     </b-card>
 
@@ -123,7 +112,7 @@
               <b-form-select
                 id="group-id"
                 v-model="newCompany.customerGroupId"
-
+                readonly
                 :placeholder="$t('app.form.placeholder.automatic')"
               />
             </b-form-group>
@@ -140,6 +129,7 @@
               <b-form-select
                 id="group-name"
                 v-model="newCompany.companyId"
+                :options="options"
               />
             </b-form-group>
           </b-col>
@@ -341,12 +331,12 @@ export default {
         { key: 'id', label: 'Id' },
         { key: 'group', label: 'Payment ID', sortable: true },
         { key: 'last_name', label: 'Company ID', sortable: true },
-        { key: 'first_name', label: 'Name Firma/Kunde', sortable: true },
-        { key: 'city', label: 'Zahlungsinformation', sortable: true },
-        { key: 'phone', label: 'Debitor', sortable: true },
-        { key: 'mail', label: 'Value', sortable: true },
-        { key: 'function', label: 'Object Reference', sortable: true },
-        { key: 'mail', label: 'Date', sortable: true },
+        { key: 'first_name', label: 'Company Name', sortable: true },
+        { key: 'city', label: 'Payment Information', sortable: true },
+        { key: 'phone', label: 'Payment Debitor', sortable: true },
+        { key: 'mail', label: 'Payment Value', sortable: true },
+        { key: 'function', label: 'Payment Object Reference', sortable: true },
+        { key: 'mail', label: 'Payment Date', sortable: true },
         { key: 'mail', label: 'Payment Type', sortable: true },
         'Action',
       ],

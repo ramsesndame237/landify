@@ -1,5 +1,6 @@
 <template>
   <b-table
+    ref="selectableTable"
     striped
     hover
     responsive
@@ -11,8 +12,11 @@
     :sort-desc.sync="sortDesc"
     :sort-direction="sortDirection"
     :filter="filter"
+    select-mode="multi"
+    selectable
     :filter-included-fields="filterOn"
     @filtered="onFiltered"
+    @row-selected="onRowSelected"
   >
     <template #cell(Action)="data">
       <b-badge
@@ -68,7 +72,7 @@
         :to="{name: link, params: {id: data.item.id}}"
       >
         <b-badge
-          class="mr-1"
+          class=" mr-1 mb-1"
           variant="secondary"
         >
           <img
@@ -83,7 +87,7 @@
         :to="{name: link_view, params: {id: data.item.id}}"
       >
         <b-badge
-          class="mr-1"
+          class=" mr-1 mb-1"
           variant="info"
         >
           <img
@@ -108,8 +112,14 @@
       </b-badge>
     </template>
 
-    <template #cell(id)>
-      <b-form-checkbox />
+    <template #cell(id)="{ rowSelected }">
+      <b-form-checkbox v-model="rowSelected" />
+    </template>
+    <template #head(id)>
+      <b-form-checkbox
+        v-model="select"
+        @change="selectAll"
+      />
     </template>
   </b-table>
 </template>
@@ -134,6 +144,7 @@ export default {
   props: ['items', 'fields', 'perPage', 'pageOptions', 'currentPage', 'link', 'filter', 'modal', 'viewModal', 'editModal', 'link_view'],
   data() {
     return {
+      select: false,
       sortBy: '',
       sortDesc: false,
       sortDirection: 'asc',
@@ -143,6 +154,7 @@ export default {
         title: '',
         content: '',
       },
+      selected: [],
     }
   },
   computed: {
@@ -158,6 +170,17 @@ export default {
     this.totalRows = this.items.length
   },
   methods: {
+    onRowSelected(items) {
+      this.selected = items
+      console.log(items)
+    },
+    selectAll() {
+      if (this.select) {
+        this.$refs.selectableTable.selectAllRows()
+      } else {
+        this.$refs.selectableTable.clearSelected()
+      }
+    },
     deleteButton(id) {
       this.$emit('deleteButton', id)
     },

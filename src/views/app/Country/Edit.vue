@@ -1,19 +1,59 @@
 <template>
   <div>
     <b-card body-class="p-0">
-      <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
+      <div
+        class="d-flex align-items-center justify-content-between"
+        style="padding: 10px"
+      >
         <div class="d-flex">
-          <img src="@/assets/images/icons/team.svg" alt="" class="mr-1">
+          <img
+            src="@/assets/images/icons/team.svg"
+            alt=""
+            class="mr-1"
+          >
           <span>{{ $t('app.content.create_new_country') }}</span>
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
-            <b-button v-b-modal.modal-primary size="sm" variant="info" class="mr-1 d-flex">
-              <img src="@/assets/images/pages/plusIcons.svg" alt="">
-              {{ $t('app.content.create_new_country') }}</b-button>
-            <b-button size="sm" class="d-flex" variant="primary">
-              <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-              {{ $t('app.btn.cancel') }}</b-button>
+            <b-button
+              v-if="view"
+              size="sm"
+              variant="info"
+              class="mr-1 d-flex"
+              @click.prevent="view = !view"
+            >
+              <img
+                src="@/assets/images/pages/editIcons.svg"
+                alt=""
+              >
+              Edit
+            </b-button>
+            <b-button
+              v-else
+              size="sm"
+              variant="info"
+              class="mr-1 d-flex"
+              @click.prevent="view = !view"
+            >
+              <img
+                src="@/assets/images/pages/editIcons.svg"
+                alt=""
+              >
+
+              Save
+            </b-button>
+            <b-button
+              v-if="!view"
+              size="sm"
+              class="d-flex"
+              variant="primary"
+              @click="view = !view"
+            >
+              <img
+                src="@/assets/images/pages/deleteIcons.svg"
+                alt=""
+              >
+              Cancel</b-button>
           </div>
         </div>
       </div>
@@ -21,19 +61,52 @@
     <b-card class="">
       <b-form>
         <b-row>
-          <b-col cols="12" md="6">
-            <b-form-group :label="$t('app.form.label.name')" label-for="name">
-              <b-form-select id="name" :placeholder="$t('app.form.placeholder.default')"   />
+          <b-col
+            cols="12"
+            md="6"
+          >
+            <b-form-group
+              :label="$t('app.form.label.name')"
+              label-for="name"
+            >
+              <b-form-select
+                id="name"
+                :disabled="view"
+                :placeholder="$t('app.form.placeholder.default')"
+              />
             </b-form-group>
           </b-col>
-          <b-col cols="12" md="6">
-            <b-form-group :label="$t('app.form.label.iso3166')" label-for="iso3166">
-              <b-form-input id="iso3166" :placeholder="$t('app.form.placeholder.default')"   type="text"/>
+          <b-col
+            cols="12"
+            md="6"
+          >
+            <b-form-group
+              :label="$t('app.form.label.iso3166')"
+              label-for="iso3166"
+            >
+              <b-form-input
+                id="iso3166"
+                :disabled="view"
+                :placeholder="$t('app.form.placeholder.default')"
+                type="text"
+              />
             </b-form-group>
           </b-col>
-          <b-col cols="12" md="6" >
-            <b-form-group :label="$t('app.form.label.country_deposit')"  class="" label-for="country_deposit">
-              <b-form-input id="country_deposit" :placeholder="$t('app.form.placeholder.default')" type="text"/>
+          <b-col
+            cols="12"
+            md="6"
+          >
+            <b-form-group
+              :label="$t('app.form.label.country_deposit')"
+              class=""
+              label-for="country_deposit"
+            >
+              <b-form-input
+                id="country_deposit"
+                :disabled="view"
+                :placeholder="$t('app.form.placeholder.default')"
+                type="text"
+              />
             </b-form-group>
           </b-col>
         </b-row>
@@ -43,13 +116,14 @@
 </template>
 
 <script>
-const Databases = () => import('@/layouts/components/DataTables.vue')
 import {
   BCard,
-  BTab, BFormCheckbox, BFormRadio,BInputGroup,
+  BTab, BFormCheckbox, BFormRadio, BInputGroup,
   BFormDatepicker,
-  BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton, BFormSelect, BModal, BFormRadioGroup,BFormTags,
+  BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton, BFormSelect, BModal, BFormRadioGroup, BFormTags,
 } from 'bootstrap-vue'
+
+const Databases = () => import('@/layouts/components/DataTables.vue')
 
 export default {
   components: {
@@ -74,6 +148,7 @@ export default {
   },
   data() {
     return {
+      view: true,
       perPage: 10,
       pageOptions: [3, 5, 10],
       user: [
