@@ -8,6 +8,9 @@ const prodPath = process.env.CI_PROJECT_NAME ?? 'kim_pro_frontend'
 module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? `/${prodPath}/` : '/',
   lintOnSave: false,
+  devServer: {
+    proxy: 'https://contabo.lx42.de/',
+  },
   css: {
     loaderOptions: {
       sass: {

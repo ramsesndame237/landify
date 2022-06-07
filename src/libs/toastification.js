@@ -22,7 +22,7 @@ Vue.prototype.$errorToast = function (title) {
     component: ToastificationContent,
     props: {
       title: title || 'Une erreur est survenue',
-      icon: 'ErrorIcon',
+      icon: 'XOctagonIcon',
       variant: 'error',
     },
   })

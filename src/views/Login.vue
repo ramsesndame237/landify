@@ -5,7 +5,7 @@
       <!-- Login v1 -->
       <b-card class="mb-0 card-transparent shadow-none">
         <b-link class="brand-logo">
-          <vuexy-logo />
+          <vuexy-logo/>
         </b-link>
 
         <b-card-title class="mb-1 font-weight-bolder">
@@ -205,15 +205,15 @@ export default {
     validationForm() {
       this.$refs.loginForm.validate().then(success => {
         if (success) {
-          this.$http.post('/token', {
-            username: this.userEmail,
-            password: this.password,
-          }).then(() => {
+          const data = new FormData()
+          data.append('username', this.userEmail)
+          data.append('password', this.password)
+          this.$http.post('/token', data).then(() => {
             this.$toast({
               component: ToastificationContent,
               props: {
                 title: 'Form Submitted',
-                icon: 'XOctagonIcon',
+                icon: 'successIcon',
                 variant: 'success',
               },
             })
