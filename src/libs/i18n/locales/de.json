@@ -570,5 +570,8 @@
       "recurring_payment": "Gesamtliste Vertragsbasierte wiederkehrende Zahlungen",
       "recurring_payment_view": "vertragsbasierte wiederkehrende Zahlung"
     }
+  },
+  "general": {
+    "error": "Ein Fehler ist aufgetreten"
   }
 }

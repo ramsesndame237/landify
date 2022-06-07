@@ -21,9 +21,9 @@ Vue.prototype.$errorToast = function (title) {
   this.$toast({
     component: ToastificationContent,
     props: {
-      title: title || 'Une erreur est survenue',
+      title: title || this.$t('general.error'),
       icon: 'XOctagonIcon',
-      variant: 'error',
+      variant: 'danger',
     },
   })
 }

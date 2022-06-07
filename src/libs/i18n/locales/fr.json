@@ -569,5 +569,8 @@
       "recurring_payment": "liste globale Paiements récurrents basés sur un contrat",
       "recurring_payment_view": "Paiement récurrent basé sur un contrat"
     }
+  },
+  "general": {
+    "error": "Une erreur est survenue"
   }
 }

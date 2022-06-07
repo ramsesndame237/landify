@@ -636,5 +636,8 @@
       "recurring_payment": "OVERALL LIST Contract based recurring payments",
       "recurring_payment_view": "contract based Recurring Payment"
     }
+  },
+  "general": {
+    "error": "An error has occurred"
   }
 }
