@@ -1,0 +1,14 @@
+.brand-logo svg{
+  width: auto;
+  height: auto;
+}
+.auth-wrapper.auth-v1 .auth-inner{
+  &:before, &:after{
+    position: fixed;
+    background-image: url("../assets/images/pages/login/circle.svg");
+    background-size: contain;
+  }
+  &:before{
+
+  }
+}

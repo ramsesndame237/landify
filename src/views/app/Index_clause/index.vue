@@ -1,0 +1,323 @@
+<template>
+  <div>
+    <b-card body-class="p-0">
+      <div
+        class="d-flex justify-content-between"
+        style="padding: 10px"
+      >
+        <b-form-group class="mb-0">
+          <label class="d-inline-block text-sm-left mr-50">{{ $t('app.content.show') }}</label>
+          <b-form-select
+            id="perPageSelect"
+            v-model="perPage"
+            style="width: 60px"
+            size="sm"
+            :options="pageOptions"
+            class="w-10"
+          />
+          <label class="d-inline-block text-sm-left ml-50">{{ $t('app.content.entries') }}</label>
+        </b-form-group>
+
+        <div class="d-flex align-items-center">
+
+          <span class="mr-1">{{ $t('app.content.show') }} 1 {{ $t('app.content.to') }} {{ perPage }} {{ $t('app.content.of') }} {{ totalRows }} {{ $t('app.content.entries') }}</span>
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            align="center"
+            class="my-0"
+            first-number
+            last-number
+            prev-class="prev-item"
+            next-class="next-item"
+          />
+        </div>
+
+        <div class="d-flex align-items-center">
+          <div class="mr-1 d-flex">
+
+            <b-button
+              v-b-modal.modal-primary
+              size="sm"
+              variant="info"
+              class="mr-1 d-flex"
+            >
+              <img
+                src="@/assets/images/pages/plusIcons.svg"
+                alt=""
+              >
+              {{ $t('app.btn.new') }}
+            </b-button>
+            <b-button
+              size="sm"
+              class="d-flex"
+              variant="primary"
+            >
+              <img
+                src="@/assets/images/pages/deleteIcons.svg"
+                alt=""
+              >
+              {{ $t('app.btn.delete') }}</b-button>
+          </div>
+
+          <div
+            size="sm"
+            class="d-flex align-items-center"
+          >
+            <label class="d-inline-block text-sm-left mr-50"> {{ $t('app.search.label') }}</label>
+            <b-form-input
+              id="filterInput"
+              v-model="filter"
+              type="search"
+              :placeholder="$t('app.search.palceholder')"
+            />
+          </div>
+        </div>
+
+      </div>
+    </b-card>
+    <b-card>
+      <Databases
+        ref="datatable"
+        :filter="filter"
+        link="index-clause-view"
+        link_view="index-clause-view"
+        :current-page="currentPage"
+        :page-options="pageOptions"
+        :per-page="perPage"
+        :items="items"
+        :fields="fields"
+      />
+    </b-card>
+
+    <!--modal-->
+    <b-modal
+      id="modal-primary"
+      :ok-title="$t('app.btn.save')"
+      :cancel-title="$t('app.btn.cancel')"
+      modal-class="modal-primary"
+      centered
+      :title="$t('app.content.create_new_index_clause')"
+      size="lg"
+    >
+      <b-form @submit.prevent>
+        <b-row>
+          <b-col cols="12">
+            <b-form-group
+              :label=" $t('app.form.label.index.id') "
+              label-for="id"
+              label-cols-md="4"
+            >
+              <b-form-input
+                id="id"
+                type="text"
+                readonly
+                :placeholder="$t('app.form.placeholder.index.id')"
+              />
+
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label=" $t('app.form.label.index.rule') "
+              label-for="name"
+              label-cols-md="4"
+            >
+              <b-form-input
+                id="name"
+                type="text"
+                :placeholder="$t('app.form.placeholder.index.rule')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label=" $t('app.form.label.index.description') "
+              label-for="desc"
+              label-cols-md="4"
+            >
+              <b-form-input
+                id="desc"
+                type="text"
+                :placeholder="$t('app.form.placeholder.index.description')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label=" $t('app.form.label.index.year') "
+              label-for="contract"
+              label-cols-md="4"
+            >
+              <b-form-select
+                id="contract"
+                size="sm"
+                :options="yearOptions"
+                class="w-10 mr-3"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label=" $t('app.form.label.index.date') "
+              label-for="date"
+              label-cols-md="4"
+            >
+              <b-form-datepicker
+                id="date"
+                size="sm"
+                class="w-10 mr-3"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label=" $t('app.form.label.index.change_per') "
+              label-for="change_per"
+              label-cols-md="4"
+            >
+              <b-form-input
+                id="changer_per"
+                type="text"
+                class="w-10 mr-3"
+                :placeholder="$t('app.form.placeholder.index.change_per')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label=" $t('app.form.label.index.minimum') "
+              label-for="minimum"
+              label-cols-md="4"
+            >
+              <b-form-input
+                id="minimum"
+                type="text"
+                class="w-10 mr-3"
+                :placeholder="$t('app.form.placeholder.index.minimum')"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :label=" $t('app.form.label.index.points') "
+              label-for="points"
+              label-cols-md="4"
+            >
+              <b-form-input
+                id="points"
+                type="text"
+                class="w-10 mr-3"
+                :placeholder="$t('app.form.placeholder.index.points')"
+              />
+            </b-form-group>
+          </b-col>
+        </b-row>
+      </b-form>
+    </b-modal>
+  </div>
+</template>
+
+<script>
+
+import {
+  BButton,
+  BFormGroup,
+  BFormSelect,
+  BFormCheckbox,
+  BModal,
+  BForm,
+  BRow,
+  BCol,
+  BFormInput,
+  BCard,
+  BPagination,
+  BInputGroup, BFormDatepicker,
+} from 'bootstrap-vue'
+
+const Databases = () => import('@/layouts/components/DataTables.vue')
+
+export default {
+  components: {
+    Databases,
+    BButton,
+    BFormGroup,
+    BPagination,
+    BCard,
+    BFormSelect,
+    BFormCheckbox,
+    BModal,
+    BForm,
+    BRow,
+    BCol,
+    BFormInput,
+    BInputGroup,
+    BFormDatepicker,
+  },
+  data() {
+    return {
+      currentPage: 1,
+      totalRows: 1,
+      perPage: 10,
+      pageOptions: [3, 5, 10],
+      sortDirection: 'asc',
+      sortBy: '',
+      sortDesc: false,
+      items: ['', '', ''],
+      fields: [
+        { key: 'id', label: 'Index Clause ID' },
+        { key: 'group_id', label: 'Index rule', sortable: false },
+        { key: 'group_name', label: 'Index begin date', sortable: true },
+        { key: 'group_fname', label: 'Index base year', sortable: true },
+        { key: 'grouphf_name', label: '# of Recurring payments', sortable: true },
+        'Action',
+      ],
+      selected: null,
+      filter: null,
+      typeOptions: [
+        { value: null, text: 'Please select the Contract Service' },
+        { value: 'type1', text: 'Type 1' },
+        { value: 'type2', text: 'Type 2' },
+        { value: 'type3', text: 'Type 3' },
+      ],
+      yearOptions: [
+        { value: null, text: 'Please select the Contract Service' },
+        { value: 'type1', text: 'Year 1' },
+        { value: 'type2', text: 'Year 2' },
+        { value: 'type3', text: 'Year 3' },
+      ],
+    }
+  },
+  computed: {
+    sortOptions() {
+      // Create an options list from our fields
+      return this.fields
+        .filter(f => f.sortable)
+        .map(f => ({ text: f.label, value: f.key }))
+    },
+  },
+  mounted() {
+    this.totalRows = this.items.length
+  },
+  methods: {
+    info(item, index, button) {
+      this.infoModal.title = `Row index: ${index}`
+      this.infoModal.content = JSON.stringify(item, null, 2)
+      this.$root.$emit('bv::show::modal', this.infoModal.id, button)
+    },
+    resetInfoModal() {
+      this.infoModal.title = ''
+      this.infoModal.content = ''
+    },
+    onFiltered(filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
+    },
+  },
+}
+</script>
+
+<style scoped>
+</style>
