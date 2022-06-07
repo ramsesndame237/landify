@@ -1,6 +1,6 @@
 <template>
   <b-table
-    ref="selectableTable"
+    ref="table"
     striped
     hover
     responsive
@@ -12,173 +12,119 @@
     :sort-by.sync="sortBy"
     :sort-desc.sync="sortDesc"
     :sort-direction="sortDirection"
-    :filter="filter"
+    :filter="search"
     select-mode="multi"
-    selectable
-    :filter-included-fields="filterOn"
     @filtered="onFiltered"
-    @row-selected="onRowSelected"
   >
-    <template #cell(Action)="data">
-      <b-badge
-        v-if="modal"
-        variant="info"
-        class=" mr-1 mb-1"
-        @click="$bvModal.show(modal)"
-      >
-        <img
-          src="@/assets/images/pages/plusIcons.svg"
-          alt=""
-        >
-        <span> &nbsp;
-          {{ $t('app.btn.new') }}
-        </span>
-      </b-badge>
-      <b-link
-        v-if="link!==undefined"
-        :to="{name: link, params: {id: data.item.id}}"
-      >
-        <b-badge
-          v-if="viewModal"
-          variant="success"
-          class=" mr-1 mb-1"
-          @click="$bvModal.show(viewModal); $emit('openViewModal')"
-        >
-          <img
-            src="@/assets/images/pages/plusIcons.svg"
-            alt=""
-          >
-          <span> &nbsp;
-            {{ $t('app.btn.view') }}
-          </span>
-        </b-badge>
-      </b-link>
+    <template #cell(__selected)="data">
+      <b-form-checkbox
+        v-if="currentItems[data.index]"
+        v-model="currentItems[data.index].__selected"
+      />
+    </template>
+    <template #head(__selected)>
+      <b-form-checkbox
+        v-model="selected"
+      />
+    </template>
 
-      <b-badge
-        v-if="editModal"
-        variant="warning"
-        class=" mr-1 mb-1"
-        @click="$bvModal.show(editModal); $emit('openEditModal')"
+    <template #cell(Actions)="data">
+      <b-button
+        v-if="onViewElement!=null"
+        size="sm"
+        class=" mr-1"
+        style="margin-bottom: 3px"
+        variant="info"
+        @click="onViewElement(currentItems[data.index])"
       >
         <img
           src="@/assets/images/pages/plusIcons.svg"
           alt=""
+          style="margin-right: 5px"
         >
-        <span> &nbsp;
-          {{ $t('app.btn.edit') }}
-        </span>
-      </b-badge>
-      <b-link
-        v-if="link"
-        :to="{name: link, params: {id: data.item.id}}"
+        <span>{{ $t('app.btn.view') }}</span>
+      </b-button>
+      <b-button
+        v-if="onEditElement!=null"
+        size="sm"
+        variant="success"
+        class="mr-1"
+        style="margin-bottom: 3px"
+        @click="onEditElement(currentItems[data.index])"
       >
-        <b-badge
-          class=" mr-1 mb-1"
-          variant="secondary"
+        <img
+          src="@/assets/images/pages/plusIcons.svg"
         >
-          <img
-            src="@/assets/images/pages/editIcons.svg"
-            alt=""
-          >
-          <span>{{ $t('app.btn.edit') }}</span>
-        </b-badge>
-      </b-link>
-      <b-link
-        v-if="link_view!==undefined"
-        :to="{name: link_view, params: {id: data.item.id}}"
-      >
-        <b-badge
-          class=" mr-1 mb-1"
-          variant="info"
-        >
-          <img
-            src="@/assets/images/pages/plusIcons.svg"
-            alt=""
-            style="margin-right: 5px"
-          >
-          <span>{{ $t('app.btn.view') }}</span>
-        </b-badge>
-      </b-link>
-      <b-badge
+        <span>{{ $t('app.btn.edit') }}</span>
+      </b-button>
+      <b-button
+        size="sm"
         variant="primary"
-        @click="deleteButton(data.item.id)"
+        @click="deleteElement(data.index)"
       >
         <img
           src="@/assets/images/pages/deleteIcons.svg"
           alt=""
         >
-        <span>
-          {{ $t('app.btn.delete') }}
-        </span>
-      </b-badge>
-    </template>
-
-    <template #cell(id)="{ rowSelected }">
-      <b-form-checkbox v-model="rowSelected"/>
-    </template>
-    <template #head(id)>
-      <b-form-checkbox
-        v-model="select"
-        @change="selectAll"
-      />
+        <span>{{ $t('app.btn.delete') }}</span>
+      </b-button>
     </template>
   </b-table>
 </template>
 
 <script>
 import {
-  BCard, BLink, BTable, BBadge, BRow, BCol, BFormCheckbox,
-  BButton,
+  BTable, BButton, BFormCheckbox,
 } from 'bootstrap-vue'
+import { mapState } from 'vuex'
 
 export default {
   components: {
     BTable,
     BButton,
-    BBadge,
-    BRow,
-    BCol,
-    BCard,
-    BLink,
     BFormCheckbox,
   },
-  props: ['entity', 'items', 'fields', 'pageOptions', 'link', 'filter', 'modal', 'viewModal', 'editModal', 'link_view'],
+  props: ['entity', 'fields', 'defaultSortField', 'onViewElement', 'onEditElement'],
   data() {
     return {
       loading: false,
-      perPage: 15,
-      currentPage: 1,
-      totalPages: 0,
-      search: '',
-      select: false,
-      sortBy: '',
+      sortBy: this.defaultSortField ?? this.fields[0].key,
       sortDesc: false,
       sortDirection: 'asc',
-      filterOn: [],
-      infoModal: {
-        id: 'info-modal',
-        title: '',
-        content: '',
-      },
-      selected: [],
+      selected: false,
+      currentItems: [],
     }
   },
   computed: {
-    sortOptions() {
-      // Create an options list from our fields
-      return this.fields
-        .filter(f => f.sortable)
-        .map(f => ({ text: f.label, value: f.key }))
+    ...mapState('table', ['search', 'perPage', 'currentPage']),
+    totalRows: {
+      get() {
+        return this.$store.state.table.totalRows
+      },
+      set(val) {
+        this.$store.state.table.totalRows = val
+      },
     },
   },
-  mounted() {
-    // Set the initial number of items
-    this.totalRows = this.items.length
+  watch: {
+    currentItems: {
+      deep: true,
+      handler() {
+        if (this.currentItems.filter(item => !item.__selected).length === 0) this.selected = true
+        else if (this.currentItems.filter(item => item.__selected).length === 0) this.selected = false
+      },
+    },
+    selected() {
+      this.selectAll()
+    },
   },
   methods: {
     provider(ctx) {
-      const { currentPage, perPage, filter, sortBy, sortDesc } = ctx
-      return this.$http.post('/crud', {
+      console.log('ctx', ctx)
+      const {
+        currentPage, perPage, filter, sortBy, sortDesc,
+      } = ctx
+      return this.$http.post('/crud/', {
         action: 'read-rich',
         entity: this.entity,
         order_by: sortBy,
@@ -191,25 +137,41 @@ export default {
         lang: this.$i18n.locale,
       })
         .then(({ data }) => {
-          this.totalPages = data.links.last_page
-          return data.data
+          console.log(data)
+          this.totalRows = data.data.links.pagination.total
+          data.data.data.forEach(el => {
+            el.__selected = false
+          })
+          this.currentItems = data.data.data
+          return this.currentItems
         })
         .catch(e => {
+          console.log(e)
           const title = e.response?.data.detail
           this.$errorToast(title)
           return null
         })
     },
-    onRowSelected(items) {
-      this.selected = items
-      console.log(items)
+    deleteSelected() {
+      const selected = this.currentItems.filter(item => item.__selected)
+      if (!selected.length) {
+        return this.$errorToast('No element selected')
+      }
+      // show confirm box
+
+      return this.$http.post('/crud/', {
+        action: 'read-rich',
+        entity: this.entity,
+      })
+    },
+    deleteElement(index) {
+
     },
     selectAll() {
-      if (this.select) {
-        this.$refs.selectableTable.selectAllRows()
-      } else {
-        this.$refs.selectableTable.clearSelected()
-      }
+      const newVal = this.selected
+      this.currentItems.forEach((item, index) => {
+        this.$set(item, '__selected', newVal)
+      })
     },
     deleteButton(id) {
       this.$emit('deleteButton', id)
