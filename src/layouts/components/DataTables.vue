@@ -187,7 +187,7 @@ export default {
         from_: '0',
         current_page: currentPage,
         filter: {},
-        filter_all: filter,
+        filter_all: filter ?? '',
         lang: this.$i18n.locale,
       })
         .then(({ data }) => {
