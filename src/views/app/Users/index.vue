@@ -104,7 +104,6 @@ export default {
         { key: 'user_email', label: 'Email', sortable: true },
         { key: 'user_last_login_time', label: 'Last login', sortable: true },
         { key: 'user_type', label: 'User type', sortable: true },
-        { key: 'user_company', label: 'Company', sortable: true },
         'Actions',
       ],
       options: [

@@ -1,72 +1,27 @@
 <template>
-  <b-table
-    ref="table"
-    striped
-    hover
-    responsive
-    :busy.sync="loading"
-    :per-page="perPage"
-    :current-page="currentPage"
-    :items="provider"
-    :fields="fields"
-    :sort-by.sync="sortBy"
-    :sort-desc.sync="sortDesc"
-    :sort-direction="sortDirection"
-    :filter="search"
-    select-mode="multi"
-    @filtered="onFiltered"
-  >
+  <b-table ref="table" striped hover responsive :busy.sync="loading" :per-page="perPage" :current-page="currentPage"
+           :items="provider" :fields="fields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
+           :sort-direction="sortDirection" :filter="search" select-mode="multi" @filtered="onFiltered">
     <template #cell(__selected)="data">
-      <b-form-checkbox
-        v-if="currentItems[data.index]"
-        v-model="currentItems[data.index].__selected"
-      />
+      <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"/>
     </template>
     <template #head(__selected)>
-      <b-form-checkbox
-        v-model="selected"
-      />
+      <b-form-checkbox v-model="selected"/>
     </template>
 
     <template #cell(Actions)="data">
-      <b-button
-        v-if="onViewElement!=null"
-        size="xs"
-        class="mr-1"
-        style="margin-bottom: 3px"
-        variant="info"
-        @click="onViewElement(currentItems[data.index])"
-      >
-        <img
-          src="@/assets/images/pages/plusIcons.svg"
-          alt=""
-          style="margin-right: 5px"
-        >
+      <b-button v-if="onViewElement!=null" size="xs" class="mr-1" style="margin-bottom: 3px" variant="info"
+                @click="onViewElement(currentItems[data.index])">
+        <img src="@/assets/images/pages/plusIcons.svg" alt="" style="margin-right: 5px">
         <span>{{ $t('app.btn.view') }}</span>
       </b-button>
-      <b-button
-        v-if="onEditElement!=null"
-        size="xs"
-        variant="success"
-        class="mr-1"
-        style="margin-bottom: 3px"
-        @click="onEditElement(currentItems[data.index])"
-      >
-        <img
-          src="@/assets/images/pages/plusIcons.svg"
-        >
+      <b-button v-if="onEditElement!=null" size="xs" variant="success" class="mr-1" style="margin-bottom: 3px"
+                @click="onEditElement(currentItems[data.index])">
+        <img src="@/assets/images/pages/plusIcons.svg">
         <span>{{ $t('app.btn.edit') }}</span>
       </b-button>
-      <b-button
-        size="xs"
-        variant="primary"
-        style="margin-bottom: 3px"
-        @click="deleteElement(data.index)"
-      >
-        <img
-          src="@/assets/images/pages/deleteIcons.svg"
-          alt=""
-        >
+      <b-button size="xs" variant="primary" style="margin-bottom: 3px" @click="deleteElement(data.index)">
+        <img src="@/assets/images/pages/deleteIcons.svg" alt="">
         <span>{{ $t('app.btn.delete') }}</span>
       </b-button>
     </template>
@@ -78,6 +33,7 @@ import {
   BTable, BButton, BFormCheckbox,
 } from 'bootstrap-vue'
 import { mapState } from 'vuex'
+import _ from 'lodash'
 
 export default {
   components: {
@@ -143,6 +99,7 @@ export default {
           data.data.data.forEach(el => {
             el.__selected = false
           })
+          this.$store.commit('table/setDefinition', data)
           this.currentItems = data.data.data
           return this.currentItems
         })
@@ -196,6 +153,7 @@ export default {
         })
           .catch(e => {
             console.error(e)
+            this.$errorToast()
           })
       })
     },

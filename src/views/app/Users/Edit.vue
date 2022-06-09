@@ -2,7 +2,6 @@
   <div>
     <b-card body-class="p-0">
       <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
-        <!--              v-b-modal.modal-user-->
         <div class="d-flex align-items-center">
           <img class="mr-1" src="@/assets/images/icons/people.svg" alt="">
           <span>Editer un utilisateur</span>
@@ -15,7 +14,6 @@
             </b-button>
             <b-button v-else size="sm" variant="info" class="mr-1 d-flex" @click="Edit">
               <img src="@/assets/images/pages/editIcons.svg" alt="">
-
               Save
             </b-button>
             <b-button v-if="!view" size="sm" class="d-flex" variant="primary" @click="changeMode">
@@ -33,85 +31,30 @@
           <!-- Field: user_email -->
           <b-col cols="12" md="6">
             <b-form-group label="E-mail*" label-for="email" placeholder="Enter here...">
-              <b-form-input id="email" v-model="user.email" :disabled="view"/>
+              <b-form-input id="user_email" v-model="user.user_email" :disabled="view"/>
             </b-form-group>
           </b-col>
 
           <!-- Field: user_password -->
           <b-col cols="12" md="6">
             <b-form-group label="Password*" label-for="password" placeholder="Enter here...">
-              <b-form-input id="password" v-model="user.password" type="password" :disabled="view"/>
+              <b-form-input id="user_password" v-model="user.user_password" type="password" :disabled="view"/>
             </b-form-group>
           </b-col>
 
-          <!-- Field user_locked -->
-          <b-col cols="12" md="7" class="d-flex mb-1">
+
+          <!-- Field user_reset-required -->
+          <b-col cols="12" md="6">
             <div class="d-flex">
               <span class="mr-1">User must change his password at next login</span>
-              <b-form-checkbox v-model="user.change_pwd" :disabled="view"/>
+              <b-form-checkbox v-model="user.user_password_reset_required" :disabled="view"/>
             </div>
-            <div class="d-flex ml-auto">
+            <div class="d-flex mt-1">
               <span class="mr-1">User locked</span>
-              <b-form-checkbox v-model="user.locked" :disabled="view"/>
+              <b-form-checkbox v-model="user.user_locked" :disabled="view"/>
             </div>
           </b-col>
 
-          <!-- Field user_gender -->
-          <b-col cols="12" md="5" class="d-flex mb-1">
-            <b-col cols="5" md-2>
-              <span>Gender</span>
-            </b-col>
-            <div class="d-flex">
-              <span class="mr-1">Mr.</span>
-              <b-form-radio v-model="user.title" name="some-radios" value="Mr." :disabled="view"/>
-            </div>
-            <div class="d-flex ml-auto">
-              <span class="mr-1">Ms.</span>
-              <b-form-radio v-model="user.title" name="some-radios" value="Ms." :disabled="view"/>
-            </div>
-
-          </b-col>
-
-          <!-- Field: user_firstname -->
-          <b-col cols="12" md="6">
-            <b-form-group label="FIRST NAME*" label-for="first_name">
-              <b-form-input id="first_name" v-model="user.first_name" :disabled="view" type="text"/>
-            </b-form-group>
-          </b-col>
-
-          <!-- Field: user_lastname -->
-          <b-col cols="12" md="6">
-            <b-form-group label="Last Name" label-for="last_name">
-              <b-form-input id="last_name" v-model="user.full_name" :disabled="view" type="text"/>
-            </b-form-group>
-          </b-col>
-
-          <b-col cols="12" md="6">
-            <b-form-group label="Name abbreviation*" label-for="name">
-              <b-form-input id="abbreviation" v-model="user.name_abrv" :disabled="view" type="text"/>
-            </b-form-group>
-          </b-col>
-
-          <b-col cols="12" md="6">
-            <b-form-group label="Function" label-for="function">
-              <b-form-input id="function" v-model="user.function" :disabled="view" type="text"/>
-            </b-form-group>
-          </b-col>
-
-          <b-col cols="12" md="6">
-            <b-form-group label="Customer Group*" label-for="group">
-              <div class="d-flex">
-                <b-form-input id="customer-group" v-model="user.group" :disabled="view" placeholder="Please select ..." class="mr-1" type="text"/>
-                <img src="@/assets/images/icons/customerGroup.svg" alt="">
-              </div>
-            </b-form-group>
-          </b-col>
-
-          <b-col cols="12" md="6">
-            <b-form-group label="Contact person" label-for="contact-person">
-              <b-form-input id="contact-person" v-model="user.contact" :disabled="view" type="text"/>
-            </b-form-group>
-          </b-col>
 
           <b-col cols="12" md="6">
             <b-form-group label="USER TYPE" label-for="name">
@@ -119,18 +62,63 @@
             </b-form-group>
           </b-col>
 
+          <!-- Field: user_firstname -->
+          <b-col cols="12" md="6">
+            <b-form-group label="First Name*" label-for="first_name">
+              <b-form-input id="first_name" v-model="user.user_firstname" :disabled="view" type="text"/>
+            </b-form-group>
+          </b-col>
+
+          <!-- Field: user_lastname -->
+          <b-col cols="12" md="6">
+            <b-form-group label="Last Name" label-for="last_name">
+              <b-form-input id="last_name" v-model="user.user_lastname" :disabled="view" type="text"/>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="12" md="6">
+            <b-form-group label="Customer Group*" label-for="group">
+              <div class="d-flex">
+                <b-form-select id="customer-group" v-model="user.customer_group_id" :disabled="view"
+                               placeholder="Please select ..." :options="customerGroupListItems" class="mr-1"/>
+                <img src="@/assets/images/icons/customerGroup.svg" alt="">
+              </div>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="12" md="6">
+            <b-form-group label="Contact person" label-for="contact-person">
+              <b-form-select id="contact-person" v-model="user.contact_person_id" :disabled="view"
+                             placeholder="Please select ..." :options="contactPersonListItems"/>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="12" md="6">
+            <b-form-group label="Shortname" label-for="short_name">
+              <b-form-input id="short_name" :value="selectedContactPerson.contact_person_short_name" disabled type="text"/>
+            </b-form-group>
+          </b-col>
+
+
+          <b-col cols="12" md="6">
+            <b-form-group label="Function" label-for="function">
+              <b-form-input id="function" :value="selectedContactPerson.contact_person_function" disabled type="text"/>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="12" md="6">
+            <b-form-group label="Salutation" label-for="salutation">
+              <b-form-radio-group id="radio-group-1" :value="selectedContactPerson.contact_person_salutation_name" disabled
+                                  :options="[{text:'Mr.',value:1}, {text:'Mrs.', value: 2}]"
+                                  :aria-describedby="ariaDescribedby" name="radio-options"/>
+            </b-form-group>
+          </b-col>
+
           <b-col cols="12" md="6">
             <b-form-group label="Title" label-for="title">
-              <b-form-input id="title" v-model="user.title" :disabled="view" type="text"/>
+              <b-form-input id="title" v-model="user.contact_person_title" disabled type="text"/>
             </b-form-group>
           </b-col>
-
-          <b-col cols="12" md="6">
-            <b-form-group label="Roles" label-for="name">
-              <v-select v-model="roles" multiple label="title" :options="availableRoles" placeholder="Select roles"/>
-            </b-form-group>
-          </b-col>
-
         </b-row>
       </b-form>
     </b-card>
@@ -141,16 +129,16 @@
           <databases :actions="true" :items="rowsRoles" :fields="columnRoles"/>
         </b-tab>
         <b-tab title="Customers">
-          <databases :items="items" :fields="fields"/>
+          <!--          <databases :items="items" :fields="fields"/>-->
         </b-tab>
         <b-tab title="Equipe">
-          <databases :items="items" :fields="fields"/>
+          <!--          <databases :items="items" :fields="fields"/>-->
         </b-tab>
         <b-tab title="Point de vente">
-          <databases :items="items" :fields="fields"/>
+          <!--          <databases :items="items" :fields="fields"/>-->
         </b-tab>
         <b-tab title="Partner">
-          <databases :items="items" :fields="fields"/>
+          <!--          <databases :items="items" :fields="fields"/>-->
         </b-tab>
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
@@ -170,7 +158,8 @@
     </b-card>
 
     <!--modal-->
-    <b-modal id="modal-role" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary" centered title="Create new user" size="lg">
+    <b-modal id="modal-role" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary" centered
+             title="Create new user" size="lg">
       <b-form @submit.prevent>
         <b-row>
           <b-col cols="12">
@@ -197,7 +186,8 @@
     </b-modal>
 
     <!--  user modal -->
-    <b-modal id="modal-user" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary" centered title="Create new user" size="lg">
+    <b-modal id="modal-user" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary" centered
+             title="Create new user" size="lg">
       <b-form @submit.prevent>
         <b-row>
           <b-col cols="12">
@@ -248,7 +238,7 @@
 <script>
 import {
   BCard,
-  BTab, BFormCheckbox, BFormRadio, BInputGroup,
+  BTab, BFormCheckbox, BFormRadioGroup,
   BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton, BFormSelect, BModal,
 } from 'bootstrap-vue'
 import axios from 'axios'
@@ -270,18 +260,16 @@ export default {
     BModal,
     BFormSelect,
     BFormCheckbox,
-    BFormRadio,
-    BInputGroup,
+    BFormRadioGroup,
   },
   props: ['id'],
   data() {
     return {
-      view: true,
+      view: this.$route.query.edit !== 'true',
       perPage: 10,
       pageOptions: [3, 5, 10],
-      user: this.$route.params.user,
+      user: this.$route.params.user || {},
       availableRoles: [{ title: 'Administrator' }, { title: 'Supervisor' }],
-      selected: 'first',
       options: [
         { text: 'Benutzer muss bei nachster Anmeldung sein Passwort andern', value: 'first', disabled: false },
         { text: 'Benutzer gesperrt', value: 'second', disabled: false },
@@ -337,18 +325,37 @@ export default {
           role_permission: 'ADMIN',
         },
       ],
+
+      customerGroupListItems: [],
+      contactPersonList: [],
     }
   },
   computed: {
-
+    contactPersonListItems() {
+      return this.contactPersonList.map(item => ({ text: item.contact_person_name, value: item.contact_person_id }))
+    },
+    selectedContactPerson() {
+      return this.contactPersonList.find(item => item.contact_person_id === this.user.contact_person_id) ?? {}
+    },
   },
-  mounted() {
-    axios.get(`https://627536d05dc4f5764ba0abcb.mockapi.io/api/users/${this.id}`)
-      .then(response => {
-        this.user = response.data
+  async created() {
+    if (!this.$route.params.user) {
+      this.user = await this.$store.dispatch('table/fetchSingleItem', {
+        entity: 'user',
+        primaryKey: 'user_id',
+        id: this.$route.params.id,
       })
+    }
+    this.contactPersonList = await this.$store.dispatch('table/fetchList', 'contact_person')
+    this.customerGroupListItems = (await this.$store.dispatch('table/fetchList', 'customer_group')).map(item => ({
+      text: item.customer_group_name,
+      value: item.customer_group_id,
+    }))
   },
   methods: {
+    update() {
+
+    },
     changeMode() {
       this.view = !this.view
     },
