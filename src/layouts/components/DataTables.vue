@@ -31,8 +31,8 @@
     <template #cell(Actions)="data">
       <b-button
         v-if="onViewElement!=null"
-        size="sm"
-        class=" mr-1"
+        size="xs"
+        class="mr-1"
         style="margin-bottom: 3px"
         variant="info"
         @click="onViewElement(currentItems[data.index])"
@@ -46,7 +46,7 @@
       </b-button>
       <b-button
         v-if="onEditElement!=null"
-        size="sm"
+        size="xs"
         variant="success"
         class="mr-1"
         style="margin-bottom: 3px"
@@ -58,8 +58,9 @@
         <span>{{ $t('app.btn.edit') }}</span>
       </b-button>
       <b-button
-        size="sm"
+        size="xs"
         variant="primary"
+        style="margin-bottom: 3px"
         @click="deleteElement(data.index)"
       >
         <img
@@ -84,7 +85,7 @@ export default {
     BButton,
     BFormCheckbox,
   },
-  props: ['entity', 'fields', 'defaultSortField', 'onViewElement', 'onEditElement'],
+  props: ['entity', 'fields', 'primaryKey', 'defaultSortField', 'onViewElement', 'onEditElement'],
   data() {
     return {
       loading: false,
@@ -158,18 +159,49 @@ export default {
         return this.$errorToast('No element selected')
       }
       // show confirm box
-
-      return this.$http.post('/crud/', {
-        action: 'read-rich',
-        entity: this.entity,
-      })
+      return this.deleteEntities(selected.map(entity => entity[this.primaryKey]))
     },
     deleteElement(index) {
-
+      return this.deleteEntities([this.currentItems[index][this.primaryKey]])
+    },
+    deleteEntities(ids) {
+      this.$swal({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-outline-danger ml-1',
+        },
+        buttonsStyling: false,
+      }).then(result => {
+        if (!result.value) return
+        this.$http.post('/crud/', {
+          action: 'delete',
+          entity: 'user',
+          data: ids.map(id => ({ [this.primaryKey]: id })),
+        }).then(() => {
+          this.$successToast(this.$t(ids.length > 1 ? 'notification.elements_deleted' : 'notification.element_deleted'))
+          this.$refs.table.refresh()
+          this.$swal({
+            icon: 'success',
+            title: 'Deleted!',
+            text: 'Your file has been deleted.',
+            customClass: {
+              confirmButton: 'btn btn-success',
+            },
+          })
+        })
+          .catch(e => {
+            console.error(e)
+          })
+      })
     },
     selectAll() {
       const newVal = this.selected
-      this.currentItems.forEach((item, index) => {
+      this.currentItems.forEach(item => {
         this.$set(item, '__selected', newVal)
       })
     },

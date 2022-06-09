@@ -638,6 +638,12 @@
     }
   },
   "general": {
-    "error": "An error has occurred"
+    "error": "An error has occurred",
+    "server_down": "The Server is unavailable",
+    "unauthorized": "This action is not authorized"
+  },
+  "notification": {
+    "element_deleted": "The element is deleted",
+    "elements_deleted": "The elements where deleted"
   }
 }

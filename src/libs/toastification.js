@@ -27,3 +27,14 @@ Vue.prototype.$errorToast = function (title) {
     },
   })
 }
+
+Vue.prototype.$successToast = function (title) {
+  this.$toast({
+    component: ToastificationContent,
+    props: {
+      title,
+      icon: 'SuccessIcon',
+      variant: 'success',
+    },
+  })
+}

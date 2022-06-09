@@ -571,6 +571,7 @@
     }
   },
   "general": {
-    "error": "Une erreur est survenue"
+    "error": "Une erreur est survenue",
+    "server_down": "Le serveur est indisponible"
   }
 }

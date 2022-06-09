@@ -212,7 +212,7 @@ export default {
             this.$toast({
               component: ToastificationContent,
               props: {
-                title: 'Form Submitted',
+                title: 'Welcome back to kimpro',
                 icon: 'successIcon',
                 variant: 'success',
               },
@@ -220,11 +220,10 @@ export default {
             this.$router.push('/app')
           })
             .catch(e => {
-              let title = ''
               if (e.response) {
-                title = e.response.data.detail
+                const title = e.response.data.detail
+                this.$errorToast(title)
               }
-              this.$errorToast(title)
             })
         }
       })
