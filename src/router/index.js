@@ -24,6 +24,187 @@ const router = new VueRouter({
         ],
       },
     },
+    // Work Package 1
+    {
+      path: '/app/users',
+      name: 'table-user',
+      component: () => import('@/views/app/Users/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.users_rights',
+        breadcrumb: [
+          {
+            text: 'app.page_title.users_rights',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/users/edit/:id',
+      name: 'table-user-edit',
+      props: true,
+      component: () => import('@/views/app/Users/Edit.vue'),
+      meta: {
+        pageTitle: 'app.page_title.users_rights_edit',
+        navActiveLink: 'table-user',
+        breadcrumb: [
+          {
+            text: 'app.page_title.users_rights',
+            to: { name: 'users-list' },
+            active: false,
+          },
+          {
+            text: 'app.page_title.users_rights_edit',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/roles',
+      name: 'table-role',
+      component: () => import('@/views/app/Authorization/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.auth',
+        breadcrumb: [
+          {
+            text: 'app.page_title.auth',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/roles/edit',
+      name: 'table-role-edit',
+      component: () => import('@/views/app/Authorization/Edit.vue'),
+      meta: {
+        pageTitle: 'app.page_title.auth_edit',
+        navActiveLink: 'table-role',
+        breadcrumb: [
+          {
+            text: 'app.page_title.auth_edit',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/teams',
+      name: 'table-team',
+      component: () => import('@/views/app/Teams/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.teams',
+        breadcrumb: [
+          {
+            text: 'app.page_title.teams',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/teams/edit',
+      name: 'table-team-edit',
+      component: () => import('@/views/app/Teams/Edit.vue'),
+      meta: {
+        pageTitle: 'app.page_title.team_edit',
+        navActiveLink: 'table-team',
+        breadcrumb: [
+          {
+            text: 'app.page_title.team_edit',
+            active: true,
+          },
+        ],
+      },
+    },
+
+    {
+      path: '/app/usertype',
+      name: 'table-usertype',
+      component: () => import('@/views/app/UsersType/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.user_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.user_type',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/usertype/edit',
+      name: 'table-usertype-edit',
+      component: () => import('@/views/app/UsersType/Edit.vue'),
+      meta: {
+        pageTitle: 'app.page_title.user_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.user_type',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/tablename',
+      name: 'table-tablename',
+      component: () => import('@/views/app/Table/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.tablename',
+        breadcrumb: [
+          {
+            text: 'app.page_title.tablename',
+            active: true,
+          },
+        ],
+      },
+    },
+
+    {
+      path: '/app/tablegroup',
+      name: 'table-tablegroup',
+      component: () => import('@/views/app/TableGroup/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.tablegroup',
+        breadcrumb: [
+          {
+            text: 'app.page_title.tablegroup',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/tablegroup/edit',
+      name: 'table-tablegroup-edit',
+      component: () => import('@/views/app/TableGroup/Edit.vue'),
+      meta: {
+        pageTitle: 'app.page_title.user_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.user_type',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/crud',
+      name: 'table-crud',
+      component: () => import('@/views/app/Crud/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.crud',
+        breadcrumb: [
+          {
+            text: 'app.page_title.crud',
+            active: true,
+          },
+        ],
+      },
+    },
+
     {
       path: '/app/deadlines',
       name: 'deadlines',
@@ -81,41 +262,6 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/app/users',
-      name: 'users-list',
-      component: () => import('@/views/app/Users/index.vue'),
-      meta: {
-        pageTitle: 'app.page_title.users_rights',
-        breadcrumb: [
-          {
-            text: 'app.page_title.users_rights',
-            active: true,
-          },
-        ],
-      },
-    },
-    {
-      path: '/app/users/edit/:id',
-      name: 'user-edit',
-      props: true,
-      component: () => import('@/views/app/Users/Edit.vue'),
-      meta: {
-        pageTitle: 'app.page_title.users_rights_edit',
-        navActiveLink: 'users-list',
-        breadcrumb: [
-          {
-            text: 'app.page_title.users_rights',
-            to: { name: 'users-list' },
-            active: false,
-          },
-          {
-            text: 'app.page_title.users_rights_edit',
-            active: true,
-          },
-        ],
-      },
-    },
-    {
       path: '/app/templates',
       name: 'templates',
       component: () => import('@/views/app/Templates.vue'),
@@ -138,81 +284,6 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.master_data',
-            active: true,
-          },
-        ],
-      },
-    },
-
-    {
-      path: '/app/Authorization',
-      name: 'authorization',
-      component: () => import('@/views/app/Authorization/index.vue'),
-      meta: {
-        pageTitle: 'app.page_title.auth',
-        breadcrumb: [
-          {
-            text: 'app.page_title.auth',
-            active: true,
-          },
-        ],
-      },
-    },
-    {
-      path: '/app/authorization/edit',
-      name: 'authorization-edit',
-      component: () => import('@/views/app/Authorization/Edit.vue'),
-      meta: {
-        pageTitle: 'app.page_title.auth_edit',
-        navActiveLink: 'authorization',
-        breadcrumb: [
-          {
-            text: 'app.page_title.auth_edit',
-            active: true,
-          },
-        ],
-      },
-    },
-
-    {
-      path: '/app/Teams',
-      name: 'teams',
-      component: () => import('@/views/app/Teams/index.vue'),
-      meta: {
-        pageTitle: 'app.page_title.teams',
-        breadcrumb: [
-          {
-            text: 'app.page_title.teams',
-            active: true,
-          },
-        ],
-      },
-    },
-    {
-      path: '/app/Teams/edit',
-      name: 'teams-edit',
-      component: () => import('@/views/app/Teams/Edit.vue'),
-      meta: {
-        pageTitle: 'app.page_title.team_edit',
-        navActiveLink: 'teams',
-        breadcrumb: [
-          {
-            text: 'app.page_title.team_edit',
-            active: true,
-          },
-        ],
-      },
-    },
-
-    {
-      path: '/app/users-type',
-      name: 'users-type',
-      component: () => import('@/views/app/UsersType/index.vue'),
-      meta: {
-        pageTitle: 'app.page_title.user_type',
-        breadcrumb: [
-          {
-            text: 'app.page_title.user_type',
             active: true,
           },
         ],
@@ -346,7 +417,7 @@ const router = new VueRouter({
     },
     {
       path: '/app/contact-person/edit',
-      name: 'contact-person-edit',
+      name: 'contactperson-edit',
       component: () => import('@/views/app/Contact_Person/Edit.vue'),
       meta: {
         pageTitle: 'app.page_title.contact_person_edit',

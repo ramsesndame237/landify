@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import Vue from 'vue'
-import axios from '@/libs/axios'
+import { api } from '@/libs/axios'
 
 export default {
   namespaced: true,
@@ -21,13 +21,13 @@ export default {
   },
   actions: {
     fetchSingleItem(context, payload) {
-      return axios.post('/crud/', {
+      return api({
         action: 'read-rich',
         entity: payload.entity,
         order_by: '',
         order_dir: 'DESC',
         per_page: 1,
-        from_: '0',
+        from: 0,
         current_page: 1,
         filter: { [payload.primaryKey]: payload.id },
         filter_all: '',
@@ -39,13 +39,13 @@ export default {
         })
     },
     fetchList(context, entity) {
-      return axios.post('/crud/', {
+      return api({
         action: 'read-rich',
         entity,
         order_by: '',
         order_dir: 'DESC',
         per_page: 100000,
-        from_: '0',
+        from: 0,
         current_page: 1,
         filter: {},
         filter_all: '',

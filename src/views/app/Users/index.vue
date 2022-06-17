@@ -5,8 +5,8 @@
                         :on-delete-elements="()=> $refs.table.deleteSelected()"/>
     </b-card>
     <b-card>
-      <Databases ref="table" link="user-edit" entity="user" :default-sort-field="defaultSortField" :fields="fields"
-                 :primary-key="primaryKey"
+      <Datatable ref="table" link="table-user-edit" entity="user" :default-sort-field="defaultSortField"
+                 :fields="fields" :primary-key="primaryKey"
                  :on-view-element="(user)=> $router.push({name: 'user-edit', params: {id: user.user_id, user}})"
                  :on-edit-element="(user)=> $router.push({name: 'user-edit', params: {id: user.user_id, user}, query: {edit: 'true'}})"/>
     </b-card>
@@ -76,12 +76,12 @@ import {
 } from 'bootstrap-vue'
 import TablePagination from '@/layouts/components/TablePagination.vue'
 
-const Databases = () => import('@/layouts/components/DataTables.vue')
+const Datatable = () => import('@/layouts/components/DataTables.vue')
 
 export default {
   components: {
     TablePagination,
-    Databases,
+    Datatable,
     BFormGroup,
     BCard,
     BFormSelect,
@@ -97,28 +97,11 @@ export default {
       defaultSortField: 'user_id',
       primaryKey: 'user_id',
       fields: [
-        { key: '__selected' },
         { key: 'user_id', label: 'Id' },
         { key: 'user_firstname', label: 'First Name', sortable: true },
         { key: 'user_lastname', label: 'Last Name', sortable: true },
         { key: 'user_email', label: 'Email', sortable: true },
         { key: 'user_last_login_time', label: 'Last login', sortable: true },
-        { key: 'user_type', label: 'User type', sortable: true },
-        'Actions',
-      ],
-      options: [
-        { value: null, text: 'Please select an option' },
-        { value: 'a', text: 'This is First option' },
-        { value: 'b', text: 'Simple Option' },
-        { value: { C: '3PO' }, text: 'This is an option with object value' },
-        { value: 'd', text: 'Please select', disabled: true },
-      ],
-      deputy: [
-        { value: null, text: 'Please select an option' },
-        { value: 'a', text: 'This is First option' },
-        { value: 'b', text: 'Simple Option' },
-        { value: { C: '3PO' }, text: 'This is an option with object value' },
-        { value: 'd', text: 'Please select', disabled: true },
       ],
     }
   },

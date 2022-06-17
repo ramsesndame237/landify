@@ -1,6 +1,6 @@
 <template>
   <b-table ref="table" striped hover responsive :busy.sync="loading" :per-page="perPage" :current-page="currentPage"
-           :items="provider" :fields="fields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
+           :items="provider" :fields="allFields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
            :sort-direction="sortDirection" :filter="search" select-mode="multi" @filtered="onFiltered">
     <template #cell(__selected)="data">
       <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"/>
@@ -10,13 +10,13 @@
     </template>
 
     <template #cell(Actions)="data">
-      <b-button v-if="onViewElement!=null" size="xs" class="mr-1" style="margin-bottom: 3px" variant="info"
-                @click="onViewElement(currentItems[data.index])">
+      <b-button v-if="withView" size="xs" class="mr-1" style="margin-bottom: 3px" variant="info"
+                @click="$router.push({name: link, params: {id: currentItems[data.index][primaryKey], entity: currentItems[data.index]}})">
         <img src="@/assets/images/pages/plusIcons.svg" alt="" style="margin-right: 5px">
         <span>{{ $t('app.btn.view') }}</span>
       </b-button>
-      <b-button v-if="onEditElement!=null" size="xs" variant="success" class="mr-1" style="margin-bottom: 3px"
-                @click="onEditElement(currentItems[data.index])">
+      <b-button v-if="withEdit" size="xs" variant="success" class="mr-1" style="margin-bottom: 3px"
+                @click="$router.push({name: link, params: {id: currentItems[data.index][primaryKey], entity: currentItems[data.index]}, query: {edit: 'true'}})">
         <img src="@/assets/images/pages/plusIcons.svg">
         <span>{{ $t('app.btn.edit') }}</span>
       </b-button>
@@ -33,7 +33,6 @@ import {
   BTable, BButton, BFormCheckbox,
 } from 'bootstrap-vue'
 import { mapState } from 'vuex'
-import _ from 'lodash'
 
 export default {
   components: {
@@ -41,11 +40,18 @@ export default {
     BButton,
     BFormCheckbox,
   },
-  props: ['entity', 'fields', 'primaryKey', 'defaultSortField', 'onViewElement', 'onEditElement'],
+  props: {
+    entity: { type: String, required: true },
+    fields: { type: Array, required: true },
+    primaryKeyColumn: { type: String },
+    withView: { type: Boolean, default: true },
+    withEdit: { type: Boolean, default: true },
+    defaultSortColumn: { type: String, default: '' },
+  },
   data() {
     return {
       loading: false,
-      sortBy: this.defaultSortField ?? this.fields[0].key,
+      sortBy: this.defaultSortColumn ?? this.fields[0].key,
       sortDesc: false,
       sortDirection: 'asc',
       selected: false,
@@ -53,6 +59,15 @@ export default {
     }
   },
   computed: {
+    primaryKey() {
+      return this.primaryKeyColumn || `${this.entity}_id`
+    },
+    link() {
+      return `table-${this.entity}-edit`
+    },
+    allFields() {
+      return [{ key: '__selected' }, ...this.fields, 'Actions']
+    },
     ...mapState('table', ['search', 'perPage', 'currentPage']),
     totalRows: {
       get() {
@@ -81,13 +96,13 @@ export default {
       const {
         currentPage, perPage, filter, sortBy, sortDesc,
       } = ctx
-      return this.$http.post('/crud/', {
+      return this.$api({
         action: 'read-rich',
         entity: this.entity,
         order_by: sortBy,
         order_dir: sortDesc ? 'DESC' : 'ASC',
         per_page: perPage,
-        from_: '0',
+        from: 0,
         current_page: currentPage,
         filter: {},
         filter_all: filter ?? '',
@@ -135,9 +150,9 @@ export default {
         buttonsStyling: false,
       }).then(result => {
         if (!result.value) return
-        this.$http.post('/crud/', {
+        this.$api({
           action: 'delete',
-          entity: 'user',
+          entity: this.entity,
           data: ids.map(id => ({ [this.primaryKey]: id })),
         }).then(() => {
           this.$successToast(this.$t(ids.length > 1 ? 'notification.elements_deleted' : 'notification.element_deleted'))

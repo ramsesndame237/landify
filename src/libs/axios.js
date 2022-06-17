@@ -11,11 +11,11 @@ const axiosIns = axios.create({
   // headers: {'X-Custom-Header': 'foobar'}
 })
 
-axiosIns.interceptors.response.use(response => {
+axiosIns.interceptors.response.use(response =>
   // Any status code that lie within the range of 2xx cause this function to trigger
   // Do something with response data
-  return response
-}, error => {
+  response,
+error => {
   // Any status codes that falls outside the range of 2xx cause this function to trigger
   const { $vue } = window
   if (error.response.status === 403) {
@@ -28,5 +28,8 @@ axiosIns.interceptors.response.use(response => {
 })
 
 Vue.prototype.$http = axiosIns
+Vue.prototype.$api = data => axiosIns.post('/api/', { a: data })
 
 export default axiosIns
+
+export const api = Vue.prototype.$api

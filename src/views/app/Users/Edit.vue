@@ -42,7 +42,6 @@
             </b-form-group>
           </b-col>
 
-
           <!-- Field user_reset-required -->
           <b-col cols="12" md="6">
             <div class="d-flex">
@@ -55,10 +54,10 @@
             </div>
           </b-col>
 
-
           <b-col cols="12" md="6">
             <b-form-group label="USER TYPE" label-for="name">
-              <b-form-input id="user-type" v-model="user.user_type" :disabled="view" type="text"/>
+              <b-form-select id="contact-person" v-model="user.usertype_id" :disabled="view"
+                             placeholder="Please select ..." :options="userTypeListItems"/>
             </b-form-group>
           </b-col>
 
@@ -79,8 +78,7 @@
           <b-col cols="12" md="6">
             <b-form-group label="Customer Group*" label-for="group">
               <div class="d-flex">
-                <b-form-select id="customer-group" v-model="user.customer_group_id" :disabled="view"
-                               placeholder="Please select ..." :options="customerGroupListItems" class="mr-1"/>
+                <b-form-input id="customer-group" v-model="user.customergroup" disabled="" class="mr-1"/>
                 <img src="@/assets/images/icons/customerGroup.svg" alt="">
               </div>
             </b-form-group>
@@ -88,35 +86,35 @@
 
           <b-col cols="12" md="6">
             <b-form-group label="Contact person" label-for="contact-person">
-              <b-form-select id="contact-person" v-model="user.contact_person_id" :disabled="view"
+              <b-form-select id="contact-person" v-model="user.contactperson_id" :disabled="view"
                              placeholder="Please select ..." :options="contactPersonListItems"/>
             </b-form-group>
           </b-col>
 
           <b-col cols="12" md="6">
             <b-form-group label="Shortname" label-for="short_name">
-              <b-form-input id="short_name" :value="selectedContactPerson.contact_person_short_name" disabled type="text"/>
+              <b-form-input id="short_name" :value="selectedContactPerson.contactperson_short_name" disabled
+                            type="text"/>
             </b-form-group>
           </b-col>
 
-
           <b-col cols="12" md="6">
             <b-form-group label="Function" label-for="function">
-              <b-form-input id="function" :value="selectedContactPerson.contact_person_function" disabled type="text"/>
+              <b-form-input id="function" :value="selectedContactPerson.contactperson_function" disabled type="text"/>
             </b-form-group>
           </b-col>
 
           <b-col cols="12" md="6">
             <b-form-group label="Salutation" label-for="salutation">
-              <b-form-radio-group id="radio-group-1" :value="selectedContactPerson.contact_person_salutation_name" disabled
-                                  :options="[{text:'Mr.',value:1}, {text:'Mrs.', value: 2}]"
+              <b-form-radio-group id="radio-group-1" :value="selectedContactPerson.contactperson_salutation_name"
+                                  disabled :options="[{text:'Mr.',value:1}, {text:'Mrs.', value: 2}]"
                                   :aria-describedby="ariaDescribedby" name="radio-options"/>
             </b-form-group>
           </b-col>
 
           <b-col cols="12" md="6">
             <b-form-group label="Title" label-for="title">
-              <b-form-input id="title" v-model="user.contact_person_title" disabled type="text"/>
+              <b-form-input id="title" v-model="user.contactperson_title" disabled type="text"/>
             </b-form-group>
           </b-col>
         </b-row>
@@ -126,7 +124,7 @@
     <b-card>
       <b-tabs pills>
         <b-tab title="Roles" active>
-          <databases :actions="true" :items="rowsRoles" :fields="columnRoles"/>
+          <databases entity="user_role_grp" :fields="columnRoles"/>
         </b-tab>
         <b-tab title="Customers">
           <!--          <databases :items="items" :fields="fields"/>-->
@@ -269,15 +267,6 @@ export default {
       perPage: 10,
       pageOptions: [3, 5, 10],
       user: this.$route.params.user || {},
-      availableRoles: [{ title: 'Administrator' }, { title: 'Supervisor' }],
-      options: [
-        { text: 'Benutzer muss bei nachster Anmeldung sein Passwort andern', value: 'first', disabled: false },
-        { text: 'Benutzer gesperrt', value: 'second', disabled: false },
-      ],
-      options2: [
-        { text: 'Mr.', value: 'first2', disabled: false },
-        { text: 'Ms.', value: 'second2', disabled: false },
-      ],
       fields: [
         { key: 'id', label: 'Id' },
         { key: 'full_name', label: 'Last Name', sortable: true },
@@ -289,53 +278,46 @@ export default {
         'Action',
       ],
       columnRoles: [
-        { key: 'id', label: 'Id' },
         { key: 'role_id', label: 'Role-ID', sortable: true },
         { key: 'role_name', label: 'Role name', sortable: true },
         { key: 'role_permission', label: 'Role permission', sortable: true },
+        { key: 'user_role_valid_from', label: 'Valid From', sortable: true },
+        { key: 'user_role_valid_to', label: 'Valid To', sortable: true },
         'Action',
       ],
-      rowsRoles: [
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          role_id: '1',
-          role_name: 'ADMIN',
-          role_permission: 'ADMIN',
-        },
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          role_id: '2',
-          role_name: 'CUSTOMERS',
-          role_permission: 'ADMIN',
-        },
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          role_id: '2',
-          role_name: 'CUSTOMERS',
-          role_permission: 'ADMIN',
-        },
-        {
-          id: 1,
-          // eslint-disable-next-line global-require
-          role_id: '2',
-          role_name: 'CUSTOMERS',
-          role_permission: 'ADMIN',
-        },
-      ],
-
-      customerGroupListItems: [],
+      userTypeList: [],
       contactPersonList: [],
     }
   },
   computed: {
     contactPersonListItems() {
-      return this.contactPersonList.map(item => ({ text: item.contact_person_name, value: item.contact_person_id }))
+      return this.contactPersonList.map(item => ({
+        text: `${item.contactperson_firstname} ${item.contactperson_lastname}`,
+        value: item.contactperson_id,
+      }))
+    },
+    userTypeListItems() {
+      return this.userTypeList.map(item => ({
+        text: item.usertype_name,
+        value: item.usertype_id,
+      }))
     },
     selectedContactPerson() {
-      return this.contactPersonList.find(item => item.contact_person_id === this.user.contact_person_id) ?? {}
+      return this.contactPersonList.find(item => item.contactperson_id === this.user.contactperson_id) ?? {}
+    },
+  },
+  watch: {
+    'user.contactperson_id': function (value) {
+      this.$api({
+        action: 'read',
+        entity: 'contactperson_title_salutation_customergroup_group',
+        attributes: ['salutation_name', 'salutation_title', 'customergroup_name'],
+        filter: {
+          contactperson_id: value,
+        },
+      }).then(data => {
+        console.log(data)
+      })
     },
   },
   async created() {
@@ -346,11 +328,8 @@ export default {
         id: this.$route.params.id,
       })
     }
-    this.contactPersonList = await this.$store.dispatch('table/fetchList', 'contact_person')
-    this.customerGroupListItems = (await this.$store.dispatch('table/fetchList', 'customer_group')).map(item => ({
-      text: item.customer_group_name,
-      value: item.customer_group_id,
-    }))
+    this.userTypeList = await this.$store.dispatch('table/fetchList', 'usertype')
+    this.contactPersonList = await this.$store.dispatch('table/fetchList', 'contactperson')
   },
   methods: {
     update() {
@@ -360,27 +339,6 @@ export default {
       this.view = !this.view
     },
     Edit() {
-      console.log(this.user)
-      axios.put(`https://627536d05dc4f5764ba0abcb.mockapi.io/api/users/${this.id}`,
-        {
-          change_pwd: this.user.change_pwd,
-          company: this.user.company,
-          contact: this.user.contact,
-          email: this.user.email,
-          first_name: this.user.first_name,
-          full_name: this.user.full_name,
-          function: this.user.function,
-          group: this.user.group,
-          locked: this.user.locked,
-          mobile: this.user.mobile,
-          name_abrv: this.user.name_abrv,
-          password: this.user.password,
-          title: this.user.title,
-          user_type: this.user.user_type,
-        }).then(response => {
-        this.user = response.data
-        this.view = true
-      })
     },
   },
 }

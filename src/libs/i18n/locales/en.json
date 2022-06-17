@@ -6,6 +6,9 @@
       "deadlines": "Deadlines",
       "doc": "Documents",
       "pos": "Point of sales",
+      "table": "Tables",
+      "tablegroup": "Table Groups",
+      "crud": "CRUD",
       "admin": {
         "parent": "Administration",
         "children": {

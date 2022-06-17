@@ -7,6 +7,43 @@ export default [
     route: 'home',
     icon: 'HomeIcon',
   },
+  // Work Package 1
+  {
+    title: 'app.sidebar.users_rights',
+    route: 'table-user',
+    icon: 'UserIcon',
+  },
+  {
+    title: 'app.sidebar.auth',
+    route: 'table-role',
+    icon: 'KeyIcon',
+  },
+  {
+    title: 'app.sidebar.teams',
+    route: 'table-team',
+    icon: 'UsersIcon',
+  },
+  {
+    title: 'app.sidebar.user_type',
+    route: 'table-usertype',
+    icon: 'UsersIcon',
+  },
+  {
+    title: 'app.sidebar.table',
+    route: 'table-tablename',
+    icon: 'UsersIcon',
+  },
+  {
+    title: 'app.sidebar.tablegroup',
+    route: 'table-tablegroup',
+    icon: 'UsersIcon',
+  },
+  {
+    title: 'app.sidebar.crud',
+    route: 'table-crud',
+    icon: 'UsersIcon',
+  },
+  // End Work Package 1
   {
     title: 'app.sidebar.tasks',
     route: 'vorgange',
@@ -89,26 +126,6 @@ export default [
     title: 'app.sidebar.properties',
     route: 'properties',
     icon: 'GitCommitIcon',
-  },
-  {
-    title: 'app.sidebar.users_rights',
-    route: 'users-list',
-    icon: 'UserIcon',
-  },
-  {
-    title: 'app.sidebar.auth',
-    route: 'authorization',
-    icon: 'KeyIcon',
-  },
-  {
-    title: 'app.sidebar.teams',
-    route: 'teams',
-    icon: 'UsersIcon',
-  },
-  {
-    title: 'app.sidebar.user_type',
-    route: 'users-type',
-    icon: 'UsersIcon',
   },
   {
     title: 'app.sidebar.templates',
