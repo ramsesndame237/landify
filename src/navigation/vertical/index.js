@@ -287,4 +287,60 @@ export default [
 
     ],
   },
+
+  {
+    title: 'app.sidebar.work_pack_4.title',
+    route: 'work package',
+    icon: 'CheckSquareIcon',
+    children: [
+      {
+        title: 'app.sidebar.work_pack_4.children.ancillary_invoice',
+        route: 'ancillary-incoive',
+      },
+      {
+        title: 'app.sidebar.work_pack_4.children.ancillary_invoice_position',
+        route: 'ancillary-incoive-position',
+      },
+      {
+        title: 'app.sidebar.work_pack_4.children.inspections',
+        route: 'inspections',
+      },
+      {
+        title: 'app.sidebar.work_pack_3.children.types.title',
+        route: 'work package',
+        icon: 'CheckSquareIcon',
+        children: [
+          {
+            title: 'app.sidebar.work_pack_4.children.types.children.cost_type',
+            route: 'cost-type',
+          },
+          {
+            title: 'app.sidebar.work_pack_4.children.types.children.claim_type',
+            route: 'claim-type',
+          },
+          {
+            title: 'app.sidebar.work_pack_4.children.types.children.invoice_criteria_type',
+            route: 'invoice-criteria-type',
+          },
+          {
+            title: 'app.sidebar.work_pack_4.children.types.children.invoice_value_type',
+            route: 'invoice-value-type',
+          },
+          {
+            title: 'app.sidebar.work_pack_4.children.types.children.ratings_type',
+            route: 'ratings-type',
+          },
+          {
+            title: 'app.sidebar.work_pack_4.children.types.children.saving_type',
+            route: 'saving-type',
+          },
+          {
+            title: 'app.sidebar.work_pack_4.children.types.children.result_categories_type',
+            route: 'result-categories-type',
+          },
+        ],
+      },
+
+    ],
+  },
 ]

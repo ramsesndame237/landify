@@ -50,9 +50,54 @@
       },
       "work_pack_3": {
         "title": "Arbeitspaket 3",
-        "children" : {
+        "children": {
           "customer_group": "Kundengruppe",
-          "payment": "Wiederkehrende Zahlung"
+          "payment": "Wiederkehrende Zahlung",
+          "pos": "POS",
+          "area": "Bereiche",
+          "location": "Standorte",
+          "contract": "Verträge",
+          "lease_contract": "Leasing-Verträge",
+          "service_object": "Objekt Dienstleistungen",
+          "criteria": "Kriterien",
+          "index_clause": "Index-Klausel",
+          "special_right": "Besondere Rechte",
+          "poservice_objects": "Dienstobjekt",
+          "tag": "Tags",
+          "unit": "Einheiten",
+          "choice": "Auswahlmöglichkeiten",
+          "types": {
+            "title": "Typen",
+            "children": {
+              "area_type": "Bereich Typ",
+              "contract_type": "Vertragsart",
+              "contract_criteria_type": "Vertragskriterien Typ",
+              "location_type": "Standort Typ",
+              "maturity_type": "Fälligkeit Art",
+              "recurring_payment_type": "Art der wiederkehrenden Zahlung",
+              "services_object_type": "Dienstleistungen Objekttyp",
+              "usage_type": "Verwendungsart"
+            }
+          }
+        }
+      },
+      "work_pack_4": {
+        "title": "Arbeitspaket 4",
+        "children": {
+          "ancillary_invoice": "Nebenkosten-Rechnungen",
+          "ancillary_invoice_position": "Rechnungspositionen",
+          "inspections": "Inspektionen",
+          "types":{
+            "children": {
+              "cost_type": "Kostenart",
+              "claim_type": "Anspruchstyp",
+              "invoice_criteria_type": "Rechnungskriterien Typ",
+              "invoice_value_type": "Rechnungswert Typ",
+              "ratings_type": "Bewertung Typ",
+              "saving_type": "Art des Speicherns",
+              "result_categories_type": "Ergebnis Kategorien Typ"
+            }
+          }
         }
       }
     },
@@ -124,7 +169,16 @@
       "deadlines": {
         "sub_title": "Globale Liste ohne Register",
         "card_text": "Viel Glück mit Ihrem neuen Projekt."
-      }
+      },
+      "invoice_ancillary_edit": "Nebenkostenrechnung erstellen/aktualisieren",
+      "invoice_ancillary_position_edit": "Position der Nebenkosten",
+      "inspections_main_heading":"Inspektionsergebnisse Überblick und Befund",
+      "create_new_cost_type": "Neue Kostenart anlegen",
+      "create_new_claim_type": "Neue Fallart anlegen",
+      "create_new_invoice_value_type": "Neue Rechnung erstellen Werttyp",
+      "create_new_rating": "Neue Bewertung erstellen",
+      "create_new_saving_type": "Neuen Speichertyp erstellen",
+      "create_new_results_categories": "Neue Ergebniskategorien erstellen"
     },
     "btn": {
       "view": "Siehe",
@@ -140,7 +194,9 @@
       "save_add_contact":"Speichern und weitere Kontakte hinzufügen",
       "save_add_contact_cirteria":"Speichern und weitere Kontaktkriterien hinzufügen",
       "save_add_contact_special_right":"Speichern und hinzufügen weitere Kontakt Sonderrechtt",
-      "save_add_contact_recuring_payment":"Speichern und weitere Zahlungen hinzufügen"
+      "save_add_contact_recuring_payment":"Speichern und weitere Zahlungen hinzufügen",
+      "filter_inspection_result": "Prüfergebnisliste filtern",
+      "export_csv": "CSV-Datei exportieren"
     },
     "search": {
       "label": "Suche",
@@ -446,7 +502,34 @@
           "m_range": "Fälligkeitsspanne x Monat (Fall M2)",
           "value": "Wertabgabe",
           "index": "Indexklausel Typ"
-        }
+        },
+        "invoice_contract_year": "Rechnung Vertragsjahr",
+        "invoice_id": "Rechnungsnummer",
+        "invoice_company_name": "Rechnung Name des Unternehmens",
+        "invoice_date_of_order": "Rechnungsdatum der Bestellung",
+        "partner_type_id": "Partner Typ Id",
+        "invoice_date": "Datum der Rechnung",
+        "invoice_contract_billing_period_from_date": "Rechnung Vertrag Abrechnungszeitraum von Datum",
+        "invoice_allocationarea": "Bereich Rechnungszuordnung",
+        "invoice_contract_billing_period_To_date":"Rechnung Vertrag Abrechnungszeitraum bis Datum",
+        "costtype_id":"Kosten Post Type ID",
+        "invoiceposition_costtype_invoice": "Rechnungsposition Kostenart Rechnung",
+        "invoiceposition_total_units": "Rechnung Gesamt Einheiten",
+        "invoiceposition_units_customer": "Rechnungsposition Einheiten Kunde",
+        "invoiceposition_amount_total": "Rechnung Position Betrag Gesamt",
+        "invoiceposition_amount_customer":"Rechnung Position Betrag Kunde",
+        "invoiceposition_apportionable": "Rechnung Position Betrag Kunde",
+        "unit_id":"Einheiten-ID",
+        "country_id":"Länder-ID",
+        "saving_type_id":"Speichern der Typ-ID",
+        "inspectionresult_realised":"Inspektionsergebnis Realisiert",
+        "board_id":"ID der Karte",
+        "costype_id":"Kostenarten-ID",
+        "contradictionpackage_id": "Widerspruchs-Paket-ID",
+        "partner_company_id": "Partner Unternehmens-ID",
+        "inspectionresult_unique_or_perennial":"Inspektionsergebnis Einzigartig oder mehrjährig",
+        "inspectionresult_legally_clear":"Inspektionsergebnis rechtlich einwandfrei",
+        "invoicevaluetype_unit_preferred_unit":"Rechnung Talue Typ Einheit Bevorzugte Einheit"
       },
 
       "tab": {
@@ -501,7 +584,13 @@
           "choice": "Wahlmöglichkeit"
         },
         "index_pay": "Wiederkehrende Zahlungen",
-        "right_contract": "Vertrag"
+        "right_contract": "Vertrag",
+        "invoice_positions": "Rechnungspositionen",
+        "invoice_deadlines": "Fristen für die Rechnungsstellung",
+        "invoice_criteria": "Kriterien für die Rechnungsstellung",
+        "invoice_details": "Details der Rechnung",
+        "external_costtype": "Externe Kostenart",
+        "contract_costtype_rel": "Vertrag Kostenart Rel"
       },
     "page_title": {
       "dashboard": "Armaturenbrett",
@@ -532,6 +621,7 @@
       "partner_company_group": "Gesamtliste der Partnerunternehmensgruppen",
       "partner_company_group_edit": "Partnerunternehmen Gruppe Bearbeiten",
       "address": "Gesamtadressenliste",
+      "contract_type": "GESAMTLISTE Vertragstyp", 
       "address_edit": "Adresse bearbeiten",
       "contact_title": "Gesamtliste der Kontakttitel",
       "contact_title_edit": "Kontakt Titel Bearbeiten",
@@ -568,7 +658,25 @@
       "special_right": "Gesamtliste Vertrag Sonderrechte",
       "special_right_view": "Vertrag Sonderrecht",
       "recurring_payment": "Gesamtliste Vertragsbasierte wiederkehrende Zahlungen",
-      "recurring_payment_view": "vertragsbasierte wiederkehrende Zahlung"
+      "recurring_payment_view": "vertragsbasierte wiederkehrende Zahlung",
+       
+      "C_C_type": "GESAMTLISTE Vertragskriterien Art",
+      "location_type": "GESAMTLISTE Standort Typ",
+      "maturity_type": "GESAMTLISTE Fälligkeit Art",
+      "R_P_type": "GESAMTLISTE Art der wiederkehrenden Zahlung",
+      "S_O_type": "GESAMTLISTE Service Objekttyp",
+      "usage_type": "GESAMTLISTE Verwendungsart",
+      "ancillary_invoice": "GESAMTLISTE Nebenkostenrechnungen",
+      "ancillary_invoice_edit":"Nebenrechnung bearbeiten",
+      "ancillary_invoice_position":"Positionen für Nebenrechnungen",
+      "ancillary_invoice_position_edit":"Nebenrechnung Position bearbeiten",
+      "inspections": "Inspektionen",
+      "cost_type": "GESAMTLISTE Kostenart",
+      "cost_type_edit": "Kostenart bearbeiten",
+      "invoice_value_type": "GESAMTLISTE Rechnungswert Art",
+      "ratings_type": "GESAMTLISTE Bewertungen",
+      "saving_type": "GESAMTLISTE Spartypen",
+      "result_categories_type": "GESAMTLISTE Ergebnis-Kategorien"
     }
   }
 }

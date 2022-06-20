@@ -49,12 +49,54 @@
         }
       },
       "work_pack_3": {
-        "title": "Work Package 3",
+        "title": "Paquet de travail  3",
         "children" : {
-          "customer_group": "Customer group",
-          "choice": "Recurrinf Payment",
-          "poservice_objects": "Service Object",
-          "payment": "Paiement récurrent"
+          "pos": "PdV",
+          "area": "Zone",
+          "location": "Emplacements",
+          "contract": "Contrats",
+          "lease_contract": "Contrats de location",
+          "service_object": "Objets de services",
+          "criteria": "Critères",
+          "index_clause": "Clause d'indexation",
+          "special_right": "Droits spéciaux",
+          "poservice_objects": "Objet du service",
+          "payment": "Paiement récurrent",
+          "tag": "Étiquettes",
+          "unit": "Unités",
+          "choice": "Choix",
+          "types": {
+            "title": "Types",
+            "children": {
+              "area_type": "Type de Zone'",
+              "contract_type": "Type de Contrat",
+              "contract_criteria_type": "Type de critères contractuels",
+              "location_type": "Type d'emplacement",
+              "maturity_type": "Type de maturité",
+              "recurring_payment_type": "Type de paiement récurrent",
+              "services_object_type": "Services Type d'objet",
+              "usage_type": "Type d'utilisation"
+            }
+          }
+        }
+      },
+      "work_pack_4": {
+        "title": "Paquet de travail  4",
+        "children": {
+          "ancillary_invoice": "Factures des frais annexes",
+          "ancillary_invoice_position": "Postes de facturation",
+          "inspections": "Contrôles",
+          "types":{
+            "children": {
+              "cost_type": "Type de coût",
+              "claim_type": "Type de réclamation",
+              "invoice_criteria_type": "Type de critères de facturation",
+              "invoice_value_type": "Type de valeur de la facture",
+              "ratings_type": "Type de notation",
+              "saving_type": "Type d'enregistrement",
+              "result_categories_type": "Catégories de résultats Type"
+            }
+          }
         }
       }
     },
@@ -98,6 +140,22 @@
       "create_new_location": "Créer un nouvel emplacement",
       "location_detail": "Détail et soin de l'emplacement",
       "location_edit": "Vue d'ensemble du lieu à Editer",
+
+      "create_new_tag": "TAG (ligne de vente, niveau organisationnel) Créer et maintenir",
+      "contract_areas": "Domaines contractuels",
+      "contract_criteria": "Critère de contrat",
+      "contract_special_rights": "Droits spéciaux du contrat",
+      "contract_recurring_payments": "Paiements récurrents du contrat",
+      "create_new_area_type": "Créer un nouveau type de zone",
+      "create_new_contract_type": "Créer un nouveau type de contrat",
+      "create_new_C_C_type": "Créer un nouveau type de critère de contrat",
+      "create_new_location_type": "Créer un nouveau type de lieu",
+      "create_new_maturity_type": "Créer un nouveau type de maturité",
+      "create_new_R_P_type": "Créer un nouveau type de paiement récurrent",
+      "create_new_S_O_type": "Créer un nouveau type d'objet de servicese",
+      "create_new_usage_type": "Créer un nouveau type d'utilisation",
+      "create_new_choice": "Créer un nouveau choix",
+      "create_new_unit": "Créer une nouvelle unité",
       "location": {
         "view_title": "Détail et soin de l'emplacement"
       },
@@ -123,7 +181,16 @@
       "deadlines": {
         "sub_title": "Liste globale sans registres",
         "card_text": "Bonne chance pour votre nouveau projet."
-      }
+      },
+      "invoice_ancillary_edit": "créer/mettre à jour la facture des frais annexes",
+      "invoice_ancillary_position_edit": "situation des frais annexes",
+      "inspections_main_heading":"Résultats de l'inspection Aperçu et constatation",
+      "create_new_cost_type": "Créer un nouveau type de coût",
+      "create_new_claim_type": "Créer un nouveau type de réclamation",
+      "create_new_invoice_value_type": "Créer un nouveau type de valeur de facture",
+      "create_new_rating": "Créer une nouvelle note",
+      "create_new_saving_type": "Créer un nouveau type d'enregistrement",
+      "create_new_results_categories": "Créer de nouvelles catégories de résultats"
     },
     "btn": {
       "new": "Nouveau",
@@ -139,7 +206,9 @@
       "save_add_contact":"Sauvegarder et ajouter un autre Contact",
       "save_add_contact_cirteria":"Sauvegarder et ajouter d'autres critères de contact",
       "save_add_contact_special_right":"Sauvegarder et ajouter d'autres droits spéciaux de contact",
-      "save_add_contact_recuring_payment":"Sauvegarder et ajouter d'autres paiements récurrents"
+      "save_add_contact_recuring_payment":"Sauvegarder et ajouter d'autres paiements récurrents",
+      "filter_inspection_result": "Filtrer la liste des résultats d'inspection",
+      "export_csv": "Exporter le Ficher CSV"
     },
     "search": {
       "label": "Rechercher",
@@ -444,7 +513,34 @@
           "m_range": "Échelle des échéances x Mois (cas de type M2) ",
           "value": "Dépôt de valeur",
           "index": "Type de clause d'indexation"
-        }
+        },
+        "invoice_contract_year": "Année du contrat de facturation",
+        "invoice_id": "ID de facture",
+        "invoice_company_name": "Facture Nom de l'entreprise",
+        "invoice_date_of_order": "Date de facturation de la commande",
+        "partner_type_id": "ID du type de partenaire",
+        "invoice_date": "Date de facturation",
+        "invoice_contract_billing_period_from_date": "Date de facturation de la période de facturation du contrat",
+        "invoice_allocationarea": "Invoice Allocation Area",
+        "invoice_contract_billing_period_To_date":"Facture Contrat Période de facturation à ce jour",
+        "costtype_id":"ID de type de poste de coût",
+        "invoiceposition_costtype_invoice": "Poste de facture Type de coût Facture",
+        "invoiceposition_total_units": "Total des unités facturées",
+        "invoiceposition_units_customer": "Poste de facturation Unités Client",
+        "invoiceposition_amount_total": "Position de la facture Montant total",
+        "invoiceposition_amount_customer":"Facture Position Montant Client",
+        "invoiceposition_apportionable": "Position de la facture au prorata",
+        "unit_id":"ID de l'unité",
+        "country_id":"ID du pays",
+        "saving_type_id":"ID de type d'enregistrement",
+        "inspectionresult_realised":"Résultat de l'inspection réalisé",
+        "board_id":"ID de carte",
+        "costype_id":"ID du type de coût",
+        "contradictionpackage_id": "ID de package de contradiction",
+        "partner_company_id": "ID de l'entreprise partenaire",
+        "inspectionresult_unique_or_perennial":"Résultat d'inspection unique ou pérenne",
+        "inspectionresult_legally_clear":"Résultat de l'inspection légalement clair",
+        "invoicevaluetype_unit_preferred_unit":"Unité de type de facture Unité préférée"
       }
     },
 
@@ -500,7 +596,13 @@
         "choice": "Choix"
       },
       "index_pay": "Paiements récurrents",
-      "right_contract": "Contrat"
+      "right_contract": "Contrat",
+      "invoice_positions": "Postes de facturation",
+      "invoice_deadlines": "Délais de facturation",
+      "invoice_criteria": "Critères de facturation",
+      "invoice_details": "Détails de la facture",
+      "external_costtype": "Type de coût externe",
+      "contract_costtype_rel": "Type de coût du contrat Rel"
     },
     "page_title": {
       "dashboard": "Tableau de bord",
@@ -557,6 +659,7 @@
       "contract": "Liste récapitulative des contrats",
       "contract_lease": "Liste récapitulative des contrats de location",
       "contract_view": "Gestion des contrats",
+      "contract_type": "LISTE GLOBALE Type de contrat", 
       "contract_edit": "Gestion des contrats",
       "services": "Liste générale des objets de service",
       "service_view": "Vue détaillée de l'objet de service",
@@ -567,7 +670,24 @@
       "special_right": "liste globale contrat Droits spéciaux",
       "special_right_view": "Contrat Droit spécial",
       "recurring_payment": "liste globale Paiements récurrents basés sur un contrat",
-      "recurring_payment_view": "Paiement récurrent basé sur un contrat"
+      "recurring_payment_view": "Paiement récurrent basé sur un contrat",
+      "C_C_type": "LISTE GLOBALE Contrat Critères Type",
+      "location_type": "LISTE GLOBALE de types d'emplacement",
+      "maturity_type": "LISTE GLOBALE de Type de maturité",
+      "R_P_type": "Liste GLOBALE de Type de paiement récurrent",
+      "S_O_type": "LISTE GLOBALE de Type d'objet de service",
+      "usage_type": "LISTE GLOBALE de Type d'utilisation",
+      "ancillary_invoice": "LISTE GLOBALE de Factures de frais annexes",
+      "ancillary_invoice_edit":"Modification des factures annexes",
+      "ancillary_invoice_position":"Positions de facturation auxiliaire",
+      "ancillary_invoice_position_edit":"Modification de la position de la facture annexe",
+      "inspections": "Inspections",
+      "cost_type": "LISTE GLOBALE de Type de coût ",
+      "cost_type_edit": "Modification du type de coût",
+      "invoice_value_type": "LISTE GLOBALE de Type de valeur de la facture",
+      "ratings_type": "LISTE GLOBALE de Type de valeur de la facture",
+      "saving_type": "LISTE GLOBALE de Types d'épargne",
+      "result_categories_type": "LISTE GLOBALE de Catégories de résultats"
     }
   }
 }

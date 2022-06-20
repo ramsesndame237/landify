@@ -5,57 +5,60 @@
         class="d-flex align-items-center justify-content-between"
         style="padding: 10px"
       >
-        <!--              v-b-modal.modal-user-->
-        <div class="d-flex align-items-center">
+        <div class="d-flex">
           <img
-            class="mr-1"
-            src="@/assets/images/icons/people.svg"
+            src="@/assets/images/icons/team.svg"
             alt=""
+            class="mr-1"
           >
-          <span>Editer un utilisateur</span>
+          <span>{{ $t('app.content.create_user') }}</span>
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
+
+            <b-button
+              v-if="!view"
+              size="sm"
+              variant="info"
+              class="mr-1 d-flex"
+            >
+              {{ $t('app.btn.save') }}
+            </b-button>
             <b-button
               v-if="view"
               size="sm"
-              variant="info"
+              variant="warning"
               class="mr-1 d-flex"
-              @click="changeMode"
+              @click="changeMode()"
             >
               <img
                 src="@/assets/images/pages/editIcons.svg"
                 alt=""
               >
-              Edit
-            </b-button>
-            <b-button
-              v-else
-              size="sm"
-              variant="info"
-              class="mr-1 d-flex"
-              @click="Edit"
-            >
-              <img
-                src="@/assets/images/pages/editIcons.svg"
-                alt=""
-              >
-
-              Save
+              {{ $t('app.btn.edit') }}
             </b-button>
             <b-button
               v-if="!view"
               size="sm"
               class="d-flex"
               variant="primary"
-              @click="changeMode"
+              @click="changeMode()"
             >
               <img
                 src="@/assets/images/pages/deleteIcons.svg"
                 alt=""
               >
-              Cancel
+              {{ $t('app.btn.cancel') }}
             </b-button>
+            <div
+              size="sm"
+              class="pl-1 d-flex align-items-center"
+            >
+              <b-form-datepicker
+                id="filterInput2"
+                size="sm"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -70,12 +73,12 @@
             md="6"
           >
             <b-form-group
-              label="E-mail*"
+              :label="$t('app.form.label.email')"
               label-for="email"
-              placeholder="Enter here..."
             >
               <b-form-input
                 id="email"
+                name="user_email"
                 v-model="user.email"
                 :disabled="view"
               />
@@ -88,12 +91,13 @@
             md="6"
           >
             <b-form-group
-              label="Password*"
+              :label="$t('app.form.label.password')"
               label-for="password"
               placeholder="Enter here..."
             >
               <b-form-input
                 id="password"
+                name="user_password"
                 v-model="user.password"
                 type="password"
                 :disabled="view"
@@ -112,6 +116,7 @@
               <b-form-checkbox
                 v-model="user.change_pwd"
                 :disabled="view"
+                name="user_password_reset_required"
               />
             </div>
             <div class="d-flex ml-auto">
@@ -119,6 +124,7 @@
               <b-form-checkbox
                 v-model="user.locked"
                 :disabled="view"
+                name="User_locked"
               />
             </div>
           </b-col>
@@ -156,37 +162,40 @@
 
           </b-col>
 
-          <!-- Field: user_firstname -->
-          <b-col
-            cols="12"
-            md="6"
-          >
-            <b-form-group
-              label="FIRST NAME*"
-              label-for="first_name"
-            >
-              <b-form-input
-                id="first_name"
-                v-model="user.first_name"
-                :disabled="view"
-                type="text"
-              />
-            </b-form-group>
-          </b-col>
-
           <!-- Field: user_lastname -->
           <b-col
             cols="12"
             md="6"
           >
             <b-form-group
-              label="Last Name"
+              :label="$t('app.form.label.last_name')"
               label-for="last_name"
             >
               <b-form-input
                 id="last_name"
                 v-model="user.full_name"
+                name="user_lastname"
                 :disabled="view"
+                type="text"
+              />
+            </b-form-group>
+          </b-col>
+
+          <!-- Field: user_firstname -->
+          <b-col
+            cols="12"
+            md="6"
+          >
+            <b-form-group
+              :label="$t('app.form.label.firstname')"
+              label-for="first_name"
+            >
+              <b-form-input
+                id="first_name"
+                v-model="user.first_name"
+                :disabled="view"
+                name="user_firstname"
+                class=""
                 type="text"
               />
             </b-form-group>
@@ -204,6 +213,7 @@
                 id="abbreviation"
                 v-model="user.name_abrv"
                 :disabled="view"
+                name="contactperson_shortname"
                 type="text"
               />
             </b-form-group>
@@ -214,13 +224,14 @@
             md="6"
           >
             <b-form-group
-              label="Function"
+              :label="$t('app.form.label.function')"
               label-for="function"
             >
               <b-form-input
                 id="function"
                 v-model="user.function"
                 :disabled="view"
+                name="contactperson_function"
                 type="text"
               />
             </b-form-group>
@@ -242,6 +253,7 @@
                   placeholder="Please select ..."
                   class="mr-1"
                   type="text"
+                  name="Customergroup_id"
                 />
                 <img
                   src="@/assets/images/icons/customerGroup.svg"
