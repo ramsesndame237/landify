@@ -3,6 +3,8 @@ import { ToastPlugin, ModalPlugin } from 'bootstrap-vue'
 import VueCompositionAPI from '@vue/composition-api'
 import i18n from '@/libs/i18n'
 
+import { ValidationProvider, ValidationObserver, extend } from 'vee-validate'
+import { required, email, max , regex} from 'vee-validate/dist/rules'
 import router from './router'
 import store from './store'
 import App from './App.vue'
@@ -14,6 +16,17 @@ import './global-components'
 import '@/libs/portal-vue'
 import '@/libs/toastification'
 import '@/libs/sweet-alerts'
+
+// Vee validate
+Vue.component('validation-provider', ValidationProvider)
+Vue.component('validation-observer', ValidationObserver)
+extend('email', email)
+extend('required', required)
+extend('regex', regex)
+extend('max', {
+  ...max,
+  message: (_, values) => i18n.t('validations.messages.max', values),
+})
 
 // BSV Plugin Registration
 Vue.use(ToastPlugin)

@@ -12,7 +12,7 @@ export default {
     tableDefinition: {},
   },
   getters: {
-    definition: state => entity => state.tableDefinition[entity],
+    tableDefinition: state => entity => state.tableDefinition[entity],
   },
   mutations: {
     setDefinition(state, data) {
@@ -34,7 +34,7 @@ export default {
         lang: window.$vue.$i18n.locale,
       })
         .then(({ data }) => {
-          context.commit('table/setDefinition', data)
+          context.commit('setDefinition', data)
           return data.data.data[0]
         })
     },

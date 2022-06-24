@@ -11,12 +11,12 @@
 
     <template #cell(Actions)="data">
       <b-button v-if="withView" size="xs" class="mr-1" style="margin-bottom: 3px" variant="info"
-                @click="$router.push({name: link, params: {id: currentItems[data.index][primaryKey], entity: currentItems[data.index]}})">
+                @click="$router.push({name: 'table-view', params: {table: entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index]}})">
         <img src="@/assets/images/pages/plusIcons.svg" alt="" style="margin-right: 5px">
         <span>{{ $t('app.btn.view') }}</span>
       </b-button>
       <b-button v-if="withEdit" size="xs" variant="success" class="mr-1" style="margin-bottom: 3px"
-                @click="$router.push({name: link, params: {id: currentItems[data.index][primaryKey], entity: currentItems[data.index]}, query: {edit: 'true'}})">
+                @click="$router.push({name: 'table-view', params: {table: entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index]}, query: {edit: 'true'}})">
         <img src="@/assets/images/pages/plusIcons.svg">
         <span>{{ $t('app.btn.edit') }}</span>
       </b-button>
@@ -47,6 +47,8 @@ export default {
     withView: { type: Boolean, default: true },
     withEdit: { type: Boolean, default: true },
     defaultSortColumn: { type: String, default: '' },
+    secondKey: {},
+    secondKeyValue: {}
   },
   data() {
     return {
@@ -66,7 +68,7 @@ export default {
       return `table-${this.entity}-edit`
     },
     allFields() {
-      return [{ key: '__selected' }, ...this.fields, 'Actions']
+      return [{ key: '__selected' }, ...this.fields.filter(f => !f.hideOnIndex), 'Actions']
     },
     ...mapState('table', ['search', 'perPage', 'currentPage']),
     totalRows: {
@@ -96,6 +98,8 @@ export default {
       const {
         currentPage, perPage, filter, sortBy, sortDesc,
       } = ctx
+      const filterData = {}
+      if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
       return this.$api({
         action: 'read-rich',
         entity: this.entity,
@@ -104,7 +108,7 @@ export default {
         per_page: perPage,
         from: 0,
         current_page: currentPage,
-        filter: {},
+        filter: filterData,
         filter_all: filter ?? '',
         lang: this.$i18n.locale,
       })

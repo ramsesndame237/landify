@@ -168,10 +168,11 @@ export default {
               })
           })
             .catch(e => {
+              let title
               if (e.response) {
-                const title = e.response.data.detail
-                this.$errorToast(title)
+                title = e.response.data.detail
               }
+              this.$errorToast(title)
             })
         }
       })

@@ -1,76 +1,35 @@
 <template>
-  <div
-    class="d-flex justify-content-between"
-    style="padding: 10px"
-  >
+  <div class="d-flex justify-content-between" style="padding: 10px">
     <b-form-group class="mb-0">
       <label class="d-inline-block text-sm-left mr-50">Show</label>
-      <b-form-select
-        id="perPageSelect"
-        v-model="perPage"
-        style="width: 60px"
-        size="sm"
-        :options="pageOptions"
-        class="w-10"
-      />
+      <b-form-select id="perPageSelect" v-model="perPage" style="width: 60px" size="sm" :options="pageOptions"
+                     class="w-10"/>
       <label class="d-inline-block text-sm-left ml-50">Entries</label>
     </b-form-group>
 
     <div class="d-flex align-items-center">
-      <span class="mr-1">show 1 to {{ perPage }} of {{ totalRows }} entries</span>
-      <b-pagination
-        v-model="currentPage"
-        :total-rows="totalRows"
-        :per-page="perPage"
-        align="center"
-        class="my-0"
-        first-number
-        last-number
-        prev-class="prev-item"
-        next-class="next-item"
-      />
+      <span class="mr-1">show {{ (currentPage - 1) * perPage + 1 }} to {{ Math.min(perPage * currentPage, totalRows) }}
+        of {{ totalRows }} entries
+      </span>
+      <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" align="center" class="my-0"
+                    first-number last-number prev-class="prev-item" next-class="next-item"/>
     </div>
 
     <div class="d-flex align-items-center">
       <div class="mr-1 d-flex">
-        <b-button
-          v-if="onNewElement!=null"
-          @click="onNewElement"
-          size="sm"
-          variant="info"
-          class="mr-1 d-flex">
-          <img
-            src="@/assets/images/pages/plusIcons.svg"
-            alt=""
-          >
+        <b-button v-if="onNewElement!=null" @click="onNewElement" size="sm" variant="info" class="mr-1 d-flex">
+          <img src="@/assets/images/pages/plusIcons.svg" alt="">
           new
         </b-button>
-        <b-button
-          v-if="onDeleteElements!=null"
-          @click="onDeleteElements"
-          size="sm"
-          class="d-flex"
-          variant="primary"
-        >
-          <img
-            src="@/assets/images/pages/deleteIcons.svg"
-            alt=""
-          >
+        <b-button v-if="onDeleteElements!=null" @click="onDeleteElements" size="sm" class="d-flex" variant="primary">
+          <img src="@/assets/images/pages/deleteIcons.svg" alt="">
           Delete
         </b-button>
       </div>
 
-      <div
-        size="sm"
-        class="d-flex align-items-center"
-      >
+      <div size="sm" class="d-flex align-items-center">
         <label class="d-inline-block text-sm-left mr-50">Search</label>
-        <b-form-input
-          id="filterInput"
-          v-model="search"
-          type="search"
-          placeholder="Search.."
-        />
+        <b-form-input id="filterInput" v-model="search" type="search" placeholder="Search.."/>
       </div>
     </div>
 
@@ -101,7 +60,7 @@ export default {
     pageOptions: {
       type: Array,
       default() {
-        return [3, 5, 10]
+        return [10,20,30]
       },
     },
   },
