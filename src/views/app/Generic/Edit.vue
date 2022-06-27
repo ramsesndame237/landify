@@ -28,7 +28,8 @@
     <b-card class="">
       <validation-observer ref="form" v-slot="{ passes }">
         <b-form @submit.prevent="passes(update)">
-          <b-row>
+          <component :is="definition.formComponent" v-if="definition.formComponent"/>
+          <b-row v-else>
             <b-col v-for="(field,index) in formFields" :key="index" cols="12" md="6">
               <field :disabled="view" :entity="entity" :table-definition="tableDefinition" :field="field"/>
             </b-col>
@@ -66,8 +67,8 @@
 <script>
 import {
   BCard,
-  BTab, BFormCheckbox, BFormRadioGroup,
-  BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton, BFormSelect, BModal,
+  BTab,
+  BTabs, BRow, BCol, BForm, BFormInput, BButton,
 } from 'bootstrap-vue'
 import Tables from "@/table";
 import DataTables from "@/layouts/components/DataTables";
@@ -81,15 +82,10 @@ export default {
     BTab,
     BTabs,
     BRow,
-    BFormGroup,
     BCol,
     BForm,
     BFormInput,
     BButton,
-    BModal,
-    BFormSelect,
-    BFormCheckbox,
-    BFormRadioGroup,
     Field,
   },
   data() {

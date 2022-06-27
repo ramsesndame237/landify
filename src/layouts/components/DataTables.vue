@@ -1,7 +1,7 @@
 <template>
   <b-table ref="table" striped hover responsive :busy.sync="loading" :per-page="perPage" :current-page="currentPage"
            :items="provider" :fields="allFields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
-           :sort-direction="sortDirection" :filter="search" select-mode="multi" @filtered="onFiltered">
+           :sort-direction="sortDirection" :filter="search" select-mode="multi" show-empty>
     <template #cell(__selected)="data">
       <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"/>
     </template>
@@ -48,7 +48,7 @@ export default {
     withEdit: { type: Boolean, default: true },
     defaultSortColumn: { type: String, default: '' },
     secondKey: {},
-    secondKeyValue: {}
+    secondKeyValue: {},
   },
   data() {
     return {
@@ -181,23 +181,6 @@ export default {
       this.currentItems.forEach(item => {
         this.$set(item, '__selected', newVal)
       })
-    },
-    deleteButton(id) {
-      this.$emit('deleteButton', id)
-    },
-    info(item, index, button) {
-      this.infoModal.title = `Row index: ${index}`
-      this.infoModal.content = JSON.stringify(item, null, 2)
-      this.$root.$emit('bv::show::modal', this.infoModal.id, button)
-    },
-    resetInfoModal() {
-      this.infoModal.title = ''
-      this.infoModal.content = ''
-    },
-    onFiltered(filteredItems) {
-      // Trigger pagination to update the number of buttons/pages due to filtering
-      this.totalRows = filteredItems.length
-      this.currentPage = 1
     },
   },
 }

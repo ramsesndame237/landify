@@ -7,7 +7,9 @@ export default {
       { key: 'user_firstname', label: 'First Name', sortable: true },
       { key: 'user_lastname', label: 'Last Name', sortable: true },
       { key: 'user_email', label: 'Email', sortable: true, type: 'email' },
-      { key: 'user_last_login_time', label: 'Last login', sortable: true },
+      { key: 'user_last_login_time', label: 'Last login', sortable: true, hideOnForm: true },
+      { key: 'usertype_id', hideOnIndex: true, type: 'list', list: 'usertype', listLabel: 'usertype_name'},
+      { key: 'contactperson_id', hideOnIndex: true, type: 'list', list: 'contactperson', listLabel: 'contactperson_lastname'},
     ],
     relations: [
       {
@@ -31,6 +33,39 @@ export default {
           { key: 'customergroup_name', sortable: true },
           { key: 'user_customergroup_valid_from', sortable: true },
           { key: 'user_customergroup_valid_to', sortable: true },
+        ],
+      },
+      {
+        title: 'Companies',
+        primaryKey: 'company_id',
+        entity: 'user_company_grp',
+        fields: [
+          { key: 'company_id', label: 'ID', sortable: true },
+          { key: 'company_name', sortable: true },
+          { key: 'user_company_valid_from', sortable: true },
+          { key: 'user_company_valid_to', sortable: true },
+        ],
+      },
+      {
+        title: 'Point of sales',
+        primaryKey: 'pos_id',
+        entity: 'user_pos_grp',
+        fields: [
+          { key: 'pos_id', label: 'ID', sortable: true },
+          { key: 'pos_name', sortable: true },
+          { key: 'user_pos_valid_from', sortable: true },
+          { key: 'user_pos_valid_to', sortable: true },
+        ],
+      },
+      {
+        title: 'Teams',
+        primaryKey: 'team_id',
+        entity: 'user_team_grp',
+        fields: [
+          { key: 'team_id', label: 'ID', sortable: true },
+          { key: 'team_name', sortable: true },
+          { key: 'user_team_valid_from', sortable: true },
+          { key: 'user_team_valid_to', sortable: true },
         ],
       },
     ],

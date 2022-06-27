@@ -8,7 +8,7 @@
       <Datatable ref="table" link="table-user-edit" :entity="table" :default-sort-field="definition.defaultSortField"
                  :fields="definition.fields" :primary-key-column="definition.primaryKey"/>
     </b-card>
-    <generic-modal :table="table" :title="'create '+table" :fields="definition.fields" ref="modal"/>
+    <generic-modal :table="table" :title="'create '+table" ref="modal"/>
   </div>
 </template>
 

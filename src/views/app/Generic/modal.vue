@@ -4,7 +4,9 @@
            :title="$t(title)" size="lg" @ok="handleOk">
     <validation-observer ref="form" v-slot="{ passes }">
       <b-form @submit.prevent="passes(submit)">
-        <b-row>
+        <component :is="definition.createComponent" v-if="definition.createComponent" :entity="entity"
+                   :table-definition="tableDefinition"/>
+        <b-row v-else>
           <b-col v-for="(field,index) in formFields" :key="index" cols="12">
             <field inline="true" :entity="entity" :table-definition="tableDefinition" :field="field"/>
           </b-col>
@@ -26,6 +28,7 @@ import {
   BFormTextarea
 } from 'bootstrap-vue'
 import Field from "@/views/app/Generic/Field";
+import Tables from '../../../table'
 
 export default {
   name: 'GenericModal',
@@ -38,13 +41,16 @@ export default {
       entity: {},
     }
   },
-  props: ['table', 'title', 'fields'],
+  props: ['table', 'title'],
   computed: {
     formFields() {
-      return this.fields.filter(f => !f.hideOnForm)
+      return this.definition.fields.filter(f => !f.hideOnForm)
     },
     tableDefinition() {
       return this.$store.getters['table/tableDefinition'](this.table)
+    },
+    definition() {
+      return Tables[this.table]
     },
   },
   methods: {
