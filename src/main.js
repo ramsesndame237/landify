@@ -4,7 +4,9 @@ import VueCompositionAPI from '@vue/composition-api'
 import i18n from '@/libs/i18n'
 
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate'
-import { required, email, max , regex} from 'vee-validate/dist/rules'
+import {
+  required, email, max, regex,
+} from 'vee-validate/dist/rules'
 import router from './router'
 import store from './store'
 import App from './App.vue'
@@ -26,6 +28,11 @@ extend('regex', regex)
 extend('max', {
   ...max,
   message: (_, values) => i18n.t('validations.messages.max', values),
+})
+extend('date_after', {
+  params: ['attribute'],
+  validate: (value, { attribute }) => value >= attribute,
+  message: 'This date must be after {_attribute_}',
 })
 
 // BSV Plugin Registration

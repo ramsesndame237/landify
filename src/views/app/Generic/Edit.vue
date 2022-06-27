@@ -43,7 +43,7 @@
       <b-tabs ref="tabs" pills>
         <b-tab v-for="(relation, index) in definition.relations" :key="index" :title="$t(relation.title)"
                :active="index===0" lazy>
-          <data-tables :second-key="definition.primaryKey" :second-key-value="$route.params.id"
+          <data-tables :second-key="definition.primaryKey" :second-key-value="entityId"
                        :primary-key-column="relation.primaryKey" :entity="relation.entity" :search="search"
                        :entity-form="relation.entityForm" :fields="relation.fields" :on-edit-element="editElement"/>
           <generic-modal title="Test" :table="relation.entityForm" :definition="relation"
@@ -114,6 +114,9 @@ export default {
     tableDefinition() {
       return this.$store.getters['table/tableDefinition'](this.table)
     },
+    entityId(){
+      return parseInt(this.$route.params.id)
+    },
   },
   async created() {
     if (!this.$route.params.entity) {
@@ -160,7 +163,7 @@ export default {
     },
     newElement() {
       const { tabs } = this.$refs
-      tabs.tabs[tabs.currentTab].$children[1].openModal({}, 'Add a role to the user')
+      tabs.tabs[tabs.currentTab].$children[1].openModal({ [this.definition.primaryKey]: this.entityId }, 'Add a role to the user')
     },
     editElement(entity) {
       const { tabs } = this.$refs

@@ -10,7 +10,7 @@
     </template>
 
     <template #cell(Actions)="data">
-      <b-button v-if="withView" size="xs" class="mr-1" style="margin-bottom: 3px" variant="info"
+      <b-button v-if="withView && !secondKey" size="xs" class="mr-1" style="margin-bottom: 3px" variant="info"
                 @click="$router.push({name: 'table-view', params: {table: entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index]}})">
         <img src="@/assets/images/pages/plusIcons.svg" alt="" style="margin-right: 5px">
         <span>{{ $t('app.btn.view') }}</span>
@@ -138,12 +138,12 @@ export default {
         return this.$errorToast('No element selected')
       }
       // show confirm box
-      return this.deleteEntities(selected.map(entity => entity[this.primaryKey]))
+      return this.deleteEntities(selected)
     },
     deleteElement(index) {
-      return this.deleteEntities([this.currentItems[index][this.primaryKey]])
+      return this.deleteEntities([this.currentItems[index]])
     },
-    deleteEntities(ids) {
+    deleteEntities(entities) {
       this.$swal({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -160,9 +160,12 @@ export default {
         this.$api({
           action: 'delete',
           entity: this.entityForm || this.entity,
-          data: ids.map(id => ({ [this.primaryKey]: id })),
+          data: entities.map(entity => ({
+            [this.primaryKey]: entity[this.primaryKey],
+            [this.secondKey]: entity[this.secondKey],
+          })),
         }).then(() => {
-          this.$successToast(this.$t(ids.length > 1 ? 'notification.elements_deleted' : 'notification.element_deleted'))
+          this.$successToast(this.$t(entities.length > 1 ? 'notification.elements_deleted' : 'notification.element_deleted'))
           this.$refs.table.refresh()
           this.$swal({
             icon: 'success',

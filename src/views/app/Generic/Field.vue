@@ -4,10 +4,10 @@
                          :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message[field.key]}">
       <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
                        :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
-      <v-select v-if="field.type==='list'" v-model="entity[field.key]" :disabled="disabled"
+      <v-select v-else-if="field.type==='list'" v-model="entity[field.key]" :disabled="disabled"
                 :state="errors.length > 0 ? false:null" :placeholder="field.key" :options="list"
                 :label="field.listLabel" :reduce="i => i[field.key]"/>
-      <flat-pickr v-else-if="field.type=='date'" v-model="entity[field.key]" :disabled="disabled"
+      <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                   :state="errors.length > 0 ? false:null" :placeholder="field.key" class="form-control"/>
       <b-form-input v-else v-model="entity[field.key]" :type="field.type||'text'" :disabled="disabled"
                     :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
@@ -46,6 +46,7 @@ export default {
         email: this.field.type === 'email',
         max: this.tableDefinition?.attribute_datatype_len[field.key] || false,
         regex: this.tableDefinition?.attribute_regexp[field.key] || false,
+        ...(this.field.rules || {}),
       }
     },
   },
