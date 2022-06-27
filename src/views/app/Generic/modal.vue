@@ -39,6 +39,7 @@ export default {
     return {
       entity: {},
       forceTitle: '',
+      create: true,
     }
   },
   props: ['table', 'definition', 'tableDefinitionKey', 'title'],
@@ -51,9 +52,10 @@ export default {
     },
   },
   methods: {
-    openModal(data, title) {
+    openModal(create, data, title) {
       this.entity = data
       this.forceTitle = title
+      this.create = create
       this.$refs.modal.show()
     },
     submit() {
@@ -63,7 +65,7 @@ export default {
         }
         this.$api({
           entity: this.table,
-          action: 'create',
+          action: this.create ? 'create' : 'update',
           data: [
             this.entity,
           ],

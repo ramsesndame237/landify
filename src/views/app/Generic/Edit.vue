@@ -114,7 +114,7 @@ export default {
     tableDefinition() {
       return this.$store.getters['table/tableDefinition'](this.table)
     },
-    entityId(){
+    entityId() {
       return parseInt(this.$route.params.id)
     },
   },
@@ -163,11 +163,11 @@ export default {
     },
     newElement() {
       const { tabs } = this.$refs
-      tabs.tabs[tabs.currentTab].$children[1].openModal({ [this.definition.primaryKey]: this.entityId }, 'Add a role to the user')
+      tabs.tabs[tabs.currentTab].$children[1].openModal(true, { [this.definition.primaryKey]: this.entityId }, `Add ${this.definition.relations[tabs.currentTab].title}`)
     },
     editElement(entity) {
       const { tabs } = this.$refs
-      tabs.tabs[tabs.currentTab].$children[1].openModal(entity, 'Update User role')
+      tabs.tabs[tabs.currentTab].$children[1].openModal(false, entity, `Update ${this.definition.relations[tabs.currentTab].title}`)
     },
   },
   beforeRouteEnter(to, from, next) {
