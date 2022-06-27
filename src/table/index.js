@@ -8,26 +8,42 @@ export default {
       { key: 'user_lastname', label: 'Last Name', sortable: true },
       { key: 'user_email', label: 'Email', sortable: true, type: 'email' },
       { key: 'user_last_login_time', label: 'Last login', sortable: true, hideOnForm: true },
-      { key: 'usertype_id', hideOnIndex: true, type: 'list', list: 'usertype', listLabel: 'usertype_name'},
-      { key: 'contactperson_id', hideOnIndex: true, type: 'list', list: 'contactperson', listLabel: 'contactperson_lastname'},
+      {
+        key: 'usertype_id',
+        label: 'User Type',
+        hideOnIndex: true,
+        type: 'list',
+        list: 'usertype',
+        listLabel: 'usertype_name'
+      },
+      {
+        key: 'contactperson_id',
+        hideOnIndex: true,
+        type: 'list',
+        list: 'contactperson',
+        listLabel: 'contactperson_lastname'
+      },
     ],
+    formComponent: () => import('@/views/app/Users/Form'),
     relations: [
       {
         title: 'Roles',
         primaryKey: 'role_id',
         entity: 'user_role_grp',
+        entityForm: 'user_role_rel',
         fields: [
-          { key: 'role_id', label: 'Role ID', sortable: true },
-          { key: 'role_name', label: 'Role name', sortable: true },
-          { key: 'role_permission', label: 'Permission', sortable: true },
-          { key: 'user_role_valid_from', label: '', sortable: true },
-          { key: 'user_role_valid_to', label: '', sortable: true },
+          { key: 'role_id', label: 'Role ID', sortable: true, type: 'list', list: 'role', listLabel: 'role_name' },
+          { key: 'role_name', label: 'Role name', sortable: true, hideOnForm: true },
+          { key: 'role_permission', label: 'Permission', sortable: true, hideOnForm: true },
+          { key: 'user_role_valid_from', type: 'date', sortable: true },
+          { key: 'user_role_valid_to', type: 'date', sortable: true },
         ],
       },
       {
         title: 'Customer Groups',
         primaryKey: 'customergroup_id',
         entity: 'user_customergroup_grp',
+        entityForm: 'user_customergroup_rel',
         fields: [
           { key: 'customergroup_id', label: 'ID', sortable: true },
           { key: 'customergroup_name', sortable: true },
@@ -39,6 +55,7 @@ export default {
         title: 'Companies',
         primaryKey: 'company_id',
         entity: 'user_company_grp',
+        entityForm: 'user_company_rel',
         fields: [
           { key: 'company_id', label: 'ID', sortable: true },
           { key: 'company_name', sortable: true },
@@ -50,6 +67,7 @@ export default {
         title: 'Point of sales',
         primaryKey: 'pos_id',
         entity: 'user_pos_grp',
+        entityForm: 'user_pos_rel',
         fields: [
           { key: 'pos_id', label: 'ID', sortable: true },
           { key: 'pos_name', sortable: true },
@@ -61,11 +79,24 @@ export default {
         title: 'Teams',
         primaryKey: 'team_id',
         entity: 'user_team_grp',
+        entityForm: 'user_team_rel',
         fields: [
           { key: 'team_id', label: 'ID', sortable: true },
           { key: 'team_name', sortable: true },
           { key: 'user_team_valid_from', sortable: true },
           { key: 'user_team_valid_to', sortable: true },
+        ],
+      },
+      {
+        title: 'Partner Companies',
+        primaryKey: 'partnercompany_id',
+        entity: 'user_partnercompany_grp',
+        entityForm: 'user_partnercompany_rel',
+        fields: [
+          { key: 'partnercompany_id', label: 'ID', sortable: true },
+          { key: 'partnercompany_name', sortable: true },
+          { key: 'user_partnercompany_valid_from', sortable: true },
+          { key: 'user_partnercompany_valid_to', sortable: true },
         ],
       },
     ],

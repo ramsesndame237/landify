@@ -1,7 +1,7 @@
 <template>
   <!--modal-->
   <b-modal id="generic-modal" ref="modal" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary" centered
-           :title="$t(title)" size="lg" @ok="handleOk">
+           :title="$t(forceTitle || title)" size="lg" @ok="handleOk">
     <validation-observer ref="form" v-slot="{ passes }">
       <b-form @submit.prevent="passes(submit)">
         <component :is="definition.createComponent" v-if="definition.createComponent" :entity="entity"
@@ -28,7 +28,6 @@ import {
   BFormTextarea
 } from 'bootstrap-vue'
 import Field from "@/views/app/Generic/Field";
-import Tables from '../../../table'
 
 export default {
   name: 'GenericModal',
@@ -39,21 +38,24 @@ export default {
   data() {
     return {
       entity: {},
+      forceTitle: '',
     }
   },
-  props: ['table', 'title'],
+  props: ['table', 'definition', 'tableDefinitionKey', 'title'],
   computed: {
     formFields() {
       return this.definition.fields.filter(f => !f.hideOnForm)
     },
     tableDefinition() {
-      return this.$store.getters['table/tableDefinition'](this.table)
-    },
-    definition() {
-      return Tables[this.table]
+      return this.$store.getters['table/tableDefinition'](this.tableDefinitionKey)
     },
   },
   methods: {
+    openModal(data, title) {
+      this.entity = data
+      this.forceTitle = title
+      this.$refs.modal.show()
+    },
     submit() {
       this.$refs.form.validate().then(success => {
         if (!success) {

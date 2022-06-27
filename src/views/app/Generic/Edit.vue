@@ -28,7 +28,8 @@
     <b-card class="">
       <validation-observer ref="form" v-slot="{ passes }">
         <b-form @submit.prevent="passes(update)">
-          <component :is="definition.formComponent" v-if="definition.formComponent"/>
+          <component :is="definition.formComponent" v-if="definition.formComponent" :disabled="view" :entity="entity"
+                     :table-definition="tableDefinition"/>
           <b-row v-else>
             <b-col v-for="(field,index) in formFields" :key="index" cols="12" md="6">
               <field :disabled="view" :entity="entity" :table-definition="tableDefinition" :field="field"/>
@@ -39,23 +40,26 @@
     </b-card>
 
     <b-card v-if="definition.relations && definition.relations.length>0">
-      <b-tabs pills>
+      <b-tabs ref="tabs" pills>
         <b-tab v-for="(relation, index) in definition.relations" :key="index" :title="$t(relation.title)"
                :active="index===0" lazy>
           <data-tables :second-key="definition.primaryKey" :second-key-value="$route.params.id"
-                       :primary-key-column="relation.primaryKey" :entity="relation.entity" :fields="relation.fields"/>
+                       :primary-key-column="relation.primaryKey" :entity="relation.entity" :search="search"
+                       :entity-form="relation.entityForm" :fields="relation.fields" :on-edit-element="editElement"/>
+          <generic-modal title="Test" :table="relation.entityForm" :definition="relation"
+                         :table-definition-key="relation.entity"/>
         </b-tab>
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
-            <b-button v-b-modal.modal-role class="mr-1" size="sm" variant="info">
+            <b-button v-b-modal.modal-role class="mr-1" size="sm" variant="info" @click="newElement">
               New
             </b-button>
-            <b-button class="mr-1" size="sm" variant="primary">
+            <b-button class="mr-1" size="sm" variant="primary" @click="deleteSelected">
               Delete
             </b-button>
             <div size="sm" class="d-flex align-items-center">
               <label class="d-inline-block text-sm-left mr-50">Search</label>
-              <b-form-input id="filterInput" type="search" placeholder="rechercher.."/>
+              <b-form-input v-model="search" debounce="500" id="filterInput" type="search" placeholder="rechercher.."/>
             </div>
           </div>
         </template>
@@ -73,10 +77,11 @@ import {
 import Tables from "@/table";
 import DataTables from "@/layouts/components/DataTables";
 import Field from './Field';
-
+import GenericModal from "@/views/app/Generic/modal";
 
 export default {
   components: {
+    GenericModal,
     DataTables,
     BCard,
     BTab,
@@ -91,28 +96,9 @@ export default {
   data() {
     return {
       view: this.$route.query.edit !== 'true',
-      perPage: 10,
-      pageOptions: [3, 5, 10],
       entity: this.$route.params.entity || {},
       originalEntity: null,
-      fields: [
-        { key: 'id', label: 'Id' },
-        { key: 'full_name', label: 'Last Name', sortable: true },
-        { key: 'first_name', label: 'First Name', sortable: true },
-        { key: 'email', label: 'eMail', sortable: true },
-        { key: 'last_login', label: 'Last login', sortable: true },
-        { key: 'user_type', label: 'User type', sortable: true },
-        { key: 'company', label: 'Company', sortable: true },
-        'Action',
-      ],
-      columnRoles: [
-        { key: 'role_id', label: 'Role-ID', sortable: true },
-        { key: 'role_name', label: 'Role name', sortable: true },
-        { key: 'role_permission', label: 'Role permission', sortable: true },
-        { key: 'user_role_valid_from', label: 'Valid From', sortable: true },
-        { key: 'user_role_valid_to', label: 'Valid To', sortable: true },
-        'Action',
-      ],
+      search: '',
     }
   },
   computed: {
@@ -152,8 +138,12 @@ export default {
             this.entity,
           ],
         })
-          .then(() => {
+          .then((data) => {
+            this.$successToast(data.data.data.message)
             // show success message
+          })
+          .catch(e => {
+            this.$errorToast()
           })
       })
     },
@@ -163,6 +153,18 @@ export default {
     },
     edit() {
       this.view = false
+    },
+    deleteSelected() {
+      const { tabs } = this.$refs
+      tabs.tabs[tabs.currentTab].$children[0].deleteSelected()
+    },
+    newElement() {
+      const { tabs } = this.$refs
+      tabs.tabs[tabs.currentTab].$children[1].openModal({}, 'Add a role to the user')
+    },
+    editElement(entity) {
+      const { tabs } = this.$refs
+      tabs.tabs[tabs.currentTab].$children[1].openModal(entity, 'Update User role')
     },
   },
   beforeRouteEnter(to, from, next) {

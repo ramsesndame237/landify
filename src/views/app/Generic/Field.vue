@@ -7,6 +7,8 @@
       <v-select v-if="field.type==='list'" v-model="entity[field.key]" :disabled="disabled"
                 :state="errors.length > 0 ? false:null" :placeholder="field.key" :options="list"
                 :label="field.listLabel" :reduce="i => i[field.key]"/>
+      <flat-pickr v-else-if="field.type=='date'" v-model="entity[field.key]" :disabled="disabled"
+                  :state="errors.length > 0 ? false:null" :placeholder="field.key" class="form-control"/>
       <b-form-input v-else v-model="entity[field.key]" :type="field.type||'text'" :disabled="disabled"
                     :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
       <small class="text-danger">{{ errors[0] }}</small>
@@ -20,12 +22,13 @@ import {
   BFormInput,
   BFormTextarea,
 } from 'bootstrap-vue'
+import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
 
 export default {
   name: 'Field',
   components: {
-    BFormInput, BFormGroup, BFormTextarea, vSelect,
+    BFormInput, BFormGroup, BFormTextarea, vSelect, flatPickr,
   },
   props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled'],
   data() {
@@ -51,4 +54,5 @@ export default {
 
 <style lang="scss" scoped>
 @import '@core/scss/vue/libs/vue-select.scss';
+@import '@core/scss/vue/libs/vue-flatpicker.scss';
 </style>

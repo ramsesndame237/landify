@@ -1,7 +1,7 @@
 <template>
   <b-table ref="table" striped hover responsive :busy.sync="loading" :per-page="perPage" :current-page="currentPage"
            :items="provider" :fields="allFields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
-           :sort-direction="sortDirection" :filter="search" select-mode="multi" show-empty>
+           :sort-direction="sortDirection" :filter="search" select-mode="multi">
     <template #cell(__selected)="data">
       <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"/>
     </template>
@@ -16,7 +16,7 @@
         <span>{{ $t('app.btn.view') }}</span>
       </b-button>
       <b-button v-if="withEdit" size="xs" variant="success" class="mr-1" style="margin-bottom: 3px"
-                @click="$router.push({name: 'table-view', params: {table: entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index]}, query: {edit: 'true'}})">
+                @click="onEditElement ? onEditElement(currentItems[data.index]) : $router.push({name: 'table-view', params: {table: entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index]}, query: {edit: 'true'}})">
         <img src="@/assets/images/pages/plusIcons.svg">
         <span>{{ $t('app.btn.edit') }}</span>
       </b-button>
@@ -42,6 +42,7 @@ export default {
   },
   props: {
     entity: { type: String, required: true },
+    entityForm: { type: String, required: false },
     fields: { type: Array, required: true },
     primaryKeyColumn: { type: String },
     withView: { type: Boolean, default: true },
@@ -49,6 +50,8 @@ export default {
     defaultSortColumn: { type: String, default: '' },
     secondKey: {},
     secondKeyValue: {},
+    search: {},
+    onEditElement: { type: Function },
   },
   data() {
     return {
@@ -70,7 +73,7 @@ export default {
     allFields() {
       return [{ key: '__selected' }, ...this.fields.filter(f => !f.hideOnIndex), 'Actions']
     },
-    ...mapState('table', ['search', 'perPage', 'currentPage']),
+    ...mapState('table', ['perPage', 'currentPage']),
     totalRows: {
       get() {
         return this.$store.state.table.totalRows
@@ -156,7 +159,7 @@ export default {
         if (!result.value) return
         this.$api({
           action: 'delete',
-          entity: this.entity,
+          entity: this.entityForm || this.entity,
           data: ids.map(id => ({ [this.primaryKey]: id })),
         }).then(() => {
           this.$successToast(this.$t(ids.length > 1 ? 'notification.elements_deleted' : 'notification.element_deleted'))

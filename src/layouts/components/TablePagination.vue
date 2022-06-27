@@ -29,7 +29,7 @@
 
       <div size="sm" class="d-flex align-items-center">
         <label class="d-inline-block text-sm-left mr-50">Search</label>
-        <b-form-input id="filterInput" v-model="search" type="search" placeholder="Search.."/>
+        <b-form-input debounce="500" id="filterInput" v-model="search" type="search" placeholder="Search.."/>
       </div>
     </div>
 

@@ -5,10 +5,10 @@
                         :on-delete-elements="()=> $refs.table.deleteSelected()"/>
     </b-card>
     <b-card>
-      <Datatable ref="table" link="table-user-edit" :entity="table" :default-sort-field="definition.defaultSortField"
+      <Datatable ref="table" link="table-user-edit" :search="search" :entity="table" :default-sort-field="definition.defaultSortField"
                  :fields="definition.fields" :primary-key-column="definition.primaryKey"/>
     </b-card>
-    <generic-modal :table="table" :title="'create '+table" ref="modal"/>
+    <generic-modal :table="table" :definition="definition" :table-definition-key="table" :title="'create '+table" ref="modal"/>
   </div>
 </template>
 
@@ -27,6 +27,7 @@ import {
 import TablePagination from '@/layouts/components/TablePagination.vue'
 import GenericModal from '@/views/app/Generic/modal';
 import Tables from '../../../table'
+import { mapState } from "vuex";
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
 
@@ -54,6 +55,7 @@ export default {
     definition() {
       return Tables[this.table]
     },
+    ...mapState('table', ['search']),
   },
   methods: {},
   beforeRouteEnter(to, from, next) {
