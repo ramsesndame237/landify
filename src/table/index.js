@@ -1,4 +1,5 @@
 export default {
+  // region Work Package 1
   user: {
     primaryKey: 'user_id',
     defaultSortField: 'user_id',
@@ -24,7 +25,7 @@ export default {
         listLabel: 'contactperson_lastname'
       },
     ],
-    formComponent: () => import('@/views/app/Users/Form'),
+    formComponent: () => import('@/views/app/FormComponent/UserForm'),
     relations: [
       {
         title: 'Roles',
@@ -234,12 +235,29 @@ export default {
       { key: 'crud', label: 'Crud', sortable: true },
     ],
   },
+  // endregion
+  // region Work Package 2
   customergroup: {
     primaryKey: 'customergroup_id',
     fields: [
       { key: 'customergroup_id', sortable: true, hideOnForm: true },
       { key: 'customergroup_name', sortable: true },
       { key: 'customergroup_description', sortable: true, hideOnIndex: true, type: 'textarea' },
+    ],
+    relations: [
+      {
+        title: 'Companies',
+        primaryKey: 'company_id',
+        entity: 'customergroup_company_grp',
+        entityForm: 'customergroup_company_rel',
+        fields: [
+          { key: 'company_id', sortable: true, type: 'list', list: 'company', listLabel: 'company_name' },
+          { key: 'company_name', sortable: true, hideOnForm: true },
+          { key: 'city_zip', sortable: true, hideOnForm: true },
+          { key: 'city_name', sortable: true, hideOnForm: true },
+          { key: 'country_short', sortable: true, hideOnForm: true },
+        ],
+      },
     ],
   },
   company: {
@@ -259,4 +277,5 @@ export default {
       { key: 'contactperson_shortname', sortable: true },
     ],
   },
+  // endregion
 }

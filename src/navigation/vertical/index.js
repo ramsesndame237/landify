@@ -48,6 +48,8 @@ export default [
     icon: 'UsersIcon',
   },
   // End Work Package 1
+
+  // Work Package 2
   {
     title: 'app.sidebar.work_pack_2.title',
     route: 'work package',
