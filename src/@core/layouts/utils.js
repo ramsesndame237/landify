@@ -42,13 +42,18 @@ export const resolveNavDataRouteName = link => {
 export const isNavLinkActive = link => {
   // Matched routes array of current route
   const matchedRoutes = router.currentRoute.matched
-
+  const { params } = router.currentRoute
   // Check if provided route matches route's matched route
   const resolveRoutedName = resolveNavDataRouteName(link)
 
   if (!resolveRoutedName) return false
 
-  return matchedRoutes.some(route => route.name === resolveRoutedName || route.meta.navActiveLink === resolveRoutedName)
+  return matchedRoutes.some(route => {
+    if (route.name === 'table' || route.name === 'table-view') {
+      return params.table === link.route.params?.table
+    }
+    return route.name === resolveRoutedName || route.meta.navActiveLink === resolveRoutedName
+  })
 }
 
 /**

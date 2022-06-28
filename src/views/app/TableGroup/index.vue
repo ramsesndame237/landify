@@ -5,10 +5,8 @@
                         :on-delete-elements="()=> $refs.table.deleteSelected()"/>
     </b-card>
     <b-card>
-      <DataTables ref="table" link="table-user-edit" entity="role" default-sort-field="role_id" :fields="fields"
-                  primary-key="role_id"/>
+      <DataTables ref="table" entity="tablegroup" :fields="fields"/>
     </b-card>
-
     <!--modal-->
     <b-modal id="create-modal" :ok-title="$t('app.btn.save')" :cancel-title="$t('app.btn.cancel')"
              modal-class="modal-primary" centered :title="$t('app.content.create_user')" size="lg">
@@ -98,18 +96,29 @@ export default {
   data() {
     return {
       fields: [
-        { key: 'id', label: 'Id' },
-        { key: 'role_id', label: 'Role ID', sortable: true },
-        { key: 'role_name', label: 'Role name', sortable: true },
-        { key: 'role_permission', label: 'Permission', sortable: true },
+        { key: 'tablegroup_id', label: 'ID', sortable: true },
+        { key: 'tablegroup_name', label: 'Name', sortable: true },
+        { key: 'tablegroup_description', label: 'Description', sortable: true },
       ],
     }
   },
   computed: {
+    sortOptions() {
+      // Create an options list from our fields
+      return this.fields
+        .filter(f => f.sortable)
+        .map(f => ({ text: f.label, value: f.key }))
+    },
   },
   mounted() {
+    this.totalRows = this.items.length
   },
   methods: {
+    info(item, index, button) {
+      this.infoModal.title = `Row index: ${index}`
+      this.infoModal.content = JSON.stringify(item, null, 2)
+      this.$root.$emit('bv::show::modal', this.infoModal.id, button)
+    },
     resetInfoModal() {
       this.infoModal.title = ''
       this.infoModal.content = ''

@@ -689,5 +689,9 @@
       "saving_type": "LISTE GLOBALE de Types d'épargne",
       "result_categories_type": "LISTE GLOBALE de Catégories de résultats"
     }
+  },
+  "general": {
+    "error": "Une erreur est survenue",
+    "server_down": "Le serveur est indisponible"
   }
 }

@@ -6,6 +6,9 @@
       "deadlines": "Deadlines",
       "doc": "Documents",
       "pos": "Point of sales",
+      "table": "Tables",
+      "tablegroup": "Table Groups",
+      "crud": "CRUD",
       "admin": {
         "parent": "Administration",
         "children": {
@@ -170,7 +173,6 @@
       "location": {
         "view_title": "Location detail and care"
       },
-
       "contract": {
         "view": "Maintain contract",
         "view2": "Maintain (rental) contract",
@@ -185,7 +187,6 @@
       "create_new_index_clause": "Create new Index Clause",
       "right_view": "Contract special right create and Maintain",
       "create_new_recurring_pay": "Create new Recurring Payment",
-
       "dashboard": {
         "sub_title": "Overall list without registers",
         "card_text": "All the best for your new project."
@@ -257,7 +258,7 @@
           "type": "Contract Type",
           "document": "Document Contract type id"
         },
-        "service" : {
+        "service": {
           "id": "service object_id (automatically)",
           "name": "service object_name (enter here ...)",
           "description": "service object_description",
@@ -458,9 +459,9 @@
         "customer_pos_no": "Customer POS No",
         "pos_name": "POS Name",
         "pos_branch_no": "POS Branch No",
-        "first_year":"First Year",
-        "symbol":"Symbol",
-        "short":"Short",
+        "first_year": "First Year",
+        "symbol": "Symbol",
+        "short": "Short",
         "location": {
           "location_id": "Location ID",
           "object_description": "Object description",
@@ -484,7 +485,7 @@
           "document": "Document Contract type",
           "end_contract_possible": "END OF CONTRACT NEXT POSSIBLE"
         },
-        "service" : {
+        "service": {
           "id": "Service OBject ID",
           "name": "Name Service Object",
           "description": "Description",
@@ -692,7 +693,7 @@
       "contract_edit": "Contract Management",
       "services": "Overview list Service Objects",
       "service_view": "Service Object detail view",
-      "criteria" : "OVERALL LIST contract criteria",
+      "criteria": "OVERALL LIST contract criteria",
       "criteria_view": "Contract Criteria",
       "index_clause": "OVERALL LIST Index clauses",
       "index_clause_view": "Index Clause",
@@ -711,6 +712,20 @@
       "ratings_type": "OVERALL LIST ratings",
       "saving_type": "OVERALL LIST Saving Types",
       "result_categories_type": "OVERALL LIST Result Categories"
+    }
+  },
+  "general": {
+    "error": "An error has occurred",
+    "server_down": "The Server is unavailable",
+    "unauthorized": "This action is not authorized"
+  },
+  "notification": {
+    "element_deleted": "The element is deleted",
+    "elements_deleted": "The elements where deleted"
+  },
+  "validations": {
+    "messages": {
+      "max": "{_field_} must contain maximum {length} characters"
     }
   }
 }

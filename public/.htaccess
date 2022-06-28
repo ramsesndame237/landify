@@ -11,3 +11,10 @@ require valid-user
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . /kim_pro_frontend [L]
 </IfModule>
+
+# DISABLE CACHING
+<IfModule mod_headers.c>
+#  <FilesMatch "\.pdf$">
+      Header set Cache-Control "no-store, max-age=60"
+#  </FilesMatch>
+</IfModule>

@@ -678,5 +678,8 @@
       "saving_type": "GESAMTLISTE Spartypen",
       "result_categories_type": "GESAMTLISTE Ergebnis-Kategorien"
     }
+  },
+  "general": {
+    "error": "Ein Fehler ist aufgetreten"
   }
 }

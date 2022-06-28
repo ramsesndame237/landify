@@ -5,7 +5,7 @@
                         :on-delete-elements="()=> $refs.table.deleteSelected()"/>
     </b-card>
     <b-card>
-      <DataTables ref="table" entity="usertype" :fields="fields"/>
+      <DataTables ref="table" entity="tablename" :fields="fields" :with-view="false" :with-edit="false"/>
     </b-card>
     <!--modal-->
     <b-modal id="modal-primary" :ok-title="$t('app.btn.save')" :cancel-title="$t('app.btn.cancel')"
@@ -48,14 +48,16 @@ import {
   BPagination,
   BInputGroup,
 } from 'bootstrap-vue'
-import DataTables from "@/layouts/components/DataTables";
 import TablePagination from "@/layouts/components/TablePagination";
+import DataTables from "@/layouts/components/DataTables";
 
+const Databases = () => import('@/layouts/components/DataTables.vue')
 
 export default {
   components: {
-    TablePagination,
     DataTables,
+    TablePagination,
+    Databases,
     BButton,
     BFormGroup,
     BPagination,
@@ -71,9 +73,7 @@ export default {
   data() {
     return {
       fields: [
-        { key: 'usertype_id', label: 'Id' },
-        { key: 'usertype_name', label: this.$t('app.form.label.name'), sortable: true },
-        { key: 'usertype_description', label: this.$t('app.form.label.description'), sortable: true },
+        { key: 'table_name', label: 'Table Name', sortable: true },
       ],
     }
   },
