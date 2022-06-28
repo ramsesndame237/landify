@@ -1,5 +1,5 @@
 <template>
-  <b-form-group :label="field.label||field.key" :label-for="'field-'+field.key" :label-cols-md="inline?4:null">
+  <b-form-group :label="field.label||snakeToTitle(field.key)" :label-for="'field-'+field.key" :label-cols-md="inline?4:null">
     <validation-provider #default="{ errors }" :rules="getValidationRules(field)" :name="field.key"
                          :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message[field.key]}">
       <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
@@ -24,6 +24,7 @@ import {
 } from 'bootstrap-vue'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
+import {snakeToTitle} from '@/libs/utils'
 
 export default {
   name: 'Field',
@@ -49,6 +50,7 @@ export default {
         ...(this.field.rules || {}),
       }
     },
+    snakeToTitle,
   },
 }
 </script>

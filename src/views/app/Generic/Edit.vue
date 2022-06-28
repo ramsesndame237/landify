@@ -27,7 +27,7 @@
 
     <b-card class="">
       <validation-observer ref="form" v-slot="{ passes }">
-        <b-form @submit.prevent="passes(update)">
+        <b-form autocomplete="off" @submit.prevent="passes(update)">
           <component :is="definition.formComponent" v-if="definition.formComponent" :disabled="view" :entity="entity"
                      :table-definition="tableDefinition"/>
           <b-row v-else>
@@ -43,9 +43,10 @@
       <b-tabs ref="tabs" pills>
         <b-tab v-for="(relation, index) in definition.relations" :key="index" :title="$t(relation.title)"
                :active="index===0" lazy>
-          <data-tables :second-key="definition.primaryKey" :second-key-value="entityId"
-                       :primary-key-column="relation.primaryKey" :entity="relation.entity" :search="search"
-                       :entity-form="relation.entityForm" :fields="relation.fields" :on-edit-element="editElement"/>
+          <data-tables :second-key="definition.primaryKey" :second-key-value="entityId" :current-page="currentPage"
+                       :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
+                       :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
+                       :fields="relation.fields" :on-edit-element="editElement"/>
           <generic-modal title="Test" :table="relation.entityForm" :definition="relation"
                          :table-definition-key="relation.entity"/>
         </b-tab>
@@ -99,6 +100,9 @@ export default {
       entity: this.$route.params.entity || {},
       originalEntity: null,
       search: '',
+      currentPage: 1,
+      perPage: Number.MAX_SAFE_INTEGER,
+      totalRows: 0,
     }
   },
   computed: {
@@ -115,7 +119,8 @@ export default {
       return this.$store.getters['table/tableDefinition'](this.table)
     },
     entityId() {
-      return parseInt(this.$route.params.id)
+      // convert to string to fix bug on relation tables
+      return `${this.$route.params.id}`
     },
   },
   async created() {
@@ -143,6 +148,7 @@ export default {
         })
           .then((data) => {
             this.$successToast(data.data.data.message)
+            this.view = true
             // show success message
           })
           .catch(e => {

@@ -195,10 +195,9 @@ export default {
     primaryKey: 'usertype_id',
     fields: [
       { key: 'usertype_id', label: 'Id', hideOnForm: true },
-      { key: 'usertype_name', label: 'app.form.label.name', sortable: true },
+      { key: 'usertype_name', sortable: true },
       {
         key: 'usertype_description',
-        label: 'app.form.label.description',
         sortable: true,
         type: 'textarea',
       },

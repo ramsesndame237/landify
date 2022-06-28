@@ -52,6 +52,9 @@ export default {
     secondKeyValue: {},
     search: {},
     onEditElement: { type: Function },
+    perPage: Number,
+    currentPage: Number,
+    totalRows: Number,
   },
   data() {
     return {
@@ -72,15 +75,6 @@ export default {
     },
     allFields() {
       return [{ key: '__selected' }, ...this.fields.filter(f => !f.hideOnIndex), 'Actions']
-    },
-    ...mapState('table', ['perPage', 'currentPage']),
-    totalRows: {
-      get() {
-        return this.$store.state.table.totalRows
-      },
-      set(val) {
-        this.$store.state.table.totalRows = val
-      },
     },
   },
   watch: {
@@ -117,7 +111,8 @@ export default {
       })
         .then(({ data }) => {
           console.log(data)
-          this.totalRows = data.data.links.pagination.total
+          // this.totalRows = data.data.links.pagination.total
+          this.$emit('update:totalRows', data.data.links.pagination.total)
           data.data.data.forEach(el => {
             el.__selected = false
           })
@@ -167,14 +162,6 @@ export default {
         }).then(() => {
           this.$successToast(this.$t(entities.length > 1 ? 'notification.elements_deleted' : 'notification.element_deleted'))
           this.$refs.table.refresh()
-          this.$swal({
-            icon: 'success',
-            title: 'Deleted!',
-            text: 'Your file has been deleted.',
-            customClass: {
-              confirmButton: 'btn btn-success',
-            },
-          })
         })
           .catch(e => {
             console.error(e)
@@ -188,6 +175,9 @@ export default {
         this.$set(item, '__selected', newVal)
       })
     },
+    reload() {
+      this.$refs.table.refresh()
+    }
   },
 }
 </script>

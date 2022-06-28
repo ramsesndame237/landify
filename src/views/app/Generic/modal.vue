@@ -19,22 +19,23 @@
 <script>
 
 import {
-  BFormGroup,
-  BFormSelect,
   BForm,
   BRow,
   BCol,
   BFormInput,
-  BFormTextarea
 } from 'bootstrap-vue'
-import Field from "@/views/app/Generic/Field";
+import Field from '@/views/app/Generic/Field'
 
 export default {
   name: 'GenericModal',
   components: {
     Field,
-    BFormInput, BFormGroup, BForm, BFormSelect, BRow, BCol, BFormTextarea
+    BFormInput,
+    BForm,
+    BRow,
+    BCol,
   },
+  props: ['table', 'definition', 'tableDefinitionKey', 'title'],
   data() {
     return {
       entity: {},
@@ -42,7 +43,6 @@ export default {
       create: true,
     }
   },
-  props: ['table', 'definition', 'tableDefinitionKey', 'title'],
   computed: {
     formFields() {
       return this.definition.fields.filter(f => !f.hideOnForm)
@@ -70,9 +70,16 @@ export default {
             this.entity,
           ],
         })
-          .then(() => {
-            this.$refs.modal.close()
+          .then(({ data }) => {
+            this.$refs.modal.hide()
+            this.$successToast(data.data.message)
+            this.$emit('reload-table')
             // navigate to view page or reload table
+          })
+          .catch(e => {
+            console.log(e)
+            const title = e.response?.data.detail
+            this.$errorToast(title)
           })
       })
     },

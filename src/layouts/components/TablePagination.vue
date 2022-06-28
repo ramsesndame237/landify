@@ -60,48 +60,29 @@ export default {
     pageOptions: {
       type: Array,
       default() {
-        return [10,20,30]
+        return [10, 20, 30]
       },
     },
+    perPage: Number,
+    currentPage: Number,
+    search: String,
+    totalRows: Number,
   },
   data() {
     return {}
   },
-  computed: {
-    search: {
-      get() {
-        return this.$store.state.table.search
-      },
-      set(val) {
-        this.$store.state.table.search = val
-      },
+  computed: {},
+  watch: {
+    search() {
+      this.$emit('update:search', this.search)
     },
-    perPage: {
-      get() {
-        return this.$store.state.table.perPage
-      },
-      set(val) {
-        this.$store.state.table.perPage = val
-      },
+    perPage() {
+      this.$emit('update:perPage', this.perPage)
     },
-    totalRows: {
-      get() {
-        return this.$store.state.table.totalRows
-      },
-      set(val) {
-        this.$store.state.table.totalRows = val
-      },
-    },
-    currentPage: {
-      get() {
-        return this.$store.state.table.currentPage
-      },
-      set(val) {
-        this.$store.state.table.currentPage = val
-      },
+    currentPage() {
+      this.$emit('update:currentPage', this.currentPage)
     },
   },
-
 }
 </script>
 
