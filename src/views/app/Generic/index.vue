@@ -21,7 +21,7 @@ import {
   BCard,
 } from 'bootstrap-vue'
 import TablePagination from '@/layouts/components/TablePagination.vue'
-import GenericModal from '@/views/app/Generic/modal';
+import GenericModal from '@/views/app/Generic/modal.vue'
 import Tables from '../../../table'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
