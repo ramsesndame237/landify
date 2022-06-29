@@ -266,8 +266,8 @@ const router = new VueRouter({
       path: '/app/types/area',
       name: 'area-type-list',
       component: () => import('@/views/app/Types/index.vue'),
-      navActiveLink: 'area-type-list',
       meta: {
+        navActiveLink: 'area-type-list',
         pageTitle: 'app.page_title.area_type',
         breadcrumb: [
           {
@@ -283,8 +283,8 @@ const router = new VueRouter({
       path: '/app/types/contract',
       name: 'contract-type-list',
       component: () => import('@/views/app/Types/index.vue'),
-      navActiveLink: 'contract-type-list',
       meta: {
+        navActiveLink: 'contract-type-list',
         pageTitle: 'app.page_title.contract_type',
         breadcrumb: [
           {
@@ -300,8 +300,8 @@ const router = new VueRouter({
       path: '/app/types/contract/criteria-type',
       name: 'contract-criteria-type',
       component: () => import('@/views/app/Types/index.vue'),
-      navActiveLink: 'contract-criteria-type',
       meta: {
+        navActiveLink: 'contract-criteria-type',
         pageTitle: 'app.page_title.C_C_type',
         breadcrumb: [
           {
@@ -317,8 +317,8 @@ const router = new VueRouter({
       path: '/app/types/location',
       name: 'location-type',
       component: () => import('@/views/app/Types/index.vue'),
-      navActiveLink: 'location-type',
       meta: {
+        navActiveLink: 'location-type',
         pageTitle: 'app.page_title.location_type',
         breadcrumb: [
           {
@@ -334,8 +334,8 @@ const router = new VueRouter({
       path: '/app/types/maturity',
       name: 'maturity-type',
       component: () => import('@/views/app/Types/index.vue'),
-      navActiveLink: 'maturity-type',
       meta: {
+        navActiveLink: 'maturity-type',
         pageTitle: 'app.page_title.maturity_type',
         breadcrumb: [
           {
@@ -351,8 +351,8 @@ const router = new VueRouter({
       path: '/app/types/recurring-payment',
       name: 'recurring-payment-type',
       component: () => import('@/views/app/Types/index.vue'),
-      navActiveLink: 'recurring-payment-type',
       meta: {
+        navActiveLink: 'recurring-payment-type',
         pageTitle: 'app.page_title.R_P_type',
         breadcrumb: [
           {
@@ -368,8 +368,8 @@ const router = new VueRouter({
       path: '/app/types/services-objects',
       name: 'service-object-type',
       component: () => import('@/views/app/Types/index.vue'),
-      navActiveLink: 'services-object-type',
       meta: {
+        navActiveLink: 'services-object-type',
         pageTitle: 'app.page_title.S_O_type',
         breadcrumb: [
           {
@@ -385,8 +385,8 @@ const router = new VueRouter({
       path: '/app/types/usages',
       name: 'usage-type',
       component: () => import('@/views/app/Types/index.vue'),
-      navActiveLink: 'usage-type',
       meta: {
+        navActiveLink: 'usage-type',
         pageTitle: 'app.page_title.usage_type',
         breadcrumb: [
           {
@@ -396,6 +396,201 @@ const router = new VueRouter({
         ],
         type: 'usages',
         formTitle: 'app.content.create_new_usage_type',
+      },
+    },
+    
+    /*  */
+    
+    {
+      path: '/app/invoices/ancillary-cost',
+      name: 'ancillary-incoive',
+      component: () => import('@/views/app/Invoices/ancillary/index.vue'),
+      meta: {
+        navActiveLink: 'ancillary-incoive',
+        pageTitle: 'app.page_title.ancillary_invoice',
+        breadcrumb: [
+          {
+            text: 'app.page_title.ancillary_invoice',
+            active: true,
+          },
+        ],
+        formTitle: 'app.content.create_new_ancillary_invoice',
+      },
+    },
+    {
+      path: '/app/invoices/ancillary-cost/edit',
+      name: 'ancillary-incoive-edit',
+      component: () => import('@/views/app/Invoices/ancillary/View.vue'),
+      meta: {
+        navActiveLink: 'ancillary-incoive',
+        pageTitle: 'app.page_title.ancillary_invoice_edit',
+        breadcrumb: [
+          {
+            text: 'app.page_title.ancillary_invoice',
+            to: { name: 'ancillary-incoive' },
+            active: false,
+          },
+          {
+            text: 'app.page_title.ancillary_invoice_edit',
+            active: true,
+          },
+        ]
+      },
+    },
+    {
+      path: '/app/invoices/ancillary-cost-position',
+      name: 'ancillary-incoive-position',
+      component: () => import('@/views/app/Invoices/position/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.ancillary_invoice_position',
+        breadcrumb: [
+          {
+            text: 'app.page_title.ancillary_invoice_position',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/inspections',
+      name: 'inspections',
+      component: () => import('@/views/app/inspection/index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.inspections',
+        breadcrumb: [
+          {
+            text: 'app.page_title.inspections',
+            active: true,
+          },
+        ],
+      },
+    },
+    /* Types for WP4 */
+    {
+      path: '/app/types/cost',
+      name: 'cost-type',
+      component: () => import('@/views/app/Types/costs/index.vue'),
+      navActiveLink: 'cost-type',
+      meta: {
+        pageTitle: 'app.page_title.cost_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.cost_type',
+            active: true,
+          },
+        ],
+        type: 'costs',
+        formTitle: 'app.content.create_new_cost_type',
+      },
+    },
+    {
+      path: '/app/types/cost/edit',
+      name: 'cost-type-edit',
+      component: () => import('@/views/app/Types/costs/Edit.vue'),
+      meta: {
+        navActiveLink: 'cost-type',
+        pageTitle: 'app.page_title.cost_type_edit',
+        breadcrumb: [
+          {
+            text: 'app.page_title.cost_type',
+            active: false, 
+            to:{name: 'cost-type'}
+          },
+          {
+            text: 'app.page_title.cost_type_edit',
+            active: true, 
+          }
+        ]
+      },
+    },
+    {
+      path: '/app/types/claim',
+      name: 'claim-type',
+      component: () => import('@/views/app/Types/claims/index.vue'),
+      navActiveLink: 'claim-type',
+      meta: {
+        pageTitle: 'app.page_title.claim_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.claim_type',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/types/invoice-criteria',
+      name: 'invoice-criteria-type',
+      component: () => import('@/views/app/Types/invoiceCriteria/index.vue'),
+      navActiveLink: 'invoice-criteria-type',
+      meta: {
+        pageTitle: 'app.page_title.invoice_criteria_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.invoice_criteria_type',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/types/invoice-value',
+      name: 'invoice-value-type',
+      component: () => import('@/views/app/Types/invoiceValue/index.vue'),
+      navActiveLink: 'invoice-value-type',
+      meta: {
+        pageTitle: 'app.page_title.invoice_value_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.invoice_value_type',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/types/ratings',
+      name: 'ratings-type',
+      component: () => import('@/views/app/Types/ratings/index.vue'),
+      navActiveLink: 'ratings-type',
+      meta: {
+        pageTitle: 'app.page_title.ratings_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.ratings_type',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/types/saving',
+      name: 'saving-type',
+      component: () => import('@/views/app/Types/saving/index.vue'),
+      navActiveLink: 'saving-type',
+      meta: {
+        pageTitle: 'app.page_title.saving_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.saving_type',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/types/result-categories',
+      name: 'result-categories-type',
+      component: () => import('@/views/app/Types/resultCategories/index.vue'),
+      navActiveLink: 'result-categories-type',
+      meta: {
+        pageTitle: 'app.page_title.result_categories_type',
+        breadcrumb: [
+          {
+            text: 'app.page_title.result_categories_type',
+            active: true,
+          },
+        ],
       },
     },
     {

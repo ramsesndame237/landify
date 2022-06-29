@@ -82,6 +82,25 @@
             }
           }
         }
+      },
+      "work_pack_4": {
+        "title": "Work Package 4",
+        "children": {
+          "ancillary_invoice": "Ancillary Cost Invoices",
+          "ancillary_invoice_position": "Invoice Positions",
+          "inspections": "Inspections",
+          "types":{
+            "children": {
+              "cost_type": "Cost Type",
+              "claim_type": "Claim Type",
+              "invoice_criteria_type": "Invoice Criteria Type",
+              "invoice_value_type": "Invoice Value Type",
+              "ratings_type": "Rating Type",
+              "saving_type": "Saving Type",
+              "result_categories_type": "Result Categories Type"
+            }
+          }
+        }
       }
     },
     "lang": {
@@ -175,7 +194,16 @@
       "deadlines": {
         "sub_title": "Overall list without registers",
         "card_text": "All the best for your new project."
-      }
+      },
+      "invoice_ancillary_edit": "create/update ancillary cost invoice",
+      "invoice_ancillary_position_edit": "position of ancillary costs",
+      "inspections_main_heading":"Inspection results Overview and finding",
+      "create_new_cost_type": "Create New cost type",
+      "create_new_claim_type": "Create New claim type",
+      "create_new_invoice_value_type": "Create New Invoice Value Type",
+      "create_new_rating": "Create New Rating",
+      "create_new_saving_type": "Create New Saving Type",
+      "create_new_results_categories": "Create New Results Categories"
     },
     "btn": {
       "view": "View",
@@ -191,7 +219,9 @@
       "save_add_contact": "Save and add further Contact",
       "save_add_contact_cirteria": "Save and add further Contact Criteria",
       "save_add_contact_special_right": "Save and add further Contact Special Right",
-      "save_add_contact_recuring_payment": "Save and add further Reccuring Payment"
+      "save_add_contact_recuring_payment": "Save and add further Reccuring Payment",
+      "filter_inspection_result": "Filter inspection result list",
+      "export_csv": "Export CSV file"
     },
     "search": {
       "label": "Search",
@@ -274,7 +304,8 @@
           "m_at": "Case M2 - recurring payment_maturity_daily_range (Please select number ...)",
           "m_rang": "Case M2 - recurring payment_maturity_monthly_range (Please select number...) ",
           "value": "recurring payment_value_deposit (Radio select...)"
-        }
+        }, 
+        "":""
       },
       "label": {
         "company_name": "Company Name",
@@ -501,7 +532,34 @@
           "m_range": "Maturity Range x Month (type M2 case) ",
           "value": "Value deposit",
           "index": "Index Clause Type"
-        }
+        },
+        "invoice_contract_year": "Invoice Contract Year",
+        "invoice_id": "Invoice Id",
+        "invoice_company_name": "Invoice Company Name",
+        "invoice_date_of_order": "Invoice Date Of Order",
+        "partner_type_id": "Partner Type Id",
+        "invoice_date": "Invoice Date",
+        "invoice_contract_billing_period_from_date": "Invoice Contract Billing Period From Date",
+        "invoice_allocationarea": "Invoice Allocation Area",
+        "invoice_contract_billing_period_To_date":"Invoice Contract Billing Period To Date",
+        "costtype_id":"Cost Post Type ID",
+        "invoiceposition_costtype_invoice": "Invoice Position Cost Type Invoice",
+        "invoiceposition_total_units": "Invoce Total Units",
+        "invoiceposition_units_customer": "Invoice Position Units Customer",
+        "invoiceposition_amount_total": "Invoice Position Amount Total",
+        "invoiceposition_amount_customer":"Invoice Position Amount Customer",
+        "invoiceposition_apportionable": "Invoice Position Apportionable",
+        "unit_id":"Unit ID",
+        "country_id":"Country ID",
+        "saving_type_id":"Saving Type ID",
+        "inspectionresult_realised":"Inspection Result Realised",
+        "board_id":"Board ID",
+        "costype_id":"Cost Type ID",
+        "contradictionpackage_id": "Contradiction Package ID",
+        "partner_company_id": "Partner Company ID",
+        "inspectionresult_unique_or_perennial":"Inspection Result Unique Or Perennial",
+        "inspectionresult_legally_clear":"Inspection Result Legally Clear",
+        "invoicevaluetype_unit_preferred_unit":"Invoice Talue Type Unit Preferred Unit"
       }
     },
     "tab": {
@@ -556,7 +614,14 @@
         "choice": "Choice"
       },
       "index_pay": "Recurring Payments",
-      "right_contract": "Contract"
+      "right_contract": "Contract",
+      "invoice_positions": "Invoice Positions",
+      "invoice_deadlines": "Invoice deadlines",
+      "invoice_criteria": "Invoice criteria",
+      "invoice_details": "Invoice details",
+      "external_costtype": "External Costtype",
+      "contract_costtype_rel": "Contract Costtype Rel"
+
     },
     "page_title": {
       "tag_edit": "TAG (Sales line, Organisational level) ",
@@ -611,7 +676,7 @@
       "choice": "Overall list of Choices",
       "area": "Overall areas list",
       "area_type": "OVERALL LIST Area Type",
-      "contract_type": "OVERALL LIST Contract Type",
+      "contract_type": "OVERALL LIST Contract Type", 
       "C_C_type": "OVERALL LIST Contract Criteria Type",
       "location_type": "OVERALL LIST Location Type",
       "maturity_type": "OVERALL LIST Maturity Type",
@@ -635,7 +700,18 @@
       "special_right": "OVERALL LIST contract Special rights",
       "special_right_view": "Contract Special right",
       "recurring_payment": "OVERALL LIST Contract based recurring payments",
-      "recurring_payment_view": "contract based Recurring Payment"
+      "recurring_payment_view": "contract based Recurring Payment",
+      "ancillary_invoice": "OVERALL LIST Ancillary Cost Invoices",
+      "ancillary_invoice_edit":"Ancillary Invoice Edit",
+      "ancillary_invoice_position":"Ancillary Invoice Positions",
+      "ancillary_invoice_position_edit":"Ancillary Invoice Position Edit",
+      "inspections": "Inspections",
+      "cost_type": "OVERALL LIST Cost Type",
+      "cost_type_edit": "Cost Type Edit",
+      "invoice_value_type": "OVERALL LIST Invoice Value Type",
+      "ratings_type": "OVERALL LIST ratings",
+      "saving_type": "OVERALL LIST Saving Types",
+      "result_categories_type": "OVERALL LIST Result Categories"
     }
   },
   "general": {

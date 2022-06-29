@@ -241,6 +241,7 @@ export default {
     fields: [
       { key: 'customergroup_id', sortable: true, hideOnForm: true },
       { key: 'customergroup_name', sortable: true },
+      { key: 'customergroup_count', sortable: true,  hideOnForm: true },
       { key: 'customergroup_description', sortable: true, hideOnIndex: true, type: 'textarea' },
     ],
     relations: [
@@ -257,14 +258,71 @@ export default {
           { key: 'country_short', sortable: true, hideOnForm: true },
         ],
       },
+      {
+        title: 'Contact Person',
+        primaryKey: 'customergroup_id',
+        entity: 'contactperson_customergroup_grp',
+        entityForm: 'contactperson_customergroup_rel',
+        fields: [
+          { key: 'contactperson_id', sortable: true, type: 'list', list: 'contactperson', listLabel: 'contactperson_name' },
+          { key: 'contactperson_lastname', sortable: true, hideOnForm: true },
+          { key: 'contactperson_firstname', sortable: true, hideOnForm: true },
+          { key: 'contactsalutation_name', sortable: true, hideOnForm: true },
+          { key: 'contacttitle_name', sortable: true, hideOnForm: true },
+          { key: 'contactperson_department', sortable: true, hideOnForm: true },
+          { key: 'contactperson_function', sortable: true, hideOnForm: true },
+          { key: 'contactdetails_email', sortable: true, hideOnForm: true },
+          { key: 'contactdetails_phone', sortable: true, hideOnForm: true },
+          { key: 'contactdetails_mobile', sortable: true, hideOnForm: true },
+        ],
+      },
+      {
+        title: 'Group Ticket/Packages',
+        primaryKey: 'group_ticket_id',
+        entity: 'groupticket_customergroup_grp',
+        entityForm: 'groupticket_customergroup_rel',
+        fields: [
+          { key: 'group_ticket_id', sortable: true, type: 'list', list: 'group_ticket', listLabel: 'group_ticket_name', hideOnIndex: true },
+          { key: 'group_ticket_name', sortable: true, hideOnForm: true},
+          { key: 'group_ticket_description', sortable: true, hideOnForm: true},
+          { key: 'group_ticket_Deadline', sortable: true, hideOnForm: true},
+          { key: 'contradictionpackage_id', label:'ContradictionPackage count',sortable: true, hideOnForm: true},
+          { key: 'contradictionpackage_sum', label:'ContradictionPackage Amount',sortable: true, hideOnForm: true},
+          { key: 'ticket_id', label:'Tickets count',sortable: true, hideOnForm: true},
+        ],
+      },
+      {
+        title: 'Users',
+        primaryKey: 'user_id',
+        entity: 'user_customergroup_grp',
+        entityForm: 'user_customergroup_rel',
+        fields: [
+          { key: 'user_id', sortable: true, type: 'list', list: 'user', listLabel: 'user_lastname', hideOnIndex: true },
+          { key: 'user_lastname', sortable: true, hideOnForm: true},
+          { key: 'user_firstname', sortable: true, hideOnForm: true},
+          { key: 'usertype_name', sortable: true, hideOnForm: true},
+          { key: 'team_name', sortable: true, hideOnForm: true},
+        ],
+      },
     ],
   },
   company: {
     primaryKey: 'company_id',
     fields: [
       { key: 'company_id', sortable: true, hideOnForm: true },
-      { key: 'company_name', sortable: true },
+      { key: 'company_name', sortable: true, hideOnForm: true },
+      { key: 'customergroup_name', sortable: true, hideOnForm: true },
+      { key: 'city_name', sortable: true, hideOnForm: true },
+      { key: 'contactdetails_phone', sortable: true, hideOnForm: true },
+      { key: 'contactdetails_email', sortable: true, hideOnForm: true },
+      { key: 'contactperson_count', label:'nd of Contact Person', sortable: true, hideOnForm: true },
     ],
+    formComponent: () => import('@/views/app/FormComponent/CompanyForm'),
+    relations: [
+      {
+        title: ''
+      }
+    ]
   },
   contactperson: {
     primaryKey: 'contactperson_id',
