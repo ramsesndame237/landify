@@ -47,12 +47,12 @@
                        :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
                        :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
                        :fields="relation.fields" :on-edit-element="editElement"/>
-          <generic-modal title="Test" :table="relation.entityForm" :definition="relation"
-                         :table-definition-key="relation.entity"/>
+          <generic-modal @reload-table="reloadRelatedTable" title="Test" :table="relation.entityForm"
+                         :definition="relation" :table-definition-key="relation.entity"/>
         </b-tab>
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
-            <b-button v-b-modal.modal-role class="mr-1" size="sm" variant="info" @click="newElement">
+            <b-button class="mr-1" size="sm" variant="info" @click="newElement">
               New
             </b-button>
             <b-button class="mr-1" size="sm" variant="primary" @click="deleteSelected">
@@ -174,6 +174,10 @@ export default {
     editElement(entity) {
       const { tabs } = this.$refs
       tabs.tabs[tabs.currentTab].$children[1].openModal(false, entity, `Update ${this.definition.relations[tabs.currentTab].title}`)
+    },
+    reloadRelatedTable() {
+      const { tabs } = this.$refs
+      tabs.tabs[tabs.currentTab].$children[0].reload()
     },
   },
   beforeRouteEnter(to, from, next) {

@@ -45,7 +45,7 @@ export default {
   },
   computed: {
     formFields() {
-      return this.definition.fields.filter(f => !f.hideOnForm)
+      return this.definition.fields.filter(f => !f.hideOnForm && (!f.auto || this.create))
     },
     tableDefinition() {
       return this.$store.getters['table/tableDefinition'](this.tableDefinitionKey)

@@ -77,7 +77,7 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_2.children.partner_compan_group',
-        route: table('partnercompanygroup'),
+        route: table('partnergroup'),
       },
       {
         title: 'app.sidebar.work_pack_2.children.address',
@@ -89,7 +89,7 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_2.children.salutation',
-        route: table('salutation'),
+        route: table('contactsalutation'),
       },
       {
         title: 'app.sidebar.work_pack_2.children.city',
@@ -216,7 +216,17 @@ export default [
 
     ],
   },
-
+  {
+    title: 'app.sidebar.work_pack_4.title',
+    route: 'work package',
+    icon: 'CheckSquareIcon',
+    children: [
+      {
+        title: 'Invoice Criteria',
+        route: table('invoicecriteria'),
+      },
+    ],
+  },
 
   {
     title: 'app.sidebar.tasks',

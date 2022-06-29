@@ -1,12 +1,12 @@
 <template>
-  <b-table ref="table" striped hover responsive :busy.sync="loading" :per-page="perPage" :current-page="currentPage"
+  <b-table :title="entity" ref="table" striped hover responsive :busy.sync="loading" :per-page="perPage" :current-page="currentPage"
            :items="provider" :fields="allFields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
            :sort-direction="sortDirection" :filter="search" select-mode="multi">
     <template #cell(__selected)="data">
       <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"/>
     </template>
     <template #head(__selected)>
-      <b-form-checkbox v-model="selected"/>
+      <b-form-checkbox v-model="selected" />
     </template>
 
     <template #cell(Actions)="data">
@@ -68,13 +68,22 @@ export default {
   },
   computed: {
     primaryKey() {
-      return this.primaryKeyColumn || `${this.entity}_id`
+      return this.primaryKeyColumn || this.fields.find(f => f.auto)?.key || `${this.entity}_id`
     },
     link() {
       return `table-${this.entity}-edit`
     },
     allFields() {
-      return [{ key: '__selected' }, ...this.fields.filter(f => !f.hideOnIndex), 'Actions']
+      return [
+        { key: '__selected' },
+        ...this.fields.filter(f => !f.hideOnIndex).map(field => {
+          const newField = { sortable: true, ...field }
+          if (newField.type === 'list') {
+            newField.key = newField.listLabel
+          }
+          return newField
+        }),
+        'Actions']
     },
   },
   watch: {
