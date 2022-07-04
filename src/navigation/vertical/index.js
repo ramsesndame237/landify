@@ -227,7 +227,11 @@ export default [
       },
     ],
   },
-
+  {
+    title: 'Kanban',
+    route: 'kanban',
+    icon: 'CheckSquareIcon',
+  },
   {
     title: 'app.sidebar.tasks',
     route: 'vorgange',

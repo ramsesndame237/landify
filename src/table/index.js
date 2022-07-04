@@ -33,10 +33,10 @@ export default {
         entity: 'user_role_grp',
         entityForm: 'user_role_rel',
         fields: [
-          { key: 'role_id', label: 'Role ID', sortable: true, type: 'list', list: 'role', listLabel: 'role_name' },
+          { key: 'role_id', label: 'Role ID', sortable: true, type: 'list', list: 'role', listLabel: 'role_name', hideOnUpdate: true },
           { key: 'role_name', label: 'Role name', sortable: true, hideOnForm: true },
-          { key: 'role_permission', label: 'Permission', sortable: true, hideOnForm: true, },
-          { key: 'user_role_valid_from', type: 'date', sortable: true },
+          { key: 'role_permission', label: 'Permission', sortable: true, hideOnForm: true },
+          { key: 'user_role_valid_from', type: 'date', sortable: true, hideOnUpdate: true },
           {
             key: 'user_role_valid_to',
             type: 'date',
@@ -345,8 +345,8 @@ export default {
   company: {
     primaryKey: 'company_id',
     fields: [
-      { key: 'company_id', sortable: true, hideOnForm: true },
-      { key: 'company_name', sortable: true, hideOnForm: true },
+      { key: 'company_id', auto: true },
+      { key: 'company_name', sortable: true },
       { key: 'customergroup_name', sortable: true, hideOnForm: true },
       { key: 'city_name', sortable: true, hideOnForm: true },
       { key: 'contactdetails_phone', sortable: true, hideOnForm: true },
@@ -490,7 +490,7 @@ export default {
     primaryKey: 'contacttitle_id',
     fields: [
       { key: 'contacttitle_id', sortable: true, auto: true },
-      { key: 'contacttitle_title', sortable: true },
+      { key: 'contacttitle_name', sortable: true },
     ],
   },
   contactsalutation: {
@@ -554,5 +554,11 @@ export default {
       { key: 'partnertype_description', sortable: true, type: 'textarea' },
     ],
   },
+  // endregion
+  // region Work Package 3
+
+  // endregion
+  // region Work Package 4
+
   // endregion
 }

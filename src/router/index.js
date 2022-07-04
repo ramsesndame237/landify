@@ -42,7 +42,11 @@ const router = new VueRouter({
         breadcrumb: [],
       },
     },
-
+    {
+      name: 'kanban',
+      path: '/app/kanban',
+      component: () => import('@/views/app/Kanban/index.vue'),
+    },
     {
       path: '/app/deadlines',
       name: 'deadlines',
@@ -398,9 +402,9 @@ const router = new VueRouter({
         formTitle: 'app.content.create_new_usage_type',
       },
     },
-    
+
     /*  */
-    
+
     {
       path: '/app/invoices/ancillary-cost',
       name: 'ancillary-incoive',
@@ -493,12 +497,12 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'app.page_title.cost_type',
-            active: false, 
-            to:{name: 'cost-type'}
+            active: false,
+            to: { name: 'cost-type' }
           },
           {
             text: 'app.page_title.cost_type_edit',
-            active: true, 
+            active: true,
           }
         ]
       },

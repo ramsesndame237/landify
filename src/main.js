@@ -7,6 +7,7 @@ import { ValidationProvider, ValidationObserver, extend } from 'vee-validate'
 import {
   required, email, max, regex,
 } from 'vee-validate/dist/rules'
+import vueKanban from 'vue-kanban'
 import router from './router'
 import store from './store'
 import App from './App.vue'
@@ -22,6 +23,10 @@ import '@/libs/sweet-alerts'
 // Vee validate
 Vue.component('validation-provider', ValidationProvider)
 Vue.component('validation-observer', ValidationObserver)
+
+Vue.use(vueKanban)
+
+
 extend('email', email)
 extend('required', required)
 extend('regex', regex)
