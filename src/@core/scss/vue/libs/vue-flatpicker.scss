@@ -12,3 +12,7 @@ html[dir='rtl'] {
     }
   }
 }
+
+.flatpickr-input:disabled{
+  background: #efefef !important;
+}

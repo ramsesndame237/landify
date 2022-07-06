@@ -8,7 +8,8 @@
                    :table-definition="tableDefinition"/>
         <b-row v-else>
           <b-col v-for="(field,index) in formFields" :key="index" cols="12">
-            <field inline="true" :entity="entity" :table-definition="tableDefinition" :field="field"/>
+            <field :disabled="!create && field.disableOnUpdate" inline="true" :entity="entity"
+                   :table-definition="tableDefinition" :field="field"/>
           </b-col>
         </b-row>
       </b-form>
@@ -35,7 +36,13 @@ export default {
     BRow,
     BCol,
   },
-  props: ['table', 'definition', 'tableDefinitionKey', 'title'],
+  props: {
+    table: String,
+    definition: Object,
+    tableDefinitionKey: String,
+    title: String,
+    isRelation: Boolean,
+  },
   data() {
     return {
       entity: {},
@@ -50,13 +57,26 @@ export default {
     tableDefinition() {
       return this.$store.getters['table/tableDefinition'](this.tableDefinitionKey)
     },
+    primaryKey() {
+      return this.definition.primaryKey ?? this.definition.fields.find(f => f.auto).key
+    },
   },
   methods: {
     openModal(create, data, title) {
-      this.entity = data
+      this.entity = { ...this.definition.default, ...data }
       this.forceTitle = title
       this.create = create
       this.$refs.modal.show()
+    },
+    saveRelations(entityId) {
+      return Promise.all(this.formFields.filter(field => field.type === 'list').map(field => this.$api({
+        entity: field.relationEntity ?? (`${this.table}_${field.list}_rel`),
+        action: this.create ? 'create' : 'update',
+        data: [{
+          [field.key]: this.entity[field.key],
+          [this.primaryKey]: entityId ?? this.entity[this.primaryKey],
+        }],
+      })))
     },
     submit() {
       this.$refs.form.validate().then(success => {
@@ -70,11 +90,17 @@ export default {
             this.entity,
           ],
         })
-          .then(({ data }) => {
-            this.$refs.modal.hide()
-            this.$successToast(data.data.message)
-            this.$emit('reload-table')
-            // navigate to view page or reload table
+          .then(async ({ data }) => {
+            try {
+              if (!this.isRelation) {
+                await this.saveRelations(data.data.data[0][0][this.primaryKey])
+              }
+            } finally {
+              this.$refs.modal.hide()
+              this.$successToast(data.data.message)
+              this.$emit('reload-table')
+              // navigate to view page or reload table
+            }
           })
           .catch(e => {
             console.log(e)

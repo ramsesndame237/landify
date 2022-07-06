@@ -43,12 +43,12 @@
       <b-tabs ref="tabs" pills>
         <b-tab v-for="(relation, index) in definition.relations" :key="index" :title="$t(relation.title)"
                :active="index===0" lazy>
-          <data-tables :second-key="definition.primaryKey" :second-key-value="entityId" :current-page="currentPage"
+          <data-tables :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
                        :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
                        :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
-                       :fields="relation.fields" :on-edit-element="editElement"/>
-          <generic-modal @reload-table="reloadRelatedTable" title="Test" :table="relation.entityForm"
-                         :definition="relation" :table-definition-key="relation.entity"/>
+                       :fields="relation.fields" :on-edit-element="editElement" />
+          <generic-modal title="Test" :table="relation.entityForm" :definition="relation" is-relation
+                         :table-definition-key="relation.entity" @reload-table="reloadRelatedTable"/>
         </b-tab>
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
@@ -60,7 +60,7 @@
             </b-button>
             <div size="sm" class="d-flex align-items-center">
               <label class="d-inline-block text-sm-left mr-50">Search</label>
-              <b-form-input v-model="search" debounce="500" id="filterInput" type="search" placeholder="rechercher.."/>
+              <b-form-input id="filterInput" v-model="search" debounce="500" type="search" placeholder="rechercher.."/>
             </div>
           </div>
         </template>
@@ -75,10 +75,10 @@ import {
   BTab,
   BTabs, BRow, BCol, BForm, BFormInput, BButton,
 } from 'bootstrap-vue'
-import Tables from "@/table";
-import DataTables from "@/layouts/components/DataTables";
-import Field from './Field';
-import GenericModal from "@/views/app/Generic/modal";
+import Tables from '@/table'
+import DataTables from '@/layouts/components/DataTables'
+import GenericModal from '@/views/app/Generic/modal'
+import Field from './Field'
 
 export default {
   components: {
@@ -122,18 +122,38 @@ export default {
       // convert to string to fix bug on relation tables
       return `${this.$route.params.id}`
     },
+    primaryKey() {
+      return this.definition.primaryKey ?? this.definition.fields.find(f => f.auto).key
+    },
   },
   async created() {
     if (!this.$route.params.entity) {
       this.entity = await this.$store.dispatch('table/fetchSingleItem', {
         entity: this.$route.params.table,
-        primaryKey: this.definition.primaryKey,
+        primaryKey: this.primaryKey,
         id: this.$route.params.id,
       })
     }
-    this.originalEntity = { ...this.entity }
+    try {
+      await this.fillRelations(this.entity)
+    } finally {
+      console.log('entity', this.entity)
+      this.originalEntity = { ...this.entity }
+    }
   },
   methods: {
+    fillRelations(entity) {
+      return Promise.all(this.formFields.filter(field => field.type === 'list').map(field => this.$api({
+        entity: field.relationEntity ?? (`${this.table}_${field.list}_rel`),
+        action: 'read-rich',
+        filter: {
+          [this.primaryKey]: entity[this.primaryKey],
+        },
+      })
+        .then(({ data }) => {
+          this.$set(entity, field.key, data.data.data[0][field.key])
+        })))
+    },
     update() {
       this.$refs.form.validate().then(success => {
         if (!success) {
@@ -146,7 +166,7 @@ export default {
             this.entity,
           ],
         })
-          .then((data) => {
+          .then(data => {
             this.$successToast(data.data.data.message)
             this.view = true
             // show success message
@@ -169,7 +189,7 @@ export default {
     },
     newElement() {
       const { tabs } = this.$refs
-      tabs.tabs[tabs.currentTab].$children[1].openModal(true, { [this.definition.primaryKey]: this.entityId }, `Add ${this.definition.relations[tabs.currentTab].title}`)
+      tabs.tabs[tabs.currentTab].$children[1].openModal(true, { [this.primaryKey]: this.entityId }, `Add ${this.definition.relations[tabs.currentTab].title}`)
     },
     editElement(entity) {
       const { tabs } = this.$refs

@@ -1,12 +1,12 @@
 <template>
-  <b-table :title="entity" ref="table" striped hover responsive :busy.sync="loading" :per-page="perPage" :current-page="currentPage"
-           :items="provider" :fields="allFields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
-           :sort-direction="sortDirection" :filter="search" select-mode="multi">
+  <b-table :title="entity" ref="table" striped hover responsive :busy.sync="loading" :per-page="perPage"
+           :current-page="currentPage" :items="provider" :fields="allFields" :sort-by.sync="sortBy"
+           :sort-desc.sync="sortDesc" :sort-direction="sortDirection" :filter="search" select-mode="multi">
     <template #cell(__selected)="data">
       <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"/>
     </template>
     <template #head(__selected)>
-      <b-form-checkbox v-model="selected" />
+      <b-form-checkbox v-model="selected"/>
     </template>
 
     <template #cell(Actions)="data">
@@ -164,10 +164,13 @@ export default {
         this.$api({
           action: 'delete',
           entity: this.entityForm || this.entity,
-          data: entities.map(entity => ({
+          data: entities.map(entity => (this.fields.filter(field => field.composite).reduce(((acc, currentValue) => {
+            acc[currentValue.key] = entity[currentValue.key]
+            return acc
+          }), {
             [this.primaryKey]: entity[this.primaryKey],
             [this.secondKey]: entity[this.secondKey],
-          })),
+          }))),
         }).then(() => {
           this.$successToast(this.$t(entities.length > 1 ? 'notification.elements_deleted' : 'notification.element_deleted'))
           this.$refs.table.refresh()

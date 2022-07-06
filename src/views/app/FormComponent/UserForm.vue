@@ -7,7 +7,8 @@
     <!-- Field: user_password -->
     <b-col cols="12" md="6">
       <b-form-group label="Password" label-for="password">
-        <b-form-input id="password" v-model="entity.user_password" :disabled="disabled" type="password" autoComplete="new-password"/>
+        <b-form-input id="password" v-model="entity.user_password" :disabled="disabled" type="password"
+                      autoComplete="new-password"/>
       </b-form-group>
     </b-col>
 
@@ -48,7 +49,7 @@
     <b-col cols="12" md="6">
       <b-form-group label="Customer Group*" label-for="group">
         <div class="d-flex">
-          <b-form-input id="customer-group" v-model="selectedContactPerson.customergroup" disabled="" class="mr-1"/>
+          <b-form-input id="customer-group" v-model="customergroup" disabled="" class="mr-1"/>
           <img src="@/assets/images/icons/customerGroup.svg" alt="">
         </div>
       </b-form-group>
@@ -68,14 +69,14 @@
 
     <b-col cols="12" md="6">
       <b-form-group label="Salutation" label-for="salutation">
-        <b-form-radio-group id="radio-group-1" :value="selectedContactPerson.contactperson_salutation_name" disabled
+        <b-form-radio-group id="radio-group-1" :value="salutation" disabled
                             :options="[{text:'Mr.',value:1}, {text:'Mrs.', value: 2}]" name="radio-options"/>
       </b-form-group>
     </b-col>
 
     <b-col cols="12" md="6">
       <b-form-group label="Title" label-for="title">
-        <b-form-input id="title" v-model="selectedContactPerson.contactperson_title" disabled type="text"/>
+        <b-form-input id="title" v-model="title" disabled type="text"/>
       </b-form-group>
     </b-col>
   </b-row>
@@ -104,6 +105,9 @@ export default {
   data() {
     return {
       definition: Table.user,
+      salutation: '',
+      title: '',
+      customergroup: '',
     }
   },
   computed: {
@@ -114,22 +118,16 @@ export default {
     },
   },
   watch: {
-    'entity.contactperson_id': function (value) {
-      this.$api({
-        action: 'read-rich',
-        entity: 'contactperson_title_salutation_customergroup_group',
-        attributes: ['salutation_name', 'salutation_title', 'customergroup_name'],
-        filter: {
-          contactperson_id: value,
-        },
-      }).then(data => {
-        console.log(data)
-      })
+    'entity.contactperson_id': function () {
+      this.fetchContactDetail()
     },
   },
   methods: {
     getField(key) {
       return this.definition.fields.find(f => f.key === key)
+    },
+    async fetchContactDetail() {
+      // await this.$api({entity: ''})
     },
   },
 }

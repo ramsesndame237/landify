@@ -1,10 +1,8 @@
 export default {
   // region Work Package 1
   user: {
-    primaryKey: 'user_id',
-    defaultSortField: 'user_id',
     fields: [
-      { key: 'user_id', label: 'Id', hideOnForm: true },
+      { key: 'user_id', label: 'Id', auto: true, hideOnForm: true },
       { key: 'user_firstname', label: 'First Name', sortable: true },
       { key: 'user_lastname', label: 'Last Name', sortable: true },
       { key: 'user_email', label: 'Email', sortable: true, type: 'email' },
@@ -15,14 +13,15 @@ export default {
         hideOnIndex: true,
         type: 'list',
         list: 'usertype',
-        listLabel: 'usertype_name'
+        listLabel: 'usertype_name',
       },
       {
         key: 'contactperson_id',
         hideOnIndex: true,
         type: 'list',
         list: 'contactperson',
-        listLabel: 'contactperson_lastname'
+        listLabel: 'contactperson_lastname',
+        relationEntity: 'contactperson_user_rel',
       },
     ],
     formComponent: () => import('@/views/app/FormComponent/UserForm'),
@@ -30,13 +29,22 @@ export default {
       {
         title: 'Roles',
         primaryKey: 'role_id',
+        composite: ['role_id', 'user_role_valid_from'],
         entity: 'user_role_grp',
         entityForm: 'user_role_rel',
         fields: [
-          { key: 'role_id', label: 'Role ID', sortable: true, type: 'list', list: 'role', listLabel: 'role_name', hideOnUpdate: true },
+          {
+            key: 'role_id',
+            label: 'Role ID',
+            sortable: true,
+            type: 'list',
+            list: 'role',
+            listLabel: 'role_name',
+            disableOnUpdate: true,
+          },
           { key: 'role_name', label: 'Role name', sortable: true, hideOnForm: true },
           { key: 'role_permission', label: 'Permission', sortable: true, hideOnForm: true },
-          { key: 'user_role_valid_from', type: 'date', sortable: true, hideOnUpdate: true },
+          { key: 'user_role_valid_from', type: 'date', sortable: true, disableOnUpdate: true, composite: true },
           {
             key: 'user_role_valid_to',
             type: 'date',
@@ -58,9 +66,16 @@ export default {
             list: 'customergroup',
             listLabel: 'customergroup_name',
             sortable: true,
+            disableOnUpdate: true
           },
           { key: 'customergroup_name', sortable: true, hideOnForm: true },
-          { key: 'user_customergroup_valid_from', sortable: true, type: 'date' },
+          {
+            key: 'user_customergroup_valid_from',
+            sortable: true,
+            type: 'date',
+            composite: true,
+            disableOnUpdate: true
+          },
           {
             key: 'user_customergroup_valid_to',
             type: 'date',
@@ -75,9 +90,17 @@ export default {
         entity: 'user_company_grp',
         entityForm: 'user_company_rel',
         fields: [
-          { key: 'company_id', label: 'ID', sortable: true, type: 'list', list: 'company', listLabel: 'company_name' },
+          {
+            key: 'company_id',
+            label: 'ID',
+            sortable: true,
+            type: 'list',
+            list: 'company',
+            listLabel: 'company_name',
+            disableOnUpdate: true,
+          },
           { key: 'company_name', sortable: true, hideOnForm: true },
-          { key: 'user_company_valid_from', sortable: true, type: 'date' },
+          { key: 'user_company_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true },
           {
             key: 'user_company_valid_to',
             sortable: true,
@@ -92,9 +115,17 @@ export default {
         entity: 'user_pos_grp',
         entityForm: 'user_pos_rel',
         fields: [
-          { key: 'pos_id', label: 'ID', sortable: true, type: 'list', list: 'pos', listLabel: 'pos_name' },
+          {
+            key: 'pos_id',
+            label: 'ID',
+            sortable: true,
+            type: 'list',
+            list: 'pos',
+            listLabel: 'pos_name',
+            disableOnUpdate: true
+          },
           { key: 'pos_name', sortable: true, hideOnForm: true },
-          { key: 'user_pos_valid_from', type: 'date', sortable: true },
+          { key: 'user_pos_valid_from', type: 'date', sortable: true, composite: true, disableOnUpdate: true },
           { key: 'user_pos_valid_to', type: 'date', sortable: true, rules: { date_after: ['@user_pos_valid_from'] } },
         ],
       },
@@ -104,9 +135,17 @@ export default {
         entity: 'user_team_grp',
         entityForm: 'user_team_rel',
         fields: [
-          { key: 'team_id', label: 'ID', sortable: true, type: 'list', list: 'team', listLabel: 'team_name' },
+          {
+            key: 'team_id',
+            label: 'ID',
+            sortable: true,
+            type: 'list',
+            list: 'team',
+            listLabel: 'team_name',
+            disableOnUpdate: true,
+          },
           { key: 'team_name', sortable: true, hideOnForm: true },
-          { key: 'user_team_valid_from', sortable: true, type: 'date' },
+          { key: 'user_team_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true },
           { key: 'user_team_valid_to', sortable: true, type: 'date', rules: { date_after: ['@user_team_valid_from'] } },
         ],
       },
@@ -122,10 +161,17 @@ export default {
             sortable: true,
             type: 'list',
             list: 'partnercompany',
-            listLabel: 'partnercompany_name'
+            listLabel: 'partnercompany_name',
+            disableOnUpdate: true
           },
           { key: 'partnercompany_name', sortable: true, hideOnForm: true },
-          { key: 'user_partnercompany_valid_from', sortable: true, type: 'date' },
+          {
+            key: 'user_partnercompany_valid_from',
+            sortable: true,
+            type: 'date',
+            composite: true,
+            disableOnUpdate: true
+          },
           {
             key: 'user_partnercompany_valid_to',
             sortable: true,
@@ -135,13 +181,19 @@ export default {
         ],
       },
     ],
+    default: {
+      user_locked: 0,
+      user_wrong_password_counter: 0,
+      user_password_reset_required: 0,
+      user_password: 'Fsa!0dsadad',
+      user_mobile: '+491511234456',
+    },
   },
   role: {
-    primaryKey: 'role_id',
     fields: [
-      { key: 'role_id', label: 'Role ID', sortable: true, hideOnForm: true },
-      { key: 'role_name', label: 'Role name', sortable: true },
-      { key: 'role_permission', label: 'Permission', sortable: true },
+      { key: 'role_id', label: 'Role ID', auto: true },
+      { key: 'role_name', label: 'Role name' },
+      { key: 'role_permission', label: 'Permission' },
     ],
     relations: [
       {
@@ -208,17 +260,15 @@ export default {
     ],
   },
   team: {
-    primaryKey: 'team_id',
     fields: [
-      { key: 'team_id', sortable: true, hideOnForm: true },
+      { key: 'team_id', auto: true },
       { key: 'team_name', sortable: true },
       { key: 'team_description', type: 'textarea' },
     ],
   },
   usertype: {
-    primaryKey: 'usertype_id',
     fields: [
-      { key: 'usertype_id', label: 'Id', hideOnForm: true },
+      { key: 'usertype_id', label: 'Id', auto: true },
       { key: 'usertype_name', sortable: true },
       {
         key: 'usertype_description',
@@ -388,9 +438,9 @@ export default {
       { key: 'partnergroup_id', type: 'list', list: 'partnergroup', listLabel: 'partnergroup_name', hideOnIndex: true },
       { key: 'partnercompany_id', auto: true },
       { key: 'partnercompany_name' },
+      { key: 'partnercompany_shortname' },
       { key: 'partnergroup_name', hideOnForm: true },
       { key: 'city_name', hideOnForm: true },
-      { key: 'partnertype_id', type: 'list', list: 'partnertype', listLabel: 'partnertype_name' },
       { key: 'contactdetails_email', hideOnForm: true },
       { key: 'contactperson_count', hideOnForm: true },
       { key: 'location_count', hideOnForm: true },
