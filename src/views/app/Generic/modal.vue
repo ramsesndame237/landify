@@ -15,7 +15,7 @@
       </b-form>
     </validation-observer>
     <template v-slot:modal-footer>
-      <b-button variant="secondary" :disabled="loading">Cancel</b-button>
+      <b-button variant="secondary" :disabled="loading" @click="$refs.modal.hide()">Cancel</b-button>
       <b-button variant="primary" :disabled="loading" @click="handleOk">
         <b-spinner small v-if="loading"/>
         Save

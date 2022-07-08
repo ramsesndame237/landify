@@ -46,7 +46,7 @@
           <data-tables :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
                        :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
                        :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
-                       :fields="relation.fields" :on-edit-element="editElement" />
+                       :fields="relation.fields" :on-edit-element="editElement"/>
           <generic-modal title="Test" :table="relation.entityForm" :definition="relation" is-relation
                          :table-definition-key="relation.entity" @reload-table="reloadRelatedTable"/>
         </b-tab>
@@ -58,10 +58,24 @@
             <b-button class="mr-1" size="sm" variant="primary" @click="deleteSelected">
               Delete
             </b-button>
-            <div size="sm" class="d-flex align-items-center">
-              <label class="d-inline-block text-sm-left mr-50">Search</label>
-              <b-form-input id="filterInput" v-model="search" debounce="500" type="search" placeholder="rechercher.."/>
-            </div>
+
+            <b-input-group size="sm">
+              <b-input-group-prepend>
+                <b-dropdown v-ripple.400="'rgba(255, 255, 255, 0.15)'" dropup right variant="primary" size="sm" text="Filter">
+                  <template #button-content>
+                    <feather-icon icon="SearchIcon" />
+                  </template>
+                  <b-dropdown-form class="py-1">
+                    <b-form-group label="Date" label-for="dropdown-form-email" @submit.stop.prevent>
+                      <b-form-input id="dropdown-form-email" size="sm" placeholder="Date"/>
+                    </b-form-group>
+
+                    <b-button variant="primary" size="sm">Search</b-button>
+                  </b-dropdown-form>
+                </b-dropdown>
+              </b-input-group-prepend>
+              <b-form-input id="filterInput" v-model="search" debounce="500" type="search" placeholder="Search..."/>
+            </b-input-group>
           </div>
         </template>
       </b-tabs>
@@ -73,7 +87,7 @@
 import {
   BCard,
   BTab,
-  BTabs, BRow, BCol, BForm, BFormInput, BButton,
+  BTabs, BRow, BCol, BForm, BFormInput, BButton, BDropdown, BDropdownForm, BFormGroup, BInputGroup, BInputGroupPrepend
 } from 'bootstrap-vue'
 import Tables from '@/table'
 import DataTables from '@/layouts/components/DataTables'
@@ -88,8 +102,8 @@ export default {
     BTab,
     BTabs,
     BRow,
-    BCol,
-    BForm,
+    BCol, BDropdown, BDropdownForm, BInputGroup, BInputGroupPrepend,
+    BForm, BFormGroup,
     BFormInput,
     BButton,
     Field,
