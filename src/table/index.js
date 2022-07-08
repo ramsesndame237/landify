@@ -203,14 +203,7 @@ export default {
         entityForm: 'role_access_rel',
         fields: [
           { key: 'access_id', label: 'ID', sortable: true, type: 'list', list: 'access', listLabel: 'access_name' },
-          { key: 'access_name', sortable: true, hideOnForm: true },
-          { key: 'role_access_valid_from', sortable: true, type: 'date' },
-          {
-            key: 'role_access_valid_to',
-            sortable: true,
-            type: 'date',
-            rules: { date_after: ['@role_access_valid_from'] }
-          },
+          { key: 'access_name', sortable: true, hideOnForm: true }
         ],
       },
       {
@@ -225,10 +218,11 @@ export default {
             type: 'list',
             list: 'user',
             listLabel: 'user_firstname',
-            hideOnIndex: true
+            hideOnIndex: true,
+            disableOnUpdate: true,
           },
           { key: 'user_firstname', sortable: true, hideOnForm: true },
-          { key: 'user_role_valid_from', type: 'date', sortable: true },
+          { key: 'user_role_valid_from', type: 'date', disableOnUpdate: true, composite: true },
           {
             key: 'user_role_valid_to',
             type: 'date',

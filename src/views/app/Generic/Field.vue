@@ -1,13 +1,14 @@
 <template>
   <b-form-group :label="field.label||snakeToTitle(field.key)" :label-for="'field-'+field.key"
                 :label-cols-md="inline?4:null">
-    <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled placeholder="Automaticaly generated ..."></b-form-input>
+    <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled
+                  placeholder="Automaticaly generated ..."></b-form-input>
     <validation-provider v-else #default="{ errors }" :rules="getValidationRules(field)" :name="field.key"
                          :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message[field.key]}">
       <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
                        :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
       <v-select v-else-if="field.type==='list'" v-model="entity[field.key]" :disabled="disabled"
-                :state="errors.length > 0 ? false:null" :placeholder="field.key" :options="list"
+                :state="errors.length > 0 ? false:null" :placeholder="field.key" :options="list" transition=""
                 :label="field.listLabel" :reduce="i => i[field.key]"/>
       <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                   :state="errors.length > 0 ? false:null" :placeholder="field.key" class="form-control"/>
@@ -36,11 +37,13 @@ export default {
   props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled'],
   data() {
     return {
-      list: [],
+      list: this.$store.state.table.listCache[this.field.list] || [],
     }
   },
   async created() {
-    if (this.field.type === 'list') this.list = await this.$store.dispatch('table/fetchList', this.field.list)
+    if (this.field.type === 'list') {
+      this.list = await this.$store.dispatch('table/fetchList', this.field.list)
+    }
   },
   methods: {
     getValidationRules(field) {

@@ -10,6 +10,7 @@ export default {
     currentPage: 1,
     totalRows: 0,
     tableDefinition: {},
+    listCache: {},
   },
   getters: {
     tableDefinition: state => entity => state.tableDefinition[entity],
@@ -51,7 +52,10 @@ export default {
         filter_all: '',
         lang: window.$vue.$i18n.locale,
       })
-        .then(({ data }) => data.data.data)
+        .then(({ data }) => {
+          Vue.set(context.state.listCache, entity, data.data.data)
+          return data.data.data
+        })
     },
   },
 }

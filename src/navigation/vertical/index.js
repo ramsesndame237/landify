@@ -119,7 +119,6 @@ export default [
   },
   {
     title: 'app.sidebar.work_pack_3.title',
-    route: 'work package',
     icon: 'CheckSquareIcon',
     children: [
       {
@@ -217,13 +216,48 @@ export default [
     ],
   },
   {
-    title: 'app.sidebar.work_pack_4.title',
-    route: 'work package',
+    title: 'Work Package 4',
     icon: 'CheckSquareIcon',
     children: [
       {
-        title: 'Invoice Criteria',
+        title: 'Invoices',
+        route: table('invoice'),
+      },
+      {
+        title: 'Invoice Positions',
+        route: table('invoiceposition'),
+      },
+      {
+        title: 'Inspection results',
+        route: table('inspectionresult'),
+      },
+      {
+        title: 'Cost Types',
+        route: table('costtype'),
+      },
+      {
+        title: 'Claim Types',
+        route: table('claimtype'),
+      },
+      {
+        title: 'Invoice Criterias',
         route: table('invoicecriteria'),
+      },
+      {
+        title: 'Invoice Value Types',
+        route: table('invoicevaluetype'),
+      },
+      {
+        title: 'Ratings',
+        route: table('rating'),
+      },
+      {
+        title: 'Result Categorization',
+        route: table('resultcategorization'),
+      },
+      {
+        title: 'Saving Types',
+        route: table('savingtype'),
       },
     ],
   },
