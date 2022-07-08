@@ -12,7 +12,7 @@
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
                     :placeholder="field.key" :options="list" transition="" :label="field.listLabel" class="w-100"
                     :reduce="i => i[field.key]"/>
-          <b-button class="ml-2" v-if="field.withNew" variant="success" @click="showNewForm">New</b-button>
+          <b-button class="ml-2" v-if="field.withNew && !disabled" variant="info" @click="showNewForm">New</b-button>
         </div>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :state="errors.length > 0 ? false:null" :placeholder="field.key" class="form-control"/>
@@ -72,6 +72,9 @@ export default {
     },
     subPrimaryKey() {
       return this.subDefinition.primaryKey ?? this.subDefinition.fields.find(f => f.auto).key
+    },
+    hasNew() {
+      return this.newValue === this.entity[this.field.key]
     },
   },
   async created() {

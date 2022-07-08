@@ -8,7 +8,7 @@
                    :table-definition="tableDefinition"/>
         <b-row v-else>
           <b-col v-for="(field,index) in formFields" :key="index" cols="12">
-            <field :ref="'field-'+field.key" :disabled="!create && field.disableOnUpdate" inline="true" :entity="entity"
+            <field ref="fields" :disabled="!create && field.disableOnUpdate" inline="true" :entity="entity"
                    :table-definition="tableDefinition" :field="field"/>
           </b-col>
         </b-row>
@@ -91,8 +91,12 @@ export default {
       })))
     },
     createNewEntities() {
-      return Promise.all(this.formFields.filter(field => field.type === 'list').map(field => {
-        const formField = this.$refs[`field-${field.key}`]
+      return Promise.all(this.formFields.filter(field => {
+        const formField = this.$refs.fields.find(f => f.field === field)
+        console.log(formField, formField.hasNew)
+        return field.type === 'list' && formField.hasNew
+      }).map(field => {
+        const formField = this.$refs.fields.find(f => f.field === field)
         return this.$api({
           entity: field.list,
           action: 'create',

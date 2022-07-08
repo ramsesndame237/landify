@@ -149,7 +149,7 @@ export default {
         entity: field.relationEntity ?? (`${this.table}_${field.list}_rel`),
         action: 'read-rich',
         filter: {
-          [this.primaryKey]: `${entity[this.primaryKey]}`,
+          [this.primaryKey]: `${this.entity[this.primaryKey]}`,
         },
       })
         .then(({ data }) => {

@@ -307,9 +307,9 @@ export default {
   customergroup: {
     fields: [
       { key: 'customergroup_id', auto: true },
-      { key: 'customergroup_name', sortable: true },
-      { key: 'customergroup_description', sortable: true, hideOnIndex: true, type: 'textarea' },
-      { key: 'pos_count', sortable: true, hideOnForm: true },
+      { key: 'customergroup_name' },
+      { key: 'customergroup_description', hideOnIndex: true, type: 'textarea' },
+      { key: 'pos_count', hideOnForm: true },
     ],
     relations: [
       {
