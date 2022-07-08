@@ -11,7 +11,7 @@ export default [
     route: 'home',
     icon: 'HomeIcon',
   },
-  // Work Package 1
+  // region Work Package 1
   {
     title: 'app.sidebar.users_rights',
     route: table('user'),
@@ -47,7 +47,7 @@ export default [
     route: table('crud'),
     icon: 'UsersIcon',
   },
-  // End Work Package 1
+  // endregion Work Package 1
 
   // Work Package 2
   {

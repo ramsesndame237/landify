@@ -1,44 +1,78 @@
 <template>
-  <b-form-group :label="field.label||snakeToTitle(field.key)" :label-for="'field-'+field.key"
-                :label-cols-md="inline?4:null">
-    <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled
-                  placeholder="Automaticaly generated ..."></b-form-input>
-    <validation-provider v-else #default="{ errors }" :rules="getValidationRules(field)" :name="field.key"
-                         :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message[field.key]}">
-      <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
-                       :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
-      <v-select v-else-if="field.type==='list'" v-model="entity[field.key]" :disabled="disabled"
-                :state="errors.length > 0 ? false:null" :placeholder="field.key" :options="list" transition=""
-                :label="field.listLabel" :reduce="i => i[field.key]"/>
-      <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
-                  :state="errors.length > 0 ? false:null" :placeholder="field.key" class="form-control"/>
-      <b-form-input v-else v-model="entity[field.key]" :type="field.type||'text'" :disabled="disabled"
-                    :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
-      <small class="text-danger">{{ errors[0] }}</small>
-    </validation-provider>
-  </b-form-group>
+  <div>
+    <b-form-group :label="field.label||snakeToTitle(field.key)" :label-for="'field-'+field.key"
+                  :label-cols-md="inline?4:null">
+      <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled
+                    placeholder="Automaticaly generated ..."></b-form-input>
+      <validation-provider v-else #default="{ errors }" :rules="getValidationRules(field)" :name="field.key"
+                           :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message[field.key]}">
+        <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
+                         :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
+        <div v-else-if="field.type==='list'" :class="field.withNew ? 'd-flex': ''">
+          <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
+                    :placeholder="field.key" :options="list" transition="" :label="field.listLabel" class="w-100"
+                    :reduce="i => i[field.key]"/>
+          <b-button class="ml-2" v-if="field.withNew" variant="success" @click="showNewForm">New</b-button>
+        </div>
+        <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
+                    :state="errors.length > 0 ? false:null" :placeholder="field.key" class="form-control"/>
+        <b-form-input v-else v-model="entity[field.key]" :type="field.type||'text'" :disabled="disabled"
+                      :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
+        <small class="text-danger">{{ errors[0] }}</small>
+      </validation-provider>
+      <div v-if="field.type==='list' && field.withNew && entity[field.key] === newValue" class="mt-3">
+        <component :is="subDefinition.createComponent" v-if="subDefinition.createComponent" :entity="subEntity"
+                   :table-definition="subTableDefinition"/>
+        <b-row v-else>
+          <b-col v-for="(field,index) in subFormFields" :key="index" cols="12">
+            <field :inline="inline" :entity="subEntity" :table-definition="tableDefinition" :field="field"/>
+          </b-col>
+        </b-row>
+      </div>
+    </b-form-group>
+  </div>
 </template>
 
 <script>
 import {
   BFormGroup,
   BFormInput,
+  BButton,
   BFormTextarea,
+  BRow,
+  BCol
 } from 'bootstrap-vue'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
 import { snakeToTitle } from '@/libs/utils'
+import Table from '@/table/index'
 
 export default {
   name: 'Field',
   components: {
-    BFormInput, BFormGroup, BFormTextarea, vSelect, flatPickr,
+    BFormInput, BFormGroup, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol,
   },
   props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled'],
   data() {
     return {
       list: this.$store.state.table.listCache[this.field.list] || [],
+      subEntity: {},
+      newValue: 'Create New Element',
     }
+  },
+  computed: {
+    subDefinition() {
+      return Table[this.field.list]
+    },
+    subFormFields() {
+      return this.subDefinition.fields.filter(f => !f.hideOnForm && !f.auto)
+    },
+    subTableDefinition() {
+      return this.$store.getters['table/tableDefinition'](this.field.list)
+    },
+    subPrimaryKey() {
+      return this.subDefinition.primaryKey ?? this.subDefinition.fields.find(f => f.auto).key
+    },
   },
   async created() {
     if (this.field.type === 'list') {
@@ -56,6 +90,10 @@ export default {
       }
     },
     snakeToTitle,
+    showNewForm() {
+      console.log('click on new')
+      this.$set(this.entity, this.field.key, this.newValue)
+    },
   },
 }
 </script>

@@ -8,12 +8,19 @@
                    :table-definition="tableDefinition"/>
         <b-row v-else>
           <b-col v-for="(field,index) in formFields" :key="index" cols="12">
-            <field :disabled="!create && field.disableOnUpdate" inline="true" :entity="entity"
+            <field :ref="'field-'+field.key" :disabled="!create && field.disableOnUpdate" inline="true" :entity="entity"
                    :table-definition="tableDefinition" :field="field"/>
           </b-col>
         </b-row>
       </b-form>
     </validation-observer>
+    <template v-slot:modal-footer>
+      <b-button variant="secondary" :disabled="loading">Cancel</b-button>
+      <b-button variant="primary" :disabled="loading" @click="handleOk">
+        <b-spinner small v-if="loading"/>
+        Save
+      </b-button>
+    </template>
   </b-modal>
 </template>
 
@@ -23,7 +30,9 @@ import {
   BForm,
   BRow,
   BCol,
+  BSpinner,
   BFormInput,
+  BButton
 } from 'bootstrap-vue'
 import Field from '@/views/app/Generic/Field'
 
@@ -32,9 +41,11 @@ export default {
   components: {
     Field,
     BFormInput,
+    BSpinner,
     BForm,
     BRow,
     BCol,
+    BButton
   },
   props: {
     table: String,
@@ -48,6 +59,7 @@ export default {
       entity: {},
       forceTitle: '',
       create: true,
+      loading: false,
     }
   },
   computed: {
@@ -78,35 +90,54 @@ export default {
         }],
       })))
     },
+    createNewEntities() {
+      return Promise.all(this.formFields.filter(field => field.type === 'list').map(field => {
+        const formField = this.$refs[`field-${field.key}`]
+        return this.$api({
+          entity: field.list,
+          action: 'create',
+          data: [formField.subEntity],
+        }).then(({ data }) => {
+          const id = data.data.data[0][0][field.key]
+          this.$set(this.entity, field.key, id)
+          return id
+        })
+      }))
+    },
     submit() {
       this.$refs.form.validate().then(success => {
         if (!success) {
           return
         }
-        this.$api({
-          entity: this.table,
-          action: this.create ? 'create' : 'update',
-          data: [
-            this.entity,
-          ],
-        })
-          .then(async ({ data }) => {
-            try {
-              if (!this.isRelation) {
-                await this.saveRelations(data.data.data[0][0][this.primaryKey])
-              }
-            } finally {
-              this.$refs.modal.hide()
-              this.$successToast(data.data.message)
-              this.$emit('reload-table')
-              // navigate to view page or reload table
-            }
+        this.loading = true
+        this.createNewEntities()
+          .then(() => {
+            return this.$api({
+              entity: this.table,
+              action: this.create ? 'create' : 'update',
+              data: [
+                this.entity,
+              ],
+            })
+              .then(async ({ data }) => {
+                try {
+                  if (!this.isRelation) {
+                    await this.saveRelations(data.data.data[0][0][this.primaryKey])
+                  }
+                } finally {
+                  this.$refs.modal.hide()
+                  this.$successToast(data.data.message)
+                  this.$emit('reload-table')
+                  // navigate to view page or reload table
+                }
+              })
+              .catch(e => {
+                console.log(e)
+                const title = e.response?.data.detail
+                this.$errorToast(title)
+              })
           })
-          .catch(e => {
-            console.log(e)
-            const title = e.response?.data.detail
-            this.$errorToast(title)
-          })
+          .finally(() => this.loading = false)
       })
     },
     handleOk(bvModalEvt) {

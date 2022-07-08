@@ -39,7 +39,7 @@
       </validation-observer>
     </b-card>
 
-    <b-card v-if="definition.relations && definition.relations.length>0">
+    <b-card v-if="entityLoaded && definition.relations && definition.relations.length>0">
       <b-tabs ref="tabs" pills>
         <b-tab v-for="(relation, index) in definition.relations" :key="index" :title="$t(relation.title)"
                :active="index===0" lazy>
@@ -103,6 +103,7 @@ export default {
       currentPage: 1,
       perPage: Number.MAX_SAFE_INTEGER,
       totalRows: 0,
+      entityLoaded: false,
     }
   },
   computed: {
@@ -139,6 +140,7 @@ export default {
     } finally {
       console.log('entity', this.entity)
       this.originalEntity = { ...this.entity }
+      this.entityLoaded = true
     }
   },
   methods: {

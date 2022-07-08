@@ -439,6 +439,7 @@ export default {
       { key: 'contactperson_count', hideOnForm: true },
       { key: 'location_count', hideOnForm: true },
       { key: 'partnertype_id', hideOnIndex: true, type: 'list', list: 'partnertype', listLabel: 'partnertype_name' },
+      { key: 'address_id', hideOnIndex: true, type: 'list', list: 'address', listLabel: 'address_street', withNew: true},
       { key: 'partnergroup_description', hideOnIndex: true, type: 'textarea' },
       { key: 'partnercompanies_count', hideOnForm: true },
     ],
