@@ -498,14 +498,21 @@ export default {
       {
         key: 'address_id', hideOnIndex: true, type: 'list', list: 'address', listLabel: 'address_street', withNew: true,
       },
-      {
-        key: 'contactperson_id', hideOnIndex: true, type: 'list', list: 'contactperson', listLabel: 'contactperson_firstname', withNew: true,
-      },
-      {
-        key: 'company_id', hideOnIndex: true, type: 'list', list: 'company', listLabel: 'company_name', withNew: true,
-      },
       { key: 'partnergroup_description', hideOnIndex: true, type: 'textarea' },
       { key: 'partnercompanies_count', hideOnForm: true },
+    ],
+    relations: [
+      {
+        title: 'Users',
+        primaryKey: 'user_id',
+        entity: 'user_partnercompany_grp',
+        entityForm: 'user_partnercompany_rel',
+        fields: [
+          {
+            key: 'address_id', label: 'ID', sortable: true, type: 'list', list: 'user', listLabel: 'user_email',
+          },
+        ],
+      },
     ],
   },
   partnergroup: {
@@ -602,6 +609,18 @@ export default {
           { key: 'company_name', sortable: true, hideOnForm: true },
         ],
       },
+    ],
+  },
+  contactdetails: {
+    primaryKey: 'contactdetails_id',
+    fields: [
+      {
+        key: 'contactdetails_id', sortable: true, auto: true, hiddenOnForm: true,
+      },
+      { key: 'contactdetails_email', sortable: true },
+      { key: 'contactdetails_phone', sortable: true },
+      { key: 'contactdetails_mobile', sortable: true },
+      { key: 'contactdetails_fax', sortable: true },
     ],
   },
   contacttitle: {
