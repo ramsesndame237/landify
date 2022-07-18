@@ -498,6 +498,12 @@ export default {
       {
         key: 'address_id', hideOnIndex: true, type: 'list', list: 'address', listLabel: 'address_street', withNew: true,
       },
+      {
+        key: 'contactdetails_id', hideOnIndex: true, type: 'list', list: 'contactdetails', listLabel: 'contactdetails_email', withNew: true,
+      },
+      {
+        key: 'companydetails_id', hideOnIndex: true, type: 'list', list: 'companydetails', listLabel: 'companydetails_commercialregisterno', withNew: true,
+      },
       { key: 'partnergroup_description', hideOnIndex: true, type: 'textarea' },
       { key: 'partnercompanies_count', hideOnForm: true },
     ],
@@ -508,9 +514,12 @@ export default {
         entity: 'user_partnercompany_grp',
         entityForm: 'user_partnercompany_rel',
         fields: [
-          {
-            key: 'address_id', label: 'ID', sortable: true, type: 'list', list: 'user', listLabel: 'user_email',
-          },
+          { key: 'user_id', auto: true },
+          { key: 'user_lastname', hideOnForm: true },
+          { key: 'user_firstname', hideOnForm: true },
+          { key: 'user_email', hideOnForm: true },
+          { key: 'user_last_login_time', hideOnForm: true },
+          { key: 'user_locked', hideOnForm: true },
         ],
       },
     ],
@@ -621,6 +630,17 @@ export default {
       { key: 'contactdetails_phone', sortable: true },
       { key: 'contactdetails_mobile', sortable: true },
       { key: 'contactdetails_fax', sortable: true },
+    ],
+  },
+  companydetails: {
+    primaryKey: 'companydetails_id',
+    fields: [
+      {
+        key: 'companydetails_id', sortable: true, auto: true, hiddenOnForm: true,
+      },
+      { key: 'companydetails_salestaxno', sortable: true },
+      { key: 'companydetails_commercialregisterno', sortable: true },
+      { key: 'companydetails_website', sortable: true },
     ],
   },
   contacttitle: {
