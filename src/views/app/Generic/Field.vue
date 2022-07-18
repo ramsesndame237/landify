@@ -16,6 +16,9 @@
         </div>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :state="errors.length > 0 ? false:null" :placeholder="field.key" class="form-control"/>
+        <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
+                         :state="errors.length > 0 ? false:null" :placeholder="field.key" value="1"
+                         unchecked-value="0" style="margin-top: 5px"/>
         <b-form-input v-else v-model="entity[field.key]" :type="field.type||'text'" :disabled="disabled"
                       :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
         <small class="text-danger">{{ errors[0] }}</small>
@@ -40,7 +43,8 @@ import {
   BButton,
   BFormTextarea,
   BRow,
-  BCol
+  BCol,
+  BFormCheckbox,
 } from 'bootstrap-vue'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
@@ -50,7 +54,7 @@ import Table from '@/table/index'
 export default {
   name: 'Field',
   components: {
-    BFormInput, BFormGroup, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol,
+    BFormInput, BFormGroup, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol, BFormCheckbox,
   },
   props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled'],
   data() {

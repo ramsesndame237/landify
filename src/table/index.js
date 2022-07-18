@@ -439,7 +439,14 @@ export default {
       { key: 'contactperson_count', hideOnForm: true },
       { key: 'location_count', hideOnForm: true },
       { key: 'partnertype_id', hideOnIndex: true, type: 'list', list: 'partnertype', listLabel: 'partnertype_name' },
-      { key: 'address_id', hideOnIndex: true, type: 'list', list: 'address', listLabel: 'address_street', withNew: true},
+      {
+        key: 'address_id',
+        hideOnIndex: true,
+        type: 'list',
+        list: 'address',
+        listLabel: 'address_street',
+        withNew: true
+      },
       { key: 'partnergroup_description', hideOnIndex: true, type: 'textarea' },
       { key: 'partnercompanies_count', hideOnForm: true },
     ],
@@ -604,6 +611,128 @@ export default {
 
   // endregion
   // region Work Package 4
+  invoice: {
+    fields: [
+      { key: 'invoice_id', auto: true },
+      { key: 'invoice_date', type: 'date' },
+      { key: 'invoice_contract_year', disabled: true, type: 'number' },
+      { key: 'invoice_company_name' },
+      { key: 'invoice_allocationarea', type: 'number' },
+      { key: 'invoice_payment_date', type: 'date' },
+      { key: 'customergroup_name', hideOnForm: true },
+      { key: 'partnercompany_name', hideOnForm: true },
+      { key: 'partnertype_name', type: 'list', list: 'partnertype', listLabel: 'partnertype_name', hideOnIndex: true },
+      { key: 'invoice_description', type: 'textarea', hideOnIndex: true },
+      { key: 'invoice_contract_billing_period_from_date', type: 'date', hideOnIndex: true },
+      {
+        key: 'invoice_contract_billing_period_to_date',
+        type: 'date',
+        rules: { date_after: ['@invoice_contract_billing_period_from_date'] },
+        hideOnIndex: true,
+      },
 
+    ],
+  },
+  inspectionresult: {
+    fields: [
+      { key: 'inspectionresult_id', auto: true },
+      { key: 'inspectionresult_value' },
+      { key: 'inspectionresult_realised' },
+      { key: 'inspectionresult_unique_or_perennial' },
+      { key: 'inspectionresult_legally_clear' },
+      { key: 'inspectionresult_legally_clear' },
+      { key: 'claimtype_name' },
+      { key: 'saving_name' },
+      { key: 'rating_name' },
+      { key: 'resultcategorization_name' },
+      { key: 'invoicepositon_count', hideOnForm: true },
+    ],
+  },
+  costtype: {
+    fields: [
+      { key: 'costtype_id', auto: true },
+      { key: 'costtype_name' },
+      { key: 'costtype_maingroup' },
+      { key: 'costtype_description', type: 'textarea' },
+      { key: 'external_costtype_count', hideOnForm: true },
+    ],
+    relations: [
+      {
+        title: 'External Cost Types',
+        primaryKey: 'externalcosttype_id',
+        entity: 'externalcosttype',
+      },
+      {
+        title: 'Contracts',
+        primaryKey: 'contract_id',
+        entity: 'contract_costtype_rel',
+        fields: [
+          {
+            key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name',
+          },
+          { key: 'contract_name' },
+          { key: 'contract_last_change_date' },
+          { key: 'contract_costtype_comment', type: 'textarea' },
+        ],
+      },
+    ],
+  },
+  claimtype: {
+    fields: [
+      { key: 'claimtype_id', auto: true },
+      { key: 'claimtype_name' },
+      { key: 'claimtype_description', type: 'textarea' },
+      { key: 'inspectionresult_count', hideOnForm: true },
+      { key: 'inspectionresult_sum', hideOnForm: true },
+    ],
+  },
+  invoicecriteria: {
+    fields: [
+      { key: 'invoicecriteria_id', auto: true },
+      { key: 'invoicecriteria_name' },
+      { key: 'invoicecriteria_description', type: 'textarea' },
+      { key: 'invoice_count', hideOnForm: true },
+    ],
+  },
+  invoicevaluetype: {
+    fields: [
+      { key: 'invoicevaluetype_id', auto: true },
+      { key: 'invoicevaluetype_name' },
+      { key: 'invoicevaluetype_description', type: 'textarea' },
+      {
+        key: 'unit_id',
+        type: 'list',
+        list: 'unit',
+        listLabel: 'unit_name',
+        label: 'Unit',
+        with: 'invoicevaluetype_unit_preferred_unit',
+      },
+      { key: 'invoicevaluetype_unit_preferred_unit', type: 'boolean' },
+      { key: 'invoice_count', hideOnForm: true },
+    ],
+  },
+  rating: {
+    fields: [
+      { key: 'rating_id', auto: true },
+      { key: 'rating_name' },
+      { key: 'rating_description', type: 'textarea' },
+      { key: 'contradictpoint_inspectionresult_rating_value_sum', hideOnForm: true },
+    ],
+  },
+  resultcategorization: {
+    fields: [
+      { key: 'resultcategorization_id', auto: true },
+      { key: 'resultcategorization_name' },
+      { key: 'resultcategorization_description', type: 'textarea' },
+    ],
+  },
+  savingtype: {
+    fields: [
+      { key: 'savingtype_id', auto: true },
+      { key: 'savingtype_name' },
+      { key: 'savingtype_description', type: 'textarea' },
+      { key: 'contradictpoint_inspectionresult_savingtype_value_sum', hideOnForm: true },
+    ],
+  },
   // endregion
 }

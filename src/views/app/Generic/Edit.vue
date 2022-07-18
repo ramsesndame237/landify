@@ -61,9 +61,10 @@
 
             <b-input-group size="sm">
               <b-input-group-prepend>
-                <b-dropdown v-ripple.400="'rgba(255, 255, 255, 0.15)'" dropup right variant="primary" size="sm" text="Filter">
+                <b-dropdown v-ripple.400="'rgba(255, 255, 255, 0.15)'" dropup right variant="primary" size="sm"
+                            text="Filter">
                   <template #button-content>
-                    <feather-icon icon="SearchIcon" />
+                    <feather-icon icon="SearchIcon"/>
                   </template>
                   <b-dropdown-form class="py-1">
                     <b-form-group label="Date" label-for="dropdown-form-email" @submit.stop.prevent>
@@ -168,6 +169,11 @@ export default {
       })
         .then(({ data }) => {
           this.$set(entity, field.key, data.data.data[0][field.key])
+          if (field.with) {
+            (typeof field.with === 'string' ? [field.with] : field.with).forEach(val => {
+              this.$set(entity, val, data.data.data[0][val])
+            })
+          }
         })))
     },
     update() {

@@ -81,14 +81,23 @@ export default {
       this.$refs.modal.show()
     },
     saveRelations(entityId) {
-      return Promise.all(this.formFields.filter(field => field.type === 'list').map(field => this.$api({
-        entity: field.relationEntity ?? (`${this.table}_${field.list}_rel`),
-        action: this.create ? 'create' : 'update',
-        data: [{
-          [field.key]: this.entity[field.key],
-          [this.primaryKey]: entityId ?? this.entity[this.primaryKey],
-        }],
-      })))
+      return Promise.all(this.formFields.filter(field => field.type === 'list').map(field => {
+        const extras = {}
+        if (field.with) {
+          (typeof field.with === 'string' ? [field.with] : field.with).forEach(val => {
+            extras[val] = this.entity[val]
+          })
+        }
+        return this.$api({
+          entity: field.relationEntity ?? (`${this.table}_${field.list}_rel`),
+          action: this.create ? 'create' : 'update',
+          data: [{
+            [field.key]: this.entity[field.key],
+            [this.primaryKey]: entityId ?? this.entity[this.primaryKey],
+            ...extras,
+          }],
+        })
+      }))
     },
     createNewEntities() {
       return Promise.all(this.formFields.filter(field => {
