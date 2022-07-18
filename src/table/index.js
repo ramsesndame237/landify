@@ -509,6 +509,20 @@ export default {
     ],
     relations: [
       {
+        title: 'Tickets',
+        primaryKey: 'ticket_id',
+        entity: 'ticket_partnercompany_grp',
+        entityForm: 'ticket_partnercompany_rel',
+        fields: [
+          { key: 'ticket_id', auto: true },
+          { key: 'ticket_name', hideOnForm: true },
+          { key: 'board_name', hideOnForm: true },
+          { key: 'ticket_deadline', hideOnForm: true },
+          { key: 'ticket_planned_treatment_week', hideOnForm: true },
+          { key: 'ticket_progress', hideOnForm: true },
+        ],
+      },
+      {
         title: 'Users',
         primaryKey: 'user_id',
         entity: 'user_partnercompany_grp',
@@ -522,6 +536,7 @@ export default {
           { key: 'user_locked', hideOnForm: true },
         ],
       },
+
     ],
   },
   partnergroup: {
