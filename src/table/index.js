@@ -433,6 +433,7 @@ export default {
     ],
   },
   company: {
+    entity: 'frontend_2_1_1',
     primaryKey: 'company_id',
     fields: [
       { key: 'company_id', auto: true },
@@ -442,7 +443,7 @@ export default {
       { key: 'contactdetails_phone', sortable: true, hideOnForm: true },
       { key: 'contactdetails_email', sortable: true, hideOnForm: true },
       {
-        key: 'contactperson_count', label: 'nd of Contact Person', sortable: true, hideOnForm: true,
+        key: 'No of contactpersons', sortable: true, hideOnForm: true,
       },
     ],
     formComponent: () => import('@/views/app/FormComponent/CompanyForm'),

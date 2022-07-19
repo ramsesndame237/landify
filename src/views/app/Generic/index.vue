@@ -6,7 +6,7 @@
                         :on-delete-elements="()=> $refs.table.deleteSelected()"/>
     </b-card>
     <b-card>
-      <Datatable :key="table" ref="table" link="table-user-edit" :search="search" :entity="table"
+      <Datatable :key="table" ref="table" link="table-user-edit" :search="search" :entity="table" :entity-list="definition.entity"
                  :default-sort-field="definition.defaultSortField" :per-page="perPage" :current-page="currentPage"
                  :total-rows.sync="totalRows" :fields="definition.fields" :primary-key-column="definition.primaryKey"/>
     </b-card>
