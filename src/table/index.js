@@ -944,8 +944,8 @@ export default {
   area: {
     primaryKey: 'area_id',
     fields: [
-      { key: 'area_name', sortable: true },
-      { key: 'area_id', sortable: true, auto: true },
+      { key: 'area_name' },
+      { key: 'area_id', auto: true },
 
       {
         key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name', sortable: true,
@@ -969,7 +969,7 @@ export default {
         key: 'area_space_value', sortable: true,
       },
       {
-        key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name', sortable: true, hideOnForm: true,
+        key: 'pos_name', hideOnForm: true,
       },
       {
         key: 'usagetype_id',
@@ -978,6 +978,41 @@ export default {
         listLabel: 'usagetype_name',
         sortable: true,
         hideOnIndex: true,
+      },
+    ],
+    relations: [
+      {
+        title: 'Contracts',
+        entity: 'area_contract_grp',
+        fields: [
+          { key: 'contract_id' },
+          { key: 'contract_area_unit_usagetype_rentalspace_value' },
+          { key: 'contract_area_unit_usagetype_allocationspace_value' },
+          { key: 'unit_name' },
+          { key: 'contract_area_unit_usagetype_mainusage' },
+          { key: 'contract_begin_date' },
+          { key: 'contract_end_date' },
+        ],
+      },
+      {
+        title: 'Point of Sales',
+        entity: 'pos_area_grp',
+        fields: [
+          { key: 'pos_id' },
+          { key: 'pos_name' },
+          { key: 'company_name' },
+          { key: 'tag_name' },
+        ],
+      },
+      {
+        title: 'Service Objects',
+        entity: 'area_serviceobject_grp',
+        fields: [
+          { key: 'serviceobject_id' },
+          { key: 'serviceobject_name' },
+          { key: 'serviceobject_description' },
+          { key: 'serviceobjecttype_id' },
+        ],
       },
     ],
   },
