@@ -79,9 +79,9 @@ export default {
         { key: '__selected' },
         ...this.fields.filter(f => !f.hideOnIndex).map(field => {
           const newField = { sortable: true, ...field }
-          if (newField.type === 'list') {
-            newField.key = newField.listLabel
-          }
+          // if (newField.type === 'list') {
+          //   newField.key = newField.listLabel
+          // }
           return newField
         }),
         'Actions']

@@ -151,11 +151,11 @@ export default {
       })
     }
     try {
+      this.entityLoaded = true
       await this.fillRelations(this.entity)
     } finally {
       console.log('entity', this.entity)
       this.originalEntity = { ...this.entity }
-      this.entityLoaded = true
     }
   },
   methods: {

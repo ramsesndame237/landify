@@ -500,10 +500,20 @@ export default {
         key: 'address_id', hideOnIndex: true, type: 'list', list: 'address', listLabel: 'address_street', withNew: true,
       },
       {
-        key: 'contactdetails_id', hideOnIndex: true, type: 'list', list: 'contactdetails', listLabel: 'contactdetails_email', withNew: true,
+        key: 'contactdetails_id',
+        hideOnIndex: true,
+        type: 'list',
+        list: 'contactdetails',
+        listLabel: 'contactdetails_email',
+        withNew: true,
       },
       {
-        key: 'companydetails_id', hideOnIndex: true, type: 'list', list: 'companydetails', listLabel: 'companydetails_commercialregisterno', withNew: true,
+        key: 'companydetails_id',
+        hideOnIndex: true,
+        type: 'list',
+        list: 'companydetails',
+        listLabel: 'companydetails_commercialregisterno',
+        withNew: true,
       },
       { key: 'partnergroup_description', hideOnIndex: true, type: 'textarea' },
       { key: 'partnercompanies_count', hideOnForm: true },
@@ -731,7 +741,283 @@ export default {
   },
   // endregion
   // region Work Package 3
+  pos: {
+    primaryKey: 'pos_id',
+    fields: [
+      { key: 'pos_id', auto: true },
+      {
+        key: 'customergroup_id',
+        type: 'list',
+        list: 'customergroup',
+        listLabel: 'customergroup_name',
+        hideOnIndex: true,
+      },
+      {
+        key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name', hideOnIndex: true,
+      },
+      { key: 'pos_name' },
+      { key: 'pos_branchnumber', type: 'number' },
+      { key: 'pos_name_external' },
+      { key: 'location_count', hideOnForm: true },
+      { key: 'area_count', hideOnForm: true },
+      { key: 'pos_first_year', type: 'number' },
+    ],
+    relations: [
+      {
+        title: 'Areas',
+        primaryKey: 'area_id',
+        entity: 'area_pos_grp',
+        entityForm: 'area_pos_rel',
+        fields: [
+          {
+            key: 'area_id',
+            sortable: true,
+            type: 'list',
+            list: 'area',
+            listLabel: 'area_name',
+            disableOnUpdate: true,
+          },
+          { key: 'area_name', hideOnForm: true },
+          { key: 'area_name_external', hideOnForm: true },
+          { key: 'location_id', hideOnForm: true },
+          {
+            key: 'location_name',
+            hideOnForm: true,
+          },
+          {
+            key: 'areatype_name',
+            hideOnForm: true,
+          },
+          {
+            key: 'area_last_change_time', hideOnForm: true,
+          }, {
+            key: 'area_space_value', hideOnForm: true,
+          },
+        ],
+      },
+      {
+        title: 'Contract',
+        primaryKey: 'contract_id',
+        entity: 'location_contract_grp',
+        entityForm: 'contract_area_unit_usagetype_rel',
+        fields: [
+          {
+            key: 'contract_id', sortable: true,
+          },
+          {
+            key: 'contract_id',
+            sortable: true,
+            type: 'list',
+            list: 'contract',
+            listLabel: 'contract_name',
+            disableOnUpdate: true,
+          },
+          {
+            key: 'contracttype_id',
+            sortable: true,
+            type: 'list',
+            list: 'contracttype',
+            listLabel: 'contractype_name',
+            hideOnForm: true,
+          },
+          { key: 'area_name_external', sortable: true, hideOnForm: true },
+          { key: 'area_id', sortable: true, hideOnForm: true },
+          {
+            key: 'area_id', sortable: true, type: 'list', list: 'area', listLabel: 'area_name', hideOnForm: true,
+          },
+          {
+            key: 'contract_area_unit_usagetype_detail_description', hideOnForm: true,
+          },
+          {
+            key: 'contract_area_unit_usagetype_mainusage', hideOnForm: true,
+          },
+          {
+            key: 'contract_area_unit_usagetype_valid_from_date', sortable: true, hideOnForm: true,
+          },
+          {
+            key: 'contract_area_unit_usagetype_valid_to_date', sortable: true, hideOnForm: true,
+          },
+          {
+            key: 'contract_first_possible_end_date', sortable: true, hideOnForm: true,
+          },
+          {
+            key: 'contract_area_unit_usagetype_rentalspace_value', hideOnForm: true,
+          },
+          {
+            key: 'contract_area_unit_usagetype_allocationspace_value', hideOnForm: true,
+          },
+          {
+            key: 'document_id', hideOnForm: true, sortable: true,
+          },
+        ],
+      },
+      {
+        title: 'Tag',
+        primaryKey: 'tag_id',
+        entity: 'pos_tag_grp',
+        entityForm: 'pos_tag_rel',
+        fields: [
+          {
+            key: 'tag_id',
+            label: 'Tag ID',
+            sortable: true,
+            type: 'list',
+            list: 'tag',
+            listLabel: 'tag_name',
+            disableOnUpdate: true,
+          },
+          { key: 'tag_name', sortable: true, hideOnForm: true },
+          { key: 'tag_description', hideOnForm: true },
+        ],
+      },
+      {
+        title: 'Group Tickets',
+        primaryKey: 'groupticket_id',
+        entity: 'pos_groupticket_grp',
+        entityForm: 'pos_groupticket_rel',
+        fields: [
+          {
+            key: 'groupticket_id',
+            type: 'list',
+            list: 'groupticket',
+            listLabel: 'groupticket_name',
+            disableOnUpdate: true,
+          },
+          { key: 'groupticket_name', hideOnForm: true },
+          { key: 'column_name', hideOnForm: true },
+          { key: 'board_id', hideOnForm: true },
+          { key: 'board_name', hideOnForm: true },
+          { key: 'groupticket_deadline', hideOnForm: true },
+          { key: 'groupticket_deadline_yellow', hideOnForm: true },
+          { key: 'groupticket_deadline_red', hideOnForm: true },
+          { key: 'groupticket_move_time', hideOnForm: true },
+          { key: 'groupticket_deadline_offset', hideOnForm: true },
+        ],
+      },
+      {
+        title: 'Contradiction Packages',
+        entity: 'pos_contradictionpackage_grp',
+        entityForm: 'pos_contracdictionpackage_rel',
+        fields: [
+          {
+            key: 'contradictionpackage_id',
+            type: 'list',
+            list: 'contradictionpackage',
+            listLabel: 'contradictionpackage_name',
+            disableOnUpdate: true,
+          },
+          { key: 'contradictionpackage_name', hideOnForm: true },
+          { key: 'contradictionpackage_description', hideOnForm: true },
+          { key: 'contradictionpackage_sum', hideOnForm: true },
+          { key: 'contradictionpackage_last_change_time', hideOnForm: true },
+        ],
+      },
+      {
+        title: 'Invoices',
+        fields: [
+          { key: 'invoice_id', auto: true },
+          { key: 'invoice_date', hideOnForm: true },
+          { key: 'invoice_contract_year', hideOnForm: true },
+          { key: 'invoice_company_name', hideOnForm: true },
+          { key: 'invoice_allocationarea', hideOnForm: true },
+          { key: 'invoice_payment_date', hideOnForm: true },
+          { key: 'customergroup_name', hideOnForm: true },
+          { key: 'partnercompany_name', hideOnForm: true },
+        ],
+      },
+      {
+        title: 'Appointment Track',
+        fields: [
+          { key: 'trackrecord_id', auto: true },
+          { key: 'trackrecord_timestamp', hideOnForm: true },
+          { key: 'trackrecord_type', hideOnForm: true },
+          { key: 'trackrecord_category', hideOnForm: true },
+          { key: 'trackrecord_visibilitytype', hideOnForm: true },
+          { key: 'trackrecord_usecase', hideOnForm: true },
+          { key: 'trackrecord_status', hideOnForm: true },
+          { key: 'trackrecord_comment', hideOnForm: true },
+          { key: 'trackrecord_element', hideOnForm: true },
+        ],
+      },
+    ],
+  },
+  area: {
+    primaryKey: 'area_id',
+    fields: [
+      { key: 'area_name', sortable: true },
+      { key: 'area_id', sortable: true, auto: true },
 
+      {
+        key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name', sortable: true,
+      },
+      {
+        key: 'city_id', type: 'list', list: 'city', listLabel: 'city_name', sortable: true, hideOnForm: true,
+      },
+      {
+        key: 'area_name_external', hideOnIndex: true,
+      },
+      {
+        key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', sortable: true, hideOnForm: true,
+      },
+      {
+        key: 'areatype_id', type: 'list', list: 'areatype', listLabel: 'areatype_name', hideOnIndex: true,
+      },
+      {
+        key: 'areatype_id', sortable: true, hideOnForm: true,
+      },
+      {
+        key: 'area_space_value', sortable: true,
+      },
+      {
+        key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name', sortable: true, hideOnForm: true,
+      },
+      {
+        key: 'usagetype_id',
+        type: 'list',
+        list: 'usagetype',
+        listLabel: 'usagetype_name',
+        sortable: true,
+        hideOnIndex: true,
+      },
+    ],
+  },
+  location: {
+    primaryKey: 'location_id',
+    fields: [
+      { key: 'location_name', sortable: true },
+      { key: 'location_id', sortable: true, auto: true },
+
+      {
+        key: 'partnercompany_id',
+        type: 'list',
+        list: 'partnercompany',
+        listLabel: 'partnercompany_name',
+        sortable: true,
+      },
+      {
+        key: 'partnertype_id',
+        type: 'list',
+        list: 'partnertype',
+        listLabel: 'partnertype_name',
+        sortable: true,
+        hideOnForm: true,
+      },
+      {
+        key: 'locationtype_id',
+        type: 'list',
+        list: 'locationtype',
+        listLabel: 'locationtype_name',
+        sortable: true,
+        hideOnForm: true,
+      },
+      {
+        key: 'city_id', type: 'list', list: 'city', listLabel: 'city_name', sortable: true, hideOnForm: true,
+      },
+      {
+        key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name',
+      },
+    ],
+  },
   // endregion
   // region Work Package 4
   invoice: {
