@@ -2,11 +2,17 @@ export default {
   // region Work Package 1
   user: {
     fields: [
-      { key: 'user_id', label: 'Id', auto: true, hideOnForm: true },
+      {
+        key: 'user_id', label: 'Id', auto: true, hideOnForm: true,
+      },
       { key: 'user_firstname', label: 'First Name', sortable: true },
       { key: 'user_lastname', label: 'Last Name', sortable: true },
-      { key: 'user_email', label: 'Email', sortable: true, type: 'email' },
-      { key: 'user_last_login_time', label: 'Last login', sortable: true, hideOnForm: true },
+      {
+        key: 'user_email', label: 'Email', sortable: true, type: 'email',
+      },
+      {
+        key: 'user_last_login_time', label: 'Last login', sortable: true, hideOnForm: true,
+      },
       {
         key: 'usertype_id',
         label: 'User Type',
@@ -42,9 +48,15 @@ export default {
             listLabel: 'role_name',
             disableOnUpdate: true,
           },
-          { key: 'role_name', label: 'Role name', sortable: true, hideOnForm: true },
-          { key: 'role_permission', label: 'Permission', sortable: true, hideOnForm: true },
-          { key: 'user_role_valid_from', type: 'date', sortable: true, disableOnUpdate: true, composite: true },
+          {
+            key: 'role_name', label: 'Role name', sortable: true, hideOnForm: true,
+          },
+          {
+            key: 'role_permission', label: 'Permission', sortable: true, hideOnForm: true,
+          },
+          {
+            key: 'user_role_valid_from', type: 'date', sortable: true, disableOnUpdate: true, composite: true,
+          },
           {
             key: 'user_role_valid_to',
             type: 'date',
@@ -66,7 +78,7 @@ export default {
             list: 'customergroup',
             listLabel: 'customergroup_name',
             sortable: true,
-            disableOnUpdate: true
+            disableOnUpdate: true,
           },
           { key: 'customergroup_name', sortable: true, hideOnForm: true },
           {
@@ -74,7 +86,7 @@ export default {
             sortable: true,
             type: 'date',
             composite: true,
-            disableOnUpdate: true
+            disableOnUpdate: true,
           },
           {
             key: 'user_customergroup_valid_to',
@@ -100,7 +112,9 @@ export default {
             disableOnUpdate: true,
           },
           { key: 'company_name', sortable: true, hideOnForm: true },
-          { key: 'user_company_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true },
+          {
+            key: 'user_company_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,
+          },
           {
             key: 'user_company_valid_to',
             sortable: true,
@@ -122,11 +136,15 @@ export default {
             type: 'list',
             list: 'pos',
             listLabel: 'pos_name',
-            disableOnUpdate: true
+            disableOnUpdate: true,
           },
           { key: 'pos_name', sortable: true, hideOnForm: true },
-          { key: 'user_pos_valid_from', type: 'date', sortable: true, composite: true, disableOnUpdate: true },
-          { key: 'user_pos_valid_to', type: 'date', sortable: true, rules: { date_after: ['@user_pos_valid_from'] } },
+          {
+            key: 'user_pos_valid_from', type: 'date', sortable: true, composite: true, disableOnUpdate: true,
+          },
+          {
+            key: 'user_pos_valid_to', type: 'date', sortable: true, rules: { date_after: ['@user_pos_valid_from'] },
+          },
         ],
       },
       {
@@ -145,8 +163,12 @@ export default {
             disableOnUpdate: true,
           },
           { key: 'team_name', sortable: true, hideOnForm: true },
-          { key: 'user_team_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true },
-          { key: 'user_team_valid_to', sortable: true, type: 'date', rules: { date_after: ['@user_team_valid_from'] } },
+          {
+            key: 'user_team_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,
+          },
+          {
+            key: 'user_team_valid_to', sortable: true, type: 'date', rules: { date_after: ['@user_team_valid_from'] },
+          },
         ],
       },
       {
@@ -162,7 +184,7 @@ export default {
             type: 'list',
             list: 'partnercompany',
             listLabel: 'partnercompany_name',
-            disableOnUpdate: true
+            disableOnUpdate: true,
           },
           { key: 'partnercompany_name', sortable: true, hideOnForm: true },
           {
@@ -170,13 +192,13 @@ export default {
             sortable: true,
             type: 'date',
             composite: true,
-            disableOnUpdate: true
+            disableOnUpdate: true,
           },
           {
             key: 'user_partnercompany_valid_to',
             sortable: true,
             type: 'date',
-            rules: { date_after: ['@user_partnercompany_valid_from'] }
+            rules: { date_after: ['@user_partnercompany_valid_from'] },
           },
         ],
       },
@@ -202,8 +224,10 @@ export default {
         entity: 'role_access_grp',
         entityForm: 'role_access_rel',
         fields: [
-          { key: 'access_id', label: 'ID', sortable: true, type: 'list', list: 'access', listLabel: 'access_name' },
-          { key: 'access_name', sortable: true, hideOnForm: true }
+          {
+            key: 'access_id', label: 'ID', sortable: true, type: 'list', list: 'access', listLabel: 'access_name',
+          },
+          { key: 'access_name', sortable: true, hideOnForm: true },
         ],
       },
       {
@@ -222,7 +246,9 @@ export default {
             disableOnUpdate: true,
           },
           { key: 'user_firstname', sortable: true, hideOnForm: true },
-          { key: 'user_role_valid_from', type: 'date', disableOnUpdate: true, composite: true },
+          {
+            key: 'user_role_valid_from', type: 'date', disableOnUpdate: true, composite: true,
+          },
           {
             key: 'user_role_valid_to',
             type: 'date',
@@ -237,7 +263,9 @@ export default {
         entity: 'role_tablegroup_grp',
         entityForm: 'role_tablegroup_rel',
         fields: [
-          { key: 'tablegroup_id', sortable: true, type: 'list', list: 'tablegroup', listLabel: 'tablegroup_name' },
+          {
+            key: 'tablegroup_id', sortable: true, type: 'list', list: 'tablegroup', listLabel: 'tablegroup_name',
+          },
           { key: 'tablegroup_name', sortable: true },
           { key: 'tablegroup_description' },
         ],
@@ -248,7 +276,9 @@ export default {
         entity: 'role_tablename_grp',
         entityForm: 'role_tablename_rel',
         fields: [
-          { key: 'table_name', sortable: true, type: 'list', list: 'tablename', listLabel: 'table_name' },
+          {
+            key: 'table_name', sortable: true, type: 'list', list: 'tablename', listLabel: 'table_name',
+          },
         ],
       },
     ],
@@ -280,9 +310,13 @@ export default {
   tablegroup: {
     primaryKey: 'tablegroup_id',
     fields: [
-      { key: 'tablegroup_id', label: 'ID', sortable: true, hideOnForm: true },
+      {
+        key: 'tablegroup_id', label: 'ID', sortable: true, hideOnForm: true,
+      },
       { key: 'tablegroup_name', label: 'Name', sortable: true },
-      { key: 'tablegroup_description', label: 'Description', sortable: true, type: 'textarea' },
+      {
+        key: 'tablegroup_description', label: 'Description', sortable: true, type: 'textarea',
+      },
     ],
     relations: [
       {
@@ -291,10 +325,12 @@ export default {
         entity: 'tablegroup_tablename_grp',
         entityForm: 'tablegroup_tablename_rel',
         fields: [
-          { key: 'table_name', sortable: true, type: 'list', list: 'tablename', listLabel: 'table_name' },
+          {
+            key: 'table_name', sortable: true, type: 'list', list: 'tablename', listLabel: 'table_name',
+          },
         ],
       },
-    ]
+    ],
   },
   crud: {
     primaryKey: 'crud',
@@ -318,7 +354,9 @@ export default {
         entity: 'customergroup_company_grp',
         entityForm: 'customergroup_company_rel',
         fields: [
-          { key: 'company_id', sortable: true, type: 'list', list: 'company', listLabel: 'company_name' },
+          {
+            key: 'company_id', sortable: true, type: 'list', list: 'company', listLabel: 'company_name',
+          },
           { key: 'company_name', sortable: true, hideOnForm: true },
           { key: 'city_zip', sortable: true, hideOnForm: true },
           { key: 'city_name', sortable: true, hideOnForm: true },
@@ -336,7 +374,7 @@ export default {
             sortable: true,
             type: 'list',
             list: 'contactperson',
-            listLabel: 'contactperson_name'
+            listLabel: 'contactperson_name',
           },
           { key: 'contactperson_lastname', sortable: true, hideOnForm: true },
           { key: 'contactperson_firstname', sortable: true, hideOnForm: true },
@@ -361,14 +399,20 @@ export default {
             type: 'list',
             list: 'group_ticket',
             listLabel: 'group_ticket_name',
-            hideOnIndex: true
+            hideOnIndex: true,
           },
           { key: 'group_ticket_name', sortable: true, hideOnForm: true },
           { key: 'group_ticket_description', sortable: true, hideOnForm: true },
           { key: 'group_ticket_Deadline', sortable: true, hideOnForm: true },
-          { key: 'contradictionpackage_id', label: 'ContradictionPackage count', sortable: true, hideOnForm: true },
-          { key: 'contradictionpackage_sum', label: 'ContradictionPackage Amount', sortable: true, hideOnForm: true },
-          { key: 'ticket_id', label: 'Tickets count', sortable: true, hideOnForm: true },
+          {
+            key: 'contradictionpackage_id', label: 'ContradictionPackage count', sortable: true, hideOnForm: true,
+          },
+          {
+            key: 'contradictionpackage_sum', label: 'ContradictionPackage Amount', sortable: true, hideOnForm: true,
+          },
+          {
+            key: 'ticket_id', label: 'Tickets count', sortable: true, hideOnForm: true,
+          },
         ],
       },
       {
@@ -377,7 +421,9 @@ export default {
         entity: 'user_customergroup_grp',
         entityForm: 'user_customergroup_rel',
         fields: [
-          { key: 'user_id', sortable: true, type: 'list', list: 'user', listLabel: 'user_lastname', hideOnIndex: true },
+          {
+            key: 'user_id', sortable: true, type: 'list', list: 'user', listLabel: 'user_lastname', hideOnIndex: true,
+          },
           { key: 'user_lastname', sortable: true, hideOnForm: true },
           { key: 'user_firstname', sortable: true, hideOnForm: true },
           { key: 'usertype_name', sortable: true, hideOnForm: true },
@@ -387,6 +433,7 @@ export default {
     ],
   },
   company: {
+    entity: 'frontend_2_1_1',
     primaryKey: 'company_id',
     fields: [
       { key: 'company_id', auto: true },
@@ -395,10 +442,12 @@ export default {
       { key: 'city_name', sortable: true, hideOnForm: true },
       { key: 'contactdetails_phone', sortable: true, hideOnForm: true },
       { key: 'contactdetails_email', sortable: true, hideOnForm: true },
-      { key: 'contactperson_count', label: 'nd of Contact Person', sortable: true, hideOnForm: true },
+      {
+        key: 'No of contactpersons', sortable: true, hideOnForm: true,
+      },
     ],
     formComponent: () => import('@/views/app/FormComponent/CompanyForm'),
-    relations: []
+    relations: [],
   },
   contactperson: {
     fields: [
@@ -411,13 +460,17 @@ export default {
       { key: 'contactperson_department', hideOnIndex: true },
       { key: 'contactperson_shortname', hideOnIndex: true },
       { key: 'contactperson_function' },
-      { key: 'user_id' },
+      {
+        key: 'user_id', type: 'list', list: 'user', listLabel: 'user_email',
+      },
     ],
   },
   payment: {
     fields: [
       { key: 'payment_id', auto: true },
-      { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name' },
+      {
+        key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name',
+      },
       { key: 'payment_info' },
       { key: 'payment_debitor' },
       { key: 'payment_objectreference' },
@@ -429,7 +482,9 @@ export default {
   partnercompany: {
     primaryKey: 'partnercompany_id',
     fields: [
-      { key: 'partnergroup_id', type: 'list', list: 'partnergroup', listLabel: 'partnergroup_name', hideOnIndex: true },
+      {
+        key: 'partnergroup_id', type: 'list', list: 'partnergroup', listLabel: 'partnergroup_name', hideOnIndex: true,
+      },
       { key: 'partnercompany_id', auto: true },
       { key: 'partnercompany_name' },
       { key: 'partnercompany_shortname' },
@@ -438,17 +493,61 @@ export default {
       { key: 'contactdetails_email', hideOnForm: true },
       { key: 'contactperson_count', hideOnForm: true },
       { key: 'location_count', hideOnForm: true },
-      { key: 'partnertype_id', hideOnIndex: true, type: 'list', list: 'partnertype', listLabel: 'partnertype_name' },
       {
-        key: 'address_id',
+        key: 'partnertype_id', hideOnIndex: true, type: 'list', list: 'partnertype', listLabel: 'partnertype_name',
+      },
+      {
+        key: 'address_id', hideOnIndex: true, type: 'list', list: 'address', listLabel: 'address_street', withNew: true,
+      },
+      {
+        key: 'contactdetails_id',
         hideOnIndex: true,
         type: 'list',
-        list: 'address',
-        listLabel: 'address_street',
-        withNew: true
+        list: 'contactdetails',
+        listLabel: 'contactdetails_email',
+        withNew: true,
+      },
+      {
+        key: 'companydetails_id',
+        hideOnIndex: true,
+        type: 'list',
+        list: 'companydetails',
+        listLabel: 'companydetails_commercialregisterno',
+        withNew: true,
       },
       { key: 'partnergroup_description', hideOnIndex: true, type: 'textarea' },
       { key: 'partnercompanies_count', hideOnForm: true },
+    ],
+    relations: [
+      {
+        title: 'Tickets',
+        primaryKey: 'ticket_id',
+        entity: 'ticket_partnercompany_grp',
+        entityForm: 'ticket_partnercompany_rel',
+        fields: [
+          { key: 'ticket_id', auto: true },
+          { key: 'ticket_name', hideOnForm: true },
+          { key: 'board_name', hideOnForm: true },
+          { key: 'ticket_deadline', hideOnForm: true },
+          { key: 'ticket_planned_treatment_week', hideOnForm: true },
+          { key: 'ticket_progress', hideOnForm: true },
+        ],
+      },
+      {
+        title: 'Users',
+        primaryKey: 'user_id',
+        entity: 'user_partnercompany_grp',
+        entityForm: 'user_partnercompany_rel',
+        fields: [
+          { key: 'user_id', auto: true },
+          { key: 'user_lastname', hideOnForm: true },
+          { key: 'user_firstname', hideOnForm: true },
+          { key: 'user_email', hideOnForm: true },
+          { key: 'user_last_login_time', hideOnForm: true },
+          { key: 'user_locked', hideOnForm: true },
+        ],
+      },
+
     ],
   },
   partnergroup: {
@@ -457,7 +556,9 @@ export default {
       { key: 'partnergroup_id', auto: true },
       { key: 'partnergroup_name' },
       { key: 'partnertype_name', hideOnForm: true },
-      { key: 'partnertype_id', hideOnIndex: true, type: 'list', list: 'partnertype', listLabel: 'partnertype_name' },
+      {
+        key: 'partnertype_id', hideOnIndex: true, type: 'list', list: 'partnertype', listLabel: 'partnertype_name',
+      },
       { key: 'partnergroup_description', hideOnIndex: true, type: 'textarea' },
       { key: 'partnercompanies_count', hideOnForm: true },
     ],
@@ -516,12 +617,17 @@ export default {
     fields: [
       { key: 'address_id', auto: true },
       { key: 'country_name', hideOnForm: true },
-      { key: 'city_id', type: 'list', list: 'city', listLabel: 'city_name', hideOnIndex: true },
+      {
+        key: 'city_id', type: 'list', list: 'city', listLabel: 'city_name', hideOnIndex: true,
+      },
       { key: 'city_name', hideOnForm: true },
       { key: 'city_zip', hideOnForm: true },
       { key: 'address_street' },
       { key: 'address_house_number' },
       { key: 'address_extra' },
+      {
+        key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name',
+      },
       { key: 'address_last_change_time', hideOnForm: true },
       { key: 'entries_count', hideOnForm: true },
     ],
@@ -532,11 +638,36 @@ export default {
         entity: 'company_address_grp',
         entityForm: 'address_company_rel',
         fields: [
-          { key: 'company_id', sortable: true, type: 'list', list: 'company', listLabel: 'company_name' },
+          {
+            key: 'company_id', sortable: true, type: 'list', list: 'company', listLabel: 'company_name',
+          },
           { key: 'company_name', sortable: true, hideOnForm: true },
         ],
       },
-    ]
+    ],
+  },
+  contactdetails: {
+    primaryKey: 'contactdetails_id',
+    fields: [
+      {
+        key: 'contactdetails_id', sortable: true, auto: true, hiddenOnForm: true,
+      },
+      { key: 'contactdetails_email', sortable: true },
+      { key: 'contactdetails_phone', sortable: true },
+      { key: 'contactdetails_mobile', sortable: true },
+      { key: 'contactdetails_fax', sortable: true },
+    ],
+  },
+  companydetails: {
+    primaryKey: 'companydetails_id',
+    fields: [
+      {
+        key: 'companydetails_id', sortable: true, auto: true, hiddenOnForm: true,
+      },
+      { key: 'companydetails_salestaxno', sortable: true },
+      { key: 'companydetails_commercialregisterno', sortable: true },
+      { key: 'companydetails_website', sortable: true },
+    ],
   },
   contacttitle: {
     primaryKey: 'contacttitle_id',
@@ -560,7 +691,9 @@ export default {
       { key: 'city_name', sortable: true },
       { key: 'city_zip', sortable: true },
       { key: 'country_short', sortable: true },
-      { key: 'country_id', hideOnIndex: true, type: 'list', list: 'country', listLabel: 'country_name' },
+      {
+        key: 'country_id', hideOnIndex: true, type: 'list', list: 'country', listLabel: 'country_name',
+      },
     ],
   },
   country: {
@@ -574,7 +707,7 @@ export default {
         type: 'list',
         list: 'currency',
         listLabel: 'currency_name',
-        hideOnIndex: true
+        hideOnIndex: true,
       },
       { key: 'currency_name', sortable: true, hideOnForm: true },
       { key: 'country_short', sortable: true },
@@ -608,7 +741,349 @@ export default {
   },
   // endregion
   // region Work Package 3
+  pos: {
+    primaryKey: 'pos_id',
+    fields: [
+      { key: 'pos_id', auto: true },
+      {
+        key: 'customergroup_id',
+        type: 'list',
+        list: 'customergroup',
+        listLabel: 'customergroup_name',
+        hideOnIndex: true,
+      },
+      {
+        key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name', hideOnIndex: true,
+      },
+      { key: 'pos_name' },
+      { key: 'pos_branchnumber', type: 'number' },
+      { key: 'pos_name_external' },
+      { key: 'location_count', hideOnForm: true },
+      { key: 'area_count', hideOnForm: true },
+      { key: 'pos_first_year', type: 'number' },
+    ],
+    relations: [
+      {
+        title: 'Areas',
+        primaryKey: 'area_id',
+        entity: 'area_pos_grp',
+        entityForm: 'area_pos_rel',
+        fields: [
+          {
+            key: 'area_id',
+            sortable: true,
+            type: 'list',
+            list: 'area',
+            listLabel: 'area_name',
+            disableOnUpdate: true,
+          },
+          { key: 'area_name', hideOnForm: true },
+          { key: 'area_name_external', hideOnForm: true },
+          { key: 'location_id', hideOnForm: true },
+          {
+            key: 'location_name',
+            hideOnForm: true,
+          },
+          {
+            key: 'areatype_name',
+            hideOnForm: true,
+          },
+          {
+            key: 'area_last_change_time', hideOnForm: true,
+          }, {
+            key: 'area_space_value', hideOnForm: true,
+          },
+        ],
+      },
+      {
+        title: 'Contract',
+        primaryKey: 'contract_id',
+        entity: 'location_contract_grp',
+        entityForm: 'contract_area_unit_usagetype_rel',
+        fields: [
+          {
+            key: 'contract_id', sortable: true,
+          },
+          {
+            key: 'contract_id',
+            sortable: true,
+            type: 'list',
+            list: 'contract',
+            listLabel: 'contract_name',
+            disableOnUpdate: true,
+          },
+          {
+            key: 'contracttype_id',
+            sortable: true,
+            type: 'list',
+            list: 'contracttype',
+            listLabel: 'contractype_name',
+            hideOnForm: true,
+          },
+          { key: 'area_name_external', sortable: true, hideOnForm: true },
+          { key: 'area_id', sortable: true, hideOnForm: true },
+          {
+            key: 'area_id', sortable: true, type: 'list', list: 'area', listLabel: 'area_name', hideOnForm: true,
+          },
+          {
+            key: 'contract_area_unit_usagetype_detail_description', hideOnForm: true,
+          },
+          {
+            key: 'contract_area_unit_usagetype_mainusage', hideOnForm: true,
+          },
+          {
+            key: 'contract_area_unit_usagetype_valid_from_date', sortable: true, hideOnForm: true,
+          },
+          {
+            key: 'contract_area_unit_usagetype_valid_to_date', sortable: true, hideOnForm: true,
+          },
+          {
+            key: 'contract_first_possible_end_date', sortable: true, hideOnForm: true,
+          },
+          {
+            key: 'contract_area_unit_usagetype_rentalspace_value', hideOnForm: true,
+          },
+          {
+            key: 'contract_area_unit_usagetype_allocationspace_value', hideOnForm: true,
+          },
+          {
+            key: 'document_id', hideOnForm: true, sortable: true,
+          },
+        ],
+      },
+      {
+        title: 'Tag',
+        primaryKey: 'tag_id',
+        entity: 'pos_tag_grp',
+        entityForm: 'pos_tag_rel',
+        fields: [
+          {
+            key: 'tag_id',
+            label: 'Tag ID',
+            sortable: true,
+            type: 'list',
+            list: 'tag',
+            listLabel: 'tag_name',
+            disableOnUpdate: true,
+          },
+          { key: 'tag_name', sortable: true, hideOnForm: true },
+          { key: 'tag_description', hideOnForm: true },
+        ],
+      },
+      {
+        title: 'Group Tickets',
+        primaryKey: 'groupticket_id',
+        entity: 'pos_groupticket_grp',
+        entityForm: 'pos_groupticket_rel',
+        fields: [
+          {
+            key: 'groupticket_id',
+            type: 'list',
+            list: 'groupticket',
+            listLabel: 'groupticket_name',
+            disableOnUpdate: true,
+          },
+          { key: 'groupticket_name', hideOnForm: true },
+          { key: 'column_name', hideOnForm: true },
+          { key: 'board_id', hideOnForm: true },
+          { key: 'board_name', hideOnForm: true },
+          { key: 'groupticket_deadline', hideOnForm: true },
+          { key: 'groupticket_deadline_yellow', hideOnForm: true },
+          { key: 'groupticket_deadline_red', hideOnForm: true },
+          { key: 'groupticket_move_time', hideOnForm: true },
+          { key: 'groupticket_deadline_offset', hideOnForm: true },
+        ],
+      },
+      {
+        title: 'Contradiction Packages',
+        entity: 'pos_contradictionpackage_grp',
+        entityForm: 'pos_contracdictionpackage_rel',
+        fields: [
+          {
+            key: 'contradictionpackage_id',
+            type: 'list',
+            list: 'contradictionpackage',
+            listLabel: 'contradictionpackage_name',
+            disableOnUpdate: true,
+          },
+          { key: 'contradictionpackage_name', hideOnForm: true },
+          { key: 'contradictionpackage_description', hideOnForm: true },
+          { key: 'contradictionpackage_sum', hideOnForm: true },
+          { key: 'contradictionpackage_last_change_time', hideOnForm: true },
+        ],
+      },
+      {
+        title: 'Invoices',
+        fields: [
+          { key: 'invoice_id', auto: true },
+          { key: 'invoice_date', hideOnForm: true },
+          { key: 'invoice_contract_year', hideOnForm: true },
+          { key: 'invoice_company_name', hideOnForm: true },
+          { key: 'invoice_allocationarea', hideOnForm: true },
+          { key: 'invoice_payment_date', hideOnForm: true },
+          { key: 'customergroup_name', hideOnForm: true },
+          { key: 'partnercompany_name', hideOnForm: true },
+        ],
+      },
+      {
+        title: 'Appointment Track',
+        fields: [
+          { key: 'trackrecord_id', auto: true },
+          { key: 'trackrecord_timestamp', hideOnForm: true },
+          { key: 'trackrecord_type', hideOnForm: true },
+          { key: 'trackrecord_category', hideOnForm: true },
+          { key: 'trackrecord_visibilitytype', hideOnForm: true },
+          { key: 'trackrecord_usecase', hideOnForm: true },
+          { key: 'trackrecord_status', hideOnForm: true },
+          { key: 'trackrecord_comment', hideOnForm: true },
+          { key: 'trackrecord_element', hideOnForm: true },
+        ],
+      },
+    ],
+  },
+  area: {
+    primaryKey: 'area_id',
+    fields: [
+      { key: 'area_name' },
+      { key: 'area_id', auto: true },
 
+      {
+        key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name', sortable: true,
+      },
+      {
+        key: 'city_id', type: 'list', list: 'city', listLabel: 'city_name', sortable: true, hideOnForm: true,
+      },
+      {
+        key: 'area_name_external', hideOnIndex: true,
+      },
+      {
+        key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', sortable: true, hideOnForm: true,
+      },
+      {
+        key: 'areatype_id', type: 'list', list: 'areatype', listLabel: 'areatype_name', hideOnIndex: true,
+      },
+      {
+        key: 'areatype_id', sortable: true, hideOnForm: true,
+      },
+      {
+        key: 'area_space_value', sortable: true,
+      },
+      {
+        key: 'pos_name', hideOnForm: true,
+      },
+      {
+        key: 'usagetype_id',
+        type: 'list',
+        list: 'usagetype',
+        listLabel: 'usagetype_name',
+        sortable: true,
+        hideOnIndex: true,
+      },
+    ],
+    relations: [
+      {
+        title: 'Contracts',
+        entity: 'area_contract_grp',
+        fields: [
+          { key: 'contract_id' },
+          { key: 'contract_area_unit_usagetype_rentalspace_value' },
+          { key: 'contract_area_unit_usagetype_allocationspace_value' },
+          { key: 'unit_name' },
+          { key: 'contract_area_unit_usagetype_mainusage' },
+          { key: 'contract_begin_date' },
+          { key: 'contract_end_date' },
+        ],
+      },
+      {
+        title: 'Point of Sales',
+        entity: 'pos_area_grp',
+        fields: [
+          { key: 'pos_id' },
+          { key: 'pos_name' },
+          { key: 'company_name' },
+          { key: 'tag_name' },
+        ],
+      },
+      {
+        title: 'Service Objects',
+        entity: 'area_serviceobject_grp',
+        fields: [
+          { key: 'serviceobject_id' },
+          { key: 'serviceobject_name' },
+          { key: 'serviceobject_description' },
+          { key: 'serviceobjecttype_id' },
+        ],
+      },
+    ],
+  },
+  location: {
+    primaryKey: 'location_id',
+    fields: [
+      { key: 'location_name', sortable: true },
+      { key: 'location_id', sortable: true, auto: true },
+
+      {
+        key: 'partnercompany_id',
+        type: 'list',
+        list: 'partnercompany',
+        listLabel: 'partnercompany_name',
+        sortable: true,
+      },
+      {
+        key: 'partnertype_id',
+        type: 'list',
+        list: 'partnertype',
+        listLabel: 'partnertype_name',
+        sortable: true,
+        hideOnForm: true,
+      },
+      {
+        key: 'locationtype_id',
+        type: 'list',
+        list: 'locationtype',
+        listLabel: 'locationtype_name',
+        sortable: true,
+        hideOnForm: true,
+      },
+      {
+        key: 'city_id', type: 'list', list: 'city', listLabel: 'city_name', sortable: true, hideOnForm: true,
+      },
+      {
+        key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name',
+      },
+    ],
+  },
+
+  tag: {
+    fields: [
+      { key: 'tag_id', auto: true },
+      { key: 'tag_name' },
+      { key: 'tag_description', type: 'textarea' },
+      { key: 'pos_count', hideOnForm: true },
+    ],
+    relations: [
+      {
+        title: 'Point of Sales',
+        entity: 'pos_tag_grp',
+        entityForm: 'pos_tag_rel',
+        fields: [
+          { key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name', disableOnUpdate: true },
+          { key: 'pos_branchnumber', hideOnForm: true },
+          { key: 'pos_name', hideOnForm: true },
+          { key: 'company_name', hideOnForm: true },
+          { key: 'area_count', hideOnForm: true },
+        ],
+      },
+    ],
+  },
+
+  areatype: {
+    fields: [
+      { key: 'areatype_id', auto: true },
+      { key: 'areatype_name' },
+      { key: 'areatype_description', type: 'textarea' },
+    ],
+  },
   // endregion
   // region Work Package 4
   invoice: {

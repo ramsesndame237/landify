@@ -42,6 +42,7 @@ export default {
   },
   props: {
     entity: { type: String, required: true },
+    entityList: {type: String},
     entityForm: { type: String, required: false },
     fields: { type: Array, required: true },
     primaryKeyColumn: { type: String },
@@ -78,9 +79,9 @@ export default {
         { key: '__selected' },
         ...this.fields.filter(f => !f.hideOnIndex).map(field => {
           const newField = { sortable: true, ...field }
-          if (newField.type === 'list') {
-            newField.key = newField.listLabel
-          }
+          // if (newField.type === 'list') {
+          //   newField.key = newField.listLabel
+          // }
           return newField
         }),
         'Actions']
@@ -108,7 +109,7 @@ export default {
       if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
       return this.$api({
         action: 'read-rich',
-        entity: this.entity,
+        entity: this.entityList || this.entity,
         order_by: sortBy,
         order_dir: sortDesc ? 'DESC' : 'ASC',
         per_page: perPage,
