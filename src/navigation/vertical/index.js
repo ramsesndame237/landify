@@ -163,7 +163,7 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_3.children.tag',
-        route: 'tags',
+        route: table('tag'),
       },
       {
         title: 'app.sidebar.work_pack_3.children.unit',
@@ -180,7 +180,7 @@ export default [
         children: [
           {
             title: 'app.sidebar.work_pack_3.children.types.children.area_type',
-            route: 'area-type-list',
+            route: table('areatype'),
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.contract_type',

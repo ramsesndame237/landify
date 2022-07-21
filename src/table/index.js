@@ -1018,6 +1018,37 @@ export default {
       },
     ],
   },
+
+  tag: {
+    fields: [
+      { key: 'tag_id', auto: true },
+      { key: 'tag_name' },
+      { key: 'tag_description', type: 'textarea' },
+      { key: 'pos_count', hideOnForm: true },
+    ],
+    relations: [
+      {
+        title: 'Point of Sales',
+        entity: 'pos_tag_grp',
+        entityForm: 'pos_tag_rel',
+        fields: [
+          { key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name', disableOnUpdate: true },
+          { key: 'pos_branchnumber', hideOnForm: true },
+          { key: 'pos_name', hideOnForm: true },
+          { key: 'company_name', hideOnForm: true },
+          { key: 'area_count', hideOnForm: true },
+        ],
+      },
+    ],
+  },
+
+  areatype: {
+    fields: [
+      { key: 'areatype_id', auto: true },
+      { key: 'areatype_name' },
+      { key: 'areatype_description', type: 'textarea' },
+    ],
+  },
   // endregion
   // region Work Package 4
   invoice: {
