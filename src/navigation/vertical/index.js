@@ -135,11 +135,11 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_3.children.contract',
-        route: table('contracts'),
+        route: table('contract'),
       },
       {
         title: 'app.sidebar.work_pack_3.children.lease_contract',
-        route: table('contracts-lease'),
+        route: table('contractlease'),
       },
       {
         title: 'app.sidebar.work_pack_3.children.poservice_objects',

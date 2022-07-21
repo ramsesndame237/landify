@@ -1011,7 +1011,7 @@ export default {
           { key: 'serviceobject_id' },
           { key: 'serviceobject_name' },
           { key: 'serviceobject_description' },
-          { key: 'serviceobjecttype_id' },
+          { key: 'serviceobjecttype_name' },
         ],
       },
     ],
@@ -1019,39 +1019,116 @@ export default {
   location: {
     primaryKey: 'location_id',
     fields: [
-      { key: 'location_name', sortable: true },
-      { key: 'location_id', sortable: true, auto: true },
-
+      { key: 'location_id', auto: true },
+      { key: 'location_name' },
+      { key: 'location_objectdescription', hideOnIndex: true },
+      { key: 'location_total_area', hideOnIndex: true },
+      { key: 'location_start_date', hideOnIndex: true },
+      { key: 'partnercompany_name', hideOnForm: true },
       {
         key: 'partnercompany_id',
         type: 'list',
         list: 'partnercompany',
         listLabel: 'partnercompany_name',
-        sortable: true,
+        hideOnIndex: true,
       },
-      {
-        key: 'partnertype_id',
-        type: 'list',
-        list: 'partnertype',
-        listLabel: 'partnertype_name',
-        sortable: true,
-        hideOnForm: true,
-      },
+      { key: 'partnertype_name', hideOnForm: true },
+      { key: 'locationtype_name', hideOnForm: true },
+      { key: 'city_name', hideOnForm: true },
+      { key: 'country_name', hideOnForm: true },
+      { key: 'area_count', hideOnForm: true },
       {
         key: 'locationtype_id',
         type: 'list',
         list: 'locationtype',
         listLabel: 'locationtype_name',
         sortable: true,
-        hideOnForm: true,
+        hideOnIndex: true,
       },
       {
-        key: 'city_id', type: 'list', list: 'city', listLabel: 'city_name', sortable: true, hideOnForm: true,
-      },
-      {
-        key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name',
+        key: 'address_id', type: 'list', list: 'address', listLabel: 'address_street', hideOnIndex: true, withNew: true
       },
     ],
+    relations: [
+      {
+        title: 'Areas',
+        entity: 'location_area_grp',
+        entityForm: 'location_area_rel',
+        fields: [
+          { key: 'area_name', hideOnForm: true },
+          { key: 'area_id' },
+          { key: 'area_space_value', hideOnForm: true },
+          { key: 'pos_name', hideOnForm: true },
+          { key: 'contract_name', hideOnForm: true },
+          { key: 'contract_area_unit_usagetype_rentalspace_value', hideOnForm: true },
+          { key: 'contract_area_unit_usagetype_allocationspace_value', hideOnForm: true },
+          { key: 'unit_name', hideOnForm: true },
+          { key: 'usagetype_name', hideOnForm: true },
+          { key: 'contract_area_unit_usagetype_valid_from_date', type: 'date' },
+          { key: 'contract_area_unit_usagetype_valid_to_date', type: 'date' },
+        ],
+      },
+      {
+        title: 'Service Objects',
+        entity: 'location_serviceobject_grp',
+        fields: [
+          { key: 'serviceobject_id' },
+          { key: 'serviceobject_name' },
+          { key: 'serviceobjecttype_name' },
+          { key: 'area_name' },
+        ],
+      },
+      {
+        title: 'Partner Companies',
+        entity: 'location_partnercompany_grp',
+        fields: [
+          { key: 'partnercompany_id' },
+          { key: 'partnercompany_name' },
+          { key: 'partnergroup_name' },
+          { key: 'partnertype_name' },
+          { key: 'city_name' },
+          { key: 'contactdetails_email' },
+          { key: 'contactdetails_phone' },
+        ],
+      },
+    ],
+  },
+  contract: {
+    fields: [
+      { key: 'contract_id', auto: true },
+      { key: 'contract_type_name', hideOnForm: true },
+      { key: 'contract_name' },
+      { key: 'contract_begin_date' },
+      { key: 'contract_end_date' },
+      { key: 'currency_id', type: 'list', list: 'currency', listLabel: 'currency_name', hideOnIndex: true },
+      { key: 'contracttype_id', type: 'list', list: 'contracttype', listLabel: 'contracttype_name', hideOnIndex: true },
+      {
+        key: 'documentcontracttype_id',
+        type: 'list',
+        list: 'documentcontracttype',
+        listLabel: 'documentcontracttype_name',
+        hideOnIndex: true
+      },
+      { key: 'documentcontracttype_name', hideOnForm: true },
+      { key: 'contract_creation_date', hideOnForm: true },
+      { key: 'currency_name', hideOnForm: true },
+      { key: 'contract_last_change_time', hideOnForm: true },
+    ],
+    relations: [
+      {
+        title: 'Documents',
+        primaryKey: 'document_id',
+        entity: 'contract_document_grp',
+        entityForm: 'contract_document_rel',
+        fields: [
+          { key: 'document_id' },
+          { key: 'document_name' },
+          { key: 'documenttype_name' },
+          { key: 'document_date_received' },
+        ],
+      },
+
+    ]
   },
 
   tag: {
