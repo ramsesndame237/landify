@@ -200,11 +200,11 @@ export default [
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.recurring_payment_type',
-            route: 'recurring-payment-type',
+            route: table('recurringpaymenttype'),
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.services_object_type',
-            route: 'service-object-type',
+            route: table('servicesobjecttype'),
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.usage_type',
