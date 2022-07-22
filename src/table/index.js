@@ -1046,7 +1046,7 @@ export default {
         hideOnIndex: true,
       },
       {
-        key: 'address_id', type: 'list', list: 'address', listLabel: 'address_street', hideOnIndex: true, withNew: true
+        key: 'address_id', type: 'list', list: 'address', listLabel: 'address_street', hideOnIndex: true, withNew: true,
       },
     ],
     relations: [
@@ -1100,14 +1100,18 @@ export default {
       { key: 'contract_name' },
       { key: 'contract_begin_date' },
       { key: 'contract_end_date' },
-      { key: 'currency_id', type: 'list', list: 'currency', listLabel: 'currency_name', hideOnIndex: true },
-      { key: 'contracttype_id', type: 'list', list: 'contracttype', listLabel: 'contracttype_name', hideOnIndex: true },
+      {
+        key: 'currency_id', type: 'list', list: 'currency', listLabel: 'currency_name', hideOnIndex: true,
+      },
+      {
+        key: 'contracttype_id', type: 'list', list: 'contracttype', listLabel: 'contracttype_name', hideOnIndex: true,
+      },
       {
         key: 'documentcontracttype_id',
         type: 'list',
         list: 'documentcontracttype',
         listLabel: 'documentcontracttype_name',
-        hideOnIndex: true
+        hideOnIndex: true,
       },
       { key: 'documentcontracttype_name', hideOnForm: true },
       { key: 'contract_creation_date', hideOnForm: true },
@@ -1128,7 +1132,7 @@ export default {
         ],
       },
 
-    ]
+    ],
   },
 
   tag: {
@@ -1144,7 +1148,9 @@ export default {
         entity: 'pos_tag_grp',
         entityForm: 'pos_tag_rel',
         fields: [
-          { key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name', disableOnUpdate: true },
+          {
+            key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name', disableOnUpdate: true,
+          },
           { key: 'pos_branchnumber', hideOnForm: true },
           { key: 'pos_name', hideOnForm: true },
           { key: 'company_name', hideOnForm: true },
@@ -1153,12 +1159,76 @@ export default {
       },
     ],
   },
+  unit: {
+    fields: [
+      { key: 'unit_id', auto: true },
+      { key: 'unit_name' },
+      { key: 'unit_short' },
+      { key: 'unit_symbol' },
+    ],
+  },
+  choice: {
+    fields: [
+      { key: 'choice_id', auto: true },
+      { key: 'choice_name' },
+      { key: 'choice_description', type: 'textarea' },
+    ],
+  },
 
   areatype: {
     fields: [
       { key: 'areatype_id', auto: true },
       { key: 'areatype_name' },
       { key: 'areatype_description', type: 'textarea' },
+    ],
+  },
+  contracttype: {
+    fields: [
+      { key: 'contracttype_id', auto: true },
+      { key: 'contracttype_name' },
+      { key: 'contracttype_description', type: 'textarea' },
+    ],
+  },
+  criteriatype: {
+    fields: [
+      { key: 'criteriatype_id', auto: true },
+      { key: 'criteriatype_name' },
+      { key: 'criteriatype_description', type: 'textarea' },
+    ],
+  },
+  locationtype: {
+    fields: [
+      { key: 'locationtype_id', auto: true },
+      { key: 'locationtype_name' },
+      { key: 'locationtype_description', type: 'textarea' },
+    ],
+  },
+  maturitytype: {
+    fields: [
+      { key: 'maturitytype_id', auto: true },
+      { key: 'maturitytype_name' },
+      { key: 'maturitytype_description', type: 'textarea' },
+    ],
+  },
+  usagetype: {
+    fields: [
+      { key: 'usagetype_id', auto: true },
+      { key: 'usagetype_name' },
+      { key: 'usagetype_description', type: 'textarea' },
+    ],
+  },
+  servicesobjecttype: {
+    fields: [
+      { key: 'servicesobjecttype_id', auto: true },
+      { key: 'servicesobjecttype_name' },
+      { key: 'servicesobjecttype_description', type: 'textarea' },
+    ],
+  },
+  recurringpaymenttype: {
+    fields: [
+      { key: 'recurringpaymenttype_id', auto: true },
+      { key: 'recurringpaymenttype_name' },
+      { key: 'recurringpaymenttype_description', type: 'textarea' },
     ],
   },
   // endregion
@@ -1173,7 +1243,9 @@ export default {
       { key: 'invoice_payment_date', type: 'date' },
       { key: 'customergroup_name', hideOnForm: true },
       { key: 'partnercompany_name', hideOnForm: true },
-      { key: 'partnertype_name', type: 'list', list: 'partnertype', listLabel: 'partnertype_name', hideOnIndex: true },
+      {
+        key: 'partnertype_name', type: 'list', list: 'partnertype', listLabel: 'partnertype_name', hideOnIndex: true,
+      },
       { key: 'invoice_description', type: 'textarea', hideOnIndex: true },
       { key: 'invoice_contract_billing_period_from_date', type: 'date', hideOnIndex: true },
       {

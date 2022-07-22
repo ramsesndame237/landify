@@ -167,11 +167,11 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_3.children.unit',
-        route: 'units',
+        route: table('unit'),
       },
       {
         title: 'app.sidebar.work_pack_3.children.choice',
-        route: 'choices',
+        route: table('choice'),
       },
       {
         title: 'app.sidebar.work_pack_3.children.types.title',
@@ -184,31 +184,31 @@ export default [
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.contract_type',
-            route: 'contract-type-list',
+            route: table('contracttype'),
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.contract_criteria_type',
-            route: 'contract-criteria-type',
+            route: table('criteriatype'),
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.location_type',
-            route: 'location-type',
+            route: table('locationtype'),
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.maturity_type',
-            route: 'maturity-type',
+            route: table('maturitytype'),
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.recurring_payment_type',
-            route: 'recurring-payment-type',
+            route: table('recurringpaymenttype'),
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.services_object_type',
-            route: 'service-object-type',
+            route: table('servicesobjecttype'),
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.usage_type',
-            route: 'usage-type',
+            route: table('usagetype'),
           },
         ],
       },
