@@ -1217,6 +1217,20 @@ export default {
       { key: 'usagetype_description', type: 'textarea' },
     ],
   },
+  servicesobjecttype: {
+    fields: [
+      { key: 'servicesobjecttype_id', auto: true },
+      { key: 'servicesobjecttype_name' },
+      { key: 'servicesobjecttype_description', type: 'textarea' },
+    ],
+  },
+  recurringpaymenttype: {
+    fields: [
+      { key: 'recurringpaymenttype_id', auto: true },
+      { key: 'recurringpaymenttype_name' },
+      { key: 'recurringpaymenttype_description', type: 'textarea' },
+    ],
+  },
   // endregion
   // region Work Package 4
   invoice: {
