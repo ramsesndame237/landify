@@ -1217,11 +1217,11 @@ export default {
       { key: 'usagetype_description', type: 'textarea' },
     ],
   },
-  servicesobjecttype: {
+  serviceobjecttype: {
     fields: [
-      { key: 'servicesobjecttype_id', auto: true },
-      { key: 'servicesobjecttype_name' },
-      { key: 'servicesobjecttype_description', type: 'textarea' },
+      { key: 'serviceobjecttype_id', auto: true },
+      { key: 'serviceobjecttype_name' },
+      { key: 'serviceobjecttype_description', type: 'textarea' },
     ],
   },
   recurringpaymenttype: {
