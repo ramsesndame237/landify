@@ -1161,6 +1161,41 @@ export default {
       { key: 'areatype_description', type: 'textarea' },
     ],
   },
+  contracttype: {
+    fields: [
+      { key: 'contracttype_id', auto: true },
+      { key: 'contracttype_name' },
+      { key: 'contracttype_description', type: 'textarea' },
+    ],
+  },
+  criteriatype: {
+    fields: [
+      { key: 'criteriatype_id', auto: true },
+      { key: 'criteriatype_name' },
+      { key: 'criteriatype_description', type: 'textarea' },
+    ],
+  },
+  locationtype: {
+    fields: [
+      { key: 'locationtype_id', auto: true },
+      { key: 'locationtype_name' },
+      { key: 'locationtype_description', type: 'textarea' },
+    ],
+  },
+  maturitytype: {
+    fields: [
+      { key: 'maturitytype_id', auto: true },
+      { key: 'maturitytype_name' },
+      { key: 'maturitytype_description', type: 'textarea' },
+    ],
+  },
+  usagetype: {
+    fields: [
+      { key: 'usagetype_id', auto: true },
+      { key: 'usagetype_name' },
+      { key: 'usagetype_description', type: 'textarea' },
+    ],
+  },
   // endregion
   // region Work Package 4
   invoice: {
