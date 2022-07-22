@@ -204,7 +204,7 @@ export default [
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.services_object_type',
-            route: table('servicesobjecttype'),
+            route: table('serviceobjecttype'),
           },
           {
             title: 'app.sidebar.work_pack_3.children.types.children.usage_type',
