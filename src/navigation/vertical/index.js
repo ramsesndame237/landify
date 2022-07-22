@@ -167,11 +167,11 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_3.children.unit',
-        route: 'units',
+        route: table('unit'),
       },
       {
         title: 'app.sidebar.work_pack_3.children.choice',
-        route: 'choices',
+        route: table('choice'),
       },
       {
         title: 'app.sidebar.work_pack_3.children.types.title',
