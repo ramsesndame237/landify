@@ -1150,7 +1150,9 @@ export default {
         entity: 'contract_specialright_grp',
         entityForm: 'contract_specialright_rel',
         fields: [
-          { key: 'specialright_id', type: 'list', list: 'specialright', listLabel: 'specialright_name' },
+          {
+            key: 'specialright_id', type: 'list', list: 'specialright', listLabel: 'specialright_name',
+          },
           { key: 'specialright_name', hideOnForm: true },
           { key: 'specialright_date', hideOnForm: true },
         ],
@@ -1202,10 +1204,16 @@ export default {
         hideOnIndex: true,
       },
       { key: 'location_name', hideOnForm: true },
-      { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name', hideOnIndex: true },
+      {
+        key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name', hideOnIndex: true,
+      },
       { key: 'area_name', hideOnForm: true },
-      { key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name', hideOnIndex: true },
-      { key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name' },
+      {
+        key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name', hideOnIndex: true,
+      },
+      {
+        key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name',
+      },
       { key: 'contract_last_change_time', hideOnForm: true },
     ],
     relations: [
@@ -1214,7 +1222,9 @@ export default {
         entity: 'serviceobject_area_grp',
         entityForm: 'serviceobject_area_rel',
         fields: [
-          { key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name' },
+          {
+            key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name',
+          },
           { key: 'area_name', hideOnForm: true },
           { key: 'area_space_value', hideOnForm: true },
           { key: 'pos_id', hideOnForm: true },
@@ -1228,7 +1238,9 @@ export default {
         entity: 'serviceobject_location_grp',
         entityForm: 'serviceobject_location_rel',
         fields: [
-          { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name' },
+          {
+            key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name',
+          },
           { key: 'location_name', hideOnForm: true },
           { key: 'locaion_total_area', hideOnForm: true },
           { key: 'location_start_date', hideOnForm: true },
@@ -1243,7 +1255,9 @@ export default {
         entity: 'serviceobject_contract_grp',
         entityForm: 'serviceobject_contract_rel',
         fields: [
-          { key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name' },
+          {
+            key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name',
+          },
           { key: 'contract_name', hideOnForm: true },
           { key: 'contract_begin_date', hideOnForm: true },
           { key: 'contract_end_date', hideOnForm: true },
@@ -1253,6 +1267,31 @@ export default {
         ],
         update: false,
       },
+    ],
+  },
+
+  specialright: {
+    fields: [
+      { key: 'specialright_id', auto: true },
+      { key: 'specialright_name' },
+      { key: 'specialright_description', type: 'textarea' },
+    ],
+    relations: [
+      {
+        title: 'Contract',
+        primaryKey: 'contract_id',
+        entity: 'contract_specialright_rel',
+        fields: [
+          { key: 'contract_id' },
+          { key: 'contract_name' },
+          { key: 'specialright_description' },
+          { key: 'contract_specialright_date' },
+          { key: 'contract_specialright_is_availed' },
+          { key: 'contract_specialright_is_passive' },
+          { key: 'contract_specialright_prior_notice_date' },
+          { key: 'contract_specialright_termination_date' },
+        ],
+      }
     ],
   },
 
@@ -1270,20 +1309,29 @@ export default {
       {
         title: 'Contract',
         primaryKey: 'contract_id',
-        entity: 'contract',
-        entityForm: 'contract_form',
+        entity: 'contract_criteria_rel',
+        entityForm: 'contract_criteria_form',
         fields: [
           { key: 'contract_id' },
           { key: 'contract_name' },
+          { key: 'contract_criteria_comment' },
+          { key: 'contract_criteria_value' },
+          { key: 'unit_id' },
+          { key: 'contract_criteria_exists' },
+          { key: 'contract_criteria_valid_from_date' },
+          { key: 'contract_criteria_valid_to_date' },
+          { key: 'choice_name' },
         ],
       },
       {
         title: 'Choice',
         primaryKey: 'choice_id',
-        entity: 'choice',
+        entity: 'contract_criteria_choice_rel',
         fields: [
-          { key: 'choice_id' },
-          { key: 'choice_name' },
+          { key: 'choice_id', hideOnForm: true },
+          {
+            key: 'choice_id', listLabel: 'choice_name', type: 'list', list: 'choice',
+          },
         ],
       },
     ],
@@ -1294,11 +1342,30 @@ export default {
       { key: 'indexclause_id', auto: true },
       { key: 'indexclause_adjustment_rule' },
       { key: 'indexclause_adjustment_description', type: 'textarea' },
-      { key: 'indexclause_baseyear', type: 'date' },
+      { key: 'indexclause_baseyear', type: 'number' },
       { key: 'indexclause_begin_date', type: 'date' },
       { key: 'indexclause_indextransmission_percent' },
       { key: 'indexclause_minimal_percent_change_agreed' },
       { key: 'indexclause_minimal_point_change_agreed' },
+    ],
+    relations: [
+      {
+        title: 'Recurring Payments',
+        primaryKey: 'recurringpayment_id',
+        entity: 'indexclause_recurringpayment_rel',
+        fields: [
+          { key: 'recurringpayment_id' },
+          { key: 'contract_id' },
+          { key: 'contract_name' },
+          { key: 'recurringpayment_condition_comment' },
+          { key: 'indexclause_baseyear' },
+          { key: 'recurringpaymenttype_name' },
+          { key: 'maturitytype_name' },
+          { key: 'recurringpayment_begin_date' },
+          { key: 'recurringpayment_percentage' },
+          { key: 'recurringpayment_sum_per_month' },
+        ],
+      },
     ],
   },
 
