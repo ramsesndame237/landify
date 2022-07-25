@@ -46,7 +46,8 @@
           <data-tables :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
                        :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
                        :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
-                       :fields="relation.fields" :on-edit-element="editElement"/>
+                       :fields="relation.fields" :on-edit-element="editElement"
+                       :with-edit="relation.update!==false"/>
           <generic-modal title="Test" :table="relation.entityForm" :definition="relation" is-relation
                          :table-definition-key="relation.entity" @reload-table="reloadRelatedTable"/>
         </b-tab>
@@ -88,7 +89,7 @@
 import {
   BCard,
   BTab,
-  BTabs, BRow, BCol, BForm, BFormInput, BButton, BDropdown, BDropdownForm, BFormGroup, BInputGroup, BInputGroupPrepend
+  BTabs, BRow, BCol, BForm, BFormInput, BButton, BDropdown, BDropdownForm, BFormGroup, BInputGroup, BInputGroupPrepend,
 } from 'bootstrap-vue'
 import Tables from '@/table'
 import DataTables from '@/layouts/components/DataTables'

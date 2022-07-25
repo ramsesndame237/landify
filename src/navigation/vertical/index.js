@@ -13,39 +13,45 @@ export default [
   },
   // region Work Package 1
   {
-    title: 'app.sidebar.users_rights',
-    route: table('user'),
-    icon: 'UserIcon',
-  },
-  {
-    title: 'app.sidebar.auth',
-    route: table('role'),
-    icon: 'KeyIcon',
-  },
-  {
-    title: 'app.sidebar.teams',
-    route: table('team'),
-    icon: 'UsersIcon',
-  },
-  {
-    title: 'app.sidebar.user_type',
-    route: table('usertype'),
-    icon: 'UsersIcon',
-  },
-  {
-    title: 'app.sidebar.table',
-    route: table('tablename'),
-    icon: 'UsersIcon',
-  },
-  {
-    title: 'app.sidebar.tablegroup',
-    route: table('tablegroup'),
-    icon: 'UsersIcon',
-  },
-  {
-    title: 'app.sidebar.crud',
-    route: table('crud'),
-    icon: 'UsersIcon',
+    title: 'Work Package 1',
+    icon: 'CheckSquareIcon',
+    children: [
+      {
+        title: 'app.sidebar.users_rights',
+        route: table('user'),
+        icon: 'UserIcon',
+      },
+      {
+        title: 'app.sidebar.auth',
+        route: table('role'),
+        icon: 'KeyIcon',
+      },
+      {
+        title: 'app.sidebar.teams',
+        route: table('team'),
+        icon: 'UsersIcon',
+      },
+      {
+        title: 'app.sidebar.user_type',
+        route: table('usertype'),
+        icon: 'UsersIcon',
+      },
+      {
+        title: 'app.sidebar.table',
+        route: table('tablename'),
+        icon: 'UsersIcon',
+      },
+      {
+        title: 'app.sidebar.tablegroup',
+        route: table('tablegroup'),
+        icon: 'UsersIcon',
+      },
+      {
+        title: 'app.sidebar.crud',
+        route: table('crud'),
+        icon: 'UsersIcon',
+      },
+    ],
   },
   // endregion Work Package 1
 
@@ -138,12 +144,8 @@ export default [
         route: table('contract'),
       },
       {
-        title: 'app.sidebar.work_pack_3.children.lease_contract',
-        route: table('contractlease'),
-      },
-      {
         title: 'app.sidebar.work_pack_3.children.poservice_objects',
-        route: 'services-object-list',
+        route: table('serviceobject'),
       },
       {
         title: 'app.sidebar.work_pack_3.children.criteria',
@@ -266,98 +268,98 @@ export default [
     route: 'kanban',
     icon: 'CheckSquareIcon',
   },
-  {
-    title: 'app.sidebar.tasks',
-    route: 'vorgange',
-    icon: 'CheckSquareIcon',
-    children: [
-      {
-        title: 'sub-items 1',
-        route: '/',
-      },
-      {
-        title: 'sub-items 2',
-        route: '/',
-      },
-    ],
-  },
-  {
-    title: 'app.sidebar.deadlines',
-    route: 'deadlines',
-    icon: 'CalendarIcon',
-  },
-  {
-    title: 'app.sidebar.doc',
-    route: 'documents',
-    icon: 'FileTextIcon',
-  },
-  {
-    title: 'app.sidebar.pos',
-    route: 'pos',
-    icon: 'GridIcon',
-  },
-
-  {
-    title: 'app.sidebar.admin.parent',
-    route: '',
-    icon: 'UserIcon',
-    children: [
-      {
-        title: 'app.sidebar.admin.children.user_manager',
-        route: '/',
-      },
-      {
-        title: 'app.sidebar.admin.children.bd',
-        route: '/',
-      },
-      {
-        title: 'app.sidebar.admin.children.costs',
-        route: '/',
-      },
-      {
-        title: 'app.sidebar.admin.children.elt',
-        route: '/',
-      },
-      {
-        title: 'app.sidebar.admin.children.bdc',
-        route: '/',
-      },
-      {
-        title: 'app.sidebar.admin.children.contract',
-        route: '/',
-      },
-      {
-        title: 'app.sidebar.admin.children.process',
-        route: '/',
-      },
-      {
-        title: 'app.sidebar.admin.children.country_currency',
-        route: '/',
-      },
-      {
-        title: 'app.sidebar.admin.children.access_protocol',
-        route: '/',
-      },
-      {
-        title: 'app.sidebar.admin.children.text_templates',
-        route: '/',
-      },
-    ],
-  },
-  {
-    title: 'app.sidebar.properties',
-    route: 'properties',
-    icon: 'GitCommitIcon',
-  },
-  {
-    title: 'app.sidebar.templates',
-    route: 'templates',
-    icon: 'FeatherIcon',
-  },
-  {
-    title: 'app.sidebar.master_data',
-    route: 'master-data',
-    icon: 'GridIcon',
-  },
+  // {
+  //   title: 'app.sidebar.tasks',
+  //   route: 'vorgange',
+  //   icon: 'CheckSquareIcon',
+  //   children: [
+  //     {
+  //       title: 'sub-items 1',
+  //       route: '/',
+  //     },
+  //     {
+  //       title: 'sub-items 2',
+  //       route: '/',
+  //     },
+  //   ],
+  // },
+  // {
+  //   title: 'app.sidebar.deadlines',
+  //   route: 'deadlines',
+  //   icon: 'CalendarIcon',
+  // },
+  // {
+  //   title: 'app.sidebar.doc',
+  //   route: 'documents',
+  //   icon: 'FileTextIcon',
+  // },
+  // {
+  //   title: 'app.sidebar.pos',
+  //   route: 'pos',
+  //   icon: 'GridIcon',
+  // },
+  //
+  // {
+  //   title: 'app.sidebar.admin.parent',
+  //   route: '',
+  //   icon: 'UserIcon',
+  //   children: [
+  //     {
+  //       title: 'app.sidebar.admin.children.user_manager',
+  //       route: '/',
+  //     },
+  //     {
+  //       title: 'app.sidebar.admin.children.bd',
+  //       route: '/',
+  //     },
+  //     {
+  //       title: 'app.sidebar.admin.children.costs',
+  //       route: '/',
+  //     },
+  //     {
+  //       title: 'app.sidebar.admin.children.elt',
+  //       route: '/',
+  //     },
+  //     {
+  //       title: 'app.sidebar.admin.children.bdc',
+  //       route: '/',
+  //     },
+  //     {
+  //       title: 'app.sidebar.admin.children.contract',
+  //       route: '/',
+  //     },
+  //     {
+  //       title: 'app.sidebar.admin.children.process',
+  //       route: '/',
+  //     },
+  //     {
+  //       title: 'app.sidebar.admin.children.country_currency',
+  //       route: '/',
+  //     },
+  //     {
+  //       title: 'app.sidebar.admin.children.access_protocol',
+  //       route: '/',
+  //     },
+  //     {
+  //       title: 'app.sidebar.admin.children.text_templates',
+  //       route: '/',
+  //     },
+  //   ],
+  // },
+  // {
+  //   title: 'app.sidebar.properties',
+  //   route: 'properties',
+  //   icon: 'GitCommitIcon',
+  // },
+  // {
+  //   title: 'app.sidebar.templates',
+  //   route: 'templates',
+  //   icon: 'FeatherIcon',
+  // },
+  // {
+  //   title: 'app.sidebar.master_data',
+  //   route: 'master-data',
+  //   icon: 'GridIcon',
+  // },
 
 ]
