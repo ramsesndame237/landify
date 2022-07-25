@@ -32,7 +32,6 @@
 import {
   BTable, BButton, BFormCheckbox,
 } from 'bootstrap-vue'
-import { mapState } from 'vuex'
 
 export default {
   components: {

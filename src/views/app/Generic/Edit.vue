@@ -25,6 +25,8 @@
       </div>
     </b-card>
 
+    <p v-if="formReview" class="text-danger h4 mb-1 text-center" v-html="formReview"></p>
+
     <b-card class="">
       <validation-observer ref="form" v-slot="{ passes }">
         <b-form autocomplete="off" @submit.prevent="passes(update)">
@@ -39,6 +41,8 @@
       </validation-observer>
     </b-card>
 
+    <p v-if="relationsReview" class="text-danger h4 mb-1 text-center" v-html="relationsReview"></p>
+
     <b-card v-if="entityLoaded && definition.relations && definition.relations.length>0">
       <b-tabs ref="tabs" pills>
         <b-tab v-for="(relation, index) in definition.relations" :key="index" :title="$t(relation.title)"
@@ -46,7 +50,7 @@
           <data-tables :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
                        :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
                        :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
-                       :fields="relation.fields" :on-edit-element="editElement"/>
+                       :fields="relation.fields" :on-edit-element="editElement" :with-edit="relation.update!==false"/>
           <generic-modal title="Test" :table="relation.entityForm" :definition="relation" is-relation
                          :table-definition-key="relation.entity" @reload-table="reloadRelatedTable"/>
         </b-tab>
@@ -88,9 +92,10 @@
 import {
   BCard,
   BTab,
-  BTabs, BRow, BCol, BForm, BFormInput, BButton, BDropdown, BDropdownForm, BFormGroup, BInputGroup, BInputGroupPrepend
+  BTabs, BRow, BCol, BForm, BFormInput, BButton, BDropdown, BDropdownForm, BFormGroup, BInputGroup, BInputGroupPrepend,
 } from 'bootstrap-vue'
 import Tables from '@/table'
+import Reviews from '@/table/review'
 import DataTables from '@/layouts/components/DataTables'
 import GenericModal from '@/views/app/Generic/modal'
 import Field from './Field'
@@ -127,6 +132,12 @@ export default {
     },
     definition() {
       return Tables[this.table]
+    },
+    formReview() {
+      return Reviews[this.table + '_form']
+    },
+    relationsReview() {
+      return Reviews[this.table + '_relations']
     },
     formFields() {
       return this.definition.fields.filter(f => !f.hideOnForm)

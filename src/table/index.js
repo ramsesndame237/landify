@@ -1046,7 +1046,7 @@ export default {
         hideOnIndex: true,
       },
       {
-        key: 'address_id', type: 'list', list: 'address', listLabel: 'address_street', hideOnIndex: true, withNew: true
+        key: 'address_id', type: 'list', list: 'address', listLabel: 'address_street', hideOnIndex: true, withNew: true,
       },
     ],
     relations: [
@@ -1100,14 +1100,18 @@ export default {
       { key: 'contract_name' },
       { key: 'contract_begin_date' },
       { key: 'contract_end_date' },
-      { key: 'currency_id', type: 'list', list: 'currency', listLabel: 'currency_name', hideOnIndex: true },
-      { key: 'contracttype_id', type: 'list', list: 'contracttype', listLabel: 'contracttype_name', hideOnIndex: true },
+      {
+        key: 'currency_id', type: 'list', list: 'currency', listLabel: 'currency_name', hideOnIndex: true,
+      },
+      {
+        key: 'contracttype_id', type: 'list', list: 'contracttype', listLabel: 'contracttype_name', hideOnIndex: true,
+      },
       {
         key: 'documentcontracttype_id',
         type: 'list',
         list: 'documentcontracttype',
         listLabel: 'documentcontracttype_name',
-        hideOnIndex: true
+        hideOnIndex: true,
       },
       { key: 'documentcontracttype_name', hideOnForm: true },
       { key: 'contract_creation_date', hideOnForm: true },
@@ -1127,8 +1131,215 @@ export default {
           { key: 'document_date_received' },
         ],
       },
+      {
+        title: 'Service Objects',
+        primaryKey: 'serviceobject_id',
+        entity: 'contract_serviceobject_grp',
+        entityForm: 'contract_serviceobject_rel',
+        fields: [
+          { key: 'serviceobject_id' },
+          { key: 'serviceobject_name' },
+          { key: 'serviceobjecttype_name' },
+          { key: 'area_name' },
+          { key: 'location_name' },
+        ],
+      },
+      {
+        title: 'Specials Rights',
+        primaryKey: 'specialright_id',
+        entity: 'contract_specialright_grp',
+        entityForm: 'contract_specialright_rel',
+        fields: [
+          { key: 'specialright_id', type: 'list', list: 'specialright', listLabel: 'specialright_name' },
+          { key: 'specialright_name', hideOnForm: true },
+          { key: 'specialright_date', hideOnForm: true },
+        ],
+      },
+      {
+        title: 'Contract criterias',
+        primaryKey: 'criteria_id',
+        entity: 'contract_criteria_grp',
+        entityForm: 'contract_criteria_rel',
+        fields: [
+          { key: 'criteria_id' },
+          { key: 'criteria_name' },
+          { key: 'contract_criteria_valid_from_date' },
+          { key: 'contract_criteria_valid_to_date' },
+          { key: 'criteriatype_name' },
+          { key: 'contract_criteria_comment' },
+          { key: 'contract_criteria_value' },
+        ],
+        update: false,
+      },
+      {
+        title: 'Invoices',
+        primaryKey: 'incoice_id',
+        entity: 'invoice_contract_grp',
+        entityForm: 'invoice_contract_rel',
+        fields: [
+          { key: 'invoice_id' },
+          { key: 'invoice_date' },
+          { key: 'invoice_payment_date' },
+          { key: 'invoice_creation_time', hideOnForm: true },
+          { key: 'invoice_date_of_order', hideOnForm: true },
+          { key: 'invoice_billing_year', hideOnForm: true },
+          { key: 'invoiceposition_count', hideOnForm: true },
+        ],
+      },
+    ],
+  },
+  serviceobject: {
+    fields: [
+      { key: 'serviceobject_id', auto: true },
+      { key: 'serviceobject_name' },
+      { key: 'serviceobjecttype_name', hideOnForm: true },
+      { key: 'serviceobject_description', type: 'textarea', hideOnIndex: true },
+      {
+        key: 'serviceobjecttype_id',
+        type: 'list',
+        list: 'serviceobjecttype',
+        listLabel: 'serviceobjecttype_name',
+        hideOnIndex: true,
+      },
+      { key: 'location_name', hideOnForm: true },
+      { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name', hideOnIndex: true },
+      { key: 'area_name', hideOnForm: true },
+      { key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name', hideOnIndex: true },
+      { key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name' },
+      { key: 'contract_last_change_time', hideOnForm: true },
+    ],
+    relations: [
+      {
+        title: 'Areas',
+        entity: 'serviceobject_area_grp',
+        entityForm: 'serviceobject_area_rel',
+        fields: [
+          { key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name' },
+          { key: 'area_name', hideOnForm: true },
+          { key: 'area_space_value', hideOnForm: true },
+          { key: 'pos_id', hideOnForm: true },
+          { key: 'company_name', hideOnForm: true },
+          { key: 'customergroup_name', hideOnForm: true },
+        ],
+        update: false,
+      },
+      {
+        title: 'Locations',
+        entity: 'serviceobject_location_grp',
+        entityForm: 'serviceobject_location_rel',
+        fields: [
+          { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name' },
+          { key: 'location_name', hideOnForm: true },
+          { key: 'locaion_total_area', hideOnForm: true },
+          { key: 'location_start_date', hideOnForm: true },
+          { key: 'city_name', hideOnForm: true },
+          { key: 'country_name', hideOnForm: true },
+          { key: 'partnercompany_name', hideOnForm: true },
+        ],
+        update: false,
+      },
+      {
+        title: 'Contracts',
+        entity: 'serviceobject_contract_grp',
+        entityForm: 'serviceobject_contract_rel',
+        fields: [
+          { key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name' },
+          { key: 'contract_name', hideOnForm: true },
+          { key: 'contract_begin_date', hideOnForm: true },
+          { key: 'contract_end_date', hideOnForm: true },
+          { key: 'city_name', hideOnForm: true },
+          { key: 'country_name', hideOnForm: true },
+          { key: 'partnercompany_name', hideOnForm: true },
+        ],
+        update: false,
+      },
+    ],
+  },
 
-    ]
+  criteria: {
+    fields: [
+      { key: 'criteria_id', auto: true },
+      { key: 'criteria_name' },
+      { key: 'criteria_description', type: 'textarea' },
+      { key: 'criteria_has_value', type: 'boolean' },
+      {
+        key: 'criteriatype_id', type: 'list', list: 'criteriatype', hideOnIndex: true, listLabel: 'criteriatype_name',
+      },
+    ],
+    relations: [
+      {
+        title: 'Contract',
+        primaryKey: 'contract_id',
+        entity: 'contract',
+        entityForm: 'contract_form',
+        fields: [
+          { key: 'contract_id' },
+          { key: 'contract_name' },
+        ],
+      },
+      {
+        title: 'Choice',
+        primaryKey: 'choice_id',
+        entity: 'choice',
+        fields: [
+          { key: 'choice_id' },
+          { key: 'choice_name' },
+        ],
+      },
+    ],
+  },
+
+  indexclause: {
+    fields: [
+      { key: 'indexclause_id', auto: true },
+      { key: 'indexclause_adjustment_rule' },
+      { key: 'indexclause_adjustment_description', type: 'textarea' },
+      { key: 'indexclause_baseyear', type: 'date' },
+      { key: 'indexclause_begin_date', type: 'date' },
+      { key: 'indexclause_indextransmission_percent' },
+      { key: 'indexclause_minimal_percent_change_agreed' },
+      { key: 'indexclause_minimal_point_change_agreed' },
+    ],
+  },
+
+  recurringpayment: {
+    fields: [
+      { key: 'recurringpayment_id', auto: true },
+      {
+        key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name', hideOnIndex: true,
+      },
+      {
+        key: 'recurringpaymenttype_id',
+        type: 'list',
+        list: 'recurringpaymenttype',
+        listLabel: 'recurringpaymenttype_name',
+        hideOnIndex: true,
+      },
+      { key: 'recurringpayment_sum_per_month', hideOnIndex: true },
+      { key: 'recurringpayment_condition_percentage', hideOnIndex: true },
+      { key: 'recurringpayment_percentage', hideOnIndex: true },
+      { key: 'recurringpayment_begin_date', type: 'date', hideOnIndex: true },
+      { key: 'recurringpayment_end_date', type: 'date', hideOnIndex: true },
+      {
+        key: 'maturitytype_id', type: 'list', list: 'maturitytype', listLabel: 'maturitytype_name', hideOnIndex: true,
+      },
+      { key: 'recurringpayment_maturity_date', type: 'date', hideOnIndex: true },
+      { key: 'recurringpayment_maturity_daily_range', hideOnIndex: true },
+      { key: 'recurringpayment_maturity_monthly_range', hideOnIndex: true },
+      { key: 'reccuringpayment_value_deposit', hideOnIndex: true },
+    ],
+    relations: [
+      {
+        title: 'Contract',
+        primaryKey: 'contract_id',
+        entity: 'contact_grp',
+        entityForm: 'contact_rel',
+        fields: [
+          { key: 'contact_id', hideOnForm: true },
+          { key: 'contact_name' },
+        ],
+      },
+    ],
   },
 
   tag: {
@@ -1144,7 +1355,9 @@ export default {
         entity: 'pos_tag_grp',
         entityForm: 'pos_tag_rel',
         fields: [
-          { key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name', disableOnUpdate: true },
+          {
+            key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name', disableOnUpdate: true,
+          },
           { key: 'pos_branchnumber', hideOnForm: true },
           { key: 'pos_name', hideOnForm: true },
           { key: 'company_name', hideOnForm: true },
@@ -1153,12 +1366,76 @@ export default {
       },
     ],
   },
+  unit: {
+    fields: [
+      { key: 'unit_id', auto: true },
+      { key: 'unit_name' },
+      { key: 'unit_short' },
+      { key: 'unit_symbol' },
+    ],
+  },
+  choice: {
+    fields: [
+      { key: 'choice_id', auto: true },
+      { key: 'choice_name' },
+      { key: 'choice_description', type: 'textarea' },
+    ],
+  },
 
   areatype: {
     fields: [
       { key: 'areatype_id', auto: true },
       { key: 'areatype_name' },
       { key: 'areatype_description', type: 'textarea' },
+    ],
+  },
+  contracttype: {
+    fields: [
+      { key: 'contracttype_id', auto: true },
+      { key: 'contracttype_name' },
+      { key: 'contracttype_description', type: 'textarea' },
+    ],
+  },
+  criteriatype: {
+    fields: [
+      { key: 'criteriatype_id', auto: true },
+      { key: 'criteriatype_name' },
+      { key: 'criteriatype_description', type: 'textarea' },
+    ],
+  },
+  locationtype: {
+    fields: [
+      { key: 'locationtype_id', auto: true },
+      { key: 'locationtype_name' },
+      { key: 'locationtype_description', type: 'textarea' },
+    ],
+  },
+  maturitytype: {
+    fields: [
+      { key: 'maturitytype_id', auto: true },
+      { key: 'maturitytype_name' },
+      { key: 'maturitytype_description', type: 'textarea' },
+    ],
+  },
+  usagetype: {
+    fields: [
+      { key: 'usagetype_id', auto: true },
+      { key: 'usagetype_name' },
+      { key: 'usagetype_description', type: 'textarea' },
+    ],
+  },
+  serviceobjecttype: {
+    fields: [
+      { key: 'serviceobjecttype_id', auto: true },
+      { key: 'serviceobjecttype_name' },
+      { key: 'serviceobjecttype_description', type: 'textarea' },
+    ],
+  },
+  recurringpaymenttype: {
+    fields: [
+      { key: 'recurringpaymenttype_id', auto: true },
+      { key: 'recurringpaymenttype_name' },
+      { key: 'recurringpaymenttype_description', type: 'textarea' },
     ],
   },
   // endregion
@@ -1173,7 +1450,9 @@ export default {
       { key: 'invoice_payment_date', type: 'date' },
       { key: 'customergroup_name', hideOnForm: true },
       { key: 'partnercompany_name', hideOnForm: true },
-      { key: 'partnertype_name', type: 'list', list: 'partnertype', listLabel: 'partnertype_name', hideOnIndex: true },
+      {
+        key: 'partnertype_name', type: 'list', list: 'partnertype', listLabel: 'partnertype_name', hideOnIndex: true,
+      },
       { key: 'invoice_description', type: 'textarea', hideOnIndex: true },
       { key: 'invoice_contract_billing_period_from_date', type: 'date', hideOnIndex: true },
       {
