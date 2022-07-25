@@ -1256,6 +1256,88 @@ export default {
     ],
   },
 
+  criteria: {
+    fields: [
+      { key: 'criteria_id', auto: true },
+      { key: 'criteria_name' },
+      { key: 'criteria_description', type: 'textarea' },
+      { key: 'criteria_has_value' },
+      {
+        key: 'criteria_type', type: 'list', list: 'criteriatype', hideOnIndex: true,
+      },
+    ],
+    relations: [
+      {
+        title: 'Contract',
+        primaryKey: 'contract_id',
+        entity: 'contract',
+        entityForm: 'contract_form',
+        fields: [
+          { key: 'contract_id' },
+          { key: 'contract_name' },
+        ],
+      },
+      {
+        title: 'Choice',
+        primaryKey: 'choice_id',
+        entity: 'choice',
+        fields: [
+          { key: 'choice_id' },
+          { key: 'choice_name' },
+        ],
+      },
+    ],
+  },
+
+  indexclause: {
+    fields: [
+      { key: 'indexclause_id', auto: true},
+      { key: 'indexclause_adjustment_rule' },
+      { key: 'indexclause_adjustment_description', type: 'textarea' },
+      { key: 'indexclause_baseyear', type: 'date' },
+      { key: 'indexclause_begin_date', type: 'date' },
+      { key: 'indexclause_indextransmission_percent' },
+      { key: 'indexclause_minimal_percent_change_agreed' },
+      { key: 'indexclause_minimal_point_change_agreed' },
+    ],
+  },
+
+  recurringpayment: {
+    fields: [
+      { key: 'recurringpayment_id', auto: true },
+      {
+        key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name', hideOnIndex: true,
+      },
+      {
+        key: 'recurringpaymenttype_id', type: 'list', list: 'recurringpaymenttype', listLabel: 'recurringpaymenttype_name', hideOnIndex: true,
+      },
+      { key: 'recurringpayment_sum_per_month', hideOnIndex: true },
+      { key: 'recurringpayment_condition_percentage', hideOnIndex: true },
+      { key: 'recurringpayment_percentage', hideOnIndex: true },
+      { key: 'recurringpayment_begin_date', type: 'date', hideOnIndex: true },
+      { key: 'recurringpayment_end_date', type: 'date', hideOnIndex: true },
+      {
+        key: 'maturitytype_id', type: 'list', list: 'maturitytype', listLabel: 'maturitytype_name', hideOnIndex: true,
+      },
+      { key: 'recurringpayment_maturity_date', type: 'date', hideOnIndex: true },
+      { key: 'recurringpayment_maturity_daily_range', hideOnIndex: true },
+      { key: 'recurringpayment_maturity_monthly_range', hideOnIndex: true },
+      { key: 'reccuringpayment_value_deposit', hideOnIndex: true },
+    ],
+    relations: [
+      {
+        title: 'Contract',
+        primaryKey: 'contract_id',
+        entity: 'contact_grp',
+        entityForm: 'contact_rel',
+        fields: [
+          { key: 'contact_id', hideOnForm: true },
+          { key: 'contact_name' },
+        ],
+      },
+    ],
+  },
+
   tag: {
     fields: [
       { key: 'tag_id', auto: true },
