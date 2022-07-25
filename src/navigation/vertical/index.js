@@ -149,11 +149,11 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_3.children.criteria',
-        route: 'criteria-list',
+        route: table('criteria'),
       },
       {
         title: 'app.sidebar.work_pack_3.children.index_clause',
-        route: 'index-clause-list',
+        route: table('indexclause'),
       },
       {
         title: 'app.sidebar.work_pack_3.children.special_right',
@@ -161,7 +161,7 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_3.children.payment',
-        route: 'recurring-payment-list',
+        route: table('recurringpayment'),
       },
       {
         title: 'app.sidebar.work_pack_3.children.tag',
