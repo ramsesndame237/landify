@@ -1261,9 +1261,9 @@ export default {
       { key: 'criteria_id', auto: true },
       { key: 'criteria_name' },
       { key: 'criteria_description', type: 'textarea' },
-      { key: 'criteria_has_value' },
+      { key: 'criteria_has_value', type: 'boolean' },
       {
-        key: 'criteria_type', type: 'list', list: 'criteriatype', hideOnIndex: true,
+        key: 'criteriatype_id', type: 'list', list: 'criteriatype', hideOnIndex: true, listLabel: 'criteriatype_name',
       },
     ],
     relations: [
@@ -1291,7 +1291,7 @@ export default {
 
   indexclause: {
     fields: [
-      { key: 'indexclause_id', auto: true},
+      { key: 'indexclause_id', auto: true },
       { key: 'indexclause_adjustment_rule' },
       { key: 'indexclause_adjustment_description', type: 'textarea' },
       { key: 'indexclause_baseyear', type: 'date' },
@@ -1309,7 +1309,11 @@ export default {
         key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name', hideOnIndex: true,
       },
       {
-        key: 'recurringpaymenttype_id', type: 'list', list: 'recurringpaymenttype', listLabel: 'recurringpaymenttype_name', hideOnIndex: true,
+        key: 'recurringpaymenttype_id',
+        type: 'list',
+        list: 'recurringpaymenttype',
+        listLabel: 'recurringpaymenttype_name',
+        hideOnIndex: true,
       },
       { key: 'recurringpayment_sum_per_month', hideOnIndex: true },
       { key: 'recurringpayment_condition_percentage', hideOnIndex: true },
