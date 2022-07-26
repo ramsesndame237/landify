@@ -35,9 +35,9 @@ export default {
       {
         title: 'Roles',
         primaryKey: 'role_id',
-        composite: ['role_id', 'user_role_valid_from'],
         entity: 'user_role_grp',
         entityForm: 'user_role_rel',
+        entityView: 'role',
         fields: [
           {
             key: 'role_id',
@@ -70,6 +70,7 @@ export default {
         primaryKey: 'customergroup_id',
         entity: 'user_customergroup_grp',
         entityForm: 'user_customergroup_rel',
+        entityView: 'customergroup',
         fields: [
           {
             key: 'customergroup_id',
@@ -101,6 +102,7 @@ export default {
         primaryKey: 'company_id',
         entity: 'user_company_grp',
         entityForm: 'user_company_rel',
+        entityView: 'company',
         fields: [
           {
             key: 'company_id',
@@ -128,6 +130,7 @@ export default {
         primaryKey: 'pos_id',
         entity: 'user_pos_grp',
         entityForm: 'user_pos_rel',
+        entityView: 'pos',
         fields: [
           {
             key: 'pos_id',
@@ -152,6 +155,7 @@ export default {
         primaryKey: 'team_id',
         entity: 'user_team_grp',
         entityForm: 'user_team_rel',
+        entityView: 'team',
         fields: [
           {
             key: 'team_id',
@@ -176,6 +180,7 @@ export default {
         primaryKey: 'partnercompany_id',
         entity: 'user_partnercompany_grp',
         entityForm: 'user_partnercompany_rel',
+        entityView: 'partnercompany',
         fields: [
           {
             key: 'partnercompany_id',
@@ -223,6 +228,9 @@ export default {
         primaryKey: 'access_id',
         entity: 'role_access_grp',
         entityForm: 'role_access_rel',
+        entityView: 'access',
+        update: false,
+        view: false,
         fields: [
           {
             key: 'access_id', label: 'ID', sortable: true, type: 'list', list: 'access', listLabel: 'access_name',
@@ -235,6 +243,7 @@ export default {
         primaryKey: 'user_id',
         entity: 'user_role_grp',
         entityForm: 'user_role_rel',
+        entityView: 'user',
         fields: [
           {
             key: 'user_id',
@@ -260,25 +269,32 @@ export default {
       {
         title: 'Table Groups',
         primaryKey: 'tablegroup_id',
-        entity: 'role_tablegroup_grp',
-        entityForm: 'role_tablegroup_rel',
+        entity: 'role_tablegroup_crud_grp',
+        entityForm: 'role_tablegroup_crud_rel',
+        entityView: 'tablegroup',
+        update: false,
         fields: [
           {
-            key: 'tablegroup_id', sortable: true, type: 'list', list: 'tablegroup', listLabel: 'tablegroup_name',
+            key: 'tablegroup_id', type: 'list', list: 'tablegroup', listLabel: 'tablegroup_name',
           },
-          { key: 'tablegroup_name', sortable: true },
-          { key: 'tablegroup_description' },
+          { key: 'crud', type: 'list', list: 'crud', listLabel: 'crud', composite: true },
+          { key: 'tablegroup_name', hideOnForm: true },
+          { key: 'tablegroup_description', hideOnForm: true },
         ],
       },
       {
         title: 'Tables',
         primaryKey: 'table_name',
-        entity: 'role_tablename_grp',
-        entityForm: 'role_tablename_rel',
+        composite: ['table_name', 'crud'],
+        entity: 'role_tablename_crud_grp',
+        entityForm: 'role_tablename_crud_rel',
+        entityView: 'tablename',
+        update: false,
         fields: [
           {
-            key: 'table_name', sortable: true, type: 'list', list: 'tablename', listLabel: 'table_name',
+            key: 'table_name', sortable: true, type: 'list', list: 'tablename', listLabel: 'table_name'
           },
+          { key: 'crud', type: 'list', list: 'crud', listLabel: 'crud', composite: true },
         ],
       },
     ],
@@ -322,8 +338,10 @@ export default {
       {
         title: 'Tables',
         primaryKey: 'table_name',
-        entity: 'tablegroup_tablename_grp',
-        entityForm: 'tablegroup_tablename_rel',
+        entity: 'tablename_tablegroup_grp',
+        entityForm: 'tablename_tablegroup_rel',
+        entityView: 'tablename',
+        update: false,
         fields: [
           {
             key: 'table_name', sortable: true, type: 'list', list: 'tablename', listLabel: 'table_name',
@@ -353,6 +371,8 @@ export default {
         primaryKey: 'company_id',
         entity: 'customergroup_company_grp',
         entityForm: 'customergroup_company_rel',
+        update: false,
+        entityView: 'company',
         fields: [
           {
             key: 'company_id', sortable: true, type: 'list', list: 'company', listLabel: 'company_name',
@@ -368,13 +388,15 @@ export default {
         primaryKey: 'customergroup_id',
         entity: 'contactperson_customergroup_grp',
         entityForm: 'contactperson_customergroup_rel',
+        entityView: 'contactperson',
+        update: false,
         fields: [
           {
             key: 'contactperson_id',
             sortable: true,
             type: 'list',
             list: 'contactperson',
-            listLabel: 'contactperson_name',
+            listLabel: 'contactperson_firstname',
           },
           { key: 'contactperson_lastname', sortable: true, hideOnForm: true },
           { key: 'contactperson_firstname', sortable: true, hideOnForm: true },
@@ -405,13 +427,13 @@ export default {
           { key: 'group_ticket_description', sortable: true, hideOnForm: true },
           { key: 'group_ticket_Deadline', sortable: true, hideOnForm: true },
           {
-            key: 'contradictionpackage_id', label: 'ContradictionPackage count', sortable: true, hideOnForm: true,
+            key: 'contradictionpackage_count', label: 'ContradictionPackage count', sortable: true, hideOnForm: true,
           },
           {
             key: 'contradictionpackage_sum', label: 'ContradictionPackage Amount', sortable: true, hideOnForm: true,
           },
           {
-            key: 'ticket_id', label: 'Tickets count', sortable: true, hideOnForm: true,
+            key: 'ticket_count', label: 'Tickets count', sortable: true, hideOnForm: true,
           },
         ],
       },
@@ -420,6 +442,8 @@ export default {
         primaryKey: 'user_id',
         entity: 'user_customergroup_grp',
         entityForm: 'user_customergroup_rel',
+        entityView: 'user',
+        update: false,
         fields: [
           {
             key: 'user_id', sortable: true, type: 'list', list: 'user', listLabel: 'user_lastname', hideOnIndex: true,
@@ -768,6 +792,7 @@ export default {
         primaryKey: 'area_id',
         entity: 'area_pos_grp',
         entityForm: 'area_pos_rel',
+        update: false,
         fields: [
           {
             key: 'area_id',

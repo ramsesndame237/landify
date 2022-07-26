@@ -10,8 +10,8 @@
     </template>
 
     <template #cell(Actions)="data">
-      <b-button v-if="withView && !secondKey" size="xs" class="mr-1" style="margin-bottom: 3px" variant="info"
-                @click="$router.push({name: 'table-view', params: {table: entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index]}})">
+      <b-button v-if="withView" size="xs" class="mr-1" style="margin-bottom: 3px" variant="info"
+                @click="onViewElement ? onViewElement(currentItems[data.index]) :$router.push({name: 'table-view', params: {table: entityView || entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index]}})">
         <img src="@/assets/images/pages/plusIcons.svg" alt="" style="margin-right: 5px">
         <span>{{ $t('app.btn.view') }}</span>
       </b-button>
@@ -41,8 +41,9 @@ export default {
   },
   props: {
     entity: { type: String, required: true },
-    entityList: {type: String},
+    entityList: { type: String },
     entityForm: { type: String, required: false },
+    entityView: { type: String, required: false },
     fields: { type: Array, required: true },
     primaryKeyColumn: { type: String },
     withView: { type: Boolean, default: true },
@@ -52,6 +53,7 @@ export default {
     secondKeyValue: {},
     search: {},
     onEditElement: { type: Function },
+    onViewElement: { type: Function },
     perPage: Number,
     currentPage: Number,
     totalRows: Number,

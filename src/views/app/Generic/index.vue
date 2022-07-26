@@ -66,14 +66,6 @@ export default {
     },
   },
   methods: {},
-  beforeRouteEnter(to, from, next) {
-    to.meta.pageTitle = `List of ${to.params.table}`
-    next()
-  },
-  beforeRouteUpdate(to, from, next) {
-    to.meta.pageTitle = `List of ${to.params.table}`
-    next()
-  },
 }
 </script>
 

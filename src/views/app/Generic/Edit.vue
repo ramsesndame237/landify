@@ -50,7 +50,8 @@
           <data-tables :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
                        :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
                        :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
-                       :fields="relation.fields" :on-edit-element="editElement" :with-edit="relation.update!==false"/>
+                       :entity-view="relation.entityView" :with-view="relation.view!==false" :fields="relation.fields"
+                       :on-edit-element="editElement" :with-edit="relation.update!==false"/>
           <generic-modal title="Test" :table="relation.entityForm" :definition="relation" is-relation
                          :table-definition-key="relation.entity" @reload-table="reloadRelatedTable"/>
         </b-tab>
@@ -233,21 +234,7 @@ export default {
       tabs.tabs[tabs.currentTab].$children[0].reload()
     },
   },
-  beforeRouteEnter(to, from, next) {
-    to.meta.pageTitle = `List of ${to.params.table}`
-    to.meta.breadcrumb = [
-      {
-        text: to.params.table,
-        to: { name: 'table', params: { table: to.params.table } },
-        active: false,
-      },
-      {
-        text: 'Details',
-        active: true,
-      },
-    ]
-    next()
-  },
+
 }
 </script>
 
