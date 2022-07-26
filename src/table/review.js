@@ -10,7 +10,8 @@ export default {
   Contracts: We need an entity for the list, The creation in contract_area_unit_usagetype_rel send 'internal server error' <br>
   Grouptickets: We dont know what entities to use<br>
   ContradictionPacakge, Invoices, Appointment Track: We dont know what entities to use<br>`,
-  area: 'We need and entitiy to fill all the columns',
+  area: `We need and entitiy to fill all the columns <br>
+Create: Impossible to associate usage_type to area, usagetype  from contains date fields`,
   area_relations: `Contracts: area_contract_grp send internal server error <br>
 Point of sales: 'area_pos_rel' doesnt send company_name and tag_name<br>
 Service Objects: area_serviceobject_grp must send serviceobjecttype_name`,

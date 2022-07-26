@@ -34,7 +34,7 @@
                      :table-definition="tableDefinition"/>
           <b-row v-else>
             <b-col v-for="(field,index) in formFields" :key="index" cols="12" md="6">
-              <field :disabled="view" :entity="entity" :table-definition="tableDefinition" :field="field"/>
+              <field ref="fields" :disabled="view" :entity="entity" :table-definition="tableDefinition" :field="field"/>
             </b-col>
           </b-row>
         </b-form>
@@ -100,6 +100,7 @@ import Reviews from '@/table/review'
 import DataTables from '@/layouts/components/DataTables'
 import GenericModal from '@/views/app/Generic/modal'
 import Field from './Field'
+import FormMixin from "@/views/app/Generic/FormMixin";
 
 export default {
   components: {
@@ -109,12 +110,18 @@ export default {
     BTab,
     BTabs,
     BRow,
-    BCol, BDropdown, BDropdownForm, BInputGroup, BInputGroupPrepend,
-    BForm, BFormGroup,
+    BCol,
+    BDropdown,
+    BDropdownForm,
+    BInputGroup,
+    BInputGroupPrepend,
+    BForm,
+    BFormGroup,
     BFormInput,
     BButton,
     Field,
   },
+  mixins: [FormMixin],
   data() {
     return {
       view: this.$route.query.edit !== 'true',
@@ -125,6 +132,7 @@ export default {
       perPage: Number.MAX_SAFE_INTEGER,
       totalRows: 0,
       entityLoaded: false,
+      create: false,
     }
   },
   computed: {
@@ -171,51 +179,18 @@ export default {
     }
   },
   methods: {
-    fillRelations(entity) {
-      return Promise.all(this.formFields.filter(field => field.type === 'list').map(field => this.$api({
-        entity: field.relationEntity ?? (`${this.table}_${field.list}_rel`),
-        action: 'read-rich',
-        filter: {
-          [this.primaryKey]: `${this.entity[this.primaryKey]}`,
-        },
-      })
-        .then(({ data }) => {
-          this.$set(entity, field.key, data.data.data[0][field.key])
-          if (field.with) {
-            (typeof field.with === 'string' ? [field.with] : field.with).forEach(val => {
-              this.$set(entity, val, data.data.data[0][val])
-            })
-          }
-        })))
-    },
-    update() {
-      this.$refs.form.validate().then(success => {
-        if (!success) {
-          return
-        }
-        this.$api({
-          entity: this.table,
-          action: 'update',
-          data: [
-            this.entity,
-          ],
-        })
-          .then(data => {
-            this.$successToast(data.data.data.message)
-            this.view = true
-            // show success message
-          })
-          .catch(e => {
-            this.$errorToast()
-          })
-      })
-    },
     cancel() {
       this.view = true
       this.entity = { ...this.originalEntity }
     },
     edit() {
       this.view = false
+    },
+    update() {
+      this.submit()
+        .then(() => {
+          this.view = true
+        })
     },
     deleteSelected() {
       const { tabs } = this.$refs

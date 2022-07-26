@@ -788,6 +788,23 @@ export default {
     ],
     relations: [
       {
+        title: 'Locations',
+        entityView: 'location',
+        update: false,
+        create: false,
+        delete: false,
+        entity: 'pos_location_grp',
+        fields: [
+          { key: 'location_name' },
+          { key: 'partnercompany_name' },
+          { key: 'address_extra' },
+          { key: 'address_street' },
+          { key: 'city_zip' },
+          { key: 'city_name' },
+          { key: 'country_name' },
+        ],
+      },
+      {
         title: 'Areas',
         primaryKey: 'area_id',
         entity: 'area_pos_grp',
@@ -980,9 +997,6 @@ export default {
       },
       { key: 'city_name', hideOnForm: true },
       {
-        key: 'city_id', type: 'list', list: 'city', listLabel: 'city_name', sortable: true, hideOnIndex: true,
-      },
-      {
         key: 'area_name_external', hideOnIndex: true,
       },
       {
@@ -1012,15 +1026,21 @@ export default {
     relations: [
       {
         title: 'Contracts',
+        primaryKey: 'contract_id',
         entity: 'area_contract_grp',
+        entityForm: 'contract_area_unit_usagetype_rel',
+        entityView: 'contract',
         fields: [
-          { key: 'contract_id' },
-          { key: 'contract_area_unit_usagetype_rentalspace_value' },
-          { key: 'contract_area_unit_usagetype_allocationspace_value' },
-          { key: 'unit_name' },
+          { key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name', disableOnUpdate: true },
+          { key: 'contract_area_unit_usagetype_rentalspace_value', type: 'number' },
+          { key: 'contract_area_unit_usagetype_allocationspace_value', type: 'number' },
+          { key: 'unit_name', hideOnForm: true },
           { key: 'contract_area_unit_usagetype_mainusage' },
-          { key: 'contract_begin_date' },
-          { key: 'contract_end_date' },
+          { key: 'contract_begin_date', hideOnForm: true },
+          { key: 'contract_end_date', hideOnForm: true },
+          { key: 'contract_area_unit_usagetype_valid_from_date', type: 'date', hideOnIndex: true },
+          { key: 'contract_area_unit_usagetype_valid_to_date', type: 'date', hideOnIndex: true },
+          { key: 'unit_id', type: 'list', list: 'unit', listLabel: 'unit_name', hideOnIndex: true },
         ],
       },
       {
@@ -1056,9 +1076,9 @@ export default {
     fields: [
       { key: 'location_id', auto: true },
       { key: 'location_name' },
-      { key: 'location_objectdescription', hideOnIndex: true },
-      { key: 'location_total_area', hideOnIndex: true },
-      { key: 'location_start_date', hideOnIndex: true },
+      { key: 'location_objectdescription', type: 'textarea', hideOnIndex: true },
+      { key: 'location_total_area', type: 'number', hideOnIndex: true },
+      { key: 'location_start_date', type: 'date', hideOnIndex: true },
       { key: 'partnercompany_name', hideOnForm: true },
       {
         key: 'partnercompany_id',
@@ -1081,7 +1101,7 @@ export default {
         hideOnIndex: true,
       },
       {
-        key: 'address_id', type: 'list', list: 'address', listLabel: 'address_street', hideOnIndex: true, withNew: true,
+        key: 'address_id', type: 'list', list: 'address', listLabel: 'address_street', hideOnIndex: true, withNew: true, alwaysNew: true
       },
     ],
     relations: [
