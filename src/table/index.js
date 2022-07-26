@@ -823,12 +823,10 @@ export default {
       {
         title: 'Contract',
         primaryKey: 'contract_id',
-        entity: 'location_contract_grp',
+        entity: 'pos_contract_grp',
         entityForm: 'contract_area_unit_usagetype_rel',
+        entityView: 'contract',
         fields: [
-          {
-            key: 'contract_id', sortable: true,
-          },
           {
             key: 'contract_id',
             sortable: true,
@@ -851,25 +849,25 @@ export default {
             key: 'area_id', sortable: true, type: 'list', list: 'area', listLabel: 'area_name', hideOnForm: true,
           },
           {
-            key: 'contract_area_unit_usagetype_detail_description', hideOnForm: true,
+            key: 'contract_area_unit_usagetype_detail_description',
           },
           {
-            key: 'contract_area_unit_usagetype_mainusage', hideOnForm: true,
+            key: 'contract_area_unit_usagetype_mainusage',
           },
           {
-            key: 'contract_area_unit_usagetype_valid_from_date', sortable: true, hideOnForm: true,
+            key: 'contract_area_unit_usagetype_valid_from_date', type: 'date', disableOnUpdate: true
           },
           {
-            key: 'contract_area_unit_usagetype_valid_to_date', sortable: true, hideOnForm: true,
+            key: 'contract_area_unit_usagetype_valid_to_date', type: 'date'
           },
           {
             key: 'contract_first_possible_end_date', sortable: true, hideOnForm: true,
           },
           {
-            key: 'contract_area_unit_usagetype_rentalspace_value', hideOnForm: true,
+            key: 'contract_area_unit_usagetype_rentalspace_value', type: 'number'
           },
           {
-            key: 'contract_area_unit_usagetype_allocationspace_value', hideOnForm: true,
+            key: 'contract_area_unit_usagetype_allocationspace_value', type: 'number'
           },
           {
             key: 'document_id', hideOnForm: true, sortable: true,
@@ -881,6 +879,8 @@ export default {
         primaryKey: 'tag_id',
         entity: 'pos_tag_grp',
         entityForm: 'pos_tag_rel',
+        entityView: 'tag',
+        update: false,
         fields: [
           {
             key: 'tag_id',
@@ -939,6 +939,9 @@ export default {
       },
       {
         title: 'Invoices',
+        entityView: 'invoice',
+        update: false,
+        entity: 'pos_invoice_grp',
         fields: [
           { key: 'invoice_id', auto: true },
           { key: 'invoice_date', hideOnForm: true },
@@ -971,24 +974,25 @@ export default {
     fields: [
       { key: 'area_name' },
       { key: 'area_id', auto: true },
-
+      { key: 'location_name', hideOnForm: true },
       {
-        key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name', sortable: true,
+        key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name', hideOnIndex: true
       },
+      { key: 'city_name', hideOnForm: true },
       {
-        key: 'city_id', type: 'list', list: 'city', listLabel: 'city_name', sortable: true, hideOnForm: true,
+        key: 'city_id', type: 'list', list: 'city', listLabel: 'city_name', sortable: true, hideOnIndex: true,
       },
       {
         key: 'area_name_external', hideOnIndex: true,
       },
       {
-        key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', sortable: true, hideOnForm: true,
+        key: 'country_name', hideOnForm: true,
       },
       {
         key: 'areatype_id', type: 'list', list: 'areatype', listLabel: 'areatype_name', hideOnIndex: true,
       },
       {
-        key: 'areatype_id', sortable: true, hideOnForm: true,
+        key: 'areatype_name', hideOnForm: true,
       },
       {
         key: 'area_space_value', sortable: true,
@@ -1021,7 +1025,10 @@ export default {
       },
       {
         title: 'Point of Sales',
-        entity: 'pos_area_grp',
+        entity: 'area_pos_grp',
+        entityForm: 'area_pos_rel',
+        entityView: 'pos',
+        update: false,
         fields: [
           { key: 'pos_id' },
           { key: 'pos_name' },
@@ -1032,11 +1039,14 @@ export default {
       {
         title: 'Service Objects',
         entity: 'area_serviceobject_grp',
+        entityView: 'serviceobject',
+        entityForm: 'area_serviceobject_rel',
+        update: false,
         fields: [
-          { key: 'serviceobject_id' },
-          { key: 'serviceobject_name' },
-          { key: 'serviceobject_description' },
-          { key: 'serviceobjecttype_name' },
+          { key: 'serviceobject_id', type: 'list', list: 'serviceobject', listLabel: 'serviceobject_name' },
+          { key: 'serviceobject_name', hideOnForm: true },
+          { key: 'serviceobject_description', hideOnForm: true },
+          { key: 'serviceobjecttype_name', hideOnForm: true },
         ],
       },
     ],
@@ -1096,24 +1106,30 @@ export default {
       {
         title: 'Service Objects',
         entity: 'location_serviceobject_grp',
+        entityForm: 'location_serviceobject_rel',
+        entityView: 'serviceobject',
+        update: false,
         fields: [
-          { key: 'serviceobject_id' },
-          { key: 'serviceobject_name' },
-          { key: 'serviceobjecttype_name' },
-          { key: 'area_name' },
+          { key: 'serviceobject_id', type: 'list', list: 'serviceobject', listLabel: 'serviceobject_name' },
+          { key: 'serviceobject_name', hideOnForm: true },
+          { key: 'serviceobjecttype_name', hideOnForm: true },
+          { key: 'area_name', hideOnForm: true },
         ],
       },
       {
         title: 'Partner Companies',
         entity: 'location_partnercompany_grp',
+        entityForm: 'location_partnercompany_rel',
+        entityView: 'partnercompany',
+        update: false,
         fields: [
-          { key: 'partnercompany_id' },
-          { key: 'partnercompany_name' },
-          { key: 'partnergroup_name' },
-          { key: 'partnertype_name' },
-          { key: 'city_name' },
-          { key: 'contactdetails_email' },
-          { key: 'contactdetails_phone' },
+          { key: 'partnercompany_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name' },
+          { key: 'partnercompany_name', hideOnForm: true },
+          { key: 'partnergroup_name', hideOnForm: true },
+          { key: 'partnertype_name', hideOnForm: true },
+          { key: 'city_name', hideOnForm: true },
+          { key: 'contactdetails_email', hideOnForm: true },
+          { key: 'contactdetails_phone', hideOnForm: true },
         ],
       },
     ],
