@@ -650,7 +650,7 @@ export default {
       { key: 'address_house_number' },
       { key: 'address_extra' },
       {
-        key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name',
+        key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', hideOnForm: true
       },
       { key: 'address_last_change_time', hideOnForm: true },
       { key: 'entries_count', hideOnForm: true },
@@ -660,7 +660,9 @@ export default {
         title: 'Companies',
         primaryKey: 'company_id',
         entity: 'company_address_grp',
-        entityForm: 'address_company_rel',
+        entityForm: 'company_address_rel',
+        entityView: 'company',
+        update: false,
         fields: [
           {
             key: 'company_id', sortable: true, type: 'list', list: 'company', listLabel: 'company_name',
@@ -1101,7 +1103,13 @@ export default {
         hideOnIndex: true,
       },
       {
-        key: 'address_id', type: 'list', list: 'address', listLabel: 'address_street', hideOnIndex: true, withNew: true, alwaysNew: true
+        key: 'address_id',
+        type: 'list',
+        list: 'address',
+        listLabel: 'address_street',
+        hideOnIndex: true,
+        withNew: true,
+        alwaysNew: true
       },
     ],
     relations: [

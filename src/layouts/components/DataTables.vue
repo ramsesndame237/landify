@@ -10,18 +10,18 @@
     </template>
 
     <template #cell(Actions)="data">
-      <b-button v-if="withView" size="xs" class="mr-1" style="margin-bottom: 3px" variant="info"
+      <b-button v-if="withView" size="xs" class="mr-1" style="margin-bottom: 3px" variant="outline-success" pill
                 @click="onViewElement ? onViewElement(currentItems[data.index]) :$router.push({name: 'table-view', params: {table: entityView || entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index]}})">
-        <img src="@/assets/images/pages/plusIcons.svg" alt="" style="margin-right: 5px">
+        <feather-icon icon="EyeIcon" class="mr-50"/>
         <span>{{ $t('app.btn.view') }}</span>
       </b-button>
-      <b-button v-if="withEdit" size="xs" variant="success" class="mr-1" style="margin-bottom: 3px"
+      <b-button v-if="withEdit" size="xs" variant="outline-info" class="mr-1" style="margin-bottom: 3px" pill
                 @click="onEditElement ? onEditElement(currentItems[data.index]) : $router.push({name: 'table-view', params: {table: entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index]}, query: {edit: 'true'}})">
-        <img src="@/assets/images/pages/plusIcons.svg">
+        <feather-icon icon="EditIcon" class="mr-50"/>
         <span>{{ $t('app.btn.edit') }}</span>
       </b-button>
-      <b-button size="xs" variant="primary" style="margin-bottom: 3px" @click="deleteElement(data.index)">
-        <img src="@/assets/images/pages/deleteIcons.svg" alt="">
+      <b-button size="xs" variant="outline-primary" style="margin-bottom: 3px" @click="deleteElement(data.index)" pill>
+        <feather-icon icon="Trash2Icon" class="mr-50"/>
         <span>{{ $t('app.btn.delete') }}</span>
       </b-button>
     </template>
