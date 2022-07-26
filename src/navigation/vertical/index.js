@@ -157,7 +157,7 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_3.children.special_right',
-        route: 'special-right-list',
+        route: table('specialright'),
       },
       {
         title: 'app.sidebar.work_pack_3.children.payment',
