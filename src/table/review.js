@@ -4,5 +4,6 @@ export default {
   tag_relations: `pos_tag_grp entity doesnt send back the fields: company_name and area_count`,
   criteria_relations: 'Impossible to get the criteria contract relation, we have an internal server error',
   indexclause_relations: 'Impossible to get the recurring payment relation, we have an internal server error',
+  company: 'The delete action doesnt work fine',
   // endregion
 }
