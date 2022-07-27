@@ -28,17 +28,8 @@
     <p v-if="formReview" class="text-danger h4 mb-1 text-center" v-html="formReview"></p>
 
     <b-card class="">
-      <validation-observer ref="form" v-slot="{ passes }">
-        <b-form autocomplete="off" @submit.prevent="passes(update)">
-          <component :is="definition.formComponent" v-if="definition.formComponent" :disabled="view" :entity="entity"
-                     :table-definition="tableDefinition"/>
-          <b-row v-else>
-            <b-col v-for="(field,index) in formFields" :key="index" cols="12" md="6">
-              <field ref="fields" :disabled="view" :entity="entity" :table-definition="tableDefinition" :field="field"/>
-            </b-col>
-          </b-row>
-        </b-form>
-      </validation-observer>
+      <entity-form ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="false"
+                   :is-relation="false" :disabled="view" :inline="false" :cols="6"/>
     </b-card>
 
     <p v-if="relationsReview" class="text-danger h4 mb-1 text-center" v-html="relationsReview"></p>
@@ -101,9 +92,11 @@ import DataTables from '@/layouts/components/DataTables'
 import GenericModal from '@/views/app/Generic/modal'
 import Field from './Field'
 import FormMixin from "@/views/app/Generic/FormMixin";
+import EntityForm from "@/views/app/Generic/EntityForm";
 
 export default {
   components: {
+    EntityForm,
     GenericModal,
     DataTables,
     BCard,
@@ -115,13 +108,10 @@ export default {
     BDropdownForm,
     BInputGroup,
     BInputGroupPrepend,
-    BForm,
     BFormGroup,
     BFormInput,
     BButton,
-    Field,
   },
-  mixins: [FormMixin],
   data() {
     return {
       view: this.$route.query.edit !== 'true',
@@ -169,6 +159,7 @@ export default {
         primaryKey: this.primaryKey,
         id: this.$route.params.id,
       })
+      this.$refs.form.setData(this.entity)
     }
     try {
       this.entityLoaded = true
@@ -182,12 +173,13 @@ export default {
     cancel() {
       this.view = true
       this.entity = { ...this.originalEntity }
+      this.$refs.form.setData(this.entity)
     },
     edit() {
       this.view = false
     },
     update() {
-      this.submit()
+      this.$refs.form.submit()
         .then(() => {
           this.view = true
         })

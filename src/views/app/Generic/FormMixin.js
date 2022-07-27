@@ -1,4 +1,7 @@
 export default {
+  data() {
+    return { loading: false }
+  },
   methods: {
     fillRelations(entity) {
       return Promise.all(this.formFields.filter(field => field.type === 'list').map(field => this.$api({
@@ -58,7 +61,7 @@ export default {
     submit() {
       return this.$refs.form.validate().then(success => {
         if (!success) {
-          return
+          return Promise.reject(new Error('Invalid Form'))
         }
         this.loading = true
         return this.createNewEntities()
@@ -77,7 +80,6 @@ export default {
                   }
                 } finally {
                   this.$successToast(data.data.message)
-                  this.$emit('reload-table')
                   // navigate to view page or reload table
                 }
               })
@@ -85,6 +87,7 @@ export default {
                 console.log(e)
                 const title = e.response?.data.detail
                 this.$errorToast(title)
+                return Promise.reject(e)
               })
           })
           .finally(() => this.loading = false)

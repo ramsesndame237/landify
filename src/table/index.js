@@ -521,7 +521,13 @@ export default {
         key: 'partnertype_id', hideOnIndex: true, type: 'list', list: 'partnertype', listLabel: 'partnertype_name',
       },
       {
-        key: 'address_id', hideOnIndex: true, type: 'list', list: 'address', listLabel: 'address_street', withNew: true,
+        key: 'address_id',
+        hideOnIndex: true,
+        type: 'list',
+        list: 'address',
+        listLabel: 'address_street',
+        withNew: true,
+        alwaysNew: true,
       },
       {
         key: 'contactdetails_id',
