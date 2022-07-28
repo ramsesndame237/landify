@@ -4,7 +4,8 @@ export default {
   },
   methods: {
     fillRelations(entity) {
-      return Promise.all(this.formFields.filter(field => field.type === 'list').map(field => this.$api({
+      console.log('fill relations', entity)
+      return Promise.all(this.formFields.filter(field => field.type === 'list' && entity[field.key] == null).map(field => this.$api({
         entity: field.relationEntity ?? (`${this.table}_${field.list}_rel`),
         action: 'read-rich',
         filter: {
@@ -42,7 +43,7 @@ export default {
     createNewEntities() {
       return Promise.all(this.formFields.filter(field => {
         const formField = this.$refs.fields.find(f => f.field === field)
-        console.log(formField, formField.hasNew)
+        // console.log(formField, formField.hasNew)
         return field.type === 'list' && formField.hasNew
       }).map(field => {
         const formField = this.$refs.fields.find(f => f.field === field)
@@ -74,6 +75,7 @@ export default {
               ],
             })
               .then(async ({ data }) => {
+                console.log('is relation', this.isRelation)
                 try {
                   if (!this.isRelation) {
                     await this.saveRelations(data.data.data[0][0][this.primaryKey])

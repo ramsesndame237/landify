@@ -28,13 +28,14 @@
     <p v-if="formReview" class="text-danger h4 mb-1 text-center" v-html="formReview"></p>
 
     <b-card class="">
-      <entity-form ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="false"
-                   :is-relation="false" :disabled="view" :inline="false" :cols="6"/>
+      <entity-form ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="create"
+                   :is-relation="false" :disabled="view" :inline="false" :cols="6" :initial-data="entity"
+                   :entity-id="entityId"/>
     </b-card>
 
     <p v-if="relationsReview" class="text-danger h4 mb-1 text-center" v-html="relationsReview"></p>
 
-    <b-card v-if="entityLoaded && definition.relations && definition.relations.length>0">
+    <b-card v-if="definition.relations && definition.relations.length>0">
       <b-tabs ref="tabs" pills>
         <b-tab v-for="(relation, index) in definition.relations" :key="index" :title="$t(relation.title)"
                :active="index===0" lazy>
@@ -115,7 +116,7 @@ export default {
   data() {
     return {
       view: this.$route.query.edit !== 'true',
-      entity: this.$route.params.entity || {},
+      entity: this.$route.params.entity,
       originalEntity: null,
       search: '',
       currentPage: 1,
@@ -146,34 +147,16 @@ export default {
     },
     entityId() {
       // convert to string to fix bug on relation tables
-      return `${this.$route.params.id}`
+      return this.$route.params.id
     },
     primaryKey() {
       return this.definition.primaryKey ?? this.definition.fields.find(f => f.auto).key
     },
   },
-  async created() {
-    if (!this.$route.params.entity) {
-      this.entity = await this.$store.dispatch('table/fetchSingleItem', {
-        entity: this.$route.params.table,
-        primaryKey: this.primaryKey,
-        id: this.$route.params.id,
-      })
-      this.$refs.form.setData(this.entity)
-    }
-    try {
-      this.entityLoaded = true
-      await this.fillRelations(this.entity)
-    } finally {
-      console.log('entity', this.entity)
-      this.originalEntity = { ...this.entity }
-    }
-  },
   methods: {
     cancel() {
       this.view = true
-      this.entity = { ...this.originalEntity }
-      this.$refs.form.setData(this.entity)
+      this.$refs.form.reset()
     },
     edit() {
       this.view = false

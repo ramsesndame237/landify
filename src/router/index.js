@@ -43,6 +43,20 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/app/new_business',
+      name: 'new-business',
+      component: () => import('@/views/app/SPNB/Index.vue'),
+      meta: {
+        pageTitle: 'app.page_title.s_p_n_b',
+        breadcrumb: [
+          {
+            text: 'app.page_title.s_p_n_b',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
       name: 'kanban',
       path: '/app/kanban',
       component: () => import('@/views/app/Kanban/index.vue'),

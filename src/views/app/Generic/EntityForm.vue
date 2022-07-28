@@ -5,8 +5,8 @@
                  :disabled="disabled" :table-definition="tableDefinition"/>
       <b-row v-else>
         <b-col v-for="(field,index) in formFields" :key="index" cols="12" :md="cols">
-          <field ref="fields" :disabled="disabled || (!create && field.disableOnUpdate)" :inline="inline" :entity="entity"
-                 :table-definition="tableDefinition" :field="field"/>
+          <field ref="fields" :disabled="disabled || (!create && field.disableOnUpdate)" :inline="inline"
+                 :entity="entity" :table-definition="tableDefinition" :field="field"/>
         </b-col>
       </b-row>
     </b-form>
@@ -42,11 +42,14 @@ export default {
     isRelation: Boolean,
     disabled: Boolean,
     cols: { default: 6 },
-    inline: { type: Boolean, default: false }
+    inline: { type: Boolean, default: false },
+    entityId: {default: 0},
   },
   data() {
     return {
       entity: { ...this.initialData, ...this.definition.default },
+      entityLoaded: false,
+      originalEntity: {},
     }
   },
   computed: {
@@ -60,9 +63,30 @@ export default {
       return this.definition.primaryKey ?? this.definition.fields.find(f => f.auto).key
     },
   },
+  async created() {
+    if (this.create) return
+    if (!this.initialData) {
+      const entity = await this.$store.dispatch('table/fetchSingleItem', {
+        entity: this.table,
+        primaryKey: this.primaryKey,
+        id: this.entityId,
+      })
+      this.setData(entity)
+    }
+    try {
+      this.entityLoaded = true
+      await this.fillRelations(this.entity)
+    } finally {
+      console.log('entity', this.entity)
+      this.originalEntity = { ...this.entity }
+    }
+  },
   methods: {
     setData(entity) {
       this.entity = { ...this.definition.default, ...entity }
+    },
+    reset() {
+      this.entity = { ...this.originalEntity }
     },
   },
 }
