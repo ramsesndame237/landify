@@ -407,6 +407,7 @@ export default {
           { key: 'contactdetails_email', sortable: true, hideOnForm: true },
           { key: 'contactdetails_phone', sortable: true, hideOnForm: true },
           { key: 'contactdetails_mobile', sortable: true, hideOnForm: true },
+          { key: 'city_name', sortable: true, hideOnForm: true },
         ],
       },
       {
@@ -446,7 +447,7 @@ export default {
         update: false,
         fields: [
           {
-            key: 'user_id', sortable: true, type: 'list', list: 'user', listLabel: 'user_lastname', hideOnIndex: true,
+            key: 'user_id', sortable: true, type: 'list', list: 'user', listLabel: 'user_lastname', hideOnIndex: false,
           },
           { key: 'user_lastname', sortable: true, hideOnForm: true },
           { key: 'user_firstname', sortable: true, hideOnForm: true },
@@ -456,13 +457,26 @@ export default {
       },
     ],
   },
+  bankdata: {
+    fields: [
+      { key: 'bankdata_id', auto: true },
+      { key: 'bankdata_iban' },
+      { key: 'bankdata_bic' },
+      { key: 'bankdata_bank_name' },
+    ]
+  },
   company: {
     entity: 'frontend_2_1_1',
     primaryKey: 'company_id',
     fields: [
+      { key: 'customergroup_id', hideOnIndex: true, type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
       { key: 'company_id', auto: true },
       { key: 'company_name', sortable: true },
       { key: 'customergroup_name', sortable: true, hideOnForm: true },
+      { key: 'address_id', type: 'list', list: 'address', listLabel: 'address_street', withNew: true, hideOnIndex: true },
+      { key: 'contactdetails_id', type: 'list', list: 'contactdetails', listLabel: 'contactdetails_email', withNew: true, hideOnIndex: true },
+      { key: 'companydetails_id', type: 'list', list: 'companydetails', listLabel: 'companydetails_salestaxno', withNew: true, hideOnIndex: true },
+      { key: 'bankdata_id', type: 'list', list: 'bankdata', listLabel: 'bankdata_iban', withNew: true, hideOnIndex: true },
       { key: 'city_name', sortable: true, hideOnForm: true },
       { key: 'contactdetails_phone', sortable: true, hideOnForm: true },
       { key: 'contactdetails_email', sortable: true, hideOnForm: true },
