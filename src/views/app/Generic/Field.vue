@@ -26,7 +26,7 @@
         <small class="text-danger">{{ errors[0] }}</small>
       </validation-provider>
       <div v-if="field.type==='list' && ((field.withNew && entity[field.key] === newValue) || field.alwaysNew)"
-           class="mt-3">
+           class="mt-2" :class="inline?'':'ml-3'">
         <component :is="subDefinition.createComponent" v-if="subDefinition.createComponent" :entity="subEntity"
                    :table-definition="subTableDefinition"/>
         <b-row v-else>

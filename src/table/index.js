@@ -473,7 +473,7 @@ export default {
       { key: 'company_id', auto: true },
       { key: 'company_name', sortable: true },
       { key: 'customergroup_name', sortable: true, hideOnForm: true },
-      { key: 'address_id', type: 'list', list: 'address', listLabel: 'address_street', withNew: true, hideOnIndex: true },
+      { key: 'address_id', type: 'list', list: 'address', listLabel: 'address_street', withNew: true, alwaysNew: true, hideOnIndex: true },
       { key: 'contactdetails_id', type: 'list', list: 'contactdetails', listLabel: 'contactdetails_email', withNew: true, hideOnIndex: true },
       { key: 'companydetails_id', type: 'list', list: 'companydetails', listLabel: 'companydetails_salestaxno', withNew: true, hideOnIndex: true },
       { key: 'bankdata_id', type: 'list', list: 'bankdata', listLabel: 'bankdata_iban', withNew: true, hideOnIndex: true },

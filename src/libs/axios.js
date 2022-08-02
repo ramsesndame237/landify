@@ -12,20 +12,22 @@ const axiosIns = axios.create({
 })
 
 axiosIns.interceptors.response.use(response =>
-  // Any status code that lie within the range of 2xx cause this function to trigger
-  // Do something with response data
-  response,
-error => {
-  // Any status codes that falls outside the range of 2xx cause this function to trigger
-  const { $vue } = window
-  if (error.response.status === 403) {
-    $vue.$errorToast($vue.$t('general.unauthorized'))
-  } else if (error.response.status === 503) {
-    $vue.$errorToast($vue.$t('general.server_down'))
-  }
-  // Do something with response error
-  return Promise.reject(error)
-})
+    // Any status code that lie within the range of 2xx cause this function to trigger
+    // Do something with response data
+    response,
+  error => {
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    const { $vue } = window
+    if (error.response) {
+      if (error.response.status === 403) {
+        $vue.$errorToast($vue.$t('general.unauthorized'))
+      } else if (error.response.status === 503) {
+        $vue.$errorToast($vue.$t('general.server_down'))
+      }
+    }
+    // Do something with response error
+    return Promise.reject(error)
+  })
 
 Vue.prototype.$http = axiosIns
 Vue.prototype.$api = data => axiosIns.post('/api/', { a: data })
