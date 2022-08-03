@@ -84,6 +84,7 @@ export default {
                   this.$successToast(data.data.message)
                   // navigate to view page or reload table
                 }
+                return data.data.data[0][0]
               })
               .catch(e => {
                 console.log(e)

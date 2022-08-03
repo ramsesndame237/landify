@@ -1,11 +1,11 @@
 <template>
   <validation-observer ref="form" v-slot="{ passes }">
     <b-form @submit.prevent="passes(submit)">
-      <component :is="definition.formComponent" v-if="definition.formComponent" :entity="entity"
-                 :disabled="disabled" :table-definition="tableDefinition"/>
+      <component :is="definition.formComponent" v-if="definition.formComponent" :entity="entity" :disabled="disabled"
+                 :table-definition="tableDefinition"/>
       <b-row v-else>
         <b-col v-for="(field,index) in formFields" :key="index" cols="12" :md="cols">
-          <field ref="fields" :disabled="disabled || (!create && field.disableOnUpdate)" :inline="inline"
+          <field ref="fields" :disabled="disabled || field.disabled || (!create && field.disableOnUpdate)" :inline="inline"
                  :entity="entity" :table-definition="tableDefinition" :field="field"/>
         </b-col>
       </b-row>
@@ -43,7 +43,7 @@ export default {
     disabled: Boolean,
     cols: { default: 6 },
     inline: { type: Boolean, default: false },
-    entityId: {default: 0},
+    entityId: { default: 0 },
   },
   data() {
     return {
@@ -87,6 +87,10 @@ export default {
     },
     reset() {
       this.entity = { ...this.originalEntity }
+    },
+    async loadDefinition() {
+      const { data } = await this.$api({ action: 'read-rich', entity: this.table })
+      this.$store.commit('table/setDefinition', data)
     },
   },
 }

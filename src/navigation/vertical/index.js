@@ -226,10 +226,6 @@ export default [
         route: table('invoice'),
       },
       {
-        title: 'Invoice Positions',
-        route: table('invoiceposition'),
-      },
-      {
         title: 'Inspection results',
         route: table('inspectionresult'),
       },

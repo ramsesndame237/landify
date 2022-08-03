@@ -1,6 +1,6 @@
 <template>
   <b-table :title="entity" ref="table" striped hover responsive :busy.sync="loading" :per-page="perPage"
-           :current-page="currentPage" :items="provider" :fields="allFields" :sort-by.sync="sortBy"
+           :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
            :sort-desc.sync="sortDesc" :sort-direction="sortDirection" :filter="search" select-mode="multi">
     <template #cell(__selected)="data">
       <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"/>
@@ -57,6 +57,8 @@ export default {
     perPage: Number,
     currentPage: Number,
     totalRows: Number,
+    selectable: { type: Boolean, default: true },
+    items: Array,
   },
   data() {
     return {
@@ -78,7 +80,7 @@ export default {
     },
     allFields() {
       return [
-        { key: '__selected' },
+        ...(this.selectable ? [{ key: '__selected' }] : []),
         ...this.fields.filter(f => !f.hideOnIndex).map(field => {
           const newField = { sortable: true, ...field }
           // if (newField.type === 'list') {

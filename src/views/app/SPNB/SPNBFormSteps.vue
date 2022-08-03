@@ -1,45 +1,8 @@
 <template>
   <div class="mb-2">
-    <b-row v-if="currentStep === 1" class="">
-      <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
-        {{ $t('app.content.create_customer_group') }}
-      </b-col>
-      <b-col cols="12" md="6">
-        <field :field="{key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name'}"
-               :entity="{}"/>
-      </b-col>
 
-      <b-col cols="12" md="6">
-        <field :field="{key: 'customergroup_name'}" :entity="{}"/>
-      </b-col>
-    </b-row>
-    <b-row v-if="currentStep === 2" class="">
-      <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
-        {{ $t('app.content.create_customer') }}
-      </b-col>
-      <b-col cols="12" md="6">
-        <entity-form table="company" :definition="Table.company" table-definition-key="company" create
-                     :initial-data="{}" cols="12"/>
-      </b-col>
-    </b-row>
-    <b-row v-if="currentStep == 3" class="">
-      <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
-        {{ $t('app.content.create_location') }}
-      </b-col>
-      <b-col cols="12" md="6" class="p-0">
-        <entity-form table="location" :definition="Table.location" table-definition-key="location" create
-                     :initial-data="{}" cols="12"/>
-      </b-col>
-      <b-col cols="12" md="6" class="p-0">
-        <Databases ref="datatable" :filter="filter" link="user-edit" :current-page="1" :page-options="[3, 5, 10]"
-                   :items="items" :fields="fields"/>
-        <div class="d-flex justify-content-center">
-          <b-button size="md" class="d-flex align-items-center mt-2" variant="info">
-            {{ $t('app.btn.save_add_location') }}
-          </b-button>
-        </div>
-      </b-col>
-    </b-row>
+
+
     <b-row v-if="currentStep == 4" class="">
       <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
         {{ $t('app.content.create_area') }}

@@ -64,17 +64,14 @@
           </b-form>
         </b-card>
         <b-card id="" class="mt-12">
-          <b-col cols="12">
-            <b-row>
-              <div class="col-12">
-                <SPNBFormSteps :current-step="current_step"/>
-              </div>
-              <div v-if="steps_progress == 100"
-                   class=" d-flex pt-5 pb-5 mb-2 justify-content-center align-items-center col-12">
-                <img src="@/assets/images/icons/smile.png" alt="">
-              </div>
-            </b-row>
-          </b-col>
+          <step1 v-if="current_step===1" ref="step1" :context="context"/>
+          <step2 v-if="current_step===2" ref="step2" :context="context"/>
+          <step3 v-if="current_step===3" ref="step2" :context="context"/>
+          <SPNBFormSteps :current-step="current_step"/>
+          <div v-if="steps_progress == 100"
+               class=" d-flex pt-5 pb-5 mb-2 justify-content-center align-items-center col-12">
+            <img src="@/assets/images/icons/smile.png" alt="">
+          </div>
           <b-col cols="12" class="d-flex align-items-center justify-content-between">
             <div>
               <small>
@@ -109,12 +106,16 @@ import {
   BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton, BFormSelect, BModal,
 } from 'bootstrap-vue'
 
-import SPNBFormSteps from '@/layouts/components/forms/SPNBFormSteps.vue'
-import Field from "@/views/app/Generic/Field";
+import SPNBFormSteps from '@/views/app/SPNB/SPNBFormSteps.vue'
+import Field from '@/views/app/Generic/Field.vue'
+import Step1 from '@/views/app/SPNB/Step1'
+import Step2 from '@/views/app/SPNB/Step2'
+import Step3 from '@/views/app/SPNB/Step3'
 
 const Databases = () => import('@/layouts/components/DataTables.vue')
 export default {
   components: {
+    Step1,
     Field,
     BCard,
     BTab,
@@ -132,6 +133,8 @@ export default {
     BFormRadio,
     BInputGroup,
     SPNBFormSteps,
+    Step2,
+    Step3,
   },
   data() {
     return {
@@ -208,6 +211,7 @@ export default {
           sub_step: true,
         },
       ],
+      context: {},
     }
   },
 
@@ -229,19 +233,21 @@ export default {
     this.ticket = response.data.data.data[0]
   },
   methods: {
-    next_step() {
-      if (this.validate_current_form()) {
-        this.steps_tabs[this.current_step - 1].completed = true
-        this.current_step++
-        this.evaluate_completed_steps()
+    async next_step() {
+      if (this.current_step === 1) {
+        this.context.customergroup_id = await this.$refs.step1.validate()
+      } else if (this.current_step === 2) {
+        this.context.customer = await this.$refs.step2.validate()
       }
+      this.goToStep(this.current_step + 1)
+    },
+    goToStep(step) {
+      this.current_step = step
+      this.steps_tabs[this.current_step].completed = false
+      this.evaluate_completed_steps()
     },
     prev_step() {
-      if (this.current_step != 1) {
-        this.current_step--
-        this.steps_tabs[this.current_step].completed = false
-        this.evaluate_completed_steps()
-      }
+      this.goToStep(this.current_step - 1)
     },
     skip_step() {
       if (this.current_step != this.max_steps) {
