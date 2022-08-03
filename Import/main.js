@@ -465,16 +465,10 @@ workbook.SheetNames.forEach(async name => {
         data: [contactdetailsEntity],
       })
 
-      const companydetailsEntity = {
-        companydetails_website: companydetails_website,
-        companydetails_salestaxno: companydetails_salestaxno,
-        companydetails_commercialregisterno: companydetails_commercialregisterno
-      }
-
       const companydetails = await api({
         entity: 'companydetails',
-        action: 'create',
-        data: [companydetailsEntity],
+        action: 'read-rich',
+        filter: { 'companydetails_commercialregisterno': companydetails_commercialregisterno },
       })
 
       const partnergroup = await api({
@@ -537,7 +531,7 @@ workbook.SheetNames.forEach(async name => {
 
       const partnercompany_companydetails_rel = {
         partnercompany_id: (await partnercompanyResponse).data.data.data[0][0].partnercompany_id,
-        companydetails_id: companydetails.data.data.data[0][0].companydetails_id
+        companydetails_id: companydetails.data.data.data[0].companydetails_id
       }
 
       const partnercompany_companydetails_rel_response = await api({
