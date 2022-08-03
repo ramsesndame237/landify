@@ -17,7 +17,6 @@ const axiosIns = axios.create({
 
 const api = data => axiosIns.post('/api/', { a: data })
 
-
 async function importPartner(data) {
   // create partner company
   const entity = {
@@ -34,7 +33,6 @@ async function importPartner(data) {
   const id = response.data.data.data[0][0]['partnercompany_id']
 
   // create address, partnercompany_address_rel
-
 
   // create contactdetail, relation,
 

@@ -469,14 +469,49 @@ export default {
     entity: 'frontend_2_1_1',
     primaryKey: 'company_id',
     fields: [
-      { key: 'customergroup_id', hideOnIndex: true, type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
+      {
+        key: 'customergroup_id',
+        hideOnIndex: true,
+        type: 'list',
+        list: 'customergroup',
+        listLabel: 'customergroup_name'
+      },
       { key: 'company_id', auto: true },
       { key: 'company_name', sortable: true },
       { key: 'customergroup_name', sortable: true, hideOnForm: true },
-      { key: 'address_id', type: 'list', list: 'address', listLabel: 'address_street', withNew: true, alwaysNew: true, hideOnIndex: true },
-      { key: 'contactdetails_id', type: 'list', list: 'contactdetails', listLabel: 'contactdetails_email', withNew: true, hideOnIndex: true },
-      { key: 'companydetails_id', type: 'list', list: 'companydetails', listLabel: 'companydetails_salestaxno', withNew: true, hideOnIndex: true },
-      { key: 'bankdata_id', type: 'list', list: 'bankdata', listLabel: 'bankdata_iban', withNew: true, hideOnIndex: true },
+      {
+        key: 'address_id',
+        type: 'list',
+        list: 'address',
+        listLabel: 'address_street',
+        withNew: true,
+        alwaysNew: true,
+        hideOnIndex: true
+      },
+      {
+        key: 'contactdetails_id',
+        type: 'list',
+        list: 'contactdetails',
+        listLabel: 'contactdetails_email',
+        withNew: true,
+        hideOnIndex: true
+      },
+      {
+        key: 'companydetails_id',
+        type: 'list',
+        list: 'companydetails',
+        listLabel: 'companydetails_salestaxno',
+        withNew: true,
+        hideOnIndex: true
+      },
+      {
+        key: 'bankdata_id',
+        type: 'list',
+        list: 'bankdata',
+        listLabel: 'bankdata_iban',
+        withNew: true,
+        hideOnIndex: true
+      },
       { key: 'city_name', sortable: true, hideOnForm: true },
       { key: 'contactdetails_phone', sortable: true, hideOnForm: true },
       { key: 'contactdetails_email', sortable: true, hideOnForm: true },
@@ -788,6 +823,7 @@ export default {
   // endregion
   // region Work Package 3
   pos: {
+    entity: 'fontend_3_1_1',
     primaryKey: 'pos_id',
     fields: [
       { key: 'pos_id', auto: true },
@@ -815,7 +851,7 @@ export default {
         update: false,
         create: false,
         delete: false,
-        entity: 'pos_location_grp',
+        entity: 'frontend_3_1_3_x_right',
         fields: [
           { key: 'location_name' },
           { key: 'partnercompany_name' },
@@ -829,7 +865,7 @@ export default {
       {
         title: 'Areas',
         primaryKey: 'area_id',
-        entity: 'area_pos_grp',
+        entity: 'frontend_3_1_3_1',
         entityForm: 'area_pos_rel',
         update: false,
         fields: [
@@ -862,7 +898,7 @@ export default {
       {
         title: 'Contract',
         primaryKey: 'contract_id',
-        entity: 'pos_contract_grp',
+        entity: 'frontend_3_1_3_2',
         entityForm: 'contract_area_unit_usagetype_rel',
         entityView: 'contract',
         fields: [
@@ -916,7 +952,7 @@ export default {
       {
         title: 'Tag',
         primaryKey: 'tag_id',
-        entity: 'pos_tag_grp',
+        entity: 'frontend_3_1_3_3',
         entityForm: 'pos_tag_rel',
         entityView: 'tag',
         update: false,
@@ -937,7 +973,7 @@ export default {
       {
         title: 'Group Tickets',
         primaryKey: 'groupticket_id',
-        entity: 'pos_groupticket_grp',
+        entity: 'frontend_3_1_3_4',
         entityForm: 'pos_groupticket_rel',
         fields: [
           {
@@ -960,7 +996,7 @@ export default {
       },
       {
         title: 'Contradiction Packages',
-        entity: 'pos_contradictionpackage_grp',
+        entity: 'frontend_3_1_3_5',
         entityForm: 'pos_contracdictionpackage_rel',
         fields: [
           {
@@ -980,7 +1016,7 @@ export default {
         title: 'Invoices',
         entityView: 'invoice',
         update: false,
-        entity: 'pos_invoice_grp',
+        entity: 'frontend_3_1_3_6',
         fields: [
           { key: 'invoice_id', auto: true },
           { key: 'invoice_date', hideOnForm: true },
@@ -1496,6 +1532,9 @@ export default {
         ],
       },
     ],
+    default: {
+      recurringpayment_condition_comment: '',
+    },
   },
 
   tag: {
@@ -1618,6 +1657,16 @@ export default {
         hideOnIndex: true,
       },
 
+    ],
+    filter: [
+      { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
+      { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name' },
+      { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name' },
+      { key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name' },
+      { key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name' },
+      { key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name' },
+      { key: 'invoice_contract_year', type: 'number' },
+      { key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_name' },
     ],
   },
   inspectionresult: {

@@ -94,6 +94,7 @@ export default {
   },
   methods: {
     getValidationRules(field) {
+      if (!this.tableDefinition) return {}
       return {
         required: true,
         email: this.field.type === 'email',

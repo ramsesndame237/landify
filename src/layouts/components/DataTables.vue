@@ -66,6 +66,7 @@ export default {
       sortDirection: 'asc',
       selected: false,
       currentItems: [],
+      filterData: {},
     }
   },
   computed: {
@@ -106,7 +107,7 @@ export default {
       const {
         currentPage, perPage, filter, sortBy, sortDesc,
       } = ctx
-      const filterData = {}
+      const filterData = { ...this.filterData }
       if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
       return this.$api({
         action: 'read-rich',
@@ -191,7 +192,11 @@ export default {
     },
     reload() {
       this.$refs.table.refresh()
-    }
+    },
+    filter(data) {
+      this.filterData = { ...data }
+      this.reload()
+    },
   },
 }
 </script>
