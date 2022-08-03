@@ -474,7 +474,7 @@ export default {
         hideOnIndex: true,
         type: 'list',
         list: 'customergroup',
-        listLabel: 'customergroup_name'
+        listLabel: 'customergroup_name',
       },
       { key: 'company_id', auto: true },
       { key: 'company_name', sortable: true },
@@ -486,7 +486,7 @@ export default {
         listLabel: 'address_street',
         withNew: true,
         alwaysNew: true,
-        hideOnIndex: true
+        hideOnIndex: true,
       },
       {
         key: 'contactdetails_id',
@@ -494,7 +494,7 @@ export default {
         list: 'contactdetails',
         listLabel: 'contactdetails_email',
         withNew: true,
-        hideOnIndex: true
+        hideOnIndex: true,
       },
       {
         key: 'companydetails_id',
@@ -502,7 +502,7 @@ export default {
         list: 'companydetails',
         listLabel: 'companydetails_salestaxno',
         withNew: true,
-        hideOnIndex: true
+        hideOnIndex: true,
       },
       {
         key: 'bankdata_id',
@@ -510,7 +510,7 @@ export default {
         list: 'bankdata',
         listLabel: 'bankdata_iban',
         withNew: true,
-        hideOnIndex: true
+        hideOnIndex: true,
       },
       { key: 'city_name', sortable: true, hideOnForm: true },
       { key: 'contactdetails_phone', sortable: true, hideOnForm: true },
@@ -519,7 +519,7 @@ export default {
         key: 'No of contactpersons', sortable: true, hideOnForm: true,
       },
     ],
-    formComponent: () => import('@/views/app/FormComponent/CompanyForm'),
+    // formComponent: () => import('@/views/app/FormComponent/CompanyForm'),
     relations: [],
   },
   contactperson: {
@@ -1682,6 +1682,17 @@ export default {
       { key: 'rating_name' },
       { key: 'resultcategorization_name' },
       { key: 'invoicepositon_count', hideOnForm: true },
+    ],
+    filter: [
+      { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
+      { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name' },
+      { key: 'user_id', type: 'list', list: 'user', listLabel: 'user_email' },
+      { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name' },
+      { key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name' },
+      { key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name' },
+      { key: 'invoice_contract_year', type: 'number' },
+      { key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name' },
+      { key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_name' },
     ],
   },
   costtype: {

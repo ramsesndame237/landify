@@ -119,7 +119,7 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_2.children.s_p_n_b',
-        route: 'new-business',
+        route: {name: 'new-business', params: {id: 1}},
       },
     ],
   },

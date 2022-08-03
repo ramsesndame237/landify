@@ -43,7 +43,7 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/app/new_business',
+      path: '/app/ticket/:id/customer',
       name: 'new-business',
       component: () => import('@/views/app/SPNB/Index.vue'),
       meta: {

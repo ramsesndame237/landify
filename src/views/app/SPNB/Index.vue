@@ -49,27 +49,16 @@
           <b-form>
             <b-row>
               <b-col cols="12" md="6">
-                <b-form-group :label="$t('app.form.label.ticket_id')" label-for="ticket_id">
-                  <b-form-input id="ticket_id" :placeholder="$t('app.form.placeholder.default')"/>
-                </b-form-group>
+                <field disabled :field="{key: 'ticket_id'}" :entity="ticket"/>
               </b-col>
-
               <b-col cols="12" md="6">
-                <b-form-group :label="$t('app.form.label.document_id')" label-for="document_id">
-                  <b-form-input id="document_id" :placeholder="$t('app.form.placeholder.default')"/>
-                </b-form-group>
+                <field disabled :field="{key: 'document_id'}" :entity="ticket"/>
               </b-col>
-
               <b-col cols="12" md="6">
-                <b-form-group :label="$t('app.form.label.description')" label-for="ticket_description">
-                  <b-form-input id="ticket_description" :placeholder="$t('app.form.placeholder.default')"/>
-                </b-form-group>
+                <field disabled :field="{key: 'ticket_description'}" :entity="ticket"/>
               </b-col>
-
               <b-col cols="12" md="6">
-                <b-form-group :label="$t('app.form.label.description')" label-for="document_description">
-                  <b-form-input id="document_description" :placeholder="$t('app.form.placeholder.default')"/>
-                </b-form-group>
+                <field disabled :field="{key: 'document_description'}" :entity="ticket"/>
               </b-col>
             </b-row>
           </b-form>
@@ -121,10 +110,12 @@ import {
 } from 'bootstrap-vue'
 
 import SPNBFormSteps from '@/layouts/components/forms/SPNBFormSteps.vue'
+import Field from "@/views/app/Generic/Field";
 
 const Databases = () => import('@/layouts/components/DataTables.vue')
 export default {
   components: {
+    Field,
     BCard,
     BTab,
     BTabs,
@@ -144,7 +135,7 @@ export default {
   },
   data() {
     return {
-
+      ticket: {},
       user: [
         {
           id: 1,
@@ -226,9 +217,16 @@ export default {
     },
   },
 
-  mounted() {
+  async mounted() {
     this.max_steps = this.steps_tabs.length // on défini la taille max de tabs
     this.steps_progress = Math.floor((this.completed_step / this.max_steps) * 100)
+
+    const response = await this.$api({
+      entity: 'ticket',
+      action: 'read-rich',
+      filter: { ticket_id: this.$route.params.id },
+    })
+    this.ticket = response.data.data.data[0]
   },
   methods: {
     next_step() {

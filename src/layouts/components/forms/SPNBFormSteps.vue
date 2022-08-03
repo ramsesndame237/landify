@@ -3,18 +3,14 @@
     <b-row v-if="currentStep === 1" class="">
       <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
         {{ $t('app.content.create_customer_group') }}
-
       </b-col>
       <b-col cols="12" md="6">
-        <b-form-group :label="$t('app.form.label.customer_group_id')" label-for="customer_group_id">
-          <b-form-select id="customer_group_id" :placeholder="$t('app.form.placeholder.default')"/>
-        </b-form-group>
+        <field :field="{key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name'}"
+               :entity="{}"/>
       </b-col>
 
       <b-col cols="12" md="6">
-        <b-form-group :label="$t('app.form.label.customer_group_name')" label-for="customer_group_name">
-          <b-form-input id="customer_group_name" :placeholder="$t('app.form.placeholder.default')"/>
-        </b-form-group>
+        <field :field="{key: 'customergroup_name'}" :entity="{}"/>
       </b-col>
     </b-row>
     <b-row v-if="currentStep === 2" class="">
@@ -49,8 +45,8 @@
         {{ $t('app.content.create_area') }}
       </b-col>
       <b-col cols="12" md="6" class="p-0">
-        <entity-form table="area" :definition="Table.area" table-definition-key="area" create
-                     :initial-data="{}" cols="12"/>
+        <entity-form table="area" :definition="Table.area" table-definition-key="area" create :initial-data="{}"
+                     cols="12"/>
       </b-col>
       <b-col cols="12" md="6" class="p-0">
         <Databases ref="datatable" :filter="filter" link="user-edit" :current-page="1" :page-options="[3, 5, 10]"
@@ -67,8 +63,8 @@
         {{ $t('app.content.create_pos') }}
       </b-col>
       <b-col cols="12" md="6" class="p-0">
-        <entity-form table="pos" :definition="Table.pos" table-definition-key="pos" create
-                     :initial-data="{}" cols="12"/>
+        <entity-form table="pos" :definition="Table.pos" table-definition-key="pos" create :initial-data="{}"
+                     cols="12"/>
       </b-col>
       <b-col cols="12" md="6" class="p-0">
         <Databases ref="datatable" :filter="filter" link="user-edit" :current-page="1" :page-options="[3, 5, 10]"
@@ -495,12 +491,14 @@ import {
 } from 'bootstrap-vue'
 import EntityForm from "@/views/app/Generic/EntityForm";
 import Table from '@/table'
+import Field from "@/views/app/Generic/Field";
 
 const Databases = () => import('@/layouts/components/DataTables.vue')
 
 export default {
   name: 'SPNBFormSteps',
   components: {
+    Field,
     EntityForm,
     Databases,
     BCard,
