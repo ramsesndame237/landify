@@ -113,8 +113,8 @@ export default {
       if (this.field.alwaysNew) {
         const selected = this.list.find(e => e[this.field.key] === this.entity[this.field.key])
         if (selected) {
-          Object.keys(selected).forEach(key => {
-            this.$set(this.subEntity, key, selected[key])
+          this.subFormFields.forEach(field => {
+            this.$set(this.subEntity, field.key, selected[field.key])
           })
         }
       }
