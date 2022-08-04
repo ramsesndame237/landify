@@ -119,7 +119,7 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_2.children.s_p_n_b',
-        route: 'new-business',
+        route: {name: 'new-business', params: {id: 1}},
       },
     ],
   },
@@ -157,7 +157,7 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_3.children.special_right',
-        route: 'special-right-list',
+        route: table('specialright'),
       },
       {
         title: 'app.sidebar.work_pack_3.children.payment',
@@ -224,10 +224,6 @@ export default [
       {
         title: 'Invoices',
         route: table('invoice'),
-      },
-      {
-        title: 'Invoice Positions',
-        route: table('invoiceposition'),
       },
       {
         title: 'Inspection results',

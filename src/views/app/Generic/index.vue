@@ -3,7 +3,9 @@
     <b-card body-class="p-0">
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage"
                         :on-new-element="()=> $refs.modal.openModal(true, {})" :total-rows="totalRows"
-                        :on-delete-elements="()=> $refs.table.deleteSelected()"/>
+                        :with-filter="definition.filter && definition.filter.length > 0"
+                        :on-delete-elements="()=> $refs.table.deleteSelected()" @filter="$refs.filter.openModal()"/>
+      <generic-filter ref="filter" :table="table" :definition="definition" @filter="filter"/>
     </b-card>
 
     <p v-if="currentReview" class="text-danger h4 mb-1 text-center" v-html="currentReview"></p>
@@ -28,11 +30,13 @@ import TablePagination from '@/layouts/components/TablePagination.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
 import Tables from '../../../table'
 import Reviews from '../../../table/review.js'
+import GenericFilter from "@/views/app/Generic/Filter";
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
 
 export default {
   components: {
+    GenericFilter,
     GenericModal,
     TablePagination,
     Datatable,
@@ -65,14 +69,15 @@ export default {
       this.totalRows = 0
     },
   },
-  methods: {},
-  beforeRouteEnter(to, from, next) {
-    to.meta.pageTitle = `List of ${to.params.table}`
-    next()
-  },
-  beforeRouteUpdate(to, from, next) {
-    to.meta.pageTitle = `List of ${to.params.table}`
-    next()
+  methods: {
+    filter(data) {
+      console.log('on filter', data);
+      this.currentPage = 1
+      this.$refs.table.filter(data)
+    },
+    reset() {
+      this.filter({})
+    },
   },
 }
 </script>

@@ -17,13 +17,16 @@
 
     <div class="d-flex align-items-center">
       <div class="mr-1 d-flex">
-        <b-button v-if="onNewElement!=null" @click="onNewElement" size="sm" variant="info" class="mr-1 d-flex">
-          <img src="@/assets/images/pages/plusIcons.svg" alt="">
-          new
+        <b-button v-if="withFilter" @click="$emit('filter')" size="sm" variant="primary" class="mr-1 btn-icon">
+          <feather-icon icon="FilterIcon" />
+        </b-button>
+        <b-button v-if="onNewElement!=null" @click="onNewElement" size="sm" variant="info" class="mr-1">
+          <feather-icon icon="PlusCircleIcon" class="mr-50"/>
+          <span class="align-middle">New</span>
         </b-button>
         <b-button v-if="onDeleteElements!=null" @click="onDeleteElements" size="sm" class="d-flex" variant="primary">
-          <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-          Delete
+          <feather-icon icon="Trash2Icon" class="mr-50"/>
+          <span class="align-middle">Delete</span>
         </b-button>
       </div>
 
@@ -57,6 +60,7 @@ export default {
   props: {
     onNewElement: Function,
     onDeleteElements: Function,
+    withFilter: Boolean,
     pageOptions: {
       type: Array,
       default() {

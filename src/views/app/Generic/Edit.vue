@@ -28,29 +28,22 @@
     <p v-if="formReview" class="text-danger h4 mb-1 text-center" v-html="formReview"></p>
 
     <b-card class="">
-      <validation-observer ref="form" v-slot="{ passes }">
-        <b-form autocomplete="off" @submit.prevent="passes(update)">
-          <component :is="definition.formComponent" v-if="definition.formComponent" :disabled="view" :entity="entity"
-                     :table-definition="tableDefinition"/>
-          <b-row v-else>
-            <b-col v-for="(field,index) in formFields" :key="index" cols="12" md="6">
-              <field :disabled="view" :entity="entity" :table-definition="tableDefinition" :field="field"/>
-            </b-col>
-          </b-row>
-        </b-form>
-      </validation-observer>
+      <entity-form ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="create"
+                   :is-relation="false" :disabled="view" :inline="false" :cols="6" :initial-data="entity"
+                   :entity-id="entityId"/>
     </b-card>
 
     <p v-if="relationsReview" class="text-danger h4 mb-1 text-center" v-html="relationsReview"></p>
 
-    <b-card v-if="entityLoaded && definition.relations && definition.relations.length>0">
+    <b-card v-if="definition.relations && definition.relations.length>0">
       <b-tabs ref="tabs" pills>
         <b-tab v-for="(relation, index) in definition.relations" :key="index" :title="$t(relation.title)"
                :active="index===0" lazy>
           <data-tables :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
                        :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
                        :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
-                       :fields="relation.fields" :on-edit-element="editElement" :with-edit="relation.update!==false"/>
+                       :entity-view="relation.entityView" :with-view="relation.view!==false" :fields="relation.fields"
+                       :on-edit-element="editElement" :with-edit="relation.update!==false"/>
           <generic-modal title="Test" :table="relation.entityForm" :definition="relation" is-relation
                          :table-definition-key="relation.entity" @reload-table="reloadRelatedTable"/>
         </b-tab>
@@ -99,31 +92,38 @@ import Reviews from '@/table/review'
 import DataTables from '@/layouts/components/DataTables'
 import GenericModal from '@/views/app/Generic/modal'
 import Field from './Field'
+import FormMixin from "@/views/app/Generic/FormMixin";
+import EntityForm from "@/views/app/Generic/EntityForm";
 
 export default {
   components: {
+    EntityForm,
     GenericModal,
     DataTables,
     BCard,
     BTab,
     BTabs,
     BRow,
-    BCol, BDropdown, BDropdownForm, BInputGroup, BInputGroupPrepend,
-    BForm, BFormGroup,
+    BCol,
+    BDropdown,
+    BDropdownForm,
+    BInputGroup,
+    BInputGroupPrepend,
+    BFormGroup,
     BFormInput,
     BButton,
-    Field,
   },
   data() {
     return {
       view: this.$route.query.edit !== 'true',
-      entity: this.$route.params.entity || {},
+      entity: this.$route.params.entity,
       originalEntity: null,
       search: '',
       currentPage: 1,
       perPage: Number.MAX_SAFE_INTEGER,
       totalRows: 0,
       entityLoaded: false,
+      create: false,
     }
   },
   computed: {
@@ -147,74 +147,25 @@ export default {
     },
     entityId() {
       // convert to string to fix bug on relation tables
-      return `${this.$route.params.id}`
+      return ''+this.$route.params.id
     },
     primaryKey() {
       return this.definition.primaryKey ?? this.definition.fields.find(f => f.auto).key
     },
   },
-  async created() {
-    if (!this.$route.params.entity) {
-      this.entity = await this.$store.dispatch('table/fetchSingleItem', {
-        entity: this.$route.params.table,
-        primaryKey: this.primaryKey,
-        id: this.$route.params.id,
-      })
-    }
-    try {
-      this.entityLoaded = true
-      await this.fillRelations(this.entity)
-    } finally {
-      console.log('entity', this.entity)
-      this.originalEntity = { ...this.entity }
-    }
-  },
   methods: {
-    fillRelations(entity) {
-      return Promise.all(this.formFields.filter(field => field.type === 'list').map(field => this.$api({
-        entity: field.relationEntity ?? (`${this.table}_${field.list}_rel`),
-        action: 'read-rich',
-        filter: {
-          [this.primaryKey]: `${this.entity[this.primaryKey]}`,
-        },
-      })
-        .then(({ data }) => {
-          this.$set(entity, field.key, data.data.data[0][field.key])
-          if (field.with) {
-            (typeof field.with === 'string' ? [field.with] : field.with).forEach(val => {
-              this.$set(entity, val, data.data.data[0][val])
-            })
-          }
-        })))
-    },
-    update() {
-      this.$refs.form.validate().then(success => {
-        if (!success) {
-          return
-        }
-        this.$api({
-          entity: this.table,
-          action: 'update',
-          data: [
-            this.entity,
-          ],
-        })
-          .then(data => {
-            this.$successToast(data.data.data.message)
-            this.view = true
-            // show success message
-          })
-          .catch(e => {
-            this.$errorToast()
-          })
-      })
-    },
     cancel() {
       this.view = true
-      this.entity = { ...this.originalEntity }
+      this.$refs.form.reset()
     },
     edit() {
       this.view = false
+    },
+    update() {
+      this.$refs.form.submit()
+        .then(() => {
+          this.view = true
+        })
     },
     deleteSelected() {
       const { tabs } = this.$refs
@@ -233,21 +184,7 @@ export default {
       tabs.tabs[tabs.currentTab].$children[0].reload()
     },
   },
-  beforeRouteEnter(to, from, next) {
-    to.meta.pageTitle = `List of ${to.params.table}`
-    to.meta.breadcrumb = [
-      {
-        text: to.params.table,
-        to: { name: 'table', params: { table: to.params.table } },
-        active: false,
-      },
-      {
-        text: 'Details',
-        active: true,
-      },
-    ]
-    next()
-  },
+
 }
 </script>
 

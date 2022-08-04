@@ -11,24 +11,27 @@
         <div v-else-if="field.type==='list'" :class="field.withNew ? 'd-flex': ''">
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
                     :placeholder="field.key" :options="list" transition="" :label="field.listLabel" class="w-100"
-                    :reduce="i => i[field.key]"/>
-          <b-button class="ml-2" v-if="field.withNew && !disabled" variant="info" @click="showNewForm">New</b-button>
+                    :loading="loading" :reduce="i => i[field.key]" @input="onChange"/>
+          <b-button class="ml-2" v-if="field.withNew && !field.alwaysNew && !disabled" variant="info"
+                    @click="showNewForm">New
+          </b-button>
         </div>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :state="errors.length > 0 ? false:null" :placeholder="field.key" class="form-control"/>
         <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
-                         :state="errors.length > 0 ? false:null" :placeholder="field.key" value="1"
-                         unchecked-value="0" style="margin-top: 5px"/>
+                         :state="errors.length > 0 ? false:null" :placeholder="field.key" value="1" unchecked-value="0"
+                         style="margin-top: 5px"/>
         <b-form-input v-else v-model="entity[field.key]" :type="field.type||'text'" :disabled="disabled"
                       :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
         <small class="text-danger">{{ errors[0] }}</small>
       </validation-provider>
-      <div v-if="field.type==='list' && field.withNew && entity[field.key] === newValue" class="mt-3">
+      <div v-if="field.type==='list' && ((field.withNew && entity[field.key] === newValue) || field.alwaysNew)"
+           class="mt-2" :class="inline?'':'ml-3'">
         <component :is="subDefinition.createComponent" v-if="subDefinition.createComponent" :entity="subEntity"
                    :table-definition="subTableDefinition"/>
         <b-row v-else>
           <b-col v-for="(field,index) in subFormFields" :key="index" cols="12">
-            <field :inline="inline" :entity="subEntity" :table-definition="tableDefinition" :field="field"/>
+            <field :disabled="disabled" :inline="inline" :entity="subEntity" :table-definition="tableDefinition" :field="field"/>
           </b-col>
         </b-row>
       </div>
@@ -62,6 +65,7 @@ export default {
       list: this.$store.state.table.listCache[this.field.list] || [],
       subEntity: {},
       newValue: 'Create New Element',
+      loading: false,
     }
   },
   computed: {
@@ -78,16 +82,19 @@ export default {
       return this.subDefinition.primaryKey ?? this.subDefinition.fields.find(f => f.auto).key
     },
     hasNew() {
-      return this.newValue === this.entity[this.field.key]
+      return this.field.alwaysNew || this.newValue === this.entity[this.field.key]
     },
   },
   async created() {
     if (this.field.type === 'list') {
+      if (this.list.length === 0) this.loading = true
       this.list = await this.$store.dispatch('table/fetchList', this.field.list)
+      this.loading = false
     }
   },
   methods: {
     getValidationRules(field) {
+      if (!this.tableDefinition) return {}
       return {
         required: true,
         email: this.field.type === 'email',
@@ -100,6 +107,17 @@ export default {
     showNewForm() {
       console.log('click on new')
       this.$set(this.entity, this.field.key, this.newValue)
+    },
+    onChange() {
+      console.log('change')
+      if (this.field.alwaysNew) {
+        const selected = this.list.find(e => e[this.field.key] === this.entity[this.field.key])
+        if (selected) {
+          this.subFormFields.forEach(field => {
+            this.$set(this.subEntity, field.key, selected[field.key])
+          })
+        }
+      }
     },
   },
 }

@@ -1,25 +1,13 @@
 <template>
-  <li
-    v-if="canViewVerticalNavMenuLink(item)"
-    class="nav-item"
-    :class="{
+  <li v-if="canViewVerticalNavMenuLink(item)" class="nav-item" :class="{
       'active': isActive,
       'disabled': item.disabled
-    }"
-  >
-    <b-link
-      v-bind="linkProps"
-      class="d-flex align-items-center"
-    >
-      <feather-icon :icon="item.icon || 'CircleIcon'" />
+    }">
+    <b-link v-bind="linkProps" class="d-flex align-items-center">
+      <feather-icon :icon="item.icon || 'CircleIcon'"/>
       <span class="menu-title text-truncate">{{ t(item.title) }}</span>
-      <b-badge
-        v-if="item.tag"
-        pill
-        :variant="item.tagVariant || 'primary'"
-        class="mr-1 ml-auto"
-      >
-        {{ item.tag }}
+      <b-badge v-if="item.tag || hasErrors" pill :variant="item.tagVariant || 'primary'" class="mr-1 ml-auto">
+        {{ item.tag || 'x' }}
       </b-badge>
     </b-link>
   </li>
@@ -31,6 +19,7 @@ import { BLink, BBadge } from 'bootstrap-vue'
 import { useUtils as useI18nUtils } from '@core/libs/i18n'
 import useVerticalNavMenuLink from './useVerticalNavMenuLink'
 import mixinVerticalNavMenuLink from './mixinVerticalNavMenuLink'
+import Review from '@/table/review'
 
 export default {
   components: {
@@ -42,6 +31,12 @@ export default {
     item: {
       type: Object,
       required: true,
+    },
+  },
+  computed: {
+    hasErrors() {
+      const table = this.item.route.params?.table
+      return table && ((Review[table] || Review[table + '_relations'] || Review[table + '_form']) != null)
     },
   },
   setup(props) {
