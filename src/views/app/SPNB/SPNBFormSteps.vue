@@ -3,24 +3,24 @@
 
 
 
-    <b-row v-if="currentStep == 4" class="">
-      <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
-        {{ $t('app.content.create_area') }}
-      </b-col>
-      <b-col cols="12" md="6" class="p-0">
-        <entity-form table="area" :definition="Table.area" table-definition-key="area" create :initial-data="{}"
-                     cols="12"/>
-      </b-col>
-      <b-col cols="12" md="6" class="p-0">
-        <Databases ref="datatable" :filter="filter" link="user-edit" :current-page="1" :page-options="[3, 5, 10]"
-                   :items="items" :fields="fields"/>
-        <div class="d-flex justify-content-center">
-          <b-button size="md" class="d-flex align-items-center mt-2" variant="info">
-            {{ $t('app.btn.save_add_location') }}
-          </b-button>
-        </div>
-      </b-col>
-    </b-row>
+<!--    <b-row v-if="currentStep == 4" class="">-->
+<!--      <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">-->
+<!--        {{ $t('app.content.create_area') }}-->
+<!--      </b-col>-->
+<!--      <b-col cols="12" md="6" class="p-0">-->
+<!--        <entity-form table="area" :definition="Table.area" table-definition-key="area" create :initial-data="{}"-->
+<!--                     cols="12"/>-->
+<!--      </b-col>-->
+<!--      <b-col cols="12" md="6" class="p-0">-->
+<!--        <Databases ref="datatable" :filter="filter" link="user-edit" :current-page="1" :page-options="[3, 5, 10]"-->
+<!--                   :items="items" :fields="fields"/>-->
+<!--        <div class="d-flex justify-content-center">-->
+<!--          <b-button size="md" class="d-flex align-items-center mt-2" variant="info">-->
+<!--            {{ $t('app.btn.save_add_location') }}-->
+<!--          </b-button>-->
+<!--        </div>-->
+<!--      </b-col>-->
+<!--    </b-row>-->
     <b-row v-if="currentStep == 5" class="">
       <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
         {{ $t('app.content.create_pos') }}
@@ -555,8 +555,8 @@ export default {
         { key: 'description', label: this.$t('app.form.label.description'), sortable: true },
         { key: 'fd', label: this.$t('app.form.label.description'), sortable: true },
         { key: 'fgf', label: this.$t('app.form.label.description'), sortable: true },
-        { key: 'descfdription', label: this.$t('app.form.label.description'), sortable: true },
-        { key: 'descdfription', label: this.$t('app.form.label.description'), sortable: true },
+        { key: 'description', label: this.$t('app.form.label.description'), sortable: true },
+        { key: 'description', label: this.$t('app.form.label.description'), sortable: true },
         this.$t('app.form.label.action'),
       ],
       address: null,
