@@ -31,7 +31,7 @@
                    :table-definition="subTableDefinition"/>
         <b-row v-else>
           <b-col v-for="(field,index) in subFormFields" :key="index" cols="12">
-            <field :inline="inline" :entity="subEntity" :table-definition="tableDefinition" :field="field"/>
+            <field :disabled="disabled" :inline="inline" :entity="subEntity" :table-definition="tableDefinition" :field="field"/>
           </b-col>
         </b-row>
       </div>

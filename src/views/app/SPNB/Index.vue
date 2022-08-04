@@ -64,9 +64,9 @@
           </b-form>
         </b-card>
         <b-card id="" class="mt-12">
-          <step1 v-if="current_step===1" ref="step1" :context="context"/>
-          <step2 v-if="current_step===2" ref="step2" :context="context"/>
-          <step3 v-if="current_step===3" ref="step2" :context="context"/>
+          <step1 v-if="current_step===1" ref="step1" :context="context" :disabled="loading"/>
+          <step2 v-if="current_step===2" ref="step2" :context="context" :disabled="loading"/>
+          <step3 v-if="current_step===3" ref="step3" :context="context" :disabled="loading"/>
           <SPNBFormSteps :current-step="current_step"/>
           <div v-if="steps_progress == 100"
                class=" d-flex pt-5 pb-5 mb-2 justify-content-center align-items-center col-12">
@@ -79,16 +79,17 @@
               </small>
             </div>
             <div class="d-flex align-items-center justify-content-between">
-              <b-button v-if="current_step >= 1 && current_step < max_steps" size="md" class="d-flex align-items-center"
+              <b-button v-if="current_step >= 1 && current_step < max_steps" :disabled="loading" size="md" class="d-flex align-items-center"
                         variant="warning" @click="skip_step()">
                 {{ $t('app.btn.skip') }}
               </b-button>
-              <b-button v-if="current_step > 1" size="md" class="d-flex align-items-center ml-2" variant="danger"
+              <b-button v-if="current_step > 1" :disabled="loading" size="md" class="d-flex align-items-center ml-2" variant="danger"
                         @click="prev_step()">
                 {{ $t('app.btn.prev') }}
               </b-button>
-              <b-button v-if="current_step <= max_steps" size="md" class="d-flex align-items-center ml-2" variant="info"
-                        @click="next_step()">
+              <b-button v-if="current_step <= max_steps" size="md" :disabled="loading"
+                        class="d-flex align-items-center ml-2" variant="info" @click="next_step()">
+                <b-spinner v-if="loading" small/>
                 {{ $t('app.btn.next') }}
               </b-button>
             </div>
@@ -101,8 +102,7 @@
 
 <script>
 import {
-  BCard,
-  BTab, BFormCheckbox, BFormRadio, BInputGroup,
+  BCard, BTab, BFormCheckbox, BFormRadio, BInputGroup, BSpinner,
   BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton, BFormSelect, BModal,
 } from 'bootstrap-vue'
 
@@ -120,6 +120,7 @@ export default {
     BCard,
     BTab,
     BTabs,
+    BSpinner,
     BRow,
     BFormGroup,
     BCol,
@@ -212,6 +213,7 @@ export default {
         },
       ],
       context: {},
+      loading: false,
     }
   },
 
@@ -234,11 +236,22 @@ export default {
   },
   methods: {
     async next_step() {
-      if (this.current_step === 1) {
-        this.context.customergroup_id = await this.$refs.step1.validate()
-      } else if (this.current_step === 2) {
-        this.context.customer = await this.$refs.step2.validate()
+      this.loading = true
+      try {
+        if (this.current_step === 1) {
+          this.context.customergroup_id = await this.$refs.step1.validate()
+        } else if (this.current_step === 2) {
+          this.context.company = await this.$refs.step2.validate()
+        } else if (this.current_step === 3) {
+          this.context.locations = this.$refs.step3.locations
+        }
+      } catch (e) {
+        console.error(e)
+        return
+      } finally {
+        this.loading = false
       }
+
       this.goToStep(this.current_step + 1)
     },
     goToStep(step) {

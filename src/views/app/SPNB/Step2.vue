@@ -4,8 +4,8 @@
       {{ $t('app.content.create_customer') }}
     </b-col>
     <b-col cols="12" md="6">
-      <entity-form ref="form" table="company" :definition="definition" table-definition-key="company" create
-                   :initial-data="initialData" cols="12"/>
+      <entity-form ref="form" table="company" :definition="definition" table-definition-key="company" :disabled="disabled"
+                   :create="initialData.company_id==null" :initial-data="initialData" cols="12"/>
     </b-col>
   </b-row>
 </template>
@@ -19,12 +19,11 @@ import Table from '@/table'
 
 export default {
   name: 'Step2',
-  props: ['context'],
+  props: ['context', 'disabled'],
   data() {
     return {
-      entity: {},
       definition: JSON.parse(JSON.stringify(Table.company)),
-      initialData: { customergroup_id: this.context.customergroup_id },
+      initialData: { customergroup_id: this.context.customergroup_id, ...this.context.company },
     }
   },
   components: { EntityForm, BRow, BCol },

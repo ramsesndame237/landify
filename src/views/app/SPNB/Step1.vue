@@ -5,11 +5,11 @@
     </b-col>
     <b-col cols="12" md="6">
       <field :field="{key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name'}"
-             :entity="entity"/>
+             :entity="entity" :disabled="disabled"/>
     </b-col>
 
     <b-col cols="12" md="6">
-      <field :field="{key: 'customergroup_name'}" :entity="entity"/>
+      <field :field="{key: 'customergroup_name'}" :entity="entity" :disabled="disabled"/>
     </b-col>
   </b-row>
 </template>
@@ -22,9 +22,10 @@ import {
 
 export default {
   name: 'Step1',
+  props: ['context', 'disabled'],
   data() {
     return {
-      entity: {},
+      entity: { customergroup_id: this.context.customergroup_id },
     }
   },
   components: { Field, BRow, BCol },
