@@ -21,29 +21,29 @@
 <!--        </div>-->
 <!--      </b-col>-->
 <!--    </b-row>-->
-    <b-row v-if="currentStep == 5" class="">
-      <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
-        {{ $t('app.content.create_pos') }}
-      </b-col>
-      <b-col cols="12" md="6" class="p-0">
-        <entity-form table="pos" :definition="Table.pos" table-definition-key="pos" create :initial-data="{}"
-                     cols="12"/>
-      </b-col>
-      <b-col cols="12" md="6" class="p-0">
-        <Databases ref="datatable" :filter="filter" link="user-edit" :current-page="1" :page-options="[3, 5, 10]"
-                   :items="items" :fields="fields"/>
-        <div class="d-flex justify-content-center">
-          <b-button size="md" class="d-flex align-items-center mt-2" variant="info">
-            {{ $t('app.btn.save_add_location') }}
-          </b-button>
-        </div>
-        <div class="bg-light mt-2 p-1 text-sm">
-          <small>
-            {{ $t('app.content.new_busness_text_pos_msg') }}
-          </small>
-        </div>
-      </b-col>
-    </b-row>
+<!--    <b-row v-if="currentStep == 5" class="">-->
+<!--      <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">-->
+<!--        {{ $t('app.content.create_pos') }}-->
+<!--      </b-col>-->
+<!--      <b-col cols="12" md="6" class="p-0">-->
+<!--        <entity-form table="pos" :definition="Table.pos" table-definition-key="pos" create :initial-data="{}"-->
+<!--                     cols="12"/>-->
+<!--      </b-col>-->
+<!--      <b-col cols="12" md="6" class="p-0">-->
+<!--        <Databases ref="datatable" :filter="filter" link="user-edit" :current-page="1" :page-options="[3, 5, 10]"-->
+<!--                   :items="items" :fields="fields"/>-->
+<!--        <div class="d-flex justify-content-center">-->
+<!--          <b-button size="md" class="d-flex align-items-center mt-2" variant="info">-->
+<!--            {{ $t('app.btn.save_add_location') }}-->
+<!--          </b-button>-->
+<!--        </div>-->
+<!--        <div class="bg-light mt-2 p-1 text-sm">-->
+<!--          <small>-->
+<!--            {{ $t('app.content.new_busness_text_pos_msg') }}-->
+<!--          </small>-->
+<!--        </div>-->
+<!--      </b-col>-->
+<!--    </b-row>-->
     <b-row v-if="currentStep == 6" class="">
       <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
         {{ $t('app.content.create_contract') }}
