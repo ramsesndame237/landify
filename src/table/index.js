@@ -827,19 +827,17 @@ export default {
   // endregion
   // region Work Package 3
   pos: {
-    entity: 'fontend_3_1_1',
+    entity: 'frontend_3_1_1',
     primaryKey: 'pos_id',
     fields: [
       { key: 'pos_id', auto: true },
       {
-        key: 'customergroup_id',
+        key: 'company_id',
         type: 'list',
-        list: 'customergroup',
-        listLabel: 'customergroup_name',
+        list: 'company',
+        listLabel: 'company_name',
         hideOnIndex: true,
-      },
-      {
-        key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name', hideOnIndex: true,
+        relationEntity: 'company_pos_rel',
       },
       { key: 'pos_name' },
       { key: 'pos_branchnumber', type: 'number' },
@@ -1047,6 +1045,9 @@ export default {
         ],
       },
     ],
+    default: {
+      pos_internal_id: '56',
+    },
   },
   area: {
     entity: 'frontend_3_2_1',

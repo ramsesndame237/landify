@@ -3,13 +3,13 @@
     <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
       {{ $t('app.content.create_pos') }}
     </b-col>
-    <b-col cols="12" md="6" class="p-0">
-      <entity-form table="pos" :definition="definition" table-definition-key="pos" create :initial-data="{}"
-                   cols="12" ref="form"/>
+    <b-col cols="12" md="6">
+      <entity-form table="pos" :definition="definition" table-definition-key="pos" create :initial-data="{}" cols="12"
+                   ref="form"/>
     </b-col>
-    <b-col cols="12" md="6" class="p-0">
-      <DataTables ref="pos" :current-page="1" :per-page="100" :with-edit="false"
-          :items="pos" :selectable="false" :with-view="false" entity="pos" :fields="fields"/>
+    <b-col cols="12" md="6">
+      <DataTables ref="pos" :current-page="1" :per-page="100" :with-edit="false" :items="pos" :selectable="false"
+                  :with-view="false" entity="pos" :fields="fields"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
           Save and add POS

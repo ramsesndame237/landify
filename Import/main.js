@@ -12,12 +12,350 @@ const axiosIns = axios.create({
   headers: { Authorization: 'Bearer johndoe@example.com' },
 })
 
-const api = data => axiosIns.post('/api/', { a: data })
+const api = data => {
+  console.log("api call", data)
+  return axiosIns.post('/api/', { a: data })
+    .then(response => {
+      console.log("response", response.data)
+      return Promise.resolve(response)
+    })
+}
 
 const workbook = XLSX.readFile('Attributes.xlsx')
 
 workbook.SheetNames.forEach(async name => {
-  if (name === 'Company') {
+  if (name === '1Partner Company') {
+    const partnercompanySheet = workbook.Sheets['Partner Company']
+
+    const range = XLSX.utils.decode_range(partnercompanySheet['!ref'])
+    // get the number of rows entries
+    const rowNumber = range.e.r - 4
+
+    for (let i = 1; i <= rowNumber; i++) {
+      const rowPos = i + 5
+
+      const partnercompany_name = partnercompanySheet[`B${rowPos}`]?.v
+      const partnercompany_shortname = partnercompanySheet[`C${rowPos}`]?.v
+      const partnergroup_name = partnercompanySheet[`D${rowPos}`]?.v
+      const partnertype_name = partnercompanySheet[`E${rowPos}`]?.v
+      const city_name = partnercompanySheet[`F${rowPos}`]?.v
+      const address_street = partnercompanySheet[`G${rowPos}`]?.v
+      const address_house_number = partnercompanySheet[`H${rowPos}`]?.v
+      const address_extra = partnercompanySheet[`I${rowPos}`]?.v
+      const contactdetails_email = partnercompanySheet[`J${rowPos}`]?.v
+      const contactdetails_phone = partnercompanySheet[`K${rowPos}`]?.v
+      const contactdetails_mobile = partnercompanySheet[`L${rowPos}`]?.v
+      const contactdetails_fax = partnercompanySheet[`M${rowPos}`]?.v
+      const companydetails_salestaxno = partnercompanySheet[`N${rowPos}`]?.v
+      const companydetails_commercialregisterno = partnercompanySheet[`O${rowPos}`]?.v
+      const companydetails_website = partnercompanySheet[`P${rowPos}`]?.v
+
+      // Create Partner Company
+      const partnercompanyEntity = {
+        partnercompany_name: partnercompany_name,
+        partnercompany_shortname: partnercompany_shortname
+      }
+
+      const partnercompanyResponse = await api({
+        entity: 'partnercompany',
+        action: 'create',
+        data: [partnercompanyEntity]
+      })
+
+
+      // create contactdetail
+      const contactdetailsEntity = {
+        contactdetails_mobile: contactdetails_mobile,
+        contactdetails_fax: contactdetails_fax,
+        contactdetails_phone: contactdetails_phone,
+        contactdetails_email: contactdetails_email
+      }
+
+      const contactdetails = await api({
+        entity: 'contactdetails',
+        action: 'create',
+        data: [contactdetailsEntity],
+      })
+
+      // Create Contact Detail Relation
+      const partnercompany_contactdetails_rel_response = await api({
+        entity: 'partnercompany_contactdetails_rel',
+        action: 'create',
+        data: [{
+          partnercompany_id: (await partnercompanyResponse).data.data.data[0][0].partnercompany_id,
+          contactdetails_id: contactdetails.data.data.data[0][0].contactdetails_id
+        }]
+      })
+      // Create Company Detail
+      const companydetails = await api({
+        entity: 'companydetails',
+        action: 'create',
+        data: [{
+          companydetails_commercialregisterno,
+          companydetails_salestaxno,
+          companydetails_website,
+        }],
+      })
+
+      // Create Company Details Relation
+      const partnercompany_companydetails_rel_response = await api({
+        entity: 'partnercompany_companydetails_rel',
+        action: 'create',
+        data: [{
+          partnercompany_id: (await partnercompanyResponse).data.data.data[0][0].partnercompany_id,
+          companydetails_id: companydetails.data.data.data[0][0].companydetails_id
+        }]
+      })
+
+
+      // Create Partner Group Relation
+      const partnergroup = await api({
+        entity: 'partnergroup',
+        action: 'read-rich',
+        filter: { 'partnergroup_name': partnergroup_name },
+      })
+
+      const partnercompany_partnergroup_rel_response = await api({
+        entity: 'partnercompany_partnergroup_rel',
+        action: 'create',
+        data: [{
+          partnercompany_id: (await partnercompanyResponse).data.data.data[0][0].partnercompany_id,
+          partnergroup_id: partnergroup.data.data.data[0].partnergroup_id
+        }]
+      })
+
+      // Create Partner Type Relation
+      const partnertype = await api({
+        entity: 'partnertype',
+        action: 'read-rich',
+        filter: { 'partnertype_name': partnertype_name },
+      })
+
+      const partnercompany_partnertype_rel_response = await api({
+        entity: 'partnercompany_partnertype_rel',
+        action: 'create',
+        data: [{
+          partnercompany_id: (await partnercompanyResponse).data.data.data[0][0].partnercompany_id,
+          partnertype_id: partnertype.data.data.data[0].partnertype_id
+        }]
+      })
+
+      // Create Address Relation
+      const addressEntity = {
+        address_street: address_street,
+        address_house_number: address_house_number,
+        address_extra: address_extra
+      }
+
+      const address = await api({
+        entity: 'address',
+        action: 'create',
+        data: [addressEntity]
+      })
+      const partnercompany_address_rel_response = await api({
+        entity: 'partnercompany_address_rel',
+        action: 'create',
+        data: [{
+          partnercompany_id: (await partnercompanyResponse).data.data.data[0][0].partnercompany_id,
+          address_id: address.data.data.data[0][0].address_id
+        }]
+      })
+      const city = await api({
+        entity: 'city',
+        action: 'read-rich',
+        filter: { 'city_name': city_name },
+      })
+
+      await api({
+        entity: 'address_city_rel',
+        action: 'create',
+        data: [{
+          city_id: city.data.data.data[0].city_id,
+          address_id: address.data.data.data[0][0].address_id
+        }]
+      })
+
+    }
+  }
+  else if (name === '1Contact Person') {
+    const contactPersonSheet = workbook.Sheets['Contact Person']
+
+    const range = XLSX.utils.decode_range(contactPersonSheet['!ref'])
+    // get the number of rows entries
+    const rowNumber = range.e.r - 4
+
+    for (let i = 1; i <= rowNumber; i++) {
+      const rowPos = i + 5
+
+      const contactperson_firstname = contactPersonSheet[`B${rowPos}`]?.v
+      const contactperson_lastname = contactPersonSheet[`C${rowPos}`]?.v
+      const contactperson_department = contactPersonSheet[`D${rowPos}`]?.v
+      const contactperson_shortname = contactPersonSheet[`E${rowPos}`]?.v
+      const contactperson_function = contactPersonSheet[`F${rowPos}`]?.v
+      const user_email = contactPersonSheet[`G${rowPos}`]?.v
+      const contactdetails_email = contactPersonSheet[`H${rowPos}`]?.v
+      const contactdetails_phone = contactPersonSheet[`I${rowPos}`]?.v
+      const contactdetails_mobile = contactPersonSheet[`J${rowPos}`]?.v
+      const contactdetails_fax = contactPersonSheet[`K${rowPos}`]?.v
+      const company_name = contactPersonSheet[`L${rowPos}`]?.v
+      const partnercompany_name = contactPersonSheet[`M${rowPos}`]?.v
+      const city_name = contactPersonSheet[`N${rowPos}`]?.v
+      const address_street = contactPersonSheet[`O${rowPos}`]?.v
+      const address_house_number = contactPersonSheet[`P${rowPos}`]?.v
+      const address_extra = contactPersonSheet[`Q${rowPos}`]?.v
+      const contactsalutation_name = contactPersonSheet[`R${rowPos}`]?.v
+      const contacttitle_name = contactPersonSheet[`S${rowPos}`]?.v
+
+
+      const user = await api({
+        entity: 'user',
+        action: 'read-rich',
+        filter: { 'user_email': user_email }
+      })
+
+      const city = await api({
+        entity: 'city',
+        action: 'read-rich',
+        filter: { 'city_name': city_name }
+      })
+
+      const contactpersonEntity = {
+        contactperson_firstname: contactperson_firstname,
+        contactperson_lastname: contactperson_lastname,
+        contactperson_department: contactperson_department,
+        contactperson_shortname: contactperson_shortname,
+        contactperson_function: contactperson_function,
+      }
+
+      const contactpersonResponse = await api({
+        entity: 'contactperson',
+        action: 'create',
+        data: [contactpersonEntity]
+      })
+      const contactperson_id = contactpersonResponse.data.data.data[0][0].contactperson_id
+
+      // Relations
+
+      // Contact title
+      const contacttitle = await api({
+        entity: 'contacttitle',
+        action: 'read-rich',
+        filter: { 'contacttitle_name': contacttitle_name }
+      })
+
+      const contactperson_contacttitle_rel = {
+        contactperson_id: contactperson_id,
+        contacttitle_id: contacttitle.data.data.data[0].contacttitle_id
+      }
+
+      const contactperson_contacttitle_rel_response = await api({
+        entity: 'contactperson_contacttitle_rel',
+        action: 'create',
+        data: [contactperson_contacttitle_rel]
+      })
+
+      // contact salutation
+
+      const contactsalutation = await api({
+        entity: 'contactsalutation',
+        action: 'read-rich',
+        filter: { 'contactsalutation_name': contactsalutation_name }
+      })
+
+      const contactperson_contactsalutation_rel = {
+        contactperson_id: contactperson_id,
+        contactsalutation_id: contactsalutation.data.data.data[0].contactsalutation_id
+      }
+
+      const contactperson_contactsalutation_rel_response = await api({
+        entity: 'contactperson_contactsalutation_rel',
+        action: 'create',
+        data: [contactperson_contactsalutation_rel]
+      })
+
+      // Company
+
+      const company = await api({
+        entity: 'company',
+        action: 'read-rich',
+        filter: { 'company_name': company_name }
+      })
+
+      const contactperson_company_rel = {
+        contactperson_id: contactperson_id,
+        company_id: company.data.data.data[0].company_id
+      }
+
+      const contactperson_company_rel_response = await api({
+        entity: 'contactperson_company_rel',
+        action: 'create',
+        data: [contactperson_company_rel]
+      })
+
+      // Contactdetails
+
+      const contactdetailsEntity = {
+        contactdetails_mobile: contactdetails_mobile,
+        contactdetails_fax: contactdetails_fax,
+        contactdetails_phone: contactdetails_phone,
+        contactdetails_email: contactdetails_email
+      }
+
+      const contactdetailsResponse = await api({
+        entity: 'contactdetails',
+        action: 'create',
+        data: [contactdetailsEntity]
+      })
+
+      const contactperson_contactdetails_rel = {
+        contactperson_id: contactperson_id,
+        contactdetails_id: contactdetailsResponse.data.data.data[0][0].contactdetails_id
+      }
+
+      const contactperson_contactdetails_rel_response = await api({
+        entity: 'contactperson_contactdetails_rel',
+        action: 'create',
+        data: [contactperson_contactdetails_rel]
+      })
+
+      // address
+
+      const addressEntity = {
+        address_street: address_street,
+        address_house_number: address_house_number,
+        address_extra: address_extra,
+      }
+
+      const addressResponse = await api({
+        entity: 'address',
+        action: 'create',
+        data: [addressEntity]
+      })
+
+      const address_city_rel = {
+        address_id: addressResponse.data.data.data[0][0].address_id,
+        city_id: city.data.data.data[0].city_id
+      }
+
+      const address_city_rel_response = await api({
+        entity: 'address_city_rel',
+        action: 'create',
+        data: [address_city_rel]
+      })
+
+      const contactperson_address_rel = {
+        contactperson_id: contactperson_id,
+        address_id: addressResponse.data.data.data[0][0].address_id
+      }
+
+      const contactperson_address_rel_response = await api({
+        entity: 'contactperson_address_rel',
+        action: 'create',
+        data: [contactperson_address_rel]
+      })
+    }
+  }
+  else if (name === '1Company') {
     const companySheet = workbook.Sheets.Company
 
     const range = XLSX.utils.decode_range(companySheet['!ref'])
@@ -186,185 +524,7 @@ workbook.SheetNames.forEach(async name => {
       })
     }
   }
-  else if (name == 'Contact Person') {
-    const contactPersonSheet = workbook.Sheets['Contact Person']
-
-    const range = XLSX.utils.decode_range(contactPersonSheet['!ref'])
-    // get the number of rows entries
-    const rowNumber = range.e.r - 4
-
-    for (let i = 1; i <= rowNumber; i++) {
-      const rowPos = i + 5
-
-      const contactperson_firstname = contactPersonSheet[`B${rowPos}`]?.v
-      const contactperson_lastname = contactPersonSheet[`C${rowPos}`]?.v
-      const contactperson_department = contactPersonSheet[`D${rowPos}`]?.v
-      const contactperson_shortname = contactPersonSheet[`E${rowPos}`]?.v
-      const contactperson_function = contactPersonSheet[`F${rowPos}`]?.v
-      const user_email = contactPersonSheet[`G${rowPos}`]?.v
-      const contactdetails_email = contactPersonSheet[`H${rowPos}`]?.v
-      const contactdetails_phone = contactPersonSheet[`I${rowPos}`]?.v
-      const contactdetails_mobile = contactPersonSheet[`J${rowPos}`]?.v
-      const contactdetails_fax = contactPersonSheet[`K${rowPos}`]?.v
-      const company_name = contactPersonSheet[`L${rowPos}`]?.v
-      const partnercompany_name = contactPersonSheet[`M${rowPos}`]?.v
-      const city_name = contactPersonSheet[`N${rowPos}`]?.v
-      const address_street = contactPersonSheet[`O${rowPos}`]?.v
-      const address_house_number = contactPersonSheet[`P${rowPos}`]?.v
-      const address_extra = contactPersonSheet[`Q${rowPos}`]?.v
-      const contactsalutation_name = contactPersonSheet[`R${rowPos}`]?.v
-      const contacttitle_name = contactPersonSheet[`S${rowPos}`]?.v
-
-
-      const user = await api({
-        entity: 'user',
-        action: 'read-rich',
-        filter: { 'user_email': user_email }
-      })
-
-      const city = await api({
-        entity: 'city',
-        action: 'read-rich',
-        filter: { 'city_name': city_name }
-      })
-
-      const contactpersonEntity = {
-        contactperson_firstname: contactperson_firstname,
-        contactperson_lastname: contactperson_lastname,
-        contactperson_department: contactperson_department,
-        contactperson_shortname: contactperson_shortname,
-        contactperson_function: contactperson_function,
-      }
-
-      const contactpersonResponse = await api({
-        entity: 'contactperson',
-        action: 'create',
-        data: [contactpersonEntity]
-      })
-      const contactperson_id = contactpersonResponse.data.data.data[0][0].contactperson_id
-
-      // Relations
-
-      // Contact title
-      const contacttitle = await api({
-        entity: 'contacttitle',
-        action: 'read-rich',
-        filter: {'contacttitle_name': contacttitle_name}
-      })
-
-      const contactperson_contacttitle_rel = {
-        contactperson_id: contactperson_id,
-        contacttitle_id: contacttitle.data.data.data[0].contacttitle_id
-      }
-
-      const contactperson_contacttitle_rel_response = await api({
-        entity: 'contactperson_contacttitle_rel',
-        action: 'create',
-        data: [contactperson_contacttitle_rel]
-      })
-
-      // contact salutation
-
-      const contactsalutation = await api({
-        entity: 'contactsalutation',
-        action: 'read-rich',
-        filter: {'contactsalutation_name': contactsalutation_name}
-      })
-
-      const contactperson_contactsalutation_rel = {
-        contactperson_id: contactperson_id,
-        contactsalutation_id: contactsalutation.data.data.data[0].contactsalutation_id
-      }
-
-      const contactperson_contactsalutation_rel_response = await api({
-        entity: 'contactperson_contactsalutation_rel',
-        action: 'create',
-        data: [contactperson_contactsalutation_rel]
-      })
-
-      // Company
-
-      const company = await api({
-        entity: 'company',
-        action: 'read-rich',
-        filter: {'company_name': company_name}
-      })
-
-      const contactperson_company_rel = {
-        contactperson_id: contactperson_id,
-        company_id: company.data.data.data[0].company_id
-      }
-
-      const contactperson_company_rel_response = await api({
-        entity: 'contactperson_company_rel',
-        action: 'create',
-        data: [contactperson_company_rel]
-      })
-
-      // Contactdetails
-
-      const contactdetailsEntity = {
-        contactdetails_mobile: contactdetails_mobile,
-        contactdetails_fax: contactdetails_fax,
-        contactdetails_phone: contactdetails_phone,
-        contactdetails_email: contactdetails_email
-      }
-
-      const contactdetailsResponse = await api({
-        entity: 'contactdetails',
-        action: 'create',
-        data: [contactdetailsEntity]
-      })
-
-      const contactperson_contactdetails_rel = {
-        contactperson_id: contactperson_id,
-        contactdetails_id: contactdetailsResponse.data.data.data[0][0].contactdetails_id
-      }
-
-      const contactperson_contactdetails_rel_response = await api({
-        entity: 'contactperson_contactdetails_rel',
-        action: 'create',
-        data: [contactperson_contactdetails_rel]
-      })
-
-      // address
-
-      const addressEntity = {
-        address_street: address_street,
-        address_house_number: address_house_number,
-        address_extra: address_extra,
-      }
-
-      const addressResponse = await api({
-        entity: 'address',
-        action: 'create',
-        data: [addressEntity]
-      })
-
-      const address_city_rel = {
-        address_id: addressResponse.data.data.data[0][0].address_id,
-        city_id: city.data.data.data[0].city_id
-      }
-
-      const address_city_rel_response = await api({
-        entity: 'address_city_rel',
-        action: 'create',
-        data: [address_city_rel]
-      })
-
-      const contactperson_address_rel = {
-        contactperson_id: contactperson_id,
-        address_id: addressResponse.data.data.data[0][0].address_id
-      }
-
-      const contactperson_address_rel_response = await api({
-        entity: 'contactperson_address_rel',
-        action: 'create',
-        data: [contactperson_address_rel]
-      })
-    }
-  }
-  else if (name === 'Pos') {
+  else if (name === '1Pos') {
     const posSheet = workbook.Sheets['Pos']
 
     const range = XLSX.utils.decode_range(posSheet['!ref'])
@@ -378,7 +538,8 @@ workbook.SheetNames.forEach(async name => {
       const pos_branchnumber = posSheet[`C${rowPos}`]?.v
       const pos_name_external = posSheet[`D${rowPos}`]?.v
       const pos_first_year = posSheet[`E${rowPos}`]?.v
-      const tag_name = posSheet[`F${rowPos}`]?.v
+      const company_name = posSheet[`F${rowPos}`]?.v
+      const tag_name = posSheet[`G${rowPos}`]?.v
 
       const tag = await api({
         entity: 'tag',
@@ -412,7 +573,7 @@ workbook.SheetNames.forEach(async name => {
       })
     }
   }
-  else if (name === 'Area') {
+  else if (name === '1Area') {
     const areaSheet = workbook.Sheets['Area']
 
     const range = XLSX.utils.decode_range(areaSheet['!ref'])
@@ -577,7 +738,7 @@ workbook.SheetNames.forEach(async name => {
 
       const location_address_rel = {
         location_id: locationResponse.data.data.data[0][0].location_id,
-        address_id: addressResponse.data.data.data[0].address_id
+        address_id: addressResponse.data.data.data[0][0].address_id
       }
 
       const location_address_rel_response = await api({
@@ -586,149 +747,6 @@ workbook.SheetNames.forEach(async name => {
         data: [location_address_rel]
       })
 
-    }
-  }
-  else if (name === 'Partner Company') {
-    const partnercompanySheet = workbook.Sheets['Partner Company']
-
-    const range = XLSX.utils.decode_range(partnercompanySheet['!ref'])
-    // get the number of rows entries
-    const rowNumber = range.e.r - 4
-
-    for (let i = 1; i <= rowNumber; i++) {
-      const rowPos = i + 5
-
-      const partnercompany_name = partnercompanySheet[`B${rowPos}`]?.v
-      const partnercompany_shortname = partnercompanySheet[`C${rowPos}`]?.v
-      const partnergroup_name = partnercompanySheet[`D${rowPos}`]?.v
-      const partnertype_name = partnercompanySheet[`E${rowPos}`]?.v
-      const city_name = partnercompanySheet[`F${rowPos}`]?.v
-      const address_street = partnercompanySheet[`G${rowPos}`]?.v
-      const address_house_number = partnercompanySheet[`H${rowPos}`]?.v
-      const address_extra = partnercompanySheet[`I${rowPos}`]?.v
-      const contactdetails_email = partnercompanySheet[`J${rowPos}`]?.v
-      const contactdetails_phone = partnercompanySheet[`K${rowPos}`]?.v
-      const contactdetails_mobile = partnercompanySheet[`L${rowPos}`]?.v
-      const contactdetails_fax = partnercompanySheet[`M${rowPos}`]?.v
-      const companydetails_salestaxno = partnercompanySheet[`N${rowPos}`]?.v
-      const companydetails_commercialregisterno = partnercompanySheet[`O${rowPos}`]?.v
-      const companydetails_website = partnercompanySheet[`P${rowPos}`]?.v
-
-      const partnercompanyEntity = {
-        partnercompany_name: partnercompany_name,
-        partnercompany_shortname: partnercompany_shortname
-      }
-
-      const partnercompanyResponse = await api({
-        entity: 'partnercompany',
-        action: 'create',
-        data: [partnercompanyEntity]
-      })
-
-      const city = await api({
-        entity: 'city',
-        action: 'read-rich',
-        filter: { 'city_name': city_name },
-      })
-
-      const contactdetailsEntity = {
-        contactdetails_mobile: contactdetails_mobile,
-        contactdetails_fax: contactdetails_fax,
-        contactdetails_phone: contactdetails_phone,
-        contactdetails_email: contactdetails_email
-      }
-
-      const contactdetails = await api({
-        entity: 'contactdetails',
-        action: 'create',
-        data: [contactdetailsEntity],
-      })
-
-      const companydetails = await api({
-        entity: 'companydetails',
-        action: 'read-rich',
-        filter: { 'companydetails_commercialregisterno': companydetails_commercialregisterno },
-      })
-
-      const partnergroup = await api({
-        entity: 'partnergroup',
-        action: 'read-rich',
-        filter: { 'partnergroup_name': partnergroup_name },
-      })
-
-      const partnertype = await api({
-        entity: 'partnertype',
-        action: 'read-rich',
-        filter: { 'partnertype_name': partnertype_name },
-      })
-
-      // relations
-      const addressEntity = {
-        address_street: address_street,
-        address_house_number: address_house_number,
-        address_extra: address_extra
-      }
-
-      const address = await api({
-        entity: 'address',
-        action: 'create',
-        data: [addressEntity]
-      })
-
-      const partnercompany_partnergroup_rel = {
-        partnercompany_id: (await partnercompanyResponse).data.data.data[0][0].partnercompany_id,
-        partnergroup_id: partnergroup.data.data.data[0].partnergroup_id
-      }
-
-      const partnercompany_partnergroup_rel_response = await api({
-        entity: 'partnercompany_partnergroup_rel',
-        action: 'create',
-        data: [partnercompany_partnergroup_rel]
-      })
-
-      const partnercompany_partnertype_rel = {
-        partnercompany_id: (await partnercompanyResponse).data.data.data[0][0].partnercompany_id,
-        partnertype_id: partnertype.data.data.data[0].partnertype_id
-      }
-
-      const partnercompany_partnertype_rel_response = await api({
-        entity: 'partnercompany_partnertype_rel',
-        action: 'create',
-        data: [partnercompany_partnertype_rel]
-      })
-
-      const partnercompany_contactdetails_rel = {
-        partnercompany_id: (await partnercompanyResponse).data.data.data[0][0].partnercompany_id,
-        contactdetails_id: contactdetails.data.data.data[0][0].contactdetails_id
-      }
-
-      const partnercompany_contactdetails_rel_response = await api({
-        entity: 'partnercompany_contactdetails_rel',
-        action: 'create',
-        data: [partnercompany_contactdetails_rel]
-      })
-
-      const partnercompany_companydetails_rel = {
-        partnercompany_id: (await partnercompanyResponse).data.data.data[0][0].partnercompany_id,
-        companydetails_id: companydetails.data.data.data[0].companydetails_id
-      }
-
-      const partnercompany_companydetails_rel_response = await api({
-        entity: 'partnercompany_companydetails_rel',
-        action: 'create',
-        data: [partnercompany_companydetails_rel]
-      })
-
-      const partnercompany_address_rel = {
-        partnercompany_id: (await partnercompanyResponse).data.data.data[0][0].partnercompany_id,
-        address_id: address.data.data.data[0][0].address_id
-      }
-
-      const partnercompany_address_rel_response = await api({
-        entity: 'partnercompany_address_rel',
-        action: 'create',
-        data: [partnercompany_address_rel]
-      })
     }
   }
 })

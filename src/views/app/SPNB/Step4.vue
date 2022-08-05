@@ -3,13 +3,13 @@
     <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
       {{ $t('app.content.create_area') }}
     </b-col>
-    <b-col cols="12" md="6" class="p-0">
-      <entity-form table="area" :definition="definition" table-definition-key="area" create :initial-data="{}"
-                   cols="12" :disabled="loading" ref="form"/>
+    <b-col cols="12" md="6">
+      <entity-form table="area" :definition="definition" table-definition-key="area" create :initial-data="{}" cols="12"
+                   :disabled="loading" ref="form"/>
     </b-col>
-    <b-col cols="12" md="6" class="p-0">
-      <DataTables entity="area" :fields="fields" :current-page="1" :per-page="100" :with-edit="false"
-                  :with-view="false" :selectable="false" :items="areas"/>
+    <b-col cols="12" md="6">
+      <DataTables entity="area" :fields="fields" :current-page="1" :per-page="100" :with-edit="false" :with-view="false"
+                  :selectable="false" :items="areas"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
           Save and add area
