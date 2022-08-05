@@ -8,7 +8,7 @@
                    cols="12"/>
     </b-col>
     <b-col cols="12" md="6" class="p-0">
-      <DataTables entity="area" :/>
+      <DataTables entity="area"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="d-flex align-items-center mt-2" variant="info">
           {{ $t('app.btn.save_add_location') }}

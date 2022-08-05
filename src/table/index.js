@@ -494,6 +494,7 @@ export default {
         list: 'contactdetails',
         listLabel: 'contactdetails_email',
         withNew: true,
+        alwaysNew: true,
         hideOnIndex: true,
       },
       {
@@ -502,6 +503,7 @@ export default {
         list: 'companydetails',
         listLabel: 'companydetails_salestaxno',
         withNew: true,
+        alwaysNew: true,
         hideOnIndex: true,
       },
       {
@@ -510,6 +512,7 @@ export default {
         list: 'bankdata',
         listLabel: 'bankdata_iban',
         withNew: true,
+        alwaysNew: true,
         hideOnIndex: true,
       },
       { key: 'city_name', sortable: true, hideOnForm: true },
@@ -585,6 +588,7 @@ export default {
         list: 'contactdetails',
         listLabel: 'contactdetails_email',
         withNew: true,
+        alwaysNew: true,
       },
       {
         key: 'companydetails_id',
@@ -593,8 +597,8 @@ export default {
         list: 'companydetails',
         listLabel: 'companydetails_commercialregisterno',
         withNew: true,
+        alwaysNew: true,
       },
-      { key: 'partnergroup_description', hideOnIndex: true, type: 'textarea' },
       { key: 'partnercompanies_count', hideOnForm: true },
     ],
     relations: [
