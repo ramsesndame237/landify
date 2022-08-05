@@ -1045,11 +1045,12 @@ export default {
     ],
   },
   area: {
+    entity: 'frontend_3_2_1',
     primaryKey: 'area_id',
     fields: [
-      { key: 'area_name' },
       { key: 'area_id', auto: true },
-      { key: 'location_name', hideOnForm: true },
+      { key: 'area_name' },
+      { key: 'location_name', hideOnForm: true, hideOnIndex: true },
       {
         key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name', hideOnIndex: true
       },
@@ -1064,7 +1065,7 @@ export default {
         key: 'areatype_id', type: 'list', list: 'areatype', listLabel: 'areatype_name', hideOnIndex: true,
       },
       {
-        key: 'areatype_name', hideOnForm: true,
+        key: 'areatype_name', hideOnForm: true, hideOnIndex: true,
       },
       {
         key: 'area_space_value', sortable: true,
@@ -1085,7 +1086,7 @@ export default {
       {
         title: 'Contracts',
         primaryKey: 'contract_id',
-        entity: 'area_contract_grp',
+        entity: 'frontend_3_2_3_1',
         entityForm: 'contract_area_unit_usagetype_rel',
         entityView: 'contract',
         fields: [
@@ -1103,7 +1104,7 @@ export default {
       },
       {
         title: 'Point of Sales',
-        entity: 'area_pos_grp',
+        entity: 'frontend_3_2_3_2',
         entityForm: 'area_pos_rel',
         entityView: 'pos',
         update: false,
@@ -1116,7 +1117,7 @@ export default {
       },
       {
         title: 'Service Objects',
-        entity: 'area_serviceobject_grp',
+        entity: 'frontend_3_2_3_3',
         entityView: 'serviceobject',
         entityForm: 'area_serviceobject_rel',
         update: false,
@@ -1130,6 +1131,7 @@ export default {
     ],
   },
   location: {
+    entity: 'frontend_3_3_1',
     primaryKey: 'location_id',
     fields: [
       { key: 'location_id', auto: true },
@@ -1171,7 +1173,7 @@ export default {
     relations: [
       {
         title: 'Areas',
-        entity: 'location_area_grp',
+        entity: 'frontend_3_3_3_1',
         entityForm: 'location_area_rel',
         fields: [
           { key: 'area_name', hideOnForm: true },
@@ -1189,7 +1191,7 @@ export default {
       },
       {
         title: 'Service Objects',
-        entity: 'location_serviceobject_grp',
+        entity: 'frontend_3_3_3_2',
         entityForm: 'location_serviceobject_rel',
         entityView: 'serviceobject',
         update: false,
@@ -1202,7 +1204,7 @@ export default {
       },
       {
         title: 'Partner Companies',
-        entity: 'location_partnercompany_grp',
+        entity: 'frontend_3_3_3_3',
         entityForm: 'location_partnercompany_rel',
         entityView: 'partnercompany',
         update: false,
