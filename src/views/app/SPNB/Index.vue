@@ -250,6 +250,10 @@ export default {
           this.context.company = await this.$refs.step2.validate()
         } else if (this.current_step === 3) {
           this.context.locations = this.$refs.step3.locations
+        } else if (this.current_step === 4) {
+          this.context.areas = this.$refs.step4.areas
+        }else if (this.current_step === 5) {
+          this.context.pos = this.$refs.step5.pos
         }
       } catch (e) {
         console.error(e)
