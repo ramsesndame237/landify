@@ -74,7 +74,6 @@
           <step8 v-if="current_step===8" ref="step8" :context="context" :disabled="loading"/>
           <step9 v-if="current_step===9" ref="step9" :context="context" :disabled="loading"/>
           <step10 v-if="current_step===10" ref="step10" :context="context" :disabled="loading"/>
-          <SPNBFormSteps :current-step="current_step"/>
           <div v-if="steps_progress == 100"
                class=" d-flex pt-5 pb-5 mb-2 justify-content-center align-items-center col-12">
             <img src="@/assets/images/icons/smile.png" alt="">
@@ -172,7 +171,7 @@ export default {
           company: 'Gohze',
         },
       ],
-      current_step: 10,
+      current_step: 1,
       max_steps: 1,
       completed_step: 0,
       steps_progress: 0,
@@ -261,24 +260,34 @@ export default {
       try {
         if (this.current_step === 1) {
           this.context.customergroup_id = await this.$refs.step1.validate()
+          this.steps_tabs[0].completed = true
         } else if (this.current_step === 2) {
           this.context.company = await this.$refs.step2.validate()
+          this.steps_tabs[1].completed = true
         } else if (this.current_step === 3) {
           this.context.locations = this.$refs.step3.locations
+          this.steps_tabs[2].completed = true
         } else if (this.current_step === 4) {
           this.context.areas = this.$refs.step4.areas
+          this.steps_tabs[3].completed = true
         } else if (this.current_step === 5) {
           this.context.pos = this.$refs.step5.pos
+          this.steps_tabs[4].completed = true
         } else if (this.current_step === 6) {
           this.context.contract = await this.$refs.step6.validate()
+          this.steps_tabs[5].completed = true
         } else if (this.current_step === 7) {
           this.context.contractAreas = await this.$refs.step7.contractAreas
+          this.steps_tabs[6].completed = true
         } else if (this.current_step === 8) {
           this.context.contractcriterias = await this.$refs.step8.contractcriterias
+          this.steps_tabs[7].completed = true
         } else if (this.current_step === 9) {
           this.context.contractspecialrights = await this.$refs.step9.contractspecialrights
+          this.steps_tabs[8].completed = true
         } else if (this.current_step === 10) {
           this.context.recurringpayments = await this.$refs.step10.recurringpayments
+          this.steps_tabs[9].completed = true
         }
       } catch (e) {
         console.error(e)

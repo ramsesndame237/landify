@@ -1,7 +1,7 @@
 <template>
   <b-row>
     <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
-      Create new ontact Criteria
+      Create new Contract Recurring Payment
     </b-col>
     <b-col cols="12" md="6">
       <entity-form table="contract_recurringpayment_rel" :definition="definition" table-definition-key="contract_recurringpayment_rel" create :initial-data="initialData" cols="12"
@@ -12,7 +12,7 @@
                   :with-view="false" entity="contract_recurringpayment_rel" :fields="fields"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
-          Save and add criteria
+          Save and add Recurring Payment
         </b-button>
       </div>
     </b-col>
@@ -41,7 +41,7 @@ export default {
     definition.fields = [
       { key: 'contract_id', disabled: true },
       { key: 'contract_name', disabled: true },
-      { key: 'recurringpayment_id', type: 'list', list: 'recurringpayment', listLabel: 'recurringpayment_description'},
+      { key: 'recurringpayment_id', type: 'list', list: 'recurringpayment', listLabel: 'recurringpayment_description' },
     ]
     return {
       definition,
