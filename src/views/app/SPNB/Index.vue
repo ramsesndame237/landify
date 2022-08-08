@@ -72,6 +72,8 @@
           <step6 v-if="current_step===6" ref="step6" :context="context" :disabled="loading"/>
           <step7 v-if="current_step===7" ref="step7" :context="context" :disabled="loading"/>
           <step8 v-if="current_step===8" ref="step8" :context="context" :disabled="loading"/>
+          <step9 v-if="current_step===9" ref="step9" :context="context" :disabled="loading"/>
+          <step10 v-if="current_step===10" ref="step10" :context="context" :disabled="loading"/>
           <SPNBFormSteps :current-step="current_step"/>
           <div v-if="steps_progress == 100"
                class=" d-flex pt-5 pb-5 mb-2 justify-content-center align-items-center col-12">
@@ -121,6 +123,8 @@ import Step5 from '@/views/app/SPNB/Step5'
 import Step6 from '@/views/app/SPNB/Step6'
 import Step7 from '@/views/app/SPNB/Step7'
 import Step8 from '@/views/app/SPNB/Step8'
+import Step9 from '@/views/app/SPNB/Step9'
+import Step10 from '@/views/app/SPNB/Step10'
 
 const Databases = () => import('@/layouts/components/DataTables.vue')
 export default {
@@ -151,6 +155,8 @@ export default {
     Step6,
     Step7,
     Step8,
+    Step9,
+    Step10,
   },
   data() {
     return {
@@ -166,7 +172,7 @@ export default {
           company: 'Gohze',
         },
       ],
-      current_step: 7,
+      current_step: 10,
       max_steps: 1,
       completed_step: 0,
       steps_progress: 0,
@@ -265,6 +271,14 @@ export default {
           this.context.pos = this.$refs.step5.pos
         } else if (this.current_step === 6) {
           this.context.contract = await this.$refs.step6.validate()
+        } else if (this.current_step === 7) {
+          this.context.contractAreas = await this.$refs.step7.contractAreas
+        } else if (this.current_step === 8) {
+          this.context.contractcriterias = await this.$refs.step8.contractcriterias
+        } else if (this.current_step === 9) {
+          this.context.contractspecialrights = await this.$refs.step9.contractspecialrights
+        } else if (this.current_step === 10) {
+          this.context.recurringpayments = await this.$refs.step10.recurringpayments
         }
       } catch (e) {
         console.error(e)
