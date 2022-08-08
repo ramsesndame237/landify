@@ -50,7 +50,6 @@ export default {
     }
   },
   mounted() {
-    // this.definition.fields.find(f => f.key === 'customergroup_id').disabled = true
     this.$refs.form.loadDefinition()
   },
   methods: {

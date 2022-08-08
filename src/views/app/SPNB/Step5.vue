@@ -4,8 +4,8 @@
       {{ $t('app.content.create_pos') }}
     </b-col>
     <b-col cols="12" md="6">
-      <entity-form table="pos" :definition="definition" table-definition-key="pos" create :initial-data="{}" cols="12"
-                   ref="form"/>
+      <entity-form table="pos" :definition="definition" table-definition-key="pos" create :initial-data="initialData" cols="12"
+                   ref="form" :disabled="loading"/>
     </b-col>
     <b-col cols="12" md="6">
       <DataTables ref="pos" :current-page="1" :per-page="100" :with-edit="false" :items="pos" :selectable="false"
@@ -39,6 +39,7 @@ export default {
   data() {
     return {
       definition: JSON.parse(JSON.stringify(Table.pos)),
+      initialData: { ...this.context.company },
       loading: false,
       pos: this.context.pos || [],
       fields: [
@@ -51,17 +52,17 @@ export default {
     }
   },
   components: { Field, BRow, BCol, DataTables, entityForm, BButton },
+  mounted() {
+    this.definition.fields.find(f => f.key === 'company_id').disabled = true
+    this.$refs.form.loadDefinition()
+  },
   methods: {
     async add() {
       this.loading = true
       const entity = await this.$refs.form.submit()
       this.pos.push(entity)
       this.loading = false
-      console.log(entity)
       return entity
-    },
-    mounted() {
-      this.$refs.form.loadDefinition()
     },
   },
 }
