@@ -44,15 +44,15 @@
 <!--        </div>-->
 <!--      </b-col>-->
 <!--    </b-row>-->
-    <b-row v-if="currentStep == 6" class="">
-      <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
-        {{ $t('app.content.create_contract') }}
-      </b-col>
-      <b-col cols="12" md="6" class="p-0">
-        <entity-form table="contract" :definition="Table.contract" table-definition-key="contract" create
-                     :initial-data="{}" cols="12"/>
-      </b-col>
-    </b-row>
+<!--    <b-row v-if="currentStep == 6" class="">-->
+<!--      <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">-->
+<!--        {{ $t('app.content.create_contract') }}-->
+<!--      </b-col>-->
+<!--      <b-col cols="12" md="6" class="p-0">-->
+<!--        <entity-form table="contract" :definition="Table.contract" table-definition-key="contract" create-->
+<!--                     :initial-data="{}" cols="12"/>-->
+<!--      </b-col>-->
+<!--    </b-row>-->
     <b-row v-if="currentStep == 7" class="">
       <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
         {{ $t('app.content.create_contract') }} - {{ $t('app.content.contract_areas') }}
@@ -175,91 +175,91 @@
         </div>
       </b-col>
     </b-row>
-    <b-row v-if="currentStep == 8" class="">
-      <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
-        {{ $t('app.content.create_contract') }} - {{ $t('app.content.contract_criteria') }}
-      </b-col>
-      <b-col cols="12" md="6" class="p-0">
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.contract_id')" label-for="contract_id" label-cols-md="12">
-            <b-row>
-              <b-col cols="12">
-                <b-form-input id="contract_id" :placeholder="$t('app.form.placeholder.automatic')"/>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.contract_name')" label-for="contract_name" label-cols-md="12">
-            <b-row>
-              <b-col cols="12">
-                <b-form-input id="contract_name" :placeholder="$t('app.form.placeholder.default')"/>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.contract_criteria')" label-for="contract_criteria"
-                        label-cols-md="12">
-            <b-row>
-              <b-col cols="12">
-                <b-form-input id="contract_criteria" :placeholder="$t('app.form.placeholder.automatic')"/>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.description')" label-for="description" label-cols-md="12">
-            <b-form-select id="description"/>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.valid_from')" label-for="valid_from" label-cols-md="12">
-            <b-row>
-              <b-col cols="12">
-                <b-form-input id="valid_from" :placeholder="$t('app.form.placeholder.default')"/>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.valid_to')" label-for="valid_to" label-cols-md="12">
-            <b-row>
-              <b-col cols="12">
-                <b-form-input id="valid_to" :placeholder="$t('app.form.placeholder.default')"/>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.exists')" label-for="exists" label-cols-md="12">
-            <b-row>
-              <b-col cols="12">
-                <b-form-input id="exists" :placeholder="$t('app.form.placeholder.default')"/>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.value')" label-for="value" label-cols-md="12">
-            <b-row>
-              <b-col cols="12">
-                <b-form-input id="value" :placeholder="$t('app.form.placeholder.default')"/>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-      </b-col>
-      <b-col cols="12" md="6" class="p-0">
-        <Databases ref="datatable" :filter="filter" link="user-edit" :current-page="1" :page-options="[3, 5, 10]"
-                   :items="items" :fields="fields"/>
-        <div class="d-flex justify-content-center">
-          <b-button size="md" class="d-flex align-items-center mt-2" variant="info">
-            {{ $t('app.btn.save_add_contact_cirteria') }}
-          </b-button>
-        </div>
-      </b-col>
-    </b-row>
+<!--    <b-row v-if="currentStep == 8" class="">-->
+<!--      <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">-->
+<!--        {{ $t('app.content.create_contract') }} - {{ $t('app.content.contract_criteria') }}-->
+<!--      </b-col>-->
+<!--      <b-col cols="12" md="6" class="p-0">-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.contract_id')" label-for="contract_id" label-cols-md="12">-->
+<!--            <b-row>-->
+<!--              <b-col cols="12">-->
+<!--                <b-form-input id="contract_id" :placeholder="$t('app.form.placeholder.automatic')"/>-->
+<!--              </b-col>-->
+<!--            </b-row>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.contract_name')" label-for="contract_name" label-cols-md="12">-->
+<!--            <b-row>-->
+<!--              <b-col cols="12">-->
+<!--                <b-form-input id="contract_name" :placeholder="$t('app.form.placeholder.default')"/>-->
+<!--              </b-col>-->
+<!--            </b-row>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.contract_criteria')" label-for="contract_criteria"-->
+<!--                        label-cols-md="12">-->
+<!--            <b-row>-->
+<!--              <b-col cols="12">-->
+<!--                <b-form-input id="contract_criteria" :placeholder="$t('app.form.placeholder.automatic')"/>-->
+<!--              </b-col>-->
+<!--            </b-row>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.description')" label-for="description" label-cols-md="12">-->
+<!--            <b-form-select id="description"/>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.valid_from')" label-for="valid_from" label-cols-md="12">-->
+<!--            <b-row>-->
+<!--              <b-col cols="12">-->
+<!--                <b-form-input id="valid_from" :placeholder="$t('app.form.placeholder.default')"/>-->
+<!--              </b-col>-->
+<!--            </b-row>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.valid_to')" label-for="valid_to" label-cols-md="12">-->
+<!--            <b-row>-->
+<!--              <b-col cols="12">-->
+<!--                <b-form-input id="valid_to" :placeholder="$t('app.form.placeholder.default')"/>-->
+<!--              </b-col>-->
+<!--            </b-row>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.exists')" label-for="exists" label-cols-md="12">-->
+<!--            <b-row>-->
+<!--              <b-col cols="12">-->
+<!--                <b-form-input id="exists" :placeholder="$t('app.form.placeholder.default')"/>-->
+<!--              </b-col>-->
+<!--            </b-row>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.value')" label-for="value" label-cols-md="12">-->
+<!--            <b-row>-->
+<!--              <b-col cols="12">-->
+<!--                <b-form-input id="value" :placeholder="$t('app.form.placeholder.default')"/>-->
+<!--              </b-col>-->
+<!--            </b-row>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--      </b-col>-->
+<!--      <b-col cols="12" md="6" class="p-0">-->
+<!--        <Databases ref="datatable" :filter="filter" link="user-edit" :current-page="1" :page-options="[3, 5, 10]"-->
+<!--                   :items="items" :fields="fields"/>-->
+<!--        <div class="d-flex justify-content-center">-->
+<!--          <b-button size="md" class="d-flex align-items-center mt-2" variant="info">-->
+<!--            {{ $t('app.btn.save_add_contact_cirteria') }}-->
+<!--          </b-button>-->
+<!--        </div>-->
+<!--      </b-col>-->
+<!--    </b-row>-->
     <b-row v-if="currentStep == 9" class="">
       <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
         {{ $t('app.content.create_contract') }} - {{ $t('app.content.contract_special_rights') }}

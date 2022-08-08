@@ -47,6 +47,9 @@ export default {
     }
   },
   components: { DataTables, Field, BRow, BCol, EntityForm, BButton },
+  mounted() {
+    this.$refs.form.loadDefinition()
+  },
   methods: {
     // async validate() {
     //   const entity = await this.$refs.form.submit()
@@ -59,9 +62,6 @@ export default {
       this.loading = false
       this.areas.push(entity)
       return entity
-    },
-    mounted() {
-      this.$refs.form.loadDefinition()
     },
   },
 }

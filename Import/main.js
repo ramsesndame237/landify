@@ -23,6 +23,8 @@ const api = data => {
 
 const workbook = XLSX.readFile('Attributes.xlsx')
 
+// Penser a prendre en compte les noms des feuilles et nom l'ordre dans lequel elles sont
+
 workbook.SheetNames.forEach(async name => {
   if (name === '1Partner Company') {
     const partnercompanySheet = workbook.Sheets['Partner Company']
@@ -64,17 +66,16 @@ workbook.SheetNames.forEach(async name => {
 
 
       // create contactdetail
-      const contactdetailsEntity = {
-        contactdetails_mobile: contactdetails_mobile,
-        contactdetails_fax: contactdetails_fax,
-        contactdetails_phone: contactdetails_phone,
-        contactdetails_email: contactdetails_email
-      }
 
       const contactdetails = await api({
         entity: 'contactdetails',
         action: 'create',
-        data: [contactdetailsEntity],
+        data: [{
+          contactdetails_mobile: contactdetails_mobile,
+          contactdetails_fax: contactdetails_fax,
+          contactdetails_phone: contactdetails_phone,
+          contactdetails_email: contactdetails_email
+        }],
       })
 
       // Create Contact Detail Relation
@@ -141,16 +142,15 @@ workbook.SheetNames.forEach(async name => {
       })
 
       // Create Address Relation
-      const addressEntity = {
-        address_street: address_street,
-        address_house_number: address_house_number,
-        address_extra: address_extra
-      }
 
       const address = await api({
         entity: 'address',
         action: 'create',
-        data: [addressEntity]
+        data: [{
+          address_street: address_street,
+          address_house_number: address_house_number,
+          address_extra: address_extra
+        }]
       })
       const partnercompany_address_rel_response = await api({
         entity: 'partnercompany_address_rel',
@@ -219,18 +219,16 @@ workbook.SheetNames.forEach(async name => {
         filter: { 'city_name': city_name }
       })
 
-      const contactpersonEntity = {
-        contactperson_firstname: contactperson_firstname,
-        contactperson_lastname: contactperson_lastname,
-        contactperson_department: contactperson_department,
-        contactperson_shortname: contactperson_shortname,
-        contactperson_function: contactperson_function,
-      }
-
       const contactpersonResponse = await api({
         entity: 'contactperson',
         action: 'create',
-        data: [contactpersonEntity]
+        data: [{
+          contactperson_firstname,
+          contactperson_lastname,
+          contactperson_department,
+          contactperson_shortname,
+          contactperson_function,
+        }]
       })
       const contactperson_id = contactpersonResponse.data.data.data[0][0].contactperson_id
 
@@ -353,6 +351,16 @@ workbook.SheetNames.forEach(async name => {
         action: 'create',
         data: [contactperson_address_rel]
       })
+
+      // Create user relation
+      await api({
+        entity: 'contactperson_user_rel',
+        action: 'create',
+        data: [{
+          contactperson_id: contactperson_id,
+          user_id: user.data.data.data[0].user_id
+        }]
+      })
     }
   }
   else if (name === '1Company') {
@@ -418,6 +426,8 @@ workbook.SheetNames.forEach(async name => {
 
       const companyEntity = {
         company_name: companyName,
+        company_template_coverletter_subject,
+        company_template_coverletter_text
       }
 
       const companyresponse = await api({
@@ -447,6 +457,16 @@ workbook.SheetNames.forEach(async name => {
         company_id: companyId,
         address_id: addressResponse.data.data.data[0][0].address_id
       }
+
+      await api({
+        entity: 'company_address_rel',
+        action: 'create',
+        data: [{
+            company_id: companyId,
+            address_id: addressResponse.data.data.data[0][0].address_id
+          }
+        ]
+      })
 
       // Company details
 
@@ -500,27 +520,24 @@ workbook.SheetNames.forEach(async name => {
       })
 
       // Bankdata
-      const bankdataEntity = {
-        bankdata_iban: bankdata_iban,
-        bankdata_bic: bankdata_bic,
-        bankdata_bank_name: bankdata_bank_name
-      }
 
       const bankdataResponse = await api({
         entity: 'bankdata',
         action: 'create',
-        data: [bankdataEntity]
+        data: [{
+          bankdata_iban: bankdata_iban,
+          bankdata_bic: bankdata_bic,
+          bankdata_bank_name: bankdata_bank_name
+        }]
       })
-
-      const company_bankdata_rel = {
-        bankdata_id: bankdataResponse.data.data.data[0][0].bankdata_id,
-        company_id: companyId
-      }
 
       const company_bankdata_rel_response = await api({
         entity: 'company_bankdata_rel',
         action: 'create',
-        data: [company_bankdata_rel]
+        data: [{
+          bankdata_id: bankdataResponse.data.data.data[0][0].bankdata_id,
+          company_id: companyId
+        }]
       })
     }
   }
@@ -547,29 +564,43 @@ workbook.SheetNames.forEach(async name => {
         filter: { 'tag_name': tag_name }
       })
 
-      const posEntity = {
-        pos_name: pos_name,
-        pos_branchnumber: pos_branchnumber,
-        pos_name_external: pos_name_external,
-        pos_first_year: pos_first_year,
-        pos_internal_id: '',
-      }
-
       const posResponse = await api({
         entity: 'pos',
         action: 'create',
-        data: [posEntity]
+        data: [{
+          pos_name: pos_name,
+          pos_branchnumber: pos_branchnumber,
+          pos_name_external: pos_name_external,
+          pos_first_year: pos_first_year,
+          pos_internal_id: '',
+        }]
       })
-
-      const pos_tag_rel = {
-        tag_id: tag.data.data.data[0].tag_id,
-        pos_id: posResponse.data.data.data[0][0].pos_id
-      }
 
       const pos_tag_rel_response = await api({
         entity: 'pos_tag_rel',
         action: 'create',
-        data: [pos_tag_rel]
+        data: [{
+          tag_id: tag.data.data.data[0].tag_id,
+          pos_id: posResponse.data.data.data[0][0].pos_id
+        }]
+      })
+
+      // Create company relation
+      const company = await api({
+        entity: 'company',
+        action: 'read-rich',
+        filter: { 'company_name': company_name }
+      })
+
+      const pos_company_rel = await api({
+        entity: 'company_pos_rel',
+        action: 'create',
+        data: [
+          {
+            company_id: company.data.data.data[0].company_id,
+            pos_id: posResponse.data.data.data[0][0].pos_id
+          }
+        ]
       })
     }
   }
@@ -658,7 +689,7 @@ workbook.SheetNames.forEach(async name => {
       })
     }
   }
-  else if (name === 'Location') {
+  else if (name === '1Location') {
     const locationSheet = workbook.Sheets.Location
 
     const range = XLSX.utils.decode_range(locationSheet['!ref'])
@@ -697,54 +728,48 @@ workbook.SheetNames.forEach(async name => {
         filter: { 'locationtype_name': locationtype_name },
       })
 
-      const locationEntity = {
-        location_objectdescription: location_objectdescription,
-        location_name: location_name,
-        location_total_area: location_total_area,
-        location_start_date: location_start_date
-      }
-
       const locationResponse = await api({
         entity: 'location',
         action: 'create',
-        data: [locationEntity]
+        data: [{
+          location_objectdescription: location_objectdescription,
+          location_name: location_name,
+          location_total_area: location_total_area,
+          location_start_date: location_start_date
+        }]
       })
 
       // Relations
 
-      const addressEntity = {
-        address_street: address_street,
-        address_house_number: address_house_number,
-        address_extra: address_extra,
-        city_id: city.data.data.data[0].city_id
-      }
-
       const addressResponse = await api({
         entity: 'address',
         action: 'create',
-        data: [addressEntity]
+        data: [{
+          address_street: address_street,
+          address_house_number: address_house_number,
+          address_extra: address_extra,
+        }]
       })
 
-      const location_locationtype_rel = {
-        location_id: locationResponse.data.data.data[0][0].location_id,
-        locationtype_id: locationtype.data.data.data[0].locationtype_id
-      }
+      // Create location_address_rel
+      await api({
+        entity: 'location_address_rel',
+        action: 'create',
+        data: [{
+          address_id: addressResponse.data.data.data[0][0].address_id,
+          location_id: locationResponse.data.data.data[0][0].location_id
+        }]
+      })
+
+      // Create location_locationtype_rel
 
       const location_locationtype_rel_response = await api({
         entity: 'location_locationtype_rel',
         action: 'create',
-        data: [location_locationtype_rel]
-      })
-
-      const location_address_rel = {
-        location_id: locationResponse.data.data.data[0][0].location_id,
-        address_id: addressResponse.data.data.data[0][0].address_id
-      }
-
-      const location_address_rel_response = await api({
-        entity: 'location_address_rel',
-        action: 'create',
-        data: [location_address_rel]
+        data: [{
+          location_id: locationResponse.data.data.data[0][0].location_id,
+          locationtype_id: locationtype.data.data.data[0].locationtype_id
+        }]
       })
 
     }

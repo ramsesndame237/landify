@@ -69,6 +69,8 @@
           <step3 v-if="current_step===3" ref="step3" :context="context" :disabled="loading"/>
           <step4 v-if="current_step===4" ref="step4" :context="context" :disabled="loading"/>
           <step5 v-if="current_step===5" ref="step5" :context="context" :disabled="loading"/>
+          <step6 v-if="current_step===6" ref="step6" :context="context" :disabled="loading"/>
+          <step8 v-if="current_step===8" ref="step8" :context="context" :disabled="loading"/>
           <SPNBFormSteps :current-step="current_step"/>
           <div v-if="steps_progress == 100"
                class=" d-flex pt-5 pb-5 mb-2 justify-content-center align-items-center col-12">
@@ -115,6 +117,8 @@ import Step2 from '@/views/app/SPNB/Step2'
 import Step3 from '@/views/app/SPNB/Step3'
 import Step4 from '@/views/app/SPNB/Step4'
 import Step5 from '@/views/app/SPNB/Step5'
+import Step6 from '@/views/app/SPNB/Step6'
+import Step8 from '@/views/app/SPNB/Step8'
 
 const Databases = () => import('@/layouts/components/DataTables.vue')
 export default {
@@ -142,6 +146,8 @@ export default {
     Step3,
     Step4,
     Step5,
+    Step6,
+    Step8,
   },
   data() {
     return {
@@ -252,8 +258,10 @@ export default {
           this.context.locations = this.$refs.step3.locations
         } else if (this.current_step === 4) {
           this.context.areas = this.$refs.step4.areas
-        }else if (this.current_step === 5) {
+        } else if (this.current_step === 5) {
           this.context.pos = this.$refs.step5.pos
+        } else if (this.current_step === 6) {
+          this.context.contract = await this.$refs.step6.validate()
         }
       } catch (e) {
         console.error(e)
@@ -270,6 +278,9 @@ export default {
       this.evaluate_completed_steps()
     },
     prev_step() {
+      if (this.current_step === 5) {
+        this.context.pos = this.$refs.step5.pos
+      }
       this.goToStep(this.current_step - 1)
     },
     skip_step() {
