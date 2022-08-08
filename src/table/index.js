@@ -730,6 +730,7 @@ export default {
         ],
       },
     ],
+    formComponent: () => import('@/views/app/FormComponent/AddressForm.vue'),
   },
   contactdetails: {
     primaryKey: 'contactdetails_id',
