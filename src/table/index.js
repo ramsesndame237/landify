@@ -1231,8 +1231,8 @@ export default {
       { key: 'contract_id', auto: true },
       { key: 'contract_type_name', hideOnForm: true },
       { key: 'contract_name' },
-      { key: 'contract_begin_date' },
-      { key: 'contract_end_date' },
+      { key: 'contract_begin_date', type: 'date' },
+      { key: 'contract_end_date', type: 'date' },
       {
         key: 'currency_id', type: 'list', list: 'currency', listLabel: 'currency_name', hideOnIndex: true,
       },

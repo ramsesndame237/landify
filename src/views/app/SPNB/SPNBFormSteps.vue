@@ -53,128 +53,128 @@
 <!--                     :initial-data="{}" cols="12"/>-->
 <!--      </b-col>-->
 <!--    </b-row>-->
-    <b-row v-if="currentStep == 7" class="">
-      <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
-        {{ $t('app.content.create_contract') }} - {{ $t('app.content.contract_areas') }}
-      </b-col>
-      <b-col cols="12" md="6" class="p-0">
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.contract_id')" label-for="contract_id" label-cols-md="12">
-            <b-row>
-              <b-col cols="12">
-                <b-form-input id="contract_id" :placeholder="$t('app.form.placeholder.automatic')"/>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.contract_name')" label-for="contract_name" label-cols-md="12">
-            <b-row>
-              <b-col cols="12">
-                <b-form-input id="contract_name" :placeholder="$t('app.form.placeholder.default')"/>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.pos_id')" label-for="pos_id" label-cols-md="12">
-            <b-row>
-              <b-col cols="12">
-                <b-form-input id="pos_id" :placeholder="$t('app.form.placeholder.automatic')"/>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.area_id')" label-for="area_id" label-cols-md="12">
-            <b-row>
-              <b-col>
-                <b-form-select id="area_id"/>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.description')" label-for="description" label-cols-md="12">
-            <b-form-select id="description"/>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.usage_type')" label-for="usage_type" label-cols-md="12">
-            <b-row>
-              <b-col cols="12">
-                <b-form-select id="usage_type" :placeholder="$t('app.form.placeholder.default')"/>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.main_usage')" label-for="main_usage" label-cols-md="12">
-            <b-row>
-              <b-col cols="12">
-                <b-form-select id="main_usage" :placeholder="$t('app.form.placeholder.default')"/>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.rental_space_unit')" label-for="rental_space_unit"
-                        label-cols-md="12">
-            <b-row>
-              <b-col cols="12">
-                <b-form-input id="rental_space_unit" :placeholder="$t('app.form.placeholder.default')"/>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.allocation_space_unit')" label-for="allocation_space_unit"
-                        label-cols-md="12">
-            <b-row>
-              <b-col cols="12">
-                <b-form-input id="allocation_space_unit" :placeholder="$t('app.form.placeholder.default')"/>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.unit')" label-for="unit" label-cols-md="12">
-            <b-row>
-              <b-col cols="12">
-                <b-form-select id="unit" :placeholder="$t('app.form.placeholder.default')"/>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.valid_from')" label-for="valid_from" label-cols-md="12">
-            <b-row>
-              <b-col cols="12">
-                <b-form-input id="valid_from" :placeholder="$t('app.form.placeholder.default')"/>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12">
-          <b-form-group :label="$t('app.form.label.valid_to')" label-for="valid_to" label-cols-md="12">
-            <b-row>
-              <b-col cols="12">
-                <b-form-input id="valid_to" :placeholder="$t('app.form.placeholder.default')"/>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-      </b-col>
-      <b-col cols="12" md="6" class="p-0">
-        <Databases ref="datatable" :filter="filter" link="user-edit" :current-page="1" :page-options="[3, 5, 10]"
-                   :items="items" :fields="fields"/>
-        <div class="d-flex justify-content-center">
-          <b-button size="md" class="d-flex align-items-center mt-2" variant="info">
-            {{ $t('app.btn.save_add_contact') }}
-          </b-button>
-        </div>
-      </b-col>
-    </b-row>
+<!--    <b-row v-if="currentStep == 7" class="">-->
+<!--      <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">-->
+<!--        {{ $t('app.content.create_contract') }} - {{ $t('app.content.contract_areas') }}-->
+<!--      </b-col>-->
+<!--      <b-col cols="12" md="6" class="p-0">-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.contract_id')" label-for="contract_id" label-cols-md="12">-->
+<!--            <b-row>-->
+<!--              <b-col cols="12">-->
+<!--                <b-form-input id="contract_id" :placeholder="$t('app.form.placeholder.automatic')"/>-->
+<!--              </b-col>-->
+<!--            </b-row>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.contract_name')" label-for="contract_name" label-cols-md="12">-->
+<!--            <b-row>-->
+<!--              <b-col cols="12">-->
+<!--                <b-form-input id="contract_name" :placeholder="$t('app.form.placeholder.default')"/>-->
+<!--              </b-col>-->
+<!--            </b-row>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.pos_id')" label-for="pos_id" label-cols-md="12">-->
+<!--            <b-row>-->
+<!--              <b-col cols="12">-->
+<!--                <b-form-input id="pos_id" :placeholder="$t('app.form.placeholder.automatic')"/>-->
+<!--              </b-col>-->
+<!--            </b-row>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.area_id')" label-for="area_id" label-cols-md="12">-->
+<!--            <b-row>-->
+<!--              <b-col>-->
+<!--                <b-form-select id="area_id"/>-->
+<!--              </b-col>-->
+<!--            </b-row>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.description')" label-for="description" label-cols-md="12">-->
+<!--            <b-form-select id="description"/>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.usage_type')" label-for="usage_type" label-cols-md="12">-->
+<!--            <b-row>-->
+<!--              <b-col cols="12">-->
+<!--                <b-form-select id="usage_type" :placeholder="$t('app.form.placeholder.default')"/>-->
+<!--              </b-col>-->
+<!--            </b-row>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.main_usage')" label-for="main_usage" label-cols-md="12">-->
+<!--            <b-row>-->
+<!--              <b-col cols="12">-->
+<!--                <b-form-select id="main_usage" :placeholder="$t('app.form.placeholder.default')"/>-->
+<!--              </b-col>-->
+<!--            </b-row>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.rental_space_unit')" label-for="rental_space_unit"-->
+<!--                        label-cols-md="12">-->
+<!--            <b-row>-->
+<!--              <b-col cols="12">-->
+<!--                <b-form-input id="rental_space_unit" :placeholder="$t('app.form.placeholder.default')"/>-->
+<!--              </b-col>-->
+<!--            </b-row>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.allocation_space_unit')" label-for="allocation_space_unit"-->
+<!--                        label-cols-md="12">-->
+<!--            <b-row>-->
+<!--              <b-col cols="12">-->
+<!--                <b-form-input id="allocation_space_unit" :placeholder="$t('app.form.placeholder.default')"/>-->
+<!--              </b-col>-->
+<!--            </b-row>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.unit')" label-for="unit" label-cols-md="12">-->
+<!--            <b-row>-->
+<!--              <b-col cols="12">-->
+<!--                <b-form-select id="unit" :placeholder="$t('app.form.placeholder.default')"/>-->
+<!--              </b-col>-->
+<!--            </b-row>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.valid_from')" label-for="valid_from" label-cols-md="12">-->
+<!--            <b-row>-->
+<!--              <b-col cols="12">-->
+<!--                <b-form-input id="valid_from" :placeholder="$t('app.form.placeholder.default')"/>-->
+<!--              </b-col>-->
+<!--            </b-row>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--        <b-col cols="12">-->
+<!--          <b-form-group :label="$t('app.form.label.valid_to')" label-for="valid_to" label-cols-md="12">-->
+<!--            <b-row>-->
+<!--              <b-col cols="12">-->
+<!--                <b-form-input id="valid_to" :placeholder="$t('app.form.placeholder.default')"/>-->
+<!--              </b-col>-->
+<!--            </b-row>-->
+<!--          </b-form-group>-->
+<!--        </b-col>-->
+<!--      </b-col>-->
+<!--      <b-col cols="12" md="6" class="p-0">-->
+<!--        <Databases ref="datatable" :filter="filter" link="user-edit" :current-page="1" :page-options="[3, 5, 10]"-->
+<!--                   :items="items" :fields="fields"/>-->
+<!--        <div class="d-flex justify-content-center">-->
+<!--          <b-button size="md" class="d-flex align-items-center mt-2" variant="info">-->
+<!--            {{ $t('app.btn.save_add_contact') }}-->
+<!--          </b-button>-->
+<!--        </div>-->
+<!--      </b-col>-->
+<!--    </b-row>-->
 <!--    <b-row v-if="currentStep == 8" class="">-->
 <!--      <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">-->
 <!--        {{ $t('app.content.create_contract') }} - {{ $t('app.content.contract_criteria') }}-->

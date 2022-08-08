@@ -70,6 +70,7 @@
           <step4 v-if="current_step===4" ref="step4" :context="context" :disabled="loading"/>
           <step5 v-if="current_step===5" ref="step5" :context="context" :disabled="loading"/>
           <step6 v-if="current_step===6" ref="step6" :context="context" :disabled="loading"/>
+          <step7 v-if="current_step===7" ref="step7" :context="context" :disabled="loading"/>
           <step8 v-if="current_step===8" ref="step8" :context="context" :disabled="loading"/>
           <SPNBFormSteps :current-step="current_step"/>
           <div v-if="steps_progress == 100"
@@ -118,6 +119,7 @@ import Step3 from '@/views/app/SPNB/Step3'
 import Step4 from '@/views/app/SPNB/Step4'
 import Step5 from '@/views/app/SPNB/Step5'
 import Step6 from '@/views/app/SPNB/Step6'
+import Step7 from '@/views/app/SPNB/Step7'
 import Step8 from '@/views/app/SPNB/Step8'
 
 const Databases = () => import('@/layouts/components/DataTables.vue')
@@ -147,6 +149,7 @@ export default {
     Step4,
     Step5,
     Step6,
+    Step7,
     Step8,
   },
   data() {
@@ -163,7 +166,7 @@ export default {
           company: 'Gohze',
         },
       ],
-      current_step: 1,
+      current_step: 7,
       max_steps: 1,
       completed_step: 0,
       steps_progress: 0,
