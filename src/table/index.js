@@ -17,11 +17,12 @@ export default {
       {
         key: 'usertype_id',
         label: 'User Type',
-        hideOnIndex: false,
+        hideOnIndex: true,
         type: 'list',
         list: 'usertype',
         listLabel: 'usertype_name',
       },
+      { key: 'usertype_name', hideOnForm: true },
       {
         key: 'contactperson_id',
         hideOnIndex: true,
