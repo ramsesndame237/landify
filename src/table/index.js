@@ -1,6 +1,7 @@
 export default {
   // region Work Package 1
   user: {
+    entity: 'frontend_1_1_2_1',
     fields: [
       {
         key: 'user_id', label: 'Id', auto: true, hideOnForm: true,
@@ -16,7 +17,7 @@ export default {
       {
         key: 'usertype_id',
         label: 'User Type',
-        hideOnIndex: true,
+        hideOnIndex: false,
         type: 'list',
         list: 'usertype',
         listLabel: 'usertype_name',
@@ -1437,20 +1438,29 @@ export default {
   },
 
   criteria: {
+    entity: 'frontend_3_6_1',
     fields: [
       { key: 'criteria_id', auto: true },
       { key: 'criteria_name' },
-      { key: 'criteria_description', type: 'textarea' },
+      { key: 'criteria_description', type: 'textarea', hideOnIndex: true },
+      { key: 'criteriatype_name', hideOnForm: true },
       { key: 'criteria_has_value', type: 'boolean' },
+      { key: 'contract_count', type: 'number', hideOnForm: true },
       {
         key: 'criteriatype_id', type: 'list', list: 'criteriatype', hideOnIndex: true, listLabel: 'criteriatype_name',
+      },
+      {
+        key: 'unit_id', type: 'list', list: 'unit', hideOnIndex: true, listLabel: 'unit_name',
+      },
+      {
+        key: 'contracttype_id', type: 'list', list: 'contracttype', hideOnIndex: true, listLabel: 'contracttype_name',
       },
     ],
     relations: [
       {
         title: 'Contract',
         primaryKey: 'contract_id',
-        entity: 'contract_criteria_rel',
+        entity: 'frontend_3_6_3',
         entityForm: 'contract_criteria_form',
         fields: [
           { key: 'contract_id' },
@@ -1461,17 +1471,19 @@ export default {
           { key: 'contract_criteria_exists', type: 'boolean' },
           { key: 'contract_criteria_valid_from_date', type: 'date' },
           { key: 'contract_criteria_valid_to_date', type: 'date' },
-          { key: 'choice_id', type: 'list', list: 'choice', listLabel: 'choice_name' },
+          { key: 'choice_id', type: 'list', list: 'choice', listLabel: 'choice_name', hideOnIndex: true },
+          { key: 'choice_name', hideOnForm: true },
         ],
       },
       {
         title: 'Choice',
         primaryKey: 'choice_id',
-        entity: 'contract_criteria_choice_rel',
+        entity: 'frontend_3_6_4',
         fields: [
           { key: 'choice_id', hideOnForm: true },
+          { key: 'choice_name', hideOnForm: true },
           {
-            key: 'choice_id', listLabel: 'choice_name', type: 'list', list: 'choice',
+            key: 'choice_id', listLabel: 'choice_name', type: 'list', list: 'choice', hideOnIndex: true,
           },
         ],
       },
@@ -1554,16 +1566,17 @@ export default {
   },
 
   tag: {
+    entity: 'frontend_3_10_1',
     fields: [
       { key: 'tag_id', auto: true },
       { key: 'tag_name' },
-      { key: 'tag_description', type: 'textarea' },
-      { key: 'pos_count', hideOnForm: true },
+      { key: 'tag_description', type: 'textarea', hideOnIndex: true },
+      { key: 'tag_count', hideOnForm: true, type: 'number' },
     ],
     relations: [
       {
         title: 'Point of Sales',
-        entity: 'pos_tag_grp',
+        entity: 'frontend_3_10_3',
         entityForm: 'pos_tag_rel',
         fields: [
           {

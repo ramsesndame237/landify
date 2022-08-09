@@ -300,6 +300,7 @@ export default {
     },
     goToStep(step) {
       this.current_step = step
+      console.log('fredchess', step)
       this.steps_tabs[this.current_step].completed = false
       this.evaluate_completed_steps()
     },
@@ -310,7 +311,7 @@ export default {
       this.goToStep(this.current_step - 1)
     },
     skip_step() {
-      if (this.current_step != this.max_steps) {
+      if (this.current_step !== this.max_steps) {
         this.current_step++
       }
     },
