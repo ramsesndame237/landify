@@ -7,11 +7,12 @@ const axios = require('axios')
 const axiosIns = axios.create({
   // You can add your headers here
   // ================================
-  baseURL: 'https://contabo.lx42.de/8001/',
-  timeout: 30000,
-  headers: { Authorization: 'Bearer johndoe@example.com' },
+  baseURL: 'https://contabo.lx42.de/8001/', // url to the backend
+  timeout: 30000, // timeout in ms
+  headers: { Authorization: 'Bearer johndoe@example.com' }, // authentication token
 })
 
+// send request to the sever
 const api = data => {
   console.log("api call", data)
   return axiosIns.post('/api/', { a: data })
@@ -21,12 +22,12 @@ const api = data => {
     })
 }
 
+// Excel Document
 const workbook = XLSX.readFile('Attributes.xlsx')
 
 // Penser a prendre en compte les noms des feuilles et nom l'ordre dans lequel elles sont
-
 workbook.SheetNames.forEach(async name => {
-  if (name === '1Partner Company') {
+  if (name === 'Partner Company') {
     const partnercompanySheet = workbook.Sheets['Partner Company']
 
     const range = XLSX.utils.decode_range(partnercompanySheet['!ref'])
