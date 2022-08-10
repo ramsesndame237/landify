@@ -1269,6 +1269,41 @@ export default {
         ],
       },
       {
+        title: 'Recurring payment',
+        primaryKey: 'recurringpayment_id',
+        entity: 'contract_recurringpayment_grp',
+        entityForm: 'contract_recurringpayment_rel',
+        fields: [
+          { key: 'recurringpayment_id', auto: true },
+          {
+            key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name', hideOnIndex: true,
+          },
+          {
+            key: 'recurringpaymenttype_id',
+            type: 'list',
+            list: 'recurringpaymenttype',
+            listLabel: 'recurringpaymenttype_name',
+            hideOnIndex: true,
+          },
+          { key: 'recurringpayment_sum_per_month', hideOnIndex: true },
+          { key: 'recurringpayment_condition_percentage', hideOnIndex: true },
+          { key: 'recurringpayment_condition_comment', hideOnIndex: true, type: 'textarea' },
+          { key: 'recurringpayment_percentage', hideOnIndex: true },
+          { key: 'recurringpayment_begin_date', type: 'date', hideOnIndex: true },
+          { key: 'recurringpayment_end_date', type: 'date', hideOnIndex: true },
+          { key: 'recurringpayment_maturity_date', type: 'date', hideOnIndex: true },
+          { key: 'recurringpayment_maturity_daily_range', hideOnIndex: true },
+          { key: 'recurringpayment_maturity_monthly_range', hideOnIndex: true },
+          { key: 'reccuringpayment_value_deposit', hideOnIndex: true },
+          {
+            key: 'maturitytype_id', type: 'list', list: 'maturitytype', listLabel: 'maturitytype_name', hideOnIndex: true, withNew: true
+          },
+          {
+            key: 'indexclause_id', type: 'list', list: 'indexclause', listLabel: 'indexclause_name', withNew: true,
+          },
+        ],
+      },
+      {
         title: 'Service Objects',
         primaryKey: 'serviceobject_id',
         entity: 'contract_serviceobject_grp',

@@ -171,7 +171,7 @@ export default {
           company: 'Gohze',
         },
       ],
-      current_step: 1,
+      current_step: 10,
       max_steps: 1,
       completed_step: 0,
       steps_progress: 0,

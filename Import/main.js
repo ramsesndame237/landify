@@ -17,9 +17,71 @@ const api = data => {
   console.log("api call", data)
   return axiosIns.post('/api/', { a: data })
     .then(response => {
+      // if (response.data.errors?.length) console.log("error: ", response.data.errors[0])
+
       console.log("response", response.data)
       return Promise.resolve(response)
     })
+}
+
+async function createAddress(entity_name, entity_id, country_name, city_name, city_zip, address, entity_address_rel_name = null) {
+
+  // Get the country
+  const country = await api({
+    entity: 'country',
+    action: 'read-rich',
+    filter: { 'country_name': country_name }
+  })
+
+  // Create city
+  const city = await api({
+    entity: 'city',
+    action: 'create',
+    data: [{
+      city_name,
+      city_zip
+    }]
+  })
+
+  // Create address entity
+  const addressEntity = await api({
+    entity: 'address',
+    action: 'create',
+    data: [address]
+  })
+
+  // Relations
+
+  // Create city country rel
+  await api({
+    entity: 'city_country_rel',
+    action: 'create',
+    data: [{
+      city_id: city.data.data.data[0][0].city_id,
+      country_id: country.data.data.data[0].country_id
+    }]
+  })
+
+  // Create entity address rel
+  const entity_id_name = `${entity_name}_id`
+  await api({
+    entity: entity_address_rel_name ? entity_address_rel_name : entity_name + "_address_rel",
+    action: 'create',
+    data: [{
+     [entity_id_name] : entity_id,
+      address_id: addressEntity.data.data.data[0][0].address_id
+    }],
+  })
+
+  // Create address city rel
+  await api({
+    entity: 'address_city_rel',
+    action: 'create',
+    data: [{
+      city_id: city.data.data.data[0][0].city_id,
+      address_id: addressEntity.data.data.data[0][0].address_id
+    }]
+  })
 }
 
 // Excel Document
@@ -27,7 +89,7 @@ const workbook = XLSX.readFile('Attributes.xlsx')
 
 // Penser a prendre en compte les noms des feuilles et nom l'ordre dans lequel elles sont
 workbook.SheetNames.forEach(async name => {
-  if (name === 'Partner Company') {
+  if (name === '1Partner Company') {
     const partnercompanySheet = workbook.Sheets['Partner Company']
 
     const range = XLSX.utils.decode_range(partnercompanySheet['!ref'])
@@ -42,16 +104,18 @@ workbook.SheetNames.forEach(async name => {
       const partnergroup_name = partnercompanySheet[`D${rowPos}`]?.v
       const partnertype_name = partnercompanySheet[`E${rowPos}`]?.v
       const city_name = partnercompanySheet[`F${rowPos}`]?.v
-      const address_street = partnercompanySheet[`G${rowPos}`]?.v
-      const address_house_number = partnercompanySheet[`H${rowPos}`]?.v
-      const address_extra = partnercompanySheet[`I${rowPos}`]?.v
-      const contactdetails_email = partnercompanySheet[`J${rowPos}`]?.v
-      const contactdetails_phone = partnercompanySheet[`K${rowPos}`]?.v
-      const contactdetails_mobile = partnercompanySheet[`L${rowPos}`]?.v
-      const contactdetails_fax = partnercompanySheet[`M${rowPos}`]?.v
-      const companydetails_salestaxno = partnercompanySheet[`N${rowPos}`]?.v
-      const companydetails_commercialregisterno = partnercompanySheet[`O${rowPos}`]?.v
-      const companydetails_website = partnercompanySheet[`P${rowPos}`]?.v
+      const city_zip = partnercompanySheet[`G${rowPos}`]?.v
+      const address_street = partnercompanySheet[`H${rowPos}`]?.v
+      const address_house_number = partnercompanySheet[`I${rowPos}`]?.v
+      const address_extra = partnercompanySheet[`J${rowPos}`]?.v
+      const country_name = partnercompanySheet[`K${rowPos}`]?.v
+      const contactdetails_email = partnercompanySheet[`L${rowPos}`]?.v
+      const contactdetails_phone = partnercompanySheet[`M${rowPos}`]?.v
+      const contactdetails_mobile = partnercompanySheet[`N${rowPos}`]?.v
+      const contactdetails_fax = partnercompanySheet[`O${rowPos}`]?.v
+      const companydetails_salestaxno = partnercompanySheet[`P${rowPos}`]?.v
+      const companydetails_commercialregisterno = partnercompanySheet[`Q${rowPos}`]?.v
+      const companydetails_website = partnercompanySheet[`R${rowPos}`]?.v
 
       // Create Partner Company
       const partnercompanyEntity = {
@@ -142,40 +206,13 @@ workbook.SheetNames.forEach(async name => {
         }]
       })
 
-      // Create Address Relation
+      const address = {
+        address_street,
+        address_house_number,
+        address_extra
+      }
 
-      const address = await api({
-        entity: 'address',
-        action: 'create',
-        data: [{
-          address_street: address_street,
-          address_house_number: address_house_number,
-          address_extra: address_extra
-        }]
-      })
-      const partnercompany_address_rel_response = await api({
-        entity: 'partnercompany_address_rel',
-        action: 'create',
-        data: [{
-          partnercompany_id: (await partnercompanyResponse).data.data.data[0][0].partnercompany_id,
-          address_id: address.data.data.data[0][0].address_id
-        }]
-      })
-      const city = await api({
-        entity: 'city',
-        action: 'read-rich',
-        filter: { 'city_name': city_name },
-      })
-
-      await api({
-        entity: 'address_city_rel',
-        action: 'create',
-        data: [{
-          city_id: city.data.data.data[0].city_id,
-          address_id: address.data.data.data[0][0].address_id
-        }]
-      })
-
+      await createAddress("partnercompany", partnercompanyResponse.data.data.data[0][0].partnercompany_id, country_name, city_name, city_zip, address)
     }
   }
   else if (name === '1Contact Person') {
@@ -201,23 +238,19 @@ workbook.SheetNames.forEach(async name => {
       const company_name = contactPersonSheet[`L${rowPos}`]?.v
       const partnercompany_name = contactPersonSheet[`M${rowPos}`]?.v
       const city_name = contactPersonSheet[`N${rowPos}`]?.v
-      const address_street = contactPersonSheet[`O${rowPos}`]?.v
-      const address_house_number = contactPersonSheet[`P${rowPos}`]?.v
-      const address_extra = contactPersonSheet[`Q${rowPos}`]?.v
-      const contactsalutation_name = contactPersonSheet[`R${rowPos}`]?.v
-      const contacttitle_name = contactPersonSheet[`S${rowPos}`]?.v
+      const city_zip = contactPersonSheet[`O${rowPos}`]?.v
+      const address_street = contactPersonSheet[`P${rowPos}`]?.v
+      const address_house_number = contactPersonSheet[`Q${rowPos}`]?.v
+      const address_extra = contactPersonSheet[`R${rowPos}`]?.v
+      const country_name = contactPersonSheet[`S${rowPos}`]?.v
+      const contactsalutation_name = contactPersonSheet[`T${rowPos}`]?.v
+      const contacttitle_name = contactPersonSheet[`U${rowPos}`]?.v
 
 
       const user = await api({
         entity: 'user',
         action: 'read-rich',
         filter: { 'user_email': user_email }
-      })
-
-      const city = await api({
-        entity: 'city',
-        action: 'read-rich',
-        filter: { 'city_name': city_name }
       })
 
       const contactpersonResponse = await api({
@@ -317,41 +350,14 @@ workbook.SheetNames.forEach(async name => {
         data: [contactperson_contactdetails_rel]
       })
 
-      // address
-
-      const addressEntity = {
-        address_street: address_street,
-        address_house_number: address_house_number,
-        address_extra: address_extra,
+      // Address
+      const address = {
+        address_street,
+        address_house_number,
+        address_extra
       }
 
-      const addressResponse = await api({
-        entity: 'address',
-        action: 'create',
-        data: [addressEntity]
-      })
-
-      const address_city_rel = {
-        address_id: addressResponse.data.data.data[0][0].address_id,
-        city_id: city.data.data.data[0].city_id
-      }
-
-      const address_city_rel_response = await api({
-        entity: 'address_city_rel',
-        action: 'create',
-        data: [address_city_rel]
-      })
-
-      const contactperson_address_rel = {
-        contactperson_id: contactperson_id,
-        address_id: addressResponse.data.data.data[0][0].address_id
-      }
-
-      const contactperson_address_rel_response = await api({
-        entity: 'contactperson_address_rel',
-        action: 'create',
-        data: [contactperson_address_rel]
-      })
+      await createAddress("contactperson",contactpersonResponse.data.data.data[0][0].contactperson_id , country_name, city_name, city_zip, address)
 
       // Create user relation
       await api({
@@ -364,7 +370,7 @@ workbook.SheetNames.forEach(async name => {
       })
     }
   }
-  else if (name === '1Company') {
+  else if (name === 'Company') {
     const companySheet = workbook.Sheets.Company
 
     const range = XLSX.utils.decode_range(companySheet['!ref'])
@@ -379,19 +385,21 @@ workbook.SheetNames.forEach(async name => {
       const company_template_coverletter_subject = companySheet[`D${rowPos}`]?.v
       const company_template_coverletter_text = companySheet[`E${rowPos}`]?.v
       const city_name = companySheet[`F${rowPos}`]?.v
-      const address_street = companySheet[`G${rowPos}`]?.v
-      const address_house_number = companySheet[`H${rowPos}`]?.v
-      const address_extra = companySheet[`I${rowPos}`]?.v
-      const contactdetails_email = companySheet[`J${rowPos}`]?.v
-      const contactdetails_phone = companySheet[`K${rowPos}`]?.v
-      const contactdetails_mobile = companySheet[`L${rowPos}`]?.v
-      const contactdetails_fax = companySheet[`M${rowPos}`]?.v
-      const companydetails_salestaxno = companySheet[`N${rowPos}`]?.v
-      const companydetails_commercialregisterno = companySheet[`O${rowPos}`]?.v
-      const companydetails_website = companySheet[`P${rowPos}`]?.v
-      const bankdata_iban = companySheet[`Q${rowPos}`]?.v
-      const bankdata_bic = companySheet[`Q${rowPos}`]?.v
-      const bankdata_bank_name = companySheet[`Q${rowPos}`]?.v
+      const city_zip = companySheet[`G${rowPos}`]?.v
+      const address_street = companySheet[`H${rowPos}`]?.v
+      const address_house_number = companySheet[`I${rowPos}`]?.v
+      const address_extra = companySheet[`J${rowPos}`]?.v
+      const country_name = companySheet[`K${rowPos}`]?.v
+      const contactdetails_email = companySheet[`L${rowPos}`]?.v
+      const contactdetails_phone = companySheet[`M${rowPos}`]?.v
+      const contactdetails_mobile = companySheet[`N${rowPos}`]?.v
+      const contactdetails_fax = companySheet[`O${rowPos}`]?.v
+      const companydetails_salestaxno = companySheet[`P${rowPos}`]?.v
+      const companydetails_commercialregisterno = companySheet[`Q${rowPos}`]?.v
+      const companydetails_website = companySheet[`R${rowPos}`]?.v
+      const bankdata_iban = companySheet[`S${rowPos}`]?.v
+      const bankdata_bic = companySheet[`T${rowPos}`]?.v
+      const bankdata_bank_name = companySheet[`U${rowPos}`]?.v
 
       // Create company
 
@@ -707,20 +715,16 @@ workbook.SheetNames.forEach(async name => {
       const partnercompany_name = locationSheet[`F${rowPos}`]?.v
       const locationtype_name = locationSheet[`G${rowPos}`]?.v
       const city_name = locationSheet[`H${rowPos}`]?.v
-      const address_street = locationSheet[`I${rowPos}`]?.v
-      const address_house_number = locationSheet[`J${rowPos}`]?.v
-      const address_extra = locationSheet[`K${rowPos}`]?.v
+      const city_zip = locationSheet[`I${rowPos}`]?.v
+      const address_street = locationSheet[`J${rowPos}`]?.v
+      const address_house_number = locationSheet[`K${rowPos}`]?.v
+      const address_extra = locationSheet[`L${rowPos}`]?.v
+      const country_name = locationSheet[`M${rowPos}`]?.v
 
       const partnercompany = await api({
         entity: 'partnercompany',
         action: 'read-rich',
         filter: { 'partnercompany_name': partnercompany_name }
-      })
-
-      const city = await api({
-        entity: 'city',
-        action: 'read-rich',
-        filter: { 'city_name': city_name },
       })
 
       const locationtype = await api({
@@ -741,27 +745,6 @@ workbook.SheetNames.forEach(async name => {
       })
 
       // Relations
-
-      const addressResponse = await api({
-        entity: 'address',
-        action: 'create',
-        data: [{
-          address_street: address_street,
-          address_house_number: address_house_number,
-          address_extra: address_extra,
-        }]
-      })
-
-      // Create location_address_rel
-      await api({
-        entity: 'location_address_rel',
-        action: 'create',
-        data: [{
-          address_id: addressResponse.data.data.data[0][0].address_id,
-          location_id: locationResponse.data.data.data[0][0].location_id
-        }]
-      })
-
       // Create location_locationtype_rel
 
       const location_locationtype_rel_response = await api({
@@ -772,6 +755,14 @@ workbook.SheetNames.forEach(async name => {
           locationtype_id: locationtype.data.data.data[0].locationtype_id
         }]
       })
+
+      const address = {
+        address_street,
+        address_house_number,
+        address_extra
+      }
+
+      await createAddress("location", locationResponse.data.data.data[0][0].location_id, country_name, city_name, city_zip, address)
 
     }
   }
