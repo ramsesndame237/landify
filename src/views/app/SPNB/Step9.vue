@@ -33,7 +33,7 @@ export default {
   components: { DataTables, entityForm, Table, BButton, BCol, BRow, Field },
   props: ['context', 'disabled'],
   data() {
-    const definition = JSON.parse(JSON.stringify(Table.contract.relations[2]))
+    const definition = JSON.parse(JSON.stringify(Table.contract.relations[3]))
 
     definition.fields = [
       { key: 'contract_id', disabled: true },

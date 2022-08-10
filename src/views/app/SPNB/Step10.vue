@@ -4,7 +4,7 @@
       Create new Contract Recurring Payment
     </b-col>
     <b-col cols="12" md="6">
-      <entity-form ref="form" table="recurringpayment" :definition="definition" table-definition-key="recurringpayment" create :initial-data="initialData"
+      <entity-form ref="form" table="contract_recurringpayment_rel" :definition="definition" table-definition-key="recurringpayment" create :initial-data="initialData"
                    cols="12" :disabled="loading"
       />
     </b-col>
@@ -37,14 +37,8 @@ export default {
   },
   props: ['context', 'disabled'],
   data() {
-    const definition = JSON.parse(JSON.stringify(Table.recurringpayment))
+    const definition = JSON.parse(JSON.stringify(Table.contract.relations.find(x => x.primaryKey === 'recurringpayment_id')))
 
-    definition.fields = [
-      ...definition.fields,
-      {
-        key: 'indexclause_id', type: 'list', list: 'indexclause', listLabel: 'indexclause_name', withNew: true,
-      },
-    ]
     return {
       definition,
       initialData: {
@@ -64,6 +58,7 @@ export default {
   },
   mounted() {
     this.$refs.form.loadDefinition()
+    this.definition.fields.find(x => x.key === 'contract_id').disabled = true
   },
   methods: {
     async add() {
