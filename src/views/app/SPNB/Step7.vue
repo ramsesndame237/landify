@@ -13,7 +13,7 @@
                   :with-view="false" entity="contract_area_unit_usagetype_rel" :fields="fields"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
-          Save and add POS
+          Save and add Contract Area
         </b-button>
       </div>
 <!--      <div class="bg-light mt-2 p-1 text-sm">-->

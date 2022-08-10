@@ -260,39 +260,30 @@ export default {
       try {
         if (this.current_step === 1) {
           this.context.customergroup_id = await this.$refs.step1.validate()
-          this.steps_tabs[0].completed = true
         } else if (this.current_step === 2) {
           this.context.company = await this.$refs.step2.validate()
-          this.steps_tabs[1].completed = true
         } else if (this.current_step === 3) {
           this.context.locations = this.$refs.step3.locations
-          this.steps_tabs[2].completed = true
         } else if (this.current_step === 4) {
           this.context.areas = this.$refs.step4.areas
-          this.steps_tabs[3].completed = true
         } else if (this.current_step === 5) {
           this.context.pos = this.$refs.step5.pos
-          this.steps_tabs[4].completed = true
         } else if (this.current_step === 6) {
           this.context.contract = await this.$refs.step6.validate()
-          this.steps_tabs[5].completed = true
         } else if (this.current_step === 7) {
           this.context.contractAreas = await this.$refs.step7.contractAreas
-          this.steps_tabs[6].completed = true
         } else if (this.current_step === 8) {
           this.context.contractcriterias = await this.$refs.step8.contractcriterias
-          this.steps_tabs[7].completed = true
         } else if (this.current_step === 9) {
           this.context.contractspecialrights = await this.$refs.step9.contractspecialrights
-          this.steps_tabs[8].completed = true
         } else if (this.current_step === 10) {
           this.context.recurringpayments = await this.$refs.step10.recurringpayments
-          this.steps_tabs[9].completed = true
         }
       } catch (e) {
         console.error(e)
         return
       } finally {
+        this.steps_tabs[this.current_step - 1].completed = true
         this.loading = false
       }
 
@@ -300,8 +291,7 @@ export default {
     },
     goToStep(step) {
       this.current_step = step
-      console.log('fredchess', step)
-      this.steps_tabs[this.current_step].completed = false
+      if (step <= 10) this.steps_tabs[this.current_step - 1].completed = false
       this.evaluate_completed_steps()
     },
     prev_step() {

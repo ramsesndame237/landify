@@ -4,12 +4,14 @@
       Create new Contract Recurring Payment
     </b-col>
     <b-col cols="12" md="6">
-      <entity-form table="contract_recurringpayment_rel" :definition="definition" table-definition-key="contract_recurringpayment_rel" create :initial-data="initialData" cols="12"
-                   ref="form" :disabled="loading"/>
+      <entity-form ref="form" table="recurringpayment" :definition="definition" table-definition-key="recurringpayment" create :initial-data="initialData"
+                   cols="12" :disabled="loading"
+      />
     </b-col>
     <b-col cols="12" md="6">
       <DataTables ref="recurringpayment" :current-page="1" :per-page="100" :with-edit="false" :items="recurringpayments" :selectable="false"
-                  :with-view="false" entity="contract_recurringpayment_rel" :fields="fields"/>
+                  :with-view="false" entity="" :fields="fields"
+      />
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
           Save and add Recurring Payment
@@ -30,18 +32,18 @@ import {
 
 export default {
   name: 'Step10',
-  components: { DataTables, entityForm, Table, BButton, BCol, BRow, Field },
+  components: {
+    DataTables, entityForm, Table, BButton, BCol, BRow, Field,
+  },
   props: ['context', 'disabled'],
   data() {
-    const definition = {
-      primaryKey: 'specialright_id',
-      entity: 'contract_recurringpayment_rel',
-      entityForm: 'contract_recurringpayment_rel',
-    }
+    const definition = JSON.parse(JSON.stringify(Table.recurringpayment))
+
     definition.fields = [
-      { key: 'contract_id', disabled: true },
-      { key: 'contract_name', disabled: true },
-      { key: 'recurringpayment_id', type: 'list', list: 'recurringpayment', listLabel: 'recurringpayment_description' },
+      ...definition.fields,
+      {
+        key: 'indexclause_id', type: 'list', list: 'indexclause', listLabel: 'indexclause_name', withNew: true,
+      },
     ]
     return {
       definition,
@@ -68,6 +70,16 @@ export default {
       this.loading = true
       try {
         const entity = await this.$refs.form.submit()
+        // create the recurring payment first
+        const response = await this.$api({
+          entity: 'contract_recurringpayment_rel',
+          action: 'create',
+          data: [{
+            contract_id: this.initialData.contract_id,
+            recurringpayment_id: entity.recurringpayment_id,
+          }],
+        })
+        console.log(response)
         this.recurringpayments.push(entity)
         console.log(entity)
         return entity

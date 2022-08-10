@@ -1494,6 +1494,7 @@ export default {
   indexclause: {
     fields: [
       { key: 'indexclause_id', auto: true },
+      { key: 'indexclause_name' },
       { key: 'indexclause_adjustment_rule' },
       { key: 'indexclause_adjustment_description', type: 'textarea' },
       { key: 'indexclause_baseyear', type: 'number' },
@@ -1538,16 +1539,17 @@ export default {
       },
       { key: 'recurringpayment_sum_per_month', hideOnIndex: true },
       { key: 'recurringpayment_condition_percentage', hideOnIndex: true },
+      { key: 'recurringpayment_condition_comment', hideOnIndex: true, type: 'textarea' },
       { key: 'recurringpayment_percentage', hideOnIndex: true },
       { key: 'recurringpayment_begin_date', type: 'date', hideOnIndex: true },
       { key: 'recurringpayment_end_date', type: 'date', hideOnIndex: true },
-      {
-        key: 'maturitytype_id', type: 'list', list: 'maturitytype', listLabel: 'maturitytype_name', hideOnIndex: true,
-      },
       { key: 'recurringpayment_maturity_date', type: 'date', hideOnIndex: true },
       { key: 'recurringpayment_maturity_daily_range', hideOnIndex: true },
       { key: 'recurringpayment_maturity_monthly_range', hideOnIndex: true },
       { key: 'reccuringpayment_value_deposit', hideOnIndex: true },
+      {
+        key: 'maturitytype_id', type: 'list', list: 'maturitytype', listLabel: 'maturitytype_name', hideOnIndex: true, withNew: true
+      },
     ],
     relations: [
       {
