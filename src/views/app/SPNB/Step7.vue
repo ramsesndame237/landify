@@ -13,14 +13,14 @@
                   :with-view="false" entity="contract_area_unit_usagetype_rel" :fields="fields"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
-          Save and add POS
+          Save and add Contract Area
         </b-button>
       </div>
-      <div class="bg-light mt-2 p-1 text-sm">
-        <small>
-          {{ $t('app.content.new_busness_text_pos_msg') }}
-        </small>
-      </div>
+<!--      <div class="bg-light mt-2 p-1 text-sm">-->
+<!--        <small>-->
+<!--          {{ $t('app.content.new_busness_text_pos_msg') }}-->
+<!--        </small>-->
+<!--      </div>-->
     </b-col>
   </b-row>
 </template>
@@ -57,6 +57,14 @@ export default {
         contract_id: this.context.contract?.contract_id,
         contract_name: this.context.contract?.contract_name,
       },
+      fields: [
+        { key: 'contract_id' },
+        { key: 'area_name' },
+        { key: 'pos_id' },
+        { key: 'space' },
+        { key: 'begin_date' },
+        { key: 'end_date' },
+      ],
       loading: false,
       contractAreas: this.context.contractAreas || [],
     }
@@ -70,7 +78,7 @@ export default {
       this.loading = true
       try {
         const entity = await this.$refs.form.submit()
-        this.pos.push(entity)
+        this.contractAreas.push(entity)
         return entity
       } finally {
         this.loading = false

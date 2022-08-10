@@ -1,6 +1,7 @@
 export default {
   // region Work Package 1
   user: {
+    entity: 'frontend_1_1_2_1',
     fields: [
       {
         key: 'user_id', label: 'Id', auto: true, hideOnForm: true,
@@ -21,6 +22,7 @@ export default {
         list: 'usertype',
         listLabel: 'usertype_name',
       },
+      { key: 'usertype_name', hideOnForm: true },
       {
         key: 'contactperson_id',
         hideOnIndex: true,
@@ -1097,6 +1099,8 @@ export default {
         entityView: 'contract',
         fields: [
           { key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name', disableOnUpdate: true },
+          { key: 'contract_area_unit_usagetype_detail_description', type: 'textarea', hideOnIndex: true },
+          { key: 'usagetype_id', type: 'list', list: 'usagetype', listLabel: 'usagetype_name', disableOnUpdate: true },
           { key: 'contract_area_unit_usagetype_rentalspace_value', type: 'number' },
           { key: 'contract_area_unit_usagetype_allocationspace_value', type: 'number' },
           { key: 'unit_name', hideOnForm: true },
@@ -1288,6 +1292,12 @@ export default {
           },
           { key: 'specialright_name', hideOnForm: true },
           { key: 'specialright_date', hideOnForm: true },
+          { key: 'contract_specialright_description', type: 'textarea' },
+          { key: 'contract_specialright_date', type: 'date' },
+          { key: 'contract_specialright_prior_notice_date', type: 'date' },
+          { key: 'contract_specialright_termination_date', type: 'date' },
+          { key: 'contract_specialright_is_passive', type: 'boolean' },
+          { key: 'contract_specialright_is_availed', type: 'boolean' },
         ],
       },
       {
@@ -1429,41 +1439,52 @@ export default {
   },
 
   criteria: {
+    entity: 'frontend_3_6_1',
     fields: [
       { key: 'criteria_id', auto: true },
       { key: 'criteria_name' },
-      { key: 'criteria_description', type: 'textarea' },
+      { key: 'criteria_description', type: 'textarea', hideOnIndex: true },
+      { key: 'criteriatype_name', hideOnForm: true },
       { key: 'criteria_has_value', type: 'boolean' },
+      { key: 'contract_count', type: 'number', hideOnForm: true },
       {
         key: 'criteriatype_id', type: 'list', list: 'criteriatype', hideOnIndex: true, listLabel: 'criteriatype_name',
+      },
+      {
+        key: 'unit_id', type: 'list', list: 'unit', hideOnIndex: true, listLabel: 'unit_name',
+      },
+      {
+        key: 'contracttype_id', type: 'list', list: 'contracttype', hideOnIndex: true, listLabel: 'contracttype_name',
       },
     ],
     relations: [
       {
         title: 'Contract',
         primaryKey: 'contract_id',
-        entity: 'contract_criteria_rel',
+        entity: 'frontend_3_6_3',
         entityForm: 'contract_criteria_form',
         fields: [
           { key: 'contract_id' },
           { key: 'contract_name' },
-          { key: 'contract_criteria_comment' },
+          { key: 'contract_criteria_comment', type: 'textarea' },
           { key: 'contract_criteria_value' },
-          { key: 'unit_id' },
-          { key: 'contract_criteria_exists' },
-          { key: 'contract_criteria_valid_from_date' },
-          { key: 'contract_criteria_valid_to_date' },
-          { key: 'choice_name' },
+          { key: 'unit_id', type: 'list', list: 'unit', listLabel: 'unit_name' },
+          { key: 'contract_criteria_exists', type: 'boolean' },
+          { key: 'contract_criteria_valid_from_date', type: 'date' },
+          { key: 'contract_criteria_valid_to_date', type: 'date' },
+          { key: 'choice_id', type: 'list', list: 'choice', listLabel: 'choice_name', hideOnIndex: true },
+          { key: 'choice_name', hideOnForm: true },
         ],
       },
       {
         title: 'Choice',
         primaryKey: 'choice_id',
-        entity: 'contract_criteria_choice_rel',
+        entity: 'frontend_3_6_4',
         fields: [
           { key: 'choice_id', hideOnForm: true },
+          { key: 'choice_name', hideOnForm: true },
           {
-            key: 'choice_id', listLabel: 'choice_name', type: 'list', list: 'choice',
+            key: 'choice_id', listLabel: 'choice_name', type: 'list', list: 'choice', hideOnIndex: true,
           },
         ],
       },
@@ -1473,6 +1494,7 @@ export default {
   indexclause: {
     fields: [
       { key: 'indexclause_id', auto: true },
+      { key: 'indexclause_name' },
       { key: 'indexclause_adjustment_rule' },
       { key: 'indexclause_adjustment_description', type: 'textarea' },
       { key: 'indexclause_baseyear', type: 'number' },
@@ -1517,16 +1539,17 @@ export default {
       },
       { key: 'recurringpayment_sum_per_month', hideOnIndex: true },
       { key: 'recurringpayment_condition_percentage', hideOnIndex: true },
+      { key: 'recurringpayment_condition_comment', hideOnIndex: true, type: 'textarea' },
       { key: 'recurringpayment_percentage', hideOnIndex: true },
       { key: 'recurringpayment_begin_date', type: 'date', hideOnIndex: true },
       { key: 'recurringpayment_end_date', type: 'date', hideOnIndex: true },
-      {
-        key: 'maturitytype_id', type: 'list', list: 'maturitytype', listLabel: 'maturitytype_name', hideOnIndex: true,
-      },
       { key: 'recurringpayment_maturity_date', type: 'date', hideOnIndex: true },
       { key: 'recurringpayment_maturity_daily_range', hideOnIndex: true },
       { key: 'recurringpayment_maturity_monthly_range', hideOnIndex: true },
       { key: 'reccuringpayment_value_deposit', hideOnIndex: true },
+      {
+        key: 'maturitytype_id', type: 'list', list: 'maturitytype', listLabel: 'maturitytype_name', hideOnIndex: true, withNew: true
+      },
     ],
     relations: [
       {
@@ -1546,16 +1569,17 @@ export default {
   },
 
   tag: {
+    entity: 'frontend_3_10_1',
     fields: [
       { key: 'tag_id', auto: true },
       { key: 'tag_name' },
-      { key: 'tag_description', type: 'textarea' },
-      { key: 'pos_count', hideOnForm: true },
+      { key: 'tag_description', type: 'textarea', hideOnIndex: true },
+      { key: 'tag_count', hideOnForm: true, type: 'number' },
     ],
     relations: [
       {
         title: 'Point of Sales',
-        entity: 'pos_tag_grp',
+        entity: 'frontend_3_10_3',
         entityForm: 'pos_tag_rel',
         fields: [
           {
