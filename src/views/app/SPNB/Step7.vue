@@ -38,7 +38,7 @@ export default {
   name: 'Step7',
   props: ['context', 'disabled'],
   data() {
-    const definition = JSON.parse(JSON.stringify(Table.area.relations[0]))
+    const definition = JSON.parse(JSON.stringify(Table.area.relations.find(x => x.primaryKey === 'contract_id')))
     definition.fields = [
       definition.fields[0],
       { key: 'contract_name', disabled: true },
