@@ -1581,7 +1581,7 @@ export default {
       { key: 'recurringpayment_maturity_date', type: 'date', hideOnIndex: true },
       { key: 'recurringpayment_maturity_daily_range', hideOnIndex: true },
       { key: 'recurringpayment_maturity_monthly_range', hideOnIndex: true },
-      { key: 'reccuringpayment_value_deposit', hideOnIndex: true },
+      { key: 'reccuringpayment_value_deposit', hideOnIndex: true, type: 'number' },
       {
         key: 'maturitytype_id', type: 'list', list: 'maturitytype', listLabel: 'maturitytype_name', hideOnIndex: true, withNew: true
       },
@@ -1600,6 +1600,7 @@ export default {
     ],
     default: {
       recurringpayment_condition_comment: '',
+      reccuringpayment_value_deposit: 35,
     },
   },
 
@@ -1849,4 +1850,13 @@ export default {
     ],
   },
   // endregion
+  // region Workpackage 5
+  contradiction: {
+    fields: [
+      { key: 'contradiction_id', auto: true },
+      { key: 'contradiction_name' },
+      { key: 'contradiction_last_change_time', type: 'date' },
+    ],
+  },
+  // end region
 }
