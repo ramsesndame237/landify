@@ -260,6 +260,20 @@ export default [
     ],
   },
   {
+    title: 'Work Package 5',
+    icon: 'CheckSquareIcon',
+    children: [
+      {
+        title: 'Contradictions',
+        route: table('contradiction'),
+      },
+      {
+        title: 'Contradictions Packages',
+        route: table('contradictionpackage'),
+      },
+    ],
+  },
+  {
     title: 'Kanban',
     route: 'kanban',
     icon: 'CheckSquareIcon',

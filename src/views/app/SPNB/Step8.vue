@@ -33,7 +33,7 @@ export default {
   components: { DataTables, entityForm, Table, BButton, BCol, BRow, Field },
   props: ['context', 'disabled'],
   data() {
-    const definition = JSON.parse(JSON.stringify(Table.criteria.relations[0]))
+    const definition = JSON.parse(JSON.stringify(Table.criteria.relations.find(x => x.primaryKey === 'contract_id')))
 
     definition.fields = [
       { key: 'contract_id', disabled: true },

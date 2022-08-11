@@ -4,7 +4,7 @@
       Create new Contract Recurring Payment
     </b-col>
     <b-col cols="12" md="6">
-      <entity-form ref="form" table="contract_recurringpayment_rel" :definition="definition" table-definition-key="recurringpayment" create :initial-data="initialData"
+      <entity-form ref="form" table="recurringpayment" :definition="definition" table-definition-key="recurringpayment" create :initial-data="initialData"
                    cols="12" :disabled="loading"
       />
     </b-col>
@@ -65,8 +65,8 @@ export default {
       this.loading = true
       try {
         const entity = await this.$refs.form.submit()
-        // create the recurring payment first
-        const response = await this.$api({
+        // create the the relation
+        await this.$api({
           entity: 'contract_recurringpayment_rel',
           action: 'create',
           data: [{
@@ -74,9 +74,7 @@ export default {
             recurringpayment_id: entity.recurringpayment_id,
           }],
         })
-        console.log(response)
         this.recurringpayments.push(entity)
-        console.log(entity)
         return entity
       } finally {
         this.loading = false
