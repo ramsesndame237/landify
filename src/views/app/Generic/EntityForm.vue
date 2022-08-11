@@ -20,8 +20,8 @@ import {
   BCol,
   BFormInput,
 } from 'bootstrap-vue'
-import Field from '@/views/app/Generic/Field'
-import FormMixin from "@/views/app/Generic/FormMixin";
+import Field from './Field.vue'
+import FormMixin from './FormMixin'
 
 export default {
   name: "EntityForm",

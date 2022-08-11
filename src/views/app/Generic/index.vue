@@ -29,8 +29,8 @@ import {
 import TablePagination from '@/layouts/components/TablePagination.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
 import Tables from '../../../table'
-import Reviews from '../../../table/review.js'
-import GenericFilter from "@/views/app/Generic/Filter";
+import Reviews from '../../../table/review'
+import GenericFilter from './Filter.vue'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
 

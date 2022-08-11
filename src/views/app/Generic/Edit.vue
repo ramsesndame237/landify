@@ -91,8 +91,6 @@ import Tables from '@/table'
 import Reviews from '@/table/review'
 import DataTables from '@/layouts/components/DataTables'
 import GenericModal from '@/views/app/Generic/modal'
-import Field from './Field'
-import FormMixin from "@/views/app/Generic/FormMixin";
 import EntityForm from "@/views/app/Generic/EntityForm";
 
 export default {
