@@ -8,9 +8,9 @@ export default {
       return Promise.all(this.formFields.filter(field => field.type === 'list' && entity[field.key] == null).map(field => this.$api({
         entity: field.relationEntity ?? (`${this.table}_${field.list}_rel`),
         action: 'read-rich',
-        filter: {
+        data: [{
           [this.primaryKey]: `${this.entity[this.primaryKey]}`,
-        },
+        }],
       })
         .then(({ data }) => {
           this.$set(entity, field.key, data.data.data[0][field.key])

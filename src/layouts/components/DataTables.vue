@@ -109,9 +109,7 @@ export default {
       const {
         currentPage, perPage, filter, sortBy, sortDesc,
       } = ctx
-      const filterData = { ...this.filterData }
-      if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
-      return this.$api({
+      const payload = {
         action: 'read-rich',
         entity: this.entityList || this.entity,
         order_by: sortBy,
@@ -119,10 +117,12 @@ export default {
         per_page: perPage,
         from: 0,
         current_page: currentPage,
-        filter: filterData,
+        filter: this.filterData,
         filter_all: filter ?? '',
         lang: this.$i18n.locale,
-      })
+      }
+      if (this.secondKey) payload.data = [{ [this.secondKey]: this.secondKeyValue }]
+      return this.$api(payload)
         .then(({ data }) => {
           console.log(data)
           // this.totalRows = data.data.links.pagination.total

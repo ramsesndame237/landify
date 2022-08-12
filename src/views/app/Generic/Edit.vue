@@ -8,16 +8,16 @@
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
-            <b-button v-if="view" size="sm" variant="info" class="mr-1 d-flex" @click="edit">
-              <img src="@/assets/images/pages/editIcons.svg" alt="">
+            <b-button v-if="view" size="sm" variant="info" class="mr-1" @click="edit">
+              <feather-icon icon="EditIcon" class="mr-50"/>
               {{ $t('Edit') }}
             </b-button>
-            <b-button v-else size="sm" variant="info" class="mr-1 d-flex" @click="update">
-              <img src="@/assets/images/pages/editIcons.svg" alt="">
+            <b-button v-else size="sm" variant="info" class="mr-1" @click="update" :disabled="loading">
+              <b-spinner v-if="loading" small class="mr-50"/>
+              <feather-icon v-else icon="SaveIcon" class="mr-50"/>
               {{ $t('Save') }}
             </b-button>
-            <b-button v-if="!view" size="sm" class="d-flex" variant="primary" @click="cancel">
-              <img src="@/assets/images/pages/deleteIcons.svg" alt="">
+            <b-button v-if="!view" size="sm" variant="primary" @click="cancel">
               {{ $t('Cancel') }}
             </b-button>
           </div>
@@ -55,25 +55,12 @@
             <b-button class="mr-1" size="sm" variant="primary" @click="deleteSelected">
               Delete
             </b-button>
+            <b-button v-if="currentHasFilter" @click="$emit('filter')" size="sm" variant="primary"
+                      class="mr-1 btn-icon">
+              <feather-icon icon="FilterIcon"/>
+            </b-button>
 
-            <b-input-group size="sm">
-              <b-input-group-prepend>
-                <b-dropdown v-ripple.400="'rgba(255, 255, 255, 0.15)'" dropup right variant="primary" size="sm"
-                            text="Filter">
-                  <template #button-content>
-                    <feather-icon icon="SearchIcon"/>
-                  </template>
-                  <b-dropdown-form class="py-1">
-                    <b-form-group label="Date" label-for="dropdown-form-email" @submit.stop.prevent>
-                      <b-form-input id="dropdown-form-email" size="sm" placeholder="Date"/>
-                    </b-form-group>
-
-                    <b-button variant="primary" size="sm">Search</b-button>
-                  </b-dropdown-form>
-                </b-dropdown>
-              </b-input-group-prepend>
-              <b-form-input id="filterInput" v-model="search" debounce="500" type="search" placeholder="Search..."/>
-            </b-input-group>
+            <b-form-input id="filterInput" v-model="search" debounce="500" type="search" placeholder="Search..."/>
           </div>
         </template>
       </b-tabs>
@@ -85,7 +72,17 @@
 import {
   BCard,
   BTab,
-  BTabs, BRow, BCol, BForm, BFormInput, BButton, BDropdown, BDropdownForm, BFormGroup, BInputGroup, BInputGroupPrepend,
+  BTabs,
+  BRow,
+  BCol,
+  BSpinner,
+  BFormInput,
+  BButton,
+  BDropdown,
+  BDropdownForm,
+  BFormGroup,
+  BInputGroup,
+  BInputGroupPrepend,
 } from 'bootstrap-vue'
 import Tables from '@/table'
 import Reviews from '@/table/review'
@@ -110,6 +107,7 @@ export default {
     BFormGroup,
     BFormInput,
     BButton,
+    BSpinner,
   },
   data() {
     return {
@@ -122,6 +120,7 @@ export default {
       totalRows: 0,
       entityLoaded: false,
       create: false,
+      loading: false,
     }
   },
   computed: {
@@ -145,10 +144,13 @@ export default {
     },
     entityId() {
       // convert to string to fix bug on relation tables
-      return ''+this.$route.params.id
+      return '' + this.$route.params.id
     },
     primaryKey() {
       return this.definition.primaryKey ?? this.definition.fields.find(f => f.auto).key
+    },
+    currentHasFilter() {
+      return this.definition.relations[this.$refs.tabs.currentTab].filter != null
     },
   },
   methods: {
@@ -160,10 +162,12 @@ export default {
       this.view = false
     },
     update() {
+      this.loading = true
       this.$refs.form.submit()
         .then(() => {
           this.view = true
         })
+        .finally(() => this.loading = false)
     },
     deleteSelected() {
       const { tabs } = this.$refs

@@ -8,7 +8,7 @@
     <b-col cols="12" md="6">
       <b-form-group label="Password" label-for="password">
         <b-form-input id="password" v-model="entity.user_password" :disabled="disabled" type="password"
-                      autoComplete="new-password"/>
+                      auto-complete="new-password"/>
       </b-form-group>
     </b-col>
 
@@ -49,7 +49,7 @@
     <b-col cols="12" md="6">
       <b-form-group label="Customer Group*" label-for="group">
         <div class="d-flex">
-          <b-form-input id="customer-group" v-model="customergroup" disabled="" class="mr-1"/>
+          <b-form-input id="customer-group" v-model="entity.customergroup_name" disabled="" class="mr-1"/>
           <img src="@/assets/images/icons/customerGroup.svg" alt="">
         </div>
       </b-form-group>
@@ -69,14 +69,13 @@
 
     <b-col cols="12" md="6">
       <b-form-group label="Salutation" label-for="salutation">
-        <b-form-radio-group id="radio-group-1" :value="salutation" disabled
-                            :options="[{text:'Mr.',value:1}, {text:'Mrs.', value: 2}]" name="radio-options"/>
+        <b-form-input id="function" :value="entity.contactsalutation_name" disabled type="text"/>
       </b-form-group>
     </b-col>
 
     <b-col cols="12" md="6">
       <b-form-group label="Title" label-for="title">
-        <b-form-input id="title" v-model="title" disabled type="text"/>
+        <b-form-input id="title" v-model="entity.contacttitle_name" disabled type="text"/>
       </b-form-group>
     </b-col>
   </b-row>
@@ -84,11 +83,10 @@
 
 <script>
 import {
-  BFormCheckbox, BFormRadioGroup,
-  BRow, BCol, BFormGroup, BFormInput,
+  BFormCheckbox, BRow, BCol, BFormGroup, BFormInput,
 } from 'bootstrap-vue'
+import Field from '@/views/app/Generic/Field'
 import Table from '../../../table/index'
-import Field from "@/views/app/Generic/Field";
 
 export default {
   name: 'UserForm',
@@ -99,15 +97,11 @@ export default {
     BCol,
     BFormInput,
     BFormCheckbox,
-    BFormRadioGroup,
   },
   props: ['entity', 'tableDefinition', 'disabled'],
   data() {
     return {
       definition: Table.user,
-      salutation: '',
-      title: '',
-      customergroup: '',
     }
   },
   computed: {
@@ -127,7 +121,15 @@ export default {
       return this.definition.fields.find(f => f.key === key)
     },
     async fetchContactDetail() {
-      // await this.$api({entity: ''})
+      const { data } = await this.$api({
+        action: 'read-rich',
+        entity: 'frontend_1_1_2_3_1_contactperson',
+        data: [{ contactperson_id: this.entity.contactperson_id }],
+      })
+      const result = data.data.data[0]
+      this.$set(this.entity, 'contactsalutation_name', result.contactsalutation_name)
+      this.$set(this.entity, 'contacttitle_name', result.contacttitle_name)
+      this.$set(this.entity, 'customergroup_name', result.customergroup_name)
     },
   },
 }
