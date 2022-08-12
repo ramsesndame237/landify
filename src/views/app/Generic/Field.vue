@@ -31,7 +31,8 @@
                    :table-definition="subTableDefinition"/>
         <b-row v-else>
           <b-col v-for="(field,index) in subFormFields" :key="index" cols="12">
-            <field :disabled="disabled" :inline="inline" :entity="subEntity" :table-definition="subTableDefinition" :field="field"/>
+            <field :disabled="disabled" :inline="inline" :entity="subEntity" :table-definition="subTableDefinition"
+                   :field="field"/>
           </b-col>
         </b-row>
       </div>
@@ -83,6 +84,9 @@ export default {
     },
     hasNew() {
       return this.field.alwaysNew || this.newValue === this.entity[this.field.key]
+    },
+    selectedValue() {
+      return this.field.type === 'list' ? this.list.find(e => e[this.field.key] === this.entity[this.field.key]) : this.entity[this.field.key]
     },
   },
   async created() {
