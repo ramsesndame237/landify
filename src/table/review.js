@@ -1,6 +1,5 @@
 export default {
   // region Work Package 1
-  user_form: 'We need an entity to get the (customergroup_name, function_name, contactitle_name, contactsalutation_name) of a contactperson ',
   // endregion
   // region Work Package 1
   // endregion

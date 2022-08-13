@@ -5,22 +5,22 @@
     </b-col>
     <b-col cols="12" md="6">
       <entity-form table="contract_area_unit_usagetype_rel" :definition="definition"
-                   table-definition-key="contract_area_unit_usagetype_rel" create :initial-data="initialData" cols="12"
-                   ref="form" :disabled="loading"/>
+                   table-definition-key="contract_area_unit_usagetype_rel" create :initial-data="initialData" ref="form"
+                   cols="12" :disabled="loading"/>
     </b-col>
     <b-col cols="12" md="6">
-      <DataTables ref="contractAreas" :current-page="1" :per-page="100" :with-edit="false" :items="contractAreas" :selectable="false"
-                  :with-view="false" entity="contract_area_unit_usagetype_rel" :fields="fields"/>
+      <DataTables ref="contractAreas" :current-page="1" :per-page="100" :with-edit="false" :items="contractAreas"
+                  :selectable="false" :with-view="false" entity="contract_area_unit_usagetype_rel" :fields="fields"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
           Save and add Contract Area
         </b-button>
       </div>
-<!--      <div class="bg-light mt-2 p-1 text-sm">-->
-<!--        <small>-->
-<!--          {{ $t('app.content.new_busness_text_pos_msg') }}-->
-<!--        </small>-->
-<!--      </div>-->
+      <!--      <div class="bg-light mt-2 p-1 text-sm">-->
+      <!--        <small>-->
+      <!--          {{ $t('app.content.new_busness_text_pos_msg') }}-->
+      <!--        </small>-->
+      <!--      </div>-->
     </b-col>
   </b-row>
 </template>
@@ -36,6 +36,7 @@ import entityForm from '@/views/app/Generic/EntityForm'
 
 export default {
   name: 'Step7',
+  components: { BRow, BCol, DataTables, entityForm, BButton },
   props: ['context', 'disabled'],
   data() {
     const definition = JSON.parse(JSON.stringify(Table.area.relations.find(x => x.primaryKey === 'contract_id')))
@@ -47,7 +48,7 @@ export default {
         disabled: true,
         rules: { required: false },
       },
-      { key: 'area_id', list: 'area', listLabel: 'area_name', type: 'list' },
+      { key: 'area_id', list: 'frontend_3_2_1', listLabel: 'area_name', type: 'list' },
       ...definition.fields.slice(1)]
     definition.fields[0].disabled = true
     return {
@@ -69,9 +70,15 @@ export default {
       contractAreas: this.context.contractAreas || [],
     }
   },
-  components: { Field, BRow, BCol, DataTables, entityForm, BButton },
   mounted() {
     this.$refs.form.loadDefinition()
+    this.$watch('$refs.form.entity.area_id', function (val) {
+      console.log('change area_id', val)
+      const idx = this.$refs.form.formFields.findIndex(f => f.key === 'area_id')
+      const selectedValue = this.$refs.form.$refs.fields[idx].selectedValue
+      this.$set(this.$refs.form.entity, 'pos_name', selectedValue.pos_name)
+      console.log(selectedValue, 'value')
+    })
   },
   methods: {
     async add() {

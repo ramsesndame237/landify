@@ -23,7 +23,6 @@
 
 <script>
 
-import EntityForm from "@/views/app/Generic/EntityForm";
 import {
   BButton, BCol, BForm, BRow,
 } from "bootstrap-vue";
