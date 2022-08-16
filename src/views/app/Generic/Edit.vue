@@ -4,7 +4,7 @@
       <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
         <div class="d-flex align-items-center">
           <img class="mr-1" src="@/assets/images/icons/people.svg" alt="">
-          <span>{{ $t('edit_' + table) }}</span>
+          <span>{{ $t(title) }}</span>
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
@@ -28,14 +28,14 @@
     <p v-if="formReview" class="text-danger h4 mb-1 text-center" v-html="formReview"></p>
 
     <b-card class="">
-      <entity-form ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="create"
-                   :is-relation="false" :disabled="view" :inline="false" :cols="6" :initial-data="entity"
-                   :entity-id="entityId"/>
+      <component :is="definition.updateComponent || definition.formComponent || 'entity-form'" ref="form" :table="table"
+                 :definition="definition" :table-definition-key="table" :create="create" :is-relation="false"
+                 :disabled="view" :inline="false" :cols="6" :initial-data="entity" :entity-id="entityId"/>
     </b-card>
 
     <p v-if="relationsReview" class="text-danger h4 mb-1 text-center" v-html="relationsReview"></p>
 
-    <b-card v-if="definition.relations && definition.relations.length>0">
+    <b-card v-if="definition.relations && definition.relations.length>0 && !create">
       <b-tabs ref="tabs" pills>
         <b-tab v-for="(relation, index) in definition.relations" :key="index" :title="$t(relation.title)"
                :active="index===0" lazy>
@@ -111,7 +111,7 @@ export default {
   },
   data() {
     return {
-      view: this.$route.query.edit !== 'true',
+      view: this.$route.name === 'table-view' && this.$route.query.edit !== 'true',
       entity: this.$route.params.entity,
       originalEntity: null,
       search: '',
@@ -119,11 +119,16 @@ export default {
       perPage: Number.MAX_SAFE_INTEGER,
       totalRows: 0,
       entityLoaded: false,
-      create: false,
+      create: this.$route.name === 'table-form',
       loading: false,
     }
   },
   computed: {
+    title() {
+      if (this.create) return 'create_' + this.table
+      if (this.view) return 'view_' + this.table
+      return 'edit_' + this.table
+    },
     table() {
       return this.$route.params.table
     },
@@ -150,13 +155,16 @@ export default {
       return this.definition.primaryKey ?? this.definition.fields.find(f => f.auto).key
     },
     currentHasFilter() {
-      return this.definition.relations[this.$refs.tabs.currentTab].filter != null
+      return this.definition.relations[this.$refs.tabs.currentTab]?.filters != null
     },
   },
   methods: {
     cancel() {
-      this.view = true
-      this.$refs.form.reset()
+      if (this.create) this.$router.push({ name: 'table', params: { table: this.table } })
+      else {
+        this.view = true
+        this.$refs.form.reset()
+      }
     },
     edit() {
       this.view = false
@@ -164,10 +172,16 @@ export default {
     update() {
       this.loading = true
       this.$refs.form.submit()
-        .then(() => {
+        .then(data => {
           this.view = true
+          if (this.create) {
+            console.log('data', data)
+            this.$router.push({ name: 'table-view', params: { id: data[this.primaryKey] }, query: { edit: true } })
+          }
         })
-        .finally(() => this.loading = false)
+        .finally(() => {
+          this.loading = false
+        })
     },
     deleteSelected() {
       const { tabs } = this.$refs

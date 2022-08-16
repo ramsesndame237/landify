@@ -3,13 +3,15 @@
            :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
            :sort-desc.sync="sortDesc" :sort-direction="sortDirection" :filter="search" select-mode="multi">
     <template #cell(__selected)="data">
-      <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"/>
+      <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"
+                       @change="onSelect(data.index)"/>
     </template>
     <template #head(__selected)>
-      <b-form-checkbox v-model="selected"/>
+      <b-form-checkbox v-if="multiSelect" v-model="selected"/>
+      <span v-else></span>
     </template>
 
-    <template #cell(Actions)="data">
+    <template v-if="withActions" #cell(Actions)="data">
       <b-button v-if="withView" size="xs" class="mr-1" style="margin-bottom: 3px" variant="outline-success" pill
                 @click="onViewElement ? onViewElement(currentItems[data.index]) :$router.push({name: 'table-view', params: {table: entityView || entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index]}})">
         <feather-icon icon="EyeIcon" class="mr-50"/>
@@ -20,7 +22,8 @@
         <feather-icon icon="EditIcon" class="mr-50"/>
         <span>{{ $t('app.btn.edit') }}</span>
       </b-button>
-      <b-button size="xs" variant="outline-primary" style="margin-bottom: 3px" @click="deleteElement(data.index)" pill>
+      <b-button v-if="withDelete" size="xs" variant="outline-primary" style="margin-bottom: 3px"
+                @click="deleteElement(data.index)" pill>
         <feather-icon icon="Trash2Icon" class="mr-50"/>
         <span>{{ $t('app.btn.delete') }}</span>
       </b-button>
@@ -48,6 +51,9 @@ export default {
     primaryKeyColumn: { type: String },
     withView: { type: Boolean, default: true },
     withEdit: { type: Boolean, default: true },
+    withDelete: { type: Boolean, default: true },
+    withActions: { type: Boolean, default: true },
+    multiSelect: { type: Boolean, default: true },
     defaultSortColumn: { type: String, default: '' },
     secondKey: {},
     secondKeyValue: {},
@@ -67,7 +73,7 @@ export default {
       sortDesc: false,
       sortDirection: 'asc',
       selected: false,
-      currentItems: [],
+      currentItems: this.items || [],
       filterData: {},
     }
   },
@@ -88,7 +94,8 @@ export default {
           // }
           return newField
         }),
-        'Actions']
+        ...(this.withActions ? ['Actions'] : []),
+      ]
     },
   },
   watch: {
@@ -101,6 +108,9 @@ export default {
     },
     selected() {
       this.selectAll()
+    },
+    items() {
+      this.currentItems = this.items
     },
   },
   methods: {
@@ -198,6 +208,15 @@ export default {
     filter(data) {
       this.filterData = { ...data }
       this.reload()
+    },
+    onSelect(index) {
+      console.log('index', index)
+      if (!this.multiSelect) {
+        this.currentItems.forEach((item, idx) => {
+          if (idx !== index) this.$set(item, '__selected', false)
+        })
+        this.$emit('selected', this.currentItems[index])
+      }
     },
   },
 }

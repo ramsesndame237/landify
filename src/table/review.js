@@ -19,4 +19,7 @@ Contract: Missing Unit on the contract relation`,
   indexclause_relations: 'Impossible to get the recurring payment relation, we have an internal server error',
   company: 'The delete action doesnt work fine',
   // endregion
+  // region WP4
+  invoice: `We need a view to display all fields in the table <br> Filter must be implemented in the backend for this table`,
+  // endregion
 }

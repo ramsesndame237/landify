@@ -2,7 +2,7 @@
   <div>
     <b-card body-class="p-0">
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage"
-                        :on-new-element="()=> $refs.modal.openModal(true, {})" :total-rows="totalRows"
+                        :on-new-element="onNewElement" :total-rows="totalRows"
                         :with-filter="definition.filter && definition.filter.length > 0"
                         :on-delete-elements="()=> $refs.table.deleteSelected()" @filter="$refs.filter.openModal()"/>
       <generic-filter ref="filter" :table="table" :definition="definition" @filter="filter"/>
@@ -60,6 +60,9 @@ export default {
     currentReview() {
       return Reviews[this.table]
     },
+    useModalToCreate() {
+      return this.definition.createModal !== false
+    },
   },
   watch: {
     table() {
@@ -71,12 +74,16 @@ export default {
   },
   methods: {
     filter(data) {
-      console.log('on filter', data);
+      console.log('on filter', data)
       this.currentPage = 1
       this.$refs.table.filter(data)
     },
     reset() {
       this.filter({})
+    },
+    onNewElement() {
+      if (this.useModalToCreate) this.$refs.modal.openModal(true, {})
+      else this.$router.push({ name: 'table-form', params: { table: this.table } })
     },
   },
 }

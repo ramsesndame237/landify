@@ -43,6 +43,15 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/app/table/:table/create',
+      name: 'table-form',
+      component: () => import('@/views/app/Generic/KeyFix/Edit.vue'),
+      meta: {
+        pageTitle: '',
+        breadcrumb: [],
+      },
+    },
+    {
       path: '/app/ticket/:id/customer',
       name: 'new-business',
       component: () => import('@/views/app/SPNB/Index.vue'),

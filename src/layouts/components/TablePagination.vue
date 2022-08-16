@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex justify-content-between" style="padding: 10px">
+  <div class="d-flex justify-content-between flex-wrap" style="padding: 10px">
     <b-form-group class="mb-0">
       <label class="d-inline-block text-sm-left mr-50">Show</label>
       <b-form-select id="perPageSelect" v-model="perPage" style="width: 60px" size="sm" :options="pageOptions"
@@ -16,24 +16,18 @@
     </div>
 
     <div class="d-flex align-items-center">
-      <div class="mr-1 d-flex">
-        <b-button v-if="withFilter" @click="$emit('filter')" size="sm" variant="primary" class="mr-1 btn-icon">
-          <feather-icon icon="FilterIcon" />
-        </b-button>
-        <b-button v-if="onNewElement!=null" @click="onNewElement" size="sm" variant="info" class="mr-1">
-          <feather-icon icon="PlusCircleIcon" class="mr-50"/>
-          <span class="align-middle">New</span>
-        </b-button>
-        <b-button v-if="onDeleteElements!=null" @click="onDeleteElements" size="sm" class="d-flex" variant="primary">
-          <feather-icon icon="Trash2Icon" class="mr-50"/>
-          <span class="align-middle">Delete</span>
-        </b-button>
-      </div>
-
-      <div size="sm" class="d-flex align-items-center">
-        <label class="d-inline-block text-sm-left mr-50">Search</label>
-        <b-form-input debounce="500" id="filterInput" v-model="search" type="search" placeholder="Search.."/>
-      </div>
+      <b-button v-if="withFilter" @click="$emit('filter')" size="sm" variant="primary" class="mr-1 btn-icon">
+        <feather-icon icon="FilterIcon"/>
+      </b-button>
+      <b-button v-if="onNewElement!=null" @click="onNewElement" size="sm" variant="info" class="mr-1">
+        <feather-icon icon="PlusCircleIcon" class="mr-50"/>
+        <span>New</span>
+      </b-button>
+      <b-button v-if="onDeleteElements!=null" @click="onDeleteElements" size="sm" variant="primary" class="mr-1">
+        <feather-icon icon="Trash2Icon" class="mr-50"/>
+        <span>Delete</span>
+      </b-button>
+      <b-form-input debounce="500" id="filterInput" v-model="search" type="search" class="w-auto" placeholder="Search.."/>
     </div>
 
   </div>

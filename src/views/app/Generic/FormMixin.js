@@ -1,6 +1,38 @@
+import {
+  BForm,
+  BRow,
+  BCol,
+  BFormInput,
+} from 'bootstrap-vue'
+import Field from '@/views/app/Generic/Field.vue'
+
 export default {
+  components: {
+    Field,
+    BFormInput,
+    BForm,
+    BRow,
+    BCol,
+  },
+  props: {
+    table: String,
+    definition: Object,
+    tableDefinitionKey: String,
+    create: Boolean,
+    initialData: Object,
+    isRelation: Boolean,
+    disabled: Boolean,
+    cols: { default: 6 },
+    inline: { type: Boolean, default: false },
+    entityId: { default: 0 },
+  },
   data() {
-    return { loading: false }
+    return {
+      entity: { ...this.initialData, ...this.definition.default },
+      entityLoaded: false,
+      originalEntity: {},
+      loading: false,
+    }
   },
   methods: {
     fillRelations(entity) {
@@ -41,6 +73,7 @@ export default {
       }))
     },
     createNewEntities() {
+      if (!Array.isArray(this.$refs.fields)) return Promise.resolve()
       return Promise.all(this.formFields.filter(field => {
         const formField = this.$refs.fields.find(f => f.field === field)
         // console.log(formField, formField.hasNew)
@@ -96,5 +129,56 @@ export default {
           .finally(() => this.loading = false)
       })
     },
+    setData(entity) {
+      this.entity = { ...this.definition.default, ...entity }
+    },
+    reset() {
+      this.entity = { ...this.originalEntity }
+    },
+    async loadDefinition() {
+      const { data } = await this.$api({ action: 'read-rich', entity: this.table })
+      this.$store.commit('table/setDefinition', data)
+    },
+    getField(key) {
+      return this.definition.fields.find(f => f.key === key)
+    },
+    isDisabled(field) {
+      return this.disabled || field.disabled || (!this.create && field.disableOnUpdate)
+    },
+    isDisabledFromName(key) {
+      return this.isDisabled(this.getField(key))
+    },
+  },
+  computed: {
+    formFields() {
+      return this.definition.fields.filter(f => !f.hideOnForm && (!f.auto || this.create))
+    },
+    tableDefinition() {
+      return this.$store.getters['table/tableDefinition'](this.tableDefinitionKey)
+    },
+    primaryKey() {
+      return this.definition.primaryKey ?? this.definition.fields.find(f => f.auto).key
+    },
+  },
+  async created() {
+    if (!this.tableDefinition) {
+      await this.loadDefinition()
+    }
+    if (this.create) return
+    if (!this.initialData) {
+      const entity = await this.$store.dispatch('table/fetchSingleItem', {
+        entity: this.table,
+        primaryKey: this.primaryKey,
+        id: this.entityId,
+      })
+      this.setData(entity)
+    }
+    try {
+      this.entityLoaded = true
+      await this.fillRelations(this.entity)
+    } finally {
+      console.log('entity', this.entity)
+      this.originalEntity = { ...this.entity }
+    }
   },
 }

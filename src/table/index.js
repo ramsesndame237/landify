@@ -1296,7 +1296,12 @@ export default {
           { key: 'recurringpayment_maturity_monthly_range', hideOnIndex: true },
           { key: 'reccuringpayment_value_deposit', hideOnIndex: true },
           {
-            key: 'maturitytype_id', type: 'list', list: 'maturitytype', listLabel: 'maturitytype_name', hideOnIndex: true, withNew: true
+            key: 'maturitytype_id',
+            type: 'list',
+            list: 'maturitytype',
+            listLabel: 'maturitytype_name',
+            hideOnIndex: true,
+            withNew: true
           },
           {
             key: 'indexclause_id', type: 'list', list: 'indexclause', listLabel: 'indexclause_name', withNew: true,
@@ -1586,10 +1591,20 @@ export default {
       { key: 'recurringpayment_maturity_monthly_range', hideOnIndex: true },
       { key: 'reccuringpayment_value_deposit', hideOnIndex: true, type: 'number' },
       {
-        key: 'maturitytype_id', type: 'list', list: 'maturitytype', listLabel: 'maturitytype_name', hideOnIndex: true, withNew: true,
+        key: 'maturitytype_id',
+        type: 'list',
+        list: 'maturitytype',
+        listLabel: 'maturitytype_name',
+        hideOnIndex: true,
+        withNew: true,
       },
       {
-        key: 'indexclause_id', type: 'list', list: 'indexclause', listLabel: 'indexclause_name', hideOnIndex: true, withNew: true,
+        key: 'indexclause_id',
+        type: 'list',
+        list: 'indexclause',
+        listLabel: 'indexclause_name',
+        hideOnIndex: true,
+        withNew: true,
       },
       { key: 'maturitytype_name', hideOnForm: true },
       { key: 'indexclause_name', hideOnForm: true },
@@ -1711,17 +1726,28 @@ export default {
   // endregion
   // region Work Package 4
   invoice: {
+    createModal: false,
+    formComponent: () => import('../views/app/FormComponent/InvoiceForm.vue'),
     fields: [
       { key: 'invoice_id', auto: true },
       { key: 'invoice_date', type: 'date' },
+      { key: 'invoice_date_of_order', type: 'date', hideOnIndex: true },
       { key: 'invoice_contract_year', disabled: true, type: 'number' },
       { key: 'invoice_company_name' },
       { key: 'invoice_allocationarea', type: 'number' },
       { key: 'invoice_payment_date', type: 'date' },
       { key: 'customergroup_name', hideOnForm: true },
-      { key: 'partnercompany_name', hideOnForm: true },
+      { key: 'facilitymanager_partnercompany_name', hideOnForm: true },
+      { key: 'owner_partnercompany_name', hideOnForm: true },
       {
-        key: 'partnertype_name', type: 'list', list: 'partnertype', listLabel: 'partnertype_name', hideOnIndex: true,
+        key: 'contract_id',
+        type: 'list',
+        list: 'contract',
+        entity: 'invoice_contract_rel',
+        with: ['invoice_contract_billing_period_from_date', 'invoice_contract_billing_period_to_date', 'invoice_contract_year'],
+      },
+      {
+        key: 'partnertype_id', type: 'list', list: 'partnertype', listLabel: 'partnertype_name', hideOnIndex: true,
       },
       { key: 'invoice_description', type: 'textarea', hideOnIndex: true },
       { key: 'invoice_contract_billing_period_from_date', type: 'date', hideOnIndex: true },
@@ -1731,9 +1757,8 @@ export default {
         rules: { date_after: ['@invoice_contract_billing_period_from_date'] },
         hideOnIndex: true,
       },
-
     ],
-    filter: [
+    filters: [
       { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
       { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name' },
       { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name' },
@@ -1743,6 +1768,9 @@ export default {
       { key: 'invoice_contract_year', type: 'number' },
       { key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_name' },
     ],
+    relations: [{
+      title: 'documents',
+    }],
   },
   inspectionresult: {
     fields: [
@@ -1758,7 +1786,7 @@ export default {
       { key: 'resultcategorization_name' },
       { key: 'invoicepositon_count', hideOnForm: true },
     ],
-    filter: [
+    filters: [
       { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
       { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name' },
       { key: 'user_id', type: 'list', list: 'user', listLabel: 'user_email' },
@@ -1864,7 +1892,7 @@ export default {
       { key: 'contradiction_name' },
       { key: 'contradiction_last_change_time', type: 'date' },
     ],
-    filter: [
+    filters: [
       { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
       { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name' },
       { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
@@ -1881,12 +1909,24 @@ export default {
       { key: 'contradictionpackage_name' },
       { key: 'contradictionpackage_sum' },
       { key: 'contradictionpackage_description', hideOnIndex: true },
-      { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name', hideOnIndex: true },
+      {
+        key: 'customergroup_id',
+        type: 'list',
+        list: 'customergroup',
+        listLabel: 'customergroup_name',
+        hideOnIndex: true
+      },
       { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name', hideOnIndex: true },
-      { key: 'partnercompany_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name', hideOnIndex: true },
+      {
+        key: 'partnercompany_id',
+        type: 'list',
+        list: 'partnercompany',
+        listLabel: 'partnercompany_name',
+        hideOnIndex: true
+      },
       { key: 'invoice_period', type: 'date', hideOnIndex: true },
     ],
-    filter: [
+    filters: [
       { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
       { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name' },
       { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
