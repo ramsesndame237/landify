@@ -16,11 +16,6 @@
           Save and add Contract Area
         </b-button>
       </div>
-      <!--      <div class="bg-light mt-2 p-1 text-sm">-->
-      <!--        <small>-->
-      <!--          {{ $t('app.content.new_busness_text_pos_msg') }}-->
-      <!--        </small>-->
-      <!--      </div>-->
     </b-col>
   </b-row>
 </template>
