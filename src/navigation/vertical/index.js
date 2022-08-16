@@ -271,6 +271,10 @@ export default [
         title: 'Contradictions Packages',
         route: table('contradictionpackage'),
       },
+      {
+        title: 'Contradictions and Protocol',
+        route: table('contradictionprotocol'),
+      },
     ],
   },
   {

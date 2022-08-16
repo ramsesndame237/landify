@@ -1864,6 +1864,64 @@ export default {
       { key: 'contradiction_name' },
       { key: 'contradiction_last_change_time', type: 'date' },
     ],
+    filter: [
+      { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
+      { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name' },
+      { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
+      { key: 'user_id', type: 'list', list: 'user', listLabel: 'user_firstname' },
+      { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name' },
+      { key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name' },
+      { key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name' },
+      { key: 'savingtype_id', type: 'list', list: 'savingtype', listLabel: 'savingtype_name' },
+    ],
+  },
+  contradictionpackage: {
+    fields: [
+      { key: 'contradictionpackage_id', auto: true },
+      { key: 'contradictionpackage_name' },
+      { key: 'contradictionpackage_sum' },
+      { key: 'contradictionpackage_description', hideOnIndex: true },
+      { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name', hideOnIndex: true },
+      { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name', hideOnIndex: true },
+      { key: 'partnercompany_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name', hideOnIndex: true },
+      { key: 'invoice_period', type: 'date', hideOnIndex: true },
+    ],
+    filter: [
+      { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
+      { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name' },
+      { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
+      { key: 'user_id', type: 'list', list: 'user', listLabel: 'user_firstname' },
+      { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name' },
+      { key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name' },
+      { key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name' },
+      { key: 'savingtype_id', type: 'list', list: 'savingtype', listLabel: 'savingtype_name' },
+    ],
+    relations: [
+      {
+        title: 'Allocated Contradictions',
+        entity: 'contradictionpackage_contradiction_rel',
+        fields: [
+          { key: 'contradiction_id', auto: true },
+          { key: 'contradiction_name' },
+          { key: 'invoice_date', type: 'date', hideOnForm: true },
+        ],
+      },
+      {
+        title: 'Available Contradictions',
+        entity: 'contradictionpackage_contradiction_rel',
+        fields: [
+          { key: 'contradiction_id', auto: true },
+          { key: 'contradiction_name' },
+          { key: 'invoice_date', type: 'date', hideOnForm: true },
+        ],
+      },
+    ],
+  },
+  contradictionprotocol: {
+    fields: [
+      { key: 'ticket_id', auto: true },
+    ],
+    // formComponent: () => import('@/views/app/FormComponent/ContradictionProtocolForm'),
   },
   // end region
 }
