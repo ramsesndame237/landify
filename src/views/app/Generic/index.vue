@@ -3,7 +3,7 @@
     <b-card body-class="p-0">
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage"
                         :on-new-element="onNewElement" :total-rows="totalRows"
-                        :with-filter="definition.filter && definition.filter.length > 0"
+                        :with-filter="definition.filters && definition.filters.length > 0"
                         :on-delete-elements="()=> $refs.table.deleteSelected()" @filter="$refs.filter.openModal()"/>
       <generic-filter ref="filter" :table="table" :definition="definition" @filter="filter"/>
     </b-card>

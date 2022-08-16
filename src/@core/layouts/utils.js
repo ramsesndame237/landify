@@ -49,7 +49,7 @@ export const isNavLinkActive = link => {
   if (!resolveRoutedName) return false
 
   return matchedRoutes.some(route => {
-    if (route.name === 'table' || route.name === 'table-view' || route.name === 'table-form') {
+    if (route.name.startsWith('table')) {
       return params.table === link.route.params?.table
     }
     return route.name === resolveRoutedName || route.meta.navActiveLink === resolveRoutedName

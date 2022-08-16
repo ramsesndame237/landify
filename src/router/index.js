@@ -71,75 +71,9 @@ const router = new VueRouter({
       component: () => import('@/views/app/Kanban/index.vue'),
     },
     {
-      path: '/app/deadlines',
-      name: 'deadlines',
-      component: () => import('@/views/app/Deadlines.vue'),
-      meta: {
-        pageTitle: 'app.page_title.deadlines',
-        breadcrumb: [
-          {
-            text: 'app.page_title.deadlines',
-            active: true,
-          },
-        ],
-      },
-    },
-    {
-      path: '/app/documents',
-      name: 'documents',
-      component: () => import('@/views/app/Documents.vue'),
-      meta: {
-        pageTitle: 'app.page_title.doc',
-        breadcrumb: [
-          {
-            text: 'app.page_title.doc',
-            active: true,
-          },
-        ],
-      },
-    },
-
-    {
-      path: '/app/properties',
-      name: 'properties',
-      component: () => import('@/views/app/Properties.vue'),
-      meta: {
-        pageTitle: 'app.page_title.properties',
-        breadcrumb: [
-          {
-            text: 'app.page_title.properties',
-            active: true,
-          },
-        ],
-      },
-    },
-    {
-      path: '/app/templates',
-      name: 'templates',
-      component: () => import('@/views/app/Templates.vue'),
-      meta: {
-        pageTitle: 'app.page_title.templates',
-        breadcrumb: [
-          {
-            text: 'app.page_title.templates',
-            active: true,
-          },
-        ],
-      },
-    },
-    {
-      path: '/app/master-data',
-      name: 'master-data',
-      component: () => import('@/views/app/Master-data.vue'),
-      meta: {
-        pageTitle: 'app.page_title.master_data',
-        breadcrumb: [
-          {
-            text: 'app.page_title.master_data',
-            active: true,
-          },
-        ],
-      },
+      name: 'table-positions-import',
+      path: '/app/invoicepositions/import/:invoice',
+      component: () => import('@/views/app/InvoicePositionImport.vue'),
     },
 
     // authentication
