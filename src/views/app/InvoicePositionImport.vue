@@ -1,23 +1,27 @@
 <template>
   <div>
-    <h3>
-      Main Heading </h3>
-    <b-card>
+    <b-card body-class="p-1">
       <h3>Take over partial billing items from previous year</h3>
     </b-card>
-    <b-row>
-
-    </b-row>
-    <div class="d-flex justify-content-end">
-      <b-button class="mr-1" size="sm" variant="primary">
+    <validation-observer ref="form" v-slot="{ passes }">
+      <b-form @submit.prevent="passes(filterTable)">
+        <b-row>
+          <b-col v-for="(field,index) in filters" :key="index" cols="12" md="4" lg="3">
+            <field ref="fields" :entity="filterData" :field="field"/>
+          </b-col>
+        </b-row>
+      </b-form>
+    </validation-observer>
+    <div class="d-flex my-2 justify-content-end">
+      <b-button class="mr-1" size="sm" variant="primary" @click="filterTable">
         <span>Show Invoice Positions</span>
       </b-button>
-      <b-button class="mr-1" size="sm" variant="primary">
+      <b-button class="mr-1" size="sm" variant="primary" @click="transfer">
         <span>Submit and transfert to invoice</span>
       </b-button>
     </div>
 
-    <h3>Please select the partial billing items and data you want to transfer:</h3>
+    <h3 class="mb-1">Please select the partial billing items and data you want to transfer:</h3>
     <b-card>
       <b-table ref="table" striped hover responsive :busy.sync="loading" :per-page="perPage" :current-page="currentPage"
                :items="provider" :fields="fields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
@@ -46,20 +50,24 @@
 </template>
 
 <script>
-import { BButton, BCard, BTable, BRow, BFormCheckbox } from 'bootstrap-vue'
-import { ref } from "@vue/composition-api";
+import { BButton, BCard, BTable, BRow, BFormCheckbox, BForm, BCol } from 'bootstrap-vue'
+import Field from '@/views/app/Generic/Field.vue';
 
 export default {
   name: 'InvoicePositionImport',
   components: {
+    Field,
     BButton,
     BCard,
     BTable,
     BRow,
     BFormCheckbox,
+    BCol,
+    BForm,
   },
   data() {
     return {
+      filterData: {},
       loading: false,
       sortBy: '',
       sortDesc: false,
@@ -96,6 +104,16 @@ export default {
       selected: false,
       perPage: 1000,
       currentPage: 1,
+      filters: [
+        { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
+        { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name' },
+        { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name' },
+        { key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name' },
+        { key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name' },
+        { key: 'invoice_contract_year', type: 'number' },
+        { key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_name' },
+        { key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name' },
+      ],
     }
   },
   watch: {
@@ -116,6 +134,12 @@ export default {
     })
   },
   methods: {
+    filterTable() {
+      this.$refs.table.refresh()
+    },
+    transfer() {
+
+    },
     provider(ctx) {
       const {
         currentPage, perPage, filter, sortBy, sortDesc,
@@ -136,10 +160,10 @@ export default {
         .then(({ data }) => {
           console.log(data)
           data.data.data.forEach(el => {
-            el.__selected = ref(false)
+            el.__selected = false
             el.meta = {}
-            Object.keys(el).map(key => {
-              el.meta.key = false
+            Object.keys(this.columnSelected).map(key => {
+              el.meta[key] = false
             })
           })
           this.$store.commit('table/setDefinition', data)
