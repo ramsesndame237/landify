@@ -72,7 +72,8 @@ const router = new VueRouter({
     },
     {
       name: 'table-positions-import',
-      path: '/app/invoicepositions/import/:invoice',
+      // table parameter is just to fix menu
+      path: '/app/table/:table/import/:invoice',
       component: () => import('@/views/app/InvoicePositionImport.vue'),
     },
 
