@@ -60,10 +60,10 @@
           </b-row>
         </b-col>
         <b-col cols="5">
-          <div class="d-flex justify-content-between align-items-center mb-1">
-            <span>Select resPective contract to area</span>
+          <div class="d-flex justify-content-between align-items-center flex-wrap mb-1">
+            <span>Select respective contract to area</span>
             <b-form-input debounce="500" id="filterInput" v-model="search" type="search" class="w-auto"
-                          placeholder="Search.."/>
+                          placeholder="Search.." :disabled="entity.company_id==null"/>
           </div>
           <data-tables ref="contracts" :current-page="1" :per-page="100" :items="contracts" :multi-select="false"
                        :with-actions="false" entity="contract" :fields="contractFields" style="max-height: 300px"
@@ -90,7 +90,13 @@ export default {
   data() {
     return {
       search: '',
-      companyField: { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name' },
+      companyField: {
+        key: 'company_id',
+        type: 'list',
+        list: 'company',
+        listLabel: 'company_name',
+        rules: { required: false },
+      },
       contractFields: [
         { key: 'contract_id' },
         { key: 'contract_name' },
@@ -113,6 +119,10 @@ export default {
     search() {
       this.fetchContracts()
     },
+    'entity.company_id': function (val) {
+      if (val) this.fetchContracts()
+      else this.contracts = []
+    },
     'entity.invoice_contract_billing_period_to_date': function () {
       this.entity.invoice_contract_year = getYearFormDateString(this.entity.invoice_contract_billing_period_to_date)
     },
@@ -124,7 +134,6 @@ export default {
   },
   async mounted() {
     this.entity.invoice_contract_year = getYearFormDateString(this.entity.invoice_contract_billing_period_to_date)
-    await this.fetchContracts()
   },
   methods: {
     async fetchContracts() {

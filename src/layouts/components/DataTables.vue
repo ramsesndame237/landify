@@ -128,6 +128,7 @@ export default {
         from: 0,
         current_page: currentPage,
         filter: this.filterData,
+        // data: [this.filterData],
         filter_all: filter ?? '',
         lang: this.$i18n.locale,
       }

@@ -45,10 +45,12 @@ export default {
         }],
       })
         .then(({ data }) => {
-          this.$set(entity, field.key, data.data.data[0][field.key])
+          const result = data.data.data[0]
+          if (!result) return
+          this.$set(entity, field.key, result[field.key])
           if (field.with) {
             (typeof field.with === 'string' ? [field.with] : field.with).forEach(val => {
-              this.$set(entity, val, data.data.data[0][val])
+              this.$set(entity, val, result[val])
             })
           }
         })))
@@ -170,7 +172,11 @@ export default {
         primaryKey: this.primaryKey,
         id: this.entityId,
       })
-      this.setData(entity)
+      if (!entity) {
+        this.$errorToast(`The entity with the id "${this.entityId}" doesnt exists`)
+      } else {
+        this.setData(entity)
+      }
     }
     try {
       this.entityLoaded = true

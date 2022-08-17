@@ -13,39 +13,41 @@
       </b-form>
     </validation-observer>
     <div class="d-flex my-2 justify-content-end">
-      <b-button class="mr-1" size="sm" variant="primary" @click="filterTable">
+      <b-button class="mr-1" variant="primary" @click="filterTable">
         <span>Show Invoice Positions</span>
       </b-button>
-      <b-button class="mr-1" size="sm" variant="primary" @click="transfer">
+      <b-button v-if="show" class="mr-1" variant="primary" @click="transfer">
         <span>Submit and transfert to invoice</span>
       </b-button>
     </div>
 
-    <h3 class="mb-1">Please select the partial billing items and data you want to transfer:</h3>
-    <b-card>
-      <b-table ref="table" striped hover responsive :busy.sync="loading" :per-page="perPage" :current-page="currentPage"
-               :items="provider" :fields="fields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
-               :sort-direction="sortDirection" select-mode="multi">
-        <template #cell(__selected)="data">
-          <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"/>
-        </template>
-        <template #head(__selected)>
-          <b-form-checkbox v-model="selected"/>
-        </template>
-        <template #head()="data">
-          <div class="d-flex">
-            <b-form-checkbox v-model="columnSelected[data.field.key]"/>
-            <span>{{ data.label }}</span>
-          </div>
-        </template>
-        <template #cell()="data">
-          <div class="d-flex">
-            <b-form-checkbox v-model="data.item.meta[data.field.key]"/>
-            <span>{{ data.value }}</span>
-          </div>
-        </template>
-      </b-table>
-    </b-card>
+    <template v-if="show">
+      <h3 class="mb-1">Please select the partial billing items and data you want to transfer:</h3>
+      <b-card>
+        <b-table ref="table" striped hover responsive :busy.sync="loading" :per-page="perPage"
+                 :current-page="currentPage" :items="provider" :fields="fields" :sort-by.sync="sortBy"
+                 :sort-desc.sync="sortDesc" :sort-direction="sortDirection" select-mode="multi">
+          <template #cell(__selected)="data">
+            <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"/>
+          </template>
+          <template #head(__selected)>
+            <b-form-checkbox v-model="selected"/>
+          </template>
+          <template #head()="data">
+            <div class="d-flex">
+              <b-form-checkbox v-model="columnSelected[data.field.key]"/>
+              <span>{{ data.label }}</span>
+            </div>
+          </template>
+          <template #cell()="data">
+            <div class="d-flex">
+              <b-form-checkbox v-model="data.item.meta[data.field.key]"/>
+              <span>{{ data.value }}</span>
+            </div>
+          </template>
+        </b-table>
+      </b-card>
+    </template>
   </div>
 </template>
 
@@ -114,6 +116,7 @@ export default {
         { key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_name' },
         { key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name' },
       ],
+      show: false,
     }
   },
   watch: {
@@ -135,10 +138,51 @@ export default {
   },
   methods: {
     filterTable() {
-      this.$refs.table.refresh()
+      if (this.show) this.$refs.table.refresh()
+      else this.show = true
     },
-    transfer() {
+    async transfer() {
+      const invoice_id = this.$route.params.invoice
+      const selectedItems = this.currentItems.filter(item => {
+        return Object.keys(item.meta).findIndex(key => item.meta[key]) >= 0
+      })
+      const data = selectedItems.map(item => {
+        const el = {}
+        Object.keys(item.meta).forEach(key => {
+          if (item.meta[key]) el[key] = item[key]
+          else if (['invoiceposition_total_units', 'invoiceposition_flat_rate',
+            'invoiceposition_units_customer', 'invoiceposition_amount_total', 'invoiceposition_amount_customer'].indexOf(key) >= 0) {
+            el[key] = 0
+          } else if (['invoiceposition_name', 'invoiceposition_costtype_invoice'].indexOf(key) >= 0) {
+            el[key] = 'Temporary'
+          } else {
+            el[key] = ''
+          }
+        })
+        return el
+      })
+      const response = await this.$api({
+        entity: 'invoiceposition',
+        action: 'create',
+        data,
+      })
 
+      const relations = response.data.data.data
+        .filter(item => !!item[0])
+        .map(item => {
+          return {
+            invoice_id,
+            invoiceposition_id: item[0].invoiceposition_id,
+          }
+        })
+
+      await this.$api({
+        action: 'create',
+        entity: 'invoice_invoiceposition_rel',
+        data: relations,
+      })
+
+      await this.$router.push({ name: 'table-view', params: { table: 'invoice', id: invoice_id }, query: { tab: 5 } })
     },
     provider(ctx) {
       const {

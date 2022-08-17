@@ -5,7 +5,8 @@
                         :on-new-element="onNewElement" :total-rows="totalRows"
                         :with-filter="definition.filters && definition.filters.length > 0"
                         :on-delete-elements="()=> $refs.table.deleteSelected()" @filter="$refs.filter.openModal()"/>
-      <generic-filter ref="filter" :table="table" :definition="definition" @filter="filter"/>
+      <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
+                      @filter="filter"/>
     </b-card>
 
     <p v-if="currentReview" class="text-danger h4 mb-1 text-center" v-html="currentReview"></p>
@@ -43,11 +44,13 @@ export default {
     BCard,
   },
   data() {
+    const payload = this.$store.getters['table/tableData'](this.$route.params.table)
     return {
-      search: '',
-      perPage: 10,
-      currentPage: 1,
-      totalRows: 0,
+      search: payload?.search || '',
+      perPage: payload?.perPage || 10,
+      currentPage: payload?.currentPage || 1,
+      totalRows: payload?.totalRows || 0,
+      initialFilterData: payload?.filter,
     }
   },
   computed: {
@@ -65,12 +68,24 @@ export default {
     },
   },
   watch: {
-    table() {
-      this.search = ''
-      // this.perPage = 10
-      this.currentPage = 1
-      this.totalRows = 0
-    },
+    // table() {
+    //   this.search = ''
+    //   // this.perPage = 10
+    //   this.currentPage = 1
+    //   this.totalRows = 0
+    // },
+  },
+  beforeDestroy() {
+    this.$store.commit('table/setTableData', {
+      table: this.table,
+      payload: {
+        search: this.search,
+        currentPage: this.currentPage,
+        perPage: this.perPage,
+        totalRows: this.totalRows,
+        filter: { ...this.$refs.filter.data },
+      },
+    })
   },
   methods: {
     filter(data) {

@@ -35,17 +35,16 @@ export default {
     table: String,
     definition: Object,
     tableDefinitionKey: String,
+    initialData: Object,
   },
   data() {
     return {
-      initialData: null,
-      data: {},
+      data: { ...this.initialData },
     }
   },
   computed: {},
   methods: {
-    openModal(data) {
-      this.initialData = data
+    openModal() {
       this.$refs.modal.show()
     },
     reset() {

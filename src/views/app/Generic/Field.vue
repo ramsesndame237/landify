@@ -94,6 +94,9 @@ export default {
       if (this.list.length === 0) this.loading = true
       this.list = await this.$store.dispatch('table/fetchList', this.field.list)
       this.loading = false
+    } else if (this.field.type === 'boolean') {
+      // set false as default value
+      if (this.entity[this.field.key] == null) this.entity[this.field.key] = 0
     }
   },
   methods: {

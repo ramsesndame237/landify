@@ -11,13 +11,18 @@ export default {
     totalRows: 0,
     tableDefinition: {},
     listCache: {},
+    tableData: {},
   },
   getters: {
     tableDefinition: state => entity => state.tableDefinition[entity],
+    tableData: state => table => state.tableData[table],
   },
   mutations: {
     setDefinition(state, data) {
       Vue.set(state.tableDefinition, data.entity, _.pick(data.data, ['attribute', 'attribute_i18n', 'attribute_regexp', 'attribute_regexp_failure_message', 'attribute_datatype_hint', 'attribute_datatype_len']))
+    },
+    setTableData(state, data) {
+      Vue.set(state.tableData, data.table, data.payload)
     },
   },
   actions: {
@@ -30,7 +35,7 @@ export default {
         per_page: 1,
         from: 0,
         current_page: 1,
-        filter: { [payload.primaryKey]: payload.id },
+        data: [{ [payload.primaryKey]: payload.id }],
         filter_all: '',
         lang: window.$vue.$i18n.locale,
       })

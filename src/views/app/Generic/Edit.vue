@@ -38,22 +38,23 @@
     <b-card v-if="definition.relations && definition.relations.length>0 && !create">
       <b-tabs ref="tabs" pills>
         <b-tab v-for="(relation, index) in definition.relations" :key="index" :title="$t(relation.title)"
-               :active="index===0" lazy>
+               :active="index===tabIndex" lazy>
           <data-tables :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
                        :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
                        :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
                        :entity-view="relation.entityView" :with-view="relation.view!==false" :fields="relation.fields"
                        :on-edit-element="editElement" :with-edit="relation.update!==false"/>
           <generic-modal title="Test" :table="relation.entityForm || relation.entity" :definition="relation" is-relation
-                         :table-definition-key="relation.entity" @reload-table="reloadRelatedTable"/>
+                         :table-definition-key="relation.entityForm || relation.entity"
+                         @reload-table="reloadRelatedTable"/>
         </b-tab>
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
-            <component v-if="currentTool" :is="currentTool"/>
-            <b-button class="mr-1" size="sm" variant="info" @click="newElement">
+            <component v-if="currentTool()" :is="currentTool()"/>
+            <b-button v-if="currentHasNew" class="mr-1" size="sm" variant="info" @click="newElement">
               New
             </b-button>
-            <b-button class="mr-1" size="sm" variant="primary" @click="deleteSelected">
+            <b-button v-if="currentHasDelete" class="mr-1" size="sm" variant="primary" @click="deleteSelected">
               Delete
             </b-button>
             <b-button v-if="currentHasFilter" @click="$emit('filter')" size="sm" variant="primary"
@@ -122,6 +123,7 @@ export default {
       entityLoaded: false,
       create: this.$route.name === 'table-form',
       loading: false,
+      tabIndex: parseInt(this.$route.query.tab || 0),
     }
   },
   computed: {
@@ -150,19 +152,26 @@ export default {
     },
     entityId() {
       // convert to string to fix bug on relation tables
-      return '' + this.$route.params.id
+      return this.$route.params.id
     },
     primaryKey() {
       return this.definition.primaryKey ?? this.definition.fields.find(f => f.auto).key
     },
     currentHasFilter() {
-      return this.definition.relations[this.$refs.tabs.currentTab]?.filters != null
+      return this.definition.relations[this.$refs.tabs?.currentTab]?.filters != null
     },
-    currentTool() {
-      return this.definition.relations[this.$refs.tabs.currentTab]?.tool
+    currentHasNew() {
+      return this.definition.relations[this.$refs.tabs?.currentTab]?.create !== false
+    },
+    currentHasDelete() {
+      return this.definition.relations[this.$refs.tabs?.currentTab]?.delete !== false
     },
   },
   methods: {
+    currentTool() {
+      if (!this.$refs.tabs) return false
+      return this.definition.relations[this.$refs.tabs.currentTab]?.tool
+    },
     cancel() {
       if (this.create) this.$router.push({ name: 'table', params: { table: this.table } })
       else {

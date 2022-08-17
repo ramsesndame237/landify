@@ -27,7 +27,8 @@
         <feather-icon icon="Trash2Icon" class="mr-50"/>
         <span>Delete</span>
       </b-button>
-      <b-form-input debounce="500" id="filterInput" v-model="search" type="search" class="w-auto" placeholder="Search.."/>
+      <b-form-input debounce="500" id="filterInput" v-model="internalSearch" type="search" class="w-auto"
+                    placeholder="Search.."/>
     </div>
 
   </div>
@@ -67,12 +68,12 @@ export default {
     totalRows: Number,
   },
   data() {
-    return {}
+    return { internalSearch: this.search }
   },
   computed: {},
   watch: {
-    search() {
-      this.$emit('update:search', this.search)
+    internalSearch() {
+      this.$emit('update:search', this.internalSearch)
     },
     perPage() {
       this.$emit('update:perPage', this.perPage)
