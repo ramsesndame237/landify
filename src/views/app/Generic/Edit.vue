@@ -44,11 +44,12 @@
                        :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
                        :entity-view="relation.entityView" :with-view="relation.view!==false" :fields="relation.fields"
                        :on-edit-element="editElement" :with-edit="relation.update!==false"/>
-          <generic-modal title="Test" :table="relation.entityForm" :definition="relation" is-relation
+          <generic-modal title="Test" :table="relation.entityForm || relation.entity" :definition="relation" is-relation
                          :table-definition-key="relation.entity" @reload-table="reloadRelatedTable"/>
         </b-tab>
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
+            <component v-if="currentTool" :is="currentTool"/>
             <b-button class="mr-1" size="sm" variant="info" @click="newElement">
               New
             </b-button>
@@ -156,6 +157,9 @@ export default {
     },
     currentHasFilter() {
       return this.definition.relations[this.$refs.tabs.currentTab]?.filters != null
+    },
+    currentTool() {
+      return this.definition.relations[this.$refs.tabs.currentTab]?.tool
     },
   },
   methods: {

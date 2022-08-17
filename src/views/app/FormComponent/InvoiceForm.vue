@@ -119,7 +119,7 @@ export default {
     'entity.contract_id': function (val) {
       const contract = this.contracts.find(c => c.contract_id === val)
       this.$set(contract, '__selected', true)
-      this.fetchAreas()
+      this.fetchAreas(val)
     },
   },
   async mounted() {

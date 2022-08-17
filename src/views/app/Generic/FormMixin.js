@@ -54,7 +54,8 @@ export default {
         })))
     },
     saveRelations(entityId) {
-      return Promise.all(this.formFields.filter(field => field.type === 'list').map(field => {
+      const keys = [this.definition.primaryKey, ...(this.definition.composite || [])]
+      return Promise.all(this.definition.fields.filter(field => field.type === 'list' && keys.indexOf(field.key) === -1).map(field => {
         const extras = {}
         if (field.with) {
           (typeof field.with === 'string' ? [field.with] : field.with).forEach(val => {
@@ -110,9 +111,7 @@ export default {
               .then(async ({ data }) => {
                 console.log('is relation', this.isRelation)
                 try {
-                  if (!this.isRelation) {
-                    await this.saveRelations(data.data.data[0][0][this.primaryKey])
-                  }
+                  await this.saveRelations(data.data.data[0][0][this.primaryKey])
                 } finally {
                   this.$successToast(data.data.message)
                   // navigate to view page or reload table
