@@ -415,7 +415,7 @@ export default {
       {
         title: 'Group Ticket/Packages',
         primaryKey: 'group_ticket_id',
-        entity: 'groupticket_customergroup_grp',
+        entity: ' group_ticket_customergroup_partnergroup_rel',
         entityForm: 'groupticket_customergroup_rel',
         fields: [
           {
@@ -525,7 +525,93 @@ export default {
       },
     ],
     // formComponent: () => import('@/views/app/FormComponent/CompanyForm'),
-    relations: [],
+    relations: [
+      {
+        title: 'Tickets',
+        primaryKey: 'ticket_id',
+        entity: 'frontend_2_1_3_1_read_ticket',
+        fields: [
+          { key: 'ticket_id', auto: true },
+          { key: 'ticket_name' },
+          { key: 'board_name' },
+          { key: 'ticket_deadline' },
+          { key: 'ticket_planned_treatment_week' },
+          { key: 'ticket_progress' },
+        ],
+      },
+      {
+        title: 'Contradictions',
+        primaryKey: 'contradiction_id',
+        entity: 'frontend_2_1_3_2',
+        fields: [
+          { key: 'contradiction_id', auto: true },
+          { key: 'contradiction_name' },
+          { key: 'contradiction_last_change_time', type: 'date' },
+          { key: 'contradiction_letter_send_time', type: 'date' },
+          { key: 'contradiction_ready_to_comm' },
+          { key: 'contradiction_payment_received' },
+          { key: 'contradictiontask_count', type: 'number' },
+          { key: 'contradictionpoint_count', type: 'number' },
+        ],
+      },
+      {
+        title: 'Reviews Invoices',
+        primaryKey: 'invoice_id',
+        fields: [
+          { key: 'invoice_id', auto: true },
+          { key: 'invoice_date', type: 'date' },
+          { key: 'invoice_contract_year', type: 'number' },
+          { key: 'invoice_allocation_area' },
+          { key: 'invoice_payment_date', type: 'date' },
+          { key: 'customergroup_name', hideOnForm: true },
+          { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name', hideOnIndex: true },
+        ],
+      },
+      {
+        title: 'Sales Order SFM',
+        primaryKey: 'product_id',
+        fields: [
+          { key: 'product_id', type: 'list', list: 'product', listLabel: 'product_name' },
+          { key: 'product_short' },
+          { key: 'product_name' },
+          { key: 'salesorder_valid_from_date', type: 'date' },
+          { key: 'salesorder_valid_to_date', type: 'date' },
+          { key: 'product_active_from_date', type: 'date' },
+          { key: 'product_active_to_date', type: 'date' },
+          { key: 'salesorder_confirmation_date', type: 'date' },
+        ],
+      },
+      {
+        title: 'Contact Persons',
+        primaryKey: 'contactperson_id',
+        entity: 'contactperson_company_rel',
+        fields: [
+          { key: 'contactperson_id', auto: true },
+          { key: 'contactperson_lastname' },
+          { key: 'contactperson_firstname' },
+          { key: 'city_name' },
+          { key: 'contactdetails_email' },
+          { key: 'contactdetails_phone' },
+          { key: 'contactdetails_mobile' },
+          { key: 'contactperson_department' },
+        ],
+      },
+      {
+        title: 'Appointment Track',
+      },
+      {
+        title: 'Bankdata',
+      },
+      {
+        title: 'Pont of Sales',
+      },
+      {
+        title: 'Payments',
+      },
+      {
+        title: 'Users',
+      },
+    ],
   },
   contactperson: {
     fields: [
@@ -851,23 +937,6 @@ export default {
     ],
     relations: [
       {
-        title: 'Locations',
-        entityView: 'location',
-        update: false,
-        create: false,
-        delete: false,
-        entity: 'frontend_3_1_3_x_right',
-        fields: [
-          { key: 'location_name' },
-          { key: 'partnercompany_name' },
-          { key: 'address_extra' },
-          { key: 'address_street' },
-          { key: 'city_zip' },
-          { key: 'city_name' },
-          { key: 'country_name' },
-        ],
-      },
-      {
         title: 'Areas',
         primaryKey: 'area_id',
         entity: 'frontend_3_1_3_1',
@@ -924,9 +993,14 @@ export default {
             hideOnForm: true,
           },
           { key: 'area_name_external', sortable: true, hideOnForm: true },
-          { key: 'area_id', sortable: true, hideOnForm: true },
           {
-            key: 'area_id', sortable: true, type: 'list', list: 'area', listLabel: 'area_name', hideOnForm: true,
+            key: 'area_id', sortable: true, type: 'list', list: 'area', listLabel: 'area_name',
+          },
+          {
+            key: 'unit_id', sortable: true, type: 'list', list: 'unit', listLabel: 'unit_name', hideOnIndex: true
+          },
+          {
+            key: 'usagetype_id', sortable: true, type: 'list', list: 'usagetype', listLabel: 'usagetype_name', hideOnIndex: true
           },
           {
             key: 'contract_area_unit_usagetype_detail_description',
@@ -979,7 +1053,7 @@ export default {
         title: 'Group Tickets',
         primaryKey: 'groupticket_id',
         entity: 'frontend_3_1_3_4',
-        entityForm: 'pos_groupticket_rel',
+        entityForm: 'pos_ticket_rel',
         fields: [
           {
             key: 'groupticket_id',
@@ -1031,20 +1105,6 @@ export default {
           { key: 'invoice_payment_date', hideOnForm: true },
           { key: 'customergroup_name', hideOnForm: true },
           { key: 'partnercompany_name', hideOnForm: true },
-        ],
-      },
-      {
-        title: 'Appointment Track',
-        fields: [
-          { key: 'trackrecord_id', auto: true },
-          { key: 'trackrecord_timestamp', hideOnForm: true },
-          { key: 'trackrecord_type', hideOnForm: true },
-          { key: 'trackrecord_category', hideOnForm: true },
-          { key: 'trackrecord_visibilitytype', hideOnForm: true },
-          { key: 'trackrecord_usecase', hideOnForm: true },
-          { key: 'trackrecord_status', hideOnForm: true },
-          { key: 'trackrecord_comment', hideOnForm: true },
-          { key: 'trackrecord_element', hideOnForm: true },
         ],
       },
     ],
@@ -1119,10 +1179,10 @@ export default {
         entityView: 'pos',
         update: false,
         fields: [
-          { key: 'pos_id' },
-          { key: 'pos_name' },
-          { key: 'company_name' },
-          { key: 'tag_name' },
+          { key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name' },
+          { key: 'pos_name', hideOnForm: true },
+          { key: 'company_name', hideOnForm: true },
+          { key: 'tag_name', hideOnForm: true },
         ],
       },
       {
@@ -1184,10 +1244,10 @@ export default {
       {
         title: 'Areas',
         entity: 'frontend_3_3_3_1',
-        entityForm: 'location_area_rel',
+        entityForm: 'area_location_rel',
         fields: [
           { key: 'area_name', hideOnForm: true },
-          { key: 'area_id' },
+          { key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name' },
           { key: 'area_space_value', hideOnForm: true },
           { key: 'pos_name', hideOnForm: true },
           { key: 'contract_name', hideOnForm: true },
@@ -1195,8 +1255,8 @@ export default {
           { key: 'contract_area_unit_usagetype_allocationspace_value', hideOnForm: true },
           { key: 'unit_name', hideOnForm: true },
           { key: 'usagetype_name', hideOnForm: true },
-          { key: 'contract_area_unit_usagetype_valid_from_date', type: 'date' },
-          { key: 'contract_area_unit_usagetype_valid_to_date', type: 'date' },
+          { key: 'contract_area_unit_usagetype_valid_from_date', type: 'date', hideOnForm: true },
+          { key: 'contract_area_unit_usagetype_valid_to_date', type: 'date', hideOnForm: true },
         ],
       },
       {
@@ -1374,6 +1434,7 @@ export default {
     ],
   },
   serviceobject: {
+    entity: 'frontend_3_5_1',
     fields: [
       { key: 'serviceobject_id', auto: true },
       { key: 'serviceobject_name' },
@@ -1402,23 +1463,23 @@ export default {
     relations: [
       {
         title: 'Areas',
-        entity: 'serviceobject_area_grp',
-        entityForm: 'serviceobject_area_rel',
+        entity: 'frontend_3_5_3_1',
+        entityForm: 'area_serviceobject_rel',
         fields: [
           {
-            key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name',
+            key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name'
           },
           { key: 'area_name', hideOnForm: true },
-          { key: 'area_space_value', hideOnForm: true },
+          { key: 'area_space_value', hideOnForm: true},
           { key: 'pos_id', hideOnForm: true },
-          { key: 'company_name', hideOnForm: true },
-          { key: 'customergroup_name', hideOnForm: true },
+          { key: 'company_id', hideOnForm: true },
+          { key: 'customergroup_id', hideOnForm: true },
         ],
         update: false,
       },
       {
         title: 'Locations',
-        entity: 'serviceobject_location_grp',
+        entity: 'location_serviceobject_rel',
         entityForm: 'serviceobject_location_rel',
         fields: [
           {
@@ -1454,6 +1515,7 @@ export default {
   },
 
   specialright: {
+    entity: 'frontend_3_8_1',
     fields: [
       { key: 'specialright_id', auto: true },
       { key: 'specialright_name' },
@@ -1502,17 +1564,17 @@ export default {
         title: 'Contract',
         primaryKey: 'contract_id',
         entity: 'frontend_3_6_3',
-        entityForm: 'contract_criteria_form',
+        entityForm: 'contract_criteria_rel',
         fields: [
-          { key: 'contract_id' },
-          { key: 'contract_name' },
+          { key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name' },
+          { key: 'contract_name', hideOnForm: true },
           { key: 'contract_criteria_comment', type: 'textarea' },
           { key: 'contract_criteria_value' },
-          { key: 'unit_id', type: 'list', list: 'unit', listLabel: 'unit_name' },
+          { key: 'unit_id', type: 'list', list: 'unit', listLabel: 'unit_name', hideOnForm: true },
           { key: 'contract_criteria_exists', type: 'boolean' },
           { key: 'contract_criteria_valid_from_date', type: 'date' },
           { key: 'contract_criteria_valid_to_date', type: 'date' },
-          { key: 'choice_id', type: 'list', list: 'choice', listLabel: 'choice_name', hideOnIndex: true },
+          { key: 'choice_id', type: 'list', list: 'choice', listLabel: 'choice_name', hideOnIndex: true, hideOnForm: true },
           { key: 'choice_name', hideOnForm: true },
         ],
       },
@@ -1520,6 +1582,7 @@ export default {
         title: 'Choice',
         primaryKey: 'choice_id',
         entity: 'frontend_3_6_4',
+        entityForm: 'criteria_choice_rel',
         fields: [
           { key: 'choice_id', hideOnForm: true },
           { key: 'choice_name', hideOnForm: true },
@@ -1532,6 +1595,7 @@ export default {
   },
 
   indexclause: {
+    entity: 'frontend_3_7_1',
     fields: [
       { key: 'indexclause_id', auto: true },
       { key: 'indexclause_name' },
@@ -1547,24 +1611,26 @@ export default {
       {
         title: 'Recurring Payments',
         primaryKey: 'recurringpayment_id',
-        entity: 'indexclause_recurringpayment_rel',
+        entity: 'frontend_3_7_3',
+        entityForm: 'recurringpayment_indexclause_rel',
         fields: [
-          { key: 'recurringpayment_id' },
-          { key: 'contract_id' },
-          { key: 'contract_name' },
-          { key: 'recurringpayment_condition_comment' },
-          { key: 'indexclause_baseyear' },
-          { key: 'recurringpaymenttype_name' },
-          { key: 'maturitytype_name' },
-          { key: 'recurringpayment_begin_date' },
-          { key: 'recurringpayment_percentage' },
-          { key: 'recurringpayment_sum_per_month' },
+          { key: 'recurringpayment_id', type: 'list', list: 'recurringpayment', listLabel: 'recurringpayment_name' },
+          { key: 'contract_id', hideOnForm: true },
+          { key: 'contract_name', hideOnForm: true },
+          { key: 'recurringpayment_condition_comment', hideOnForm: true },
+          { key: 'indexclause_baseyear', hideOnForm: true },
+          { key: 'recurringpaymenttype_name', hideOnForm: true },
+          { key: 'maturitytype_name', hideOnForm: true },
+          { key: 'recurringpayment_begin_date', hideOnForm: true },
+          { key: 'recurringpayment_percentage', hideOnForm: true },
+          { key: 'recurringpayment_sum_per_month', hideOnForm: true },
         ],
       },
     ],
   },
 
   recurringpayment: {
+    entity: 'frontend_3_9_1',
     fields: [
       { key: 'recurringpayment_id', auto: true },
       { key: 'recurringpayment_name' },
@@ -1611,13 +1677,19 @@ export default {
     ],
     relations: [
       {
-        title: 'Contract',
-        primaryKey: 'contract_id',
-        entity: 'contact_grp',
-        entityForm: 'contact_rel',
+        title: 'Index Clause',
+        entity: 'frontend_3_9_3',
+        entityForm: 'recurringpayment_indexclause_rel',
         fields: [
-          { key: 'contact_id', hideOnForm: true },
-          { key: 'contact_name' },
+          { key: 'indexclause_id', type: 'list', list: 'indexclause', listLabel: 'indexclause_name' },
+          { key: 'indexclause_name', hideOnForm: true },
+          { key: 'indexclause_adjustment_description', hideOnForm: true },
+          { key: 'indexclause_adjustment_rule', hideOnForm: true },
+          { key: 'indexclause_begin_date', hideOnForm: true },
+          { key: 'indexclause_baseyear', hideOnForm: true },
+          { key: 'indexclause_indextransmission_percent', hideOnForm: true },
+          { key: 'indexclause_minimal_percent_change_agreed', hideOnForm: true },
+          { key: 'indexclause_minimal_point_change_agreed', hideOnForm: true },
         ],
       },
     ],
@@ -1660,6 +1732,7 @@ export default {
     ],
   },
   choice: {
+    entity: 'frontend_3_12_1',
     fields: [
       { key: 'choice_id', auto: true },
       { key: 'choice_name' },
