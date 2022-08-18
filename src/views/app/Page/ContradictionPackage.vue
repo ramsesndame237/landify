@@ -87,7 +87,17 @@ export default {
   data() {
     return {
       contradictionFields: Table.contradiction.fields.slice(0, 2),
-      contradictionpointFields: Table.contradictionpoint.fields,
+      contradictionpointFields: [
+        { key: 'ticket_name' },
+        { key: 'ticket_id' },
+        { key: 'column_name' },
+        { key: 'location_name' },
+        { key: 'pos_name' },
+        { key: 'invoice_contract_year' },
+        { key: 'ticket_deadline' },
+        { key: 'ticket_deadline_offset' },
+        { key: 'contradiction_sum' },
+      ],
       contradictionDefinition: Table.contradiction,
       filterData: {},
       showDetail: false,

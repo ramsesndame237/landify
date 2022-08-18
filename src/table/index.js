@@ -576,7 +576,11 @@ export default {
           { key: 'invoice_payment_date', type: 'date', hideOnForm: true },
           { key: 'customergroup_name', hideOnForm: true },
           {
-            key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name', hideOnIndex: true,
+            key: 'customergroup_id',
+            type: 'list',
+            list: 'customergroup',
+            listLabel: 'customergroup_name',
+            hideOnIndex: true,
           },
         ],
       },
@@ -1139,7 +1143,12 @@ export default {
             key: 'unit_id', sortable: true, type: 'list', list: 'unit', listLabel: 'unit_name', hideOnIndex: true,
           },
           {
-            key: 'usagetype_id', sortable: true, type: 'list', list: 'usagetype', listLabel: 'usagetype_name', hideOnIndex: true,
+            key: 'usagetype_id',
+            sortable: true,
+            type: 'list',
+            list: 'usagetype',
+            listLabel: 'usagetype_name',
+            hideOnIndex: true,
           },
           {
             key: 'contract_area_unit_usagetype_detail_description',
@@ -1734,7 +1743,12 @@ export default {
           { key: 'contract_criteria_valid_from_date', type: 'date' },
           { key: 'contract_criteria_valid_to_date', type: 'date' },
           {
-            key: 'choice_id', type: 'list', list: 'choice', listLabel: 'choice_name', hideOnIndex: true, hideOnForm: true,
+            key: 'choice_id',
+            type: 'list',
+            list: 'choice',
+            listLabel: 'choice_name',
+            hideOnIndex: true,
+            hideOnForm: true,
           },
           { key: 'choice_name', hideOnForm: true },
         ],
@@ -2300,6 +2314,9 @@ export default {
   // endregion
   // region Workpackage 5
   contradiction: {
+    customPage: () => import('@/views/app/Page/Contradiction/Index.vue'),
+    createModal: false,
+    formComponent: () => import('@/views/app/FormComponent/ContradictionForm.vue'),
     fields: [
       { key: 'contradiction_id', auto: true },
       { key: 'contradiction_name' },
@@ -2333,6 +2350,10 @@ export default {
         key: 'savingtype_id', type: 'list', list: 'savingtype', listLabel: 'savingtype_name',
       },
     ],
+    default: {
+      contradiction_ready_to_comm: 0,
+      contradiction_sender_abbreviation: "dfsdf",
+    },
   },
   contradictionpackage: {
     customPage: () => import('@/views/app/Page/ContradictionPackage.vue'),
@@ -2343,22 +2364,6 @@ export default {
       { key: 'contradictionpackage_sum' },
       { key: 'contradictionpackage_description', hideOnIndex: true },
       { key: 'contradiction_count', hideOnForm: true },
-      // {
-      //   key: 'customergroup_id',
-      //   type: 'list',
-      //   list: 'customergroup',
-      //   listLabel: 'customergroup_name',
-      //   hideOnIndex: true
-      // },
-      // { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name', hideOnIndex: true },
-      // {
-      //   key: 'partnercompany_id',
-      //   type: 'list',
-      //   list: 'partnercompany',
-      //   listLabel: 'partnercompany_name',
-      //   hideOnIndex: true
-      // },
-      // { key: 'invoice_period', type: 'date', hideOnIndex: true },
     ],
     filters: [
       {
@@ -2386,45 +2391,16 @@ export default {
         key: 'savingtype_id', type: 'list', list: 'savingtype', listLabel: 'savingtype_name',
       },
     ],
-    relations: [
-      {
-        title: 'Allocated Contradictions',
-        entity: 'contradictionpackage_contradiction_rel',
-        fields: [
-          { key: 'contradiction_id', auto: true },
-          { key: 'contradiction_name' },
-          { key: 'invoice_date', type: 'date', hideOnForm: true },
-        ],
-      },
-      {
-        title: 'Available Contradictions',
-        entity: 'contradictionpackage_contradiction_rel',
-        fields: [
-          { key: 'contradiction_id', auto: true },
-          { key: 'contradiction_name' },
-          { key: 'invoice_date', type: 'date', hideOnForm: true },
-        ],
-      },
-    ],
   },
   contradictionpoint: {
     fields: [
-      { key: 'ticket_name' },
-      { key: 'ticket_id' },
-      { key: 'column_name' },
-      { key: 'location_name' },
-      { key: 'pos_name' },
-      { key: 'invoice_contract_year' },
-      { key: 'ticket_deadline' },
-      { key: 'ticket_deadline_offset' },
-      { key: 'contradiction_sum' }
-    ]
-  },
-  contradictionprotocol: {
-    fields: [
-      { key: 'ticket_id', auto: true },
+      { key: 'contradictionpoint_rank' },
+      { key: 'contradictionpoint_title' },
+      { key: 'contradictionpoint_inspectionresult_rating_value_green' },
+      { key: 'contradictionpoint_inspectionresult_rating_value_amber' },
+      { key: 'contradictionpoint_inspectionresult_rating_value_red' },
+      { key: 'contradictionpoint_inspectionresult_rating_value_grey' },
     ],
-    // formComponent: () => import('@/views/app/FormComponent/ContradictionProtocolForm'),
   },
   // end region
 }

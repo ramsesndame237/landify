@@ -12,10 +12,10 @@
     <p v-if="currentReview" class="text-danger h4 mb-1 text-center" v-html="currentReview"></p>
 
     <b-card>
-      <Datatable :key="table" ref="table" link="table-user-edit" :search="search" :entity="table"
-                 :entity-list="definition.entity" :default-sort-field="definition.defaultSortField" :per-page="perPage"
-                 :current-page="currentPage" :total-rows.sync="totalRows" :fields="definition.fields"
-                 :primary-key-column="definition.primaryKey"/>
+      <Datatable :key="table" ref="table" :search="search" :entity="table"
+                 :entity-list="definition.entity" :default-sort-column="initialSortBy||definition.defaultSortField"
+                 :default-sort-desc="initialSortDesc" :per-page="perPage" :current-page="currentPage"
+                 :total-rows.sync="totalRows" :fields="definition.fields" :primary-key-column="definition.primaryKey"/>
     </b-card>
     <generic-modal @reload-table="$refs.table.reload()" :table="table" :definition="definition"
                    :table-definition-key="table" :title="'create '+table" ref="modal"/>
@@ -51,6 +51,8 @@ export default {
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
       initialFilterData: payload?.filter,
+      initialSortBy: payload?.sortBy,
+      initialSortDesc: payload?.sortDesc || false,
     }
   },
   computed: {
@@ -84,6 +86,8 @@ export default {
         perPage: this.perPage,
         totalRows: this.totalRows,
         filter: { ...this.$refs.filter.data },
+        sortBy: this.$refs.table.sortBy,
+        sortDesc: this.$refs.table.sortDesc,
       },
     })
   },
