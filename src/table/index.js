@@ -418,21 +418,21 @@ export default {
       },
       {
         title: 'Group Ticket/Packages',
-        primaryKey: 'group_ticket_id',
-        entity: ' group_ticket_customergroup_partnergroup_rel',
+        primaryKey: 'groupticket_id',
+        entity: ' groupticket_customergroup_partnergroup_rel',
         entityForm: 'groupticket_customergroup_rel',
         fields: [
           {
-            key: 'group_ticket_id',
+            key: 'groupticket_id',
             sortable: true,
             type: 'list',
             list: 'group_ticket',
             listLabel: 'group_ticket_name',
             hideOnIndex: true,
           },
-          { key: 'group_ticket_name', sortable: true, hideOnForm: true },
-          { key: 'group_ticket_description', sortable: true, hideOnForm: true },
-          { key: 'group_ticket_Deadline', sortable: true, hideOnForm: true },
+          { key: 'groupticket_name', sortable: true, hideOnForm: true },
+          { key: 'groupticket_description', sortable: true, hideOnForm: true },
+          { key: 'groupticket_Deadline', sortable: true, hideOnForm: true },
           {
             key: 'contradictionpackage_count', label: 'ContradictionPackage count', sortable: true, hideOnForm: true,
           },
@@ -475,6 +475,8 @@ export default {
     entity: 'frontend_2_1_1',
     primaryKey: 'company_id',
     fields: [
+      { key: 'company_id', auto: true },
+      { key: 'company_name', sortable: true },
       {
         key: 'customergroup_id',
         hideOnIndex: true,
@@ -482,8 +484,6 @@ export default {
         list: 'customergroup',
         listLabel: 'customergroup_name',
       },
-      { key: 'company_id', auto: true },
-      { key: 'company_name', sortable: true },
       { key: 'customergroup_name', sortable: true, hideOnForm: true },
       {
         key: 'address_id',
@@ -566,6 +566,10 @@ export default {
         title: 'Reviews Invoices',
         primaryKey: 'invoice_id',
         entity: 'frontend_2_1_3_3',
+        create: false,
+        delete: false,
+        entityView: 'invoice',
+        update: false,
         fields: [
           {
             key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_name',

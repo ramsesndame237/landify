@@ -50,14 +50,14 @@
 
 <script>
 import EditPageMixin from "@/views/app/Generic/EditPageMixin";
-import { BTabs, BTab, BCard, BButton } from "bootstrap-vue"
+import { BTabs, BTab, BCard, BButton, BSpinner } from "bootstrap-vue"
 import EntityForm from "@/views/app/Generic/EntityForm";
 import ContradictionForm from "@/views/app/FormComponent/ContradictionForm";
 import ContradictionPoint from "@/views/app/Page/Contradiction/ContradictionPoint";
 
 export default {
   name: 'Index',
-  components: { ContradictionPoint, ContradictionForm, BTab, BTabs, BCard, BButton },
+  components: { ContradictionPoint, ContradictionForm, BTab, BTabs, BCard, BButton , BSpinner},
   mixins: [EditPageMixin],
 }
 </script>

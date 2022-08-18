@@ -119,7 +119,7 @@ export default [
       },
       {
         title: 'app.sidebar.work_pack_2.children.s_p_n_b',
-        route: {name: 'new-business', params: {id: 1}},
+        route: { name: 'new-business', params: { id: 1 } },
       },
     ],
   },
@@ -274,102 +274,14 @@ export default [
     ],
   },
   {
-    title: 'Kanban',
-    route: 'kanban',
+    title: 'Work Package 6',
     icon: 'CheckSquareIcon',
+    children: [
+      {
+        title: 'Kanban',
+        route: 'kanban',
+        icon: 'CheckSquareIcon',
+      },
+    ],
   },
-  // {
-  //   title: 'app.sidebar.tasks',
-  //   route: 'vorgange',
-  //   icon: 'CheckSquareIcon',
-  //   children: [
-  //     {
-  //       title: 'sub-items 1',
-  //       route: '/',
-  //     },
-  //     {
-  //       title: 'sub-items 2',
-  //       route: '/',
-  //     },
-  //   ],
-  // },
-  // {
-  //   title: 'app.sidebar.deadlines',
-  //   route: 'deadlines',
-  //   icon: 'CalendarIcon',
-  // },
-  // {
-  //   title: 'app.sidebar.doc',
-  //   route: 'documents',
-  //   icon: 'FileTextIcon',
-  // },
-  // {
-  //   title: 'app.sidebar.pos',
-  //   route: 'pos',
-  //   icon: 'GridIcon',
-  // },
-  //
-  // {
-  //   title: 'app.sidebar.admin.parent',
-  //   route: '',
-  //   icon: 'UserIcon',
-  //   children: [
-  //     {
-  //       title: 'app.sidebar.admin.children.user_manager',
-  //       route: '/',
-  //     },
-  //     {
-  //       title: 'app.sidebar.admin.children.bd',
-  //       route: '/',
-  //     },
-  //     {
-  //       title: 'app.sidebar.admin.children.costs',
-  //       route: '/',
-  //     },
-  //     {
-  //       title: 'app.sidebar.admin.children.elt',
-  //       route: '/',
-  //     },
-  //     {
-  //       title: 'app.sidebar.admin.children.bdc',
-  //       route: '/',
-  //     },
-  //     {
-  //       title: 'app.sidebar.admin.children.contract',
-  //       route: '/',
-  //     },
-  //     {
-  //       title: 'app.sidebar.admin.children.process',
-  //       route: '/',
-  //     },
-  //     {
-  //       title: 'app.sidebar.admin.children.country_currency',
-  //       route: '/',
-  //     },
-  //     {
-  //       title: 'app.sidebar.admin.children.access_protocol',
-  //       route: '/',
-  //     },
-  //     {
-  //       title: 'app.sidebar.admin.children.text_templates',
-  //       route: '/',
-  //     },
-  //   ],
-  // },
-  // {
-  //   title: 'app.sidebar.properties',
-  //   route: 'properties',
-  //   icon: 'GitCommitIcon',
-  // },
-  // {
-  //   title: 'app.sidebar.templates',
-  //   route: 'templates',
-  //   icon: 'FeatherIcon',
-  // },
-  // {
-  //   title: 'app.sidebar.master_data',
-  //   route: 'master-data',
-  //   icon: 'GridIcon',
-  // },
-
 ]
