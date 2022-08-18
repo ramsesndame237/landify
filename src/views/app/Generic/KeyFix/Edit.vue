@@ -1,13 +1,19 @@
 <template>
-  <edit :key="$route.path"/>
+  <component :is="definition.customPage || 'edit'" :key="$route.path"/>
 </template>
 
 <script>
-import Edit from '../Edit'
+import table from '@/table/index'
+import Edit from '../Edit.vue'
 
 export default {
   name: 'EditPage',
   components: { Edit },
+  computed: {
+    definition() {
+      return table[this.$route.params.table]
+    },
+  },
   beforeRouteEnter(to, from, next) {
     to.meta.pageTitle = `List of ${to.params.table}`
     to.meta.breadcrumb = [

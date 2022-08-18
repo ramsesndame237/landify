@@ -564,7 +564,13 @@ export default {
           { key: 'invoice_allocation_area' },
           { key: 'invoice_payment_date', type: 'date' },
           { key: 'customergroup_name', hideOnForm: true },
-          { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name', hideOnIndex: true },
+          {
+            key: 'customergroup_id',
+            type: 'list',
+            list: 'customergroup',
+            listLabel: 'customergroup_name',
+            hideOnIndex: true
+          },
         ],
       },
       {
@@ -1000,7 +1006,12 @@ export default {
             key: 'unit_id', sortable: true, type: 'list', list: 'unit', listLabel: 'unit_name', hideOnIndex: true
           },
           {
-            key: 'usagetype_id', sortable: true, type: 'list', list: 'usagetype', listLabel: 'usagetype_name', hideOnIndex: true
+            key: 'usagetype_id',
+            sortable: true,
+            type: 'list',
+            list: 'usagetype',
+            listLabel: 'usagetype_name',
+            hideOnIndex: true
           },
           {
             key: 'contract_area_unit_usagetype_detail_description',
@@ -1470,7 +1481,7 @@ export default {
             key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name'
           },
           { key: 'area_name', hideOnForm: true },
-          { key: 'area_space_value', hideOnForm: true},
+          { key: 'area_space_value', hideOnForm: true },
           { key: 'pos_id', hideOnForm: true },
           { key: 'company_id', hideOnForm: true },
           { key: 'customergroup_id', hideOnForm: true },
@@ -1574,7 +1585,14 @@ export default {
           { key: 'contract_criteria_exists', type: 'boolean' },
           { key: 'contract_criteria_valid_from_date', type: 'date' },
           { key: 'contract_criteria_valid_to_date', type: 'date' },
-          { key: 'choice_id', type: 'list', list: 'choice', listLabel: 'choice_name', hideOnIndex: true, hideOnForm: true },
+          {
+            key: 'choice_id',
+            type: 'list',
+            list: 'choice',
+            listLabel: 'choice_name',
+            hideOnIndex: true,
+            hideOnForm: true
+          },
           { key: 'choice_name', hideOnForm: true },
         ],
       },
@@ -2102,7 +2120,9 @@ export default {
     fields: [
       { key: 'contradiction_id', auto: true },
       { key: 'contradiction_name' },
-      { key: 'contradiction_last_change_time', type: 'date' },
+      { key: 'contradiction_last_change_time', hideOnForm: true },
+      { key: 'contradictiontask_count', hideOnForm: true },
+      { key: 'contradictionpoint_count', hideOnForm: true },
     ],
     filters: [
       { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
@@ -2116,27 +2136,30 @@ export default {
     ],
   },
   contradictionpackage: {
+    customPage: () => import('@/views/app/Page/ContradictionPackage.vue'),
+    createModal: false,
     fields: [
       { key: 'contradictionpackage_id', auto: true },
       { key: 'contradictionpackage_name' },
       { key: 'contradictionpackage_sum' },
       { key: 'contradictionpackage_description', hideOnIndex: true },
-      {
-        key: 'customergroup_id',
-        type: 'list',
-        list: 'customergroup',
-        listLabel: 'customergroup_name',
-        hideOnIndex: true
-      },
-      { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name', hideOnIndex: true },
-      {
-        key: 'partnercompany_id',
-        type: 'list',
-        list: 'partnercompany',
-        listLabel: 'partnercompany_name',
-        hideOnIndex: true
-      },
-      { key: 'invoice_period', type: 'date', hideOnIndex: true },
+      { key: 'contradiction_count', hideOnForm: true },
+      // {
+      //   key: 'customergroup_id',
+      //   type: 'list',
+      //   list: 'customergroup',
+      //   listLabel: 'customergroup_name',
+      //   hideOnIndex: true
+      // },
+      // { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name', hideOnIndex: true },
+      // {
+      //   key: 'partnercompany_id',
+      //   type: 'list',
+      //   list: 'partnercompany',
+      //   listLabel: 'partnercompany_name',
+      //   hideOnIndex: true
+      // },
+      // { key: 'invoice_period', type: 'date', hideOnIndex: true },
     ],
     filters: [
       { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
@@ -2168,6 +2191,19 @@ export default {
         ],
       },
     ],
+  },
+  contradictionpoint: {
+    fields: [
+      { key: 'ticket_name' },
+      { key: 'ticket_id' },
+      { key: 'column_name' },
+      { key: 'location_name' },
+      { key: 'pos_name' },
+      { key: 'invoice_contract_year' },
+      { key: 'ticket_deadline' },
+      { key: 'ticket_deadline_offset' },
+      { key: 'contradiction_sum' }
+    ]
   },
   contradictionprotocol: {
     fields: [

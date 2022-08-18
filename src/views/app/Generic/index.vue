@@ -98,7 +98,12 @@ export default {
     },
     onNewElement() {
       if (this.useModalToCreate) this.$refs.modal.openModal(true, {})
-      else this.$router.push({ name: 'table-form', params: { table: this.table } })
+      else {
+        this.$router.push({
+          name: 'table-form',
+          params: { table: this.table },
+        })
+      }
     },
   },
 }

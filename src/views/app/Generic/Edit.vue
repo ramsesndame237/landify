@@ -86,11 +86,11 @@ import {
   BInputGroup,
   BInputGroupPrepend,
 } from 'bootstrap-vue'
-import Tables from '@/table'
 import Reviews from '@/table/review'
 import DataTables from '@/layouts/components/DataTables'
 import GenericModal from '@/views/app/Generic/modal'
 import EntityForm from "@/views/app/Generic/EntityForm";
+import EditPageMixin from "@/views/app/Generic/EditPageMixin";
 
 export default {
   components: {
@@ -111,51 +111,22 @@ export default {
     BButton,
     BSpinner,
   },
+  mixins: [EditPageMixin],
   data() {
     return {
-      view: this.$route.name === 'table-view' && this.$route.query.edit !== 'true',
-      entity: this.$route.params.entity,
-      originalEntity: null,
       search: '',
       currentPage: 1,
       perPage: Number.MAX_SAFE_INTEGER,
       totalRows: 0,
-      entityLoaded: false,
-      create: this.$route.name === 'table-form',
-      loading: false,
-      tabIndex: parseInt(this.$route.query.tab || 0),
     }
   },
   computed: {
-    title() {
-      if (this.create) return 'create_' + this.table
-      if (this.view) return 'view_' + this.table
-      return 'edit_' + this.table
-    },
-    table() {
-      return this.$route.params.table
-    },
-    definition() {
-      return Tables[this.table]
-    },
+
     formReview() {
       return Reviews[this.table + '_form']
     },
     relationsReview() {
       return Reviews[this.table + '_relations']
-    },
-    formFields() {
-      return this.definition.fields.filter(f => !f.hideOnForm)
-    },
-    tableDefinition() {
-      return this.$store.getters['table/tableDefinition'](this.table)
-    },
-    entityId() {
-      // convert to string to fix bug on relation tables
-      return this.$route.params.id
-    },
-    primaryKey() {
-      return this.definition.primaryKey ?? this.definition.fields.find(f => f.auto).key
     },
     currentHasFilter() {
       return this.definition.relations[this.$refs.tabs?.currentTab]?.filters != null
@@ -171,30 +142,6 @@ export default {
     currentTool() {
       if (!this.$refs.tabs) return false
       return this.definition.relations[this.$refs.tabs.currentTab]?.tool
-    },
-    cancel() {
-      if (this.create) this.$router.push({ name: 'table', params: { table: this.table } })
-      else {
-        this.view = true
-        this.$refs.form.reset()
-      }
-    },
-    edit() {
-      this.view = false
-    },
-    update() {
-      this.loading = true
-      this.$refs.form.submit()
-        .then(data => {
-          this.view = true
-          if (this.create) {
-            console.log('data', data)
-            this.$router.push({ name: 'table-view', params: { id: data[this.primaryKey] }, query: { edit: true } })
-          }
-        })
-        .finally(() => {
-          this.loading = false
-        })
     },
     deleteSelected() {
       const { tabs } = this.$refs

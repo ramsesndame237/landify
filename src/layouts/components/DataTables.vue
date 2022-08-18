@@ -152,8 +152,16 @@ export default {
           return null
         })
     },
+    getSelected() {
+      return this.currentItems.filter(item => item.__selected)
+    },
+    deselectAll() {
+      this.currentItems.forEach(item => {
+        item.__selected = false
+      })
+    },
     deleteSelected() {
-      const selected = this.currentItems.filter(item => item.__selected)
+      const selected = this.getSelected()
       if (!selected.length) {
         return this.$errorToast('No element selected')
       }

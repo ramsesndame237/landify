@@ -51,6 +51,18 @@ const router = new VueRouter({
         breadcrumb: [],
       },
     },
+    // region Custom Edit Page
+    {
+      path: '/app/table/custom/contracdictionpackage/view/:id',
+      name: 'contradictionpackage-view',
+      component: () => import('@/views/app/Page/ContradictionPackage.vue'),
+    },
+    {
+      path: '/app/table/custom/contracdictionpackage/create',
+      name: 'contracdictionpackage-create',
+      component: () => import('@/views/app/Page/ContradictionPackage.vue'),
+    },
+    // endregion
     {
       path: '/app/ticket/:id/customer',
       name: 'new-business',
