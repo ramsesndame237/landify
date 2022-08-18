@@ -102,6 +102,7 @@ export default {
     currentItems: {
       deep: true,
       handler() {
+        if (this.currentItems.length === 0) return
         if (this.currentItems.filter(item => !item.__selected).length === 0) this.selected = true
         else if (this.currentItems.filter(item => item.__selected).length === 0) this.selected = false
       },
