@@ -17,7 +17,7 @@
                  :default-sort-desc="initialSortDesc" :per-page="perPage" :current-page="currentPage"
                  :total-rows.sync="totalRows" :fields="definition.fields" :primary-key-column="definition.primaryKey"/>
     </b-card>
-    <generic-modal @reload-table="$refs.table.reload()" :table="table" :definition="definition"
+    <generic-modal @reload-table="$refs.table.reload()" :table="table" :definition="definition" with-continue
                    :table-definition-key="table" :title="'create '+table" ref="modal"/>
   </div>
 </template>

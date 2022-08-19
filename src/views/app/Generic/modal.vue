@@ -6,7 +6,11 @@
                  :initial-data="initialData" :create="create" :is-relation="isRelation" inline :cols="12"/>
     <template v-slot:modal-footer>
       <b-button variant="secondary" :disabled="loading" @click="$refs.modal.hide()">Cancel</b-button>
-      <b-dropdown split text="Save" variant="primary" :disabled="loading" @click="handleOk" right>
+      <b-button variant="primary" :disabled="loading" @click="handleOk" v-if="!withContinue">
+        <b-spinner v-if="loading" small/>
+        Save
+      </b-button>
+      <b-dropdown v-else split text="Save" variant="primary" :disabled="loading" @click="handleOk" right>
         <template #button-content>
           <b-spinner v-if="loading" class="mr-1" small/>
           <span>Save</span>
@@ -35,6 +39,7 @@ export default {
     tableDefinitionKey: String,
     title: String,
     isRelation: Boolean,
+    withContinue: { type: Boolean, default: false },
   },
   data() {
     return {
