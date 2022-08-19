@@ -27,10 +27,12 @@ contract_criteria_grp doesnt return criteriatype_name<br>
 Impossible to add invoice relation . Return 'Failed executing sql: {err: "1062 (23000): Duplicate entry 'x' for key 'invoice_id'<br>`,
   serviceobject_relations: `Need entity for location relation<br>
 serviceobject_contract_grp doesnt send city, country and partnercompany_name`,
-  recurringpayment: `Impossible to create a recurring payment, we have an internal server error`,
+  recurringpayment: `Impossible to create a recurring payment, we have an internal server error<br>
+frontend_3_9_1 doesnt return indexclause_name<br>`,
   criteria_relations: `Impossible to get the criteria contract relation, we have an internal server error<br>
 Contract: Missing Unit on the contract relation`,
-  indexclause_relations: 'Impossible to get the recurring payment relation, we have an internal server error',
+  indexclause_relations: `Impossible to get the recurring payment relation, we have an internal server error<br>
+Impossible to create the indexclause relation , returns: err: "1062 (23000): Duplicate entry '1' for key 'indexclause_id'`,
   // endregion
   // region WP4
   invoice: `We need a view to display all fields in the table <br> Filter must be implemented in the backend for this table`,

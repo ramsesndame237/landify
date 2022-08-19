@@ -1869,6 +1869,8 @@ export default {
         title: 'Index Clause',
         entity: 'frontend_3_9_3',
         entityForm: 'recurringpayment_indexclause_rel',
+        primaryKey: 'indexclause_id',
+        entityView: 'indexclause',
         fields: [
           {
             key: 'indexclause_id', type: 'list', list: 'indexclause', listLabel: 'indexclause_name',
@@ -1902,6 +1904,8 @@ export default {
         title: 'Point of Sales',
         entity: 'frontend_3_10_3',
         entityForm: 'pos_tag_rel',
+        entityView: 'pos',
+        primaryKey: 'pos_id',
         fields: [
           {
             key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name', disableOnUpdate: true,
