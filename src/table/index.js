@@ -1337,6 +1337,7 @@ export default {
         entityView: 'pos',
         update: false,
         create: false,
+        primaryKey: 'pos_id',
         fields: [
           {
             key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name',
@@ -1352,6 +1353,7 @@ export default {
         entityView: 'serviceobject',
         entityForm: 'area_serviceobject_rel',
         update: false,
+        primaryKey: 'serviceobject_id',
         fields: [
           {
             key: 'serviceobject_id', type: 'list', list: 'serviceobject', listLabel: 'serviceobject_name',
@@ -1408,6 +1410,7 @@ export default {
         title: 'Areas',
         entity: 'frontend_3_3_3_1',
         entityForm: 'area_location_rel',
+        primaryKey: 'area_id',
         fields: [
           { key: 'area_name', hideOnForm: true },
           {
@@ -1429,6 +1432,7 @@ export default {
         entity: 'frontend_3_3_3_2',
         entityForm: 'location_serviceobject_rel',
         entityView: 'serviceobject',
+        primaryKey: 'serviceobject_id',
         update: false,
         fields: [
           {
