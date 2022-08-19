@@ -483,6 +483,7 @@ export default {
         type: 'list',
         list: 'customergroup',
         listLabel: 'customergroup_name',
+        relationEntity: 'customergroup_company_rel',
       },
       { key: 'customergroup_name', sortable: true, hideOnForm: true },
       {
@@ -935,11 +936,9 @@ export default {
     fields: [
       { key: 'address_id', auto: true },
       { key: 'country_name', hideOnForm: true },
-      {
-        key: 'city_id', type: 'list', list: 'city', listLabel: 'city_name', hideOnIndex: true,
-      },
-      { key: 'city_name', hideOnForm: true },
-      { key: 'city_zip', hideOnForm: true },
+      { key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', hideOnIndex: true },
+      { key: 'city_name' },
+      { key: 'city_zip' },
       { key: 'address_street' },
       { key: 'address_house_number' },
       { key: 'address_extra' },
@@ -1011,7 +1010,7 @@ export default {
       { key: 'city_id', sortable: true, auto: true },
       { key: 'city_name', sortable: true },
       { key: 'city_zip', sortable: true },
-      { key: 'country_short', sortable: true },
+      { key: 'country_short', sortable: true, hideOnForm: true },
       {
         key: 'country_id', hideOnIndex: true, type: 'list', list: 'country', listLabel: 'country_name',
       },

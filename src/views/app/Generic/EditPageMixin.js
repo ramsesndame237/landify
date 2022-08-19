@@ -5,7 +5,6 @@ export default {
     return {
       view: this.$route.name === 'table-view' && this.$route.query.edit !== 'true',
       entity: this.$route.params.entity,
-      originalEntity: null,
       create: this.$route.name === 'table-form',
       loading: false,
       tabIndex: parseInt(this.$route.query.tab || 0),

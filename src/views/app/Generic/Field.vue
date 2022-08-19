@@ -83,10 +83,15 @@ export default {
       return this.subDefinition.primaryKey ?? this.subDefinition.fields.find(f => f.auto).key
     },
     hasNew() {
-      return this.field.alwaysNew || this.newValue === this.entity[this.field.key]
+      return this.newValue === this.entity[this.field.key]
     },
     selectedValue() {
       return this.field.type === 'list' ? this.list.find(e => e[this.field.key] === this.entity[this.field.key]) : this.entity[this.field.key]
+    },
+  },
+  watch: {
+    list() {
+      this.onChange()
     },
   },
   async created() {
@@ -98,6 +103,11 @@ export default {
       // set false as default value
       if (this.entity[this.field.key] == null) this.entity[this.field.key] = 0
     }
+  },
+  mounted() {
+    this.$watch(`entity.${this.field.key}`, () => {
+      this.onChange()
+    })
   },
   methods: {
     getValidationRules(field) {
@@ -126,7 +136,7 @@ export default {
         }
       }
     },
-  },
+  }
 }
 </script>
 

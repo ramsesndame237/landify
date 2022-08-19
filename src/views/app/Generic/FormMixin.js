@@ -48,6 +48,7 @@ export default {
           const result = data.data.data[0]
           if (!result) return
           this.$set(entity, field.key, result[field.key])
+          this.$set(entity, field.key, result[field.key])
           if (field.with) {
             (typeof field.with === 'string' ? [field.with] : field.with).forEach(val => {
               this.$set(entity, val, result[val])
@@ -77,11 +78,16 @@ export default {
     },
     createNewEntities() {
       if (!Array.isArray(this.$refs.fields)) return Promise.resolve()
-      return Promise.all(this.formFields.filter(field => {
+      const fieldsToCreate = this.formFields.filter(field => {
         const formField = this.$refs.fields.find(f => f.field === field)
-        // console.log(formField, formField.hasNew)
-        return field.type === 'list' && formField.hasNew
-      }).map(field => {
+        console.log((field.type === 'list') && (formField.hasNew || (field.alwaysNew && this.originalEntity[field.key] == null)))
+        return (field.type === 'list') && (formField.hasNew || (field.alwaysNew && this.originalEntity[field.key] == null))
+      })
+      const fieldsToUpdate = this.formFields.filter(field => {
+        return (field.alwaysNew && this.originalEntity[field.key] != null)
+      })
+      console.log(fieldsToUpdate, fieldsToCreate, 'fields');
+      return Promise.all([...fieldsToCreate.map(field => {
         const formField = this.$refs.fields.find(f => f.field === field)
         return this.$api({
           entity: field.list,
@@ -93,7 +99,16 @@ export default {
           this.$set(this.entity, field.key, id)
           return id
         })
-      }))
+      }), ...fieldsToUpdate.map(field => {
+        const formField = this.$refs.fields.find(f => f.field === field)
+        return this.$api({
+          entity: field.list,
+          action: 'update',
+          data: [{ ...formField.subEntity, [field.key]: this.originalEntity[field.key] }],
+        }).then(({ data }) => {
+          // formField.list.push(data.data.data[0][0])
+        })
+      })])
     },
     submit() {
       return this.$refs.form.validate().then(success => {

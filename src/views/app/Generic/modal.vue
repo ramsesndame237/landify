@@ -2,14 +2,19 @@
   <!--modal-->
   <b-modal id="generic-modal" ref="modal" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary" centered
            :title="$t(forceTitle || title)" size="lg" @ok="handleOk">
-    <entity-form ref="form" :table="table" :definition="definition" :table-definition-key="tableDefinitionKey" :initial-data="initialData"
-                 :create="create" :is-relation="isRelation" inline :cols="12"/>
+    <entity-form ref="form" :table="table" :definition="definition" :table-definition-key="tableDefinitionKey"
+                 :initial-data="initialData" :create="create" :is-relation="isRelation" inline :cols="12"/>
     <template v-slot:modal-footer>
       <b-button variant="secondary" :disabled="loading" @click="$refs.modal.hide()">Cancel</b-button>
-      <b-button variant="primary" :disabled="loading" @click="handleOk">
-        <b-spinner v-if="loading" small/>
-        Save
-      </b-button>
+      <b-dropdown split text="Save" variant="primary" :disabled="loading" @click="handleOk" right>
+        <template #button-content>
+          <b-spinner v-if="loading" class="mr-1" small/>
+          <span>Save</span>
+        </template>
+        <b-dropdown-item @click="handleOk($event, true)">
+          Save and continue
+        </b-dropdown-item>
+      </b-dropdown>
     </template>
   </b-modal>
 </template>
@@ -18,12 +23,12 @@
 
 import EntityForm from "@/views/app/Generic/EntityForm";
 import {
-  BButton, BSpinner,
-} from "bootstrap-vue";
+  BButton, BSpinner, BDropdown, BDropdownItem,
+} from 'bootstrap-vue'
 
 export default {
   name: 'GenericModal',
-  components: { EntityForm, BButton, BSpinner },
+  components: { EntityForm, BButton, BSpinner, BDropdown, BDropdownItem },
   props: {
     table: String,
     definition: Object,
@@ -47,15 +52,20 @@ export default {
       this.create = create
       this.$refs.modal.show()
     },
-    handleOk(bvModalEvt) {
+    handleOk(bvModalEvt, redirect) {
       // Prevent modal from closing
       bvModalEvt.preventDefault()
       // Trigger submit handler
       this.loading = true
       this.$refs.form.submit()
-        .then(() => {
+        .then(entity => {
           this.$refs.modal.hide()
-          this.$emit('reload-table')
+          if (redirect) {
+            this.$router.push({
+              name: 'table-view',
+              params: { table: this.table, id: entity[this.$refs.form.primaryKey] },
+            })
+          } else this.$emit('reload-table')
         })
         .finally(() => this.loading = false)
     },
