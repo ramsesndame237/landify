@@ -16,6 +16,17 @@ Create: Impossible to associate usage_type to area, usagetype  from contains dat
   area_relations: `frontend_3_2_3_1 doesnt return usagetype_id<br>
 `,
   location: `frontend_3_3_1 doesnt send partnercompany infos and locationtype, `,
+  location_relations: `does frontend_3_3_3_2 return duplicate values?<br>
+`,
+  contract: 'Need entity with all propertie. contract entity doent send all',
+  contract_relations: `Need entity for document relation<br>
+error 500 on document read-rich request<br>
+Need entity for serviceobject relation<br>
+contract_recurringpayment_grp doesnt send all datas<br>
+contract_criteria_grp doesnt return criteriatype_name<br>
+Impossible to add invoice relation . Return 'Failed executing sql: {err: "1062 (23000): Duplicate entry 'x' for key 'invoice_id'<br>`,
+  serviceobject_relations: `Need entity for location relation<br>
+serviceobject_contract_grp doesnt send city, country and partnercompany_name`,
   recurringpayment: `Impossible to create a recurring payment, we have an internal server error`,
   criteria_relations: `Impossible to get the criteria contract relation, we have an internal server error<br>
 Contract: Missing Unit on the contract relation`,
