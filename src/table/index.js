@@ -2242,52 +2242,62 @@ export default {
     ],
   },
   costtype: {
+    entity: 'frontend_4_7_1',
     fields: [
       { key: 'costtype_id', auto: true },
       { key: 'costtype_name' },
       { key: 'costtype_maingroup' },
       { key: 'costtype_description', type: 'textarea' },
-      { key: 'external_costtype_count', hideOnForm: true },
+      { key: 'costtype_amount_externalcosttypes', hideOnForm: true },
     ],
     relations: [
       {
         title: 'External Cost Types',
         primaryKey: 'externalcosttype_id',
-        entity: 'externalcosttype',
+        entity: 'frontend_4_7_3_1',
+        entityForm: 'costtype_externalcosttype_rel',
+        fields: [
+          { key: 'externalcosttype_id', type: 'list', list: 'externalcosttype', listLabel: 'externalcosttype_name' },
+          { key: 'externalcosttype_name', hideOnForm: true },
+        ],
       },
       {
         title: 'Contracts',
         primaryKey: 'contract_id',
-        entity: 'contract_costtype_rel',
+        entity: 'frontend_4_7_3_2',
+        entityForm: 'contract_costtype_rel',
         fields: [
           {
             key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name',
           },
-          { key: 'contract_name' },
-          { key: 'contract_last_change_date' },
-          { key: 'contract_costtype_comment', type: 'textarea' },
+          { key: 'contract_name', hideOnForm: true },
+          { key: 'contract_last_change_time', type: 'date', hideOnForm: true },
+          { key: 'contract_costtype_comment', type: 'textarea', hideOnIndex: true },
         ],
       },
     ],
   },
   claimtype: {
+    entity: 'frontend_4_8_1',
     fields: [
       { key: 'claimtype_id', auto: true },
       { key: 'claimtype_name' },
       { key: 'claimtype_description', type: 'textarea' },
-      { key: 'inspectionresult_count', hideOnForm: true },
-      { key: 'inspectionresult_sum', hideOnForm: true },
+      { key: 'claimtype_amount_inspectionresults', hideOnForm: true },
+      { key: 'claimtype_sum_inspectionresults', hideOnForm: true },
     ],
   },
   invoicecriteria: {
+    entity: 'frontend_4_9_1',
     fields: [
       { key: 'invoicecriteria_id', auto: true },
       { key: 'invoicecriteria_name' },
       { key: 'invoicecriteria_description', type: 'textarea' },
-      { key: 'invoice_count', hideOnForm: true },
+      { key: 'invoicecriteria_amount_invoices', hideOnForm: true },
     ],
   },
   invoicevaluetype: {
+    entity: 'frontend_4_10_1',
     fields: [
       { key: 'invoicevaluetype_id', auto: true },
       { key: 'invoicevaluetype_name' },
@@ -2301,15 +2311,16 @@ export default {
         with: 'invoicevaluetype_unit_preferred_unit',
       },
       { key: 'invoicevaluetype_unit_preferred_unit', type: 'boolean' },
-      { key: 'invoice_count', hideOnForm: true },
+      { key: 'invoicevaluetype_amount_invoices', hideOnForm: true },
     ],
   },
   rating: {
+    entity: 'frontend_4_11_1',
     fields: [
       { key: 'rating_id', auto: true },
       { key: 'rating_name' },
       { key: 'rating_description', type: 'textarea' },
-      { key: 'contradictpoint_inspectionresult_rating_value_sum', hideOnForm: true },
+      { key: 'rating_sum_inspectionresults', hideOnForm: true },
     ],
   },
   resultcategorization: {
@@ -2320,11 +2331,12 @@ export default {
     ],
   },
   savingtype: {
+    entity: 'frontend_4_13_1',
     fields: [
       { key: 'savingtype_id', auto: true },
       { key: 'savingtype_name' },
       { key: 'savingtype_description', type: 'textarea' },
-      { key: 'contradictpoint_inspectionresult_savingtype_value_sum', hideOnForm: true },
+      { key: 'savingtype_sum_inspectionsresults', hideOnForm: true },
     ],
   },
   // endregion

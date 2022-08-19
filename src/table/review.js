@@ -36,5 +36,7 @@ Impossible to create the indexclause relation , returns: err: "1062 (23000): Dup
   // endregion
   // region WP4
   invoice: `We need a view to display all fields in the table <br> Filter must be implemented in the backend for this table`,
+  costtype: 'frontend_4_7_1 doesnt return costtype_maingroup',
+  costtype_relations: `Impossible to create new externalcosttype relation<br>`,
   // endregion
 }
