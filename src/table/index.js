@@ -2356,7 +2356,11 @@ export default {
     ],
     default: {
       contradiction_ready_to_comm: 0,
-      contradiction_sender_abbreviation: "dfsdf",
+      contradiction_sender_abbreviation: 'dfsdf',
+      contradiction_signature1: 0,
+      contradiction_signature2: 0,
+      contradiction_comment_for_customer: 'dsfsdfds',
+      contradiction_addendum_necessary: 0
     },
   },
   contradictionpackage: {
