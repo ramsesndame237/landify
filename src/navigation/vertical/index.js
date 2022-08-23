@@ -284,4 +284,15 @@ export default [
       },
     ],
   },
+  {
+    title: 'Work Package 7',
+    icon: 'CheckSquareIcon',
+    children: [
+      {
+        title: 'BackOffice',
+        route: 'backoffice',
+        icon: 'CheckSquareIcon',
+      },
+    ],
+  },
 ]
