@@ -1065,7 +1065,7 @@ export default {
     entity: 'frontend_3_1_1',
     primaryKey: 'pos_id',
     fields: [
-      { key: 'pos_id', auto: true },
+      { key: 'pos_id', auto: true, hideOnIndex: true },
       {
         key: 'company_id',
         type: 'list',
@@ -1267,7 +1267,7 @@ export default {
     entity: 'frontend_3_2_1',
     primaryKey: 'area_id',
     fields: [
-      { key: 'area_id', auto: true },
+      { key: 'area_id', auto: true, hideOnIndex: true },
       { key: 'area_name' },
       { key: 'location_name', hideOnForm: true, hideOnIndex: true },
       {
@@ -1368,7 +1368,7 @@ export default {
     entity: 'frontend_3_3_1',
     primaryKey: 'location_id',
     fields: [
-      { key: 'location_id', auto: true },
+      { key: 'location_id', auto: true, hideOnIndex: true },
       { key: 'location_name' },
       { key: 'location_objectdescription', type: 'textarea', hideOnIndex: true },
       { key: 'location_total_area', type: 'number', hideOnIndex: true },
@@ -1464,7 +1464,7 @@ export default {
   },
   contract: {
     fields: [
-      { key: 'contract_id', auto: true },
+      { key: 'contract_id', auto: true, hideOnIndex: true },
       { key: 'contract_type_name', hideOnForm: true },
       { key: 'contract_name' },
       { key: 'contract_begin_date', type: 'date' },
