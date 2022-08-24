@@ -15,7 +15,6 @@ user_customergroup_grp doesnt send usertype_name and team_name`,
 Create: Impossible to associate usage_type to area, usagetype  from contains date fields`,
   area_relations: `frontend_3_2_3_1 doesnt return usagetype_id<br>
 `,
-  location: `frontend_3_3_1 doesnt send partnercompany infos and locationtype, `,
   location_relations: `does frontend_3_3_3_2 return duplicate values?<br>
 `,
   contract: 'Need entity with all propertie. contract entity doent send all',
