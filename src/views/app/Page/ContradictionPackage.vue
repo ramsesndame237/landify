@@ -164,7 +164,7 @@ export default {
     filter(data) {
       console.log('on filter', data)
       this.currentPage = 1
-      this.$refs.table.filter(data)
+      this.$refs.contradictions.filter(data)
     },
   },
   computed: {
