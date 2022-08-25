@@ -18,12 +18,17 @@
           </b-button>
         </div>
       </div>
+
       <b-card class="mt-2">
         <entity-form ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="create"
                      :is-relation="false" :disabled="view" :inline="false" :cols="6" :initial-data="entity"
                      :entity-id="entityId"/>
       </b-card>
       <b-card class="mt-2" v-if="!create">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <h4>Filter Contradictions</h4>
+          <b-button variant="info" >Filter</b-button>
+        </div>
         <field v-for="(field,idx) in filterFields" :key="idx" :field="field" :entity="filterData"/>
       </b-card>
     </b-col>
@@ -43,8 +48,11 @@
 
     </b-col>
     <b-col cols="4" v-if="!create">
-      <div class="bg-white p-1">
+      <div class="bg-white p-1 d-flex justify-content-between align-items-center">
         <h4 class="mb-0">Available contradictions</h4>
+        <b-button size="sm" variant="primary" class="mr-1 btn-icon">
+          <feather-icon icon="FilterIcon"/>
+        </b-button>
       </div>
       <b-card class="mt-2">
         <data-tables ref="contradictions" :current-page="1" :per-page="100" :with-actions="false" entity="contradiction"
@@ -105,7 +113,8 @@ export default {
         { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
         { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name' },
         { key: 'partnercompany_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name' },
-        { key: 'invoice_date', type: 'date' },
+        { key: 'invoice_contract_year_from', type: 'number' },
+        { key: 'invoice_contract_year_to', type: 'number' },
       ],
       search: '',
       loadingContradictions: false,

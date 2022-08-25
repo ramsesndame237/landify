@@ -1373,7 +1373,8 @@ export default {
       { key: 'location_objectdescription', type: 'textarea', hideOnIndex: true },
       { key: 'location_total_area', type: 'number', hideOnIndex: true },
       { key: 'location_start_date', type: 'date', hideOnIndex: true },
-      { key: 'partnercompany_name', hideOnForm: true },
+      { key: 'owner', hideOnForm: true },
+      { key: 'facility manager', hideOnForm: true },
       {
         key: 'partnercompany_id',
         type: 'list',
@@ -1381,7 +1382,6 @@ export default {
         listLabel: 'partnercompany_name',
         hideOnIndex: true,
       },
-      { key: 'partnertype_name', hideOnForm: true },
       { key: 'locationtype_name', hideOnForm: true },
       { key: 'city_name', hideOnForm: true },
       { key: 'country_name', hideOnForm: true },

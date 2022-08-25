@@ -13,12 +13,12 @@
 
     <template v-if="withActions" #cell(Actions)="data">
       <b-button v-if="withView" size="xs" class="mr-1" style="margin-bottom: 3px" variant="outline-success" pill
-                @click="onViewElement ? onViewElement(currentItems[data.index]) :$router.push({name: 'table-view', params: {table: entityView || entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index]}})">
+                @click="onViewElement ? onViewElement(currentItems[data.index]) :$router.push({name: 'table-view', params: {table: entityView || entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index], ids: currentItems.map(i => i[primaryKey])}})">
         <feather-icon icon="EyeIcon" class="mr-50"/>
         <span>{{ $t('app.btn.view') }}</span>
       </b-button>
       <b-button v-if="withEdit" size="xs" variant="outline-info" class="mr-1" style="margin-bottom: 3px" pill
-                @click="onEditElement ? onEditElement(currentItems[data.index]) : $router.push({name: 'table-view', params: {table: entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index]}, query: {edit: 'true'}})">
+                @click="onEditElement ? onEditElement(currentItems[data.index]) : $router.push({name: 'table-view', params: {table: entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index], ids: currentItems.map(i => i[primaryKey])}, query: {edit: 'true'}})">
         <feather-icon icon="EditIcon" class="mr-50"/>
         <span>{{ $t('app.btn.edit') }}</span>
       </b-button>

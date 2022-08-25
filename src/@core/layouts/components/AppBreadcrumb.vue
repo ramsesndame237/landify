@@ -64,24 +64,30 @@ export default {
     currentId() {
       return parseInt(this.$route.params.id)
     },
+    ids() {
+      return this.$route.params.ids || []
+    },
+    currentIndex() {
+      return this.ids.indexOf(this.currentId)
+    },
     hasPrevious() {
-      return this.currentId > 1
+      return this.currentIndex > 0
     },
     hasNext() {
-      return true
+      return this.currentIndex < this.ids.length - 1
     },
   },
   methods: {
     onPrevious() {
       return this.$router.push({
         name: 'table-view',
-        params: { table: this.$route.params.table, id: this.currentId - 1 },
+        params: { table: this.$route.params.table, id: this.ids[this.currentIndex - 1], ids: this.ids },
       })
     },
     onNext() {
       return this.$router.push({
         name: 'table-view',
-        params: { table: this.$route.params.table, id: this.currentId + 1 },
+        params: { table: this.$route.params.table, id: this.ids[this.currentIndex + 1], ids: this.ids },
       })
     },
   },
