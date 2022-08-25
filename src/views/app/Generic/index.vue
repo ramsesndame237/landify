@@ -52,7 +52,7 @@ export default {
       totalRows: payload?.totalRows || 0,
       initialFilterData: payload?.filter,
       initialSortBy: payload?.sortBy,
-      initialSortDesc: payload?.sortDesc || false,
+      initialSortDesc: payload?.sortDesc || true,
     }
   },
   computed: {

@@ -127,6 +127,9 @@ export default {
             })
               .then(async ({ data }) => {
                 console.log('is relation', this.isRelation)
+                // if (data.data.errors[0]) {
+                //   throw new Error(data)
+                // }
                 try {
                   await this.saveRelations(data.data.data[0][0][this.primaryKey])
                 } finally {
@@ -137,7 +140,7 @@ export default {
               })
               .catch(e => {
                 console.log(e)
-                const title = e.response?.data.detail
+                const title = e.response?.data.detail || e.data?.errors[0].err
                 this.$errorToast(title)
                 return Promise.reject(e)
               })

@@ -732,10 +732,10 @@ export default {
   partnercompany: {
     primaryKey: 'partnercompany_id',
     fields: [
+      { key: 'partnercompany_id', auto: true },
       {
         key: 'partnergroup_id', type: 'list', list: 'partnergroup', listLabel: 'partnergroup_name', hideOnIndex: true,
       },
-      { key: 'partnercompany_id', auto: true },
       { key: 'partnercompany_name' },
       { key: 'partnercompany_shortname' },
       { key: 'partnergroup_name', hideOnForm: true },
@@ -1433,13 +1433,15 @@ export default {
         entityView: 'serviceobject',
         primaryKey: 'serviceobject_id',
         update: false,
+        create: false,
+        delete: false,
         fields: [
           {
             key: 'serviceobject_id', type: 'list', list: 'serviceobject', listLabel: 'serviceobject_name',
           },
           { key: 'serviceobject_name', hideOnForm: true },
           { key: 'serviceobjecttype_name', hideOnForm: true },
-          { key: 'area_name', hideOnForm: true },
+          { key: 'area_count', hideOnForm: true },
         ],
       },
       {
@@ -1747,9 +1749,7 @@ export default {
           { key: 'contract_name', hideOnForm: true },
           { key: 'contract_criteria_comment', type: 'textarea' },
           { key: 'contract_criteria_value' },
-          {
-            key: 'unit_id', type: 'list', list: 'unit', listLabel: 'unit_name', hideOnForm: true,
-          },
+          { key: 'unit_name' },
           { key: 'contract_criteria_exists', type: 'boolean' },
           { key: 'contract_criteria_valid_from_date', type: 'date' },
           { key: 'contract_criteria_valid_to_date', type: 'date' },
