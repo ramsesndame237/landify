@@ -1,12 +1,29 @@
 <template>
   <b-col :lg="cols">
     <b-card>
-      <div class="" style="display: flex; justify-content: space-between">
-        <b-col class="col-10">
-          <b-card-title>{{ title }}</b-card-title>
+      <div class="d-flex justify-content-center align-content-center">
+        <b-col class="col-10 d-flex align-content-center">
+          <div class="bigdot"></div>
+          <b-card-title class="card-title">{{ title }}</b-card-title>
         </b-col>
         <b-col class="col-2">
           <div class="dots"></div>
+          <b-dropdown
+              no-caret
+              right
+              text=""
+              variant="transparent"
+              class="chart-dropdown"
+              toggle-class="p-50"
+              size="sm"
+          >
+            <b-dropdown-item
+                v-for="option in options"
+                :key="option"
+            >
+              {{ option }}
+            </b-dropdown-item>
+          </b-dropdown>
         </b-col>
       </div>
       <b-card-text>Value:
@@ -34,7 +51,7 @@
 </template>
 
 <script>
-import { BCard, BCardText, BLink, BCol, BRow, BProgress, BCardTitle } from 'bootstrap-vue'
+import { BCard, BCardText, BLink, BCol, BRow, BProgress, BCardTitle, BDropdown, BDropdownItem } from 'bootstrap-vue'
 
 export default {
   name: 'SummaryCard',
@@ -47,6 +64,13 @@ export default {
     BRow,
     BProgress,
     BCardTitle,
+    BDropdown,
+    BDropdownItem,
+  },
+  data() {
+    return {
+      options: ['opt 1', 'opt 2', 'opt 3', 'opt 4'],
+    }
   },
   computed: {
     customColor() {
@@ -84,5 +108,17 @@ export default {
   content: '';
   position: absolute;
   right: -8px;
+}
+
+.bigdot {
+  height: 30px;
+  width: 30px;
+  background-color: #ccc;
+  border-radius: 999px;
+  margin-right: 5px;
+}
+.card-title {
+  line-height: 30px;
+  text-align: center;
 }
 </style>

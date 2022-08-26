@@ -1,8 +1,11 @@
 <template>
   <b-col :lg="cols">
     <div class="p-1" :style="{backgroundColor: color}">
-      <div class="d-flex justify-content-between">
-        <div class="left" style="font-size: 14px">{{ headerText }}</div>
+      <div class="d-flex justify-content-between align-content-center">
+        <div class="left d-flex justify-content-center align-content-center" style="font-size: 14px">
+          <div class="bigdot"></div>
+          <span class="header-text">{{ headerText }}</span>
+        </div>
         <b-dropdown
             no-caret
             right
@@ -59,4 +62,15 @@ export default {
 </script>
 
 <style scoped>
+  .bigdot {
+    height: 30px;
+    width: 30px;
+    background-color: #ccc;
+    border-radius: 999px;
+    margin-right: 5px;
+  }
+  .header-text {
+    line-height: 30px;
+    text-align: center;
+  }
 </style>
