@@ -37,7 +37,7 @@
 import { BCard, BCardText, BLink, BCol, BRow, BProgress, BCardTitle } from 'bootstrap-vue'
 
 export default {
-  name: 'SommaryCard',
+  name: 'SummaryCard',
   props: ['value', 'color', 'title', 'percent', 'number', 'variant', 'cols'],
   components: {
     BCard,

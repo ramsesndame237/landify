@@ -38,14 +38,9 @@
             <open-ticket-card title="Offene Tickets bearbeitbar" number="26" hours="200" cols="4" bgColor="rgba(213, 17, 48, .1)" color="#D51130"></open-ticket-card>
             <b-col lg="4">
               <b-row>
-                <b-progress
-                  value="70"
-                  max="100"
-                  variant="danger"
-                  show-value
-                  class="progress-bar-danger w-100"
-                  height="50px"
-                ></b-progress>
+                <custom-horizontal-progress :cols="12" color="rgba(0, 196, 177, .3)" bgColor="rgba(0, 196, 177, .1)" :value="70" :max="100" title=" Erstprüfungen" class="mb-2"></custom-horizontal-progress>
+                <custom-horizontal-progress :cols="12" color="rgba(255, 122, 0, .3)" bgColor="rgba(255, 122, 0, .1)" :value="100" :max="100" title=" Erstprüfungen mit Einsparungen" class="mb-2"></custom-horizontal-progress>
+                <custom-horizontal-progress :cols="12" color="rgba(213, 17, 48, .3)" bgColor="rgba(213, 17, 48, .1)" :value="95" :max="100" title=" Prozentual" class="mb-2" is-percentage></custom-horizontal-progress>
               </b-row>
             </b-col>
           </b-row>
@@ -59,7 +54,7 @@
 import TicketCard from '@/views/app/CustomComponents/TicketCard'
 import OpenTicketCard from '@/views/app/CustomComponents/OpenTicketCard'
 import VueApexCharts from 'vue-apexcharts'
-import HorizontalTicket from '@/views/app/CustomComponents/HorizontalTicket'
+import CustomHorizontalProgress from '@/views/app/CustomComponents/CustomHorizontalProgress'
 
 import { BRow, BCard, BCol, BIcon, BDropdown, BDropdownItem, BCardBody, BCardSubTitle, BProgress } from 'bootstrap-vue'
 export default {
@@ -73,7 +68,7 @@ export default {
     BCardSubTitle,
     VueApexCharts,
     BCardBody,
-    BProgress,
+    CustomHorizontalProgress
   },
   data() {
     return {
