@@ -365,11 +365,12 @@ export default {
   // endregion
   // region Work Package 2
   customergroup: {
+    entity: 'frontend_2_2_1',
     fields: [
       { key: 'customergroup_id', auto: true },
       { key: 'customergroup_name' },
       { key: 'customergroup_description', hideOnIndex: true, type: 'textarea' },
-      { key: 'pos_count', hideOnForm: true },
+      { key: 'company_count', hideOnForm: true },
     ],
     relations: [
       {
@@ -1447,7 +1448,7 @@ export default {
       {
         title: 'Partner Companies',
         entity: 'frontend_3_3_3_3',
-        entityForm: 'location_partnercompany_rel',
+        entityForm: 'partnercompany_location_rel',
         entityView: 'partnercompany',
         update: false,
         fields: [
@@ -1993,6 +1994,7 @@ export default {
   // endregion
   // region Work Package 4
   invoice: {
+    entity: 'frontend_4_1_1',
     createModal: false,
     formComponent: () => import('../views/app/FormComponent/InvoiceForm.vue'),
     fields: [
