@@ -9,6 +9,7 @@ Do we have to keep grouptickettab ?<br>
 user_customergroup_grp doesnt send usertype_name and team_name`,
   company_relations: `frontend_2_1_3_2 doesnt send cotradiction_payment_received <br>`,
   contactperson: `Need entity for list. contactperson doesnt return city_name, contactdetails infos and userId`,
+  partnercompany: 'We need a view for this table',
   // endregion
   // region Work Package 3
   area: `
@@ -28,10 +29,8 @@ Impossible to add invoice relation . Return 'Failed executing sql: {err: "1062 (
 serviceobject_contract_grp doesnt send city, country and partnercompany_name`,
   recurringpayment: `Impossible to create a recurring payment, we have an internal server error<br>
 frontend_3_9_1 doesnt return indexclause_name<br>`,
-  criteria_relations: `Impossible to get the criteria contract relation, we have an internal server error<br>
-Contract: Missing Unit on the contract relation`,
-  indexclause_relations: `Impossible to get the recurring payment relation, we have an internal server error<br>
-Impossible to create the indexclause relation , returns: err: "1062 (23000): Duplicate entry '1' for key 'indexclause_id'`,
+  criteria_relations: `Contract: Missing Unit on the contract relation, Create in criteria_choice_rel send internal server error`,
+  indexclause_relations: `Impossible to create the indexclause relation , returns: err: "1062 (23000): Duplicate entry '1' for key 'indexclause_id'`,
   // endregion
   // region WP4
   invoice: `We need a view to display all fields in the table <br> Filter must be implemented in the backend for this table`,
