@@ -5,9 +5,9 @@
         <div class="">widerspruchsfrist</div>
         <div class="">
           <div class="dropdown-btn" @click="showDropdown">
-            <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
-              <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
-            </svg>
+            <p class="h1">
+              <b-icon-three-dots></b-icon-three-dots>
+            </p>
           </div>
           <b-dropdown
               no-caret
@@ -41,12 +41,13 @@
 </template>
 
 <script>
-import {BDropdown, BDropdownItem, } from 'bootstrap-vue'
+import {BDropdown, BDropdownItem, BIconThreeDots, } from 'bootstrap-vue'
 export default {
   name: 'PeriodCard',
   components: {
     BDropdown,
     BDropdownItem,
+    BIconThreeDots,
   },
   data() {
     return {
