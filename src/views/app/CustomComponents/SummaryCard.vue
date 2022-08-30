@@ -14,9 +14,9 @@
         </b-col>
         <b-col class="col-2">
           <div class="dropdown-btn" @click="showDropdown">
-            <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
-              <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
-            </svg>
+            <p class="h1">
+              <b-icon-three-dots></b-icon-three-dots>
+            </p>
           </div>
           <b-dropdown
               no-caret
@@ -75,6 +75,7 @@ import {
   BIcon,
   BIconFlag,
   BIconStopwatch,
+  BIconThreeDots,
 } from 'bootstrap-vue'
 
 export default {
@@ -92,6 +93,7 @@ export default {
     BIcon,
     BIconFlag,
     BIconStopwatch,
+    BIconThreeDots,
   },
   data() {
     return {
@@ -132,4 +134,11 @@ h6 {
   text-align: center;
 }
 .dropdown-btn { cursor: pointer }
+
+.dropdown-menu {
+  top: -32px!important;
+}
+.dropdown {
+  margin-top: -70px;
+}
 </style>
