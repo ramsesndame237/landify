@@ -701,6 +701,7 @@ export default {
     ],
   },
   contactperson: {
+    entity: 'frontend_2_3_1',
     fields: [
       { key: 'contactperson_id', auto: true },
       { key: 'contactperson_firstname' },

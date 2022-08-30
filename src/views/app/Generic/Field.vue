@@ -67,6 +67,7 @@ export default {
       subEntity: {},
       newValue: 'Create New Element',
       loading: false,
+      promise: null,
     }
   },
   computed: {
@@ -97,11 +98,17 @@ export default {
   async created() {
     if (this.field.type === 'list') {
       if (this.list.length === 0) this.loading = true
-      this.list = await this.$store.dispatch('table/fetchList', this.field.list)
+     this.promise = this.$store.dispatch('table/fetchList', this.field.list)
+      this.list = await this.promise
       this.loading = false
     } else if (this.field.type === 'boolean') {
       // set false as default value
       if (this.entity[this.field.key] == null) this.entity[this.field.key] = 0
+    }
+  },
+  beforeDestroy() {
+    if(this.promise){
+      Promise.resolve()
     }
   },
   mounted() {
