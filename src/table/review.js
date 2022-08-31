@@ -2,23 +2,17 @@ export default {
   // region Work Package 1
   // endregion
   // region Work Package 2
-  customergroup: 'We need an entity to have data in the pos_count column',
   customergroup_relations: `Customergroup_company_grp doesnt send city_zip,city_name,country_short <br>
 contactperson_customergroup_grp doesnt send all values <br>
 Do we have to keep grouptickettab ?<br>
 user_customergroup_grp doesnt send usertype_name and team_name`,
-  company_relations: `frontend_2_1_3_2 doesnt send cotradiction_payment_received <br>`,
-  contactperson: `Need entity for list. contactperson doesnt return city_name, contactdetails infos and userId`,
-  partnercompany: 'We need a view for this table',
+  partnercompany: 'Doesnt return partnercompanies count',
+  partnercompany_relations: `We need relation table to create ticket, invoice, contadiction relations<br>`,
   // endregion
   // region Work Package 3
-  area: `
-Create: Impossible to associate usage_type to area, usagetype  from contains date fields`,
   area_relations: `frontend_3_2_3_1 doesnt return usagetype_id<br>
 `,
-  location_relations: `does frontend_3_3_3_2 return duplicate values?<br>
-`,
-  contract: 'Need entity with all propertie. contract entity doent send all',
+  contract: 'Cannot determine witch property of frontend_3_4_1_1 response is owner or manager',
   contract_relations: `Need entity for document relation<br>
 error 500 on document read-rich request<br>
 Need entity for serviceobject relation<br>

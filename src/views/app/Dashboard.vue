@@ -65,14 +65,4 @@ export default {
 
 <style scoped>
   .center-col { margin-top: 15px }
-  /*.dots:after {*/
-  /*  cursor: pointer;*/
-  /*  color: black;*/
-  /*  content: '\2026';*/
-  /*  font-size: 25px;*/
-  /*  padding: 0 5px;*/
-  /*  font-weight: 700;*/
-  /*  display: flex;*/
-  /*  align-content: center;*/
-  /*}*/
 </style>

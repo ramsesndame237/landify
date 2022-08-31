@@ -64,4 +64,8 @@ export default {
 
 <style scoped>
   .dropdown-btn { cursor: pointer }
+
+  .dropdown {
+    margin-top: -70px;
+  }
 </style>
