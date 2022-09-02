@@ -18,7 +18,7 @@
         <span>4/5</span>
       </div>
       <div class="" style="color: #00F1DA; background-color: rgba(0, 241, 218, .1); padding: 3px 7px; border-radius: 3px">
-        <b-icon-clock></b-icon-clock>
+        <b-icon-clock-fill></b-icon-clock-fill>
         <span class="ml-1">{{ left_days }} Tage übrig</span>
       </div>
     </div>
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { BAvatarGroup, BAvatar, BButton, BIconPaperclip, BProgress, BIconCheck, BIconClock } from 'bootstrap-vue'
+import { BAvatarGroup, BAvatar, BButton, BIconPaperclip, BProgress, BIconCheck, BIconClockFill } from 'bootstrap-vue'
 import CustomHorizontalProgress from '@/views/app/CustomComponents/CustomHorizontalProgress'
 export default {
   name: 'SummaryBlock',
@@ -55,17 +55,17 @@ export default {
     BButton,
     BProgress,
     BIconCheck,
-    BIconClock,
+    BIconClockFill,
     CustomHorizontalProgress,
   },
   props: {
     title: String,
     sub_title: String,
-    hours: Number,
-    percents: Number,
-    left_days: Number,
-    documents_nb: Number,
-    participants_nb: Number,
+    hours: String,
+    percents: String,
+    left_days: String,
+    documents_nb: String,
+    participants_nb: String,
     withAttach: { type: Boolean, default: false },
   },
 }

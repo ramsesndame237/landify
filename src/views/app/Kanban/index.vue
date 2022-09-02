@@ -2,7 +2,7 @@
   <div>
     <kanban-board :blocks="blocks" :stages="stages">
       <div v-for="block in blocks" :slot="block.id" :key="block.id" class="item">
-        <!--        <simple-block :title="block.title" :description="block.description" v-if="block.id & 1"></simple-block>-->
+<!--        <simple-block :title="block.title" :description="block.description" v-if="block.id & 1"></simple-block>-->
         <summary-block
           title="Widerspruchsfrist"
           sub_title="Filiale 1"

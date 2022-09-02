@@ -282,6 +282,11 @@ export default [
         route: 'kanban',
         icon: 'CheckSquareIcon',
       },
+      {
+        title: 'Operations',
+        route: 'operations',
+        icon: 'CheckSquareIcon',
+      },
     ],
   },
   {
