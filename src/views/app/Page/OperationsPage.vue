@@ -63,20 +63,20 @@
       <b-row>
         <b-col lg="6">
           <b-card>
-            <b-card-body>
+            <div class="">
               <h6 style="color: #ccc">abcbcaoasjsijs</h6>
               <h4 class="font-weight-bolder mb-2" style="color: black">Title</h4>
               <b-button class="m-auto" variant="danger">Open</b-button>
-            </b-card-body>
+            </div>
           </b-card>
         </b-col>
         <b-col lg="6">
           <b-card>
-            <b-card-body>
+            <div class="">
               <h6 style="color: #ccc">abcbcaoasjsijs</h6>
               <h4 class="font-weight-bolder mb-2" style="color: black">Title</h4>
               <b-button class="m-auto" variant="danger">Open</b-button>
-            </b-card-body>
+            </div>
           </b-card>
         </b-col>
       </b-row>
