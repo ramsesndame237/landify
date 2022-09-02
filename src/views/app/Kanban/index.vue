@@ -2,10 +2,22 @@
   <div>
     <kanban-board :blocks="blocks" :stages="stages">
       <div v-for="block in blocks" :slot="block.id" :key="block.id" class="item">
-        <simple-block :title="block.title" :description="block.description"></simple-block>
+        <!--        <simple-block :title="block.title" :description="block.description" v-if="block.id & 1"></simple-block>-->
+        <summary-block
+          title="Widerspruchsfrist"
+          sub_title="Filiale 1"
+          hours="54"
+          percents="50"
+          documents_nb="14"
+          left_days="14"
+          participants_nb="17"
+          :with-attach="block.id & 1 ? true : false"
+        />
       </div>
       <div v-for="stage in stages" :slot="'footer-'+stage" :key="stage" style="padding: 10px">
-        <b-button variant="primary" block @click="createBlock(stage)">+</b-button>
+        <b-button variant="primary" block @click="createBlock(stage)">
+          +
+        </b-button>
       </div>
     </kanban-board>
   </div>
@@ -14,18 +26,20 @@
 import { BAvatarGroup, BAvatar, BButton } from 'bootstrap-vue'
 // eslint-disable-next-line import/extensions
 import SimpleBlock from '@/views/app/CustomComponents/WP6/SimpleBlock'
+import SummaryBlock from '@/views/app/CustomComponents/WP6/SummaryBlock'
 
 export default {
-  name: 'kanban',
+  name: 'Kanban',
   components: {
     BAvatarGroup,
     BAvatar,
     BButton,
-    SimpleBlock
+    SimpleBlock,
+    SummaryBlock,
   },
   data() {
     return {
-      stages: ['Stage 1', 'Stage 2', 'Stage 3', 'Stage 4', 'Stage 5'],
+      stages: ['Stage 1', 'Stage 2', 'Stage 3'],
       blocks: [
         {
           id: 1,
@@ -57,8 +71,8 @@ export default {
         title: 'New Block',
         description: 'My block description',
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
