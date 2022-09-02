@@ -17,6 +17,29 @@
           </div>
         </b-card-body>
       </b-card>
+      <b-row>
+        <additional-costs-card
+            title="NEBENKOSTENABRECHNUNGEN"
+            color="#ccc"
+            cols="6"
+            hours="54"
+            percent="75"
+        />
+        <additional-costs-card
+            title="NEBENKOSTENABRECHNUNGEN"
+            color="#ccc"
+            cols="6"
+            hours="54"
+            percent="75"
+        />
+      </b-row>
+      <div class="d-flex justify-content-between align-items-center">
+        <h2>Subaufgaben</h2>
+        <span>Alle anzeigen</span>
+      </div>
+      <validation-card title="Kunde XY" subtitle="Emeut an diese Aufgabe erinnert werden"/>
+      <validation-card title="Fililalleiter V" subtitle="Emeut an diese Aufgabe erinnert werden"/>
+      <validation-card title="Fililalleiter V" subtitle="Emeut an diese Aufgabe erinnert werden"/>
     </b-col>
     <b-col lg="3"></b-col>
   </b-row>
@@ -24,6 +47,8 @@
 
 <script>
 import { BButton, BCol, BRow, BCard, BCardBody, BIconAlarm } from 'bootstrap-vue'
+import AdditionalCostsCard from '@/views/app/CustomComponents/WP6/AdditionalCostsCard'
+import ValidationCard from '@/views/app/CustomComponents/WP6/ValidationCard'
 
 export default {
   name: 'OperationsPage',
@@ -34,6 +59,8 @@ export default {
     BCard,
     BCardBody,
     BIconAlarm,
+    AdditionalCostsCard,
+    ValidationCard,
   },
 }
 </script>
