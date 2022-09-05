@@ -643,6 +643,7 @@ export default {
           { key: 'bankdata_is_active', type: 'boolean', hideOnForm: true },
           { key: 'bankdata_bank_name', hideOnForm: true },
         ],
+        view: false,
       },
       {
         title: 'Point of Sales',
@@ -697,6 +698,7 @@ export default {
           user_company_valid_from: '2022-07-01',
           user_company_valid_to: '2022-07-25',
         },
+        view: false,
       },
     ],
   },
@@ -732,6 +734,7 @@ export default {
     ],
   },
   partnercompany: {
+    entity: 'frontend_2_5_1',
     primaryKey: 'partnercompany_id',
     fields: [
       { key: 'partnercompany_id', auto: true },
@@ -743,8 +746,8 @@ export default {
       { key: 'partnergroup_name', hideOnForm: true },
       { key: 'city_name', hideOnForm: true },
       { key: 'contactdetails_email', hideOnForm: true },
-      { key: 'contactperson_count', hideOnForm: true },
-      { key: 'location_count', hideOnForm: true },
+      { key: 'contactpersons_count', hideOnForm: true },
+      { key: 'locations_count', hideOnForm: true },
       {
         key: 'partnertype_id', hideOnIndex: true, type: 'list', list: 'partnertype', listLabel: 'partnertype_name',
       },
@@ -1467,12 +1470,20 @@ export default {
     ],
   },
   contract: {
+    entity: 'frontend_3_4_1_1',
     fields: [
       { key: 'contract_id', auto: true, hideOnIndex: true },
-      { key: 'contract_type_name', hideOnForm: true },
       { key: 'contract_name' },
-      { key: 'contract_begin_date', type: 'date' },
-      { key: 'contract_end_date', type: 'date' },
+      { key: 'contracttype_id', hideOnForm: true },
+      { key: 'location_name', hideOnForm: true },
+      { key: 'partnercompany_name', hideOnForm: true },
+      { key: 'pos_name', hideOnForm: true },
+      { key: 'contract_begin_date', hideOnForm: true },
+      { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
+      { key: 'contract_sum_allarea_allocationspace', hideOnForm: true },
+      { key: 'currency_name', hideOnForm: true },
+      { key: 'contract_count_area', type: 'date', hideOnIndex: true },
+      { key: 'contract_end_date', type: 'date', hideOnIndex: true },
       {
         key: 'currency_id', type: 'list', list: 'currency', listLabel: 'currency_name', hideOnIndex: true,
       },
@@ -1486,10 +1497,6 @@ export default {
         listLabel: 'documentcontracttype_name',
         hideOnIndex: true,
       },
-      { key: 'documentcontracttype_name', hideOnForm: true },
-      { key: 'contract_creation_date', hideOnForm: true },
-      { key: 'currency_name', hideOnForm: true },
-      { key: 'contract_last_change_time', hideOnForm: true },
     ],
     relations: [
       {

@@ -17,10 +17,10 @@
           <b-row>
             <b-col lg="6">
               <vue-apex-charts
-                  type="donut"
+                  type="pie"
                   height="300"
-                  :series="donutChart.series"
-                  :options="donutChart.chartOptions"
+                  :series="pieChart.series"
+                  :options="pieChart.chartOptions"
               />
             </b-col>
           </b-row>
@@ -72,7 +72,7 @@ export default {
   },
   data() {
     return {
-      donutChart: {
+      pieChart: {
         series: [14, 12, 16, 24],
         chartOptions: {
           legend: {
@@ -107,7 +107,7 @@ export default {
                     },
                   },
                   total: {
-                    show: true,
+                    show: false,
                     fontSize: '1rem',
                     label: 'Summary',
                     formatter() {

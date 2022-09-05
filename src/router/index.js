@@ -88,6 +88,21 @@ const router = new VueRouter({
       path: '/app/table/:table/import/:invoice',
       component: () => import('@/views/app/InvoicePositionImport.vue'),
     },
+    // Workpackage 6
+    {
+      path: '/app/operations',
+      name: 'operations',
+      component: () => import('@/views/app/Page/OperationsPage.vue'),
+      meta: {
+        pageTitle: 'Operations',
+        breadcrumb: [
+          {
+            text: 'Operations',
+            active: true,
+          },
+        ],
+      },
+    },
     // Workpackage 7
     {
       path: '/app/backoffice',

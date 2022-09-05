@@ -2,65 +2,63 @@
   <div>
     <kanban-board :blocks="blocks" :stages="stages">
       <div v-for="block in blocks" :slot="block.id" :key="block.id" class="item">
-        <div class="top px-1 pt-1">
-          <h5>{{ block.title }}</h5>
-          <p>{{ block.description }}</p>
-          <div class="flex items-center justify-between">
-            <div>
-              <strong>Area:</strong>
-              <span class="ml-2">Stock space</span>
-            </div>
-          </div>
-        </div>
-        <hr>
-        <div class="bottom px-1 pb-1">
-          <div class="list" style="font-size: 10px">
-            <dl class="d-flex justify-content-between">
-              <dt>Partner company name</dt>
-              <dd>Test</dd>
-            </dl>
-            <dl class="d-flex justify-content-between">
-              <dt>Company name</dt>
-              <dd>Test</dd>
-            </dl>
-            <dl class="d-flex justify-content-between">
-              <dt>Responsible receivables manager</dt>
-              <dd>Test</dd>
-            </dl>
-            <b-avatar-group size="32px">
-              <b-avatar class="pull-up" :src="require('@/assets/images/portrait/small/avatar-s-5.jpg')"/>
-              <b-avatar class="pull-up" variant="primary"
-                        :src="require('@/assets/images/portrait/small/avatar-s-7.jpg')"/>
-              <b-avatar class="pull-up" :src="require('@/assets/images/portrait/small/avatar-s-10.jpg')"/>
-            </b-avatar-group>
-          </div>
-        </div>
+<!--        <simple-block :title="block.title" :description="block.description" v-if="block.id & 1"></simple-block>-->
+        <summary-block
+          title="Widerspruchsfrist"
+          sub_title="Filiale 1"
+          hours="54"
+          percents="50"
+          documents_nb="14"
+          left_days="14"
+          participants_nb="17"
+          :with-attach="block.id & 1 ? true : false"
+        />
       </div>
       <div v-for="stage in stages" :slot="'footer-'+stage" :key="stage" style="padding: 10px">
-        <b-button variant="primary" block @click="createBlock(stage)">+</b-button>
+        <b-button variant="primary" block @click="createBlock(stage)">
+          +
+        </b-button>
       </div>
     </kanban-board>
   </div>
 </template>
 <script>
 import { BAvatarGroup, BAvatar, BButton } from 'bootstrap-vue'
+// eslint-disable-next-line import/extensions
+import SimpleBlock from '@/views/app/CustomComponents/WP6/SimpleBlock'
+import SummaryBlock from '@/views/app/CustomComponents/WP6/SummaryBlock'
 
 export default {
-  name: 'kanban',
+  name: 'Kanban',
   components: {
     BAvatarGroup,
     BAvatar,
     BButton,
+    SimpleBlock,
+    SummaryBlock,
   },
   data() {
     return {
-      stages: ['Stage 1', 'Stage 2', 'Stage 3', 'Stage 4', 'Stage 5'],
+      stages: ['Stage 1', 'Stage 2', 'Stage 3'],
       blocks: [
         {
           id: 1,
           status: 'Stage 1',
           title: 'Mon ticket préféré',
-          description: 'dfksljfksdf sd sjdfksmdflqkdf dfj qsmldjflmq sjdfklqsj lkqsjdlm fjqsdjf qsdlf ',
+          description: 'Une description pas comme les autres.',
+        },
+      ],
+      summaryBlocks: [
+        {
+          id: 1,
+          title: 'My awsome title',
+          todo: 5,
+          done: 4,
+          documentNumber: 14,
+          remainingDays: 14,
+          workedDays: 54,
+          maxDays: 108,
+          participantsNumber: 20,
         },
       ],
     }
@@ -68,13 +66,13 @@ export default {
   methods: {
     createBlock(stage) {
       this.blocks.push({
-        id: this.blocks[this.blocks.length-1].id + 1,
+        id: this.blocks[this.blocks.length - 1].id + 1,
         status: stage,
         title: 'New Block',
         description: 'My block description',
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
