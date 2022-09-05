@@ -158,14 +158,16 @@ export default {
           })
             .then(async ({ data }) => {
               console.log('is relation', this.isRelation)
-              // if (data.data.errors[0]) {
-              //   throw new Error(data)
-              // }
-              try {
-                await this.saveRelations(data.data.data[0][0][this.primaryKey])
-              } finally {
-                this.$successToast(data.data.message)
-                // navigate to view page or reload table
+              if (data.data.errors[0]) {
+                this.$errorToast(data.data.errors[0]['Failed executing sql'].err)
+                throw new Error(data.data.errors[0]['Failed executing sql'].err)
+              } else {
+                try {
+                  await this.saveRelations(data.data.data[0][0][this.primaryKey])
+                } finally {
+                  this.$successToast(data.data.message)
+                  // navigate to view page or reload table
+                }
               }
               return data.data.data[0][0]
             })

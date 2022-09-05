@@ -1,5 +1,5 @@
 <template>
-  <b-table :title="entity" ref="table" striped hover responsive :busy.sync="loading" :per-page="perPage"
+  <b-table :title="entityList||entity" ref="table" striped hover responsive :busy.sync="loading" :per-page="perPage"
            :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
            :sort-desc.sync="sortDesc" :filter="search" select-mode="multi">
     <template #cell(__selected)="data">

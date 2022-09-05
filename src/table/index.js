@@ -777,15 +777,16 @@ export default {
         listLabel: 'companydetails_commercialregisterno',
         withNew: true,
         alwaysNew: true,
-      },
-      { key: 'partnercompanies_count', hideOnForm: true },
+      }
     ],
     relations: [
       {
         title: 'Tickets',
         primaryKey: 'ticket_id',
         entity: 'frontend_2_5_3_1_tickets',
-        entityForm: '',
+        create: false,
+        update: false,
+        delete: false,
         fields: [
           { key: 'ticket_id', type: 'list', list: 'ticket', listLabel: 'ticket_name' },
           { key: 'ticket_name', hideOnForm: true },
@@ -831,7 +832,8 @@ export default {
         title: 'Contact Persons',
         primaryKey: 'location_id',
         entity: 'frontend_2_5_3_5',
-        entityForm: '',
+        entityForm: 'contactperson',
+        entityView: 'contactperson',
         fields: [
           { key: 'contactperson_id', type: 'list', list: 'contactperson', listLabel: 'contactperson_lastname' },
           { key: 'contactperson_lastname', hideOnForm: true },
@@ -863,6 +865,7 @@ export default {
         primaryKey: 'user_id',
         entity: 'frontend_2_5_3_8',
         entityForm: 'user_partnercompany_rel',
+        entityView: 'user',
         fields: [
           { key: 'user_id', type: 'list', list: 'user', listLabel: 'user_lastname' },
           { key: 'user_lastname', hideOnForm: true },
@@ -870,6 +873,19 @@ export default {
           { key: 'user_email', hideOnForm: true },
           { key: 'user_last_login_time', hideOnForm: true },
           { key: 'user_locked', hideOnForm: true },
+          {
+            key: 'user_partnercompany_valid_from',
+            sortable: true,
+            type: 'date',
+            composite: true,
+            disableOnUpdate: true,
+          },
+          {
+            key: 'user_partnercompany_valid_to',
+            sortable: true,
+            type: 'date',
+            rules: { date_after: ['@user_partnercompany_valid_from'] },
+          },
         ],
       },
     ],
@@ -1791,6 +1807,8 @@ export default {
         primaryKey: 'choice_id',
         entity: 'frontend_3_6_4',
         entityForm: 'criteria_choice_rel',
+        update: false,
+        entityView: 'choice',
         fields: [
           { key: 'choice_id', hideOnForm: true },
           { key: 'choice_name', hideOnForm: true },
@@ -1846,7 +1864,12 @@ export default {
       { key: 'recurringpayment_name' },
       { key: 'contract_name', hideOnForm: true },
       {
-        key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name', hideOnIndex: true,
+        key: 'contract_id',
+        type: 'list',
+        list: 'contract',
+        listLabel: 'contract_name',
+        hideOnIndex: true,
+        relationEntity: 'contract_recurringpayment_rel'
       },
       {
         key: 'recurringpaymenttype_id',
@@ -1865,7 +1888,6 @@ export default {
       { key: 'recurringpayment_maturity_date', type: 'date', hideOnIndex: true },
       { key: 'recurringpayment_maturity_daily_range', hideOnIndex: true },
       { key: 'recurringpayment_maturity_monthly_range', hideOnIndex: true },
-      { key: 'reccuringpayment_value_deposit', hideOnIndex: true, type: 'number' },
       {
         key: 'maturitytype_id',
         type: 'list',
@@ -2278,6 +2300,8 @@ export default {
         primaryKey: 'externalcosttype_id',
         entity: 'frontend_4_7_3_1',
         entityForm: 'costtype_externalcosttype_rel',
+        update: false,
+        view: false,
         fields: [
           { key: 'externalcosttype_id', type: 'list', list: 'externalcosttype', listLabel: 'externalcosttype_name' },
           { key: 'externalcosttype_name', hideOnForm: true },
@@ -2290,7 +2314,7 @@ export default {
         entityForm: 'contract_costtype_rel',
         fields: [
           {
-            key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name',
+            key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name', disableOnUpdate: true,
           },
           { key: 'contract_name', hideOnForm: true },
           { key: 'contract_last_change_time', type: 'date', hideOnForm: true },

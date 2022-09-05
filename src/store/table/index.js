@@ -30,8 +30,8 @@ export default {
       return api({
         action: 'read-rich',
         entity: payload.entity,
-        order_by: '',
-        order_dir: 'DESC',
+        // order_by: '',
+        // order_dir: 'DESC',
         per_page: 1,
         from: 0,
         current_page: 1,

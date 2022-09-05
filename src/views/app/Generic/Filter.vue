@@ -5,15 +5,20 @@
     <validation-observer ref="form" v-slot="{ passes }">
       <b-form @submit.prevent="passes(handleOk)">
         <b-row>
-          <b-col v-for="(field,index) in definition.filters" :key="index" cols="12" :md="vertical?12:4" :lg="vertical?12:3">
+          <b-col v-for="(field,index) in definition.filters" :key="index" cols="12" :md="vertical?12:4"
+                 :lg="vertical?12:3">
             <field ref="fields" :entity="data" :field="field"/>
           </b-col>
         </b-row>
       </b-form>
     </validation-observer>
     <template v-slot:modal-footer>
-      <b-button variant="secondary" @click="$refs.modal.hide()">Cancel</b-button>
-      <b-button variant="info" @click="reset">Reset</b-button>
+      <b-button variant="secondary" @click="$refs.modal.hide()">
+        Cancel
+      </b-button>
+      <b-button variant="info" @click="reset">
+        Reset
+      </b-button>
       <b-button variant="primary" @click="handleOk">
         Apply
       </b-button>
@@ -49,6 +54,7 @@ export default {
       this.$refs.modal.show()
     },
     reset() {
+      this.data = { ...this.initialData }
       this.$refs.form.reset()
       // this.$refs.modal.hide()
     },
