@@ -30,7 +30,7 @@ axiosIns.interceptors.response.use(response =>
   })
 
 Vue.prototype.$http = axiosIns
-Vue.prototype.$api = data => axiosIns.post('/api/', { a: data })
+Vue.prototype.$api = data => axiosIns.post(`/api/?${data.entity}`, { a: data })
 
 export default axiosIns
 

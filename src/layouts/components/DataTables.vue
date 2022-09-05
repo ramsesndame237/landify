@@ -129,11 +129,14 @@ export default {
         from: 0,
         current_page: currentPage,
         // filter: this.filterData,
-        data: [this.filterData],
         filter_all: filter ?? '',
         lang: this.$i18n.locale,
       }
-      if (this.secondKey) payload.data = [{ [this.secondKey]: this.secondKeyValue }]
+      const filterData = { ...this.filterData }
+      if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
+      if (Object.keys(this.filterData).length > 0) {
+        payload.data = [this.filterData]
+      }
       return this.$api(payload)
         .then(({ data }) => {
           console.log(data)
@@ -196,8 +199,11 @@ export default {
             [this.primaryKey]: entity[this.primaryKey],
             [this.secondKey]: entity[this.secondKey],
           }))),
-        }).then(() => {
-          this.$successToast(this.$t(entities.length > 1 ? 'notification.elements_deleted' : 'notification.element_deleted'))
+        }).then(resp => {
+          const count = resp.data.data.rowcount
+          if (count > 0) this.$successToast(`${count} Element(s) where deleted`)
+          else this.$errorToast(`${count} Element(s) where deleted`)
+          // this.$successToast(this.$t(entities.length > 1 ? 'notification.elements_deleted' : 'notification.element_deleted'))
           this.$refs.table.refresh()
         })
           .catch(e => {
