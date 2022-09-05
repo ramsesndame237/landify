@@ -714,6 +714,13 @@
     }
   },
   "table_title": {
+    "user": "Overall list users",
+    "role": "Authorization Management - Role List Overview",
+    "team": "OVERALL LIST TEAMS",
+    "usertype": "OVERALL LIST USER TYPE",
+    "tablename": "OVERALL LIST Tables",
+    "tablegroup": "OVERALL LIST Table groups",
+    "crud": "OVERALL LIST CRUD",
     "invoice": "Overview list ancillary cost invoices",
     "inspectionresult": "Inspectionresults",
     "address": "OVERALL LIST Address Data",

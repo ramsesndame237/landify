@@ -7,7 +7,7 @@
     <div class="stats d-flex justify-content-between align-items-center mb-1">
       <div class="d-flex">
         <div class="d-flex justify-content-center align-items-center" style="background-color: black; border-radius: 100%; padding: 2px; height: 20px; width: 20px; color: #fff; margin-right: 2px">
-          <b-icon-paperclip></b-icon-paperclip>
+          <b-icon-paperclip class="font-weight-bolder"></b-icon-paperclip>
         </div>
         <span>{{ documents_nb }}</span>
       </div>
