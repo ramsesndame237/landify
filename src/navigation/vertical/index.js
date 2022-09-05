@@ -283,6 +283,11 @@ export default [
         icon: 'CheckSquareIcon',
       },
       {
+        title: 'Advanced Kanban',
+        route: 'advanced-kanban',
+        icon: 'CheckSquareIcon',
+      },
+      {
         title: 'Operations',
         route: 'operations',
         icon: 'CheckSquareIcon',

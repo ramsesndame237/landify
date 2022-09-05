@@ -829,7 +829,7 @@ export default {
       },
       {
         title: 'Contact Persons',
-        primaryKey: 'location_id',
+        primaryKey: 'contactperson_id',
         entity: 'frontend_2_5_3_5',
         entityForm: '',
         fields: [
@@ -1092,6 +1092,7 @@ export default {
         primaryKey: 'area_id',
         entity: 'frontend_3_1_3_1',
         entityForm: 'area_pos_rel',
+        entityView: 'area',
         update: false,
         fields: [
           {
@@ -1183,6 +1184,9 @@ export default {
             key: 'document_id', hideOnForm: true, sortable: true,
           },
         ],
+        create: false,
+        delete: false,
+        update: false,
       },
       {
         title: 'Tag',
@@ -1228,11 +1232,12 @@ export default {
           { key: 'ticket_move_time', hideOnForm: true },
           { key: 'ticket_deadline_offset', hideOnForm: true },
         ],
+        create: false,
+        delete: false,
       },
       {
         title: 'Contradiction Packages',
         entity: 'frontend_3_1_3_5',
-        entityForm: 'pos_contracdictionpackage_rel',
         fields: [
           {
             key: 'contradictionpackage_id',
@@ -1246,6 +1251,8 @@ export default {
           { key: 'contradictionpackage_sum', hideOnForm: true },
           { key: 'contradictionpackage_last_change_time', hideOnForm: true },
         ],
+        create: false,
+        delete: false,
       },
       {
         title: 'Invoices',
@@ -1340,7 +1347,6 @@ export default {
         entityForm: 'area_pos_rel',
         entityView: 'pos',
         update: false,
-        create: false,
         primaryKey: 'pos_id',
         fields: [
           {
@@ -1438,8 +1444,6 @@ export default {
         entityView: 'serviceobject',
         primaryKey: 'serviceobject_id',
         update: false,
-        create: false,
-        delete: false,
         fields: [
           {
             key: 'serviceobject_id', type: 'list', list: 'serviceobject', listLabel: 'serviceobject_name',

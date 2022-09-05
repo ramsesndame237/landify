@@ -1,12 +1,12 @@
 <template>
   <b-col :lg="cols">
     <b-card>
-      <div class="d-flex justify-content-center align-content-center">
+      <div class="d-flex justify-content-between align-items-center mb-2">
         <b-col class="col-10 d-flex align-content-center">
           <div class="bigdot"></div>
           <h5 class="header-text">{{ title }}</h5>
         </b-col>
-        <b-col class="col-2">
+        <b-col class="col-2 d-flex justify-content-center align-items-center">
           <div class="dropdown-btn" @click="showDropdown">
             <p class="h1">
               <b-icon-three-dots></b-icon-three-dots>
@@ -124,8 +124,5 @@ export default {
 
   .dropdown-menu {
     top: -32px!important;
-  }
-  .dropdown {
-    margin-top: -70px;
   }
 </style>
