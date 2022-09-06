@@ -23,8 +23,11 @@ Impossible to create new pos relation 'Duplicate entry' error`,
   location:  `Delete problem?`,
   location_relations: `Create impossible for Area relation cause 'Duplicate entry' error<br>
 Delete problem for area location, all rows are affected after deletion of one row<br>
-frontend_3_3_3_2 doesnt send all relation for a location<br>`,
-  contract: 'Cannot determine witch property of frontend_3_4_1_1 response is owner or manager',
+frontend_3_3_3_2 doesnt send all relations for a location<br>
+Regex validation on location_partnercompany_partnertype_rel is a problem to create a relation<br>
+Delete on partnercompany relation doesnt work`,
+  contract: `Cannot determine witch property of frontend_3_4_1_1 response is owner or manager<br>
+Cannot delete a row<br>`,
   contract_relations: `Need entity for document relation<br>
 error 500 on document read-rich request<br>
 Need entity for serviceobject relation<br>

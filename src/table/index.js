@@ -1546,6 +1546,26 @@ export default {
         ],
       },
       {
+        title: 'Specials Rights',
+        primaryKey: 'specialright_id',
+        entity: 'contract_specialright_grp',
+        entityForm: 'contract_specialright_rel',
+        entityView: 'specialright',
+        fields: [
+          {
+            key: 'specialright_id', type: 'list', list: 'specialright', listLabel: 'specialright_name',
+          },
+          { key: 'specialright_name', hideOnForm: true },
+          { key: 'specialright_date', hideOnForm: true },
+          { key: 'contract_specialright_description', type: 'textarea' },
+          { key: 'contract_specialright_date', type: 'date' },
+          { key: 'contract_specialright_prior_notice_date', type: 'date' },
+          { key: 'contract_specialright_termination_date', type: 'date' },
+          { key: 'contract_specialright_is_passive', type: 'boolean' },
+          { key: 'contract_specialright_is_availed', type: 'boolean' },
+        ],
+      },
+      {
         title: 'Recurring payment',
         primaryKey: 'recurringpayment_id',
         entity: 'contract_recurringpayment_grp',
@@ -1583,26 +1603,6 @@ export default {
           { key: 'serviceobjecttype_name' },
           { key: 'area_name' },
           { key: 'location_name' },
-        ],
-      },
-      {
-        title: 'Specials Rights',
-        primaryKey: 'specialright_id',
-        entity: 'contract_specialright_grp',
-        entityForm: 'contract_specialright_rel',
-        entityView: 'specialright',
-        fields: [
-          {
-            key: 'specialright_id', type: 'list', list: 'specialright', listLabel: 'specialright_name',
-          },
-          { key: 'specialright_name', hideOnForm: true },
-          { key: 'specialright_date', hideOnForm: true },
-          { key: 'contract_specialright_description', type: 'textarea' },
-          { key: 'contract_specialright_date', type: 'date' },
-          { key: 'contract_specialright_prior_notice_date', type: 'date' },
-          { key: 'contract_specialright_termination_date', type: 'date' },
-          { key: 'contract_specialright_is_passive', type: 'boolean' },
-          { key: 'contract_specialright_is_availed', type: 'boolean' },
         ],
       },
       {
