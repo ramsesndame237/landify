@@ -23,7 +23,7 @@
                          style="margin-top: 5px"/>
         <b-form-input v-else v-model="entity[field.key]" :type="field.type||'text'" :disabled="disabled"
                       :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
-        <small class="text-danger">{{ errors[0] }}</small>
+        <small class="text-danger" v-for="(error,i) in errors" :key="i">{{ error }}</small>
       </validation-provider>
       <div v-if="field.type==='list' && ((field.withNew && entity[field.key] === newValue) || field.alwaysNew)"
            class="mt-2" :class="inline?'':'ml-3'">
@@ -67,6 +67,7 @@ export default {
       subEntity: {},
       newValue: 'Create New Element',
       loading: false,
+      promise: null,
     }
   },
   computed: {
@@ -97,11 +98,17 @@ export default {
   async created() {
     if (this.field.type === 'list') {
       if (this.list.length === 0) this.loading = true
-      this.list = await this.$store.dispatch('table/fetchList', this.field.list)
+      this.promise = this.$store.dispatch('table/fetchList', this.field.list)
+      this.list = await this.promise
       this.loading = false
     } else if (this.field.type === 'boolean') {
       // set false as default value
       if (this.entity[this.field.key] == null) this.entity[this.field.key] = 0
+    }
+  },
+  beforeDestroy() {
+    if (this.promise) {
+      Promise.resolve()
     }
   },
   mounted() {

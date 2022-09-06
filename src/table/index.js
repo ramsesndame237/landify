@@ -777,15 +777,16 @@ export default {
         listLabel: 'companydetails_commercialregisterno',
         withNew: true,
         alwaysNew: true,
-      },
-      { key: 'partnercompanies_count', hideOnForm: true },
+      }
     ],
     relations: [
       {
         title: 'Tickets',
         primaryKey: 'ticket_id',
         entity: 'frontend_2_5_3_1_tickets',
-        entityForm: '',
+        create: false,
+        update: false,
+        delete: false,
         fields: [
           { key: 'ticket_id', type: 'list', list: 'ticket', listLabel: 'ticket_name' },
           { key: 'ticket_name', hideOnForm: true },
@@ -829,9 +830,10 @@ export default {
       },
       {
         title: 'Contact Persons',
-        primaryKey: 'location_id',
+        primaryKey: 'contactperson_id',
         entity: 'frontend_2_5_3_5',
-        entityForm: '',
+        entityForm: 'contactperson',
+        entityView: 'contactperson',
         fields: [
           { key: 'contactperson_id', type: 'list', list: 'contactperson', listLabel: 'contactperson_lastname' },
           { key: 'contactperson_lastname', hideOnForm: true },
@@ -863,6 +865,7 @@ export default {
         primaryKey: 'user_id',
         entity: 'frontend_2_5_3_8',
         entityForm: 'user_partnercompany_rel',
+        entityView: 'user',
         fields: [
           { key: 'user_id', type: 'list', list: 'user', listLabel: 'user_lastname' },
           { key: 'user_lastname', hideOnForm: true },
@@ -870,6 +873,19 @@ export default {
           { key: 'user_email', hideOnForm: true },
           { key: 'user_last_login_time', hideOnForm: true },
           { key: 'user_locked', hideOnForm: true },
+          {
+            key: 'user_partnercompany_valid_from',
+            sortable: true,
+            type: 'date',
+            composite: true,
+            disableOnUpdate: true,
+          },
+          {
+            key: 'user_partnercompany_valid_to',
+            sortable: true,
+            type: 'date',
+            rules: { date_after: ['@user_partnercompany_valid_from'] },
+          },
         ],
       },
     ],
@@ -1092,6 +1108,7 @@ export default {
         primaryKey: 'area_id',
         entity: 'frontend_3_1_3_1',
         entityForm: 'area_pos_rel',
+        entityView: 'area',
         update: false,
         fields: [
           {
@@ -1183,6 +1200,9 @@ export default {
             key: 'document_id', hideOnForm: true, sortable: true,
           },
         ],
+        create: false,
+        delete: false,
+        update: false,
       },
       {
         title: 'Tag',
@@ -1228,11 +1248,12 @@ export default {
           { key: 'ticket_move_time', hideOnForm: true },
           { key: 'ticket_deadline_offset', hideOnForm: true },
         ],
+        create: false,
+        delete: false,
       },
       {
         title: 'Contradiction Packages',
         entity: 'frontend_3_1_3_5',
-        entityForm: 'pos_contracdictionpackage_rel',
         fields: [
           {
             key: 'contradictionpackage_id',
@@ -1246,6 +1267,8 @@ export default {
           { key: 'contradictionpackage_sum', hideOnForm: true },
           { key: 'contradictionpackage_last_change_time', hideOnForm: true },
         ],
+        create: false,
+        delete: false,
       },
       {
         title: 'Invoices',
@@ -1340,7 +1363,6 @@ export default {
         entityForm: 'area_pos_rel',
         entityView: 'pos',
         update: false,
-        create: false,
         primaryKey: 'pos_id',
         fields: [
           {
@@ -1373,20 +1395,13 @@ export default {
     entity: 'frontend_3_3_1',
     primaryKey: 'location_id',
     fields: [
-      { key: 'location_id', auto: true, hideOnIndex: true },
+      { key: 'location_id', auto: true },
       { key: 'location_name' },
       { key: 'location_objectdescription', type: 'textarea', hideOnIndex: true },
       { key: 'location_total_area', type: 'number', hideOnIndex: true },
       { key: 'location_start_date', type: 'date', hideOnIndex: true },
       { key: 'owner', hideOnForm: true },
       { key: 'facility manager', hideOnForm: true },
-      {
-        key: 'partnercompany_id',
-        type: 'list',
-        list: 'partnercompany',
-        listLabel: 'partnercompany_name',
-        hideOnIndex: true,
-      },
       { key: 'locationtype_name', hideOnForm: true },
       { key: 'city_name', hideOnForm: true },
       { key: 'country_name', hideOnForm: true },
@@ -1438,8 +1453,6 @@ export default {
         entityView: 'serviceobject',
         primaryKey: 'serviceobject_id',
         update: false,
-        create: false,
-        delete: false,
         fields: [
           {
             key: 'serviceobject_id', type: 'list', list: 'serviceobject', listLabel: 'serviceobject_name',
@@ -1452,19 +1465,39 @@ export default {
       {
         title: 'Partner Companies',
         entity: 'frontend_3_3_3_3',
-        entityForm: 'location_partnercompany_rel',
+        entityForm: 'location_partnercompany_partnertype_rel',
         entityView: 'partnercompany',
-        update: false,
+        primaryKey: 'partnercompany_id',
         fields: [
           {
-            key: 'partnercompany_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name',
+            key: 'partnercompany_id',
+            type: 'list',
+            list: 'partnercompany',
+            listLabel: 'partnercompany_name',
+            disableOnUpdate: true,
           },
           { key: 'partnercompany_name', hideOnForm: true },
           { key: 'partnergroup_name', hideOnForm: true },
           { key: 'partnertype_name', hideOnForm: true },
+          {
+            key: 'partnertype_id',
+            hideOnIndex: true,
+            type: 'list',
+            composite: true,
+            list: 'partnertype',
+            listLabel: 'partnertype_name',
+            disableOnUpdate: true,
+          },
           { key: 'city_name', hideOnForm: true },
           { key: 'contactdetails_email', hideOnForm: true },
           { key: 'contactdetails_phone', hideOnForm: true },
+          {
+            key: 'location_partnercompany_partnertype_valid_from_date',
+            type: 'date',
+            composite: true,
+            disableOnUpdate: true,
+          },
+          { key: 'location_partnercompany_partnertype_valid_to_date', type: 'date' },
         ],
       },
     ],
@@ -1778,6 +1811,8 @@ export default {
         primaryKey: 'choice_id',
         entity: 'frontend_3_6_4',
         entityForm: 'criteria_choice_rel',
+        update: false,
+        entityView: 'choice',
         fields: [
           { key: 'choice_id', hideOnForm: true },
           { key: 'choice_name', hideOnForm: true },
@@ -1833,7 +1868,12 @@ export default {
       { key: 'recurringpayment_name' },
       { key: 'contract_name', hideOnForm: true },
       {
-        key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name', hideOnIndex: true,
+        key: 'contract_id',
+        type: 'list',
+        list: 'contract',
+        listLabel: 'contract_name',
+        hideOnIndex: true,
+        relationEntity: 'contract_recurringpayment_rel'
       },
       {
         key: 'recurringpaymenttype_id',
@@ -1852,7 +1892,6 @@ export default {
       { key: 'recurringpayment_maturity_date', type: 'date', hideOnIndex: true },
       { key: 'recurringpayment_maturity_daily_range', hideOnIndex: true },
       { key: 'recurringpayment_maturity_monthly_range', hideOnIndex: true },
-      { key: 'reccuringpayment_value_deposit', hideOnIndex: true, type: 'number' },
       {
         key: 'maturitytype_id',
         type: 'list',
@@ -2002,6 +2041,7 @@ export default {
   // endregion
   // region Work Package 4
   invoice: {
+    entity: 'frontend_4_1_1',
     createModal: false,
     formComponent: () => import('../views/app/FormComponent/InvoiceForm.vue'),
     fields: [
@@ -2264,6 +2304,8 @@ export default {
         primaryKey: 'externalcosttype_id',
         entity: 'frontend_4_7_3_1',
         entityForm: 'costtype_externalcosttype_rel',
+        update: false,
+        view: false,
         fields: [
           { key: 'externalcosttype_id', type: 'list', list: 'externalcosttype', listLabel: 'externalcosttype_name' },
           { key: 'externalcosttype_name', hideOnForm: true },
@@ -2276,7 +2318,7 @@ export default {
         entityForm: 'contract_costtype_rel',
         fields: [
           {
-            key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name',
+            key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name', disableOnUpdate: true,
           },
           { key: 'contract_name', hideOnForm: true },
           { key: 'contract_last_change_time', type: 'date', hideOnForm: true },

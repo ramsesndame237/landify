@@ -35,8 +35,8 @@ export default {
     }
   },
   methods: {
-    fillRelations(entity) {
-      console.log('fill relations', entity)
+    fillRelations() {
+      const entity = this.entity
       return Promise.all(this.formFields.filter(field => field.type === 'list' && entity[field.key] == null).map(field => this.$api({
         entity: field.relationEntity ?? (`${this.table}_${field.list}_rel`),
         action: 'read-rich',
@@ -48,7 +48,7 @@ export default {
           const result = data.data.data[0]
           if (!result) return
           this.$set(entity, field.key, result[field.key])
-          this.$set(entity, field.key, result[field.key])
+          this.$set(this.originalEntity, field.key, result[field.key])
           if (field.with) {
             (typeof field.with === 'string' ? [field.with] : field.with).forEach(val => {
               this.$set(entity, val, result[val])
@@ -57,23 +57,57 @@ export default {
         })))
     },
     saveRelations(entityId) {
-      const keys = [this.definition.primaryKey, ...(this.definition.composite || [])]
-      return Promise.all(this.definition.fields.filter(field => field.type === 'list' && keys.indexOf(field.key) === -1).map(field => {
+      const keys = [this.definition.primaryKey, ...(this.definition.fields.filter(f => f.composite).map(f => f.key))]
+      return Promise.all(this.definition.fields.filter(field => field.type === 'list' && keys.indexOf(field.key) === -1 && (this.entity[field.key] !== this.originalEntity[field.key] || !!field.with)).map(field => {
         const extras = {}
         if (field.with) {
           (typeof field.with === 'string' ? [field.with] : field.with).forEach(val => {
             extras[val] = this.entity[val]
           })
         }
-        return this.$api({
-          entity: field.relationEntity ?? (`${this.table}_${field.list}_rel`),
-          action: this.create ? 'create' : 'update',
-          data: [{
-            [field.key]: this.entity[field.key],
-            [this.primaryKey]: entityId ?? this.entity[this.primaryKey],
-            ...extras,
-          }],
+        const isNew = this.originalEntity[field.key] == null
+        if (!isNew && field.alwaysNew) return Promise.resolve()
+        const entityName = field.relationEntity ?? (`${this.table}_${field.list}_rel`)
+        const data = {
+          [field.key]: this.entity[field.key],
+          [this.primaryKey]: entityId ?? this.entity[this.primaryKey],
+          ...extras,
+        }
+        return Promise.resolve().then(() => {
+          if (isNew) {
+            return this.$api({
+              entity: entityName,
+              action: 'create',
+              data: [data],
+            })
+          }
+          return this.$api({
+            entity: entityName,
+            action: 'delete',
+            data: [{ ...data, [field.key]: this.originalEntity[field.key] }],
+          })
+            .then(() => this.$api({
+              entity: entityName,
+              action: 'create',
+              data: [data],
+            }))
         })
+          .then(resp => {
+            const errors = resp.data.data.errors
+            if (typeof errors === 'string') {
+              this.$refs.form.setErrors({
+                [field.key]: [errors],
+              })
+            }
+            if (Array.isArray(errors) && errors.length > 0) {
+              this.$refs.form.setErrors({
+                [field.key]: resp.data.data.errors.map(error => {
+                  if (typeof error === 'string') return error
+                  return error['Failed executing sql'].err
+                }),
+              })
+            }
+          })
       }))
     },
     createNewEntities() {
@@ -83,10 +117,8 @@ export default {
         console.log((field.type === 'list') && (formField.hasNew || (field.alwaysNew && this.originalEntity[field.key] == null)))
         return (field.type === 'list') && (formField.hasNew || (field.alwaysNew && this.originalEntity[field.key] == null))
       })
-      const fieldsToUpdate = this.formFields.filter(field => {
-        return (field.alwaysNew && this.originalEntity[field.key] != null)
-      })
-      console.log(fieldsToUpdate, fieldsToCreate, 'fields');
+      const fieldsToUpdate = this.formFields.filter(field => (field.alwaysNew && this.originalEntity[field.key] != null))
+      console.log(fieldsToUpdate, fieldsToCreate, 'fields')
       return Promise.all([...fieldsToCreate.map(field => {
         const formField = this.$refs.fields.find(f => f.field === field)
         return this.$api({
@@ -117,34 +149,34 @@ export default {
         }
         this.loading = true
         return this.createNewEntities()
-          .then(() => {
-            return this.$api({
-              entity: this.table,
-              action: this.create ? 'create' : 'update',
-              data: [
-                this.entity,
-              ],
-            })
-              .then(async ({ data }) => {
-                console.log('is relation', this.isRelation)
-                // if (data.data.errors[0]) {
-                //   throw new Error(data)
-                // }
+          .then(() => this.$api({
+            entity: this.table,
+            action: this.create ? 'create' : 'update',
+            data: [
+              this.entity,
+            ],
+          })
+            .then(async ({ data }) => {
+              console.log('is relation', this.isRelation)
+              if (data.data.errors[0]) {
+                this.$errorToast(data.data.errors[0]['Failed executing sql'].err)
+                throw new Error(data.data.errors[0]['Failed executing sql'].err)
+              } else {
                 try {
                   await this.saveRelations(data.data.data[0][0][this.primaryKey])
                 } finally {
                   this.$successToast(data.data.message)
                   // navigate to view page or reload table
                 }
-                return data.data.data[0][0]
-              })
-              .catch(e => {
-                console.log(e)
-                const title = e.response?.data.detail || e.data?.errors[0].err
-                this.$errorToast(title)
-                return Promise.reject(e)
-              })
-          })
+              }
+              return data.data.data[0][0]
+            })
+            .catch(e => {
+              console.log(e)
+              const title = e.response?.data.detail || e.data?.errors[0].err
+              this.$errorToast(title)
+              return Promise.reject(e)
+            }))
           .finally(() => this.loading = false)
       })
     },
@@ -184,7 +216,7 @@ export default {
       await this.loadDefinition()
     }
     if (this.create) return
-    if (!this.initialData) {
+    if (!this.isRelation) {
       const entity = await this.$store.dispatch('table/fetchSingleItem', {
         entity: this.table,
         primaryKey: this.primaryKey,
@@ -196,12 +228,8 @@ export default {
         this.setData(entity)
       }
     }
-    try {
-      this.entityLoaded = true
-      await this.fillRelations(this.entity)
-    } finally {
-      console.log('entity', this.entity)
-      this.originalEntity = { ...this.entity }
-    }
+    this.entityLoaded = true
+    this.originalEntity = { ...this.entity }
+    await this.fillRelations()
   },
 }

@@ -2,16 +2,16 @@
   <div>
     <kanban-board :blocks="blocks" :stages="stages">
       <div v-for="block in blocks" :slot="block.id" :key="block.id" class="item">
-<!--        <simple-block :title="block.title" :description="block.description" v-if="block.id & 1"></simple-block>-->
+        <!--        <simple-block :title="block.title" :description="block.description" v-if="block.id & 1"></simple-block>-->
         <summary-block
-          title="Widerspruchsfrist"
-          sub_title="Filiale 1"
-          hours="54"
-          percents="50"
-          documents_nb="14"
-          left_days="14"
-          participants_nb="17"
-          :with-attach="block.id & 1 ? true : false"
+            title="Widerspruchsfrist"
+            sub_title="Filiale 1"
+            hours="54"
+            percents="50"
+            documents_nb="14"
+            left_days="14"
+            participants_nb="17"
+            :with-attach="block.id & 1 ? true : false"
         />
       </div>
       <div v-for="stage in stages" :slot="'footer-'+stage" :key="stage" style="padding: 10px">
@@ -29,7 +29,7 @@ import SimpleBlock from '@/views/app/CustomComponents/WP6/SimpleBlock'
 import SummaryBlock from '@/views/app/CustomComponents/WP6/SummaryBlock'
 
 export default {
-  name: 'Kanban',
+  name: 'AdvancedKanban',
   components: {
     BAvatarGroup,
     BAvatar,
@@ -261,3 +261,4 @@ ul {
   }
 }
 </style>
+
