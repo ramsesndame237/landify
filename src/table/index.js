@@ -801,7 +801,10 @@ export default {
         title: 'Contradictions',
         primaryKey: 'contradiction_id',
         entity: 'frontend_2_5_3_2',
-        entityForm: '',
+        create: false,
+        update: false,
+        delete: false,
+        entityView: 'contradiction',
         fields: [
           { key: 'contradiction_id', type: 'list', list: 'contradiction', listLabel: 'contradiction_name' },
           { key: 'contradiction_name', hideOnForm: true },
@@ -817,7 +820,10 @@ export default {
         title: 'Reviews Invoices',
         primaryKey: 'invoice_id',
         entity: 'frontend_2_5_3_3',
-        entityForm: '',
+        create: false,
+        update: false,
+        delete: false,
+        entityView: 'invoice',
         fields: [
           { key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_description' },
           { key: 'invoice_date', type: 'date', hideOnForm: true },
@@ -849,7 +855,7 @@ export default {
         title: 'Locations',
         primaryKey: 'location_id',
         entity: 'frontend_2_5_3_5',
-        entityForm: '',
+        entityForm: 'location',
         fields: [
           { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_lastname' },
           { key: 'location_name', hideOnForm: true },
@@ -892,6 +898,7 @@ export default {
   },
   partnergroup: {
     primaryKey: 'partnergroup_id',
+
     fields: [
       { key: 'partnergroup_id', auto: true },
       { key: 'partnergroup_name' },

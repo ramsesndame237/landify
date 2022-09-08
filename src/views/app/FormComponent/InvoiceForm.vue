@@ -128,7 +128,11 @@ export default {
     },
     'entity.contract_id': function (val) {
       const contract = this.contracts.find(c => c.contract_id === val)
-      if(!contract) return
+      if (!contract) {
+        // laoding form
+        // this.fetchContracts()
+        return
+      }
       this.$set(contract, '__selected', true)
       this.fetchAreas(val)
     },
