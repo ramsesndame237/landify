@@ -393,7 +393,7 @@ export default {
       {
         title: 'Contact Person',
         primaryKey: 'customergroup_id',
-        entity: 'contactperson_customergroup_grp',
+        entity: 'frontend_2_2_3_2',
         entityForm: 'contactperson_customergroup_rel',
         entityView: 'contactperson',
         update: false,
@@ -419,21 +419,23 @@ export default {
       },
       {
         title: 'Group Ticket/Packages',
-        primaryKey: 'groupticket_id',
-        entity: ' groupticket_customergroup_partnergroup_rel',
-        entityForm: 'groupticket_customergroup_rel',
+        primaryKey: 'ticket_id',
+        entity: 'frontend_2_2_3_3',
+        create: false,
+        edit: false,
+        delete: false,
         fields: [
           {
-            key: 'groupticket_id',
+            key: 'ticket_id',
             sortable: true,
             type: 'list',
-            list: 'group_ticket',
-            listLabel: 'group_ticket_name',
+            list: 'ticket',
+            listLabel: 'ticket_name',
             hideOnIndex: true,
           },
-          { key: 'groupticket_name', sortable: true, hideOnForm: true },
-          { key: 'groupticket_description', sortable: true, hideOnForm: true },
-          { key: 'groupticket_Deadline', sortable: true, hideOnForm: true },
+          { key: 'ticket_name', sortable: true, hideOnForm: true },
+          { key: 'ticket_description', sortable: true, hideOnForm: true },
+          { key: 'ticket_Deadline', sortable: true, hideOnForm: true },
           {
             key: 'contradictionpackage_count', label: 'ContradictionPackage count', sortable: true, hideOnForm: true,
           },
@@ -448,7 +450,7 @@ export default {
       {
         title: 'Users',
         primaryKey: 'user_id',
-        entity: 'user_customergroup_grp',
+        entity: 'frontend_2_2_3_4',
         entityForm: 'user_customergroup_rel',
         entityView: 'user',
         update: false,
@@ -1925,6 +1927,8 @@ export default {
         entityForm: 'recurringpayment_indexclause_rel',
         primaryKey: 'indexclause_id',
         entityView: 'indexclause',
+        update: false,
+        create: false,
         fields: [
           {
             key: 'indexclause_id', type: 'list', list: 'indexclause', listLabel: 'indexclause_name',

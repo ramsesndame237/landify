@@ -12,16 +12,10 @@ user_customergroup_grp doesnt send usertype_name and team_name`,
   address: 'We need a view to display all fields',
   // endregion
   // region Work Package 3
-  pos: `Delete impossible<br>
-Create works but the new entities dont show in the list with frontend_3_1_1 but show with pos entity<br>
-`,
+  pos: `Create works but the new entities dont show in the list with frontend_3_1_1 but show with pos entity`,
   pos_relations: `Impossible to create new area relation cause 'duplicate entry' problem<br>
 `,
-  area: `always return pos_name = null`,
-  area_relations: `frontend_3_2_3_1 doesnt return usagetype_id<br>
-Impossible to delete contract relation<br>
-Impossible to create new pos relation 'Duplicate entry' error`,
-  location:  `Delete problem?`,
+  area_relations: `frontend_3_2_3_1 doesnt return usagetype_id<br>`,
   location_relations: `Create impossible for Area relation cause 'Duplicate entry' error<br>
 Delete problem for area location, all rows are affected after deletion of one row<br>
 frontend_3_3_3_2 doesnt send all relations for a location<br>
@@ -40,6 +34,5 @@ serviceobject_contract_grp doesnt send city, country and partnercompany_name`,
   recurringpayment: `frontend_3_9_1 doesnt return indexclause_name<br>`,
   // endregion
   // region WP4
-  costtype_relations: `Impossible to create new externalcosttype relation<br>`,
   // endregion
 }
