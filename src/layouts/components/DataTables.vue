@@ -134,8 +134,8 @@ export default {
       }
       const filterData = { ...this.filterData }
       if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
-      if (Object.keys(this.filterData).length > 0) {
-        payload.data = [this.filterData]
+      if (Object.keys(filterData).length > 0) {
+        payload.data = [filterData]
       }
       return this.$api(payload)
         .then(({ data }) => {
