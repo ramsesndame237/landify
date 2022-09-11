@@ -6,9 +6,10 @@ export default {
 contactperson_customergroup_grp doesnt send all values <br>
 Do we have to keep grouptickettab ?<br>
 user_customergroup_grp doesnt send usertype_name and team_name`,
-  partnercompany: 'Doesnt return partnercompanies count',
-  partnercompany_relations: `We need relation table to create ticket, invoice, contadiction relations<br>
-frontend_2_5_3_5 doent send contactperson_id`,
+  partnercompany_relations: `frontend_2_5_3_5 doent send contactperson_id`,
+  partnergroup: 'We need a view to show partner_type and partnercompany_count',
+  partnergroup_relations: 'We need views for all tab registers',
+  address: 'We need a view to display all fields',
   // endregion
   // region Work Package 3
   pos: `Delete impossible<br>
@@ -39,7 +40,6 @@ serviceobject_contract_grp doesnt send city, country and partnercompany_name`,
   recurringpayment: `frontend_3_9_1 doesnt return indexclause_name<br>`,
   // endregion
   // region WP4
-  costtype: 'frontend_4_7_1 doesnt return costtype_maingroup',
   costtype_relations: `Impossible to create new externalcosttype relation<br>`,
   // endregion
 }
