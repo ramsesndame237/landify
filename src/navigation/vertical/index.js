@@ -82,7 +82,7 @@ export default [
         route: table('partnercompany'),
       },
       {
-        title: 'app.sidebar.work_pack_2.children.partner_compan_group',
+        title: 'Partner Group',
         route: table('partnergroup'),
       },
       {

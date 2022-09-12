@@ -376,7 +376,7 @@ export default {
       {
         title: 'Companies',
         primaryKey: 'company_id',
-        entity: 'customergroup_company_grp',
+        entity: 'frontend_2_2_3_1',
         entityForm: 'customergroup_company_rel',
         update: false,
         entityView: 'company',
@@ -900,7 +900,7 @@ export default {
   },
   partnergroup: {
     primaryKey: 'partnergroup_id',
-
+    entity: 'frontend_2_6_1',
     fields: [
       { key: 'partnergroup_id', auto: true },
       { key: 'partnergroup_name' },
@@ -909,7 +909,7 @@ export default {
         key: 'partnertype_id', hideOnIndex: true, type: 'list', list: 'partnertype', listLabel: 'partnertype_name',
       },
       { key: 'partnergroup_description', hideOnIndex: true, type: 'textarea' },
-      { key: 'partnercompanies_count', hideOnForm: true },
+      { key: 'partnercompany_count', hideOnForm: true },
     ],
     relations: [
       {
@@ -963,6 +963,7 @@ export default {
   },
   address: {
     primaryKey: 'address_id',
+    entity: 'frontend_2_7_1',
     fields: [
       { key: 'address_id', auto: true },
       { key: 'country_name', hideOnForm: true },
@@ -1036,6 +1037,7 @@ export default {
   },
   city: {
     primaryKey: 'city_id',
+    entity: 'frontend_2_10_1',
     fields: [
       { key: 'city_id', sortable: true, auto: true },
       { key: 'city_name', sortable: true },
@@ -1048,6 +1050,7 @@ export default {
   },
   country: {
     primaryKey: 'country_id',
+    entity: 'frontend_2_12_1',
     fields: [
       { key: 'country_id', sortable: true, auto: true },
       { key: 'country_name', sortable: true },

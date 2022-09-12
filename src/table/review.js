@@ -2,14 +2,8 @@ export default {
   // region Work Package 1
   // endregion
   // region Work Package 2
-  customergroup_relations: `Customergroup_company_grp doesnt send city_zip,city_name,country_short <br>
-contactperson_customergroup_grp doesnt send all values <br>
-Do we have to keep grouptickettab ?<br>
-user_customergroup_grp doesnt send usertype_name and team_name`,
   partnercompany_relations: `frontend_2_5_3_5 doent send contactperson_id`,
-  partnergroup: 'We need a view to show partner_type and partnercompany_count',
   partnergroup_relations: 'We need views for all tab registers',
-  address: 'We need a view to display all fields',
   // endregion
   // region Work Package 3
   pos: `Create works but the new entities dont show in the list with frontend_3_1_1 but show with pos entity`,
