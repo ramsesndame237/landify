@@ -145,7 +145,7 @@ export default {
           data.data.data.forEach(el => {
             el.__selected = false
           })
-          this.$store.commit('table/setDefinition', data)
+          this.$store.commit('table/setDefinition', { data, table: this.entity })
           this.currentItems = data.data.data
           return this.currentItems
         })

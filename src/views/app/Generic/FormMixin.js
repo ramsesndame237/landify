@@ -110,6 +110,56 @@ export default {
           })
       }))
     },
+    async saveAddressData(formField, initialAddress) {
+      const cityExists = !!initialAddress.city_id
+      await this.$api({
+        entity: 'city',
+        action: cityExists ? 'update' : 'create',
+        data: [
+          {
+            city_name: formField.subEntity.city_name,
+            city_zip: formField.subEntity.city_zip,
+            ...(cityExists ? { city_id: initialAddress.city_id } : {}),
+          },
+        ],
+      })
+        .then(async ({ data }) => {
+          const city_id = cityExists ? initialAddress.city_id : data.data.data[0][0].city_id
+          if (cityExists) {
+            // if country changed
+            if (formField.subEntity.country_id !== initialAddress.country_id) {
+              // update city_country_rel
+              await this.$api({
+                entity: 'city_country_rel',
+                action: 'delete',
+                data: [{ city_id, country_id: initialAddress.country_id }],
+              })
+              await this.$api({
+                entity: 'city_country_rel',
+                action: 'create',
+                data: [{ city_id, country_id: formField.subEntity.country_id }],
+              })
+            }
+          } else {
+            return Promise.all([
+              this.$api({
+                entity: 'address_city_rel',
+                action: 'create',
+                data: [{
+                  city_id, address_id: initialAddress.address_id,
+                }],
+              }),
+              this.$api({
+                entity: 'city_country_rel',
+                action: 'create',
+                data: [
+                  { city_id, country_id: formField.subEntity.country_id },
+                ],
+              }),
+            ])
+          }
+        })
+    },
     createNewEntities() {
       if (!Array.isArray(this.$refs.fields)) return Promise.resolve()
       const fieldsToCreate = this.formFields.filter(field => {
@@ -125,35 +175,10 @@ export default {
           entity: field.list,
           action: 'create',
           data: [formField.subEntity],
-        }).then(({ data }) => {
+        }).then(async ({ data }) => {
           const id = data.data.data[0][0][field.key]
-          if (field.key === "address") {
-            return this.$api({
-              entity: 'city',
-              action: 'create',
-              data: [
-                { city_name: formField.subEntity.city_name, city_zip: formField.subEntity.city_zip },
-              ],
-            })
-              .then(({ data }) => {
-                const city_id = data.data.data[0][0].city_id
-                return Promise.all([
-                  this.$api({
-                    entity: 'address_city_rel',
-                    action: 'create',
-                    data: [{
-                      city_id, address_id: id,
-                    }],
-                  }),
-                  this.$api({
-                    entity: 'city_country_rel',
-                    action: 'create',
-                    data: [
-                      { city_id, country_id: formField.subEntity.country_id },
-                    ],
-                  }),
-                ])
-              })
+          if (field.key === 'address_id') {
+            await this.saveAddressData(formField, { address_id: id })
           }
           formField.list.push(data.data.data[0][0])
           this.$set(this.entity, field.key, id)
@@ -165,8 +190,11 @@ export default {
           entity: field.list,
           action: 'update',
           data: [{ ...formField.subEntity, [field.key]: this.originalEntity[field.key] }],
-        }).then(({ data }) => {
+        }).then(async ({ data }) => {
           // formField.list.push(data.data.data[0][0])
+          if (field.key === 'address_id') {
+            await this.saveAddressData(formField, formField.list.find(e => e[field.key] === this.originalEntity[field.key]))
+          }
         })
       })])
     },
@@ -216,7 +244,7 @@ export default {
     },
     async loadDefinition() {
       const { data } = await this.$api({ action: 'read-rich', entity: this.table })
-      this.$store.commit('table/setDefinition', data)
+      this.$store.commit('table/setDefinition', {data, table: this.table})
     },
     getField(key) {
       return this.definition.fields.find(f => f.key === key)

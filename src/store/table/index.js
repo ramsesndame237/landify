@@ -18,8 +18,8 @@ export default {
     tableData: state => table => state.tableData[table],
   },
   mutations: {
-    setDefinition(state, data) {
-      Vue.set(state.tableDefinition, data.entity, _.pick(data.data, ['attribute', 'attribute_i18n', 'attribute_regexp', 'attribute_regexp_failure_message', 'attribute_datatype_hint', 'attribute_datatype_len']))
+    setDefinition(state, { data, table }) {
+      Vue.set(state.tableDefinition, table, _.pick(data.data, ['attribute', 'attribute_i18n', 'attribute_regexp', 'attribute_regexp_failure_message', 'attribute_datatype_hint', 'attribute_datatype_len']))
     },
     setTableData(state, data) {
       Vue.set(state.tableData, data.table, data.payload)
