@@ -1703,7 +1703,7 @@ export default {
       },
       {
         title: 'Locations',
-        entity: 'location_serviceobject_rel',
+        entity: 'frontend_3_5_3_2',
         entityForm: 'serviceobject_location_rel',
         entityView: 'location',
         primaryKey: 'location_id',
@@ -1723,7 +1723,7 @@ export default {
       },
       {
         title: 'Contracts',
-        entity: 'serviceobject_contract_grp',
+        entity: 'frontend_3_5_3_3',
         entityForm: 'serviceobject_contract_rel',
         entityView: 'contract',
         primaryKey: 'contract_id',

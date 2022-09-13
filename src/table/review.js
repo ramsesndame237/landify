@@ -20,8 +20,6 @@ Need entity for serviceobject relation<br>
 contract_recurringpayment_grp doesnt send all datas<br>
 contract_criteria_grp doesnt return criteriatype_name<br>
 Impossible to add invoice relation . Return 'Failed executing sql: {err: "1062 (23000): Duplicate entry 'x' for key 'invoice_id'<br>`,
-  serviceobject_relations: `Need entity for location relation<br>
-serviceobject_contract_grp doesnt send city, country and partnercompany_name`,
   recurringpayment: `frontend_3_9_1 doesnt return indexclause_name<br>`,
   // endregion
   // region WP4
