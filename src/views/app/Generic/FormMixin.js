@@ -126,8 +126,36 @@ export default {
           action: 'create',
           data: [formField.subEntity],
         }).then(({ data }) => {
-          formField.list.push(data.data.data[0][0])
           const id = data.data.data[0][0][field.key]
+          if (field.key === "address") {
+            return this.$api({
+              entity: 'city',
+              action: 'create',
+              data: [
+                { city_name: formField.subEntity.city_name, city_zip: formField.subEntity.city_zip },
+              ],
+            })
+              .then(({ data }) => {
+                const city_id = data.data.data[0][0].city_id
+                return Promise.all([
+                  this.$api({
+                    entity: 'address_city_rel',
+                    action: 'create',
+                    data: [{
+                      city_id, address_id: id,
+                    }],
+                  }),
+                  this.$api({
+                    entity: 'city_country_rel',
+                    action: 'create',
+                    data: [
+                      { city_id, country_id: formField.subEntity.country_id },
+                    ],
+                  }),
+                ])
+              })
+          }
+          formField.list.push(data.data.data[0][0])
           this.$set(this.entity, field.key, id)
           return id
         })

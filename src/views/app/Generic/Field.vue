@@ -98,7 +98,11 @@ export default {
   async created() {
     if (this.field.type === 'list') {
       if (this.list.length === 0) this.loading = true
-      this.promise = this.$store.dispatch('table/fetchList', this.field.list)
+      let { list } = this.field
+      if (list === 'address') {
+        list = this.subDefinition.entity
+      }
+      this.promise = this.$store.dispatch('table/fetchList', list)
       this.list = await this.promise
       this.loading = false
     } else if (this.field.type === 'boolean') {
