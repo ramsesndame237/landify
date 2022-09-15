@@ -44,6 +44,19 @@ export default {
           return data.data.data[0]
         })
     },
+    fetchTableDefinition(context, entity) {
+      return api({
+        action: 'read-rich',
+        entity,
+        per_page: 1,
+        current_page: 1,
+        lang: window.$vue.$i18n.locale,
+      })
+        .then(({ data }) => {
+          context.commit('setDefinition', { data, table: entity })
+          return data.data.data
+        })
+    },
     fetchList(context, entity) {
       return api({
         action: 'read-rich',
@@ -59,6 +72,7 @@ export default {
       })
         .then(({ data }) => {
           Vue.set(context.state.listCache, entity, data.data.data)
+          context.commit('setDefinition', { data, table: entity })
           return data.data.data
         })
     },

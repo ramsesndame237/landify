@@ -2,7 +2,6 @@ export default {
   // region Work Package 1
   // endregion
   // region Work Package 2
-  partnercompany_relations: `frontend_2_5_3_5 doent send contactperson_id`,
   partnergroup_relations: 'We need views for all tab registers',
   // endregion
   // region Work Package 3

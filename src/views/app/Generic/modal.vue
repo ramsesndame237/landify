@@ -2,8 +2,9 @@
   <!--modal-->
   <b-modal id="generic-modal" ref="modal" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary" centered
            :title="$t(forceTitle || title)" size="lg" @ok="handleOk">
-    <entity-form ref="form" :table="table" :definition="definition" :table-definition-key="tableDefinitionKey"
-                 :initial-data="initialData" :create="create" :is-relation="isRelation" inline :cols="12"/>
+    <component :is="definition.updateComponent || definition.formComponent || 'entity-form'" ref="form" :table="table"
+               :definition="definition" :table-definition-key="tableDefinitionKey" :initial-data="initialData"
+               :create="create" :is-relation="isRelation" inline :cols="12"/>
     <template v-slot:modal-footer>
       <b-button variant="secondary" :disabled="loading" @click="$refs.modal.hide()">Cancel</b-button>
       <b-button variant="primary" :disabled="loading" @click="handleOk" v-if="!withContinue">

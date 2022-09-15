@@ -145,7 +145,7 @@ export default {
           data.data.data.forEach(el => {
             el.__selected = false
           })
-          this.$store.commit('table/setDefinition', { data, table: this.entity })
+          this.$store.commit('table/setDefinition', { data, table: this.table })
           this.currentItems = data.data.data
           return this.currentItems
         })
@@ -187,9 +187,10 @@ export default {
           cancelButton: 'btn btn-outline-danger ml-1',
         },
         buttonsStyling: false,
-      }).then(result => {
+      }).then(async result => {
         if (!result.value) return
-        this.$api({
+        const firstEntityToDelete = this.fields.find(f => f.hide)
+        const data = {
           action: 'delete',
           entity: this.entityForm || this.entity,
           data: entities.map(entity => (this.fields.filter(field => field.composite).reduce(((acc, currentValue) => {
@@ -199,7 +200,15 @@ export default {
             [this.primaryKey]: entity[this.primaryKey],
             [this.secondKey]: entity[this.secondKey],
           }))),
-        }).then(resp => {
+        }
+        if (firstEntityToDelete) {
+          try {
+            await this.$api({ ...data, entity: firstEntityToDelete.relationEntity })
+          } catch (e) {
+            console.error(e)
+          }
+        }
+        this.$api(data).then(resp => {
           const count = resp.data.data.rowcount
           if (count > 0) this.$successToast(`${count} Element(s) where deleted`)
           else this.$errorToast(`${count} Element(s) where deleted`)

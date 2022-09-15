@@ -379,6 +379,7 @@ export default {
         entity: 'frontend_2_2_3_1',
         entityForm: 'customergroup_company_rel',
         update: false,
+        create: false,
         entityView: 'company',
         fields: [
           {
@@ -397,6 +398,7 @@ export default {
         entityForm: 'contactperson_customergroup_rel',
         entityView: 'contactperson',
         update: false,
+        create: false,
         fields: [
           {
             key: 'contactperson_id',
@@ -418,7 +420,7 @@ export default {
         ],
       },
       {
-        title: 'Group Ticket/Packages',
+        title: 'Tickets',
         primaryKey: 'ticket_id',
         entity: 'frontend_2_2_3_3',
         create: false,
@@ -453,7 +455,6 @@ export default {
         entity: 'frontend_2_2_3_4',
         entityForm: 'user_customergroup_rel',
         entityView: 'user',
-        update: false,
         fields: [
           {
             key: 'user_id', sortable: true, type: 'list', list: 'user', listLabel: 'user_lastname', hideOnIndex: false,
@@ -462,6 +463,48 @@ export default {
           { key: 'user_firstname', sortable: true, hideOnForm: true },
           { key: 'usertype_name', sortable: true, hideOnForm: true },
           { key: 'team_name', sortable: true, hideOnForm: true },
+          {
+            key: 'user_customergroup_valid_from',
+            sortable: true,
+            type: 'date',
+            composite: true,
+            disableOnUpdate: true,
+          },
+          {
+            key: 'user_customergroup_valid_to',
+            type: 'date',
+            rules: { date_after: ['@user_customergroup_valid_from'] },
+            sortable: true,
+          },
+        ],
+      },
+      {
+        title: 'Users',
+        primaryKey: 'user_id',
+        entity: 'frontend_2_2_3_4',
+        entityForm: 'user_customergroup_rel',
+        entityView: 'user',
+        fields: [
+          {
+            key: 'user_id', sortable: true, type: 'list', list: 'user', listLabel: 'user_lastname', hideOnIndex: false,
+          },
+          { key: 'user_lastname', sortable: true, hideOnForm: true },
+          { key: 'user_firstname', sortable: true, hideOnForm: true },
+          { key: 'usertype_name', sortable: true, hideOnForm: true },
+          { key: 'team_name', sortable: true, hideOnForm: true },
+          {
+            key: 'user_customergroup_valid_from',
+            sortable: true,
+            type: 'date',
+            composite: true,
+            disableOnUpdate: true,
+          },
+          {
+            key: 'user_customergroup_valid_to',
+            type: 'date',
+            rules: { date_after: ['@user_customergroup_valid_from'] },
+            sortable: true,
+          },
         ],
       },
     ],
@@ -479,7 +522,8 @@ export default {
     primaryKey: 'company_id',
     fields: [
       { key: 'company_id', auto: true },
-      { key: 'company_name', sortable: true },
+      { key: 'company_name' },
+      { key: 'company_shortname' },
       {
         key: 'customergroup_id',
         hideOnIndex: true,
@@ -516,15 +560,6 @@ export default {
         alwaysNew: true,
         hideOnIndex: true,
       },
-      {
-        key: 'bankdata_id',
-        type: 'list',
-        list: 'bankdata',
-        listLabel: 'bankdata_iban',
-        withNew: true,
-        alwaysNew: true,
-        hideOnIndex: true,
-      },
       { key: 'city_name', sortable: true, hideOnForm: true },
       { key: 'contactdetails_phone', sortable: true, hideOnForm: true },
       { key: 'contactdetails_email', sortable: true, hideOnForm: true },
@@ -553,6 +588,9 @@ export default {
         title: 'Contradictions',
         primaryKey: 'contradiction_id',
         entity: 'frontend_2_1_3_2',
+        create: false,
+        update: false,
+        // delete: false,
         fields: [
           {
             key: 'contradiction_id', type: 'list', list: 'contradiction', listLabel: 'contradiction_name',
@@ -596,13 +634,14 @@ export default {
         title: 'Sales Order SFM',
         primaryKey: 'product_id',
         entity: 'frontend_2_1_3_4',
+        entityForm: 'company_product_rel',
         fields: [
           {
             key: 'product_id', type: 'list', list: 'product', listLabel: 'product_name',
           },
           { key: 'product_short' },
           { key: 'product_name' },
-          { key: 'salesorder_valid_from_date', type: 'date' },
+          { key: 'salesorder_valid_from_date', type: 'date', composite: true },
           { key: 'salesorder_valid_to_date', type: 'date' },
           { key: 'product_active_from_date', type: 'date' },
           { key: 'product_active_to_date', type: 'date' },
@@ -614,6 +653,10 @@ export default {
         primaryKey: 'contactperson_id',
         entity: 'frontend_2_1_3_5',
         entityForm: 'contactperson_company_rel',
+        entityView: 'contactperson',
+        create: false,
+        update: false,
+        delete: false,
         fields: [
           {
             key: 'contactperson_id', type: 'list', list: 'contactperson', listLabel: 'contactperson_lastname',
@@ -633,17 +676,16 @@ export default {
       {
         title: 'Bankdata',
         entity: 'frontend_2_1_3_7',
-        entityForm: 'company_bankdata_rel',
+        entityForm: 'bankdata',
+        primaryKey: 'bankdata_id',
         fields: [
-          {
-            key: 'bankdata_id', type: 'list', list: 'bankdata', listLabel: 'bankdata_account_number',
-          },
-          { key: 'bankdata_bank_name', hideOnForm: true },
-          { key: 'bankdata_iban', hideOnForm: true },
-          { key: 'bankdata_bic', hideOnForm: true },
-          { key: 'bankdata_vat', hideOnForm: true },
-          { key: 'bankdata_is_active', type: 'boolean', hideOnForm: true },
-          { key: 'bankdata_bank_name', hideOnForm: true },
+          { key: 'company_id', type: 'list', list: 'company', relationEntity: 'company_bankdata_rel', hide: true },
+          { key: 'bankdata_bank_name' },
+          { key: 'bankdata_account_number' },
+          { key: 'bankdata_iban' },
+          { key: 'bankdata_bic' },
+          { key: 'bankdata_vat' },
+          { key: 'bankdata_is_active', type: 'boolean' },
         ],
         view: false,
       },
@@ -652,6 +694,8 @@ export default {
         entity: 'frontend_2_1_3_8',
         primaryKey: 'pos_id',
         entityForm: 'company_pos_rel',
+        entityView: 'pos',
+        update: false,
         fields: [
           {
             key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name',
@@ -668,17 +712,17 @@ export default {
         title: 'Payments',
         primaryKey: 'payment_id',
         entity: 'frontend_2_1_3_9',
-        entityForm: 'company_payment_rel',
+        // entityForm: 'company_payment_rel',
+        entityForm: 'payment',
+        entityView: 'payment',
         fields: [
-          {
-            key: 'payment_id', type: 'list', list: 'payment', listLabel: 'payment_info',
-          },
-          { key: 'payment_info', hideOnForm: true },
-          { key: 'payment_debitor', hideOnForm: true },
-          { key: 'payment_value', hideOnForm: true },
-          { key: 'payment_objectreference', hideOnForm: true },
-          { key: 'payment_date', hideOnForm: true, type: 'date' },
-          { key: 'payment_type', hideOnForm: true },
+          { key: 'company_id', type: 'list', list: 'company', relationEntity: 'company_payment_rel', hide: true },
+          { key: 'payment_info', },
+          { key: 'payment_debitor', },
+          { key: 'payment_value', type: 'number' },
+          { key: 'payment_objectreference', },
+          { key: 'payment_date', type: 'date' },
+          { key: 'payment_type' },
         ],
       },
       {
@@ -686,6 +730,7 @@ export default {
         primaryKey: 'user_id',
         entity: 'frontend_2_1_3_10',
         entityForm: 'user_company_rel',
+        entityView: 'user',
         fields: [
           {
             key: 'user_id', type: 'list', list: 'user', listLabel: 'user_firstname',
@@ -695,17 +740,22 @@ export default {
           { key: 'usertype_name', hideOnForm: true },
           { key: 'team_name', hideOnForm: true },
           { key: 'user_last_login_time', hideOnForm: true },
-        ],
-        default: {
-          user_company_valid_from: '2022-07-01',
-          user_company_valid_to: '2022-07-25',
-        },
-        view: false,
+          {
+            key: 'user_company_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,
+          },
+          {
+            key: 'user_company_valid_to',
+            sortable: true,
+            type: 'date',
+            rules: { date_after: ['@user_company_valid_from'] },
+          },
+        ]
       },
     ],
   },
   contactperson: {
     entity: 'frontend_2_3_1',
+    formComponent: () => import('@/views/app/FormComponent/ContactPersonForm.vue'),
     fields: [
       { key: 'contactperson_id', auto: true },
       { key: 'contactperson_firstname' },
@@ -718,6 +768,36 @@ export default {
       { key: 'contactperson_function' },
       {
         key: 'user_id', type: 'list', list: 'user', listLabel: 'user_email',
+      },
+      {
+        key: 'contactdetails_id',
+        type: 'list',
+        list: 'contactdetails',
+        listLabel: 'contactdetails_email',
+        hideOnIndex: true,
+        alwaysNew: true,
+      },
+      {
+        key: 'contactsalutation_id',
+        type: 'list',
+        list: 'contactsalutation',
+        listLabel: 'contactsalutation_name',
+        hideOnIndex: true,
+      },
+      {
+        key: 'contacttitle_id',
+        type: 'list',
+        list: 'contacttitle',
+        listLabel: 'contacttitle_name',
+        hideOnIndex: true,
+      },
+      {
+        key: 'address_id',
+        type: 'list',
+        list: 'address',
+        listLabel: 'address_street',
+        hideOnIndex: true,
+        alwaysNew: true,
       },
     ],
   },
@@ -840,13 +920,15 @@ export default {
         title: 'Contact Persons',
         primaryKey: 'contactperson_id',
         entity: 'frontend_2_5_3_5',
-        entityForm: 'contactperson',
+        create: false,
+        update: false,
+        delete: false,
         entityView: 'contactperson',
         fields: [
           { key: 'contactperson_id', type: 'list', list: 'contactperson', listLabel: 'contactperson_lastname' },
           { key: 'contactperson_lastname', hideOnForm: true },
           { key: 'contactperson_firstname', hideOnForm: true },
-          { key: 'contactperson_city_name', hideOnForm: true },
+          { key: 'city_name', hideOnForm: true },
           { key: 'contactdetails_email', hideOnForm: true },
           { key: 'contactdetails_phone', hideOnForm: true },
           { key: 'contactdetails_Mobile', hideOnForm: true },
@@ -856,16 +938,33 @@ export default {
       {
         title: 'Locations',
         primaryKey: 'location_id',
-        entity: 'frontend_2_5_3_5',
-        entityForm: 'location',
+        entity: 'frontend_2_5_3_7',
+        entityForm: 'location_partnercompany_partnertype_rel',
         fields: [
-          { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_lastname' },
+          { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name' },
           { key: 'location_name', hideOnForm: true },
           { key: 'partnercompany_name', hideOnForm: true },
+          { key: 'partnertype_name', hideOnForm: true },
           { key: 'locationtype_name', hideOnForm: true },
           { key: 'city_name', hideOnForm: true },
           { key: 'country_name', hideOnForm: true },
           { key: 'area_count', hideOnForm: true },
+          {
+            key: 'partnertype_id',
+            hideOnIndex: true,
+            type: 'list',
+            composite: true,
+            list: 'partnertype',
+            listLabel: 'partnertype_name',
+            disableOnUpdate: true,
+          },
+          {
+            key: 'location_partnercompany_partnertype_valid_from_date',
+            type: 'date',
+            composite: true,
+            disableOnUpdate: true,
+          },
+          { key: 'location_partnercompany_partnertype_valid_to_date', type: 'date' },
         ],
       },
       {
@@ -967,12 +1066,18 @@ export default {
     fields: [
       { key: 'address_id', auto: true },
       { key: 'country_name', hideOnForm: true },
-      { key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', hideOnIndex: true },
-      { key: 'city_name' },
-      { key: 'city_zip' },
       { key: 'address_street' },
       { key: 'address_house_number' },
       { key: 'address_extra' },
+      { key: 'city_zip', fromTable: 'city' },
+      { key: 'city_name', fromTable: 'city', },
+      {
+        key: 'country_id',
+        type: 'list',
+        list: 'country',
+        listLabel: 'country_name',
+        hideOnIndex: true,
+      },
       {
         key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', hideOnForm: true,
       },
@@ -987,6 +1092,8 @@ export default {
         entityForm: 'company_address_rel',
         entityView: 'company',
         update: false,
+        create: false,
+        delete: false,
         fields: [
           {
             key: 'company_id', sortable: true, type: 'list', list: 'company', listLabel: 'company_name',
@@ -995,7 +1102,7 @@ export default {
         ],
       },
     ],
-    formComponent: () => import('@/views/app/FormComponent/AddressForm.vue'),
+    // formComponent: () => import('@/views/app/FormComponent/AddressForm.vue'),
   },
   contactdetails: {
     primaryKey: 'contactdetails_id',

@@ -164,10 +164,9 @@ export default {
       if (!Array.isArray(this.$refs.fields)) return Promise.resolve()
       const fieldsToCreate = this.formFields.filter(field => {
         const formField = this.$refs.fields.find(f => f.field === field)
-        console.log((field.type === 'list') && (formField.hasNew || (field.alwaysNew && this.originalEntity[field.key] == null)))
-        return (field.type === 'list') && (formField.hasNew || (field.alwaysNew && this.originalEntity[field.key] == null))
+        return !field.hide && (field.type === 'list') && (formField.hasNew || (field.alwaysNew && this.originalEntity[field.key] == null))
       })
-      const fieldsToUpdate = this.formFields.filter(field => (field.alwaysNew && this.originalEntity[field.key] != null))
+      const fieldsToUpdate = this.formFields.filter(field => (!field.hide && field.alwaysNew && this.originalEntity[field.key] != null))
       console.log(fieldsToUpdate, fieldsToCreate, 'fields')
       return Promise.all([...fieldsToCreate.map(field => {
         const formField = this.$refs.fields.find(f => f.field === field)
@@ -244,7 +243,7 @@ export default {
     },
     async loadDefinition() {
       const { data } = await this.$api({ action: 'read-rich', entity: this.table })
-      this.$store.commit('table/setDefinition', {data, table: this.table})
+      this.$store.commit('table/setDefinition', { data, table: this.table })
     },
     getField(key) {
       return this.definition.fields.find(f => f.key === key)
@@ -258,7 +257,7 @@ export default {
   },
   computed: {
     formFields() {
-      return this.definition.fields.filter(f => !f.hideOnForm && (!f.auto || this.create))
+      return this.definition.fields.filter(f => !f.hideOnForm && (true || !f.auto || this.create))
     },
     tableDefinition() {
       return this.$store.getters['table/tableDefinition'](this.tableDefinitionKey)

@@ -133,6 +133,17 @@ export default {
       return this.definition.relations[this.$refs.tabs?.currentTab]?.filters != null
     },
   },
+  mounted() {
+    this.$watch('$refs.tabs.currentTab', (val) => {
+      if (this.tabIndex !== val) {
+        this.$router.replace({
+          name: this.$route.name,
+          params: this.$route.params,
+          query: { tab: val },
+        })
+      }
+    })
+  },
   methods: {
     currentTool() {
       if (!this.$refs.tabs) return false
@@ -163,7 +174,6 @@ export default {
       tabs.tabs[tabs.currentTab].$children[0].reload()
     },
   },
-
 }
 </script>
 

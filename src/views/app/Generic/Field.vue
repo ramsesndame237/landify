@@ -1,10 +1,10 @@
 <template>
   <div>
     <b-form-group :label="field.label||snakeToTitle(field.key)" :label-for="'field-'+field.key"
-                  :label-cols-md="inline?4:null">
+                  :class="hideMain?'hide-main':''" :label-cols-md="inline?4:null">
       <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled
                     placeholder="Automaticaly generated ..."></b-form-input>
-      <validation-provider v-else #default="{ errors }" :rules="getValidationRules(field)" :name="field.key"
+      <validation-provider v-else #default="{ errors }" :rules="getValidationRules(field)"
                            :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message[field.key]}">
         <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
@@ -25,17 +25,20 @@
                       :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
         <small class="text-danger" v-for="(error,i) in errors" :key="i">{{ error }}</small>
       </validation-provider>
-      <div v-if="field.type==='list' && ((field.withNew && entity[field.key] === newValue) || field.alwaysNew)"
-           class="mt-2" :class="inline?'':'ml-3'">
-        <component :is="subDefinition.createComponent" v-if="subDefinition.createComponent" :entity="subEntity"
-                   :table-definition="subTableDefinition"/>
-        <b-row v-else>
-          <b-col v-for="(field,index) in subFormFields" :key="index" cols="12">
-            <field :disabled="disabled" :inline="inline" :entity="subEntity" :table-definition="subTableDefinition"
-                   :field="field"/>
-          </b-col>
-        </b-row>
-      </div>
+      <template v-if="field.type==='list' && ((field.withNew && entity[field.key] === newValue) || field.alwaysNew)">
+        <slot :subEntity="subEntity" :subTableDefinition="subTableDefinition" :subFormFields="subFormFields">
+          <div class="mt-2" :class="inline?'':'ml-3'">
+            <component :is="subDefinition.createComponent" v-if="subDefinition.createComponent" :entity="subEntity"
+                       :table-definition="subTableDefinition"/>
+            <b-row v-else>
+              <b-col v-for="(field,index) in subFormFields" :key="index" cols="12">
+                <field :disabled="disabled" :inline="inline" :entity="subEntity" :table-definition="subTableDefinition"
+                       :field="field"/>
+              </b-col>
+            </b-row>
+          </div>
+        </slot>
+      </template>
     </b-form-group>
   </div>
 </template>
@@ -60,7 +63,7 @@ export default {
   components: {
     BFormInput, BFormGroup, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol, BFormCheckbox,
   },
-  props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled'],
+  props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'hideMain'],
   data() {
     return {
       list: this.$store.state.table.listCache[this.field.list] || [],
@@ -101,6 +104,8 @@ export default {
       let { list } = this.field
       if (list === 'address') {
         list = this.subDefinition.entity
+        await this.$store.dispatch('table/fetchTableDefinition', 'address')
+        await this.$store.dispatch('table/fetchTableDefinition', 'city')
       }
       this.promise = this.$store.dispatch('table/fetchList', list)
       this.list = await this.promise
@@ -122,12 +127,16 @@ export default {
   },
   methods: {
     getValidationRules(field) {
-      if (!this.tableDefinition) return {}
+      let definition = this.tableDefinition
+      if (field.fromTable) {
+        definition = this.$store.getters['table/tableDefinition'](field.fromTable)
+      }
+      if (!definition) return {}
       return {
-        required: true,
+        required: !this.field.alwaysNew,
         email: this.field.type === 'email',
-        max: this.tableDefinition?.attribute_datatype_len[field.key] || false,
-        regex: this.tableDefinition?.attribute_regexp[field.key] || false,
+        max: definition?.attribute_datatype_len[field.key] || false,
+        regex: definition?.attribute_regexp[field.key] || false,
         ...(this.field.rules || {}),
       }
     },
@@ -147,11 +156,19 @@ export default {
         }
       }
     },
-  }
+  },
 }
 </script>
 
-<style lang="scss" scoped>
-@import '@core/scss/vue/libs/vue-select.scss';
-@import '@core/scss/vue/libs/vue-flatpicker.scss';
+<style lang="scss">
+
+.hide-main {
+  > label {
+    display: none !important;
+  }
+
+  > div > span {
+    display: none;
+  }
+}
 </style>
