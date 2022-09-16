@@ -85,7 +85,7 @@
               </small>
             </div>
             <div class="d-flex align-items-center justify-content-between">
-              <b-button v-if="current_step >= 1 && current_step < max_steps" :disabled="loading" size="md" class="d-flex align-items-center"
+              <b-button v-if="current_step > 1 && current_step < max_steps" :disabled="loading" size="md" class="d-flex align-items-center"
                         variant="warning" @click="skip_step()">
                 {{ $t('app.btn.skip') }}
               </b-button>

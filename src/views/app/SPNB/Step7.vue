@@ -38,12 +38,12 @@ export default {
     definition.fields = [
       definition.fields[0],
       { key: 'contract_name', disabled: true },
+      { key: 'area_id', list: 'frontend_3_2_1', listLabel: 'area_name', type: 'list' },
       {
         key: 'pos_name',
         disabled: true,
         rules: { required: false },
       },
-      { key: 'area_id', list: 'frontend_3_2_1', listLabel: 'area_name', type: 'list' },
       ...definition.fields.slice(1)]
     definition.fields[0].disabled = true
     return {

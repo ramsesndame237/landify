@@ -4,14 +4,12 @@
       Create new Contract Recurring Payment
     </b-col>
     <b-col cols="12" md="6">
-      <entity-form ref="form" table="recurringpayment" :definition="definition" table-definition-key="recurringpayment" create :initial-data="initialData"
-                   cols="12" :disabled="loading"
-      />
+      <entity-form ref="form" table="recurringpayment" :definition="definition" table-definition-key="recurringpayment"
+                   create :initial-data="initialData" cols="12" :disabled="loading"/>
     </b-col>
     <b-col cols="12" md="6">
-      <DataTables ref="recurringpayment" :current-page="1" :per-page="100" :with-edit="false" :items="recurringpayments" :selectable="false"
-                  :with-view="false" entity="" :fields="fields"
-      />
+      <DataTables ref="recurringpayment" :current-page="1" :per-page="100" :with-edit="false" :items="recurringpayments"
+                  :selectable="false" :with-view="false" entity="" :fields="fields"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
           Save and add Recurring Payment
@@ -37,8 +35,12 @@ export default {
   },
   props: ['context', 'disabled'],
   data() {
-    const definition = JSON.parse(JSON.stringify(Table.contract.relations.find(x => x.primaryKey === 'recurringpayment_id')))
-
+    const definition = JSON.parse(JSON.stringify(Table.recurringpayment))
+    definition.fields = [
+      { key: 'contract_id', disabled: true },
+      { key: 'contract_name', disabled: true },
+      ...definition.fields.filter(f => f.key !== 'contract_id'),
+    ]
     return {
       definition,
       initialData: {
@@ -58,7 +60,7 @@ export default {
   },
   mounted() {
     this.$refs.form.loadDefinition()
-    this.definition.fields.find(x => x.key === 'contract_id').disabled = true
+    // this.definition.fields.find(x => x.key === 'contract_id').disabled = true
   },
   methods: {
     async add() {
