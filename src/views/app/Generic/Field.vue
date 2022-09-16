@@ -5,7 +5,7 @@
       <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled
                     placeholder="Automaticaly generated ..."></b-form-input>
       <validation-provider v-else #default="{ errors }" :rules="getValidationRules(field)" :name="field.key"
-                           :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message[field.key]}">
+                           :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message&& tableDefinition.attribute_regexp_failure_message[field.key]}">
         <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
         <div v-else-if="field.type==='list'" :class="(field.withNew || field.ids) ? 'd-flex': ''">
@@ -146,8 +146,8 @@ export default {
       return {
         required: !this.field.alwaysNew,
         email: this.field.type === 'email',
-        max: definition?.attribute_datatype_len[field.key] || false,
-        regex: definition?.attribute_regexp[field.key] || false,
+        max: (definition.attribute_datatype_len && definition.attribute_datatype_len[field.key]) || false,
+        regex: (definition.attribute_regexp && definition.attribute_regexp[field.key]) || false,
         ...(this.field.rules || {}),
       }
     },

@@ -1512,7 +1512,14 @@ export default {
         entityForm: 'serviceobject',
         primaryKey: 'serviceobject_id',
         fields: [
-          { key: 'area_id', type: 'list', list: 'company', relationEntity: 'area_serviceobject_rel', hide: true, hideOnIndex: true },
+          {
+            key: 'area_id',
+            type: 'list',
+            list: 'company',
+            relationEntity: 'area_serviceobject_rel',
+            hide: true,
+            hideOnIndex: true
+          },
           { key: 'serviceobject_id', auto: true },
           { key: 'serviceobject_name' },
           { key: 'serviceobject_external_name' },
@@ -1592,7 +1599,14 @@ export default {
         entityForm: 'serviceobject',
         primaryKey: 'serviceobject_id',
         fields: [
-          { key: 'location_id', type: 'list', list: 'location', relationEntity: 'location_serviceobject_rel', hide: true, hideOnIndex: true },
+          {
+            key: 'location_id',
+            type: 'list',
+            list: 'location',
+            relationEntity: 'location_serviceobject_rel',
+            hide: true,
+            hideOnIndex: true
+          },
           { key: 'serviceobject_id', auto: true },
           { key: 'serviceobject_name' },
           { key: 'serviceobject_external_name' },
@@ -1655,7 +1669,8 @@ export default {
       { key: 'contract_name' },
       { key: 'contracttype_id', hideOnForm: true },
       { key: 'location_name', hideOnForm: true },
-      { key: 'partnercompany_name', hideOnForm: true },
+      { key: 'owner', hideOnForm: true },
+      { key: 'facility_manager', hideOnForm: true },
       { key: 'pos_name', hideOnForm: true },
       { key: 'contract_begin_date', type: 'date' },
       { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
@@ -1681,14 +1696,22 @@ export default {
       {
         title: 'Documents',
         primaryKey: 'document_id',
-        entity: 'contract_document_grp',
-        entityForm: 'contract_document_rel',
+        entity: 'frontend_3_4_3_1_bottom',
+        entityForm: 'document',
         view: false,
+        create: false,
         fields: [
-          { key: 'document_id' },
+          { key: 'document_id', disabledOnUpdate: true },
           { key: 'document_name' },
-          { key: 'documenttype_name' },
-          { key: 'document_date_received' },
+          { key: 'documenttype_name', hideOnForm: true },
+          {
+            key: 'documenttype_id',
+            type: 'list',
+            list: 'documenttype',
+            listLabel: 'documenttype_name',
+            hideOnIndex: true,
+          },
+          { key: 'document_mime_type' },
         ],
       },
       {
@@ -1775,6 +1798,7 @@ export default {
         entity: 'invoice_contract_grp',
         entityForm: 'invoice_contract_rel',
         entityView: 'invoice',
+        create: false,
         fields: [
           { key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_description' },
           { key: 'invoice_date', type: 'date', hideOnForm: true },
@@ -1805,16 +1829,16 @@ export default {
         hideOnIndex: true,
       },
       { key: 'location_name', hideOnForm: true },
-      {
-        key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name', hideOnIndex: true,
-      },
       { key: 'area_name', hideOnForm: true },
-      {
-        key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name', hideOnIndex: true,
-      },
-      {
-        key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name',
-      },
+      // {
+      //   key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name', hideOnIndex: true, relationEntity: 'location_serviceobject_rel',
+      // },
+      // {
+      //   key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name', hideOnIndex: true, relationEntity: 'area_serviceobject_rel',
+      // },
+      // {
+      //   key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name',
+      // },
       { key: 'contract_last_change_time', hideOnForm: true },
     ],
     relations: [
@@ -1839,10 +1863,9 @@ export default {
       {
         title: 'Locations',
         entity: 'frontend_3_5_3_2',
-        entityForm: 'serviceobject_location_rel',
+        entityForm: 'location_serviceobject_rel',
         entityView: 'location',
         primaryKey: 'location_id',
-        create: false,
         fields: [
           {
             key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name',
@@ -1931,6 +1954,7 @@ export default {
         primaryKey: 'contract_id',
         entity: 'frontend_3_6_3',
         entityForm: 'contract_criteria_rel',
+        create: false,
         fields: [
           {
             key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name',

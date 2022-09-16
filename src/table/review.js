@@ -9,12 +9,6 @@ export default {
 Delete problem for area location, all rows are affected after deletion of one row<br>
 frontend_3_3_3_2 doesnt send all relations for a location`,
   contract: `Cannot determine witch property of frontend_3_4_1_1 response is owner or manager<br>`,
-  contract_relations: `Need entity for document relation<br>
-error 500 on document read-rich request<br>
-Need entity for serviceobject relation<br>
-contract_recurringpayment_grp doesnt send all datas<br>
-contract_criteria_grp doesnt return criteriatype_name<br>
-Impossible to add invoice relation . Return 'Failed executing sql: {err: "1062 (23000): Duplicate entry 'x' for key 'invoice_id'<br>`,
   recurringpayment: `frontend_3_9_1 doesnt return indexclause_name<br>`,
   // endregion
   // region WP4

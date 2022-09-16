@@ -49,10 +49,13 @@ export default {
         withNew: true,
       },
       {
-        key: 'user_id', type: 'list', list: 'user', listLabel: 'user_email',
+        key: 'user_id', type: 'list', list: 'user', listLabel: 'user_email', relationEntity: 'user_pos_rel', with: ['user_pos_valid_from'],
       },
       {
-        key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name', ids: this.context.areas,
+        key: 'user_pos_valid_from', type: 'date',
+      },
+      {
+        key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name', ids: this.context.areas, relationEntity: 'area_pos_rel',
       },
     ]
     return {
