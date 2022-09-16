@@ -305,4 +305,15 @@ export default [
       },
     ],
   },
+  {
+    title: 'Import',
+    icon: 'CheckSquareIcon',
+    children: [
+      {
+        title: 'Import Xlsx file',
+        route: 'import',
+        icon: 'CheckSquareIcon',
+      },
+    ],
+  },
 ]
