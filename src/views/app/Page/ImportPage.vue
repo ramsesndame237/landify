@@ -9,7 +9,7 @@
                  class="input-file" @change="currentStatus = 4; fileCount = $event.target.files.length; file = $event.target.files[0]"
           >
           <p v-if="isInitial">
-            Drag your file(s) here to begin<br> or click to browse
+            Drag your file here to begin<br> or click to browse
           </p>
           <p v-if="isCharged">
             File charged
@@ -29,12 +29,15 @@
           >Upload</b-button>
         </div>
       </form>
+      <div class="mt-5" v-if="result && currentStatus === 2">
+        <b-table responsive="sm" :items="result"/>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { BButton, BIconArrowRepeat, BIconCheck } from 'bootstrap-vue'
+import { BButton, BIconArrowRepeat, BIconCheck, BTable } from 'bootstrap-vue'
 
 const STATUS_INITIAL = 0; const STATUS_SAVING = 1; const STATUS_SUCCESS = 2; const STATUS_FAILED = 3; const STATUS_CHARGED = 4
 export default {
@@ -43,6 +46,7 @@ export default {
     BButton,
     BIconArrowRepeat,
     BIconCheck,
+    BTable,
   },
   data() {
     return {
@@ -52,6 +56,7 @@ export default {
       uploadFieldName: 'file',
       fileCount: 0,
       file: null,
+      result: null,
     }
   },
   computed: {
@@ -93,7 +98,7 @@ export default {
       const response = await this.$upload(formData)
         .then(data => {
           this.currentStatus = STATUS_SUCCESS
-          console.log(data)
+          this.result = data.data.data
         })
 
       console.log(response)
