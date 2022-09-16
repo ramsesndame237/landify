@@ -123,6 +123,20 @@ const router = new VueRouter({
         ],
       },
     },
+    {
+      path: '/app/import',
+      name: 'import',
+      component: () => import('@/views/app/Page/ImportPage.vue'),
+      meta: {
+        pageTitle: 'Import',
+        breadcrumb: [
+          {
+            text: 'import Xlsx file',
+            active: true,
+          },
+        ],
+      },
+    },
 
     // authentication
     {
