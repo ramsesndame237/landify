@@ -4,14 +4,15 @@
       {{ $t('app.content.create_pos') }}
     </b-col>
     <b-col cols="12" md="6">
-      <entity-form table="pos" :definition="definition" table-definition-key="pos" create :initial-data="initialData" cols="12"
-                   ref="form" :disabled="loading"/>
+      <entity-form table="pos" :definition="definition" table-definition-key="pos" create :initial-data="initialData"
+                   cols="12" ref="form" :disabled="loading"/>
     </b-col>
     <b-col cols="12" md="6">
-      <DataTables ref="pos" :current-page="1" :per-page="100" :with-edit="false" :items="pos" :selectable="false"
-                  :with-view="false" entity="pos" :fields="fields"/>
+      <DataTables ref="datatable" :current-page="1" :per-page="100" :with-edit="false" :items="pos" :selectable="false"
+                  :with-view="false" entity="pos" :entity-list="definition.entity" :fields="fields"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
+          <b-spinner v-if="loading" small/>
           Save and add POS
         </b-button>
       </div>
@@ -37,8 +38,25 @@ export default {
   name: 'Step5',
   props: ['context', 'disabled'],
   data() {
+    const definition = JSON.parse(JSON.stringify(Table.pos))
+    definition.fields = [
+      ...definition.fields,
+      {
+        key: 'tag_id',
+        type: 'list',
+        list: 'tag',
+        listLabel: 'tag_name',
+        withNew: true,
+      },
+      {
+        key: 'user_id', type: 'list', list: 'user', listLabel: 'user_email',
+      },
+      {
+        key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name', ids: this.context.areas,
+      },
+    ]
     return {
-      definition: JSON.parse(JSON.stringify(Table.pos)),
+      definition,
       initialData: { ...this.context.company },
       loading: false,
       pos: this.context.pos || [],

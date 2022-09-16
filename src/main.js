@@ -26,7 +26,6 @@ Vue.component('validation-observer', ValidationObserver)
 
 Vue.use(vueKanban)
 
-
 extend('email', email)
 extend('required', required)
 extend('regex', regex)

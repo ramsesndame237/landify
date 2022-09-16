@@ -8,10 +8,11 @@
                    :disabled="loading" ref="form"/>
     </b-col>
     <b-col cols="12" md="6">
-      <DataTables entity="area" :fields="fields" :current-page="1" :per-page="100" :with-edit="false" :with-view="false"
-                  :selectable="false" :items="areas"/>
+      <DataTables ref="datatable" entity="area" :entity-list="definition.entity" :fields="fields" :current-page="1" :per-page="100"
+                  :with-edit="false" :with-view="false" :selectable="false" :ids="areas"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
+          <b-spinner v-if="loading" small/>
           Save and add area
         </b-button>
       </div>
@@ -32,9 +33,11 @@ export default {
   name: 'Step4',
   props: ['context', 'disabled'],
   data() {
+    const definition = JSON.parse(JSON.stringify(Table.area))
+    definition.fields.find(f => f.key === 'location_id').ids = this.context.locations
     return {
       entity: { customergroup_id: this.context.customergroup_id },
-      definition: JSON.parse(JSON.stringify(Table.area)),
+      definition,
       fields: [
         { key: 'location_name' },
         { key: 'area_name' },
@@ -51,17 +54,15 @@ export default {
     this.$refs.form.loadDefinition()
   },
   methods: {
-    // async validate() {
-    //   const entity = await this.$refs.form.submit()
-    //   return entity
-    // },
-    // eslint-disable-next-line no-empty-function
     async add() {
       this.loading = true
-      const entity = await this.$refs.form.submit()
-      this.loading = false
-      this.areas.push(entity)
-      return entity
+      try {
+        const entity = await this.$refs.form.submit()
+        this.areas.push(entity.area_id)
+        this.$refs.datatable.reload()
+      } finally {
+        this.loading = false
+      }
     },
   },
 }

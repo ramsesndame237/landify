@@ -179,7 +179,7 @@ export default {
           if (field.key === 'address_id') {
             await this.saveAddressData(formField, { address_id: id })
           }
-          formField.list.push(data.data.data[0][0])
+          await formField.fetchList()
           this.$set(this.entity, field.key, id)
           return id
         })
@@ -271,7 +271,7 @@ export default {
       await this.loadDefinition()
     }
     if (this.create) return
-    if (!this.isRelation) {
+    if (!this.isRelation && !this.initialData[this.primaryKey]) {
       const entity = await this.$store.dispatch('table/fetchSingleItem', {
         entity: this.table,
         primaryKey: this.primaryKey,

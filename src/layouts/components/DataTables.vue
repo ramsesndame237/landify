@@ -66,6 +66,7 @@ export default {
     selectable: { type: Boolean, default: true },
     defaultSortDesc: { type: Boolean, default: false },
     items: Array,
+    ids: Array,
   },
   data() {
     return {
@@ -128,14 +129,22 @@ export default {
         per_page: perPage,
         from: 0,
         current_page: currentPage,
-        // filter: this.filterData,
         filter_all: filter ?? '',
         lang: this.$i18n.locale,
       }
-      const filterData = { ...this.filterData }
-      if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
-      if (Object.keys(filterData).length > 0) {
-        payload.data = [filterData]
+
+      if (this.ids) {
+        if (this.ids.length === 0) {
+          this.currentItems = []
+          return []
+        }
+        payload.data = this.ids.map(id => ({ [this.primaryKey]: id }))
+      } else {
+        const filterData = { ...this.filterData }
+        if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
+        if (Object.keys(filterData).length > 0) {
+          payload.data = [filterData]
+        }
       }
       return this.$api(payload)
         .then(({ data }) => {

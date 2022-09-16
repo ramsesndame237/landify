@@ -1417,7 +1417,10 @@ export default {
         listLabel: 'usagetype_name',
         sortable: true,
         hideOnIndex: true,
+        with: ['area_usagetype_valid_from_date', 'area_usagetype_valid_to_date'],
       },
+      { key: 'area_usagetype_valid_from_date', type: 'date', hideOnIndex: true },
+      // { key: 'area_usagetype_valid_to_date', type: 'date', hideOnIndex: true},
     ],
     relations: [
       {
@@ -1996,7 +1999,7 @@ export default {
         list: 'indexclause',
         listLabel: 'indexclause_name',
         hideOnIndex: true,
-        rules: {required: false},
+        rules: { required: false },
       },
       { key: 'maturitytype_name', hideOnForm: true },
       { key: 'indexclause_name', hideOnForm: true },

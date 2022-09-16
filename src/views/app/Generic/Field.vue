@@ -4,16 +4,19 @@
                   :class="hideMain?'hide-main':''" :label-cols-md="inline?4:null">
       <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled
                     placeholder="Automaticaly generated ..."></b-form-input>
-      <validation-provider v-else #default="{ errors }" :rules="getValidationRules(field)"
+      <validation-provider v-else #default="{ errors }" :rules="getValidationRules(field)" :name="field.key"
                            :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message[field.key]}">
         <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
-        <div v-else-if="field.type==='list'" :class="field.withNew ? 'd-flex': ''">
+        <div v-else-if="field.type==='list'" :class="(field.withNew || field.ids) ? 'd-flex': ''">
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
-                    :placeholder="field.key" :options="list" transition="" :label="field.listLabel" class="w-100"
+                    :placeholder="field.key" :options="listItems" transition="" :label="field.listLabel" class="w-100"
                     :loading="loading" :reduce="i => i[field.key]" @input="onChange"/>
-          <b-button class="ml-2" v-if="field.withNew && !field.alwaysNew && !disabled" variant="info"
+          <b-button class="ml-2 text-nowrap" v-if="field.withNew && !field.alwaysNew && !disabled" variant="info"
                     @click="showNewForm">New
+          </b-button>
+          <b-button v-if="field.ids" class="ml-2 text-nowrap" variant="info" @click="showAll=!showAll">
+            {{ showAll ? 'Show Created' : 'Show All' }}
           </b-button>
         </div>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
@@ -71,9 +74,14 @@ export default {
       newValue: 'Create New Element',
       loading: false,
       promise: null,
+      showAll: false,
     }
   },
   computed: {
+    listItems() {
+      if (!this.field.ids || this.field.ids.length === 0 || this.showAll) return this.list
+      return this.list.filter(item => this.field.ids.indexOf(item[this.field.key]) >= 0)
+    },
     subDefinition() {
       return Table[this.field.list]
     },
@@ -100,16 +108,7 @@ export default {
   },
   async created() {
     if (this.field.type === 'list') {
-      if (this.list.length === 0) this.loading = true
-      let { list } = this.field
-      if (list === 'address') {
-        list = this.subDefinition.entity
-        await this.$store.dispatch('table/fetchTableDefinition', 'address')
-        await this.$store.dispatch('table/fetchTableDefinition', 'city')
-      }
-      this.promise = this.$store.dispatch('table/fetchList', list)
-      this.list = await this.promise
-      this.loading = false
+      await this.fetchList()
     } else if (this.field.type === 'boolean') {
       // set false as default value
       if (this.entity[this.field.key] == null) this.entity[this.field.key] = 0
@@ -126,6 +125,18 @@ export default {
     })
   },
   methods: {
+    async fetchList() {
+      if (this.list.length === 0) this.loading = true
+      let { list } = this.field
+      if (list === 'address') {
+        list = this.subDefinition.entity
+        await this.$store.dispatch('table/fetchTableDefinition', 'address')
+        await this.$store.dispatch('table/fetchTableDefinition', 'city')
+      }
+      this.promise = this.$store.dispatch('table/fetchList', list)
+      this.list = await this.promise
+      this.loading = false
+    },
     getValidationRules(field) {
       let definition = this.tableDefinition
       if (field.fromTable) {

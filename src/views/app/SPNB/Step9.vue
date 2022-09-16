@@ -12,6 +12,7 @@
                   :with-view="false" entity="contract_specialright_rel" :fields="fields"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
+          <b-spinner v-if="loading" small/>
           Save and add Special Right
         </b-button>
       </div>

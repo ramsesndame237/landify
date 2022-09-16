@@ -9,7 +9,7 @@
     </b-col>
     <b-col cols="12" md="6">
       <DataTables ref="datatable" :current-page="1" :per-page="100" :with-edit="false" :with-view="false"
-                  entity="location" :items="locations" :fields="fields" :selectable="false"/>
+                  entity="location" :entity-list="definition.entity" :fields="fields" :selectable="false" :ids="locations"/>
       <div class="text-center">
         <b-button size="md" class="mt-2" :disabled="loading" variant="info" @click="add">
           <b-spinner v-if="loading" small/>
@@ -57,7 +57,8 @@ export default {
       this.loading = true
       const entity = await this.$refs.form.submit()
       this.loading = false
-      this.locations.push(entity)
+      this.locations.push(entity.location_id)
+      this.$refs.datatable.reload()
       return entity
     },
   },
