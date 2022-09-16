@@ -5,10 +5,6 @@ export default {
   partnergroup_relations: 'We need views for all tab registers',
   // endregion
   // region Work Package 3
-  pos: `Create works but the new entities dont show in the list with frontend_3_1_1 but show with pos entity`,
-  pos_relations: `Impossible to create new area relation cause 'duplicate entry' problem<br>
-`,
-  area_relations: `frontend_3_2_3_1 doesnt return usagetype_id<br>`,
   location_relations: `
 Delete problem for area location, all rows are affected after deletion of one row<br>
 frontend_3_3_3_2 doesnt send all relations for a location`,

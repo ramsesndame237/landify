@@ -271,7 +271,7 @@ export default {
       await this.loadDefinition()
     }
     if (this.create) return
-    if (!this.isRelation && !this.initialData[this.primaryKey]) {
+    if (!this.isRelation && (!this.initialData || !this.initialData[this.primaryKey])) {
       const entity = await this.$store.dispatch('table/fetchSingleItem', {
         entity: this.table,
         primaryKey: this.primaryKey,
