@@ -398,7 +398,7 @@ export default {
         entityForm: 'contactperson_customergroup_rel',
         entityView: 'contactperson',
         update: false,
-        formComponent: ()=> import('@/views/app/FormComponent/CustomerGroupContactPerson.vue'),
+        formComponent: () => import('@/views/app/FormComponent/CustomerGroupContactPerson.vue'),
         fields: [
           {
             key: 'contactperson_id',
@@ -487,7 +487,6 @@ export default {
       { key: 'bankdata_id', auto: true },
       { key: 'bankdata_iban' },
       { key: 'bankdata_bic' },
-      { key: 'bankdata_bank_name' },
       { key: 'bankdata_bank_name' },
       { key: 'bankdata_account_number' },
       { key: 'bankdata_vat' },
@@ -738,6 +737,7 @@ export default {
   },
   contactperson: {
     entity: 'frontend_2_3_1',
+    create: false,
     fieldComponent: () => import('@/views/app/CreateComponent/ContactPersonForm.vue'),
     fields: [
       { key: 'contactperson_id', auto: true },
@@ -746,11 +746,11 @@ export default {
       { key: 'city_name', hideOnForm: true },
       { key: 'contactdetails_phone', hideOnForm: true },
       { key: 'contactdetails_email', hideOnForm: true },
-      { key: 'contactperson_department', hideOnIndex: true },
+      { key: 'contactperson_department', hideOnIndex: true, rules: { required: false } },
       { key: 'contactperson_shortname', hideOnIndex: true },
-      { key: 'contactperson_function' },
+      { key: 'contactperson_function', rules: { required: false } },
       {
-        key: 'user_id', type: 'list', list: 'user', listLabel: 'user_email', rules: {required: false}
+        key: 'user_id', type: 'list', list: 'user', listLabel: 'user_email', rules: { required: false }
       },
       {
         key: 'contactdetails_id',
@@ -759,7 +759,7 @@ export default {
         listLabel: 'contactdetails_email',
         hideOnIndex: true,
         alwaysNew: true,
-        onlyForm: true,
+        // onlyForm: true,
       },
       {
         key: 'contactsalutation_id',
@@ -767,6 +767,7 @@ export default {
         list: 'contactsalutation',
         listLabel: 'contactsalutation_name',
         hideOnIndex: true,
+        rules: { required: false },
       },
       {
         key: 'contacttitle_id',
@@ -774,6 +775,7 @@ export default {
         list: 'contacttitle',
         listLabel: 'contacttitle_name',
         hideOnIndex: true,
+        rules: { required: false },
       },
       {
         key: 'address_id',
@@ -782,7 +784,7 @@ export default {
         listLabel: 'address_street',
         hideOnIndex: true,
         alwaysNew: true,
-        onlyForm: true,
+        // onlyForm: true,
       },
     ],
   },
@@ -790,7 +792,11 @@ export default {
     fields: [
       { key: 'payment_id', auto: true },
       {
-        key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name',
+        key: 'company_id',
+        type: 'list',
+        list: 'company',
+        listLabel: 'company_name',
+        relationEntity: 'company_payment_rel',
       },
       { key: 'payment_info' },
       { key: 'payment_debitor' },
@@ -1048,6 +1054,7 @@ export default {
         entityForm: 'partnergroup_contactperson_rel',
         entityView: 'contactperson',
         update: false,
+        formComponent: () => import('@/views/app/FormComponent/PartnerGroupContactPerson'),
         fields: [
           {
             key: 'contactperson_id',
@@ -1078,7 +1085,7 @@ export default {
       { key: 'address_id', auto: true },
       { key: 'address_street' },
       { key: 'address_house_number' },
-      { key: 'address_extra' },
+      { key: 'address_extra', rules: { required: false } },
       {
         key: 'city_id',
         type: 'list',
@@ -1112,7 +1119,54 @@ export default {
           { key: 'company_name', sortable: true, hideOnForm: true },
         ],
       },
+      {
+        title: 'Locations',
+        primaryKey: 'company_id',
+        entity: 'location_address_grp',
+        entityView: 'location',
+        update: false,
+        create: false,
+        delete: false,
+        fields: [
+          {
+            key: 'location_id',
+          },
+          { key: 'location_name' },
+        ],
+      },
+      {
+        title: 'Contact Persons',
+        primaryKey: 'contactperson_id',
+        entity: 'contactperson_address_grp',
+        entityView: 'contactperson',
+        update: false,
+        create: false,
+        delete: false,
+        fields: [
+          {
+            key: 'contactperson_id',
+          },
+          { key: 'contactperson_firstname' },
+          { key: 'contactperson_lastname' },
+        ],
+      },
+      {
+        title: 'Partner Companies',
+        primaryKey: 'partnercompany_id',
+        entity: 'partnercompany_address_grp',
+        entityView: 'partnercompany',
+        update: false,
+        create: false,
+        delete: false,
+        fields: [
+          {
+            key: 'partnercompany_id',
+          },
+          { key: 'partnercompany_name' },
+        ],
+      },
     ],
+
     // formComponent: () => import('@/views/app/FormComponent/AddressForm.vue'),
   },
   contactdetails: {
@@ -1121,10 +1175,10 @@ export default {
       {
         key: 'contactdetails_id', sortable: true, auto: true, hiddenOnForm: true,
       },
-      { key: 'contactdetails_email', sortable: true },
-      { key: 'contactdetails_phone', sortable: true },
-      { key: 'contactdetails_mobile', sortable: true },
-      { key: 'contactdetails_fax', sortable: true },
+      { key: 'contactdetails_email', rules: { required: false } },
+      { key: 'contactdetails_phone', rules: { required: false } },
+      { key: 'contactdetails_mobile', rules: { required: false } },
+      { key: 'contactdetails_fax', rules: { required: false } },
     ],
   },
   companydetails: {
@@ -1709,13 +1763,7 @@ export default {
       {
         key: 'contracttype_id', type: 'list', list: 'contracttype', listLabel: 'contracttype_name', hideOnIndex: true,
       },
-      {
-        key: 'documentcontracttype_id',
-        type: 'list',
-        list: 'documentcontracttype',
-        listLabel: 'documentcontracttype_name',
-        hideOnIndex: true,
-      },
+
     ],
     relations: [
       {
@@ -1737,6 +1785,15 @@ export default {
             hideOnIndex: true,
           },
           { key: 'document_mime_type' },
+          { key: 'documentcontracttype_name', hideOnForm: true },
+          {
+            key: 'documentcontracttype_id',
+            type: 'list',
+            list: 'documentcontracttype',
+            listLabel: 'documentcontracttype_name',
+            hideOnIndex: true,
+            relationEntity: 'document_contract_documentcontracttype_rel',
+          },
         ],
       },
       {

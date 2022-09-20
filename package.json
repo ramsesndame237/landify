@@ -29,6 +29,7 @@
     "core-js": "3.22.0",
     "echarts": "5.2.1",
     "font-awesome": "^4.7.0",
+    "fuse.js": "^6.6.2",
     "jsonwebtoken": "8.5.1",
     "leaflet": "1.6.0",
     "portal-vue": "2.1.7",

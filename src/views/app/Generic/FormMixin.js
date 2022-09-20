@@ -198,6 +198,10 @@ export default {
     saveEntity(entity, originalEntity, formFields, fieldComponents, table, definition, primaryKey, create) {
       return this.createNewEntities(fieldComponents, formFields, entity, originalEntity)
         .then(() => {
+          /// if we updating and we have no changes
+          if (!create && formFields.every(f => entity[f.key] === originalEntity[f.key])) {
+            return { noupdate: true, entity }
+          }
           return this.$api({
             entity: table,
             action: create ? 'create' : 'update',
@@ -231,10 +235,11 @@ export default {
         this.loading = true
         return this.saveEntity(this.entity, this.originalEntity, this.formFields, this.$refs.fields, this.table, this.definition, this.primaryKey, this.create)
           .then(async data => {
-            await this.afterSaveHook(data.data.data[0][0])
-            this.$successToast(data.data.message)
+            const result = data.noupdate ? data.entity : data.data.data[0][0]
+            await this.afterSaveHook(result)
+            this.$successToast(data.noupdate ? 'OK' : data.data.message)
             // navigate to view page or reload table
-            return data.data.data[0][0]
+            return result
           })
           .catch(e => {
             console.log(e)

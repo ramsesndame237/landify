@@ -42,10 +42,14 @@
     <b-col cols="12">
       <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('address_id')">
         <template #default="{subFormFields, subTableDefinition, subEntity}">
-          <b-row>
+          <b-row class="mt-2">
             <b-col cols="12" md="6">
               <field :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
                      :field="subFormFields.find(f=> f.key==='address_street')"/>
+            </b-col>
+            <b-col cols="12" md="6">
+              <field :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
+                     :field="subFormFields.find(f=> f.key==='address_house_number')"/>
             </b-col>
             <b-col cols="12" md="6">
               <field :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
@@ -55,7 +59,7 @@
               <field :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
                      :field="subFormFields.find(f=> f.key==='city_id')">
                 <template #default="{subFormFields, subTableDefinition, subEntity}">
-                  <b-row>
+                  <b-row >
                     <b-col cols="12" md="6">
                       <b-row>
                         <b-col cols="12" md="6">
@@ -87,7 +91,7 @@
       <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
              :field="getField('contactdetails_id')">
         <template #default="{subFormFields, subTableDefinition, subEntity}">
-          <b-row>
+          <b-row class="mt-2">
             <b-col cols="12" md="6">
               <field :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
                      :field="subFormFields.find(f=> f.key==='contactdetails_phone')"/>

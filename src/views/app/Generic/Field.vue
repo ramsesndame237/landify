@@ -9,8 +9,9 @@
                          :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
         <div v-else-if="field.type==='list'" :class="(field.withNew || field.ids) ? 'd-flex': ''">
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
+                    :get-option-label="defaultLabelFunction[field.key]||(option=> option[field.listLabel])"
                     :placeholder="field.key" :options="listItems" transition="" :label="field.listLabel" class="w-100"
-                    :loading="loading" :reduce="i => i[field.key]" @input="onChange"/>
+                    :loading="loading" :reduce="i => i[field.key]" :filter="fuseSearch" @input="onChange"/>
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm">New
           </b-button>
@@ -18,7 +19,7 @@
             {{ showAll ? 'Show Created' : 'Show All' }}
           </b-button>
         </div>
-        <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
+        <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled" :config="dateConfig"
                     :state="errors.length > 0 ? false:null" :placeholder="field.key" class="form-control"/>
         <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key" value="1" unchecked-value="0"
@@ -47,6 +48,7 @@
 </template>
 
 <script>
+import Fuse from 'fuse.js'
 import {
   BButton, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow,
 } from 'bootstrap-vue'
@@ -69,6 +71,12 @@ export default {
       loading: false,
       promise: null,
       showAll: false,
+      defaultLabelFunction: {
+        address_id: option => `${option.city_zip || ''} - ${option.city_name || ''} - ${option.address_street || ''}`,
+      },
+      dateConfig: {
+        allowInput: true,
+      },
     }
   },
   computed: {
@@ -123,6 +131,15 @@ export default {
     })
   },
   methods: {
+    fuseSearch(options, search) {
+      const fuse = new Fuse(options, {
+        keys: this.list[0] ? Object.keys(this.list[0]) : [],
+        shouldSort: true,
+      })
+      return search.length
+        ? fuse.search(search).map(({ item }) => item)
+        : fuse.list
+    },
     getSubFields() {
       console.log(this.$refs)
       if (this.subDefinition.fieldComponent) {
