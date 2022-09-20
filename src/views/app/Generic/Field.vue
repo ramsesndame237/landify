@@ -1,9 +1,8 @@
 <template>
   <div>
-    <b-form-group :label="field.label||snakeToTitle(field.key)" :label-for="'field-'+field.key"
-                  :class="hideMain?'hide-main':''" :label-cols-md="inline?4:null">
-      <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled
-                    placeholder="Automaticaly generated ..."></b-form-input>
+    <b-form-group v-if="visible" :label="field.label||snakeToTitle(field.key)" :label-for="'field-'+field.key"
+                  :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null">
+      <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled placeholder="Automaticaly generated ..."/>
       <validation-provider v-else #default="{ errors }" :rules="getValidationRules(field)" :name="field.key"
                            :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message&& tableDefinition.attribute_regexp_failure_message[field.key]}">
         <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
@@ -12,7 +11,7 @@
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
                     :placeholder="field.key" :options="listItems" transition="" :label="field.listLabel" class="w-100"
                     :loading="loading" :reduce="i => i[field.key]" @input="onChange"/>
-          <b-button class="ml-2 text-nowrap" v-if="field.withNew && !field.alwaysNew && !disabled" variant="info"
+          <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm">New
           </b-button>
           <b-button v-if="field.ids" class="ml-2 text-nowrap" variant="info" @click="showAll=!showAll">
@@ -26,17 +25,18 @@
                          style="margin-top: 5px"/>
         <b-form-input v-else v-model="entity[field.key]" :type="field.type||'text'" :disabled="disabled"
                       :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
-        <small class="text-danger" v-for="(error,i) in errors" :key="i">{{ error }}</small>
+        <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
       </validation-provider>
       <template v-if="field.type==='list' && ((field.withNew && entity[field.key] === newValue) || field.alwaysNew)">
         <slot :subEntity="subEntity" :subTableDefinition="subTableDefinition" :subFormFields="subFormFields">
-          <div class="mt-2" :class="inline?'':'ml-3'">
-            <component :is="subDefinition.createComponent" v-if="subDefinition.createComponent" :entity="subEntity"
-                       :table-definition="subTableDefinition"/>
+          <div :class="field.onlyForm?'':('mt-2 '+(inline ? '': 'ml-3'))">
+            <component :is="subDefinition.fieldComponent" v-if="subDefinition.fieldComponent" ref="fieldComponent"
+                       :entity="subEntity" :table-definition="subTableDefinition" :definition="subDefinition"
+                       :disabled="disabled"/>
             <b-row v-else>
               <b-col v-for="(field,index) in subFormFields" :key="index" cols="12">
-                <field :disabled="disabled" :inline="inline" :entity="subEntity" :table-definition="subTableDefinition"
-                       :field="field"/>
+                <field ref="fields" :disabled="disabled" :inline="inline" :entity="subEntity"
+                       :table-definition="subTableDefinition" :field="field"/>
               </b-col>
             </b-row>
           </div>
@@ -48,13 +48,7 @@
 
 <script>
 import {
-  BFormGroup,
-  BFormInput,
-  BButton,
-  BFormTextarea,
-  BRow,
-  BCol,
-  BFormCheckbox,
+  BButton, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow,
 } from 'bootstrap-vue'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
@@ -66,7 +60,7 @@ export default {
   components: {
     BFormInput, BFormGroup, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol, BFormCheckbox,
   },
-  props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'hideMain'],
+  props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled'],
   data() {
     return {
       list: this.$store.state.table.listCache[this.field.list] || [],
@@ -78,6 +72,9 @@ export default {
     }
   },
   computed: {
+    visible() {
+      return this.field.visible ? this.field.visible(this.entity) : true
+    },
     listItems() {
       if (!this.field.ids || this.field.ids.length === 0 || this.showAll) return this.list
       return this.list.filter(item => this.field.ids.indexOf(item[this.field.key]) >= 0)
@@ -86,7 +83,8 @@ export default {
       return Table[this.field.list]
     },
     subFormFields() {
-      return this.subDefinition.fields.filter(f => !f.hideOnForm && !f.auto)
+      const excluded = (typeof this.field.without === 'string') ? [this.field.without] : (Array.isArray(this.field.without) ? this.field.without : [])
+      return this.subDefinition.fields.filter(f => !f.hideOnForm && !f.auto && excluded.indexOf(f.key) === -1)
     },
     subTableDefinition() {
       return this.$store.getters['table/tableDefinition'](this.field.list)
@@ -125,6 +123,13 @@ export default {
     })
   },
   methods: {
+    getSubFields() {
+      console.log(this.$refs)
+      if (this.subDefinition.fieldComponent) {
+        return this.$refs.fieldComponent.$children.filter(c => c.$options.name === 'Field')
+      }
+      return this.$refs.fields || this.$children[0].$children.filter(c => c.$options.name === 'Field')
+    },
     async fetchList() {
       if (this.list.length === 0) this.loading = true
       let { list } = this.field
@@ -133,8 +138,10 @@ export default {
         await this.$store.dispatch('table/fetchTableDefinition', 'address')
         await this.$store.dispatch('table/fetchTableDefinition', 'city')
       }
-      this.promise = this.$store.dispatch('table/fetchList', list)
-      this.list = await this.promise
+      this.list = await this.$store.dispatch('table/fetchList', this.field.entityList || list)
+      if (this.field.entityList) {
+        await this.$store.dispatch('table/fetchTableDefinition', list)
+      }
       this.loading = false
     },
     getValidationRules(field) {
@@ -159,10 +166,9 @@ export default {
     onChange() {
       console.log('change')
       if (this.field.alwaysNew) {
-        const selected = this.list.find(e => e[this.field.key] === this.entity[this.field.key])
-        if (selected) {
+        if (this.selectedValue) {
           this.subFormFields.forEach(field => {
-            this.$set(this.subEntity, field.key, selected[field.key])
+            this.$set(this.subEntity, field.key, this.selectedValue[field.key])
           })
         }
       }

@@ -163,7 +163,12 @@ export default {
     },
     newElement() {
       const { tabs } = this.$refs
-      tabs.tabs[tabs.currentTab].$children[1].openModal(true, { [this.primaryKey]: this.entityId }, `Add ${this.definition.relations[tabs.currentTab].title}`)
+      const route = this.definition.relations[tabs.currentTab].newRoute
+      if (route) {
+        this.$router.push({ name: route.name, params: { id: this.entityId, table: route.params.table } })
+      } else {
+        tabs.tabs[tabs.currentTab].$children[1].openModal(true, { [this.primaryKey]: this.entityId }, `Add ${this.definition.relations[tabs.currentTab].title}`)
+      }
     },
     editElement(entity) {
       const { tabs } = this.$refs
@@ -176,7 +181,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-@import '../../../assets/scss/pages/page-users.scss';
-</style>

@@ -5,6 +5,7 @@ import {
   BFormInput,
 } from 'bootstrap-vue'
 import Field from '@/views/app/Generic/Field.vue'
+import Table from '@/table'
 
 export default {
   components: {
@@ -24,6 +25,7 @@ export default {
     disabled: Boolean,
     cols: { default: 6 },
     inline: { type: Boolean, default: false },
+    fetchData: { type: Boolean, default: true },
     entityId: { default: 0 },
   },
   data() {
@@ -56,44 +58,52 @@ export default {
           }
         })))
     },
-    saveRelations(entityId) {
-      const keys = [this.definition.primaryKey, ...(this.definition.fields.filter(f => f.composite).map(f => f.key))]
-      return Promise.all(this.definition.fields.filter(field => field.type === 'list' && keys.indexOf(field.key) === -1 && (this.entity[field.key] !== this.originalEntity[field.key] || !!field.with)).map(field => {
+    saveRelations(table, definition, primaryKey, entityId, entity, originalEntity) {
+      const keys = [definition.primaryKey, ...(definition.fields.filter(f => f.composite).map(f => f.key))]
+      return Promise.all(definition.fields.filter(field => field.type === 'list' && keys.indexOf(field.key) === -1 && (entity[field.key] !== originalEntity[field.key] || !!field.with)).map(field => {
         const extras = {}
         if (field.with) {
           (typeof field.with === 'string' ? [field.with] : field.with).forEach(val => {
-            extras[val] = this.entity[val]
+            extras[val] = entity[val]
           })
         }
-        const isNew = this.originalEntity[field.key] == null
+        const isNew = originalEntity[field.key] == null
         if (!isNew && field.alwaysNew) return Promise.resolve()
-        const entityName = field.relationEntity ?? (`${this.table}_${field.list}_rel`)
+        const entityName = field.relationEntity ?? (`${table}_${field.list}_rel`)
         const data = {
-          [field.key]: this.entity[field.key],
-          [this.primaryKey]: entityId ?? this.entity[this.primaryKey],
+          [field.key]: entity[field.key],
+          [primaryKey]: entityId ?? entity[primaryKey],
           ...extras,
         }
         return Promise.resolve().then(() => {
           if (isNew) {
-            return this.$api({
-              entity: entityName,
-              action: 'create',
-              data: [data],
-            })
+            // if id is non null
+            if (data[field.key]) {
+              return this.$api({
+                entity: entityName,
+                action: 'create',
+                data: [data],
+              })
+            }
+            return Promise.resolve()
           }
           return this.$api({
             entity: entityName,
             action: 'delete',
-            data: [{ ...data, [field.key]: this.originalEntity[field.key] }],
+            data: [{ ...data, [field.key]: originalEntity[field.key] }],
           })
-            .then(() => this.$api({
-              entity: entityName,
-              action: 'create',
-              data: [data],
-            }))
+            .then(() => {
+              if (data[field.key]) {
+                return this.$api({
+                  entity: entityName,
+                  action: 'create',
+                  data: [data],
+                })
+              }
+            })
         })
           .then(resp => {
-            const errors = resp.data.data.errors
+            const errors = resp ?? resp.data.data.errors
             if (typeof errors === 'string') {
               this.$refs.form.setErrors({
                 [field.key]: [errors],
@@ -160,42 +170,58 @@ export default {
           }
         })
     },
-    createNewEntities() {
-      if (!Array.isArray(this.$refs.fields)) return Promise.resolve()
-      const fieldsToCreate = this.formFields.filter(field => {
-        const formField = this.$refs.fields.find(f => f.field === field)
-        return !field.hide && (field.type === 'list') && (formField.hasNew || (field.alwaysNew && this.originalEntity[field.key] == null))
-      })
-      const fieldsToUpdate = this.formFields.filter(field => (!field.hide && field.alwaysNew && this.originalEntity[field.key] != null))
-      console.log(fieldsToUpdate, fieldsToCreate, 'fields')
-      return Promise.all([...fieldsToCreate.map(field => {
-        const formField = this.$refs.fields.find(f => f.field === field)
-        return this.$api({
-          entity: field.list,
-          action: 'create',
-          data: [formField.subEntity],
-        }).then(async ({ data }) => {
-          const id = data.data.data[0][0][field.key]
-          if (field.key === 'address_id') {
-            await this.saveAddressData(formField, { address_id: id })
-          }
-          await formField.fetchList()
-          this.$set(this.entity, field.key, id)
-          return id
+    createNewEntities(fieldComponents, formFields, entity, originalEntity) {
+      if (!Array.isArray(fieldComponents)) return Promise.resolve()
+      return Promise.all(formFields.filter(field => {
+        const component = fieldComponents.find(f => f.field === field)
+        return !field.hide && component && (field.type === 'list') && (component.hasNew || field.alwaysNew)
+      }).map(field => {
+        const component = fieldComponents.find(f => f.field === field)
+        const create = component.hasNew || (field.alwaysNew && originalEntity[field.key] == null)
+        const formField = fieldComponents.find(f => f.field === field)
+        const subDefinition = Table[field.list]
+        const data = create ? formField.subEntity : { ...formField.subEntity, [field.key]: originalEntity[field.key] }
+        return this.saveEntity(data,
+          originalEntity[field.key] == null ? {} : formField.list.find(i => i[field.key] === originalEntity[field.key]),
+          this.getFormFields(subDefinition), formField.getSubFields(), field.list, subDefinition, this.getPrimaryKey(subDefinition), create)
+          .then(async data => {
+            const id = data.data.data[0][0][field.key]
+            // if (field.key === 'address_id') {
+            //   await this.saveAddressData(formField, create ? { address_id: id } : formField.list.find(e => e[field.key] === originalEntity[field.key]))
+            // }
+            if (!field.onlyForm) await formField.fetchList()
+            if (create) this.$set(entity, field.key, id)
+            return data
+          })
+      }))
+    },
+    saveEntity(entity, originalEntity, formFields, fieldComponents, table, definition, primaryKey, create) {
+      return this.createNewEntities(fieldComponents, formFields, entity, originalEntity)
+        .then(() => {
+          return this.$api({
+            entity: table,
+            action: create ? 'create' : 'update',
+            data: [
+              entity,
+            ],
+          })
+            .then(async ({ data }) => {
+              if (data.data.errors[0]) {
+                this.$errorToast(data.data.errors[0]['Failed executing sql'].err)
+                throw new Error(data.data.errors[0]['Failed executing sql'].err)
+              } else {
+                try {
+                  await this.saveRelations(table, definition, primaryKey, data.data.data[0][0][primaryKey], entity, originalEntity)
+                } finally {
+                  // this.$successToast(data.data.message)
+                  // navigate to view page or reload table
+                }
+              }
+              return data
+            })
         })
-      }), ...fieldsToUpdate.map(field => {
-        const formField = this.$refs.fields.find(f => f.field === field)
-        return this.$api({
-          entity: field.list,
-          action: 'update',
-          data: [{ ...formField.subEntity, [field.key]: this.originalEntity[field.key] }],
-        }).then(async ({ data }) => {
-          // formField.list.push(data.data.data[0][0])
-          if (field.key === 'address_id') {
-            await this.saveAddressData(formField, formField.list.find(e => e[field.key] === this.originalEntity[field.key]))
-          }
-        })
-      })])
+    },
+    async afterSaveHook(data) {
     },
     submit() {
       return this.$refs.form.validate().then(success => {
@@ -203,35 +229,19 @@ export default {
           return Promise.reject(new Error('Invalid Form'))
         }
         this.loading = true
-        return this.createNewEntities()
-          .then(() => this.$api({
-            entity: this.table,
-            action: this.create ? 'create' : 'update',
-            data: [
-              this.entity,
-            ],
+        return this.saveEntity(this.entity, this.originalEntity, this.formFields, this.$refs.fields, this.table, this.definition, this.primaryKey, this.create)
+          .then(async data => {
+            await this.afterSaveHook(data.data.data[0][0])
+            this.$successToast(data.data.message)
+            // navigate to view page or reload table
+            return data.data.data[0][0]
           })
-            .then(async ({ data }) => {
-              console.log('is relation', this.isRelation)
-              if (data.data.errors[0]) {
-                this.$errorToast(data.data.errors[0]['Failed executing sql'].err)
-                throw new Error(data.data.errors[0]['Failed executing sql'].err)
-              } else {
-                try {
-                  await this.saveRelations(data.data.data[0][0][this.primaryKey])
-                } finally {
-                  this.$successToast(data.data.message)
-                  // navigate to view page or reload table
-                }
-              }
-              return data.data.data[0][0]
-            })
-            .catch(e => {
-              console.log(e)
-              const title = e.response?.data.detail || e.data?.errors[0].err
-              this.$errorToast(title)
-              return Promise.reject(e)
-            }))
+          .catch(e => {
+            console.log(e)
+            const title = e.response?.data.detail || e.data?.errors[0].err
+            this.$errorToast(title)
+            return Promise.reject(e)
+          })
           .finally(() => this.loading = false)
       })
     },
@@ -254,16 +264,22 @@ export default {
     isDisabledFromName(key) {
       return this.isDisabled(this.getField(key))
     },
+    getFormFields(definition) {
+      return definition.fields.filter(f => !f.hideOnForm)
+    },
+    getPrimaryKey(definition) {
+      return definition.primaryKey ?? definition.fields.find(f => f.auto).key
+    },
   },
   computed: {
     formFields() {
-      return this.definition.fields.filter(f => !f.hideOnForm && (true || !f.auto || this.create))
+      return this.getFormFields(this.definition)
     },
     tableDefinition() {
       return this.$store.getters['table/tableDefinition'](this.tableDefinitionKey)
     },
     primaryKey() {
-      return this.definition.primaryKey ?? this.definition.fields.find(f => f.auto).key
+      return this.getPrimaryKey(this.definition)
     },
   },
   async created() {
@@ -271,7 +287,7 @@ export default {
       await this.loadDefinition()
     }
     if (this.create) return
-    if (!this.isRelation && (!this.initialData || !this.initialData[this.primaryKey])) {
+    if (!this.isRelation && this.fetchData) {
       const entity = await this.$store.dispatch('table/fetchSingleItem', {
         entity: this.table,
         primaryKey: this.primaryKey,

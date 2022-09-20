@@ -46,6 +46,3 @@ export default {
 }
 </script>
 
-<style scoped>
-@import '../../../assets/scss/pages/page-users.scss';
-</style>

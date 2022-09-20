@@ -198,7 +198,7 @@ export default {
         buttonsStyling: false,
       }).then(async result => {
         if (!result.value) return
-        const firstEntityToDelete = this.fields.find(f => f.hide)
+        const entityToDelete = this.fields.find(f => f.alwaysNew)
         const data = {
           action: 'delete',
           entity: this.entityForm || this.entity,
@@ -210,14 +210,16 @@ export default {
             [this.secondKey]: entity[this.secondKey],
           }))),
         }
-        if (firstEntityToDelete) {
-          try {
-            await this.$api({ ...data, entity: firstEntityToDelete.relationEntity })
-          } catch (e) {
-            console.error(e)
+
+        this.$api(data).then(async resp => {
+          if (entityToDelete) {
+            try {
+              await this.$api({ ...data, entity: entityToDelete.list })
+            } catch (e) {
+              console.error(e)
+            }
           }
-        }
-        this.$api(data).then(resp => {
+
           const count = resp.data.data.rowcount
           if (count > 0) this.$successToast(`${count} Element(s) where deleted`)
           else this.$errorToast(`${count} Element(s) where deleted`)

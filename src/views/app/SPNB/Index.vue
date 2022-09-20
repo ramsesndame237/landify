@@ -326,7 +326,6 @@ export default {
 </script>
 
 <style scoped>
-@import '../../../assets/scss/pages/page-users.scss';
 
 .bg-pink {
   background: #D5113010;
