@@ -9,7 +9,7 @@
     </b-col>
 
     <b-col cols="12" md="6">
-      <field :field="{key: 'customergroup_name'}" :entity="entity" :disabled="disabled"/>
+      <field :field="{key: 'customergroup_name'}" :entity="entity" :disabled="disabled || entity.customergroup_id != null"/>
     </b-col>
   </b-row>
 </template>

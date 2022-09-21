@@ -87,11 +87,12 @@ export default {
   methods: {
     async add() {
       this.loading = true
-      const entity = await this.$refs.form.submit()
-      this.loading = false
-      this.locations.push(entity.location_id)
-      this.$refs.datatable.reload()
-      return entity
+      this.$refs.form.submit()
+        .then(entity => {
+          this.locations.push(entity.location_id)
+          this.$refs.datatable.reload()
+        })
+        .finally(() => this.loading = false)
     },
   },
 }
