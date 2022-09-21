@@ -2,10 +2,12 @@
 async function importPartnercompany(a, data, rapport) {
 
   // eslint-disable-next-line no-param-reassign
-  rapport.Imported = data.length - 7
+    const start = 18
+  const end = data.length
+  rapport.Imported = end - start
 
   // Get variables
-  for (let i = 7; i < 8; i++) {
+  for (let i = start; i < end; i++) {
     const partnercompany_name = data[i][1]
     const partnercompany_shortname = data[i][2]
     const partnergroup_name = data[i][3]
