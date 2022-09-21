@@ -11,7 +11,8 @@
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
                     :get-option-label="defaultLabelFunction[field.key]||(option=> option[field.listLabel])"
                     :placeholder="field.key" :options="listItems" transition="" :label="field.listLabel" class="w-100"
-                    :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch" @input="onChange"/>
+                    :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
+                    @input="onChange"/>
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm">New
           </b-button>
@@ -63,7 +64,7 @@ export default {
   components: {
     BFormInput, BFormGroup, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol, BFormCheckbox,
   },
-  props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled'],
+  props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue'],
   data() {
     return {
       list: this.$store.state.table.listCache[this.field.list] || [],
@@ -85,11 +86,19 @@ export default {
       return this.field.visible ? this.field.visible(this.entity) : true
     },
     listItems() {
-      if (!this.field.ids || this.field.ids.length === 0 || this.showAll) return this.list
+      if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
+        if (this.field.filter_key && this.filterValue) {
+          console.log('filter with value', this.filterValue)
+          return this.list.filter(e => e[this.field.filter_key] === this.filterValue)
+        }
+        return this.list
+      }
       return this.list.filter(item => this.field.ids.indexOf(item[this.field.key]) >= 0)
     },
     subDefinition() {
-      return Table[this.field.list]
+      const definition = { ...Table[this.field.list] }
+      if (this.field.withFields) definition.fields = [...definition.fields, ...this.field.withFields]
+      return definition
     },
     subFormFields() {
       const excluded = (typeof this.field.without === 'string') ? [this.field.without] : (Array.isArray(this.field.without) ? this.field.without : [])

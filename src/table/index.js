@@ -1270,7 +1270,7 @@ export default {
     entity: 'frontend_3_1_1',
     primaryKey: 'pos_id',
     fields: [
-      { key: 'pos_id', auto: true, hideOnIndex: true },
+      { key: 'pos_id', auto: true },
       {
         key: 'company_id',
         type: 'list',
@@ -1455,7 +1455,7 @@ export default {
           { key: 'ticket_move_time', hideOnForm: true },
           { key: 'ticket_deadline_offset', hideOnForm: true },
         ],
-        create: false,
+        newRoute: { name: 'table-form', params: { table: 'ticket' } },
         update: false,
         delete: false,
       },
@@ -1506,7 +1506,7 @@ export default {
     entity: 'frontend_3_2_1',
     primaryKey: 'area_id',
     fields: [
-      { key: 'area_id', auto: true, hideOnIndex: true },
+      { key: 'area_id', auto: true },
       { key: 'area_name' },
       { key: 'location_name', hideOnForm: true, hideOnIndex: true },
       {
@@ -1744,7 +1744,7 @@ export default {
   contract: {
     entity: 'frontend_3_4_1_1',
     fields: [
-      { key: 'contract_id', auto: true, hideOnIndex: true },
+      { key: 'contract_id', auto: true },
       { key: 'contract_name' },
       { key: 'contracttype_id', hideOnForm: true },
       { key: 'location_name', hideOnForm: true },
@@ -1807,7 +1807,6 @@ export default {
             key: 'specialright_id', type: 'list', list: 'specialright', listLabel: 'specialright_name',
           },
           { key: 'specialright_name', hideOnForm: true },
-          { key: 'specialright_date', hideOnForm: true },
           { key: 'contract_specialright_description', type: 'textarea' },
           { key: 'contract_specialright_date', type: 'date' },
           { key: 'contract_specialright_prior_notice_date', type: 'date' },
@@ -1834,20 +1833,24 @@ export default {
             without: 'contract_id',
           },
           {
+            key: 'recurringpayment_name',
+            hideOnForm: true,
+          },
+          {
             key: 'recurringpaymenttype_name',
             hideOnForm: true,
           },
           { key: 'recurringpayment_begin_date', type: 'date', hideOnForm: true },
           {
-            key: 'recurringpaymenttype_id',
+            key: 'recurringpaymenttype_name',
             hideOnForm: true,
           },
           {
-            key: 'maturitytype_id',
+            key: 'maturitytype_name',
             hideOnForm: true,
           },
           {
-            key: 'indexclause_id', hideOnForm: true,
+            key: 'indexclause_name', hideOnForm: true,
           },
         ],
       },
@@ -1855,10 +1858,34 @@ export default {
         title: 'Service Objects',
         primaryKey: 'serviceobject_id',
         entity: 'frontend_3_4_3_7',
-        entityForm: 'contract_serviceobject_rel',
+        entityForm: 'serviceobject_contract_rel',
         entityView: 'serviceobject',
         fields: [
-          { key: 'serviceobject_id', type: 'list', list: 'serviceobject', alwaysNew: true, onlyForm: true },
+          {
+            key: 'serviceobject_id',
+            type: 'list',
+            list: 'serviceobject',
+            alwaysNew: true,
+            onlyForm: true,
+            withFields: [
+              {
+                key: 'location_id',
+                type: 'list',
+                list: 'location',
+                listLabel: 'location_name',
+                hideOnIndex: true,
+                relationEntity: 'location_serviceobject_rel',
+              },
+              {
+                key: 'area_id',
+                type: 'list',
+                list: 'area',
+                listLabel: 'area_name',
+                hideOnIndex: true,
+                relationEntity: 'area_serviceobject_rel',
+              },
+            ],
+          },
           { key: 'serviceobject_name', hideOnForm: true },
           { key: 'serviceobjecttype_name', hideOnForm: true },
           { key: 'area_name', hideOnForm: true },
@@ -1871,14 +1898,11 @@ export default {
         entity: 'frontend_3_4_3_4',
         entityForm: 'contract_criteria_rel',
         entityView: 'criteria',
+        fieldComponent: () => import('@/views/app/CreateComponent/ContractCriteria'),
         fields: [
-          { key: 'criteria_id', type: 'list', list: 'criteria', listLabel: 'criteria_name' },
+          { key: 'criteria_id', type: 'list', list: 'criteria', listLabel: 'criteria_name', composite: true },
           { key: 'criteria_name', hideOnForm: true },
-          { key: 'contract_criteria_valid_from_date', type: 'date' },
-          { key: 'contract_criteria_valid_to_date', type: 'date' },
-          { key: 'criteriatype_name', hideOnForm: true },
-          { key: 'contract_criteria_comment', type: 'textarea' },
-          { key: 'contract_criteria_value', type: 'number' },
+          ...getContractCriteriaFields(),
         ],
         update: false,
       },
@@ -1909,6 +1933,7 @@ export default {
     fields: [
       { key: 'serviceobject_id', auto: true },
       { key: 'serviceobject_name' },
+      { key: 'serviceobject_external_name' },
       { key: 'serviceobjecttype_name', hideOnForm: true },
       { key: 'serviceobject_description', type: 'textarea', hideOnIndex: true },
       {
@@ -2050,20 +2075,7 @@ export default {
             key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name',
           },
           { key: 'contract_name', hideOnForm: true },
-          { key: 'contract_criteria_comment', type: 'textarea' },
-          { key: 'contract_criteria_value' },
-          { key: 'unit_name', hideOnForm: true },
-          { key: 'contract_criteria_exists', type: 'boolean' },
-          { key: 'contract_criteria_valid_from_date', type: 'date' },
-          { key: 'contract_criteria_valid_to_date', type: 'date' },
-          {
-            key: 'choice_id',
-            type: 'list',
-            list: 'choice',
-            listLabel: 'choice_name',
-            hideOnIndex: true,
-          },
-          { key: 'choice_name', hideOnForm: true },
+          ...getContractCriteriaFields(),
         ],
       },
       {
@@ -2762,4 +2774,27 @@ export default {
   ticket: {
     fields: [],
   },
+}
+
+function getContractCriteriaFields() {
+  return [
+    { key: 'contract_criteria_valid_from_date', type: 'date', composite: true },
+    { key: 'contract_criteria_valid_to_date', type: 'date' },
+    { key: 'contract_criteria_exists', type: 'boolean' },
+    { key: 'criteriatype_name', hideOnForm: true },
+    { key: 'contract_criteria_comment', type: 'textarea' },
+    { key: 'contract_criteria_value', type: 'number' },
+    {
+      key: 'choice_id',
+      type: 'list',
+      list: 'frontend_3_6_4',
+      relationEntity: 'contract_criteria_choice_rel',
+      with: ['criteria_id', 'contract_id'],
+      listLabel: 'choice_name',
+      hideOnIndex: true,
+      filter_key: 'criteria_id',
+      filter_value: null,
+    },
+    { key: 'choice_name', hideOnForm: true },
+  ]
 }

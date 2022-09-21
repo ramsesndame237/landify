@@ -6,17 +6,18 @@
     <b-col cols="12" md="6">
       <entity-form ref="form" table="location" :definition="definition" table-definition-key="location" create
                    :disabled="loading" :initial-data="initialData" cols="12"/>
+      <div class="text-center">
+        <b-button size="md" class="mt-2" :disabled="loading" variant="info" @click="add">
+          <b-spinner v-if="loading" small/>
+          Save
+        </b-button>
+      </div>
     </b-col>
     <b-col cols="12" md="6">
       <DataTables ref="datatable" :current-page="1" :per-page="100" :with-edit="false" :with-view="false"
                   entity="location" :entity-list="definition.entity" :fields="fields" :selectable="false"
                   :ids="locations"/>
-      <div class="text-center">
-        <b-button size="md" class="mt-2" :disabled="loading" variant="info" @click="add">
-          <b-spinner v-if="loading" small/>
-          {{ $t('app.btn.save_add_location') }}
-        </b-button>
-      </div>
+
     </b-col>
   </b-row>
 </template>
@@ -91,6 +92,7 @@ export default {
         .then(entity => {
           this.locations.push(entity.location_id)
           this.$refs.datatable.reload()
+          this.$refs.form.reset()
         })
         .finally(() => this.loading = false)
     },

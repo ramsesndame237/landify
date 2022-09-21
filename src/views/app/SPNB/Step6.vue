@@ -4,8 +4,8 @@
       {{ $t('app.content.create_contract') }}
     </b-col>
     <b-col cols="12" md="6">
-      <entity-form table="contract" :definition="definition" table-definition-key="contract" create
-                   :initial-data="initialData" cols="12" ref="form" :disabled="loading"/>
+      <entity-form table="contract" :definition="definition" table-definition-key="contract" :create="initialData.contract_id==null"
+                   :initial-data="initialData" cols="12" ref="form" :disabled="loading" :entity-id="initialData.contract_id"/>
     </b-col>
   </b-row>
 </template>

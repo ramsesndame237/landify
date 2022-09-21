@@ -6,16 +6,16 @@
     <b-col cols="12" md="6">
       <entity-form table="contract_specialright_rel" :definition="definition" table-definition-key="contract_specialright_rel" create :initial-data="initialData" cols="12"
                    ref="form" :disabled="loading"/>
-    </b-col>
-    <b-col cols="12" md="6">
-      <DataTables ref="contractspecialright" :current-page="1" :per-page="100" :with-edit="false" :items="contractspecialrights" :selectable="false"
-                  :with-view="false" entity="contract_specialright_rel" :fields="fields"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
           <b-spinner v-if="loading" small/>
-          Save and add Special Right
+          Save
         </b-button>
       </div>
+    </b-col>
+    <b-col cols="12" md="6">
+      <DataTables ref="datatable" :current-page="1" :per-page="100" :with-edit="false" :initial-filter="{contract_id: initialData.contract_id}" :selectable="false"
+                  :with-view="false" entity="contract_specialright_rel" entity-list="contract_specialright_rel" :fields="fields"/>
     </b-col>
   </b-row>
 </template>
@@ -67,8 +67,8 @@ export default {
       this.loading = true
       try {
         const entity = await this.$refs.form.submit()
-        this.contractspecialrights.push(entity)
-        return entity
+        this.$refs.form.reset()
+        this.$refs.datatable.reload()
       } finally {
         this.loading = false
       }
