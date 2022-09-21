@@ -8,7 +8,7 @@
                    cols="12" ref="form" :disabled="loading"/>
     </b-col>
     <b-col cols="12" md="6">
-      <DataTables ref="datatable" :current-page="1" :per-page="100" :with-edit="false" :items="pos" :selectable="false"
+      <DataTables ref="datatable" :current-page="1" :per-page="100" :with-edit="false" :ids="pos" :selectable="false"
                   :with-view="false" entity="pos" :entity-list="definition.entity" :fields="fields"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
@@ -28,7 +28,7 @@
 <script>
 import Field from "@/views/app/Generic/Field";
 import {
-  BRow, BCol, BButton
+  BRow, BCol, BButton, BSpinner
 } from 'bootstrap-vue'
 import Table from '@/table'
 import DataTables from '@/layouts/components/DataTables'
@@ -72,7 +72,7 @@ export default {
       ],
     }
   },
-  components: { Field, BRow, BCol, DataTables, entityForm, BButton },
+  components: { Field, BRow, BCol, DataTables, entityForm, BButton , BSpinner},
   mounted() {
     this.definition.fields.find(f => f.key === 'company_id').disabled = true
     this.$refs.form.loadDefinition()
@@ -81,7 +81,7 @@ export default {
     async add() {
       this.loading = true
       const entity = await this.$refs.form.submit()
-      this.pos.push(entity)
+      this.pos.push(entity.pos_id)
       this.loading = false
       return entity
     },

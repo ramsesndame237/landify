@@ -61,24 +61,29 @@ export default {
     saveRelations(table, definition, primaryKey, entityId, entity, originalEntity) {
       const keys = [definition.primaryKey, ...(definition.fields.filter(f => f.composite).map(f => f.key))]
       return Promise.all(definition.fields.filter(field => field.type === 'list' && keys.indexOf(field.key) === -1 && (entity[field.key] !== originalEntity[field.key] || !!field.with)).map(field => {
-        const extras = {}
+        const extras = { ...field.default }
+        const column = field.tableKey || field.key
+        console.log('save relation on column', column)
         if (field.with) {
           (typeof field.with === 'string' ? [field.with] : field.with).forEach(val => {
-            extras[val] = entity[val]
+            const withField = definition.fields.find(f => f.key === val)
+            const withColumn = withField.tableKey || withField.key
+            extras[withColumn] = entity[withField.key]
           })
         }
         const isNew = originalEntity[field.key] == null
         if (!isNew && field.alwaysNew) return Promise.resolve()
         const entityName = field.relationEntity ?? (`${table}_${field.list}_rel`)
         const data = {
-          [field.key]: entity[field.key],
+          [column]: entity[field.key],
           [primaryKey]: entityId ?? entity[primaryKey],
           ...extras,
         }
+        console.log('data', data)
         return Promise.resolve().then(() => {
           if (isNew) {
             // if id is non null
-            if (data[field.key]) {
+            if (data[column]) {
               return this.$api({
                 entity: entityName,
                 action: 'create',
@@ -90,10 +95,10 @@ export default {
           return this.$api({
             entity: entityName,
             action: 'delete',
-            data: [{ ...data, [field.key]: originalEntity[field.key] }],
+            data: [{ ...data, [column]: originalEntity[field.key] }],
           })
             .then(() => {
-              if (data[field.key]) {
+              if (data[column]) {
                 return this.$api({
                   entity: entityName,
                   action: 'create',
@@ -103,6 +108,7 @@ export default {
             })
         })
           .then(resp => {
+            if (!resp) return
             const errors = resp ?? resp.data.data.errors
             if (typeof errors === 'string') {
               this.$refs.form.setErrors({
@@ -111,7 +117,7 @@ export default {
             }
             if (Array.isArray(errors) && errors.length > 0) {
               this.$refs.form.setErrors({
-                [field.key]: resp.data.data.errors.map(error => {
+                [field.key]: errors.map(error => {
                   if (typeof error === 'string') return error
                   return error['Failed executing sql'].err
                 }),
@@ -185,6 +191,7 @@ export default {
           originalEntity[field.key] == null ? {} : formField.list.find(i => i[field.key] === originalEntity[field.key]),
           this.getFormFields(subDefinition), formField.getSubFields(), field.list, subDefinition, this.getPrimaryKey(subDefinition), create)
           .then(async data => {
+            if (data.noupdate) return data.entity
             const id = data.data.data[0][0][field.key]
             // if (field.key === 'address_id') {
             //   await this.saveAddressData(formField, create ? { address_id: id } : formField.list.find(e => e[field.key] === originalEntity[field.key]))

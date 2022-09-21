@@ -22,9 +22,8 @@
 </template>
 
 <script>
-import Field from "@/views/app/Generic/Field";
 import {
-  BRow, BCol, BButton
+  BRow, BCol, BButton, BSpinner,
 } from 'bootstrap-vue'
 import Table from '@/table'
 import DataTables from '@/layouts/components/DataTables'
@@ -32,14 +31,14 @@ import entityForm from '@/views/app/Generic/EntityForm'
 
 export default {
   name: 'Step7',
-  components: { BRow, BCol, DataTables, entityForm, BButton },
+  components: { BRow, BCol, DataTables, entityForm, BButton, BSpinner },
   props: ['context', 'disabled'],
   data() {
     const definition = JSON.parse(JSON.stringify(Table.area.relations.find(x => x.primaryKey === 'contract_id')))
     definition.fields = [
       definition.fields[0],
       { key: 'contract_name', disabled: true },
-      { key: 'area_id', list: 'frontend_3_2_1', listLabel: 'area_name', type: 'list' },
+      { key: 'area_id', list: 'frontend_3_2_1', listLabel: 'area_name', type: 'list', ids: this.context.areas },
       {
         key: 'pos_name',
         disabled: true,

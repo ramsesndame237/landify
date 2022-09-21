@@ -5,7 +5,7 @@
     </b-col>
     <b-col cols="12" md="6">
       <entity-form ref="form" table="company" :definition="definition" table-definition-key="company" :disabled="disabled"
-                   :create="initialData.company_id==null" :initial-data="initialData" cols="12"/>
+                   :create="initialData.company_id==null" :initial-data="initialData" cols="12" :fetch-data="false"/>
     </b-col>
   </b-row>
 </template>

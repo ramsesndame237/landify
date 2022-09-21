@@ -32,7 +32,7 @@
                     cols="8">
                     {{ tab.step }}. {{ tab.text }}
                   </b-col>
-                  <b-col class="" cols="">
+                  <b-col cols="4">
                     <div
                       :class="` h-100 p-1 justify-content-center d-flex align-items-center  rounded ${(current_step == tab.step || tab.completed) ? 'step_completed' : ' text-primary bg-pink'}`">
                       <img v-if="tab.completed" src="@/assets/images/icons/check_rounded.png" alt="">
@@ -85,12 +85,12 @@
               </small>
             </div>
             <div class="d-flex align-items-center justify-content-between">
-              <b-button v-if="current_step > 1 && current_step < max_steps" :disabled="loading" size="md" class="d-flex align-items-center"
-                        variant="warning" @click="skip_step()">
+              <b-button v-if="current_step > 1 && current_step < max_steps" :disabled="loading" size="md"
+                        class="d-flex align-items-center" variant="warning" @click="skip_step()">
                 {{ $t('app.btn.skip') }}
               </b-button>
-              <b-button v-if="current_step > 1" :disabled="loading" size="md" class="d-flex align-items-center ml-2" variant="danger"
-                        @click="prev_step()">
+              <b-button v-if="current_step > 1" :disabled="loading" size="md" class="d-flex align-items-center ml-2"
+                        variant="danger" @click="prev_step()">
                 {{ $t('app.btn.prev') }}
               </b-button>
               <b-button v-if="current_step <= max_steps" size="md" :disabled="loading"
@@ -108,11 +108,9 @@
 
 <script>
 import {
-  BCard, BTab, BFormCheckbox, BFormRadio, BInputGroup, BSpinner,
-  BTabs, BRow, BCol, BForm, BFormGroup, BFormInput, BButton, BFormSelect, BModal,
+  BCard, BSpinner, BRow, BCol, BForm, BButton,
 } from 'bootstrap-vue'
 
-import SPNBFormSteps from '@/views/app/SPNB/SPNBFormSteps.vue'
 import Field from '@/views/app/Generic/Field.vue'
 import Step1 from '@/views/app/SPNB/Step1'
 import Step2 from '@/views/app/SPNB/Step2'
@@ -125,28 +123,16 @@ import Step8 from '@/views/app/SPNB/Step8'
 import Step9 from '@/views/app/SPNB/Step9'
 import Step10 from '@/views/app/SPNB/Step10'
 
-const Databases = () => import('@/layouts/components/DataTables.vue')
 export default {
   components: {
     Step1,
     Field,
     BCard,
-    BTab,
-    BTabs,
     BSpinner,
     BRow,
-    BFormGroup,
     BCol,
     BForm,
-    BFormInput,
     BButton,
-    Databases,
-    BModal,
-    BFormSelect,
-    BFormCheckbox,
-    BFormRadio,
-    BInputGroup,
-    SPNBFormSteps,
     Step2,
     Step3,
     Step4,
@@ -306,6 +292,7 @@ export default {
       }
     },
     jump_step_to(step) {
+      // if (!this.steps_tabs[step].completed) return
       this.current_step = step
     },
 

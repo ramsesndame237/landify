@@ -11,7 +11,7 @@
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
                     :get-option-label="defaultLabelFunction[field.key]||(option=> option[field.listLabel])"
                     :placeholder="field.key" :options="listItems" transition="" :label="field.listLabel" class="w-100"
-                    :loading="loading" :reduce="i => i[field.key]" :filter="fuseSearch" @input="onChange"/>
+                    :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch" @input="onChange"/>
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm">New
           </b-button>
@@ -19,8 +19,9 @@
             {{ showAll ? 'Show Created' : 'Show All' }}
           </b-button>
         </div>
-        <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled" :config="dateConfig"
-                    :state="errors.length > 0 ? false:null" :placeholder="field.key" class="form-control"/>
+        <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
+                    :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
+                    class="form-control"/>
         <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key" value="1" unchecked-value="0"
                          style="margin-top: 5px"/>
@@ -168,7 +169,7 @@ export default {
       }
       if (!definition) return {}
       return {
-        required: !this.field.alwaysNew,
+        required: this.field.alwaysNew ? false : (this.field.required !== false),
         email: this.field.type === 'email',
         max: (definition.attribute_datatype_len && definition.attribute_datatype_len[field.key]) || false,
         regex: (definition.attribute_regexp && definition.attribute_regexp[field.key]) || false,
