@@ -2474,7 +2474,6 @@ export default {
           {
             key: 'invoicevaluetype_id',
             type: 'list',
-            hideOnIndex: true,
             list: 'invoicevaluetype',
             listLabel: 'invoicevaluetype_name',
           },
@@ -2496,7 +2495,6 @@ export default {
             type: 'list',
             list: 'invoicecriteria',
             listLabel: 'invoicecriteria_name',
-            hideOnIndex: true
           },
           { key: 'invoicecriteria_name', hideOnForm: true },
           { key: 'invoicecriteria_description', hideOnForm: true },
@@ -2513,7 +2511,6 @@ export default {
             key: 'invoicedeadline_id',
             type: 'list',
             list: 'invoicedeadline',
-            hideOnIndex: true,
             listLabel: 'invoicedeadline_name',
           },
           { key: 'invoicedeadline_name', hideOnForm: true },
@@ -2551,8 +2548,8 @@ export default {
             type: 'list',
             list: 'serviceobject',
             listLabel: 'serviceobject_name',
-            alwaysNew: true,
-            onlyForm: true,
+            // alwaysNew: true,
+            // onlyForm: true,
           },
           { key: 'serviceobject_name', hideOnForm: true },
           { key: 'serviceobjecttype_name', hideOnForm: true },
@@ -2562,8 +2559,13 @@ export default {
     ],
   },
   invoiceposition: {
+
     fields: [
+      { key: 'invoiceposition_id', auto: true },
       { key: 'invoiceposition_name' },
+      {
+        key: 'unit_id', type: 'list', list: 'unit', listLabel: 'unit_name', hideOnIndex: true,
+      },
       { key: 'invoiceposition_total_units', type: 'number' },
       { key: 'invoiceposition_units_customer', type: 'number' },
       { key: 'invoiceposition_costtype_invoice' },
@@ -2571,9 +2573,7 @@ export default {
       {
         key: 'costtype_id', type: 'list', list: 'costtype', listLabel: 'costtype_name', hideOnIndex: true,
       },
-      {
-        key: 'unit_id', type: 'list', list: 'unit', listLabel: 'unit_name', hideOnIndex: true,
-      },
+
       { key: 'invoiceposition_flat_rate', type: 'boolean' },
       { key: 'invoiceposition_amount_total', type: 'number' },
       { key: 'invoiceposition_amount_customer', type: 'number' },
