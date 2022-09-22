@@ -7,7 +7,7 @@ const axios = require('axios')
 const axiosIns = axios.create({
   // You can add your headers here
   // ================================
-  baseURL: 'https://contabo.lx42.de/8001/', // url to the backend
+  baseURL: 'http://127.0.0.1:8001/', // url to the backend
   timeout: 30000, // timeout in ms
   headers: { Authorization: 'Bearer johndoe@example.com' }, // authentication token
 })

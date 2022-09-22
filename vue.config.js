@@ -9,6 +9,7 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? `/${prodPath}/` : '/',
   lintOnSave: false,
   devServer: {
+   // proxy: 'http://127.0.0.1:8001/',
     proxy: 'https://contabo.lx42.de/',
   },
   css: {
