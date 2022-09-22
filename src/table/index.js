@@ -1894,6 +1894,24 @@ export default {
         ],
       },
       {
+        title: 'Cost Types',
+        primaryKey: 'costtype_id',
+        entity: 'frontend_3_4_3_5',
+        entityForm: 'contract_costtype_rel',
+        entityView: 'costtype',
+        fields: [
+          {
+            key: 'costtype_id',
+            type: 'list',
+            list: 'costtype',
+            listLabel: 'costtype_name',
+          },
+          { key: 'costtype_name', hideOnForm: true },
+          { key: 'contract_costtype_comment' },
+        ],
+      },
+
+      {
         title: 'Contract criterias',
         primaryKey: 'criteria_id',
         entity: 'frontend_3_4_3_4',
@@ -1909,7 +1927,7 @@ export default {
       },
       {
         title: 'Invoices',
-        primaryKey: 'incoice_id',
+        primaryKey: 'invoice_id',
         entity: 'frontend_3_4_3_6',
         entityForm: 'invoice_contract_rel',
         entityView: 'invoice',
@@ -2858,12 +2876,6 @@ export default {
 
 function getContractCriteriaFields() {
   return [
-    { key: 'contract_criteria_valid_from_date', type: 'date', composite: true },
-    { key: 'contract_criteria_valid_to_date', type: 'date' },
-    { key: 'contract_criteria_exists', type: 'boolean' },
-    { key: 'criteriatype_name', hideOnForm: true },
-    { key: 'contract_criteria_comment', type: 'textarea' },
-    { key: 'contract_criteria_value', type: 'number' },
     {
       key: 'choice_id',
       type: 'list',
@@ -2874,7 +2886,15 @@ function getContractCriteriaFields() {
       hideOnIndex: true,
       filter_key: 'criteria_id',
       filter_value: null,
+      mandatoryIfListEmpty: true,
     },
+    { key: 'contract_criteria_valid_from_date', type: 'date', composite: true },
+    { key: 'contract_criteria_valid_to_date', type: 'date' },
+    { key: 'contract_criteria_exists', type: 'boolean' },
+    { key: 'criteriatype_name', hideOnForm: true },
+    { key: 'contract_criteria_comment', type: 'textarea' },
+    { key: 'contract_criteria_value', type: 'number' },
+
     { key: 'choice_name', hideOnForm: true },
   ]
 }

@@ -190,7 +190,7 @@ export default {
       }
       if (!definition) return {}
       return {
-        required: this.field.alwaysNew ? false : (this.field.required !== false),
+        required: this.field.alwaysNew ? false : ((this.field.mandatoryIfListEmpty && this.listItems.length === 0) ? false : (this.field.required !== false)),
         email: this.field.type === 'email',
         max: (definition.attribute_datatype_len && definition.attribute_datatype_len[field.key]) || false,
         regex: (definition.attribute_regexp && definition.attribute_regexp[field.key]) || false,

@@ -1,22 +1,24 @@
 <template>
   <b-row>
     <b-col cols="12" v-if="getField('contract_id')">
-      <field :disabled="true" :entity="entity" :table-definition="tableDefinition"
-             :field="getField('contract_id')"/>
+      <field :disabled="true" :entity="entity" :table-definition="tableDefinition" :field="getField('contract_id')"/>
     </b-col>
     <b-col cols="12" v-if="getField('contract_name')">
-      <field :disabled="true" :entity="entity" :table-definition="tableDefinition"
-             :field="getField('contract_name')"/>
+      <field :disabled="true" :entity="entity" :table-definition="tableDefinition" :field="getField('contract_name')"/>
     </b-col>
     <b-col cols="12">
       <field ref="criteriaField" :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
              :field="getField('criteria_id')"/>
     </b-col>
+    <b-col cols="12" v-if="entity.criteria_id">
+      <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('choice_id')"
+             :filter-value="entity.criteria_id"/>
+    </b-col>
     <b-col cols="12">
       <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
              :field="getField('contract_criteria_comment')"/>
     </b-col>
-    <b-col v-if="showValueField"  cols="12">
+    <b-col v-if="showValueField" cols="12">
       <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
              :field="getField('contract_criteria_value')"/>
     </b-col>
@@ -31,9 +33,6 @@
     <b-col cols="12">
       <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
              :field="getField('contract_criteria_valid_to_date')"/>
-    </b-col>
-    <b-col cols="12" v-if="entity.criteria_id">
-      <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('choice_id')" :filter-value="entity.criteria_id"/>
     </b-col>
   </b-row>
 </template>
@@ -63,6 +62,9 @@ export default {
     },
   },
   watch: {
+    showValueField(val) {
+      this.$set(this.getField('choice_id'), 'required', !val)
+    },
   },
   mounted() {
     // const field = this.getField('choice_id')

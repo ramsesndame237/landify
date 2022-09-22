@@ -70,7 +70,7 @@
                           placeholder="Search.." :disabled="entity.company_id==null"/>
           </div>
           <data-tables ref="contracts" :current-page="1" :per-page="100" :items="contracts" :multi-select="false"
-                       :with-actions="false" entity="contract"  :fields="contractFields" style="max-height: 300px"
+                       :with-actions="false" entity="contract" :fields="contractFields" style="max-height: 300px"
                        class="mb-1" @selected="onContractSelect"/>
 
           <data-tables ref="areas" :current-page="1" :per-page="100" :items="areas" :selectable="false"
@@ -130,15 +130,22 @@ export default {
     'entity.invoice_contract_billing_period_to_date': function () {
       this.entity.invoice_contract_year = getYearFormDateString(this.entity.invoice_contract_billing_period_to_date)
     },
-    'entity.contract_id': function (val) {
+    'entity.contract_id': async function (val) {
       const contract = this.contracts.find(c => c.contract_id === val)
       if (!contract) {
         // laoding form
         // this.fetchContracts()
+        this.contracts = (await this.$api({
+          entity: 'contract',
+          action: 'read-rich',
+          data: [{ contract_id: val }],
+        })).data.data.data
+        this.$set(this.contracts[0], '__selected', true)
+        await this.fetchAreas(val)
         return
       }
       this.$set(contract, '__selected', true)
-      this.fetchAreas(val)
+      await this.fetchAreas(val)
     },
   },
   async mounted() {
