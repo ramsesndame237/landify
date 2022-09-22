@@ -32,7 +32,7 @@ export default {
         relationEntity: 'contactperson_user_rel',
       },
     ],
-    formComponent: () => import('@/views/app/FormComponent/UserForm'),
+    updateComponent: () => import('@/views/app/FormComponent/UserForm'),
     relations: [
       {
         title: 'Roles',
@@ -1298,8 +1298,8 @@ export default {
         fields: [
           { key: 'location_name', hideOnForm: true },
           { key: 'customergroup_name', hideOnForm: true },
-          { key: 'facility_manager', hideOnForm: true },
-          { key: 'owner' },
+          { key: 'manager_name', hideOnForm: true },
+          { key: 'owner_name' },
           { key: 'area_name' },
           {
             key: 'area_main_usage', hideOnForm: true,
@@ -1505,6 +1505,7 @@ export default {
   area: {
     entity: 'frontend_3_2_1',
     primaryKey: 'area_id',
+    updateComponent: ()=> import('@/views/app/UpdateComponent/AreaForm'),
     fields: [
       { key: 'area_id', auto: true },
       { key: 'area_name' },
@@ -1632,8 +1633,8 @@ export default {
       { key: 'location_objectdescription', type: 'textarea', hideOnIndex: true },
       { key: 'location_total_area', type: 'number', hideOnIndex: true },
       { key: 'location_start_date', type: 'date', hideOnIndex: true },
-      { key: 'owner', hideOnForm: true },
-      { key: 'facility manager', hideOnForm: true },
+      { key: 'owner_name', hideOnForm: true },
+      { key: 'manager_name', hideOnForm: true },
       { key: 'locationtype_name', hideOnForm: true },
       { key: 'city_name', hideOnForm: true },
       { key: 'country_name', hideOnForm: true },
@@ -1748,8 +1749,8 @@ export default {
       { key: 'contract_name' },
       { key: 'contracttype_id', hideOnForm: true },
       { key: 'location_name', hideOnForm: true },
-      { key: 'owner', hideOnForm: true },
-      { key: 'facility_manager', hideOnForm: true },
+      { key: 'owner_name', hideOnForm: true },
+      { key: 'manager_name', hideOnForm: true },
       { key: 'pos_name', hideOnForm: true },
       { key: 'contract_begin_date', type: 'date' },
       { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
@@ -2145,7 +2146,7 @@ export default {
         list: 'contract',
         listLabel: 'contract_name',
         hideOnIndex: true,
-        relationEntity: 'contract_recurringpayment_rel'
+        relationEntity: 'contract_recurringpayment_rel',
       },
       {
         key: 'recurringpaymenttype_id',
@@ -2155,12 +2156,24 @@ export default {
         hideOnIndex: true,
       },
       { key: 'recurringpaymenttype_name', hideOnForm: true },
-      { key: 'recurringpayment_sum_per_month', hideOnIndex: true },
-      { key: 'recurringpayment_condition_percentage', hideOnIndex: true },
-      { key: 'recurringpayment_condition_comment', hideOnIndex: true, type: 'textarea' },
-      { key: 'recurringpayment_percentage', hideOnIndex: true },
+      {
+        key: 'recurringpayment_sum_per_month',
+        hideOnIndex: true,
+        visible: visibleByRecurringPaymentType([1, 3, 4, 5, 6]),
+      },
+      {
+        key: 'recurringpayment_condition_percentage',
+        hideOnIndex: true,
+        visible: visibleByRecurringPaymentType([2, 5]),
+      },
+      {
+        key: 'recurringpayment_percentage',
+        hideOnIndex: true,
+        visible: visibleByRecurringPaymentType([2]),
+      },
       { key: 'recurringpayment_begin_date', type: 'date', hideOnIndex: true },
       { key: 'recurringpayment_end_date', type: 'date', hideOnIndex: true },
+      { key: 'recurringpayment_condition_comment', hideOnIndex: true, type: 'textarea' },
       {
         key: 'maturitytype_id',
         type: 'list',
@@ -2184,13 +2197,17 @@ export default {
         hideOnIndex: true,
         visible: entity => entity.maturitytype_id === 2,
       },
+      { key: 'recurringpayment_value_deposit', type: 'boolean' },
       {
         key: 'indexclause_id',
         type: 'list',
         list: 'indexclause',
         listLabel: 'indexclause_name',
         hideOnIndex: true,
+        withNew: true,
         rules: { required: false },
+        visible: entity => entity.recurringpayment_value_deposit === 1,
+        // hideOnUpdate: true,
       },
       { key: 'maturitytype_name', hideOnForm: true },
       { key: 'indexclause_name', hideOnForm: true },
@@ -2797,4 +2814,13 @@ function getContractCriteriaFields() {
     },
     { key: 'choice_name', hideOnForm: true },
   ]
+}
+
+function visibleByRecurringPaymentType(indexes) {
+  return (entity, vm) => {
+    const list = vm.$store.state.table.listCache.recurringpaymenttype
+    if (!list) return false
+    const selected = list.find(i => i.recurringpaymenttype_id === entity.recurringpaymenttype_id)
+    return selected ? indexes.indexOf(parseInt(selected.recurringpaymenttype_name.split('-')[0])) >= 0 : false
+  }
 }

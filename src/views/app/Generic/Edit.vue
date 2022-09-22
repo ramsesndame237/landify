@@ -28,7 +28,7 @@
     <p v-if="formReview" class="text-danger h4 mb-1 text-center" v-html="formReview"></p>
 
     <b-card class="">
-      <component :is="definition.updateComponent || definition.formComponent || 'entity-form'" ref="form" :table="table"
+      <component :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'" ref="form" :table="table"
                  :definition="definition" :table-definition-key="table" :create="create" :is-relation="false"
                  :disabled="view" :inline="false" :cols="6" :initial-data="entity" :entity-id="entityId"/>
     </b-card>

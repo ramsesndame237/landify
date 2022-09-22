@@ -24,8 +24,8 @@
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
                     class="form-control"/>
         <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
-                         :state="errors.length > 0 ? false:null" :placeholder="field.key" value="1" unchecked-value="0"
-                         style="margin-top: 5px"/>
+                         :state="errors.length > 0 ? false:null" :placeholder="field.key" :value="1"
+                         :unchecked-value="0" style="margin-top: 5px"/>
         <b-form-input v-else v-model="entity[field.key]" :type="field.type||'text'" :disabled="disabled"
                       :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
         <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
@@ -78,12 +78,15 @@ export default {
       },
       dateConfig: {
         allowInput: true,
+        locale: {
+          firstDayOfWeek: 1,
+        },
       },
     }
   },
   computed: {
     visible() {
-      return this.field.visible ? this.field.visible(this.entity) : true
+      return this.field.visible ? this.field.visible(this.entity, this) : true
     },
     listItems() {
       if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
@@ -127,7 +130,7 @@ export default {
       await this.fetchList()
     } else if (this.field.type === 'boolean') {
       // set false as default value
-      if (this.entity[this.field.key] == null) this.entity[this.field.key] = 0
+      if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, 0)
     }
   },
   beforeDestroy() {
