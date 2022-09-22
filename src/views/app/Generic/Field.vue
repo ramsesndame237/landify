@@ -20,6 +20,11 @@
             {{ showAll ? 'Show Created' : 'Show All' }}
           </b-button>
         </div>
+        <div v-else-if="field.type==='yesno'">
+          <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
+                    :placeholder="field.key" :options="yesNoOptions" transition="" label="label" class="w-100"
+                    :reduce="i => i.value"/>
+        </div>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
                     class="form-control"/>
@@ -82,6 +87,10 @@ export default {
           firstDayOfWeek: 1,
         },
       },
+      yesNoOptions: [
+        { value: 1, label: 'Yes' },
+        { value: 0, label: 'No' },
+      ],
     }
   },
   computed: {

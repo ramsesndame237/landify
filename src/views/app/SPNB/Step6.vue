@@ -4,8 +4,9 @@
       {{ $t('app.content.create_contract') }}
     </b-col>
     <b-col cols="12" md="6">
-      <entity-form table="contract" :definition="definition" table-definition-key="contract" :create="initialData.contract_id==null"
-                   :initial-data="initialData" cols="12" ref="form" :disabled="loading" :entity-id="initialData.contract_id"/>
+      <entity-form table="contract" :definition="definition" table-definition-key="contract"
+                   :create="initialData.contract_id==null" :initial-data="initialData" cols="12" ref="form"
+                   :disabled="loading" :entity-id="initialData.contract_id"/>
     </b-col>
   </b-row>
 </template>
@@ -34,8 +35,13 @@ export default {
   },
   methods: {
     async validate() {
-      const entity = await this.$refs.form.submit()
-      return entity
+      this.loading = true
+      try {
+        const entity = await this.$refs.form.submit()
+        return entity
+      } finally {
+        this.loading = false
+      }
     },
   },
 }

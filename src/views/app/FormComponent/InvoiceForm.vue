@@ -57,6 +57,10 @@
               <field ref="fields" :disabled="isDisabledFromName('invoice_description')" :entity="entity"
                      :table-definition="tableDefinition" :field="getField('invoice_description')"/>
             </b-col>
+            <b-col cols="12">
+              <field ref="fields" :disabled="isDisabledFromName('invoice_number')" :entity="entity"
+                     :table-definition="tableDefinition" :field="getField('invoice_number')"/>
+            </b-col>
           </b-row>
         </b-col>
         <b-col cols="5">
@@ -66,7 +70,7 @@
                           placeholder="Search.." :disabled="entity.company_id==null"/>
           </div>
           <data-tables ref="contracts" :current-page="1" :per-page="100" :items="contracts" :multi-select="false"
-                       :with-actions="false" entity="contract" :fields="contractFields" style="max-height: 300px"
+                       :with-actions="false" entity="contract"  :fields="contractFields" style="max-height: 300px"
                        class="mb-1" @selected="onContractSelect"/>
 
           <data-tables ref="areas" :current-page="1" :per-page="100" :items="areas" :selectable="false"
@@ -153,7 +157,7 @@ export default {
     async fetchAreas(contractId) {
       this.$refs.areas.loading = true
       this.areas = (await this.$api({
-        entity: 'contract_area_unit_usagetype_rel',
+        entity: 'frontend_3_4_1_1',
         action: 'read-rich',
         data: [{ contract_id: contractId }],
       })).data.data.data

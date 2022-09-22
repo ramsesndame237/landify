@@ -1505,7 +1505,7 @@ export default {
   area: {
     entity: 'frontend_3_2_1',
     primaryKey: 'area_id',
-    updateComponent: ()=> import('@/views/app/UpdateComponent/AreaForm'),
+    updateComponent: () => import('@/views/app/UpdateComponent/AreaForm'),
     fields: [
       { key: 'area_id', auto: true },
       { key: 'area_name' },
@@ -2356,8 +2356,8 @@ export default {
       { key: 'invoice_allocationarea', type: 'number' },
       { key: 'invoice_payment_date', type: 'date' },
       { key: 'customergroup_name', hideOnForm: true },
-      { key: 'facilitymanager_partnercompany_name', hideOnForm: true },
-      { key: 'owner_partnercompany_name', hideOnForm: true },
+      { key: 'manager_name', hideOnForm: true },
+      { key: 'owner_name', hideOnForm: true },
       {
         key: 'contract_id',
         type: 'list',
@@ -2369,6 +2369,7 @@ export default {
         key: 'partnertype_id', type: 'list', list: 'partnertype', listLabel: 'partnertype_name', hideOnIndex: true,
       },
       { key: 'invoice_description', type: 'textarea', hideOnIndex: true },
+      { key: 'invoice_number' },
       { key: 'invoice_contract_billing_period_from_date', type: 'date', hideOnIndex: true },
       {
         key: 'invoice_contract_billing_period_to_date',
@@ -2506,42 +2507,34 @@ export default {
         tool: () => import('@/views/app/InvoicePositionTools.vue'),
         title: 'Invoice Positions',
         entity: 'invoice_invoiceposition_rel',
-        entityForm: 'invoiceposition',
+        entityForm: 'invoice_invoiceposition_rel',
         primaryKey: 'invoiceposition_id',
         fields: [
-          {
-            key: 'invoice_id',
-            type: 'list',
-            relationEntity: 'invoice_invoiceposition_rel',
-            hideOnForm: true,
-            hideOnIndex: true
-          },
-          { key: 'invoiceposition_id', hideOnForm: true },
-          { key: 'invoiceposition_name' },
-          { key: 'invoiceposition_total_units', type: 'number' },
-          { key: 'invoiceposition_units_customer', type: 'number' },
-          { key: 'invoiceposition_costtype_invoice' },
+          { key: 'invoiceposition_id', type: 'list', list: 'invoiceposition', alwaysNew: true, onlyForm: true },
+          { key: 'invoiceposition_name', hideOnForm: true },
+          { key: 'invoiceposition_total_units', hideOnForm: true },
+          { key: 'invoiceposition_units_customer', hideOnForm: true },
+          { key: 'invoiceposition_costtype_invoice', hideOnForm: true },
           { key: 'costtype_name', hideOnForm: true },
-          {
-            key: 'costtype_id', type: 'list', list: 'costtype', listLabel: 'costtype_name', hideOnIndex: true,
-          },
-          {
-            key: 'unit_id', type: 'list', list: 'unit', listLabel: 'unit_name', hideOnIndex: true,
-          },
-          { key: 'invoiceposition_flat_rate', type: 'boolean' },
-          { key: 'invoiceposition_amount_total', type: 'number' },
-          { key: 'invoiceposition_amount_customer', type: 'number' },
-          { key: 'invoiceposition_apportionable', type: 'boolean' },
+          { key: 'invoiceposition_flat_rate', hideOnForm: true },
+          { key: 'invoiceposition_amount_total', hideOnForm: true },
+          { key: 'invoiceposition_amount_customer', hideOnForm: true },
+          { key: 'invoiceposition_apportionable', hideOnForm: true },
         ],
       },
       {
         title: 'Service Objects',
         entity: 'invoice_serviceobject_rel',
         primaryKey: 'serviceobject_id',
-        view: false,
+        entityView: 'serviceobject',
         fields: [
           {
-            key: 'serviceobject_id', type: 'list', list: 'serviceobject', listLabel: 'serviceobject_name',
+            key: 'serviceobject_id',
+            type: 'list',
+            list: 'serviceobject',
+            listLabel: 'serviceobject_name',
+            alwaysNew: true,
+            onlyForm: true,
           },
           { key: 'serviceobject_name', hideOnForm: true },
           { key: 'serviceobjecttype_name', hideOnForm: true },
@@ -2550,7 +2543,27 @@ export default {
       },
     ],
   },
+  invoiceposition: {
+    fields: [
+      { key: 'invoiceposition_name' },
+      { key: 'invoiceposition_total_units', type: 'number' },
+      { key: 'invoiceposition_units_customer', type: 'number' },
+      { key: 'invoiceposition_costtype_invoice' },
+      { key: 'costtype_name', hideOnForm: true },
+      {
+        key: 'costtype_id', type: 'list', list: 'costtype', listLabel: 'costtype_name', hideOnIndex: true,
+      },
+      {
+        key: 'unit_id', type: 'list', list: 'unit', listLabel: 'unit_name', hideOnIndex: true,
+      },
+      { key: 'invoiceposition_flat_rate', type: 'boolean' },
+      { key: 'invoiceposition_amount_total', type: 'number' },
+      { key: 'invoiceposition_amount_customer', type: 'number' },
+      { key: 'invoiceposition_apportionable', type: 'boolean' },
+    ]
+  },
   inspectionresult: {
+    create: false,
     fields: [
       { key: 'inspectionresult_id', auto: true },
       { key: 'inspectionresult_value' },
@@ -2562,7 +2575,7 @@ export default {
       { key: 'saving_name' },
       { key: 'rating_name' },
       { key: 'resultcategorization_name' },
-      { key: 'invoicepositon_count', hideOnForm: true },
+      { key: 'invoiceposition_count', hideOnForm: true },
     ],
     filters: [
       {
@@ -2585,10 +2598,60 @@ export default {
       },
       { key: 'invoice_contract_year', type: 'number' },
       {
-        key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name',
+        key: 'inspectionresult_realised', type: 'yesno',
       },
       {
-        key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_name',
+        key: 'board_id', type: 'list', list: 'board', listLabel: 'board_name',
+      },
+      {
+        key: 'costtype_id', type: 'list', list: 'costtype', listLabel: 'costtype_name',
+      },
+      {
+        key: 'contradictionpackage_id',
+        type: 'list',
+        list: 'contradictionpackage',
+        listLabel: 'contradictionpackage_name',
+      },
+      {
+        key: 'owner_id',
+        type: 'list',
+        list: 'partnercompany',
+        listLabel: 'partnercompany_name',
+        tableKey: 'partnercompany_id'
+      },
+      {
+        key: 'manager_id',
+        type: 'list',
+        list: 'partnercompany',
+        listLabel: 'partnercompany_name',
+        tableKey: 'partnercompany_id'
+      },
+      {
+        key: 'inspectionresultimpacttype_id',
+        type: 'list',
+        list: 'inspectionresultimpacttype',
+        listLabel: 'inspectionresultimpacttype_name',
+      },
+      {
+        key: 'inspectionresult_legally_clear', type: 'yesno',
+      },
+      {
+        key: 'savingtype_id',
+        type: 'list',
+        list: 'savingtype',
+        listLabel: 'savingtype_name',
+      },
+      {
+        key: 'ratingtype_id',
+        type: 'list',
+        list: 'ratingtype',
+        listLabel: 'ratingtype_name',
+      },
+      {
+        key: 'claimtype_id',
+        type: 'list',
+        list: 'claimtype',
+        listLabel: 'claimtype_name',
       },
     ],
   },
@@ -2693,7 +2756,7 @@ export default {
     ],
   },
   // endregion
-  // region Workpackage 5
+  //region Workpackage 5
   contradiction: {
     customPage: () => import('@/views/app/Page/Contradiction/Index.vue'),
     createModal: false,
@@ -2787,7 +2850,7 @@ export default {
       { key: 'contradictionpoint_inspectionresult_rating_value_grey' },
     ],
   },
-  // end region
+  //endregion
   ticket: {
     fields: [],
   },

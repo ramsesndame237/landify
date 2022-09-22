@@ -264,6 +264,7 @@ export default {
       if (this.$refs.fields) this.$refs.fields.forEach(f => f.subEntity = {})
       this.entity = { ...this.initialData, ...this.originalEntity }
       this.$refs.form.reset()
+      this.$refs.form.reset()
     },
     async loadDefinition() {
       const { data } = await this.$api({ action: 'read-rich', entity: this.table })

@@ -27,12 +27,12 @@ import DataTables from '@/layouts/components/DataTables'
 import entityForm from '@/views/app/Generic/EntityForm'
 import Field from '@/views/app/Generic/Field'
 import {
-  BRow, BCol, BButton,
+  BRow, BCol, BButton, BSpinner
 } from 'bootstrap-vue'
 
 export default {
   name: 'Step8',
-  components: { DataTables, entityForm, Table, BButton, BCol, BRow, Field },
+  components: { DataTables, entityForm, Table, BButton, BCol, BRow, Field, BSpinner },
   props: ['context', 'disabled'],
   data() {
     const definition = {
