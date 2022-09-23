@@ -43,6 +43,12 @@ extend('date_after', {
   message: 'This date must be after {_attribute_}',
 })
 
+extend('lower', {
+  params: ['attribute'],
+  validate: (value, { attribute }) => value <= attribute,
+  message: 'The value must be lower than {_attribute_}',
+})
+
 // BSV Plugin Registration
 Vue.use(ToastPlugin)
 Vue.use(ModalPlugin)

@@ -2569,7 +2569,7 @@ export default {
         key: 'unit_id', type: 'list', list: 'unit', listLabel: 'unit_name', hideOnIndex: true,
       },
       { key: 'invoiceposition_total_units', type: 'number' },
-      { key: 'invoiceposition_units_customer', type: 'number' },
+      { key: 'invoiceposition_units_customer', type: 'number', rules: { lower: ['@invoiceposition_total_units'] } },
       { key: 'invoiceposition_costtype_invoice' },
       { key: 'costtype_name', hideOnForm: true },
       {
@@ -2578,7 +2578,7 @@ export default {
 
       { key: 'invoiceposition_flat_rate', type: 'boolean' },
       { key: 'invoiceposition_amount_total', type: 'number' },
-      { key: 'invoiceposition_amount_customer', type: 'number' },
+      { key: 'invoiceposition_amount_customer', type: 'number', rules: { lower: ['@invoiceposition_amount_total'] } },
       { key: 'invoiceposition_apportionable', type: 'boolean' },
     ]
   },
