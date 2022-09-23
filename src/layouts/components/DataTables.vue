@@ -1,7 +1,7 @@
 <template>
   <b-table :title="entityList||entity" ref="table" striped hover responsive :busy.sync="loading" :per-page="perPage"
            :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
-           :sort-desc.sync="sortDesc" :filter="search" select-mode="multi">
+           :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" @row-clicked="onRowClicked">
     <template #cell(__selected)="data">
       <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"
                        @change="onSelect(data.index)"/>
@@ -258,6 +258,10 @@ export default {
         })
         this.$emit('selected', this.currentItems[index])
       }
+    },
+    onRowClicked(record, index) {
+      console.log('row clicked', record)
+      this.$set(record, '__selected', !record.__selected)
     },
   },
 }

@@ -2489,6 +2489,7 @@ export default {
         entity: 'invoice_invoicecriteria_rel',
         entityForm: 'invoice_invoicecriteria_rel',
         primaryKey: 'invoicecriteria_id',
+        view: false,
         fields: [
           {
             key: 'invoicecriteria_id',
@@ -2506,6 +2507,7 @@ export default {
         entity: 'invoice_invoicedeadline_rel',
         entityForm: 'invoice_invoicedeadline_rel',
         primaryKey: 'invoicedeadline_id',
+        view: false,
         fields: [
           {
             key: 'invoicedeadline_id',
@@ -2524,6 +2526,7 @@ export default {
         entity: 'invoice_invoiceposition_rel',
         entityForm: 'invoice_invoiceposition_rel',
         primaryKey: 'invoiceposition_id',
+        view: false,
         fields: [
           { key: 'invoiceposition_id', type: 'list', list: 'invoiceposition', alwaysNew: true, onlyForm: true },
           { key: 'invoiceposition_name', hideOnForm: true },
