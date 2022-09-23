@@ -45,7 +45,10 @@ extend('date_after', {
 
 extend('lower', {
   params: ['attribute'],
-  validate: (value, { attribute }) => value <= attribute,
+  validate: (value, { attribute }) => {
+    if (!value || !attribute) return true
+    return parseInt(value) <= parseInt(attribute)
+  },
   message: 'The value must be lower than {_attribute_}',
 })
 
