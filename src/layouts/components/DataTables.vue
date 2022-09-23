@@ -6,6 +6,10 @@
       <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"
                        @change="onSelect(data.index)"/>
     </template>
+    <template #cell()="data">
+      <b-form-checkbox v-if="data.field.type==='boolean'" disabled="" v-model="data.value" :value="1"/>
+      <span v-else>{{ data.value }}</span>
+    </template>
     <template #head(__selected)>
       <b-form-checkbox v-if="multiSelect" v-model="selected"/>
       <span v-else></span>
