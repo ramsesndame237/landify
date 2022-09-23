@@ -2,12 +2,13 @@
   <!--modal-->
   <b-modal id="generic-modal" ref="modal" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary" centered
            :title="$t(forceTitle || title)" size="lg" @ok="handleOk">
-    <component :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'" ref="form" :table="table"
-               :definition="definition" :table-definition-key="tableDefinitionKey" :initial-data="initialData"
-               :create="create" :is-relation="isRelation" inline :cols="12"/>
+    <component
+      :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
+      ref="form" :table="table" :definition="definition" :table-definition-key="tableDefinitionKey"
+      :initial-data="initialData" :create="create" :is-relation="isRelation" inline :cols="12"/>
     <template v-slot:modal-footer>
       <b-button variant="secondary" :disabled="loading" @click="$refs.modal.hide()">Cancel</b-button>
-      <b-button variant="primary" :disabled="loading" @click="handleOk" v-if="!withContinue">
+      <b-button v-if="!create || !withContinue" variant="primary" :disabled="loading" @click="handleOk">
         <b-spinner v-if="loading" small/>
         Save
       </b-button>
@@ -16,8 +17,11 @@
           <b-spinner v-if="loading" class="mr-1" small/>
           <span>Save</span>
         </template>
-        <b-dropdown-item @click="handleOk($event, true)">
+        <b-dropdown-item @click="handleOk($event, 1)" v-if="!isRelation">
           Save and continue
+        </b-dropdown-item>
+        <b-dropdown-item v-if="create" @click="handleOk($event, 2)">
+          Save and create another
         </b-dropdown-item>
       </b-dropdown>
     </template>
@@ -65,13 +69,19 @@ export default {
       this.loading = true
       this.$refs.form.submit()
         .then(entity => {
-          this.$refs.modal.hide()
-          if (redirect) {
+          if (redirect === 1) {
+            this.$refs.modal.hide()
             this.$router.push({
               name: 'table-view',
               params: { table: this.table, id: entity[this.$refs.form.primaryKey] },
             })
-          } else this.$emit('reload-table')
+          } else if (redirect === 2) {
+            this.$refs.form.reset()
+            this.$emit('reload-table')
+          } else {
+            this.$refs.modal.hide()
+            this.$emit('reload-table')
+          }
         })
         .finally(() => this.loading = false)
     },

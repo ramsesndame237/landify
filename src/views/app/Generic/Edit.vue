@@ -28,9 +28,10 @@
     <p v-if="formReview" class="text-danger h4 mb-1 text-center" v-html="formReview"></p>
 
     <b-card class="">
-      <component :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'" ref="form" :table="table"
-                 :definition="definition" :table-definition-key="table" :create="create" :is-relation="false"
-                 :disabled="view" :inline="false" :cols="6" :initial-data="entity" :entity-id="entityId"/>
+      <component
+        :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
+        ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="create"
+        :is-relation="false" :disabled="view" :inline="false" :cols="6" :initial-data="entity" :entity-id="entityId"/>
     </b-card>
 
     <p v-if="relationsReview" class="text-danger h4 mb-1 text-center" v-html="relationsReview"></p>
@@ -46,7 +47,7 @@
                        :on-edit-element="editElement" :with-edit="relation.update!==false"
                        :with-delete="relation.delete!==false"/>
           <generic-modal title="Test" :table="relation.entityForm || relation.entity" :definition="relation" is-relation
-                         :table-definition-key="relation.entityForm || relation.entity"
+                         :table-definition-key="relation.entityForm || relation.entity" with-continue
                          @reload-table="reloadRelatedTable"/>
         </b-tab>
         <template #tabs-end>
@@ -177,6 +178,10 @@ export default {
     reloadRelatedTable() {
       const { tabs } = this.$refs
       tabs.tabs[tabs.currentTab].$children[0].reload()
+    },
+    getCurrentTable() {
+      const { tabs } = this.$refs
+      return tabs.tabs[tabs.currentTab].$children[0]
     },
   },
 }

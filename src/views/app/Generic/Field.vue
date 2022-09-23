@@ -31,8 +31,9 @@
         <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key" :value="1"
                          :unchecked-value="0" style="margin-top: 5px"/>
-        <b-form-input v-else v-model="entity[field.key]" :type="field.type||'text'" :disabled="disabled"
-                      :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
+        <b-form-input v-else v-model="entity[field.key]" :type="field.type==='decimal'?'number':(field.type||'text')"
+                      :disabled="disabled" :step="field.type==='decimal'?0.01:1" :state="errors.length > 0 ? false:null"
+                      :placeholder="field.key"/>
         <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
       </validation-provider>
       <template v-if="field.type==='list' && ((field.withNew && entity[field.key] === newValue) || field.alwaysNew)">
@@ -188,12 +189,13 @@ export default {
       if (field.fromTable) {
         definition = this.$store.getters['table/tableDefinition'](field.fromTable)
       }
-      if (!definition) return {}
       return {
         required: this.field.alwaysNew ? false : ((this.field.mandatoryIfListEmpty && this.listItems.length === 0) ? false : (this.field.required !== false)),
         email: this.field.type === 'email',
-        max: (definition.attribute_datatype_len && definition.attribute_datatype_len[field.key]) || false,
-        regex: (definition.attribute_regexp && definition.attribute_regexp[field.key]) || false,
+        ...(definition ? {
+          max: (definition.attribute_datatype_len && definition.attribute_datatype_len[field.key]) || false,
+          regex: (definition.attribute_regexp && definition.attribute_regexp[field.key]) || false,
+        } : {}),
         ...(this.field.rules || {}),
       }
     },
