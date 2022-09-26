@@ -41,7 +41,7 @@
             </div>
           </template>
           <template #cell()="data">
-            <div class="d-flex">
+            <div class="d-flex" v-if="data.value">
               <b-form-checkbox v-model="data.item.meta[data.field.key]"/>
               <span>{{ data.value }}</span>
             </div>
@@ -80,7 +80,7 @@ export default {
       columnSelected: {
         invoiceposition_name: false,
         invoiceposition_costtype_invoice: false,
-        costtype_id: false,
+        costtype_name: false,
         invoiceposition_flat_rate: false,
         invoiceposition_total_units: false,
         invoiceposition_units_customer: false,
@@ -92,11 +92,7 @@ export default {
         { key: 'invoiceposition_name', __selected: false },
         { key: 'invoiceposition_costtype_invoice', __selected: false },
         {
-          key: 'costtype_id',
-          type: 'list',
-          list: 'costtype',
-          listLabel: 'costtype_name',
-          hideOnIndex: true,
+          key: 'costtype_name',
           __selected: false,
         },
         { key: 'invoiceposition_flat_rate', type: 'boolean', __selected: false },
@@ -186,6 +182,22 @@ export default {
           entity: 'invoice_invoiceposition_rel',
           data: relations,
         })
+        const typeRel = []
+        response.data.data.data.forEach((el, idx) => {
+          if (!el[0]) return
+          if (selectedItems[idx].meta.costtype_name && selectedItems[idx].costtype_id) {
+            typeRel.push({
+              costtype_id: selectedItems[idx].costtype_id,
+              invoiceposition_id: el[0].invoiceposition_id,
+            })
+          }
+        })
+        // create costtype relation
+        await this.$api({
+          action: 'create',
+          entity: 'invoiceposition_costtype_rel',
+          data: typeRel,
+        })
 
         await this.$router.push({ name: 'table-view', params: { table: 'invoice', id: invoice_id }, query: { tab: 5 } })
       } finally {
@@ -198,7 +210,7 @@ export default {
       } = ctx
       const payload = {
         action: 'read-rich',
-        entity: 'invoiceposition',
+        entity: 'frontend_4_4_1',
         order_by: sortBy,
         order_dir: sortDesc ? 'DESC' : 'ASC',
         per_page: perPage,

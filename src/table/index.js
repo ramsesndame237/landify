@@ -2423,7 +2423,7 @@ export default {
     relations: [
       {
         title: 'Contract Document',
-        entity: 'document_invoice_rel',
+        entity: 'frontend_4_2_1_bottom',
         entityForm: 'document',
         primaryKey: 'document_id',
         create: false,
@@ -2446,8 +2446,7 @@ export default {
       },
       {
         title: 'Invoice Document',
-        entity: 'document_invoice_rel',
-        entityForm: 'document',
+        entityForm: 'document_invoice_rel',
         primaryKey: 'document_id',
         fields: [
           {
@@ -2486,7 +2485,7 @@ export default {
       },
       {
         title: 'Invoice Criteria',
-        entity: 'invoice_invoicecriteria_rel',
+        entity: 'frontend_4_2_3',
         entityForm: 'invoice_invoicecriteria_rel',
         primaryKey: 'invoicecriteria_id',
         view: false,
@@ -2504,7 +2503,7 @@ export default {
       },
       {
         title: 'Invoice Deadlines',
-        entity: 'invoice_invoicedeadline_rel',
+        entity: 'frontend_4_2_4',
         entityForm: 'invoice_invoicedeadline_rel',
         primaryKey: 'invoicedeadline_id',
         view: false,
@@ -2523,7 +2522,7 @@ export default {
       {
         tool: () => import('@/views/app/InvoicePositionTools.vue'),
         title: 'Invoice Positions',
-        entity: 'invoice_invoiceposition_rel',
+        entity: 'frontend_4_2_5',
         entityForm: 'invoice_invoiceposition_rel',
         primaryKey: 'invoiceposition_id',
         view: false,
@@ -2542,7 +2541,7 @@ export default {
       },
       {
         title: 'Service Objects',
-        entity: 'invoice_serviceobject_rel',
+        entity: 'frontend_4_2_6',
         primaryKey: 'serviceobject_id',
         entityView: 'serviceobject',
         fields: [
@@ -2556,7 +2555,6 @@ export default {
           },
           { key: 'serviceobject_name', hideOnForm: true },
           { key: 'serviceobjecttype_name', hideOnForm: true },
-          { key: 'area_name', hideOnForm: true },
         ],
       },
     ],
