@@ -1290,7 +1290,7 @@ export default {
       {
         title: 'Locations',
         primaryKey: 'location_id',
-        entity: 'to_provide',
+        entity: 'frontend_3_1_3_x_right',
         entityView: 'location',
         update: false,
         create: false,
@@ -1684,7 +1684,9 @@ export default {
         title: 'Service Objects',
         entity: 'frontend_3_3_3_2',
         entityView: 'serviceobject',
-        entityForm: 'location_serviceobject_rel',
+        create: false,
+        delete: false,
+        update: false,
         primaryKey: 'serviceobject_id',
         fields: [
           {
@@ -1870,14 +1872,6 @@ export default {
             onlyForm: true,
             withFields: [
               {
-                key: 'location_id',
-                type: 'list',
-                list: 'location',
-                listLabel: 'location_name',
-                hideOnIndex: true,
-                relationEntity: 'location_serviceobject_rel',
-              },
-              {
                 key: 'area_id',
                 type: 'list',
                 list: 'area',
@@ -2005,13 +1999,16 @@ export default {
             key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name',
           },
           { key: 'location_name', hideOnForm: true },
-          { key: 'locaion_total_area', hideOnForm: true },
+          { key: 'location_total_area', hideOnForm: true },
           { key: 'location_start_date', hideOnForm: true },
           { key: 'city_name', hideOnForm: true },
           { key: 'country_name', hideOnForm: true },
-          { key: 'partnercompany_name', hideOnForm: true },
+          { key: 'owner_name', hideOnForm: true },
+          { key: 'manager_name', hideOnForm: true },
         ],
         update: false,
+        create: false,
+        delete: false,
       },
       {
         title: 'Contracts',
@@ -2466,7 +2463,8 @@ export default {
       },
       {
         title: 'Invoice Details',
-        entity: 'invoice_invoicevaluetype_rel',
+        entity: 'frontend_4_2_2',
+        entityForm: 'invoice_invoicevaluetype_rel',
         primaryKey: 'invoicevaluetype_id',
         view: false,
         fields: [
