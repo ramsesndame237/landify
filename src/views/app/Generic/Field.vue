@@ -74,7 +74,7 @@ export default {
   data() {
     return {
       list: this.$store.state.table.listCache[this.field.list] || [],
-      subEntity: {},
+      subEntity: { [this.field.key]: this.entity[this.field.key] },
       newValue: 'Create New Element',
       loading: false,
       promise: null,
@@ -178,7 +178,11 @@ export default {
         await this.$store.dispatch('table/fetchTableDefinition', 'address')
         await this.$store.dispatch('table/fetchTableDefinition', 'city')
       }
-      this.list = await this.$store.dispatch('table/fetchList', this.field.entityList || list)
+      const payload = { entity: this.field.entityList || list }
+      if (this.field.onlyForm) {
+        payload.data = [{ [this.field.key]: this.entity[this.field.key] }]
+      }
+      this.list = await this.$store.dispatch('table/fetchList', payload)
       if (this.field.entityList) {
         await this.$store.dispatch('table/fetchTableDefinition', list)
       }

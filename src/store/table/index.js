@@ -57,7 +57,7 @@ export default {
           return data.data.data
         })
     },
-    fetchList(context, entity) {
+    fetchList(context, { entity, data }) {
       return api({
         action: 'read-rich',
         entity,
@@ -67,6 +67,7 @@ export default {
         from: 0,
         current_page: 1,
         filter: {},
+        ...(data ? { data } : {}),
         filter_all: '',
         lang: window.$vue.$i18n.locale,
       })

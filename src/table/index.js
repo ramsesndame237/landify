@@ -2867,9 +2867,17 @@ export default {
     ],
   },
   //endregion
+  //region Work Package 6
   ticket: {
     fields: [],
   },
+  board: {
+    fields: [
+
+    ]
+  }
+  //endregion
+
 }
 
 function getContractCriteriaFields() {

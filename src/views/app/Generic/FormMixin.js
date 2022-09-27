@@ -37,26 +37,39 @@ export default {
     }
   },
   methods: {
-    fillRelations() {
-      const entity = this.entity
-      return Promise.all(this.formFields.filter(field => field.type === 'list' && entity[field.key] == null).map(field => this.$api({
-        entity: field.relationEntity ?? (`${this.table}_${field.list}_rel`),
-        action: 'read-rich',
-        data: [{
-          [this.primaryKey]: `${this.entity[this.primaryKey]}`,
-        }],
-      })
-        .then(({ data }) => {
-          const result = data.data.data[0]
-          if (!result) return
-          this.$set(entity, field.key, result[field.key])
-          this.$set(this.originalEntity, field.key, result[field.key])
-          if (field.with) {
-            (typeof field.with === 'string' ? [field.with] : field.with).forEach(val => {
-              this.$set(entity, val, result[val])
+    fillRelations(entity, originalEntity, formFields, table, primaryKey) {
+      return Promise.all(formFields.filter(field => field.type === 'list').map(async field => {
+        if (entity[field.key] == null) {
+          await this.$api({
+            entity: field.relationEntity ?? (`${table}_${field.list}_rel`),
+            action: 'read-rich',
+            data: [{
+              [primaryKey]: `${entity[primaryKey]}`,
+            }],
+          })
+            .then(({ data }) => {
+              const result = data.data.data[0]
+              if (!result) return
+              this.$set(entity, field.key, result[field.key])
+              this.$set(originalEntity, field.key, result[field.key])
+              if (field.with) {
+                (typeof field.with === 'string' ? [field.with] : field.with).forEach(val => {
+                  this.$set(entity, val, result[val])
+                })
+              }
             })
-          }
-        })))
+        }
+        if (field.alwaysNew) {
+          const component = this.$refs.fields.find(f => f.field === field)
+          if (!component) return
+          const subDefinition = component.subDefinition
+          this.getFormFields(subDefinition).forEach(field => {
+            if (this.initialData[field.key]) component.subEntity[field.key] = this.initialData[field.key]
+          })
+          const subOriginalEntity = originalEntity[field.key] == null ? {} : component.list.find(i => i[field.key] === originalEntity[field.key])
+          return this.fillRelations(component.subEntity, subOriginalEntity || {}, this.getFormFields(subDefinition), field.list, this.getPrimaryKey(subDefinition))
+        }
+      }))
     },
     saveRelations(table, definition, primaryKey, entityId, entity, originalEntity) {
       const keys = [definition.primaryKey, ...(definition.fields.filter(f => f.composite).map(f => f.key))]
@@ -297,7 +310,7 @@ export default {
       return this.getPrimaryKey(this.definition)
     },
   },
-  async created() {
+  async mounted() {
     if (!this.tableDefinition) {
       await this.loadDefinition()
     }
@@ -316,6 +329,6 @@ export default {
     }
     this.entityLoaded = true
     this.originalEntity = { ...this.entity }
-    await this.fillRelations()
+    await this.fillRelations(this.entity, this.originalEntity, this.formFields, this.table, this.primaryKey)
   },
 }
