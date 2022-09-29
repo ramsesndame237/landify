@@ -1290,7 +1290,7 @@ export default {
       {
         title: 'Locations',
         primaryKey: 'location_id',
-        entity: 'frontend_3_1_3_x_right',
+        entity: 'frontend_3_1_3_7',
         entityView: 'location',
         update: false,
         create: false,
@@ -1701,7 +1701,9 @@ export default {
           { key: 'serviceobject_external_name', hideOnForm: true },
           { key: 'serviceobjecttype_name', hideOnForm: true },
           { key: 'serviceobject_description', type: 'textarea', hideOnForm: true },
-          { key: 'area_count', hideOnForm: true },
+          { key: 'area_id', hideOnForm: true },
+          { key: 'area_name' },
+          { key: 'areatype_name' },
         ],
       },
       {
@@ -2122,8 +2124,11 @@ export default {
       { key: 'indexclause_baseyear', type: 'number' },
       { key: 'indexclause_begin_date', type: 'date' },
       { key: 'indexclause_indextransmission_percent' },
-      { key: 'indexclause_minimal_percent_change_agreed' },
-      { key: 'indexclause_minimal_point_change_agreed' },
+      { key: 'indexclause_minimal_percent_change_agreed', type: 'decimal', required: false },
+      {
+        key: 'indexclause_minimal_point_change_agreed',
+        required_if_null: 'indexclause_minimal_percent_change_agreed',
+      },
     ],
     relations: [
       {
@@ -2873,9 +2878,51 @@ export default {
   },
   board: {
     fields: [
-
-    ]
-  }
+      { key: 'board_id', auto: true },
+      { key: 'board_name' },
+      { key: 'board_description', type: 'textarea' },
+      {
+        key: 'btn',
+        sortable: false,
+        type: 'button',
+        hideOnForm: true,
+        label: 'Button',
+        btnLabel: 'Kanban',
+        getRoute: board => ({ name: 'kanban', params: { id: board.board_id, table: 'board' } }),
+      },
+    ],
+    relations: [
+      {
+        title: 'Columns',
+        entity: 'columnx_board_rel',
+        primaryKey: 'column_id',
+        fields: [
+          { key: 'column_id', type: 'list', list: 'columnx', alwaysNew: true, onlyForm: true },
+          { key: 'column_name', hideOnForm: true },
+          { key: 'column_description', type: 'textarea', hideOnForm: true },
+        ],
+      },
+    ],
+  },
+  columnx: {
+    fields: [
+      { key: 'column_id', auto: true },
+      { key: 'column_name' },
+      { key: 'column_description', type: 'textarea' },
+      { key: 'default_value_id', type: 'list', list: 'defaultvalue', alwaysNew: true, onlyForm: true },
+    ],
+  },
+  defaultvalue: {
+    fields: [
+      { key: 'default_value_id', auto: true },
+      { key: 'default_deadline_period', type: 'number' },
+      { key: 'default_deadline_yellow', type: 'number' },
+      { key: 'default_deadline_red', type: 'number' },
+      { key: 'default_prediction_value', type: 'number' },
+      { key: 'default_prediction_info' },
+      { key: 'default_deadline_info' },
+    ],
+  },
   //endregion
 
 }

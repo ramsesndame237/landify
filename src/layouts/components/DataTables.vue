@@ -8,6 +8,7 @@
     </template>
     <template #cell()="data">
       <b-form-checkbox v-if="data.field.type==='boolean'" disabled="" v-model="data.value" :value="1"/>
+      <b-button v-else-if="data.field.type==='button'" size="xs" @click="$router.push(data.field.getRoute(data.item))">{{data.field.btnLabel}}</b-button>
       <span v-else>{{ data.value }}</span>
     </template>
     <template #head(__selected)>

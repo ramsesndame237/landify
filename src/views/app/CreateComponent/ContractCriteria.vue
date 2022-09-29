@@ -10,8 +10,8 @@
       <field ref="criteriaField" :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
              :field="getField('criteria_id')"/>
     </b-col>
-    <b-col cols="12" v-if="entity.criteria_id">
-      <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('choice_id')"
+    <b-col cols="12" v-show="entity.criteria_id && (!$refs.choice || $refs.choice.listItems.length > 0)">
+      <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('choice_id')" ref="choice"
              :filter-value="entity.criteria_id"/>
     </b-col>
     <b-col cols="12">

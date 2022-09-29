@@ -200,8 +200,9 @@ export default {
         const formField = fieldComponents.find(f => f.field === field)
         const subDefinition = component.subDefinition
         const data = create ? formField.subEntity : { ...formField.subEntity, [field.key]: originalEntity[field.key] }
-        return this.saveEntity(data,
-          originalEntity[field.key] == null ? {} : formField.list.find(i => i[field.key] === originalEntity[field.key]),
+        const original = originalEntity[field.key] == null ? {} : formField.list.find(i => i[field.key] === originalEntity[field.key])
+        console.log(create, data, original, originalEntity)
+        return this.saveEntity(data, original,
           this.getFormFields(subDefinition), formField.getSubFields(), field.list, subDefinition, this.getPrimaryKey(subDefinition), create)
           .then(async data => {
             if (data.noupdate) return data.entity

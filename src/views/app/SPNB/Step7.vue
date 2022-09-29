@@ -53,6 +53,8 @@ export default {
       initialData: {
         contract_id: this.context.contract?.contract_id,
         contract_name: this.context.contract?.contract_name,
+        contract_area_unit_usagetype_valid_from_date: this.context.contract?.contract_begin_date,
+        contract_area_unit_usagetype_valid_to_date: this.context.contract?.contract_end_date,
       },
       fields: [
         { key: 'contract_id' },

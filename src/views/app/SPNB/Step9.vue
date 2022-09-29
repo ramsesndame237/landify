@@ -47,6 +47,8 @@ export default {
       initialData: {
         contract_id: this.context.contract?.contract_id,
         contract_name: this.context.contract?.contract_name,
+        contract_specialright_date: this.context.contract?.contract_begin_date,
+        contract_specialright_termination_date: this.context.contract?.contract_end_date,
       },
       fields: [
         { key: 'specialright_id' },

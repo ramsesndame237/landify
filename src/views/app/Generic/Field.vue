@@ -3,7 +3,7 @@
     <b-form-group v-if="visible" :label="field.label||snakeToTitle(field.key)" :label-for="'field-'+field.key"
                   :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null">
       <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled placeholder="Automaticaly generated ..."/>
-      <validation-provider v-else #default="{ errors }" :rules="getValidationRules(field)" :name="field.key"
+      <validation-provider v-else #default="{ errors }" :rules="rules" :name="field.key"
                            :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message&& tableDefinition.attribute_regexp_failure_message[field.key]}">
         <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
@@ -65,12 +65,16 @@ import vSelect from 'vue-select'
 import { snakeToTitle } from '@/libs/utils'
 import Table from '@/table/index'
 
+function isEmpty(val) {
+  return val === '' || val == null
+}
+
 export default {
   name: 'Field',
   components: {
     BFormInput, BFormGroup, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol, BFormCheckbox,
   },
-  props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue'],
+  props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition'],
   data() {
     return {
       list: this.$store.state.table.listCache[this.field.list] || [],
@@ -84,6 +88,8 @@ export default {
       },
       dateConfig: {
         allowInput: true,
+        altInput: true,
+        altFormat: 'd.m.Y',
         locale: {
           firstDayOfWeek: 1,
         },
@@ -95,6 +101,9 @@ export default {
     }
   },
   computed: {
+    rules(){
+      return this.getValidationRules(this.field)
+    },
     visible() {
       return this.field.visible ? this.field.visible(this.entity, this) : true
     },
@@ -154,6 +163,43 @@ export default {
     })
   },
   methods: {
+    getPrimaryKey(definition) {
+      return definition.primaryKey ?? definition.fields.find(f => f.auto).key
+    },
+    async getRelationValue() {
+      if (this.field.type === 'list') {
+        if (this.entity[this.field.key] == null) {
+          const primaryKey = this.getPrimaryKey(this.definition)
+          await this.$api({
+            entity: this.field.relationEntity ?? (`${this.table}_${this.field.list}_rel`),
+            action: 'read-rich',
+            data: [{
+              [primaryKey]: `${this.entity[primaryKey]}`,
+            }],
+          })
+            .then(({ data }) => {
+              const result = data.data.data[0]
+              if (!result) return null
+              this.$set(this.entity, this.field.key, result[this.field.key])
+              // this.$set(originalEntity, field.key, result[field.key])
+              if (this.field.with) {
+                (typeof this.field.with === 'string' ? [this.field.with] : this.field.with).forEach(val => {
+                  this.$set(this.entity, val, result[val])
+                })
+              }
+              return result[this.field.key]
+            })
+        }
+        if (this.field.alwaysNew) {
+          this.getFormFields(this.subDefinition).forEach(field => {
+            if (this.entity[field.key]) this.subEntity[field.key] = this.entity[field.key]
+          })
+          this.getSubFields().forEach(field => {
+            field.getRelationValue()
+          })
+        }
+      }
+    },
     fuseSearch(options, search) {
       const fuse = new Fuse(options, {
         keys: this.list[0] ? Object.keys(this.list[0]) : [],
@@ -179,7 +225,7 @@ export default {
         await this.$store.dispatch('table/fetchTableDefinition', 'city')
       }
       const payload = { entity: this.field.entityList || list }
-      if (this.field.onlyForm) {
+      if (this.field.onlyForm && this.entity[this.field.key]) {
         payload.data = [{ [this.field.key]: this.entity[this.field.key] }]
       }
       this.list = await this.$store.dispatch('table/fetchList', payload)
@@ -194,7 +240,7 @@ export default {
         definition = this.$store.getters['table/tableDefinition'](field.fromTable)
       }
       return {
-        required: this.field.alwaysNew ? false : ((this.field.mandatoryIfListEmpty && this.listItems.length === 0) ? false : (this.field.required !== false)),
+        required: this.field.alwaysNew ? false : ((this.field.mandatoryIfListEmpty && this.listItems.length === 0) ? false : (this.field.required_if_null ? isEmpty(this.entity[this.field.required_if_null]) : this.field.required !== false)),
         email: this.field.type === 'email',
         ...(definition ? {
           max: (definition.attribute_datatype_len && definition.attribute_datatype_len[field.key]) || false,

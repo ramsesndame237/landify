@@ -91,7 +91,7 @@ const router = new VueRouter({
     },
     {
       name: 'kanban',
-      path: '/app/kanban',
+      path: '/app/table/:table/:id/kanban',
       component: () => import('@/views/app/Kanban/index.vue'),
     },
     {

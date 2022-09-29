@@ -5,7 +5,7 @@ import i18n from '@/libs/i18n'
 
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate'
 import {
-  required, email, max, regex, max_value,
+  required, email, max, regex, max_value, required_if,
 } from 'vee-validate/dist/rules'
 import vueKanban from 'vue-kanban'
 import router from './router'
@@ -29,6 +29,7 @@ Vue.use(vueKanban)
 extend('email', email)
 extend('required', required)
 extend('regex', regex)
+extend('required_if', required_if)
 extend('max', {
   ...max,
   message: (_, values) => i18n.t('validations.messages.max', values),
@@ -41,6 +42,14 @@ extend('date_after', {
   params: ['attribute'],
   validate: (value, { attribute }) => value >= attribute,
   message: 'This date must be after {_attribute_}',
+})
+extend('required_if_null', {
+  params: ['attribute'],
+  validate: (value, { attribute }) => {
+    console.log(value, attribute)
+    return (!attribute && !!value) || (!!attribute && !value)
+  },
+  message: 'This field is required if {_attribute_} is empty',
 })
 
 extend('lower', {

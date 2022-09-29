@@ -44,7 +44,7 @@ export default {
         { key: 'area_name' },
         { key: 'area_id' },
         { key: 'area_space_value' },
-        { key: 'area_type_name' },
+        { key: 'areatype_name' },
       ],
       loading: false,
       areas: this.context.areas || [],

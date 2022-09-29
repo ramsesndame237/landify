@@ -55,6 +55,8 @@ export default {
       initialData: {
         contract_id: this.context.contract?.contract_id,
         contract_name: this.context.contract?.contract_name,
+        recurringpayment_begin_date: this.context.contract?.contract_begin_date,
+        recurringpayment_end_date: this.context.contract?.contract_end_date,
       },
       fields: [
         { key: 'recurringpayment_id' },

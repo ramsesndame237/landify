@@ -278,9 +278,8 @@ export default [
     icon: 'CheckSquareIcon',
     children: [
       {
-        title: 'Kanban',
-        route: 'kanban',
-        icon: 'CheckSquareIcon',
+        title: 'Boards',
+        route: table('board'),
       },
       {
         title: 'Advanced Kanban',
