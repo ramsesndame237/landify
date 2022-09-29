@@ -89,7 +89,9 @@ export default {
       dateConfig: {
         allowInput: true,
         altInput: true,
-        altFormat: 'd.m.Y',
+        altFormat: this.field.time ? 'd.m.Y H:i:S' : 'd.m.Y',
+        dateFormat: this.field.time ? 'Y-m-d H:i:S' : 'Y-m-d',
+        enableTime: this.field.time === true,
         locale: {
           firstDayOfWeek: 1,
         },

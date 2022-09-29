@@ -821,9 +821,9 @@ export default {
       { key: 'contactdetails_email', hideOnForm: true },
       { key: 'contactpersons_count', hideOnForm: true },
       { key: 'locations_count', hideOnForm: true },
-      {
-        key: 'partnertype_id', hideOnIndex: true, type: 'list', list: 'partnertype', listLabel: 'partnertype_name',
-      },
+      // {
+      //   key: 'partnertype_id', hideOnIndex: true, type: 'list', list: 'partnertype', listLabel: 'partnertype_name',
+      // },
       {
         key: 'address_id',
         hideOnIndex: true,
@@ -1000,9 +1000,9 @@ export default {
       { key: 'partnergroup_id', auto: true },
       { key: 'partnergroup_name' },
       { key: 'partnertype_name', hideOnForm: true },
-      {
-        key: 'partnertype_id', hideOnIndex: true, type: 'list', list: 'partnertype', listLabel: 'partnertype_name',
-      },
+      // {
+      //   key: 'partnertype_id', hideOnIndex: true, type: 'list', list: 'partnertype', listLabel: 'partnertype_name',
+      // },
       { key: 'partnergroup_description', hideOnIndex: true, type: 'textarea' },
       { key: 'partnercompany_count', hideOnForm: true },
     ],
@@ -2874,7 +2874,21 @@ export default {
   //endregion
   //region Work Package 6
   ticket: {
-    fields: [],
+    fields: [
+      { key: 'ticket_id', auto: true },
+      { key: 'ticket_name' },
+      { key: 'ticket_description', type: 'textarea' },
+      { key: 'ticket_deadline', type: 'date', time: true },
+      { key: 'ticket_deadline_yellow', type: 'date', time: true },
+      { key: 'ticket_deadline_red', type: 'date', time: true },
+      {key: 'ticket_planned_treatment_week'},
+      {
+        key: 'column_id', type: 'list', list: 'columnx', listLabel: 'column_name', visible: false,
+      },
+    ],
+    default: {
+      ticket_progress: 10,
+    },
   },
   board: {
     fields: [

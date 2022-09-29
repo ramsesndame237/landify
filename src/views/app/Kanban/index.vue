@@ -6,12 +6,14 @@
         <summary-block title="Widerspruchsfrist" sub_title="Filiale 1" hours="54" percents="50" documents_nb="14"
                        left_days="14" participants_nb="17" :with-attach="block.id & 1 ? true : false"/>
       </div>
-      <div v-for="stage in stages" :slot="'footer-'+stage" :key="stage" style="padding: 10px">
-        <b-button variant="primary" block @click="createBlock(stage)">
-          +
+      <div v-for="(stage,idx) in stages" :slot="'footer-'+stage" :key="stage" style="padding: 10px">
+        <b-button variant="primary" block @click="createTicket(columns[idx])">
+          New Ticket
         </b-button>
       </div>
     </kanban-board>
+    <generic-modal @reload-table="$refs.table.reload()" :table="table" :definition="definition"
+                   :table-definition-key="table" title="Create a new Ticket" ref="modal"/>
   </div>
 </template>
 <script>
@@ -19,10 +21,13 @@ import { BAvatarGroup, BAvatar, BButton } from 'bootstrap-vue'
 // eslint-disable-next-line import/extensions
 import SimpleBlock from '@/views/app/CustomComponents/WP6/SimpleBlock'
 import SummaryBlock from '@/views/app/CustomComponents/WP6/SummaryBlock'
+import GenericModal from "@/views/app/Generic/modal";
+import Table from '@/table'
 
 export default {
   name: 'Kanban',
   components: {
+    GenericModal,
     BAvatarGroup,
     BAvatar,
     BButton,
@@ -31,7 +36,10 @@ export default {
   },
   data() {
     return {
+      table: 'ticket',
+      definition: Table.ticket,
       columns: [],
+      tickets: [],
       blocks: [
         {
           id: 1,
@@ -61,6 +69,9 @@ export default {
       return this.columns.map(c => c.column_name)
     },
   },
+  mounted() {
+    this.loadStages()
+  },
   methods: {
     createBlock(stage) {
       this.blocks.push({
@@ -88,12 +99,20 @@ export default {
             })
         })
         .finally(() => this.loading = false)
+    },
+    createTicket(column) {
+      this.$refs.modal.openModal(true, { column_id: column.column_id })
+    },
+    loadTickets() {
+      this.$api({
+        entity: 'frontend_ticket_list',
+        action: 'read-rich',
+        data: [{ board_id: this.$route.params.id }],
+      })
+        .then(({ data }) => {
+          this.tickets = data.data.data
+        })
     }
-  },
-  mounted() {
-    this.loadStages()
   },
 }
 </script>
-
-
