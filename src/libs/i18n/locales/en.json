@@ -779,7 +779,8 @@
   },
   "validations": {
     "messages": {
-      "max": "{_field_} must contain maximum {length} characters"
+      "max": "{_field_} must contain maximum {length} characters",
+      "max_value": "{_field_} must be lower than {max}"
     }
   }
 }

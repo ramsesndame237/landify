@@ -5,7 +5,7 @@ import i18n from '@/libs/i18n'
 
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate'
 import {
-  required, email, max, regex,
+  required, email, max, regex, max_value,
 } from 'vee-validate/dist/rules'
 import vueKanban from 'vue-kanban'
 import router from './router'
@@ -32,6 +32,10 @@ extend('regex', regex)
 extend('max', {
   ...max,
   message: (_, values) => i18n.t('validations.messages.max', values),
+})
+extend('max_value', {
+  ...max_value,
+  message: (_, values) => i18n.t('validations.messages.max_value', values),
 })
 extend('date_after', {
   params: ['attribute'],

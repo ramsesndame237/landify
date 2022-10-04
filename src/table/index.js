@@ -2559,7 +2559,6 @@ export default {
     ],
   },
   invoiceposition: {
-
     fields: [
       { key: 'invoiceposition_id', auto: true },
       { key: 'invoiceposition_name' },
@@ -2678,7 +2677,7 @@ export default {
     fields: [
       { key: 'costtype_id', auto: true },
       { key: 'costtype_name' },
-      { key: 'costtype_maingroup' },
+      { key: 'costtype_maingroup', type: 'boolean' },
       { key: 'costtype_description', type: 'textarea' },
       { key: 'costtype_amount_externalcosttypes', hideOnForm: true },
     ],
