@@ -7,16 +7,17 @@
       <entity-form table="contract_area_unit_usagetype_rel" :definition="definition"
                    table-definition-key="contract_area_unit_usagetype_rel" create :initial-data="initialData" ref="form"
                    cols="12" :disabled="loading"/>
-    </b-col>
-    <b-col cols="12" md="6">
-      <DataTables ref="contractAreas" :current-page="1" :per-page="100" :with-edit="false" :items="contractAreas"
-                  :selectable="false" :with-view="false" entity="contract_area_unit_usagetype_rel" :fields="fields"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
           <b-spinner v-if="loading" small/>
-          Save and add Contract Area
+          Save
         </b-button>
       </div>
+    </b-col>
+    <b-col cols="12" md="6">
+      <DataTables ref="datatable" :current-page="1" :per-page="100" :with-edit="false" :initial-filter="{contract_id: initialData.contract_id}"
+                  :selectable="false" :with-view="false" entity="contract_area" entity-list="frontend_3_2_3_1"
+                  :fields="fields"/>
     </b-col>
   </b-row>
 </template>
@@ -56,10 +57,11 @@ export default {
       fields: [
         { key: 'contract_id' },
         { key: 'area_name' },
-        { key: 'pos_id' },
-        { key: 'space' },
-        { key: 'begin_date' },
-        { key: 'end_date' },
+        { key: 'pos_name' },
+        { key: 'contract_area_unit_usagetype_rentalspace_value' },
+        { key: 'contract_begin_date' },
+        { key: 'contract_end_date' },
+        { key: 'usagetype_name' },
       ],
       loading: false,
       contractAreas: this.context.contractAreas || [],
@@ -80,7 +82,9 @@ export default {
       this.loading = true
       try {
         const entity = await this.$refs.form.submit()
-        this.contractAreas.push(entity)
+        this.$refs.form.reset()
+        // this.contractAreas.push({ contract_id: entity.contract_id, area_id: entity.area_id })
+        this.$refs.datatable.reload()
         return entity
       } finally {
         this.loading = false

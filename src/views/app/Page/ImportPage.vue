@@ -29,15 +29,26 @@
           >Upload</b-button>
         </div>
       </form>
-      <div class="mt-5" v-if="result && currentStatus === 2">
+      <div class="mt-5" v-if="result">
         <b-table responsive="sm" :items="result"/>
+      </div>
+      <div v-if="errors.length > 0" class="mt-5">
+        <b-card-actions action-collapse collapsed :title="`Errors(${errors.length})`">
+          <div v-for="(error, index) in errors" :key="index" style="color: red">
+            {{ error }}
+          </div>
+        </b-card-actions>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { BButton, BIconArrowRepeat, BIconCheck, BTable } from 'bootstrap-vue'
+/* eslint-disable */
+import { BButton, BIconArrowRepeat, BIconCheck, BTable, BCard } from 'bootstrap-vue'
+import { BCardActions } from '@core/components/b-card-actions'
+import readXlsxFile from 'read-excel-file'
+import { importPartnercompany, importCompany } from '@/import'
 
 const STATUS_INITIAL = 0; const STATUS_SAVING = 1; const STATUS_SUCCESS = 2; const STATUS_FAILED = 3; const STATUS_CHARGED = 4
 export default {
@@ -47,6 +58,7 @@ export default {
     BIconArrowRepeat,
     BIconCheck,
     BTable,
+    BCardActions,
   },
   data() {
     return {
@@ -56,7 +68,9 @@ export default {
       uploadFieldName: 'file',
       fileCount: 0,
       file: null,
-      result: null,
+      result: [],
+      errors: [],
+      errorsCnt: 0,
     }
   },
   computed: {
@@ -87,21 +101,22 @@ export default {
       this.uploadError = null
     },
     async upload(file) {
-      if (file === null) return
-
+      if (file == null) return
       this.currentStatus = STATUS_SAVING
 
-      // save the file
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const response = await this.$upload(formData)
-        .then(data => {
-          this.currentStatus = STATUS_SUCCESS
-          this.result = data.data.data
-        })
-
-      console.log(response)
+      let rapport = {
+        Table: 'Partner Company',
+        Imported: 0,
+        Success: 0,
+        Error: 0,
+        Failed: 0,
+        Created: 0,
+        Updated: 0
+      }
+      // Import Partner Comapnies
+      readXlsxFile(file, { sheet: 'Partner Company' }).then(async data => {
+        await importPartnercompany(this, data, rapport)
+      })
     },
   },
 }

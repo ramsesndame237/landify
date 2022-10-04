@@ -32,7 +32,7 @@ export default {
         relationEntity: 'contactperson_user_rel',
       },
     ],
-    formComponent: () => import('@/views/app/FormComponent/UserForm'),
+    updateComponent: () => import('@/views/app/FormComponent/UserForm'),
     relations: [
       {
         title: 'Roles',
@@ -1270,7 +1270,7 @@ export default {
     entity: 'frontend_3_1_1',
     primaryKey: 'pos_id',
     fields: [
-      { key: 'pos_id', auto: true, hideOnIndex: true },
+      { key: 'pos_id', auto: true },
       {
         key: 'company_id',
         type: 'list',
@@ -1298,8 +1298,8 @@ export default {
         fields: [
           { key: 'location_name', hideOnForm: true },
           { key: 'customergroup_name', hideOnForm: true },
-          { key: 'facility_manager', hideOnForm: true },
-          { key: 'owner' },
+          { key: 'manager_name', hideOnForm: true },
+          { key: 'owner_name' },
           { key: 'area_name' },
           {
             key: 'area_main_usage', hideOnForm: true,
@@ -1455,7 +1455,7 @@ export default {
           { key: 'ticket_move_time', hideOnForm: true },
           { key: 'ticket_deadline_offset', hideOnForm: true },
         ],
-        create: false,
+        newRoute: { name: 'table-form', params: { table: 'ticket' } },
         update: false,
         delete: false,
       },
@@ -1505,8 +1505,9 @@ export default {
   area: {
     entity: 'frontend_3_2_1',
     primaryKey: 'area_id',
+    updateComponent: () => import('@/views/app/UpdateComponent/AreaForm'),
     fields: [
-      { key: 'area_id', auto: true, hideOnIndex: true },
+      { key: 'area_id', auto: true },
       { key: 'area_name' },
       { key: 'location_name', hideOnForm: true, hideOnIndex: true },
       {
@@ -1632,8 +1633,8 @@ export default {
       { key: 'location_objectdescription', type: 'textarea', hideOnIndex: true },
       { key: 'location_total_area', type: 'number', hideOnIndex: true },
       { key: 'location_start_date', type: 'date', hideOnIndex: true },
-      { key: 'owner', hideOnForm: true },
-      { key: 'facility manager', hideOnForm: true },
+      { key: 'owner_name', hideOnForm: true },
+      { key: 'manager_name', hideOnForm: true },
       { key: 'locationtype_name', hideOnForm: true },
       { key: 'city_name', hideOnForm: true },
       { key: 'country_name', hideOnForm: true },
@@ -1744,12 +1745,12 @@ export default {
   contract: {
     entity: 'frontend_3_4_1_1',
     fields: [
-      { key: 'contract_id', auto: true, hideOnIndex: true },
+      { key: 'contract_id', auto: true },
       { key: 'contract_name' },
       { key: 'contracttype_id', hideOnForm: true },
       { key: 'location_name', hideOnForm: true },
-      { key: 'owner', hideOnForm: true },
-      { key: 'facility_manager', hideOnForm: true },
+      { key: 'owner_name', hideOnForm: true },
+      { key: 'manager_name', hideOnForm: true },
       { key: 'pos_name', hideOnForm: true },
       { key: 'contract_begin_date', type: 'date' },
       { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
@@ -1807,7 +1808,6 @@ export default {
             key: 'specialright_id', type: 'list', list: 'specialright', listLabel: 'specialright_name',
           },
           { key: 'specialright_name', hideOnForm: true },
-          { key: 'specialright_date', hideOnForm: true },
           { key: 'contract_specialright_description', type: 'textarea' },
           { key: 'contract_specialright_date', type: 'date' },
           { key: 'contract_specialright_prior_notice_date', type: 'date' },
@@ -1834,20 +1834,24 @@ export default {
             without: 'contract_id',
           },
           {
+            key: 'recurringpayment_name',
+            hideOnForm: true,
+          },
+          {
             key: 'recurringpaymenttype_name',
             hideOnForm: true,
           },
           { key: 'recurringpayment_begin_date', type: 'date', hideOnForm: true },
           {
-            key: 'recurringpaymenttype_id',
+            key: 'recurringpaymenttype_name',
             hideOnForm: true,
           },
           {
-            key: 'maturitytype_id',
+            key: 'maturitytype_name',
             hideOnForm: true,
           },
           {
-            key: 'indexclause_id', hideOnForm: true,
+            key: 'indexclause_name', hideOnForm: true,
           },
         ],
       },
@@ -1855,10 +1859,34 @@ export default {
         title: 'Service Objects',
         primaryKey: 'serviceobject_id',
         entity: 'frontend_3_4_3_7',
-        entityForm: 'contract_serviceobject_rel',
+        entityForm: 'serviceobject_contract_rel',
         entityView: 'serviceobject',
         fields: [
-          { key: 'serviceobject_id', type: 'list', list: 'serviceobject', alwaysNew: true, onlyForm: true },
+          {
+            key: 'serviceobject_id',
+            type: 'list',
+            list: 'serviceobject',
+            alwaysNew: true,
+            onlyForm: true,
+            withFields: [
+              {
+                key: 'location_id',
+                type: 'list',
+                list: 'location',
+                listLabel: 'location_name',
+                hideOnIndex: true,
+                relationEntity: 'location_serviceobject_rel',
+              },
+              {
+                key: 'area_id',
+                type: 'list',
+                list: 'area',
+                listLabel: 'area_name',
+                hideOnIndex: true,
+                relationEntity: 'area_serviceobject_rel',
+              },
+            ],
+          },
           { key: 'serviceobject_name', hideOnForm: true },
           { key: 'serviceobjecttype_name', hideOnForm: true },
           { key: 'area_name', hideOnForm: true },
@@ -1866,25 +1894,40 @@ export default {
         ],
       },
       {
+        title: 'Cost Types',
+        primaryKey: 'costtype_id',
+        entity: 'frontend_3_4_3_5',
+        entityForm: 'contract_costtype_rel',
+        entityView: 'costtype',
+        fields: [
+          {
+            key: 'costtype_id',
+            type: 'list',
+            list: 'costtype',
+            listLabel: 'costtype_name',
+          },
+          { key: 'costtype_name', hideOnForm: true },
+          { key: 'contract_costtype_comment' },
+        ],
+      },
+
+      {
         title: 'Contract criterias',
         primaryKey: 'criteria_id',
         entity: 'frontend_3_4_3_4',
         entityForm: 'contract_criteria_rel',
         entityView: 'criteria',
+        fieldComponent: () => import('@/views/app/CreateComponent/ContractCriteria'),
         fields: [
-          { key: 'criteria_id', type: 'list', list: 'criteria', listLabel: 'criteria_name' },
+          { key: 'criteria_id', type: 'list', list: 'criteria', listLabel: 'criteria_name', composite: true },
           { key: 'criteria_name', hideOnForm: true },
-          { key: 'contract_criteria_valid_from_date', type: 'date' },
-          { key: 'contract_criteria_valid_to_date', type: 'date' },
-          { key: 'criteriatype_name', hideOnForm: true },
-          { key: 'contract_criteria_comment', type: 'textarea' },
-          { key: 'contract_criteria_value', type: 'number' },
+          ...getContractCriteriaFields(),
         ],
         update: false,
       },
       {
         title: 'Invoices',
-        primaryKey: 'incoice_id',
+        primaryKey: 'invoice_id',
         entity: 'frontend_3_4_3_6',
         entityForm: 'invoice_contract_rel',
         entityView: 'invoice',
@@ -1909,6 +1952,7 @@ export default {
     fields: [
       { key: 'serviceobject_id', auto: true },
       { key: 'serviceobject_name' },
+      { key: 'serviceobject_external_name' },
       { key: 'serviceobjecttype_name', hideOnForm: true },
       { key: 'serviceobject_description', type: 'textarea', hideOnIndex: true },
       {
@@ -2050,20 +2094,7 @@ export default {
             key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name',
           },
           { key: 'contract_name', hideOnForm: true },
-          { key: 'contract_criteria_comment', type: 'textarea' },
-          { key: 'contract_criteria_value' },
-          { key: 'unit_name', hideOnForm: true },
-          { key: 'contract_criteria_exists', type: 'boolean' },
-          { key: 'contract_criteria_valid_from_date', type: 'date' },
-          { key: 'contract_criteria_valid_to_date', type: 'date' },
-          {
-            key: 'choice_id',
-            type: 'list',
-            list: 'choice',
-            listLabel: 'choice_name',
-            hideOnIndex: true,
-          },
-          { key: 'choice_name', hideOnForm: true },
+          ...getContractCriteriaFields(),
         ],
       },
       {
@@ -2133,7 +2164,7 @@ export default {
         list: 'contract',
         listLabel: 'contract_name',
         hideOnIndex: true,
-        relationEntity: 'contract_recurringpayment_rel'
+        relationEntity: 'contract_recurringpayment_rel',
       },
       {
         key: 'recurringpaymenttype_id',
@@ -2143,12 +2174,24 @@ export default {
         hideOnIndex: true,
       },
       { key: 'recurringpaymenttype_name', hideOnForm: true },
-      { key: 'recurringpayment_sum_per_month', hideOnIndex: true },
-      { key: 'recurringpayment_condition_percentage', hideOnIndex: true },
-      { key: 'recurringpayment_condition_comment', hideOnIndex: true, type: 'textarea' },
-      { key: 'recurringpayment_percentage', hideOnIndex: true },
+      {
+        key: 'recurringpayment_sum_per_month',
+        hideOnIndex: true,
+        visible: visibleByRecurringPaymentType([1, 3, 4, 5, 6]),
+      },
+      {
+        key: 'recurringpayment_condition_percentage',
+        hideOnIndex: true,
+        visible: visibleByRecurringPaymentType([2, 5]),
+      },
+      {
+        key: 'recurringpayment_percentage',
+        hideOnIndex: true,
+        visible: visibleByRecurringPaymentType([2]),
+      },
       { key: 'recurringpayment_begin_date', type: 'date', hideOnIndex: true },
       { key: 'recurringpayment_end_date', type: 'date', hideOnIndex: true },
+      { key: 'recurringpayment_condition_comment', hideOnIndex: true, type: 'textarea' },
       {
         key: 'maturitytype_id',
         type: 'list',
@@ -2172,13 +2215,17 @@ export default {
         hideOnIndex: true,
         visible: entity => entity.maturitytype_id === 2,
       },
+      { key: 'recurringpayment_value_deposit', type: 'boolean' },
       {
         key: 'indexclause_id',
         type: 'list',
         list: 'indexclause',
         listLabel: 'indexclause_name',
         hideOnIndex: true,
+        withNew: true,
         rules: { required: false },
+        visible: entity => entity.recurringpayment_value_deposit === 1,
+        // hideOnUpdate: true,
       },
       { key: 'maturitytype_name', hideOnForm: true },
       { key: 'indexclause_name', hideOnForm: true },
@@ -2327,8 +2374,8 @@ export default {
       { key: 'invoice_allocationarea', type: 'number' },
       { key: 'invoice_payment_date', type: 'date' },
       { key: 'customergroup_name', hideOnForm: true },
-      { key: 'facilitymanager_partnercompany_name', hideOnForm: true },
-      { key: 'owner_partnercompany_name', hideOnForm: true },
+      { key: 'manager_name', hideOnForm: true },
+      { key: 'owner_name', hideOnForm: true },
       {
         key: 'contract_id',
         type: 'list',
@@ -2340,6 +2387,7 @@ export default {
         key: 'partnertype_id', type: 'list', list: 'partnertype', listLabel: 'partnertype_name', hideOnIndex: true,
       },
       { key: 'invoice_description', type: 'textarea', hideOnIndex: true },
+      { key: 'invoice_number' },
       { key: 'invoice_contract_billing_period_from_date', type: 'date', hideOnIndex: true },
       {
         key: 'invoice_contract_billing_period_to_date',
@@ -2426,7 +2474,6 @@ export default {
           {
             key: 'invoicevaluetype_id',
             type: 'list',
-            hideOnIndex: true,
             list: 'invoicevaluetype',
             listLabel: 'invoicevaluetype_name',
           },
@@ -2448,7 +2495,6 @@ export default {
             type: 'list',
             list: 'invoicecriteria',
             listLabel: 'invoicecriteria_name',
-            hideOnIndex: true
           },
           { key: 'invoicecriteria_name', hideOnForm: true },
           { key: 'invoicecriteria_description', hideOnForm: true },
@@ -2465,7 +2511,6 @@ export default {
             key: 'invoicedeadline_id',
             type: 'list',
             list: 'invoicedeadline',
-            hideOnIndex: true,
             listLabel: 'invoicedeadline_name',
           },
           { key: 'invoicedeadline_name', hideOnForm: true },
@@ -2477,42 +2522,34 @@ export default {
         tool: () => import('@/views/app/InvoicePositionTools.vue'),
         title: 'Invoice Positions',
         entity: 'invoice_invoiceposition_rel',
-        entityForm: 'invoiceposition',
+        entityForm: 'invoice_invoiceposition_rel',
         primaryKey: 'invoiceposition_id',
         fields: [
-          {
-            key: 'invoice_id',
-            type: 'list',
-            relationEntity: 'invoice_invoiceposition_rel',
-            hideOnForm: true,
-            hideOnIndex: true
-          },
-          { key: 'invoiceposition_id', hideOnForm: true },
-          { key: 'invoiceposition_name' },
-          { key: 'invoiceposition_total_units', type: 'number' },
-          { key: 'invoiceposition_units_customer', type: 'number' },
-          { key: 'invoiceposition_costtype_invoice' },
+          { key: 'invoiceposition_id', type: 'list', list: 'invoiceposition', alwaysNew: true, onlyForm: true },
+          { key: 'invoiceposition_name', hideOnForm: true },
+          { key: 'invoiceposition_total_units', hideOnForm: true },
+          { key: 'invoiceposition_units_customer', hideOnForm: true },
+          { key: 'invoiceposition_costtype_invoice', hideOnForm: true },
           { key: 'costtype_name', hideOnForm: true },
-          {
-            key: 'costtype_id', type: 'list', list: 'costtype', listLabel: 'costtype_name', hideOnIndex: true,
-          },
-          {
-            key: 'unit_id', type: 'list', list: 'unit', listLabel: 'unit_name', hideOnIndex: true,
-          },
-          { key: 'invoiceposition_flat_rate', type: 'boolean' },
-          { key: 'invoiceposition_amount_total', type: 'number' },
-          { key: 'invoiceposition_amount_customer', type: 'number' },
-          { key: 'invoiceposition_apportionable', type: 'boolean' },
+          { key: 'invoiceposition_flat_rate', hideOnForm: true },
+          { key: 'invoiceposition_amount_total', hideOnForm: true },
+          { key: 'invoiceposition_amount_customer', hideOnForm: true },
+          { key: 'invoiceposition_apportionable', hideOnForm: true },
         ],
       },
       {
         title: 'Service Objects',
         entity: 'invoice_serviceobject_rel',
         primaryKey: 'serviceobject_id',
-        view: false,
+        entityView: 'serviceobject',
         fields: [
           {
-            key: 'serviceobject_id', type: 'list', list: 'serviceobject', listLabel: 'serviceobject_name',
+            key: 'serviceobject_id',
+            type: 'list',
+            list: 'serviceobject',
+            listLabel: 'serviceobject_name',
+            // alwaysNew: true,
+            // onlyForm: true,
           },
           { key: 'serviceobject_name', hideOnForm: true },
           { key: 'serviceobjecttype_name', hideOnForm: true },
@@ -2521,7 +2558,30 @@ export default {
       },
     ],
   },
+  invoiceposition: {
+
+    fields: [
+      { key: 'invoiceposition_id', auto: true },
+      { key: 'invoiceposition_name' },
+      {
+        key: 'unit_id', type: 'list', list: 'unit', listLabel: 'unit_name', hideOnIndex: true,
+      },
+      { key: 'invoiceposition_total_units', type: 'number' },
+      { key: 'invoiceposition_units_customer', type: 'number' },
+      { key: 'invoiceposition_costtype_invoice' },
+      { key: 'costtype_name', hideOnForm: true },
+      {
+        key: 'costtype_id', type: 'list', list: 'costtype', listLabel: 'costtype_name', hideOnIndex: true,
+      },
+
+      { key: 'invoiceposition_flat_rate', type: 'boolean' },
+      { key: 'invoiceposition_amount_total', type: 'number' },
+      { key: 'invoiceposition_amount_customer', type: 'number' },
+      { key: 'invoiceposition_apportionable', type: 'boolean' },
+    ]
+  },
   inspectionresult: {
+    create: false,
     fields: [
       { key: 'inspectionresult_id', auto: true },
       { key: 'inspectionresult_value' },
@@ -2533,7 +2593,7 @@ export default {
       { key: 'saving_name' },
       { key: 'rating_name' },
       { key: 'resultcategorization_name' },
-      { key: 'invoicepositon_count', hideOnForm: true },
+      { key: 'invoiceposition_count', hideOnForm: true },
     ],
     filters: [
       {
@@ -2556,10 +2616,60 @@ export default {
       },
       { key: 'invoice_contract_year', type: 'number' },
       {
-        key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name',
+        key: 'inspectionresult_realised', type: 'yesno',
       },
       {
-        key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_name',
+        key: 'board_id', type: 'list', list: 'board', listLabel: 'board_name',
+      },
+      {
+        key: 'costtype_id', type: 'list', list: 'costtype', listLabel: 'costtype_name',
+      },
+      {
+        key: 'contradictionpackage_id',
+        type: 'list',
+        list: 'contradictionpackage',
+        listLabel: 'contradictionpackage_name',
+      },
+      {
+        key: 'owner_id',
+        type: 'list',
+        list: 'partnercompany',
+        listLabel: 'partnercompany_name',
+        tableKey: 'partnercompany_id'
+      },
+      {
+        key: 'manager_id',
+        type: 'list',
+        list: 'partnercompany',
+        listLabel: 'partnercompany_name',
+        tableKey: 'partnercompany_id'
+      },
+      {
+        key: 'inspectionresultimpacttype_id',
+        type: 'list',
+        list: 'inspectionresultimpacttype',
+        listLabel: 'inspectionresultimpacttype_name',
+      },
+      {
+        key: 'inspectionresult_legally_clear', type: 'yesno',
+      },
+      {
+        key: 'savingtype_id',
+        type: 'list',
+        list: 'savingtype',
+        listLabel: 'savingtype_name',
+      },
+      {
+        key: 'ratingtype_id',
+        type: 'list',
+        list: 'ratingtype',
+        listLabel: 'ratingtype_name',
+      },
+      {
+        key: 'claimtype_id',
+        type: 'list',
+        list: 'claimtype',
+        listLabel: 'claimtype_name',
       },
     ],
   },
@@ -2664,7 +2774,7 @@ export default {
     ],
   },
   // endregion
-  // region Workpackage 5
+  //region Workpackage 5
   contradiction: {
     customPage: () => import('@/views/app/Page/Contradiction/Index.vue'),
     createModal: false,
@@ -2758,8 +2868,42 @@ export default {
       { key: 'contradictionpoint_inspectionresult_rating_value_grey' },
     ],
   },
-  // end region
+  //endregion
   ticket: {
     fields: [],
   },
+}
+
+function getContractCriteriaFields() {
+  return [
+    {
+      key: 'choice_id',
+      type: 'list',
+      list: 'frontend_3_6_4',
+      relationEntity: 'contract_criteria_choice_rel',
+      with: ['criteria_id', 'contract_id'],
+      listLabel: 'choice_name',
+      hideOnIndex: true,
+      filter_key: 'criteria_id',
+      filter_value: null,
+      mandatoryIfListEmpty: true,
+    },
+    { key: 'contract_criteria_valid_from_date', type: 'date', composite: true },
+    { key: 'contract_criteria_valid_to_date', type: 'date' },
+    { key: 'contract_criteria_exists', type: 'boolean' },
+    { key: 'criteriatype_name', hideOnForm: true },
+    { key: 'contract_criteria_comment', type: 'textarea' },
+    { key: 'contract_criteria_value', type: 'number' },
+
+    { key: 'choice_name', hideOnForm: true },
+  ]
+}
+
+function visibleByRecurringPaymentType(indexes) {
+  return (entity, vm) => {
+    const list = vm.$store.state.table.listCache.recurringpaymenttype
+    if (!list) return false
+    const selected = list.find(i => i.recurringpaymenttype_id === entity.recurringpaymenttype_id)
+    return selected ? indexes.indexOf(parseInt(selected.recurringpaymenttype_name.split('-')[0])) >= 0 : false
+  }
 }

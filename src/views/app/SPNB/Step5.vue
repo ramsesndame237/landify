@@ -6,16 +6,17 @@
     <b-col cols="12" md="6">
       <entity-form table="pos" :definition="definition" table-definition-key="pos" create :initial-data="initialData"
                    cols="12" ref="form" :disabled="loading"/>
-    </b-col>
-    <b-col cols="12" md="6">
-      <DataTables ref="datatable" :current-page="1" :per-page="100" :with-edit="false" :ids="pos" :selectable="false"
-                  :with-view="false" entity="pos" :entity-list="definition.entity" :fields="fields"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
           <b-spinner v-if="loading" small/>
-          Save and add POS
+          Save
         </b-button>
       </div>
+    </b-col>
+    <b-col cols="12" md="6">
+      <DataTables ref="datatable" :current-page="1" :per-page="100" :with-edit="false" :ids="pos" :selectable="false"
+                  :with-view="false" entity="pos" entity-list="frontend_3_1_3_1" :fields="fields"/>
+
       <div class="bg-light mt-2 p-1 text-sm">
         <small>
           {{ $t('app.content.new_busness_text_pos_msg') }}
@@ -49,13 +50,23 @@ export default {
         withNew: true,
       },
       {
-        key: 'user_id', type: 'list', list: 'user', listLabel: 'user_email', relationEntity: 'user_pos_rel', with: ['user_pos_valid_from'],
+        key: 'user_id',
+        type: 'list',
+        list: 'user',
+        listLabel: 'user_email',
+        relationEntity: 'user_pos_rel',
+        with: ['user_pos_valid_from'],
       },
       {
         key: 'user_pos_valid_from', type: 'date',
       },
       {
-        key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name', ids: this.context.areas, relationEntity: 'area_pos_rel',
+        key: 'area_id',
+        type: 'list',
+        list: 'area',
+        listLabel: 'area_name',
+        ids: this.context.areas,
+        relationEntity: 'area_pos_rel',
       },
     ]
     return {
@@ -72,7 +83,7 @@ export default {
       ],
     }
   },
-  components: { Field, BRow, BCol, DataTables, entityForm, BButton , BSpinner},
+  components: { Field, BRow, BCol, DataTables, entityForm, BButton, BSpinner },
   mounted() {
     this.definition.fields.find(f => f.key === 'company_id').disabled = true
     this.$refs.form.loadDefinition()
@@ -80,10 +91,13 @@ export default {
   methods: {
     async add() {
       this.loading = true
-      const entity = await this.$refs.form.submit()
-      this.pos.push(entity.pos_id)
-      this.loading = false
-      return entity
+      this.$refs.form.submit()
+        .then(entity => {
+          this.pos.push(entity.pos_id)
+          this.$refs.datatable.reload()
+          this.$refs.form.reset()
+        })
+        .finally(() => this.loading = false)
     },
   },
 }

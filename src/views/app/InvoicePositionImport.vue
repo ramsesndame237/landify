@@ -17,6 +17,7 @@
         <span>Show Invoice Positions</span>
       </b-button>
       <b-button v-if="show" class="mr-1" variant="primary" @click="transfer">
+        <b-spinner v-if="transfering" small/>
         <span>Submit and transfert to invoice</span>
       </b-button>
     </div>
@@ -52,7 +53,7 @@
 </template>
 
 <script>
-import { BButton, BCard, BTable, BRow, BFormCheckbox, BForm, BCol } from 'bootstrap-vue'
+import { BButton, BCard, BTable, BRow, BFormCheckbox, BForm, BCol, BSpinner } from 'bootstrap-vue'
 import Field from '@/views/app/Generic/Field.vue';
 
 export default {
@@ -66,11 +67,13 @@ export default {
     BFormCheckbox,
     BCol,
     BForm,
+    BSpinner,
   },
   data() {
     return {
       filterData: {},
       loading: false,
+      transfering: false,
       sortBy: '',
       sortDesc: false,
       sortDirection: 'asc',
@@ -161,28 +164,33 @@ export default {
         })
         return el
       })
-      const response = await this.$api({
-        entity: 'invoiceposition',
-        action: 'create',
-        data,
-      })
-
-      const relations = response.data.data.data
-        .filter(item => !!item[0])
-        .map(item => {
-          return {
-            invoice_id,
-            invoiceposition_id: item[0].invoiceposition_id,
-          }
+      this.transfering = true
+      try {
+        const response = await this.$api({
+          entity: 'invoiceposition',
+          action: 'create',
+          data,
         })
 
-      await this.$api({
-        action: 'create',
-        entity: 'invoice_invoiceposition_rel',
-        data: relations,
-      })
+        const relations = response.data.data.data
+          .filter(item => !!item[0])
+          .map(item => {
+            return {
+              invoice_id,
+              invoiceposition_id: item[0].invoiceposition_id,
+            }
+          })
 
-      await this.$router.push({ name: 'table-view', params: { table: 'invoice', id: invoice_id }, query: { tab: 5 } })
+        await this.$api({
+          action: 'create',
+          entity: 'invoice_invoiceposition_rel',
+          data: relations,
+        })
+
+        await this.$router.push({ name: 'table-view', params: { table: 'invoice', id: invoice_id }, query: { tab: 5 } })
+      } finally {
+        this.transfering = false
+      }
     },
     provider(ctx) {
       const {

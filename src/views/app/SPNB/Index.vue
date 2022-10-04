@@ -74,7 +74,7 @@
           <step8 v-if="current_step===8" ref="step8" :context="context" :disabled="loading"/>
           <step9 v-if="current_step===9" ref="step9" :context="context" :disabled="loading"/>
           <step10 v-if="current_step===10" ref="step10" :context="context" :disabled="loading"/>
-          <div v-if="steps_progress == 100"
+          <div v-if="current_step===11"
                class=" d-flex pt-5 pb-5 mb-2 justify-content-center align-items-center col-12">
             <img src="@/assets/images/icons/smile.png" alt="">
           </div>

@@ -11,7 +11,8 @@
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
                     :get-option-label="defaultLabelFunction[field.key]||(option=> option[field.listLabel])"
                     :placeholder="field.key" :options="listItems" transition="" :label="field.listLabel" class="w-100"
-                    :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch" @input="onChange"/>
+                    :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
+                    @input="onChange"/>
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm">New
           </b-button>
@@ -19,12 +20,17 @@
             {{ showAll ? 'Show Created' : 'Show All' }}
           </b-button>
         </div>
+        <div v-else-if="field.type==='yesno'">
+          <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
+                    :placeholder="field.key" :options="yesNoOptions" transition="" label="label" class="w-100"
+                    :reduce="i => i.value"/>
+        </div>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
                     class="form-control"/>
         <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
-                         :state="errors.length > 0 ? false:null" :placeholder="field.key" value="1" unchecked-value="0"
-                         style="margin-top: 5px"/>
+                         :state="errors.length > 0 ? false:null" :placeholder="field.key" :value="1"
+                         :unchecked-value="0" style="margin-top: 5px"/>
         <b-form-input v-else v-model="entity[field.key]" :type="field.type||'text'" :disabled="disabled"
                       :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
         <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
@@ -63,7 +69,7 @@ export default {
   components: {
     BFormInput, BFormGroup, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol, BFormCheckbox,
   },
-  props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled'],
+  props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue'],
   data() {
     return {
       list: this.$store.state.table.listCache[this.field.list] || [],
@@ -77,19 +83,34 @@ export default {
       },
       dateConfig: {
         allowInput: true,
+        locale: {
+          firstDayOfWeek: 1,
+        },
       },
+      yesNoOptions: [
+        { value: 1, label: 'Yes' },
+        { value: 0, label: 'No' },
+      ],
     }
   },
   computed: {
     visible() {
-      return this.field.visible ? this.field.visible(this.entity) : true
+      return this.field.visible ? this.field.visible(this.entity, this) : true
     },
     listItems() {
-      if (!this.field.ids || this.field.ids.length === 0 || this.showAll) return this.list
+      if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
+        if (this.field.filter_key && this.filterValue) {
+          console.log('filter with value', this.filterValue)
+          return this.list.filter(e => e[this.field.filter_key] === this.filterValue)
+        }
+        return this.list
+      }
       return this.list.filter(item => this.field.ids.indexOf(item[this.field.key]) >= 0)
     },
     subDefinition() {
-      return Table[this.field.list]
+      const definition = { ...Table[this.field.list] }
+      if (this.field.withFields) definition.fields = [...definition.fields, ...this.field.withFields]
+      return definition
     },
     subFormFields() {
       const excluded = (typeof this.field.without === 'string') ? [this.field.without] : (Array.isArray(this.field.without) ? this.field.without : [])
@@ -118,7 +139,7 @@ export default {
       await this.fetchList()
     } else if (this.field.type === 'boolean') {
       // set false as default value
-      if (this.entity[this.field.key] == null) this.entity[this.field.key] = 0
+      if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, 0)
     }
   },
   beforeDestroy() {
@@ -169,7 +190,7 @@ export default {
       }
       if (!definition) return {}
       return {
-        required: this.field.alwaysNew ? false : (this.field.required !== false),
+        required: this.field.alwaysNew ? false : ((this.field.mandatoryIfListEmpty && this.listItems.length === 0) ? false : (this.field.required !== false)),
         email: this.field.type === 'email',
         max: (definition.attribute_datatype_len && definition.attribute_datatype_len[field.key]) || false,
         regex: (definition.attribute_regexp && definition.attribute_regexp[field.key]) || false,

@@ -6,16 +6,17 @@
     <b-col cols="12" md="6">
       <entity-form table="area" :definition="definition" table-definition-key="area" create :initial-data="{}" cols="12"
                    :disabled="loading" ref="form"/>
+      <div class="d-flex justify-content-center">
+        <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
+          <b-spinner v-if="loading" small/>
+          Save
+        </b-button>
+      </div>
     </b-col>
     <b-col cols="12" md="6">
       <DataTables ref="datatable" entity="area" :entity-list="definition.entity" :fields="fields" :current-page="1" :per-page="100"
                   :with-edit="false" :with-view="false" :selectable="false" :ids="areas"/>
-      <div class="d-flex justify-content-center">
-        <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
-          <b-spinner v-if="loading" small/>
-          Save and add area
-        </b-button>
-      </div>
+
     </b-col>
   </b-row>
 </template>
@@ -25,7 +26,7 @@ import Field from "@/views/app/Generic/Field";
 import EntityForm from '@/views/app/Generic/EntityForm'
 import Table from '@/table'
 import {
-  BRow, BCol, BButton,
+  BRow, BCol, BButton, BSpinner
 } from 'bootstrap-vue'
 import DataTables from '@/layouts/components/DataTables'
 
@@ -49,7 +50,7 @@ export default {
       areas: this.context.areas || [],
     }
   },
-  components: { DataTables, Field, BRow, BCol, EntityForm, BButton },
+  components: { DataTables, Field, BRow, BCol, EntityForm, BButton, BSpinner },
   mounted() {
     this.$refs.form.loadDefinition()
   },
@@ -60,6 +61,7 @@ export default {
         const entity = await this.$refs.form.submit()
         this.areas.push(entity.area_id)
         this.$refs.datatable.reload()
+        this.$refs.form.reset()
       } finally {
         this.loading = false
       }

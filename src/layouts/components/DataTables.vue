@@ -67,6 +67,7 @@ export default {
     defaultSortDesc: { type: Boolean, default: false },
     items: Array,
     ids: Array,
+    initialFilter: Object,
   },
   data() {
     return {
@@ -75,7 +76,7 @@ export default {
       sortDesc: this.defaultSortDesc,
       selected: false,
       currentItems: this.items || [],
-      filterData: {},
+      filterData: { ...this.initialFilter },
     }
   },
   computed: {
@@ -138,7 +139,7 @@ export default {
           this.currentItems = []
           return []
         }
-        payload.data = this.ids.map(id => ({ [this.primaryKey]: id }))
+        payload.data = this.ids.map(id => (typeof id === 'object' ? id : { [this.primaryKey]: id }))
       } else {
         const filterData = { ...this.filterData }
         if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue

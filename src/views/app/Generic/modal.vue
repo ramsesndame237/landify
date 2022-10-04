@@ -2,7 +2,7 @@
   <!--modal-->
   <b-modal id="generic-modal" ref="modal" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary" centered
            :title="$t(forceTitle || title)" size="lg" @ok="handleOk">
-    <component :is="definition.updateComponent || definition.formComponent || 'entity-form'" ref="form" :table="table"
+    <component :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'" ref="form" :table="table"
                :definition="definition" :table-definition-key="tableDefinitionKey" :initial-data="initialData"
                :create="create" :is-relation="isRelation" inline :cols="12"/>
     <template v-slot:modal-footer>

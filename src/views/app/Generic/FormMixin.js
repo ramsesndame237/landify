@@ -67,8 +67,8 @@ export default {
         if (field.with) {
           (typeof field.with === 'string' ? [field.with] : field.with).forEach(val => {
             const withField = definition.fields.find(f => f.key === val)
-            const withColumn = withField.tableKey || withField.key
-            extras[withColumn] = entity[withField.key]
+            const withColumn = withField ? (withField.tableKey || withField.key) : val
+            extras[withColumn] = entity[withField ? withField.key : val]
           })
         }
         const isNew = originalEntity[field.key] == null
@@ -185,7 +185,7 @@ export default {
         const component = fieldComponents.find(f => f.field === field)
         const create = component.hasNew || (field.alwaysNew && originalEntity[field.key] == null)
         const formField = fieldComponents.find(f => f.field === field)
-        const subDefinition = Table[field.list]
+        const subDefinition = component.subDefinition
         const data = create ? formField.subEntity : { ...formField.subEntity, [field.key]: originalEntity[field.key] }
         return this.saveEntity(data,
           originalEntity[field.key] == null ? {} : formField.list.find(i => i[field.key] === originalEntity[field.key]),
@@ -261,7 +261,10 @@ export default {
       this.entity = { ...this.definition.default, ...entity }
     },
     reset() {
-      this.entity = { ...this.originalEntity }
+      if (this.$refs.fields) this.$refs.fields.forEach(f => f.subEntity = {})
+      this.entity = { ...this.initialData, ...this.originalEntity }
+      this.$refs.form.reset()
+      this.$refs.form.reset()
     },
     async loadDefinition() {
       const { data } = await this.$api({ action: 'read-rich', entity: this.table })
@@ -277,7 +280,7 @@ export default {
       return this.isDisabled(this.getField(key))
     },
     getFormFields(definition) {
-      return definition.fields.filter(f => !f.hideOnForm)
+      return definition.fields.filter(f => !f.hideOnForm && (this.create || !f.hideOnUpdate))
     },
     getPrimaryKey(definition) {
       return definition.primaryKey ?? definition.fields.find(f => f.auto).key

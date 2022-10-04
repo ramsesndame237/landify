@@ -6,15 +6,17 @@
     <b-col cols="12" md="6">
       <entity-form ref="form" table="recurringpayment" :definition="definition" table-definition-key="recurringpayment"
                    create :initial-data="initialData" cols="12" :disabled="loading"/>
-    </b-col>
-    <b-col cols="12" md="6">
-      <DataTables ref="recurringpayment" :current-page="1" :per-page="100" :with-edit="false" :items="recurringpayments"
-                  :selectable="false" :with-view="false" entity="" :fields="fields"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
-          Save and add Recurring Payment
+          Save
         </b-button>
       </div>
+    </b-col>
+    <b-col cols="12" md="6">
+      <DataTables ref="datatable" :current-page="1" :per-page="100" :with-edit="false"
+                  :initial-filter="{contract_id: initialData.contract_id}" :selectable="false" :with-view="false"
+                  entity="contract_recurringpayment_rel" entity-list="frontend_3_4_3_3" :fields="fields"/>
+
     </b-col>
   </b-row>
 </template>
@@ -35,9 +37,16 @@ export default {
   },
   props: ['context', 'disabled'],
   data() {
-    const definition = JSON.parse(JSON.stringify(Table.recurringpayment))
+    const definition = { ...Table.recurringpayment }
     definition.fields = [
-      { key: 'contract_id', disabled: true },
+      {
+        key: 'contract_id',
+        disabled: true,
+        type: 'list',
+        list: 'contract',
+        listLabel: 'contract_name',
+        relationEntity: 'contract_recurringpayment_rel'
+      },
       { key: 'contract_name', disabled: true },
       ...definition.fields.filter(f => f.key !== 'contract_id'),
     ]
@@ -67,16 +76,18 @@ export default {
       this.loading = true
       try {
         const entity = await this.$refs.form.submit()
-        // create the the relation
-        await this.$api({
-          entity: 'contract_recurringpayment_rel',
-          action: 'create',
-          data: [{
-            contract_id: this.initialData.contract_id,
-            recurringpayment_id: entity.recurringpayment_id,
-          }],
-        })
-        this.recurringpayments.push(entity)
+        this.$refs.form.reset()
+        this.$refs.datatable.reload()
+        // // create the the relation
+        // await this.$api({
+        //   entity: 'contract_recurringpayment_rel',
+        //   action: 'create',
+        //   data: [{
+        //     contract_id: this.initialData.contract_id,
+        //     recurringpayment_id: entity.recurringpayment_id,
+        //   }],
+        // })
+        // this.recurringpayments.push(entity)
         return entity
       } finally {
         this.loading = false

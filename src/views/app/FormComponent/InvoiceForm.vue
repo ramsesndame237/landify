@@ -57,6 +57,10 @@
               <field ref="fields" :disabled="isDisabledFromName('invoice_description')" :entity="entity"
                      :table-definition="tableDefinition" :field="getField('invoice_description')"/>
             </b-col>
+            <b-col cols="12">
+              <field ref="fields" :disabled="isDisabledFromName('invoice_number')" :entity="entity"
+                     :table-definition="tableDefinition" :field="getField('invoice_number')"/>
+            </b-col>
           </b-row>
         </b-col>
         <b-col cols="5">
@@ -126,15 +130,22 @@ export default {
     'entity.invoice_contract_billing_period_to_date': function () {
       this.entity.invoice_contract_year = getYearFormDateString(this.entity.invoice_contract_billing_period_to_date)
     },
-    'entity.contract_id': function (val) {
+    'entity.contract_id': async function (val) {
       const contract = this.contracts.find(c => c.contract_id === val)
       if (!contract) {
         // laoding form
         // this.fetchContracts()
+        this.contracts = (await this.$api({
+          entity: 'contract',
+          action: 'read-rich',
+          data: [{ contract_id: val }],
+        })).data.data.data
+        this.$set(this.contracts[0], '__selected', true)
+        await this.fetchAreas(val)
         return
       }
       this.$set(contract, '__selected', true)
-      this.fetchAreas(val)
+      await this.fetchAreas(val)
     },
   },
   async mounted() {
@@ -153,7 +164,7 @@ export default {
     async fetchAreas(contractId) {
       this.$refs.areas.loading = true
       this.areas = (await this.$api({
-        entity: 'contract_area_unit_usagetype_rel',
+        entity: 'frontend_3_4_1_1',
         action: 'read-rich',
         data: [{ contract_id: contractId }],
       })).data.data.data
