@@ -1,0 +1,19 @@
+0 1 686 51779 Alexander@helix9:~/digitalsuxess/kim_pro_frontend/db>grep '^| invoice ' kim_pro_COLUMNS.txt
+| invoice                                         | invoice_id                                          |
+| invoice                                         | invoice_creation_time                               |
+| invoice                                         | invoice_last_change_time                            |
+| invoice                                         | invoice_company_name                                |
+| invoice                                         | invoice_date_of_order                               |
+| invoice                                         | invoice_date                                        |
+| invoice                                         | invoice_billing_period_from_date                    |
+| invoice                                         | invoice_billing_period_to_date                      |
+| invoice                                         | invoice_allocationarea                              |
+| invoice                                         | invoice_description                                 |
+| invoice                                         | invoice_payment_date                                |
+| invoice                                         | invoice_closingdate                                 |
+| invoice                                         | invoice_number                                      |
+0 1 686 51779 Alexander@helix9:~/digitalsuxess/kim_pro_frontend/db>grep '^| invoice_contract_rel ' kim_pro_COLUMNS.txt
+| invoice_contract_rel                            | invoice_id                                          |
+| invoice_contract_rel                            | contract_id                                         |
+| invoice_contract_rel                            | invoice_contract_year                               |
+0 1 686 51779 Alexander@helix9:~/digitalsuxess/kim_pro_frontend/db>
