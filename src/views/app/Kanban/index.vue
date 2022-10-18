@@ -84,19 +84,12 @@ export default {
     loadStages() {
       this.loading = true
       this.$api({
-        entity: 'columnx_board_rel',
+        entity: 'frontend_column_list',
         action: 'read-rich',
         data: [{ board_id: this.$route.params.id }],
       })
         .then(({ data }) => {
-          return this.$api({
-            entity: 'columnx',
-            action: 'read-rich',
-            data: data.data.data.map(r => ({ column_id: r.column_id })),
-          })
-            .then(({ data }) => {
-              this.columns = data.data.data
-            })
+          this.columns = data.data.data.sort(c => c.rank_order)
         })
         .finally(() => this.loading = false)
     },
@@ -112,7 +105,7 @@ export default {
         .then(({ data }) => {
           this.tickets = data.data.data
         })
-    }
+    },
   },
 }
 </script>

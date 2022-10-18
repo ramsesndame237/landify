@@ -2908,12 +2908,14 @@ export default {
     relations: [
       {
         title: 'Columns',
-        entity: 'columnx_board_rel',
+        entityForm: 'columnx_board_rel',
+        entity: 'frontend_column_list',
         primaryKey: 'column_id',
         fields: [
           { key: 'column_id', type: 'list', list: 'columnx', alwaysNew: true, onlyForm: true },
           { key: 'column_name', hideOnForm: true },
           { key: 'column_description', type: 'textarea', hideOnForm: true },
+          { key: 'rank_order', type: 'number'},
         ],
       },
     ],
