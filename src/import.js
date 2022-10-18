@@ -2,7 +2,7 @@
 async function importPartnercompany(a, data, rapport) {
 
   // eslint-disable-next-line no-param-reassign
-    const start = 18
+    const start = 26
   const end = data.length
   rapport.Imported = end - start
 
@@ -49,7 +49,7 @@ async function importPartnercompany(a, data, rapport) {
     // so if we have an error in the creation, we have an error
     if (partnergroup.data.data.data.length === 0 && partnergroup.data.data.data[0][0].length === 0) {
       rapport.Failed++
-      a.errors.push(`${i} - Error while creating partnergroup`)
+      a.errors.push(`${i+1} - Error while creating partnergroup`)
       continue
     }
 
@@ -57,7 +57,7 @@ async function importPartnercompany(a, data, rapport) {
     let partnercompany = await a.$api({
       entity: 'partnercompany',
       action: 'read-rich',
-      filter: { partnercompany_name }
+      data: [{ partnercompany_name }]
     })
 
     if (partnercompany.data.data.data.length > 0) {
@@ -172,7 +172,7 @@ async function createAddress(a, entity_name, entity_id, country_name, city_name,
   })
 
   if (addressEntity.data.data.data[0].length === 0) {
-    a.errors.push(`${row_id} - Error while creating address, check address's informations`)
+    a.errors.push(`${row_id+1} - Error while creating address, check address's informations`)
     return
   }
 
