@@ -8,7 +8,7 @@
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
-            <b-button v-if="view" size="sm" variant="info" class="mr-1" @click="edit">
+            <b-button v-if="view && $can('update', table)" size="sm" variant="info" class="mr-1" @click="edit">
               <feather-icon icon="EditIcon" class="mr-50"/>
               {{ $t('Edit') }}
             </b-button>
