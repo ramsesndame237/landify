@@ -36,9 +36,9 @@
 
     <p v-if="relationsReview" class="text-danger h4 mb-1 text-center" v-html="relationsReview"></p>
 
-    <b-card v-if="definition.relations && definition.relations.length>0 && !create">
+    <b-card v-if="definition.relations && visibleRelations.length>0 && !create">
       <b-tabs ref="tabs" pills>
-        <b-tab v-for="(relation, index) in definition.relations" :key="index" :title="$t(relation.title)"
+        <b-tab v-for="(relation, index) in visibleRelations" :key="index" :title="$t(relation.title)"
                :active="index===tabIndex" lazy>
           <data-tables :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
                        :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
@@ -53,10 +53,12 @@
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
             <component v-if="currentTool()" :is="currentTool()"/>
-            <b-button v-if="currentHasNew()" class="mr-1" size="sm" variant="info" @click="newElement">
+            <b-button v-if="currentHasNew() && canCreateCurrent" class="mr-1" size="sm" variant="info"
+                      @click="newElement">
               New
             </b-button>
-            <b-button v-if="currentHasDelete()" class="mr-1" size="sm" variant="primary" @click="deleteSelected">
+            <b-button v-if="currentHasDelete() && canDeleteCurrent" class="mr-1" size="sm" variant="primary"
+                      @click="deleteSelected">
               Delete
             </b-button>
             <b-button v-if="currentHasFilter" @click="$emit('filter')" size="sm" variant="primary"
@@ -131,12 +133,22 @@ export default {
       return Reviews[this.table + '_relations']
     },
     currentHasFilter() {
-      return this.definition.relations[this.$refs.tabs?.currentTab]?.filters != null
+      return this.visibleRelations[this.$refs.tabs?.currentTab]?.filters != null
     },
+    canDeleteCurrent() {
+      return this.$can('delete', this.visibleRelations[this.$refs.tabs?.currentTab]?.entityForm)
+    },
+    canCreateCurrent() {
+      return this.$can('create', this.visibleRelations[this.$refs.tabs?.currentTab]?.entityForm)
+    },
+    visibleRelations() {
+      return this.definition.relations.filter(r => this.$can('read', r.entityForm))
+    }
   },
   mounted() {
     this.$watch('$refs.tabs.currentTab', (val) => {
       if (this.tabIndex !== val) {
+        this.tabIndex = val
         this.$router.replace({
           name: this.$route.name,
           params: this.$route.params,
@@ -148,15 +160,15 @@ export default {
   methods: {
     currentTool() {
       if (!this.$refs.tabs) return false
-      return this.definition.relations[this.$refs.tabs.currentTab]?.tool
+      return this.visibleRelations[this.$refs.tabs.currentTab]?.tool
     },
     currentHasNew() {
       if (!this.$refs.tabs) return false
-      return this.definition.relations[this.$refs.tabs.currentTab]?.create !== false
+      return this.visibleRelations[this.$refs.tabs.currentTab]?.create !== false
     },
     currentHasDelete() {
       if (!this.$refs.tabs) return false
-      return this.definition.relations[this.$refs.tabs.currentTab]?.delete !== false
+      return this.visibleRelations[this.$refs.tabs.currentTab]?.delete !== false
     },
     deleteSelected() {
       const { tabs } = this.$refs
@@ -164,7 +176,7 @@ export default {
     },
     newElement() {
       const { tabs } = this.$refs
-      const route = this.definition.relations[tabs.currentTab].newRoute
+      const route = this.visibleRelations[tabs.currentTab].newRoute
       if (route) {
         this.$router.push({ name: route.name, params: { id: this.entityId, table: route.params.table } })
       } else {

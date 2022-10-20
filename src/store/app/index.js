@@ -45,18 +45,19 @@ export default {
         entity: 'user_role_grp',
         data: [{ user_id: data.user.user_id }],
       }, { root: true })).filter(r => (moment(r.user_role_valid_from).isBefore(now) && moment(r.user_role_valid_to).isAfter(now)))
-      data.tables = (await dispatch('table/fetchList', {
+      const hasRoles = data.roles.length > 0
+      data.tables = hasRoles ? (await dispatch('table/fetchList', {
         entity: 'role_tablename_crud_grp',
         data: data.roles.map(r => ({ role_id: r.role_id })),
-      }, { root: true }))
-      data.tablegroups = (await dispatch('table/fetchList', {
+      }, { root: true })) : []
+      data.tablegroups = hasRoles ? (await dispatch('table/fetchList', {
         entity: 'role_tablegroup_crud_grp',
         data: data.roles.map(r => ({ role_id: r.role_id })),
-      }, { root: true }))
-      data.tablegroup_tables = (await dispatch('table/fetchList', {
+      }, { root: true })) : []
+      data.tablegroup_tables = hasRoles ? (await dispatch('table/fetchList', {
         entity: 'tablename_tablegroup_grp',
         data: data.tablegroups.map(t => ({ tablegroup_id: t.tablegroup_id })),
-      }, { root: true }))
+      }, { root: true })) : []
       localStorage.setItem('userData', JSON.stringify(data))
       return data
     },

@@ -19,7 +19,6 @@ import './global-components'
 import '@/libs/portal-vue'
 import '@/libs/toastification'
 import '@/libs/sweet-alerts'
-import '@/libs/acl'
 import '@/auth/jwt/useJwt'
 
 // Vee validate
@@ -81,6 +80,9 @@ Vue.config.productionTip = false
 const userEmail = localStorage.getItem('userEmail')
 
 function init() {
+  // load acl after userdata is loaded
+  require('@/libs/acl')
+
   window.$vue = new Vue({
     router,
     store,

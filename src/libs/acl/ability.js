@@ -23,6 +23,7 @@ export const defineRules = () => {
   const userEmail = localStorage.getItem('userEmail')
   const rules = []
 
+  if (!userData) return rules
   if (userEmail === 'johndoe@example.com') {
     rules.push({ action: 'manage', subject: 'all' })
   }

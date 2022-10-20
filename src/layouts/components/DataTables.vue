@@ -24,7 +24,8 @@
         <feather-icon icon="EyeIcon" class="mr-50"/>
         <span>{{ $t('app.btn.view') }}</span>
       </b-button>
-      <b-button v-if="withEdit && canUpdate" size="xs" variant="outline-info" class="mr-1" style="margin-bottom: 3px" pill
+      <b-button v-if="withEdit && canUpdate" size="xs" variant="outline-info" class="mr-1" style="margin-bottom: 3px"
+                pill
                 @click="onEditElement ? onEditElement(currentItems[data.index]) : $router.push({name: 'table-view', params: {table: entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index], ids: currentItems.map(i => i[primaryKey])}, query: {edit: 'true'}})">
         <feather-icon icon="EditIcon" class="mr-50"/>
         <span>{{ $t('app.btn.edit') }}</span>
@@ -107,10 +108,10 @@ export default {
       ]
     },
     canDelete() {
-      return this.$can('delete', this.entity)
+      return this.$can('delete', this.entityForm || this.entity)
     },
     canUpdate() {
-      return this.$can('update', this.entity)
+      return this.$can('update', this.entityForm || this.entity)
     },
   },
   watch: {
