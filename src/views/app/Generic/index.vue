@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-card body-class="p-0">
-      <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage"
+      <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"
                         :on-new-element="definition.create ===false ? null : onNewElement" :total-rows="totalRows"
                         :with-filter="definition.filters && definition.filters.length > 0"
                         :on-delete-elements="()=> $refs.table.deleteSelected()" @filter="$refs.filter.openModal()"/>

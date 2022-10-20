@@ -1,4 +1,6 @@
 import { $themeBreakpoints } from '@themeConfig'
+import { api } from '@/libs/axios'
+import moment from 'moment'
 
 console.log('env', process.env)
 export default {
@@ -29,5 +31,34 @@ export default {
       state.shallShowOverlay = val !== undefined ? val : !state.shallShowOverlay
     },
   },
-  actions: {},
+  actions: {
+    async fetchUserData({ dispatch }, email) {
+      // get user, user roles, role_tables_crud, role_tablegroup_crud, tablegroup_table
+      const data = {}
+      data.user = (await api({
+        entity: 'user',
+        filter: { user_email: email },
+        action: 'read-rich',
+      })).data.data.data[0]
+      const now = moment()
+      data.roles = (await dispatch('table/fetchList', {
+        entity: 'user_role_grp',
+        data: [{ user_id: data.user.user_id }],
+      }, { root: true })).filter(r => (moment(r.user_role_valid_from).isBefore(now) && moment(r.user_role_valid_to).isAfter(now)))
+      data.tables = (await dispatch('table/fetchList', {
+        entity: 'role_tablename_crud_grp',
+        data: data.roles.map(r => ({ role_id: r.role_id })),
+      }, { root: true }))
+      data.tablegroups = (await dispatch('table/fetchList', {
+        entity: 'role_tablegroup_crud_grp',
+        data: data.roles.map(r => ({ role_id: r.role_id })),
+      }, { root: true }))
+      data.tablegroup_tables = (await dispatch('table/fetchList', {
+        entity: 'tablename_tablegroup_grp',
+        data: data.tablegroups.map(t => ({ tablegroup_id: t.tablegroup_id })),
+      }, { root: true }))
+      localStorage.setItem('userData', JSON.stringify(data))
+      return data
+    },
+  },
 }

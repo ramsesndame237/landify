@@ -69,7 +69,7 @@ export default {
         filter: {},
         ...(data ? { data } : {}),
         filter_all: '',
-        lang: window.$vue.$i18n.locale,
+        lang: window.$vue ? window.$vue.$i18n.locale : 'en',
       })
         .then(({ data }) => {
           Vue.set(context.state.listCache, entity, data.data.data)

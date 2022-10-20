@@ -66,9 +66,10 @@
 
             <!-- submit button -->
             <div class="text-center">
-              <b-button variant="primary" type="submit" pill @click="validationForm">
+              <b-button variant="primary" type="submit" style="display: inline-flex" pill @click="validationForm">
                 <span style="line-height: 24px" class="mr-1">Login</span>
-                <feather-icon size="24" icon="ArrowRightIcon"/>
+                <b-spinner v-if="loading" style="width: 24px;height: 24px"/>
+                <feather-icon v-else size="24" icon="ArrowRightIcon"/>
               </b-button>
             </div>
 
@@ -102,6 +103,7 @@ import {
   BInputGroupAppend,
   BInputGroupPrepend,
   BFormCheckbox,
+  BSpinner,
 } from 'bootstrap-vue'
 import VuexyLogo from '@core/layouts/components/Logo.vue'
 import { required, email } from '@validations'
@@ -109,6 +111,7 @@ import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import ToastificationContent from '@core/components/toastification/ToastificationContent'
 import useJwt from "@/auth/jwt/useJwt";
 import { getHomeRouteForLoggedInUser } from "@/auth/utils";
+import { defineRules } from "@/libs/acl/ability";
 
 export default {
   components: {
@@ -126,6 +129,7 @@ export default {
     BInputGroupAppend,
     BInputGroupPrepend,
     BFormCheckbox,
+    BSpinner,
     ValidationProvider,
     ValidationObserver,
   },
@@ -135,9 +139,11 @@ export default {
       userEmail: '',
       password: '',
       status: '',
+      loading: false,
       // validation rules
       required,
       email,
+
     }
   },
   computed: {
@@ -146,26 +152,30 @@ export default {
     },
   },
   methods: {
+
     validationForm() {
       this.$refs.loginForm.validate().then(success => {
         if (success) {
           const data = new FormData()
-          data.append('username', this.userEmail)
+          data.append('username', 'johndoe@example.com')
           data.append('password', this.password)
-          this.$http.post('/token', data).then(({ data: { access_token } }) => {
+          this.loading = true
+          this.$http.post('/token', data).then(async ({ data: { access_token } }) => {
             useJwt.setToken(access_token)
+            const userData = await this.$store.dispatch('app/fetchUserData', this.userEmail)
+            localStorage.setItem('userEmail', this.userEmail)
+            console.log(userData)
+            this.$ability.update(defineRules())
             // get full user data
-            this.$router.replace(getHomeRouteForLoggedInUser(''))
-              .then(() => {
-                this.$toast({
-                  component: ToastificationContent,
-                  props: {
-                    title: 'Welcome back to kimpro',
-                    icon: 'successIcon',
-                    variant: 'success',
-                  },
-                })
-              })
+            await this.$router.replace(getHomeRouteForLoggedInUser(''))
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Welcome back to kimpro',
+                icon: 'successIcon',
+                variant: 'success',
+              },
+            })
           })
             .catch(e => {
               let title
@@ -174,6 +184,7 @@ export default {
               }
               this.$errorToast(title)
             })
+            .finally(() => this.loading = false)
         }
       })
     },

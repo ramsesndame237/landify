@@ -19,6 +19,8 @@ import './global-components'
 import '@/libs/portal-vue'
 import '@/libs/toastification'
 import '@/libs/sweet-alerts'
+import '@/libs/acl'
+import '@/auth/jwt/useJwt'
 
 // Vee validate
 Vue.component('validation-provider', ValidationProvider)
@@ -76,9 +78,20 @@ require('@/assets/scss/style.scss')
 
 Vue.config.productionTip = false
 
-window.$vue = new Vue({
-  router,
-  store,
-  i18n,
-  render: h => h(App),
-}).$mount('#app')
+const userEmail = localStorage.getItem('userEmail')
+
+function init() {
+  window.$vue = new Vue({
+    router,
+    store,
+    i18n,
+    render: h => h(App),
+  }).$mount('#app')
+}
+
+if (userEmail) {
+  store.dispatch('app/fetchUserData', userEmail)
+    .finally(init)
+} else {
+  init()
+}

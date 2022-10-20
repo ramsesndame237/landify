@@ -8,7 +8,9 @@
     </template>
     <template #cell()="data">
       <b-form-checkbox v-if="data.field.type==='boolean'" disabled="" v-model="data.value" :value="1"/>
-      <b-button v-else-if="data.field.type==='button'" size="xs" @click="$router.push(data.field.getRoute(data.item))">{{data.field.btnLabel}}</b-button>
+      <b-button v-else-if="data.field.type==='button'" size="xs" @click="$router.push(data.field.getRoute(data.item))">
+        {{ data.field.btnLabel }}
+      </b-button>
       <span v-else>{{ data.value }}</span>
     </template>
     <template #head(__selected)>
@@ -22,12 +24,12 @@
         <feather-icon icon="EyeIcon" class="mr-50"/>
         <span>{{ $t('app.btn.view') }}</span>
       </b-button>
-      <b-button v-if="withEdit" size="xs" variant="outline-info" class="mr-1" style="margin-bottom: 3px" pill
+      <b-button v-if="withEdit && canUpdate" size="xs" variant="outline-info" class="mr-1" style="margin-bottom: 3px" pill
                 @click="onEditElement ? onEditElement(currentItems[data.index]) : $router.push({name: 'table-view', params: {table: entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index], ids: currentItems.map(i => i[primaryKey])}, query: {edit: 'true'}})">
         <feather-icon icon="EditIcon" class="mr-50"/>
         <span>{{ $t('app.btn.edit') }}</span>
       </b-button>
-      <b-button v-if="withDelete" size="xs" variant="outline-primary" style="margin-bottom: 3px"
+      <b-button v-if="withDelete && canDelete" size="xs" variant="outline-primary" style="margin-bottom: 3px"
                 @click="deleteElement(data.index)" pill>
         <feather-icon icon="Trash2Icon" class="mr-50"/>
         <span>{{ $t('app.btn.delete') }}</span>
@@ -103,6 +105,12 @@ export default {
         }),
         ...(this.withActions ? ['Actions'] : []),
       ]
+    },
+    canDelete() {
+      return this.$can('delete', this.entity)
+    },
+    canUpdate() {
+      return this.$can('update', this.entity)
     },
   },
   watch: {

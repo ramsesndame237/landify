@@ -19,11 +19,11 @@
       <b-button v-if="withFilter" @click="$emit('filter')" size="sm" variant="primary" class="mr-1 btn-icon">
         <feather-icon icon="FilterIcon"/>
       </b-button>
-      <b-button v-if="onNewElement!=null" @click="onNewElement" size="sm" variant="info" class="mr-1">
+      <b-button v-if="onNewElement!=null && canCreate" @click="onNewElement" size="sm" variant="info" class="mr-1">
         <feather-icon icon="PlusCircleIcon" class="mr-50"/>
         <span>New</span>
       </b-button>
-      <b-button v-if="onDeleteElements!=null" @click="onDeleteElements" size="sm" variant="primary" class="mr-1">
+      <b-button v-if="onDeleteElements!=null && canDelete" @click="onDeleteElements" size="sm" variant="primary" class="mr-1">
         <feather-icon icon="Trash2Icon" class="mr-50"/>
         <span>Delete</span>
       </b-button>
@@ -66,11 +66,19 @@ export default {
     currentPage: Number,
     search: String,
     totalRows: Number,
+    entity: String,
   },
   data() {
     return { internalSearch: this.search }
   },
-  computed: {},
+  computed: {
+    canDelete() {
+      return this.$can('delete', this.entity)
+    },
+    canCreate() {
+      return this.$can('create', this.entity)
+    },
+  },
   watch: {
     internalSearch() {
       this.$emit('update:search', this.internalSearch)
