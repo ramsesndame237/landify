@@ -42,6 +42,7 @@ Vue.prototype.$api = data => {
     .catch(error => {
       if (data.entity !== '1__log') {
         console.log('my error', error)
+        const userEmail = localStorage.getItem('userEmail')
         axiosIns.post('/api/?log', {
           a: {
             action: 'create',
@@ -51,7 +52,7 @@ Vue.prototype.$api = data => {
                 log_json_request: data,
                 log_timestamp: moment().format('YYYY-MM-DD HH:mm'),
                 log_json: {
-                  user_email: '',
+                  user_email: userEmail,
                   url: window.location.href,
                   status: error.response?.status,
                   response: error.response?.data,
