@@ -45,6 +45,7 @@ export default {
   },
   data() {
     const payload = this.$store.getters['table/tableData'](this.$route.params.table)
+    console.log('initial payload', payload)
     return {
       search: payload?.search || '',
       perPage: payload?.perPage || 10,
@@ -52,13 +53,11 @@ export default {
       totalRows: payload?.totalRows || 0,
       initialFilterData: payload?.filter,
       initialSortBy: payload?.sortBy,
-      initialSortDesc: payload?.sortDesc || true,
+      initialSortDesc: payload?.sortDesc ?? true,
+      table: this.$route.params.table,
     }
   },
   computed: {
-    table() {
-      return this.$route.params.table
-    },
     definition() {
       return Tables[this.table]
     },
@@ -68,14 +67,6 @@ export default {
     useModalToCreate() {
       return this.definition.createModal !== false
     },
-  },
-  watch: {
-    // table() {
-    //   this.search = ''
-    //   // this.perPage = 10
-    //   this.currentPage = 1
-    //   this.totalRows = 0
-    // },
   },
   beforeDestroy() {
     this.$store.commit('table/setTableData', {

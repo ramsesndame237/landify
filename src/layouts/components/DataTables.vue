@@ -161,17 +161,19 @@ export default {
           payload.data = [filterData]
         }
       }
+      // retrieve from cache
+      const cacheKey = this.getCacheKey(payload)
+      const fromCache = this.$store.getters['table/tableCache'](cacheKey)
+      if (fromCache) {
+        return this.processData(fromCache)
+      }
       return this.$api(payload)
         .then(({ data }) => {
           console.log(data)
-          // this.totalRows = data.data.links.pagination.total
-          this.$emit('update:totalRows', data.data.links.pagination.total)
-          data.data.data.forEach(el => {
-            el.__selected = false
-          })
-          this.$store.commit('table/setDefinition', { data, table: this.table })
-          this.currentItems = data.data.data
-          return this.currentItems
+          const items = this.processData(data)
+          // set in cache
+          this.$store.commit('table/setTableCache', { key: cacheKey, data })
+          return items
         })
         .catch(e => {
           console.log(e)
@@ -179,6 +181,18 @@ export default {
           this.$errorToast(title)
           return null
         })
+    },
+    getCacheKey(payload) {
+      return JSON.stringify(payload)
+    },
+    processData(data) {
+      this.$emit('update:totalRows', data.data.links.pagination.total)
+      data.data.data.forEach(el => {
+        el.__selected = false
+      })
+      this.$store.commit('table/setDefinition', { data, table: this.table })
+      this.currentItems = data.data.data
+      return this.currentItems
     },
     getSelected() {
       return this.currentItems.filter(item => item.__selected)

@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import Vue from 'vue'
+import moment from 'moment'
 import { api } from '@/libs/axios'
 
 export default {
@@ -11,11 +12,23 @@ export default {
     totalRows: 0,
     tableDefinition: {},
     listCache: {},
+    // table paramters
     tableData: {},
+    // caching results from the backend
+    tableCache: {},
   },
   getters: {
     tableDefinition: state => entity => state.tableDefinition[entity],
     tableData: state => table => state.tableData[table],
+    tableCache: state => (key => {
+      const val = state.tableCache[key]
+      if (val) {
+        if (moment().diff(val.time, 's') <= 120) {
+          return val.data
+        }
+      }
+      return null
+    }),
   },
   mutations: {
     setDefinition(state, { data, table }) {
@@ -23,6 +36,10 @@ export default {
     },
     setTableData(state, data) {
       Vue.set(state.tableData, data.table, data.payload)
+      console.log('set table data', data.table, data.payload)
+    },
+    setTableCache(state, data) {
+      Vue.set(state.tableCache, data.key, { data: data.data, time: moment() })
     },
   },
   actions: {
