@@ -511,7 +511,7 @@
         "invoice_date": "Datum der Rechnung",
         "invoice_contract_billing_period_from_date": "Rechnung Vertrag Abrechnungszeitraum von Datum",
         "invoice_allocationarea": "Bereich Rechnungszuordnung",
-        "invoice_contract_billing_period_To_date":"Rechnung Vertrag Abrechnungszeitraum bis Datum",
+        "invoice_contract_billing_period_to_date":"Rechnung Vertrag Abrechnungszeitraum bis Datum",
         "costtype_id":"Kosten Post Type ID",
         "invoiceposition_costtype_invoice": "Rechnungsposition Kostenart Rechnung",
         "invoiceposition_total_units": "Rechnung Gesamt Einheiten",
@@ -621,7 +621,7 @@
       "partner_company_group": "Gesamtliste der Partnerunternehmensgruppen",
       "partner_company_group_edit": "Partnerunternehmen Gruppe Bearbeiten",
       "address": "Gesamtadressenliste",
-      "contract_type": "GESAMTLISTE Vertragstyp", 
+      "contract_type": "GESAMTLISTE Vertragstyp",
       "address_edit": "Adresse bearbeiten",
       "contact_title": "Gesamtliste der Kontakttitel",
       "contact_title_edit": "Kontakt Titel Bearbeiten",
@@ -659,7 +659,7 @@
       "special_right_view": "Vertrag Sonderrecht",
       "recurring_payment": "Gesamtliste Vertragsbasierte wiederkehrende Zahlungen",
       "recurring_payment_view": "vertragsbasierte wiederkehrende Zahlung",
-       
+
       "C_C_type": "GESAMTLISTE Vertragskriterien Art",
       "location_type": "GESAMTLISTE Standort Typ",
       "maturity_type": "GESAMTLISTE Fälligkeit Art",

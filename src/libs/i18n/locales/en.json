@@ -541,7 +541,7 @@
         "invoice_date": "Invoice Date",
         "invoice_contract_billing_period_from_date": "Invoice Contract Billing Period From Date",
         "invoice_allocationarea": "Invoice Allocation Area",
-        "invoice_contract_billing_period_To_date": "Invoice Contract Billing Period To Date",
+        "invoice_contract_billing_period_to_date": "Invoice Contract Billing Period To Date",
         "costtype_id": "Cost Post Type ID",
         "invoiceposition_costtype_invoice": "Invoice Position Cost Type Invoice",
         "invoiceposition_total_units": "Invoce Total Units",
