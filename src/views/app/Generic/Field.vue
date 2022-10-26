@@ -85,6 +85,7 @@ export default {
       showAll: false,
       defaultLabelFunction: {
         address_id: option => `${option.city_zip || ''} - ${option.city_name || ''} - ${option.address_street || ''}`,
+        invoice_id: option => `${option.invoice_id || ''} - ${option.invoice_number || ''} - ${option.invoice_date || ''}`,
       },
       dateConfig: {
         allowInput: true,

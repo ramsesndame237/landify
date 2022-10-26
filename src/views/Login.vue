@@ -171,7 +171,7 @@ export default {
             this.$toast({
               component: ToastificationContent,
               props: {
-                title: 'Welcome back to kimpro',
+                title: 'Welcome back to ZELOS',
                 icon: 'successIcon',
                 variant: 'success',
               },
