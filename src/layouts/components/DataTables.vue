@@ -183,7 +183,7 @@ export default {
         })
     },
     getCacheKey(payload) {
-      return JSON.stringify(payload)
+      return this.entity + '-' + JSON.stringify(payload)
     },
     processData(data) {
       this.$emit('update:totalRows', data.data.links.pagination.total)
@@ -253,6 +253,11 @@ export default {
           if (count > 0) this.$successToast(`${count} Element(s) where deleted`)
           else this.$errorToast(`${count} Element(s) where deleted`)
           // this.$successToast(this.$t(entities.length > 1 ? 'notification.elements_deleted' : 'notification.element_deleted'))
+          this.$store.commit('table/deleteTableCacheKeyFromPrefix', this.entity + '-')
+          // if all elements where deleted, go to page 1
+          if (this.currentItems.length === count) {
+            this.$emit('update:currentPage', 1)
+          }
           this.$refs.table.refresh()
         })
           .catch(e => {

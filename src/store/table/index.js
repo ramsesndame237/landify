@@ -41,6 +41,11 @@ export default {
     setTableCache(state, data) {
       Vue.set(state.tableCache, data.key, { data: data.data, time: moment() })
     },
+    deleteTableCacheKeyFromPrefix(state, prefix) {
+      Object.keys(state.tableCache).forEach(key => {
+        if (key.startsWith(prefix)) Vue.set(state.tableCache, key, null)
+      })
+    },
   },
   actions: {
     fetchSingleItem(context, payload) {

@@ -69,6 +69,8 @@ export default {
       this.loading = true
       this.$refs.form.submit()
         .then(entity => {
+          // delete cache for entity
+          this.$store.commit('table/deleteTableCacheKeyFromPrefix', this.table + '-')
           if (redirect === 1) {
             this.$refs.modal.hide()
             this.$router.push({

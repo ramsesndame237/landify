@@ -14,7 +14,7 @@
     <b-card>
       <Datatable :key="table" ref="table" :search="search" :entity="table" :entity-list="definition.entity"
                  :default-sort-column="initialSortBy||definition.defaultSortField" :default-sort-desc="initialSortDesc"
-                 :per-page="perPage" :current-page="currentPage" :total-rows.sync="totalRows"
+                 :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :fields="definition.fields" :primary-key-column="definition.primaryKey"/>
     </b-card>
     <generic-modal @reload-table="$refs.table.reload()" :table="table" :definition="definition" with-continue

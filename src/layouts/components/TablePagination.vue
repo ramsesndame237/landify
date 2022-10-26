@@ -59,7 +59,7 @@ export default {
     pageOptions: {
       type: Array,
       default() {
-        return [10, 20, 30]
+        return [2, 10, 20, 30]
       },
     },
     perPage: Number,
