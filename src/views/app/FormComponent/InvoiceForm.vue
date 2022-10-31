@@ -40,14 +40,12 @@
                      :table-definition="tableDefinition" :field="getField('invoice_allocationarea')"/>
             </b-col>
             <b-col cols="3">
-              <field ref="fields" :disabled="isDisabledFromName('invoice_contract_billing_period_from_date')"
-                     :entity="entity" :table-definition="tableDefinition"
-                     :field="getField('invoice_contract_billing_period_from_date')"/>
+              <field ref="fields" :disabled="isDisabledFromName('invoice_billing_period_from_date')" :entity="entity"
+                     :table-definition="tableDefinition" :field="getField('invoice_billing_period_from_date')"/>
             </b-col>
             <b-col cols="3">
-              <field ref="fields" :disabled="isDisabledFromName('invoice_contract_billing_period_to_date')"
-                     :entity="entity" :table-definition="tableDefinition"
-                     :field="getField('invoice_contract_billing_period_to_date')"/>
+              <field ref="fields" :disabled="isDisabledFromName('invoice_billing_period_to_date')" :entity="entity"
+                     :table-definition="tableDefinition" :field="getField('invoice_billing_period_to_date')"/>
             </b-col>
             <b-col cols="12">
               <field ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
@@ -69,12 +67,12 @@
             <b-form-input debounce="500" id="filterInput" v-model="search" type="search" class="w-auto"
                           placeholder="Search.." :disabled="entity.company_id==null"/>
           </div>
-          <data-tables ref="contracts" :current-page="1" :per-page="100" :items="contracts" :multi-select="false"
+          <data-tables ref="contracts" :disabled="disabled" :current-page="1" :per-page="100" :items="contracts" :multi-select="false"
                        :with-actions="false" entity="contract" :fields="contractFields" style="max-height: 300px"
                        class="mb-1" @selected="onContractSelect"/>
 
-          <data-tables ref="areas" :current-page="1" :per-page="100" :items="areas" :selectable="false"
-                       :with-actions="false" entity="area" :fields="areaFields" style="max-height: 300px"/>
+          <data-tables ref="areas" :disabled="disabled" :current-page="1" :per-page="100" :items="areas" :with-actions="false" entity="area"
+                       :fields="areaFields" style="max-height: 300px"/>
 
         </b-col>
       </b-row>
@@ -84,8 +82,8 @@
 
 <script>
 import FormMixin from '@/views/app/Generic/FormMixin'
-import DataTables from '@/layouts/components/DataTables';
-import { getYearFormDateString } from "@/libs/utils";
+import DataTables from '@/layouts/components/DataTables'
+import { getYearFormDateString } from "@/libs/utils"
 
 export default {
   name: 'InvoiceForm',
@@ -127,8 +125,8 @@ export default {
       if (val) this.fetchContracts()
       else this.contracts = []
     },
-    'entity.invoice_contract_billing_period_to_date': function () {
-      this.entity.invoice_contract_year = getYearFormDateString(this.entity.invoice_contract_billing_period_to_date)
+    'entity.invoice_billing_period_to_date': function () {
+      this.entity.invoice_contract_year = getYearFormDateString(this.entity.invoice_billing_period_to_date)
     },
     'entity.contract_id': async function (val) {
       const contract = this.contracts.find(c => c.contract_id === val)
@@ -149,7 +147,10 @@ export default {
     },
   },
   async mounted() {
-    this.entity.invoice_contract_year = getYearFormDateString(this.entity.invoice_contract_billing_period_to_date)
+    this.entity.invoice_contract_year = getYearFormDateString(this.entity.invoice_billing_period_to_date)
+    this.$watch('areas', () => {
+      this.$set(this.entity, 'area_id', this.areas.filter(a => a.__selected).map(a => a.area_id || 1))
+    }, { deep: true })
   },
   methods: {
     async fetchContracts() {
@@ -168,6 +169,8 @@ export default {
         action: 'read-rich',
         data: [{ contract_id: contractId }],
       })).data.data.data
+      this.areas.filter(a => this.originalEntity.area_id.indexOf(a.area_id) >= 0)
+        .forEach(a => this.$set(a, '__selected', true))
       this.$refs.areas.loading = false
     },
     onContractSelect(contract) {

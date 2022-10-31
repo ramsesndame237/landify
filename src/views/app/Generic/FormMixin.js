@@ -49,6 +49,11 @@ export default {
           })
             .then(({ data }) => {
               const result = data.data.data[0]
+              if (field.multiple) {
+                this.$set(entity, field.key, data.data.data.map(r => r[field.key]))
+                this.$set(originalEntity, field.key, data.data.data.map(r => r[field.key]))
+                return
+              }
               if (!result) return
               this.$set(entity, field.key, result[field.key])
               this.$set(originalEntity, field.key, result[field.key])
@@ -87,20 +92,29 @@ export default {
         const isNew = originalEntity[field.key] == null
         if (!isNew && field.alwaysNew) return Promise.resolve()
         const entityName = field.relationEntity ?? (`${table}_${field.list}_rel`)
-        const data = {
-          [column]: entity[field.key],
-          [primaryKey]: entityId ?? entity[primaryKey],
-          ...extras,
-        }
+        const data = (Array.isArray(entity[field.key]) ? entity[field.key] : [entity[field.key]])
+          .filter(val => val != null)
+          .map(val => ({
+            [column]: val,
+            [primaryKey]: entityId ?? entity[primaryKey],
+            ...extras,
+          }))
+        const oldData = (Array.isArray(originalEntity[field.key]) ? originalEntity[field.key] : [originalEntity[field.key]])
+          .filter(val => val != null)
+          .map(val => ({
+            [column]: val,
+            [primaryKey]: entityId ?? entity[primaryKey],
+            ...extras,
+          }))
         console.log('data', data)
         return Promise.resolve().then(() => {
           if (isNew) {
             // if id is non null
-            if (data[column]) {
+            if (data.length > 0) {
               return this.$api({
                 entity: entityName,
                 action: 'create',
-                data: [data],
+                data,
               })
             }
             return Promise.resolve()
@@ -108,14 +122,14 @@ export default {
           return this.$api({
             entity: entityName,
             action: 'delete',
-            data: [{ ...data, [column]: originalEntity[field.key] }],
+            data: oldData,
           })
             .then(() => {
-              if (data[column]) {
+              if (data.length > 0) {
                 return this.$api({
                   entity: entityName,
                   action: 'create',
-                  data: [data],
+                  data,
                 })
               }
             })

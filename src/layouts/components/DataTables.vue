@@ -4,7 +4,7 @@
            :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" @row-clicked="onRowClicked">
     <template #cell(__selected)="data">
       <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"
-                       @change="onSelect(data.index)"/>
+                       :disabled="disabled" @change="onSelect(data.index)"/>
     </template>
     <template #cell()="data">
       <b-form-checkbox v-if="data.field.type==='boolean'" disabled="" v-model="data.value" :value="1"/>
@@ -14,7 +14,7 @@
       <span v-else>{{ data.value }}</span>
     </template>
     <template #head(__selected)>
-      <b-form-checkbox v-if="multiSelect" v-model="selected"/>
+      <b-form-checkbox v-if="multiSelect" v-model="selected" :disabled="disabled"/>
       <span v-else></span>
     </template>
 
@@ -72,6 +72,7 @@ export default {
     currentPage: Number,
     totalRows: Number,
     selectable: { type: Boolean, default: true },
+    disabled: { type: Boolean, default: false },
     defaultSortDesc: { type: Boolean, default: false },
     items: Array,
     ids: Array,
