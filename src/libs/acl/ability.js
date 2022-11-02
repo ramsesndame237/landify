@@ -21,9 +21,10 @@ function getAction(crud) {
 export const defineRules = () => {
   const userData = JSON.parse(localStorage.getItem('userData'))
   const userEmail = localStorage.getItem('userEmail')
-  const rules = []
+  const rules = [{ subject: 'Auth', action: 'read' }]
 
   if (!userData) return rules
+  rules.push({ action: 'read', subject: 'dashboard' })
   if (userEmail === 'johndoe@example.com') {
     rules.push({ action: 'manage', subject: 'all' })
   }

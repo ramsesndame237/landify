@@ -40,6 +40,7 @@ export default {
   components: { EntityForm, BButton, BSpinner, BDropdown, BDropdownItem },
   props: {
     table: String,
+    cacheKey: String,
     definition: Object,
     tableDefinitionKey: String,
     title: String,
@@ -70,7 +71,7 @@ export default {
       this.$refs.form.submit()
         .then(entity => {
           // delete cache for entity
-          this.$store.commit('table/deleteTableCacheKeyFromPrefix', this.table + '-')
+          this.$store.commit('table/deleteTableCacheKeyFromPrefix', this.cacheKey)
           if (redirect === 1) {
             this.$refs.modal.hide()
             this.$router.push({

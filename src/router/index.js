@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import { canNavigate } from '@/libs/acl/routeProtection'
+import { isUserLoggedIn, getUserData, getHomeRouteForLoggedInUser } from '@/auth/utils'
 
 Vue.use(VueRouter)
 
@@ -34,6 +36,7 @@ const router = new VueRouter({
             active: true,
           },
         ],
+        resource: 'dashboard',
       },
     },
     {
@@ -43,6 +46,7 @@ const router = new VueRouter({
       meta: {
         pageTitle: '',
         breadcrumb: [],
+        action: 'read',
       },
     },
     {
@@ -52,6 +56,7 @@ const router = new VueRouter({
       meta: {
         pageTitle: '',
         breadcrumb: [],
+        action: 'read',
       },
     },
     {
@@ -61,6 +66,7 @@ const router = new VueRouter({
       meta: {
         pageTitle: '',
         breadcrumb: [],
+        action: 'create',
       },
     },
     // region Custom Edit Page
@@ -157,6 +163,8 @@ const router = new VueRouter({
       component: () => import('@/views/Login.vue'),
       meta: {
         layout: 'full',
+        resource: 'Auth',
+        redirectIfLoggedIn: true,
       },
     },
     {
@@ -165,6 +173,8 @@ const router = new VueRouter({
       component: () => import('@/views/ForgotPassword.vue'),
       meta: {
         layout: 'full',
+        resource: 'Auth',
+        redirectIfLoggedIn: true,
       },
     },
     {
@@ -173,9 +183,19 @@ const router = new VueRouter({
       component: () => import('@/views/Register.vue'),
       meta: {
         layout: 'full',
+        resource: 'Auth',
+        redirectIfLoggedIn: true,
       },
     },
-
+    {
+      path: '/not-authorized',
+      name: 'misc-not-authorized',
+      component: () => import('@/views/error/NotAuthorized.vue'),
+      meta: {
+        layout: 'full',
+        resource: 'Auth',
+      },
+    },
     // error
     {
       path: '/error-404',
@@ -183,6 +203,7 @@ const router = new VueRouter({
       component: () => import('@/views/error/Error404.vue'),
       meta: {
         layout: 'full',
+        resource: 'Auth',
       },
     },
     { path: '/', redirect: '/login' },
@@ -192,6 +213,26 @@ const router = new VueRouter({
       redirect: 'error-404',
     },
   ],
+})
+
+router.beforeEach((to, _, next) => {
+  const isLoggedIn = isUserLoggedIn()
+  console.log(to)
+  if (!canNavigate(to)) {
+    // Redirect to login if not logged in
+    if (!isLoggedIn) return next({ name: 'login' })
+
+    // If logged in => not authorized
+    return next({ name: 'misc-not-authorized' })
+  }
+
+  // Redirect if logged in
+  if (to.meta.redirectIfLoggedIn && isLoggedIn) {
+    const userData = getUserData()
+    next(getHomeRouteForLoggedInUser(userData ? userData.role : null))
+  }
+
+  return next()
 })
 
 // ? For splash screen

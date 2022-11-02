@@ -4,7 +4,8 @@
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"
                         :on-new-element="definition.create ===false ? null : onNewElement" :total-rows="totalRows"
                         :with-filter="definition.filters && definition.filters.length > 0"
-                        :on-delete-elements="()=> $refs.table.deleteSelected()" @filter="$refs.filter.openModal()"/>
+                        :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
+                        @filter="$refs.filter.openModal()"/>
       <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
                       @filter="filter"/>
     </b-card>
@@ -13,12 +14,13 @@
 
     <b-card>
       <Datatable :key="table" ref="table" :search="search" :entity="table" :entity-list="definition.entity"
+                 :with-delete="definition.delete !== false" :with-edit="definition.update !== false"
                  :default-sort-column="initialSortBy||definition.defaultSortField" :default-sort-desc="initialSortDesc"
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :fields="definition.fields" :primary-key-column="definition.primaryKey"/>
     </b-card>
-    <generic-modal @reload-table="$refs.table.reload()" :table="table" :definition="definition" with-continue
-                   :table-definition-key="table" :title="'create '+table" ref="modal"/>
+    <generic-modal :cache-key="table+'-'" @reload-table="$refs.table.reload()" :table="table" :definition="definition"
+                   with-continue :table-definition-key="table" :title="'create '+table" ref="modal"/>
   </div>
 </template>
 

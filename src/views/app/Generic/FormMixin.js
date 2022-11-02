@@ -115,6 +115,8 @@ export default {
                 entity: entityName,
                 action: 'create',
                 data,
+              }).then(resp => {
+                this.handleRelationErrors(resp, field)
               })
             }
             return Promise.resolve()
@@ -135,73 +137,27 @@ export default {
             })
         })
           .then(resp => {
-            if (!resp) return
-            const errors = resp ?? resp.data.data.errors
-            if (typeof errors === 'string') {
-              this.$refs.form.setErrors({
-                [field.key]: [errors],
-              })
-            }
-            if (Array.isArray(errors) && errors.length > 0) {
-              this.$refs.form.setErrors({
-                [field.key]: errors.map(error => {
-                  if (typeof error === 'string') return error
-                  return error['Failed executing sql'].err
-                }),
-              })
-            }
+            this.handleRelationErrors(resp, field)
           })
       }))
     },
-    async saveAddressData(formField, initialAddress) {
-      const cityExists = !!initialAddress.city_id
-      await this.$api({
-        entity: 'city',
-        action: cityExists ? 'update' : 'create',
-        data: [
-          {
-            city_name: formField.subEntity.city_name,
-            city_zip: formField.subEntity.city_zip,
-            ...(cityExists ? { city_id: initialAddress.city_id } : {}),
-          },
-        ],
-      })
-        .then(async ({ data }) => {
-          const city_id = cityExists ? initialAddress.city_id : data.data.data[0][0].city_id
-          if (cityExists) {
-            // if country changed
-            if (formField.subEntity.country_id !== initialAddress.country_id) {
-              // update city_country_rel
-              await this.$api({
-                entity: 'city_country_rel',
-                action: 'delete',
-                data: [{ city_id, country_id: initialAddress.country_id }],
-              })
-              await this.$api({
-                entity: 'city_country_rel',
-                action: 'create',
-                data: [{ city_id, country_id: formField.subEntity.country_id }],
-              })
-            }
-          } else {
-            return Promise.all([
-              this.$api({
-                entity: 'address_city_rel',
-                action: 'create',
-                data: [{
-                  city_id, address_id: initialAddress.address_id,
-                }],
-              }),
-              this.$api({
-                entity: 'city_country_rel',
-                action: 'create',
-                data: [
-                  { city_id, country_id: formField.subEntity.country_id },
-                ],
-              }),
-            ])
-          }
+    handleRelationErrors(resp, field) {
+      if (!resp || !resp.data) return
+      const errors = resp.data.data.errors
+      console.log('errors', errors)
+      if (typeof errors === 'string') {
+        this.$refs.form.setErrors({
+          [field.key]: [errors],
         })
+      }
+      if (Array.isArray(errors) && errors.length > 0) {
+        this.$refs.form.setErrors({
+          [field.key]: errors.map(error => {
+            if (typeof error === 'string') return error
+            return error['Failed executing sql'].err
+          }),
+        })
+      }
     },
     createNewEntities(fieldComponents, formFields, entity, originalEntity) {
       if (!Array.isArray(fieldComponents)) return Promise.resolve()
@@ -232,9 +188,10 @@ export default {
     },
     saveEntity(entity, originalEntity, formFields, fieldComponents, table, definition, primaryKey, create) {
       return this.createNewEntities(fieldComponents, formFields, entity, originalEntity)
-        .then(() => {
+        .then(async () => {
           /// if we updating and we have no changes
-          if (!create && formFields.every(f => entity[f.key] === originalEntity[f.key])) {
+          if (!create && formFields.filter(f => f.type !== 'list').every(f => entity[f.key] === originalEntity[f.key])) {
+            await this.saveRelations(table, definition, primaryKey, entity[primaryKey], entity, originalEntity)
             return { noupdate: true, entity }
           }
           return this.$api({
@@ -261,6 +218,12 @@ export default {
         })
     },
     async afterSaveHook(data) {
+    },
+    saveTrackRecord(table, create, entity, originalEntity) {
+
+      this.$api({
+
+      })
     },
     submit() {
       return this.$refs.form.validate().then(success => {

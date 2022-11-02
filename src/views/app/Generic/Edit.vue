@@ -46,7 +46,8 @@
                        :entity-view="relation.entityView" :with-view="relation.view!==false" :fields="relation.fields"
                        :on-edit-element="editElement" :with-edit="relation.update!==false"
                        :with-delete="relation.delete!==false"/>
-          <generic-modal title="Test" :table="relation.entityForm || relation.entity" :definition="relation" is-relation
+          <generic-modal :cache-key="relation.entity+'-'" title="Test" :table="relation.entityForm || relation.entity"
+                         :definition="relation" is-relation
                          :table-definition-key="relation.entityForm || relation.entity" with-continue
                          @reload-table="reloadRelatedTable"/>
         </b-tab>

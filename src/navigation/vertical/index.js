@@ -20,6 +20,8 @@ export default [
     title: 'app.sidebar.dashboard',
     route: 'home',
     icon: 'HomeIcon',
+    action: 'read',
+    resource: 'dashboard',
   },
   // region Work Package 1
   {
@@ -138,6 +140,10 @@ export default [
         title: 'Operations',
         route: 'operations',
         icon: 'CheckSquareIcon',
+      },
+      {
+        title: 'Trackrecord',
+        route: table('trackrecord'),
       },
     ],
   },

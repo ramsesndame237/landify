@@ -2946,6 +2946,23 @@ export default {
       { key: 'default_deadline_info' },
     ],
   },
+  trackrecord: {
+    delete: false,
+    update: false,
+    create: false,
+    fields: [
+      { key: 'trackrecord_id', auto: true },
+      { key: 'trackrecord_timestamp' },
+      { key: 'trackrecord_type' },
+      { key: 'trackrecordcategory_name' },
+      { key: 'trackrecordtype_name' },
+      { key: 'trackrecord_status' },
+      { key: 'trackrecord_comment' },
+    ],
+    filters: [
+      { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
+    ],
+  },
   //endregion
 
 }
