@@ -128,7 +128,7 @@ export default {
                     data,
                   })
                     .then(resp => {
-                      this.saveTrackRecord(table, entity, originalEntity)
+                      this.saveTrackRecord(entityName, resp.data.data.data[0][0], oldData, primaryKey, 'create')
                       this.handleRelationErrors(resp, field)
                     })
                 }
@@ -145,8 +145,11 @@ export default {
                       entity: entityName,
                       action: 'create',
                       data,
+                    }).then(resp => {
+                      this.saveTrackRecord(entityName, resp.data.data.data[0][0], oldData, primaryKey, 'update')
                     })
                   }
+                  return null
                 })
             })
             .then(resp => {
@@ -213,7 +216,7 @@ export default {
             await this.saveRelations(table, definition, primaryKey, entity[primaryKey], entity, originalEntity)
             return {
               noupdate: true,
-              entity
+              entity,
             }
           }
           return this.$api({
@@ -236,44 +239,47 @@ export default {
                 }
               }
               console.log('data', data)
-              this.saveTrackRecord(table, data.data.data[0][0], originalEntity, action)
+              this.saveTrackRecord(table, data.data.data[0][0], originalEntity, primaryKey, action)
               return data
             })
         })
     },
     async afterSaveHook(data) {
     },
-    saveTrackRecord(table, entity, originalEntity, usecase = 'create') {
-      const TRACKABLES = ['company']
+    async saveTrackRecord(table, entity, originalEntity, primaryKey, usecase = 'create') {
+      const TRACKABLES = [
+        'company',
+        'user_partnercompany_rel',
+        'user_company_rel',
+        'customergroup_company_rel',
+        'contactperson_company_rel',
+      ]
 
-      if (!TRACKABLES.includes(table)) {
-        return
-      }
-
-      console.log('====', {
-        table,
-        entity,
-        originalEntity,
-        usecase,
-        primaryKey: this.primaryKey
-      })
-
-
-      // return this.$api({
-      //   action: 'create',
-      //   entity: 'trackrecord',
-      //   data: [{
-      //     trackrecord_type: 0,
-      //     trackrecord_comment: `${table} - ${entity[this.primaryKey]}`,
-      //     trackrecord_usecase: usecase,
-      //   }],
+      // console.log('track record data', {
+      //   table,
+      //   entity,
+      //   originalEntity,
+      //   usecase,
+      //   primaryKey,
       // })
-      //   .then(result => {
-      //     console.log('tr', result)
-      //   })
-      //   .catch(error => {
-      //     throw error
-      //   })
+
+      if (TRACKABLES.indexOf(table) >= 0) {
+        this.$api({
+          action: 'create',
+          entity: 'trackrecord',
+          data: [{
+            trackrecord_type: 0,
+            trackrecord_comment: `${table} - ${entity[primaryKey]}`,
+            trackrecord_usecase: usecase,
+          }],
+        })
+          .then(result => {
+            console.log('tr', result)
+          })
+          .catch(error => {
+            throw error
+          })
+      }
     },
     submit() {
       return this.$refs.form.validate()
