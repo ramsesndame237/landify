@@ -59,6 +59,7 @@ export default {
     CustomHorizontalProgress,
   },
   props: {
+    ticket: Object,
     title: String,
     sub_title: String,
     hours: String,

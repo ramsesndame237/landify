@@ -2894,10 +2894,12 @@ export default {
     },
   },
   board: {
+    entity: 'frontend_6_1_4',
     fields: [
       { key: 'board_id', auto: true },
       { key: 'board_name' },
       { key: 'board_description', type: 'textarea' },
+      { key: 'board_amount_columnx', hideOnForm: true  },
       {
         key: 'btn',
         sortable: false,

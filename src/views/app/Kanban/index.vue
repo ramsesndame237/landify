@@ -1,9 +1,9 @@
 <template>
   <div>
-    <kanban-board :blocks="blocks" :stages="stages">
-      <div v-for="block in blocks" :slot="block.id" :key="block.id" class="item">
-        <summary-block title="Widerspruchsfrist" sub_title="Filiale 1" hours="54" percents="50" documents_nb="14"
-                       left_days="14" participants_nb="17" :with-attach="block.id & 1 ? true : false"/>
+    <kanban-board :blocks="tickets" :stages="stages" status-prop="column_name" id-prop="ticket_id">
+      <div v-for="ticket in tickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
+        <summary-block :ticket="ticket" :title="ticket.ticket_name" sub_title="Filiale 1" hours="54" percents="50" documents_nb="14"
+                       left_days="14" participants_nb="17" :with-attach="ticket.id & 1 ? true : false"/>
       </div>
       <div v-for="(stage,idx) in stages" :slot="'footer-'+stage" :key="stage" :id="'button-'+stage"
            style="padding: 10px">
@@ -71,6 +71,7 @@ export default {
   },
   mounted() {
     this.loadStages()
+    this.loadTickets()
   },
   methods: {
     createBlock(stage) {
