@@ -789,6 +789,7 @@ export default {
     ],
   },
   payment: {
+    entity: 'frontend_2_4_1',
     fields: [
       { key: 'payment_id', auto: true },
       {
@@ -798,6 +799,7 @@ export default {
         listLabel: 'company_name',
         relationEntity: 'company_payment_rel',
       },
+      { key: 'company_name', hideOnForm: true },
       { key: 'payment_info' },
       { key: 'payment_debitor' },
       { key: 'payment_objectreference' },
@@ -1928,6 +1930,7 @@ export default {
         entityForm: 'invoice_contract_rel',
         entityView: 'invoice',
         create: false,
+        update: false,
         fields: [
           { key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_description' },
           { key: 'invoice_date', type: 'date', hideOnForm: true },
@@ -1937,8 +1940,8 @@ export default {
           { key: 'invoice_billing_year', hideOnForm: true },
           { key: 'invoiceposition_count', hideOnForm: true },
           { key: 'invoice_contract_year', type: 'number' },
-          { key: 'invoice_contract_billing_period_from_date', type: 'date' },
-          { key: 'invoice_contract_billing_period_to_date', type: 'date' },
+          { key: 'invoice_billing_period_from_date', type: 'date' },
+          { key: 'invoice_billing_period_to_date', type: 'date' },
         ],
       },
     ],
@@ -1959,16 +1962,8 @@ export default {
         hideOnIndex: true,
       },
       { key: 'location_name', hideOnForm: true },
-      { key: 'area_name', hideOnForm: true },
-      // {
-      //   key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name', hideOnIndex: true, relationEntity: 'location_serviceobject_rel',
-      // },
-      // {
-      //   key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name', hideOnIndex: true, relationEntity: 'area_serviceobject_rel',
-      // },
-      // {
-      //   key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name',
-      // },
+      { key: 'serviceobject_amount_areas', hideOnForm: true },
+      { key: 'contract_name', hideOnForm: true },
       { key: 'contract_last_change_time', hideOnForm: true },
     ],
     relations: [
@@ -2375,7 +2370,8 @@ export default {
       { key: 'invoice_company_name' },
       { key: 'invoice_allocationarea', type: 'number' },
       { key: 'invoice_payment_date', type: 'date' },
-      { key: 'customergroup_name', hideOnForm: true },
+      { key: 'company_name', hideOnForm: true },
+      { key: 'location_name', hideOnForm: true },
       { key: 'manager_name', hideOnForm: true },
       { key: 'owner_name', hideOnForm: true },
       {
