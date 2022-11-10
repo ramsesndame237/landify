@@ -7,7 +7,7 @@
       <field :disabled="true" :entity="entity" :table-definition="tableDefinition" :field="getField('contract_name')"/>
     </b-col>
     <b-col cols="12">
-      <field ref="criteriaField" :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
+      <field ref="criteriaField" :disabled="disabled || (!create)" :entity="entity" :table-definition="tableDefinition"
              :field="getField('criteria_id')"/>
     </b-col>
     <b-col cols="12" v-show="entity.criteria_id && (!$refs.choice || $refs.choice.listItems.length > 0)">
@@ -27,7 +27,7 @@
              :field="getField('contract_criteria_exists')"/>
     </b-col>
     <b-col cols="12">
-      <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
+      <field :disabled="disabled || (!create)" :entity="entity" :table-definition="tableDefinition"
              :field="getField('contract_criteria_valid_from_date')"/>
     </b-col>
     <b-col cols="12">
@@ -50,7 +50,7 @@ export default {
     BRow,
     BCol,
   },
-  props: ['disabled', 'entity', 'tableDefinition', 'definition'],
+  props: ['disabled', 'entity', 'tableDefinition', 'definition','create'],
   data() {
     return {
       mounted: false,

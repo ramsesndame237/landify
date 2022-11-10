@@ -1781,7 +1781,7 @@ export default {
         view: false,
         create: false,
         fields: [
-          { key: 'document_id', disabledOnUpdate: true },
+          { key: 'document_id', disableOnUpdate: true },
           { key: 'document_name' },
           { key: 'documenttype_name', hideOnForm: true },
           {
@@ -1917,11 +1917,18 @@ export default {
         entityView: 'criteria',
         fieldComponent: () => import('@/views/app/CreateComponent/ContractCriteria'),
         fields: [
-          { key: 'criteria_id', type: 'list', list: 'criteria', listLabel: 'criteria_name', composite: true },
+          {
+            key: 'criteria_id',
+            type: 'list',
+            list: 'criteria',
+            listLabel: 'criteria_name',
+            composite: true,
+            disableOnUpdate: true
+          },
           { key: 'criteria_name', hideOnForm: true },
           ...getContractCriteriaFields(),
         ],
-        update: false,
+        // update: false,
       },
       {
         title: 'Invoices',
@@ -2886,7 +2893,7 @@ export default {
       { key: 'ticket_deadline_red', type: 'date', time: true },
       { key: 'ticket_planned_treatment_week' },
       {
-        key: 'column_id', type: 'list', list: 'columnx', listLabel: 'column_name', visible: false,
+        key: 'column_id', type: 'list', list: 'columnx', listLabel: 'column_name', visible: () => false,
       },
     ],
     default: {
@@ -2899,7 +2906,7 @@ export default {
       { key: 'board_id', auto: true },
       { key: 'board_name' },
       { key: 'board_description', type: 'textarea' },
-      { key: 'board_amount_columnx', hideOnForm: true  },
+      { key: 'board_amount_columnx', hideOnForm: true },
       {
         key: 'btn',
         sortable: false,
@@ -2979,7 +2986,7 @@ function getContractCriteriaFields() {
       filter_value: null,
       mandatoryIfListEmpty: true,
     },
-    { key: 'contract_criteria_valid_from_date', type: 'date', composite: true },
+    { key: 'contract_criteria_valid_from_date', type: 'date', composite: true, disableOnUpdate: true },
     { key: 'contract_criteria_valid_to_date', type: 'date' },
     { key: 'contract_criteria_exists', type: 'boolean' },
     { key: 'criteriatype_name', hideOnForm: true },

@@ -1,15 +1,23 @@
 <template>
   <div>
+    <b-card body-class="p-0">
+      <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
+        <div class="d-flex align-items-center">
+          <img class="mr-1" src="@/assets/images/icons/people.svg" alt="">
+          <h4 class="mb-0">Board: {{ board_name }}</h4>
+        </div>
+        <div class="d-flex align-items-center">
+          <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions" />
+          <b-button variant="primary" class="mx-1" block @click="createTicket()">
+            New Ticket
+          </b-button>
+          <b-form-input debounce="500" v-model="search" type="search" class="w-16" placeholder="Search.."/>
+        </div>
+      </div>
+    </b-card>
     <kanban-board :blocks="tickets" :stages="stages" status-prop="column_name" id-prop="ticket_id">
       <div v-for="ticket in tickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
-        <summary-block :ticket="ticket" :title="ticket.ticket_name" sub_title="Filiale 1" hours="54" percents="50" documents_nb="14"
-                       left_days="14" participants_nb="17" :with-attach="ticket.id & 1 ? true : false"/>
-      </div>
-      <div v-for="(stage,idx) in stages" :slot="'footer-'+stage" :key="stage" :id="'button-'+stage"
-           style="padding: 10px">
-        <b-button variant="primary" block @click="createTicket(columns[idx])">
-          New Ticket
-        </b-button>
+        <invoice-ticket-card :ticket="ticket"/>
       </div>
     </kanban-board>
     <generic-modal @reload-table="$refs.table.reload()" :table="table" :definition="definition"
@@ -17,26 +25,33 @@
   </div>
 </template>
 <script>
-import { BAvatarGroup, BAvatar, BButton } from 'bootstrap-vue'
+import { BAvatarGroup, BAvatar, BButton, BCard, BFormInput, BFormSelect } from 'bootstrap-vue'
 // eslint-disable-next-line import/extensions
 import SimpleBlock from '@/views/app/CustomComponents/WP6/SimpleBlock'
 import SummaryBlock from '@/views/app/CustomComponents/WP6/SummaryBlock'
 import GenericModal from "@/views/app/Generic/modal";
 import Table from '@/table'
+import vSelect from 'vue-select'
+import InvoiceTicketCard from "@/views/app/CustomComponents/WP6/InvoiceTicketCard";
 
 export default {
   name: 'Kanban',
   components: {
+    InvoiceTicketCard,
     GenericModal,
     BAvatarGroup,
     BAvatar,
-    BButton,
+    BButton, vSelect, BFormSelect,
+    BCard, BFormInput,
     SimpleBlock,
     SummaryBlock,
   },
   data() {
     return {
       table: 'ticket',
+      search: '',
+      filterOptions: [{ text: 'All', value: 0 }, { text: 'My tickets', value: 1 }],
+      filterValue: 0,
       definition: Table.ticket,
       columns: [],
       tickets: [],
@@ -68,6 +83,9 @@ export default {
     stages() {
       return this.columns.map(c => c.column_name)
     },
+    board_name() {
+      return this.columns[0]?.board_name
+    },
   },
   mounted() {
     this.loadStages()
@@ -95,7 +113,7 @@ export default {
         .finally(() => this.loading = false)
     },
     createTicket(column) {
-      this.$refs.modal.openModal(true, { column_id: column.column_id })
+      this.$refs.modal.openModal(true, { column_id: this.columns[0].column_id })
     },
     loadTickets() {
       this.$api({

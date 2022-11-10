@@ -42,10 +42,19 @@ export default {
       loading: false,
     }
   },
+  watch: {
+    entity: {
+      handler(val) {
+        console.log('entity', val)
+      },
+      deep: true,
+    },
+  },
   methods: {
     fillRelations(entity, originalEntity, formFields, table, primaryKey) {
       return Promise.all(formFields.filter(field => field.type === 'list')
         .map(async field => {
+          console.log("Fill relations", field, table, primaryKey, entity)
           if (entity[field.key] == null) {
             await this.$api({
               entity: field.relationEntity ?? (`${table}_${field.list}_rel`),
@@ -77,7 +86,7 @@ export default {
             const subDefinition = component.subDefinition
             this.getFormFields(subDefinition)
               .forEach(field => {
-                if (this.initialData[field.key]) component.subEntity[field.key] = this.initialData[field.key]
+                if (this.initialData[field.key]) this.$set(component.subEntity, field.key, this.initialData[field.key])
               })
             const subOriginalEntity = originalEntity[field.key] == null ? {} : component.list.find(i => i[field.key] === originalEntity[field.key])
             return this.fillRelations(component.subEntity, subOriginalEntity || {}, this.getFormFields(subDefinition), field.list, this.getPrimaryKey(subDefinition))
@@ -370,6 +379,7 @@ export default {
     }
     this.entityLoaded = true
     this.originalEntity = { ...this.entity }
+    console.log('mounted', this.entity)
     await this.fillRelations(this.entity, this.originalEntity, this.formFields, this.table, this.primaryKey)
   },
 }

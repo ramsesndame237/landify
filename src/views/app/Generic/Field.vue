@@ -104,7 +104,7 @@ export default {
     }
   },
   computed: {
-    rules(){
+    rules() {
       return this.getValidationRules(this.field)
     },
     visible() {
@@ -170,6 +170,7 @@ export default {
       return definition.primaryKey ?? definition.fields.find(f => f.auto).key
     },
     async getRelationValue() {
+      console.log('get relation value')
       if (this.field.type === 'list') {
         if (this.entity[this.field.key] == null) {
           const primaryKey = this.getPrimaryKey(this.definition)
@@ -261,6 +262,12 @@ export default {
       console.log('change')
       if (this.field.alwaysNew) {
         if (this.selectedValue) {
+          if (this.field.onlyForm && this.$parent.$parent.isRelation) {
+            this.subFormFields.forEach(field => {
+              if(!this.subEntity[field.key]) this.$set(this.subEntity, field.key, this.selectedValue[field.key])
+            })
+            return
+          }
           this.subFormFields.forEach(field => {
             this.$set(this.subEntity, field.key, this.selectedValue[field.key])
           })
