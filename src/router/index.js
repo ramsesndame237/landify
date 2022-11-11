@@ -96,7 +96,7 @@ const router = new VueRouter({
       },
     },
     {
-      name: 'kanban',
+      name: 'table-kanban',
       path: '/app/table/:table/:id/kanban',
       component: () => import('@/views/app/Kanban/index.vue'),
     },
@@ -110,21 +110,6 @@ const router = new VueRouter({
       // table parameter is just to fix menu
       path: '/app/table/:table/import/:invoice',
       component: () => import('@/views/app/InvoicePositionImport.vue'),
-    },
-    // Workpackage 6
-    {
-      path: '/app/operations',
-      name: 'operations',
-      component: () => import('@/views/app/Page/OperationsPage.vue'),
-      meta: {
-        pageTitle: 'Operations',
-        breadcrumb: [
-          {
-            text: 'Operations',
-            active: true,
-          },
-        ],
-      },
     },
     // Workpackage 7
     {

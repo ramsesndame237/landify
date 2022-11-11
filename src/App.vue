@@ -1,11 +1,7 @@
 <template>
-  <div
-    id="app"
-    class="h-100"
-    :class="[skinClasses]"
-  >
+  <div id="app" class="h-100" :class="[skinClasses]">
     <component :is="layout">
-      <router-view />
+      <router-view/>
     </component>
   </div>
 </template>
@@ -89,6 +85,10 @@ export default {
     watch(windowWidth, val => {
       store.commit('app/UPDATE_WINDOW_WIDTH', val)
     })
+    // Update now after 60 seconds
+    setInterval(() => {
+      store.commit('app/UPDATE_NOW')
+    }, 60000)
 
     return {
       skinClasses,

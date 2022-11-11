@@ -7,7 +7,7 @@
           <h4 class="mb-0">Board: {{ board_name }}</h4>
         </div>
         <div class="d-flex align-items-center">
-          <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions" />
+          <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
           <b-button variant="primary" class="mx-1" block @click="createTicket()">
             New Ticket
           </b-button>
@@ -15,13 +15,14 @@
         </div>
       </div>
     </b-card>
-    <kanban-board :blocks="tickets" :stages="stages" status-prop="column_name" id-prop="ticket_id">
+    <kanban-board :blocks="tickets" :stages="stages" :config="config" status-prop="column_name" id-prop="ticket_id"
+                  @update-block="updateBlock">
       <div v-for="ticket in tickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
         <invoice-ticket-card :ticket="ticket"/>
       </div>
     </kanban-board>
-    <generic-modal @reload-table="$refs.table.reload()" :table="table" :definition="definition"
-                   :table-definition-key="table" title="Create a new Ticket" ref="modal"/>
+    <generic-modal @reload-table="onNewTicket" :table="table" :definition="definition" :table-definition-key="table"
+                   title="Create a new Ticket" ref="modal"/>
   </div>
 </template>
 <script>
@@ -33,6 +34,8 @@ import GenericModal from "@/views/app/Generic/modal";
 import Table from '@/table'
 import vSelect from 'vue-select'
 import InvoiceTicketCard from "@/views/app/CustomComponents/WP6/InvoiceTicketCard";
+import moment from "moment";
+import { getUserData } from "@/auth/utils";
 
 export default {
   name: 'Kanban',
@@ -55,6 +58,7 @@ export default {
       definition: Table.ticket,
       columns: [],
       tickets: [],
+      teams: [],
       blocks: [
         {
           id: 1,
@@ -77,6 +81,26 @@ export default {
         },
       ],
       loading: false,
+      config: {
+        // Don't allow blocks to be moved out of the approved stage
+        accepts: (block, target, source) => {
+          // console.log(target.dataset, source.dataset, 'moved')
+          const columnSourceIdx = this.columns.findIndex(c => c.column_name === source.dataset.status)
+          const columnTargetIdx = this.columns.findIndex(c => c.column_name === target.dataset.status)
+          // check if user is in the right team
+          const user = getUserData()
+          const email = user.user.user_email
+          const teamId = this.columns[columnSourceIdx].team_id
+          let isInTeam = true
+          if (teamId) isInTeam = this.teams.find(team => team.team_id === teamId && team.user_email === email && moment().isBetween(moment(team.user_team_valid_from), moment(team.user_team_valid_to), 'day')) != null
+          if (!isInTeam) return false
+          // +1 -1 movements
+          if (columnTargetIdx === columnSourceIdx + 1 || columnTargetIdx === columnSourceIdx - 1) return true
+          // check special cases
+
+          return false
+        },
+      },
     }
   },
   computed: {
@@ -105,14 +129,30 @@ export default {
       this.$api({
         entity: 'frontend_column_list',
         action: 'read-rich',
+        order_by: 'rank_order',
+        order_dir: 'ASC',
         data: [{ board_id: this.$route.params.id }],
       })
         .then(({ data }) => {
           this.columns = data.data.data.sort(c => c.rank_order)
+          const ids = this.columns.map(c => c.team_id).filter(c => c != null)
+          if (ids.length === 0) return
+          return this.$api({
+            entity: 'user_team_grp',
+            action: 'read-rich',
+            data: ids.map(id => ({ team_id: id })),
+          }).then(({ data }) => {
+            this.teams = data.data.data
+          })
         })
         .finally(() => this.loading = false)
     },
-    createTicket(column) {
+    updateBlock(id, status) {
+      console.log(id, status, 'move')
+      this.moveToColumn(this.tickets.find(t => t.ticket_id === Number(id)), this.columns.find(c => c.column_name === status))
+      // this.blocks.find(b => b.id === Number(id)).status = status;
+    },
+    createTicket() {
       this.$refs.modal.openModal(true, { column_id: this.columns[0].column_id })
     },
     loadTickets() {
@@ -124,6 +164,27 @@ export default {
         .then(({ data }) => {
           this.tickets = data.data.data
         })
+    },
+    async onNewTicket(ticket) {
+      await this.moveToColumn(ticket, this.columns[0])
+      this.loadTickets()
+    },
+    async moveToColumn(ticket, column) {
+      const now = moment()
+      await this.$api({
+        action: 'create',
+        entity: 'ticket_columnx_rel',
+        data: [
+          {
+            ticket_id: ticket.ticket_id,
+            column_id: column.column_id,
+            ticket_move_time: now.format('YYYY-MM-DD HH:mm:ss'),
+            ticket_deadline_offset: now.clone().add(column.default_deadline_period).format('YYYY-MM-DD HH:mm:ss'),
+            ticket_deadline_offset_yellow: now.clone().add(column.default_deadline_yellow).format('YYYY-MM-DD HH:mm:ss'),
+            ticket_deadline_offset_red: now.clone().add(column.default_deadline_red).format('YYYY-MM-DD HH:mm:ss'),
+          },
+        ],
+      })
     },
   },
 }

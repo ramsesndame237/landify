@@ -2884,6 +2884,8 @@ export default {
   //endregion
   //region Work Package 6
   ticket: {
+    customPage: () => import('@/views/app/Page/TicketDetail.vue'),
+    create: false,
     fields: [
       { key: 'ticket_id', auto: true },
       { key: 'ticket_name' },
@@ -2892,9 +2894,17 @@ export default {
       { key: 'ticket_deadline_yellow', type: 'date', time: true },
       { key: 'ticket_deadline_red', type: 'date', time: true },
       { key: 'ticket_planned_treatment_week' },
-      {
-        key: 'column_id', type: 'list', list: 'columnx', listLabel: 'column_name', visible: () => false,
-      },
+      // {
+      //   key: 'column_id', type: 'list', list: 'columnx', listLabel: 'column_name', visible: () => false,
+      // },
+      { key: 'column_name', hideOnForm: true },
+      { key: 'board_name', hideOnForm: true },
+      { key: 'contract_id', hideOnForm: true },
+      { key: 'contract_name', hideOnForm: true },
+      { key: 'pos_id', hideOnForm: true },
+      { key: 'pos_name', hideOnForm: true },
+      { key: 'sub_ticket_count', hideOnForm: true },
+
     ],
     default: {
       ticket_progress: 10,
@@ -2914,7 +2924,7 @@ export default {
         hideOnForm: true,
         label: 'Button',
         btnLabel: 'Kanban',
-        getRoute: board => ({ name: 'kanban', params: { id: board.board_id, table: 'board' } }),
+        getRoute: board => ({ name: 'table-kanban', params: { id: board.board_id, table: 'board' } }),
       },
     ],
     relations: [
@@ -2927,6 +2937,7 @@ export default {
           { key: 'column_id', type: 'list', list: 'columnx', alwaysNew: true, onlyForm: true },
           { key: 'column_name', hideOnForm: true },
           { key: 'column_description', type: 'textarea', hideOnForm: true },
+          { key: 'team_name', hideOnForm: true },
           { key: 'rank_order', type: 'number' },
         ],
       },
@@ -2938,6 +2949,7 @@ export default {
       { key: 'column_name' },
       { key: 'column_description', type: 'textarea' },
       { key: 'default_value_id', type: 'list', list: 'defaultvalue', alwaysNew: true, onlyForm: true },
+      { key: 'team_id', type: 'list', list: 'team', listLabel: 'team_name' },
     ],
   },
   defaultvalue: {

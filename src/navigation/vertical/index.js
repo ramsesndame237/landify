@@ -127,24 +127,9 @@ export default [
     title: 'Work Package 6',
     icon: 'CheckSquareIcon',
     children: [
-      {
-        title: 'Boards',
-        route: table('board'),
-      },
-      {
-        title: 'Advanced Kanban',
-        route: 'advanced-kanban',
-        icon: 'CheckSquareIcon',
-      },
-      {
-        title: 'Operations',
-        route: 'operations',
-        icon: 'CheckSquareIcon',
-      },
-      {
-        title: 'Trackrecord',
-        route: table('trackrecord'),
-      },
+      item('Boards', 'board'),
+      item('Tickets', 'ticket'),
+      item('Trackrecord', 'trackrecord'),
     ],
   },
   {

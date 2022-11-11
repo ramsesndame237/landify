@@ -11,6 +11,7 @@ export default {
     packageVersion: process.env.PACKAGE_VERSION || '0',
     commitVersion: process.env.CI_VERSION || '',
     commitDate: process.env.CI_DATE || '',
+    now: moment(),
   },
   getters: {
     fullVersion: state => `v${state.packageVersion} - ${state.commitVersion} - ${process.env.CI_DATE}`,
@@ -22,8 +23,12 @@ export default {
       if (windowWidth >= $themeBreakpoints.sm) return 'sm'
       return 'xs'
     },
+    now: state => state.now,
   },
   mutations: {
+    UPDATE_NOW(state) {
+      state.now = moment()
+    },
     UPDATE_WINDOW_WIDTH(state, val) {
       state.windowWidth = val
     },
