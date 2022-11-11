@@ -2886,6 +2886,7 @@ export default {
   ticket: {
     customPage: () => import('@/views/app/Page/TicketDetail.vue'),
     create: false,
+    entity: 'frontend_6_1_6',
     fields: [
       { key: 'ticket_id', auto: true },
       { key: 'ticket_name' },
