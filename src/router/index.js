@@ -181,6 +181,15 @@ const router = new VueRouter({
         resource: 'Auth',
       },
     },
+    {
+      path: '/comming-soon',
+      name: 'comming-soon',
+      component: () => import('@/views/error/ComingSoon.vue'),
+      meta: {
+        layout: 'full',
+        resource: 'Auth',
+      },
+    },
     // error
     {
       path: '/error-404',

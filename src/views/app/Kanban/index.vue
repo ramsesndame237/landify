@@ -97,7 +97,6 @@ export default {
           // +1 -1 movements
           if (columnTargetIdx === columnSourceIdx + 1 || columnTargetIdx === columnSourceIdx - 1) return true
           // check special cases
-
           return false
         },
       },
