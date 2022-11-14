@@ -30,6 +30,7 @@ export default {
         list: 'contactperson',
         listLabel: 'contactperson_lastname',
         relationEntity: 'contactperson_user_rel',
+        hideOnCreate: true,
       },
     ],
     updateComponent: () => import('@/views/app/FormComponent/UserForm'),
@@ -63,7 +64,7 @@ export default {
             key: 'user_role_valid_to',
             type: 'date',
             rules: { date_after: ['@user_role_valid_from'] },
-            sortable: true,
+            required: false,
           },
         ],
       },
@@ -369,7 +370,7 @@ export default {
     fields: [
       { key: 'customergroup_id', auto: true },
       { key: 'customergroup_name' },
-      { key: 'customergroup_description', hideOnIndex: true, type: 'textarea' },
+      { key: 'customergroup_description', hideOnIndex: true, type: 'textarea', required: false },
       { key: 'company_count', hideOnForm: true },
     ],
     relations: [
@@ -486,10 +487,10 @@ export default {
     fields: [
       { key: 'bankdata_id', auto: true },
       { key: 'bankdata_iban' },
-      { key: 'bankdata_bic' },
+      { key: 'bankdata_bic', required: false },
       { key: 'bankdata_bank_name' },
-      { key: 'bankdata_account_number' },
-      { key: 'bankdata_vat' },
+      { key: 'bankdata_account_number', required: false },
+      { key: 'bankdata_vat', required: false },
       { key: 'bankdata_is_active', type: 'boolean' },
     ],
   },
@@ -620,8 +621,8 @@ export default {
           { key: 'product_name' },
           { key: 'salesorder_valid_from_date', type: 'date', composite: true },
           { key: 'salesorder_valid_to_date', type: 'date' },
-          { key: 'product_active_from_date', type: 'date' },
-          { key: 'product_active_to_date', type: 'date' },
+          { key: 'product_active_from_date', type: 'date', required: false },
+          { key: 'product_active_to_date', type: 'date', required: false },
           { key: 'salesorder_confirmation_date', type: 'date' },
         ],
       },
@@ -823,9 +824,6 @@ export default {
       { key: 'contactdetails_email', hideOnForm: true },
       { key: 'contactpersons_count', hideOnForm: true },
       { key: 'locations_count', hideOnForm: true },
-      // {
-      //   key: 'partnertype_id', hideOnIndex: true, type: 'list', list: 'partnertype', listLabel: 'partnertype_name',
-      // },
       {
         key: 'address_id',
         hideOnIndex: true,
@@ -1001,11 +999,11 @@ export default {
     fields: [
       { key: 'partnergroup_id', auto: true },
       { key: 'partnergroup_name' },
-      { key: 'partnertype_name', hideOnForm: true },
+      // { key: 'partnertype_name', hideOnForm: true },
       // {
       //   key: 'partnertype_id', hideOnIndex: true, type: 'list', list: 'partnertype', listLabel: 'partnertype_name',
       // },
-      { key: 'partnergroup_description', hideOnIndex: true, type: 'textarea' },
+      { key: 'partnergroup_description', hideOnIndex: true, type: 'textarea', required: false },
       { key: 'partnercompany_count', hideOnForm: true },
     ],
     relations: [
@@ -1177,10 +1175,10 @@ export default {
       {
         key: 'contactdetails_id', sortable: true, auto: true, hiddenOnForm: true,
       },
-      { key: 'contactdetails_email', rules: { required: false } },
-      { key: 'contactdetails_phone', rules: { required: false } },
-      { key: 'contactdetails_mobile', rules: { required: false } },
-      { key: 'contactdetails_fax', rules: { required: false } },
+      { key: 'contactdetails_email', required: false },
+      { key: 'contactdetails_phone', required: false },
+      { key: 'contactdetails_mobile', required: false },
+      { key: 'contactdetails_fax', required: false },
     ],
   },
   companydetails: {
@@ -1189,9 +1187,9 @@ export default {
       {
         key: 'companydetails_id', sortable: true, auto: true, hiddenOnForm: true,
       },
-      { key: 'companydetails_salestaxno', sortable: true },
-      { key: 'companydetails_commercialregisterno', sortable: true },
-      { key: 'companydetails_website', sortable: true },
+      { key: 'companydetails_salestaxno', required: false },
+      { key: 'companydetails_commercialregisterno', required: false },
+      { key: 'companydetails_website', required: false },
     ],
   },
   contacttitle: {
@@ -1283,10 +1281,10 @@ export default {
       },
       { key: 'pos_name' },
       { key: 'pos_branchnumber' },
-      { key: 'pos_name_external' },
+      { key: 'pos_name_external', required: false },
       { key: 'location_count', hideOnForm: true },
       { key: 'area_count', hideOnForm: true },
-      { key: 'pos_first_year', type: 'number' },
+      { key: 'pos_first_year', type: 'number', required: false },
     ],
     relations: [
       {
@@ -1517,7 +1515,7 @@ export default {
       },
       { key: 'city_name', hideOnForm: true },
       {
-        key: 'area_name_external', hideOnIndex: true,
+        key: 'area_name_external', hideOnIndex: true, required: false,
       },
       {
         key: 'country_name', hideOnForm: true,
@@ -1544,7 +1542,7 @@ export default {
         with: ['area_usagetype_valid_from_date', 'area_usagetype_valid_to_date'],
       },
       { key: 'area_usagetype_valid_from_date', type: 'date', hideOnIndex: true },
-      { key: 'area_usagetype_valid_to_date', type: 'date', hideOnIndex: true, rules: { required: false } },
+      { key: 'area_usagetype_valid_to_date', type: 'date', hideOnIndex: true,required: false },
     ],
     relations: [
       {
@@ -1632,9 +1630,9 @@ export default {
     fields: [
       { key: 'location_id', auto: true },
       { key: 'location_name' },
-      { key: 'location_objectdescription', type: 'textarea', hideOnIndex: true },
-      { key: 'location_total_area', type: 'number', hideOnIndex: true },
-      { key: 'location_start_date', type: 'date', hideOnIndex: true },
+      { key: 'location_objectdescription', type: 'textarea', hideOnIndex: true , required: false},
+      { key: 'location_total_area', type: 'number', hideOnIndex: true, required: false },
+      { key: 'location_start_date', type: 'date', hideOnIndex: true, required: false },
       { key: 'owner_name', hideOnForm: true },
       { key: 'manager_name', hideOnForm: true },
       { key: 'locationtype_name', hideOnForm: true },

@@ -52,6 +52,10 @@
                      :field="companyField"/>
             </b-col>
             <b-col cols="12">
+              <field ref="fields" :filter-value="entity.company_id" :disabled="disabled || entity.company_id==null" :entity="entity"
+                     :table-definition="tableDefinition" :field="posField"/>
+            </b-col>
+            <b-col cols="12">
               <field ref="fields" :disabled="isDisabledFromName('invoice_description')" :entity="entity"
                      :table-definition="tableDefinition" :field="getField('invoice_description')"/>
             </b-col>
@@ -65,14 +69,14 @@
           <div class="d-flex justify-content-between align-items-center flex-wrap mb-1">
             <span>Select respective contract to area</span>
             <b-form-input debounce="500" id="filterInput" v-model="search" type="search" class="w-auto"
-                          placeholder="Search.." :disabled="entity.company_id==null"/>
+                          placeholder="Search.." :disabled="entity.pos_id==null"/>
           </div>
-          <data-tables ref="contracts" :disabled="disabled" :current-page="1" :per-page="100" :items="contracts" :multi-select="false"
-                       :with-actions="false" entity="contract" :fields="contractFields" style="max-height: 300px"
-                       class="mb-1" @selected="onContractSelect"/>
+          <data-tables ref="contracts" :disabled="disabled" :current-page="1" :per-page="100" :items="contracts"
+                       :multi-select="false" :with-actions="false" entity="contract" :fields="contractFields"
+                       style="max-height: 300px" class="mb-1" @selected="onContractSelect"/>
 
-          <data-tables ref="areas" :disabled="disabled" :current-page="1" :per-page="100" :items="areas" :with-actions="false" entity="area"
-                       :fields="areaFields" style="max-height: 300px"/>
+          <data-tables ref="areas" :disabled="disabled" :current-page="1" :per-page="100" :items="areas"
+                       :with-actions="false" entity="area" :fields="areaFields" style="max-height: 300px"/>
 
         </b-col>
       </b-row>
@@ -97,7 +101,15 @@ export default {
         type: 'list',
         list: 'company',
         listLabel: 'company_name',
-        rules: { required: false },
+        required: false,
+      },
+      posField: {
+        key: 'pos_id',
+        type: 'list',
+        list: 'frontend_2_1_3_8',
+        listLabel: 'pos_name',
+        required: false,
+        filter_key: 'company_id',
       },
       contractFields: [
         { key: 'contract_id' },
@@ -121,9 +133,12 @@ export default {
     search() {
       this.fetchContracts()
     },
-    'entity.company_id': function (val) {
+    'entity.pos_id': function (val) {
       if (val) this.fetchContracts()
       else this.contracts = []
+    },
+    'entity.company_id': function (val) {
+      // if (val) this.posField.filterValue = this.entity.company_id
     },
     'entity.invoice_billing_period_to_date': function () {
       this.entity.invoice_contract_year = getYearFormDateString(this.entity.invoice_billing_period_to_date)

@@ -343,7 +343,7 @@ export default {
       return this.isDisabled(this.getField(key))
     },
     getFormFields(definition) {
-      return definition.fields.filter(f => !f.hideOnForm && (this.create || !f.hideOnUpdate))
+      return definition.fields.filter(f => !f.hideOnForm && (this.create || !f.hideOnUpdate) && (!this.create || !f.hideOnCreate))
     },
     getPrimaryKey(definition) {
       return definition.primaryKey ?? definition.fields.find(f => f.auto).key
