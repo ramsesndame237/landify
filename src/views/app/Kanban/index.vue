@@ -36,6 +36,7 @@ import vSelect from 'vue-select'
 import InvoiceTicketCard from "@/views/app/CustomComponents/WP6/InvoiceTicketCard";
 import moment from "moment";
 import { getUserData } from "@/auth/utils";
+import _ from 'lodash'
 
 export default {
   name: 'Kanban',
@@ -161,7 +162,21 @@ export default {
         data: [{ board_id: this.$route.params.id }],
       })
         .then(({ data }) => {
-          this.tickets = data.data.data
+          const rawData = data.data.data
+          this.tickets = Object.values(_.groupBy(rawData, 'ticket_id')).map(r => {
+            const obj = _.pick(r[0], ['ticket_creation_time', 'ticket_deadline',
+              'ticket_deadline_red',
+              'ticket_deadline_yellow',
+              'ticket_description',
+              'ticket_id',
+              'ticket_last_change_time',
+              'ticket_name',
+              'ticket_planned_treatment_week',
+              'ticket_progress'])
+            obj.columns = _.orderBy(r, 'column_entry_time', 'desc').map(i => _.pick(i, ['column_id', 'column_name']))
+            obj.column_name = obj.columns[0].column_name
+            return obj
+          })
         })
     },
     async onNewTicket(ticket) {
