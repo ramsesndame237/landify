@@ -4,14 +4,15 @@
       <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
         <div class="d-flex align-items-center">
           <img class="mr-1" src="@/assets/images/icons/people.svg" alt="">
-          <h4 class="mb-0">Board: {{ board_name }}</h4>
+          <h4 class="mb-0">
+            Board: {{ board_name }} </h4>
         </div>
         <div class="d-flex align-items-center">
           <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
           <b-button variant="primary" class="mx-1" block @click="createTicket()">
             New Ticket
           </b-button>
-          <b-form-input debounce="500" v-model="search" type="search" class="w-16" placeholder="Search.."/>
+          <b-form-input v-model="search" debounce="500" type="search" class="w-16" placeholder="Search.."/>
         </div>
       </div>
     </b-card>
@@ -21,21 +22,23 @@
         <invoice-ticket-card :ticket="ticket"/>
       </div>
     </kanban-board>
-    <generic-modal @reload-table="onNewTicket" :table="table" :definition="definition" :table-definition-key="table"
-                   title="Create a new Ticket" ref="modal"/>
+    <generic-modal ref="modal" :table="table" :definition="definition" :table-definition-key="table"
+                   title="Create a new Ticket" @reload-table="onNewTicket"/>
   </div>
 </template>
 <script>
-import { BAvatarGroup, BAvatar, BButton, BCard, BFormInput, BFormSelect } from 'bootstrap-vue'
+import {
+  BAvatarGroup, BAvatar, BButton, BCard, BFormInput, BFormSelect,
+} from 'bootstrap-vue'
 // eslint-disable-next-line import/extensions
 import SimpleBlock from '@/views/app/CustomComponents/WP6/SimpleBlock'
 import SummaryBlock from '@/views/app/CustomComponents/WP6/SummaryBlock'
-import GenericModal from "@/views/app/Generic/modal";
+import GenericModal from '@/views/app/Generic/modal'
 import Table from '@/table'
 import vSelect from 'vue-select'
-import InvoiceTicketCard from "@/views/app/CustomComponents/WP6/InvoiceTicketCard";
-import moment from "moment";
-import { getUserData } from "@/auth/utils";
+import InvoiceTicketCard from '@/views/app/CustomComponents/WP6/InvoiceTicketCard'
+import moment from 'moment-business-time'
+import { getUserData } from '@/auth/utils'
 import _ from 'lodash'
 
 export default {
@@ -45,8 +48,11 @@ export default {
     GenericModal,
     BAvatarGroup,
     BAvatar,
-    BButton, vSelect, BFormSelect,
-    BCard, BFormInput,
+    BButton,
+    vSelect,
+    BFormSelect,
+    BCard,
+    BFormInput,
     SimpleBlock,
     SummaryBlock,
   },
@@ -173,7 +179,7 @@ export default {
               'ticket_name',
               'ticket_planned_treatment_week',
               'ticket_progress'])
-            obj.columns = _.orderBy(r, 'column_entry_time', 'desc').map(i => _.pick(i, ['column_id', 'column_name']))
+            obj.columns = _.orderBy(r, 'ticket_move_time_in', 'desc').map(i => _.pick(i, ['ticket_id', 'column_id', 'column_name', 'ticket_move_time_in', 'ticket_move_time_out', 'ticket_deadline_offset', 'ticket_deadline_offset_yellow', 'ticket_deadline_offset_red']))
             obj.column_name = obj.columns[0].column_name
             return obj
           })
@@ -185,6 +191,9 @@ export default {
     },
     async moveToColumn(ticket, column) {
       const now = moment()
+      const deadline = now.clone().addWorkingTime(column.default_deadline_period, 'hours').format('YYYY-MM-DD HH:mm:ss')
+      const deadline_yellow = now.clone().addWorkingTime(column.default_deadline_yellow, 'hours').format('YYYY-MM-DD HH:mm:ss')
+      const deadline_red = now.clone().addWorkingTime(column.default_deadline_red, 'hours').format('YYYY-MM-DD HH:mm:ss')
       await this.$api({
         action: 'create',
         entity: 'ticket_columnx_rel',
@@ -192,10 +201,30 @@ export default {
           {
             ticket_id: ticket.ticket_id,
             column_id: column.column_id,
-            ticket_move_time: now.format('YYYY-MM-DD HH:mm:ss'),
-            ticket_deadline_offset: now.clone().add(column.default_deadline_period).format('YYYY-MM-DD HH:mm:ss'),
-            ticket_deadline_offset_yellow: now.clone().add(column.default_deadline_yellow).format('YYYY-MM-DD HH:mm:ss'),
-            ticket_deadline_offset_red: now.clone().add(column.default_deadline_red).format('YYYY-MM-DD HH:mm:ss'),
+            ticket_move_time_in: now.format('YYYY-MM-DD HH:mm:ss'),
+            ticket_deadline_offset: deadline,
+            ticket_deadline_offset_yellow: deadline_yellow,
+            ticket_deadline_offset_red: deadline_red,
+          },
+        ],
+      })
+      if (ticket.columns && ticket.columns[0]) {
+        this.$api({
+          action: 'update',
+          entity: 'ticket_columnx_rel',
+          data: [{ ...ticket.columns[0], ticket_move_time_out: now.format('YYYY-MM-DD HH:mm:ss') }],
+        })
+      }
+      // update ticket times
+      this.$api({
+        action: 'update',
+        entity: 'ticket',
+        data: [
+          {
+            ...ticket,
+            ticket_deadline: deadline,
+            ticket_deadline_yellow: deadline_yellow,
+            ticket_deadline_red: deadline_red,
           },
         ],
       })
@@ -203,7 +232,6 @@ export default {
   },
 }
 </script>
-
 
 <style lang="scss">
 /*@import '~vue-kanban/src/assets/kanban.scss';*/

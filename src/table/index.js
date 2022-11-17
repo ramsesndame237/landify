@@ -2956,6 +2956,7 @@ export default {
       { key: 'column_id', auto: true },
       { key: 'column_name' },
       { key: 'column_description', type: 'textarea' },
+      { key: 'column_is_qualitygate', type: 'boolean' },
       { key: 'default_value_id', type: 'list', list: 'defaultvalue', alwaysNew: true, onlyForm: true },
       { key: 'team_id', type: 'list', list: 'team', listLabel: 'team_name' },
     ],

@@ -1,5 +1,5 @@
 <template>
-  <div class="p-1">
+  <div class="p-1 ticket" :class="'ticket-'+deadlineColor">
     <div class="d-flex align-items-center mb-1">
       <b-avatar variant="light-secondary" text="I"/>
       <h4 class="font-weight-bolder mb-0 ml-1" style="color: #ccc; font-size: 15px">{{ ticket.ticket_name }}</h4>
@@ -95,7 +95,7 @@ export default {
     deadlineColor() {
       if (this.now.isAfter(this.deadline_red)) return 'danger'
       if (this.now.isAfter(this.deadline_yellow)) return 'secondary'
-      return ''
+      return 'success'
     },
     deadlineForHuman() {
       return this.deadline.from(this.now)
@@ -104,6 +104,25 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
 
+.ticket {
+  border-left: 4px solid;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+
+  &-success {
+    border-left-color: $success;
+  }
+
+  &-danger {
+    border-left-color: $danger;
+  }
+
+  &-warning {
+    border-left-color: $warning;
+  }
+}
 </style>
