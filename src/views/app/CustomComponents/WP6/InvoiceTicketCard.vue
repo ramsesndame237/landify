@@ -2,13 +2,16 @@
   <div class="p-1 ticket" :class="'ticket-'+deadlineColor">
     <div class="d-flex align-items-center mb-1">
       <b-avatar variant="light-secondary" text="I"/>
-      <h4 class="font-weight-bolder mb-0 ml-1" style="color: #ccc; font-size: 15px">{{ ticket.ticket_name }}</h4>
+      <h4 class="font-weight-bolder mb-0 ml-1" style="color: #ccc; font-size: 15px" :title="ticket.ticket_id">{{ ticket.ticket_name }}</h4>
       <b-dropdown variant="link-" toggle-class="p-0" right no-caret class="ml-auto">
         <template v-slot:button-content>
           <feather-icon icon="MoreHorizontalIcon"/>
         </template>
         <b-dropdown-item :to="{name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket}}">
           More details
+        </b-dropdown-item>
+        <b-dropdown-item @click="toggleTicket(ticket)">
+          {{ ticket.ticket_closed ? 'Re-open' : 'Close' }}
         </b-dropdown-item>
       </b-dropdown>
     </div>
@@ -26,6 +29,11 @@
       <strong class="mr-1">Deadline:</strong>
       <span :class="deadlineColor?('text-'+deadlineColor):''">{{ deadlineForHuman }}</span>
       <b-icon-calendar-date :class="'ml-auto '+ (deadlineColor?('text-'+deadlineColor):'')"/>
+    </div>
+    <div class="d-flex">
+      <strong class="mr-1">Deadline Offset:</strong>
+      <span :class="columnDeadlineColor?('text-'+columnDeadlineColor):''">{{ columnDeadlineForHuman }}</span>
+      <b-icon-calendar-date :class="'ml-auto '+ (columnDeadlineColor?('text-'+columnDeadlineColor):'')"/>
     </div>
     <div class="d-flex">
       <strong class="mr-1">Planned treatment week:</strong>
@@ -57,6 +65,7 @@ import {
 import CustomHorizontalProgress from '@/views/app/CustomComponents/CustomHorizontalProgress'
 import moment from "moment";
 import { mapGetters } from "vuex";
+import TicketMixin from "@/views/app/Kanban/TicketMixin";
 
 export default {
   name: 'InvoiceTicketCard',
@@ -73,11 +82,13 @@ export default {
     BDropdownItem,
     CustomHorizontalProgress,
   },
+  mixins: [TicketMixin],
   data() {
     return {
       deadline_red: moment(this.ticket.ticket_deadline_red),
       deadline_yellow: moment(this.ticket.ticket_deadline_yellow),
-      deadline: moment(this.ticket.ticket_deadline),
+      column_deadline_red: moment(this.ticket.columns[0].ticket_deadline_offset_red),
+      column_deadline_yellow: moment(this.ticket.columns[0].ticket_deadline_offset_yellow),
     }
   },
   filters: {
@@ -94,11 +105,19 @@ export default {
     }),
     deadlineColor() {
       if (this.now.isAfter(this.deadline_red)) return 'danger'
-      if (this.now.isAfter(this.deadline_yellow)) return 'secondary'
+      if (this.now.isAfter(this.deadline_yellow)) return 'warning'
+      return 'success'
+    },
+    columnDeadlineColor() {
+      if (this.now.isAfter(this.column_deadline_red)) return 'danger'
+      if (this.now.isAfter(this.column_deadline_yellow)) return 'warning'
       return 'success'
     },
     deadlineForHuman() {
-      return this.deadline.from(this.now)
+      return this.deadline_yellow.from(this.now)
+    },
+    columnDeadlineForHuman() {
+      return this.column_deadline_yellow.from(this.now)
     },
   },
 }

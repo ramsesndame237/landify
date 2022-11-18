@@ -2892,7 +2892,7 @@ export default {
       { key: 'ticket_id', auto: true },
       { key: 'ticket_name' },
       { key: 'ticket_description', type: 'textarea', required: false },
-      { key: 'ticket_deadline', type: 'date', time: true },
+      // { key: 'ticket_deadline', type: 'date', time: true },
       { key: 'ticket_deadline_yellow', type: 'date', time: true },
       { key: 'ticket_deadline_red', type: 'date', time: true },
       { key: 'ticket_planned_treatment_week' },
@@ -2918,6 +2918,7 @@ export default {
     ],
     default: {
       ticket_progress: 10,
+      ticket_deadline: '2000-01-01 00:00:00',
     },
   },
   board: {

@@ -84,7 +84,7 @@ async function init() {
 
   const data = await store.dispatch('app/fetchAppData')
   console.log(data.attribute)
-  i18n.mergeLocaleMessage(store.state.app.lang, { attribute: data.attribute, global: data.global })
+  i18n.mergeLocaleMessage(store.state.app.lang, { attribute: data.attribute, ...data.global })
   window.$vue = new Vue({
     router,
     store,

@@ -181,7 +181,7 @@ const router = new VueRouter({
       name: 'comming-soon',
       component: () => import('@/views/error/ComingSoon.vue'),
       meta: {
-        layout: 'full',
+        // layout: 'full',
         resource: 'Auth',
       },
     },

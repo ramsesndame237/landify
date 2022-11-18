@@ -18,6 +18,9 @@
       <div>
         <span class="mr-1">Filiale AB</span>
         <strong>Verwalter XY</strong>
+        <b-button variant="primary" class="ml-2" @click="toggleTicket(entity)">
+          {{ entity.ticket_closed ? 'Re-open' : 'Close' }}
+        </b-button>
       </div>
     </div>
     <b-row>
@@ -30,12 +33,12 @@
                        title="Create a sub task" @reload-table="onNewTicket"/>
         <sub-ticket-card v-for="(ticket,idx) in subTickets" :key="idx" :ticket="ticket"/>
         <p v-if="subTickets.length===0" class="text-center">No sub ticket available</p>
-        <b-card v-if="entity.columns" class="mt-3" title="Timeline">
+        <b-card-actions v-if="entity.columns" class="mt-3" title="Timeline" action-collapse collapsed>
           <app-timeline>
-            <app-timeline-item v-for="(column,idx) in entity.columns" :key="idx" :title="column.column_name"
-                               subtitle="" :time="column.ticket_move_time_in" variant="success"/>
+            <app-timeline-item v-for="(column,idx) in entity.columns" :key="idx" :title="column.column_name" subtitle=""
+                               :time="column.ticket_move_time_in" variant="success"/>
           </app-timeline>
-        </b-card>
+        </b-card-actions>
       </b-col>
       <b-col lg="4">
         <div class="d-flex justify-content-between align-items-center">
@@ -93,10 +96,13 @@ import GenericModal from "@/views/app/Generic/modal";
 import SubTicketCard from "@/views/app/CustomComponents/WP6/SubTicketCard";
 import AppTimeline from "@core/components/app-timeline/AppTimeline";
 import AppTimelineItem from "@core/components/app-timeline/AppTimelineItem";
+import BCardActions from "@core/components/b-card-actions/BCardActions";
+import TicketMixin from "@/views/app/Kanban/TicketMixin";
 
 export default {
   name: 'OperationsPage',
   components: {
+    BCardActions,
     AppTimelineItem,
     AppTimeline,
     SubTicketCard,
@@ -114,7 +120,7 @@ export default {
     BIconCaretDown,
     OperationRecapCard,
   },
-  mixins: [EditPageMixin],
+  mixins: [EditPageMixin, TicketMixin],
   data() {
     const ticketDef = JSON.parse(JSON.stringify(Table.ticket))
     let index = ticketDef.fields.findIndex(f => f.key === 'column_id')

@@ -20,7 +20,7 @@
                  :fields="definition.fields" :primary-key-column="definition.primaryKey"/>
     </b-card>
     <generic-modal :cache-key="table+'-'" @reload-table="$refs.table.reload()" :table="table" :definition="definition"
-                   with-continue :table-definition-key="table" :title="`global.headline-${table}-new`" ref="modal"/>
+                   with-continue :table-definition-key="table" :title="`headline~${table}~new`" ref="modal"/>
   </div>
 </template>
 

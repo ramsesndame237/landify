@@ -63,7 +63,7 @@ export default {
       return {
         global: globalTranslations.filter(t => t.translation_lang === state.lang.toUpperCase())
           .reduce((prev, current) => {
-            prev[current.translation_id.substr(1).replaceAll('.', '-')] = current.translation_text
+            prev[current.translation_id] = current.translation_text
             return prev
           }, {}),
         attribute: attributeTranslations.filter(l => l.attribute_lang === state.lang.toUpperCase()).reduce((prev, current) => {

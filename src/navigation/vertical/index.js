@@ -4,7 +4,7 @@ function table(name) {
 
 function item(tablename, title, icon) {
   return {
-    title: `global.menu-${title || tablename}`,
+    title: `menu~${title || tablename}`,
     route: table(tablename),
     // icon: 'UserIcon',
     action: 'read',
@@ -13,7 +13,7 @@ function item(tablename, title, icon) {
 }
 
 function key(val) {
-  return `global.menu-${val}`
+  return `menu~${val}`
 }
 
 export default [

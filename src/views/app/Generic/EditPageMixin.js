@@ -12,8 +12,8 @@ export default {
   },
   computed: {
     title() {
-      if (this.create) return `global.headline-${this.table}-new`
-      return `global.headline-${this.table}-detail`
+      if (this.create) return `headline~${this.table}~new`
+      return `headline~${this.table}~detail`
     },
     table() {
       return this.$route.params.table

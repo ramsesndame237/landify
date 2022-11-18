@@ -16,9 +16,14 @@
         </div>
       </div>
     </b-card>
-    <kanban-board :blocks="tickets" :stages="stages" :config="config" status-prop="column_name" id-prop="ticket_id"
-                  @update-block="updateBlock">
-      <div v-for="ticket in tickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
+    <kanban-board :blocks="visibleTickets" :stages="stages" :config="config" status-prop="column_name"
+                  id-prop="ticket_id" @update-block="updateBlock">
+      <div v-for="stage in stages" :key="stage" :slot="stage" class="w-100 d-flex justify-content-between"
+           :title="isQualityGate(stage)?'Quality Gate Column':''">
+        <h2>{{ stage }}</h2>
+        <feather-icon v-if="isQualityGate(stage)" class="text-primary" icon="StarIcon"/>
+      </div>
+      <div v-for="ticket in visibleTickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
         <invoice-ticket-card :ticket="ticket"/>
       </div>
     </kanban-board>
@@ -31,11 +36,8 @@ import {
   BAvatarGroup, BAvatar, BButton, BCard, BFormInput, BFormSelect,
 } from 'bootstrap-vue'
 // eslint-disable-next-line import/extensions
-import SimpleBlock from '@/views/app/CustomComponents/WP6/SimpleBlock'
-import SummaryBlock from '@/views/app/CustomComponents/WP6/SummaryBlock'
 import GenericModal from '@/views/app/Generic/modal'
 import Table from '@/table'
-import vSelect from 'vue-select'
 import InvoiceTicketCard from '@/views/app/CustomComponents/WP6/InvoiceTicketCard'
 import moment from 'moment-business-time'
 import { getUserData } from '@/auth/utils'
@@ -49,44 +51,23 @@ export default {
     BAvatarGroup,
     BAvatar,
     BButton,
-    vSelect,
     BFormSelect,
     BCard,
     BFormInput,
-    SimpleBlock,
-    SummaryBlock,
   },
   data() {
     return {
       table: 'ticket',
       search: '',
-      filterOptions: [{ text: 'All', value: 0 }, { text: 'My tickets', value: 1 }],
+      filterOptions: [{ text: 'All openned', value: 0 }, { text: 'My tickets', value: 1 }, {
+        text: 'All closed',
+        value: 2,
+      }],
       filterValue: 0,
       definition: Table.ticket,
       columns: [],
       tickets: [],
       teams: [],
-      blocks: [
-        {
-          id: 1,
-          status: 'Stage 1',
-          title: 'Mon ticket préféré',
-          description: 'Une description pas comme les autres.',
-        },
-      ],
-      summaryBlocks: [
-        {
-          id: 1,
-          title: 'My awsome title',
-          todo: 5,
-          done: 4,
-          documentNumber: 14,
-          remainingDays: 14,
-          workedDays: 54,
-          maxDays: 108,
-          participantsNumber: 20,
-        },
-      ],
       loading: false,
       config: {
         // Don't allow blocks to be moved out of the approved stage
@@ -95,15 +76,17 @@ export default {
           const columnSourceIdx = this.columns.findIndex(c => c.column_name === source.dataset.status)
           const columnTargetIdx = this.columns.findIndex(c => c.column_name === target.dataset.status)
           // check if user is in the right team
-          const user = getUserData()
-          const email = user.user.user_email
           const teamId = this.columns[columnSourceIdx].team_id
           let isInTeam = true
-          if (teamId) isInTeam = this.teams.find(team => team.team_id === teamId && team.user_email === email && moment().isBetween(moment(team.user_team_valid_from), moment(team.user_team_valid_to), 'day')) != null
+          if (teamId) isInTeam = this.currentUserInTeam(teamId)
           if (!isInTeam) return false
           // +1 -1 movements
           if (columnTargetIdx === columnSourceIdx + 1 || columnTargetIdx === columnSourceIdx - 1) return true
-          // check special cases
+          // target column before next quality gate column
+          const columnNextQualityGateIdx = this.columns.findIndex((c, idx) => c.column_is_qualitygate && idx > columnSourceIdx)
+          if (columnNextQualityGateIdx >= 0) {
+            if (columnTargetIdx <= columnNextQualityGateIdx) return true
+          }
           return false
         },
       },
@@ -116,12 +99,34 @@ export default {
     board_name() {
       return this.columns[0]?.board_name
     },
+    visibleTickets() {
+      return this.tickets.filter(ticket => {
+        if (this.filterValue === 0) {
+          return !ticket.ticket_closed
+        }
+        if (this.filterValue === 1) {
+          return this.currentUserInTeam(ticket.columns[0].team_id)
+        }
+        if (this.filterValue === 2) {
+          return ticket.ticket_closed
+        }
+        return true
+      })
+    },
   },
   mounted() {
     this.loadStages()
     this.loadTickets()
   },
   methods: {
+    isQualityGate(stage) {
+      return this.columns.find(c => c.column_name === stage).column_is_qualitygate
+    },
+    currentUserInTeam(teamId) {
+      const user = getUserData()
+      const email = user.user.user_email
+      return this.teams.find(team => team.team_id === teamId && team.user_email === email && moment().isBetween(moment(team.user_team_valid_from), moment(team.user_team_valid_to), 'day')) != null
+    },
     createBlock(stage) {
       this.blocks.push({
         id: this.blocks[this.blocks.length - 1].id + 1,
@@ -196,7 +201,7 @@ export default {
       const deadline = now.clone().addWorkingTime(column.default_deadline_period, 'hours').format('YYYY-MM-DD HH:mm:ss')
       const deadline_yellow = now.clone().addWorkingTime(column.default_deadline_yellow, 'hours').format('YYYY-MM-DD HH:mm:ss')
       const deadline_red = now.clone().addWorkingTime(column.default_deadline_red, 'hours').format('YYYY-MM-DD HH:mm:ss')
-      await this.$api({
+      const columnTicket = (await this.$api({
         action: 'create',
         entity: 'ticket_columnx_rel',
         data: [
@@ -209,31 +214,21 @@ export default {
             ticket_deadline_offset_red: deadline_red,
           },
         ],
-      })
-      if (ticket.columns && ticket.columns[0]) {
-        this.$api({
+      })).data.data.data[0][0]
+      columnTicket.column_name = this.columns.find(c => c.column_id === columnTicket.column_id).column_name
+      if (!ticket.columns) ticket.columns = []
+      ticket.columns.prepend(columnTicket)
+      if (ticket.columns && ticket.columns[1]) {
+        const updatedColumnTicket = (await this.$api({
           action: 'update',
           entity: 'ticket_columnx_rel',
           data: [{
             ..._.pick(ticket.columns[0], ['ticket_id', 'column_id', 'ticket_move_time_in']),
-            ticket_move_time_out: now.format('YYYY-MM-DD HH:mm:ss')
+            ticket_move_time_out: now.format('YYYY-MM-DD HH:mm:ss'),
           }],
-        })
+        })).data.data.data[0][0]
+        ticket.columns[1].ticket_move_time_out = updatedColumnTicket.ticket_move_time_out
       }
-      // update ticket times
-      this.$api({
-        action: 'update',
-        entity: 'ticket',
-        data: [
-          {
-            // ...ticket,
-            ticket_id: ticket.ticket_id,
-            ticket_deadline: deadline,
-            ticket_deadline_yellow: deadline_yellow,
-            ticket_deadline_red: deadline_red,
-          },
-        ],
-      })
     },
   },
 }
