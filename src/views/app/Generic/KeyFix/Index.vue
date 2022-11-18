@@ -9,11 +9,11 @@ export default {
   name: 'IndexPage',
   components: { Index },
   beforeRouteEnter(to, from, next) {
-    to.meta.pageTitle = `table_title.${to.params.table}`
+    to.meta.pageTitle = `global.headline-${to.params.table}-list`
     next()
   },
   beforeRouteUpdate(to, from, next) {
-    to.meta.pageTitle = `table_title.${to.params.table}`
+    to.meta.pageTitle = `global.headline-${to.params.table}-list`
     next()
   },
 }

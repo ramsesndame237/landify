@@ -2,22 +2,26 @@ function table(name) {
   return { name: 'table', params: { table: name } }
 }
 
-function item(title, tablename, icon) {
+function item(tablename, title, icon) {
   return {
-    title,
+    title: `global.menu-${title || tablename}`,
     route: table(tablename),
-    icon: 'UserIcon',
+    // icon: 'UserIcon',
     action: 'read',
     resource: tablename,
   }
 }
 
+function key(val) {
+  return `global.menu-${val}`
+}
+
 export default [
   {
-    header: 'Main',
+    header: key('main'),
   },
   {
-    title: 'app.sidebar.dashboard',
+    title: key('dashboard'),
     route: 'home',
     icon: 'HomeIcon',
     action: 'read',
@@ -26,8 +30,8 @@ export default [
   {
     title: 'My Task and tickets',
     children: [
-      item('Boards', 'board'),
-      item('Tickets', 'ticket'),
+      item('board'),
+      item('ticket'),
       {
         title: 'Document Upload',
         route: 'comming-soon',
@@ -35,178 +39,178 @@ export default [
     ],
   },
   {
-    title: 'Classification',
+    title: key('classification'),
     route: 'comming-soon',
   },
-  item('app.sidebar.work_pack_3.children.pos', 'pos'),
+  item('pos'),
   {
-    title: 'Contracts',
+    title: key('contract'),
     children: [
       {
-        title: 'Condition List',
+        title: key('condition'),
         route: 'comming-soon',
       },
       {
-        title: 'Deadline list',
+        title: key('deadline'),
         route: 'comming-soon',
       },
       {
-        title: 'Payment list',
+        title: key('payment'),
         route: 'comming-soon',
       },
     ],
   },
   {
-    title: 'app.sidebar.work_pack_2.children.s_p_n_b',
+    title: key('newbus'),
     route: { name: 'new-business', params: { id: 1 } },
   },
   {
-    header: 'Master Data',
+    header: key('masterdata'),
   },
   {
-    title: 'Account Data',
+    title: key('accountdata'),
     children: [
-      item('app.sidebar.work_pack_2.children.customer_group', 'customergroup'),
-      item('app.sidebar.work_pack_2.children.company', 'company'),
-      item('Partner Group', 'partnergroup'),
-      item('app.sidebar.work_pack_2.children.partner_company', 'partnercompany'),
-      item('app.sidebar.work_pack_2.children.contact_person', 'contactperson'),
+      item('customergroup'),
+      item('company'),
+      item('partnergroup'),
+      item('partnercompany'),
+      item('contactperson'),
     ],
   },
   {
     title: 'Rentals and contracts',
     children: [
-      item('app.sidebar.work_pack_3.children.pos', 'pos'),
-      item('app.sidebar.work_pack_3.children.contract', 'contract'),
-      item('app.sidebar.work_pack_3.children.area', 'area'),
-      item('app.sidebar.work_pack_3.children.location', 'location'),
-      item('app.sidebar.work_pack_2.children.payment', 'payment'),
-      item('app.sidebar.work_pack_3.children.poservice_objects', 'serviceobject'),
+      item('pos'),
+      item('contract'),
+      item('area'),
+      item('location'),
+      item('payment'),
+      item('serviceobject'),
     ],
   },
   {
-    header: 'Operations',
+    header: key('operations'),
   },
   {
     title: 'Invoice and contradiction',
     children: [
-      item('Invoices', 'invoice'),
-      item('Inspection results', 'inspectionresult'),
-      item('Trackrecord', 'trackrecord'),
-      item('Contradictions', 'contradiction'),
-      item('Contradictions Packages', 'contradictionpackage'),
+      item('invoice'),
+      item('inspectionresult'),
+      item('trackrecord'),
+      item('contradiction'),
+      item('contradictionpackage'),
     ],
   },
   {
     title: 'Facility services',
     children: [
-      item('Tickets', 'ticket'),
-      item('app.sidebar.work_pack_3.children.poservice_objects', 'serviceobject'),
+      item('ticket'),
+      item('serviceobject'),
     ],
   },
   {
-    header: 'Configuration',
+    header: key('configuration'),
   },
   {
     title: 'Account data related',
     children: [
-      item('app.sidebar.work_pack_2.children.address', 'address'),
-      item('app.sidebar.work_pack_2.children.city', 'city'),
-      item('app.sidebar.work_pack_2.children.contact_title', 'contacttitle'),
-      item('app.sidebar.work_pack_2.children.salutation', 'contactsalutation'),
-      item('app.sidebar.work_pack_2.children.partner_type', 'partnertype'),
+      item('address'),
+      item('city'),
+      item('contacttitle'),
+      item('contactsalutation'),
+      item('partnertype'),
       {
-        title: 'Product',
+        title: key('product'),
         route: 'comming-soon',
       },
-      item('app.sidebar.work_pack_3.children.tag', 'tag'),
+      item('tag'),
     ],
   },
   {
     title: 'Contract data related',
     children: [
-      item('app.sidebar.work_pack_3.children.criteria', 'criteria'),
-      item('app.sidebar.work_pack_3.children.index_clause', 'indexclause'),
-      item('app.sidebar.work_pack_3.children.special_right', 'specialright'),
-      item('app.sidebar.work_pack_3.children.payment', 'recurringpayment'),
-      item('app.sidebar.work_pack_3.children.choice', 'choice'),
-      item('app.sidebar.work_pack_3.children.types.children.contract_type', 'contracttype'),
+      item('criteria'),
+      item('indexclause'),
+      item('specialright'),
+      item('recurringpayment'),
+      item('choice'),
+      item('contracttype'),
       {
-        title: 'Document Contract Type',
+        title: key('document_contract_type'),
         route: 'comming-soon',
       },
-      item('app.sidebar.work_pack_3.children.types.children.contract_criteria_type', 'criteriatype'),
-      item('app.sidebar.work_pack_3.children.types.children.maturity_type', 'maturitytype'),
-      item('app.sidebar.work_pack_3.children.types.children.recurring_payment_type', 'recurringpaymenttype'),
+      item('criteriatype'),
+      item('maturitytype'),
+      item('recurringpaymenttype'),
 
     ],
   },
   {
     title: 'Object data related',
     children: [
-      item('app.sidebar.work_pack_3.children.types.children.location_type', 'locationtype'),
-      item('app.sidebar.work_pack_3.children.types.children.area_type', 'areatype'),
-      item('app.sidebar.work_pack_3.children.types.children.usage_type', 'usagetype'),
-      item('app.sidebar.work_pack_3.children.types.children.services_object_type', 'serviceobjecttype'),
+      item('locationtype'),
+      item('areatype'),
+      item('usagetype'),
+      item('serviceobjecttype'),
     ],
   },
   {
     title: 'Invoice and contradiction related data',
     children: [
-      item('Cost Types', 'costtype'),
+      item('costtype'),
       {
         title: 'Cost type abstract',
         route: 'comming-soon',
       },
-      item('Claim Types', 'claimtype'),
-      item('Saving Types', 'savingtype'),
-      item('Ratings', 'rating'),
-      item('Result Categorization', 'resultcategorization'),
-      item('Invoice Criterias', 'invoicecriteria'),
-      item('Invoice Value Types', 'invoicevaluetype'),
+      item('claimtype'),
+      item('savingtype'),
+      item('rating'),
+      item('resultcategorization'),
+      item('invoicecriteria'),
+      item('invoicevaluetype'),
     ],
   },
   {
-    title: 'Ticket related data',
+    title: key('ticket'),
     children: [
-      item('Boards', 'board'),
+      item('board', 'ticketboard'),
       {
-        title: 'Ticket type',
+        title: key('tickettype'),
         route: 'comming-soon',
       },
     ],
   },
   {
-    title: 'Miscellaneous',
+    title: key('miscellaneous'),
     children: [
-      item('app.sidebar.work_pack_2.children.lang', 'language'),
-      item('app.sidebar.work_pack_2.children.country', 'country'),
-      item('app.sidebar.work_pack_2.children.currency', 'currency'),
-      item('app.sidebar.work_pack_3.children.unit', 'unit'),
+      item('language'),
+      item('country'),
+      item('currency'),
+      item('unit'),
       {
-        title: 'Document Types',
+        title: key('document_type'),
         route: 'comming-soon',
       },
     ],
   },
   {
-    header: 'Administration',
+    header: key('administration'),
   },
   {
-    title: 'User',
+    title: key('user'),
     children: [
-      item('app.sidebar.users_rights', 'user', 'UserIcon'),
-      item('app.sidebar.teams', 'team', 'UsersIcon'),
-      item('app.sidebar.user_type', 'usertype', 'UsersIcon'),
+      item('user', null, 'UserIcon'),
+      item('team'),
+      item('usertype'),
     ],
   },
   {
-    title: 'Rights',
+    title: key('rights'),
     children: [
-      item('app.sidebar.auth', 'role', 'KeyIcon'),
-      item('app.sidebar.table', 'tablename', 'UsersIcon'),
-      item('app.sidebar.tablegroup', 'tablegroup', 'UsersIcon'),
-      item('app.sidebar.crud', 'crud', 'UsersIcon'),
+      item('role'),
+      item('tablename'),
+      item('tablegroup'),
+      item('crud'),
     ],
   },
   {

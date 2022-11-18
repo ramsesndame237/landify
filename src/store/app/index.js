@@ -2,6 +2,13 @@ import { $themeBreakpoints } from '@themeConfig'
 import { api } from '@/libs/axios'
 import moment from 'moment'
 
+function getUserLanguage() {
+  let lang = localStorage.getItem('current-lang')
+  if (!lang) lang = (navigator.language || navigator.userLanguage).split('-')[0].toLowerCase()
+  if (['en', 'fr', 'de'].indexOf(lang) === -1) lang = 'en'
+  return lang
+}
+
 console.log('env', process.env)
 export default {
   namespaced: true,
@@ -12,6 +19,7 @@ export default {
     commitVersion: process.env.CI_VERSION || '',
     commitDate: process.env.CI_DATE || '',
     now: moment(),
+    lang: getUserLanguage(),
   },
   getters: {
     fullVersion: state => `v${state.packageVersion} - ${state.commitVersion} - ${process.env.CI_DATE}`,
@@ -37,6 +45,33 @@ export default {
     },
   },
   actions: {
+    async fetchAppData({ state }) {
+      // get translations
+      const globalTranslations = (await api({
+        entity: '1__translation_i18n',
+        action: 'read-rich',
+        per_page: 1000000,
+        lang: state.lang,
+      })).data.data.data
+      const attributeTranslations = (await api({
+        entity: '1__attribute_i18n',
+        action: 'read-rich',
+        per_page: 1000000,
+        lang: state.lang,
+      })).data.data.data
+
+      return {
+        global: globalTranslations.filter(t => t.translation_lang === state.lang.toUpperCase())
+          .reduce((prev, current) => {
+            prev[current.translation_id.substr(1).replaceAll('.', '-')] = current.translation_text
+            return prev
+          }, {}),
+        attribute: attributeTranslations.filter(l => l.attribute_lang === state.lang.toUpperCase()).reduce((prev, current) => {
+          prev[current.attribute_name] = current.attribute_nice_name
+          return prev
+        }, {}),
+      }
+    },
     async fetchUserData({ dispatch }, email) {
       // get user, user roles, role_tables_crud, role_tablegroup_crud, tablegroup_table
       const data = {}
@@ -64,7 +99,6 @@ export default {
         data: data.tablegroups.map(t => ({ tablegroup_id: t.tablegroup_id })),
       }, { root: true })) : []
       localStorage.setItem('userData', JSON.stringify(data))
-      return data
     },
   },
 }

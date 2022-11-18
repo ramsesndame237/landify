@@ -12,9 +12,8 @@ export default {
   },
   computed: {
     title() {
-      if (this.create) return 'create_' + this.table
-      if (this.view) return 'view_' + this.table
-      return 'edit_' + this.table
+      if (this.create) return `global.headline-${this.table}-new`
+      return `global.headline-${this.table}-detail`
     },
     table() {
       return this.$route.params.table

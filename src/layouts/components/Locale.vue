@@ -1,30 +1,11 @@
 <template>
-  <b-nav-item-dropdown
-    id="dropdown-grouped"
-    variant="link"
-    class="dropdown-language"
-    right
-  >
+  <b-nav-item-dropdown id="dropdown-grouped" variant="link" class="dropdown-language" right>
     <template #button-content>
-      <b-img
-        :src="currentLocale.img"
-        height="14px"
-        width="22px"
-        :alt="currentLocale.locale"
-      />
+      <b-img :src="currentLocale.img" height="14px" width="22px" :alt="currentLocale.locale"/>
       <span class="ml-50 text-body">{{ currentLocale.name }}</span>
     </template>
-    <b-dropdown-item
-      v-for="localeObj in locales"
-      :key="localeObj.locale"
-      @click="$i18n.locale = localeObj.locale"
-    >
-      <b-img
-        :src="localeObj.img"
-        height="14px"
-        width="22px"
-        :alt="localeObj.locale"
-      />
+    <b-dropdown-item v-for="localeObj in locales" :key="localeObj.locale" @click="switchLocale(localeObj.locale)">
+      <b-img :src="localeObj.img" height="14px" width="22px" :alt="localeObj.locale"/>
       <span class="ml-50">{{ localeObj.name }}</span>
     </b-dropdown-item>
   </b-nav-item-dropdown>
@@ -43,6 +24,12 @@ export default {
   computed: {
     currentLocale() {
       return this.locales.find(l => l.locale === this.$i18n.locale)
+    },
+  },
+  methods: {
+    switchLocale(locale) {
+      localStorage.setItem('current-lang', locale)
+      window.location.reload()
     },
   },
   setup() {

@@ -28,7 +28,7 @@
         </b-row>
         <div class="d-flex justify-content-between align-items-center">
           <h2>Sub tasks</h2>
-          <b-button @click="createSubTicket">Add Sub task</b-button>
+          <b-button variant="primary" @click="createSubTicket">Add Sub task</b-button>
         </div>
         <generic-modal ref="modal" table="ticket" :definition="ticketDef" table-definition-key="ticket"
                        title="Create a sub task" @reload-table="onNewTicket"/>
@@ -74,6 +74,9 @@
             </b-card>
           </b-col>
         </b-row>
+        <div>
+          <b-button variant="primary">Add a new document</b-button>
+        </div>
       </b-col>
     </b-row>
   </div>

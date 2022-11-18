@@ -60,17 +60,6 @@
       />
       <span>Task</span>
     </b-dropdown-item>
-    <b-dropdown-item
-      :to="{ name: 'apps-chat' }"
-      link-class="d-flex align-items-center"
-    >
-      <feather-icon
-        size="16"
-        icon="MessageSquareIcon"
-        class="mr-50"
-      />
-      <span>Chat</span>
-    </b-dropdown-item>
 
     <b-dropdown-divider />
 

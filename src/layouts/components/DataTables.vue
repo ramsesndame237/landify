@@ -99,7 +99,7 @@ export default {
       return [
         ...(this.selectable ? [{ key: '__selected' }] : []),
         ...this.fields.filter(f => !f.hideOnIndex).map(field => {
-          const newField = { sortable: true, ...field }
+          const newField = { label: this.$t('attribute.' + field.key), sortable: true, ...field }
           // if (newField.type === 'list') {
           //   newField.key = newField.listLabel
           // }

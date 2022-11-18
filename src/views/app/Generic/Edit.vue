@@ -38,8 +38,9 @@
 
     <b-card v-if="definition.relations && visibleRelations.length>0 && !create">
       <b-tabs ref="tabs" pills>
-        <b-tab v-for="(relation, index) in visibleRelations" :key="index" :title="$t(relation.title)"
-               :active="index===tabIndex" lazy>
+        <b-tab v-for="(relation, index) in visibleRelations" :key="index"
+               :title="$t('global.headline-'+(relation.entityView||relation.title)+'-tab')" :active="index===tabIndex"
+               lazy>
           <data-tables :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
                        :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
                        :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
@@ -181,12 +182,14 @@ export default {
       if (route) {
         this.$router.push({ name: route.name, params: { id: this.entityId, table: route.params.table } })
       } else {
-        tabs.tabs[tabs.currentTab].$children[1].openModal(true, { [this.primaryKey]: this.entityId }, `Add ${this.definition.relations[tabs.currentTab].title}`)
+        const def = this.definition.relations[tabs.currentTab]
+        tabs.tabs[tabs.currentTab].$children[1].openModal(true, { [this.primaryKey]: this.entityId }, `global.headline-${def.entityView || def.title}-new`)
       }
     },
     editElement(entity) {
       const { tabs } = this.$refs
-      tabs.tabs[tabs.currentTab].$children[1].openModal(false, entity, `Update ${this.definition.relations[tabs.currentTab].title}`)
+      const def = this.definition.relations[tabs.currentTab]
+      tabs.tabs[tabs.currentTab].$children[1].openModal(false, entity, `global.headline-${def.entityView || def.title}-update`)
     },
     reloadRelatedTable() {
       const { tabs } = this.$refs

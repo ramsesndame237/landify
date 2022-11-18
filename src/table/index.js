@@ -30,7 +30,8 @@ export default {
         list: 'contactperson',
         listLabel: 'contactperson_lastname',
         relationEntity: 'contactperson_user_rel',
-        hideOnCreate: true,
+        // hideOnCreate: true,
+        required: false,
       },
     ],
     updateComponent: () => import('@/views/app/FormComponent/UserForm'),
@@ -96,7 +97,7 @@ export default {
             key: 'user_customergroup_valid_to',
             type: 'date',
             rules: { date_after: ['@user_customergroup_valid_from'] },
-            sortable: true,
+            required: false,
           },
         ],
       },
@@ -122,7 +123,7 @@ export default {
           },
           {
             key: 'user_company_valid_to',
-            sortable: true,
+            required: false,
             type: 'date',
             rules: { date_after: ['@user_company_valid_from'] },
           },
@@ -149,7 +150,7 @@ export default {
             key: 'user_pos_valid_from', type: 'date', sortable: true, composite: true, disableOnUpdate: true,
           },
           {
-            key: 'user_pos_valid_to', type: 'date', sortable: true, rules: { date_after: ['@user_pos_valid_from'] },
+            key: 'user_pos_valid_to', type: 'date', required: false, rules: { date_after: ['@user_pos_valid_from'] },
           },
         ],
       },
@@ -174,7 +175,7 @@ export default {
             key: 'user_team_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,
           },
           {
-            key: 'user_team_valid_to', sortable: true, type: 'date', rules: { date_after: ['@user_team_valid_from'] },
+            key: 'user_team_valid_to', required: false, type: 'date', rules: { date_after: ['@user_team_valid_from'] },
           },
         ],
       },
@@ -204,7 +205,7 @@ export default {
           },
           {
             key: 'user_partnercompany_valid_to',
-            sortable: true,
+            required: false,
             type: 'date',
             rules: { date_after: ['@user_partnercompany_valid_from'] },
           },
@@ -546,7 +547,7 @@ export default {
     ],
     relations: [
       {
-        title: 'Tickets',
+        title: 'ticket',
         primaryKey: 'ticket_id',
         entity: 'frontend_2_1_3_1_read_ticket',
         newRoute: { name: 'table-form', params: { table: 'ticket' } },
@@ -562,7 +563,7 @@ export default {
         ],
       },
       {
-        title: 'Contradictions',
+        title: 'contradiction',
         primaryKey: 'contradiction_id',
         entity: 'frontend_2_1_3_2',
         create: false,
@@ -658,7 +659,7 @@ export default {
         update: false,
       },
       {
-        title: 'Bankdata',
+        title: 'bankdata',
         entity: 'frontend_2_1_3_7',
         entityForm: 'company_bankdata_rel',
         primaryKey: 'bankdata_id',
@@ -854,7 +855,7 @@ export default {
     ],
     relations: [
       {
-        title: 'Tickets',
+        title: 'ticket',
         primaryKey: 'ticket_id',
         entity: 'frontend_2_5_3_1_tickets',
         create: false,
@@ -936,6 +937,7 @@ export default {
         primaryKey: 'location_id',
         entity: 'frontend_2_5_3_7',
         entityForm: 'location_partnercompany_partnertype_rel',
+        entityView: 'location',
         fields: [
           { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name' },
           { key: 'location_name', hideOnForm: true },
@@ -1956,9 +1958,9 @@ export default {
     fields: [
       { key: 'serviceobject_id', auto: true },
       { key: 'serviceobject_name' },
-      { key: 'serviceobject_external_name' },
+      { key: 'serviceobject_external_name', required: false },
       { key: 'serviceobjecttype_name', hideOnForm: true },
-      { key: 'serviceobject_description', type: 'textarea', hideOnIndex: true },
+      { key: 'serviceobject_description', type: 'textarea', hideOnIndex: true, required: false },
       {
         key: 'serviceobjecttype_id',
         type: 'list',
@@ -2945,6 +2947,7 @@ export default {
           { key: 'column_id', type: 'list', list: 'columnx', alwaysNew: true, onlyForm: true },
           { key: 'column_name', hideOnForm: true },
           { key: 'column_description', type: 'textarea', hideOnForm: true },
+          { key: 'column_is_qualitygate', type: 'boolean', hideOnForm: true, },
           { key: 'team_name', hideOnForm: true },
           { key: 'rank_order', type: 'number' },
         ],
@@ -2958,7 +2961,7 @@ export default {
       { key: 'column_description', type: 'textarea' },
       { key: 'column_is_qualitygate', type: 'boolean' },
       { key: 'default_value_id', type: 'list', list: 'defaultvalue', alwaysNew: true, onlyForm: true },
-      { key: 'team_id', type: 'list', list: 'team', listLabel: 'team_name' },
+      { key: 'team_id', type: 'list', list: 'team', listLabel: 'team_name', required: false },
     ],
   },
   defaultvalue: {

@@ -8,8 +8,8 @@ import {
   required, email, max, regex, max_value, required_if,
 } from 'vee-validate/dist/rules'
 import vueKanban from 'vue-kanban'
-import router from './router'
 import store from './store'
+import router from './router'
 import App from './App.vue'
 
 // Global Components
@@ -26,7 +26,6 @@ Vue.component('validation-provider', ValidationProvider)
 Vue.component('validation-observer', ValidationObserver)
 
 Vue.use(vueKanban)
-
 extend('email', email)
 extend('required', required)
 extend('regex', regex)
@@ -79,10 +78,13 @@ Vue.config.productionTip = false
 
 const userEmail = localStorage.getItem('userEmail')
 
-function init() {
+async function init() {
   // load acl after userdata is loaded
   require('@/libs/acl')
 
+  const data = await store.dispatch('app/fetchAppData')
+  console.log(data.attribute)
+  i18n.mergeLocaleMessage(store.state.app.lang, { attribute: data.attribute, global: data.global })
   window.$vue = new Vue({
     router,
     store,

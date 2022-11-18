@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-form-group v-if="visible" :label="field.label||snakeToTitle(field.key)" :label-for="'field-'+field.key"
+    <b-form-group v-if="visible" :label="field.label||$t('attribute.'+field.key)" :label-for="'field-'+field.key"
                   :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null">
       <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled placeholder="Automaticaly generated ..."/>
       <validation-provider v-else #default="{ errors }" :rules="rules" :name="field.key"
