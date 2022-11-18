@@ -163,8 +163,9 @@ export default {
     },
     loadTickets() {
       this.$api({
-        entity: 'frontend_ticket_list',
+        entity: 'frontend_6_1_6_listall',
         action: 'read-rich',
+        per_page: 1000000,
         data: [{ board_id: this.$route.params.id }],
       })
         .then(({ data }) => {
@@ -178,6 +179,7 @@ export default {
               'ticket_last_change_time',
               'ticket_name',
               'ticket_planned_treatment_week',
+              'ticket_closed',
               'ticket_progress'])
             obj.columns = _.orderBy(r, 'ticket_move_time_in', 'desc').map(i => _.pick(i, ['ticket_id', 'column_id', 'column_name', 'ticket_move_time_in', 'ticket_move_time_out', 'ticket_deadline_offset', 'ticket_deadline_offset_yellow', 'ticket_deadline_offset_red']))
             obj.column_name = obj.columns[0].column_name
@@ -212,7 +214,10 @@ export default {
         this.$api({
           action: 'update',
           entity: 'ticket_columnx_rel',
-          data: [{ ...ticket.columns[0], ticket_move_time_out: now.format('YYYY-MM-DD HH:mm:ss') }],
+          data: [{
+            ..._.pick(ticket.columns[0], ['ticket_id', 'column_id', 'ticket_move_time_in']),
+            ticket_move_time_out: now.format('YYYY-MM-DD HH:mm:ss')
+          }],
         })
       }
       // update ticket times
@@ -221,7 +226,8 @@ export default {
         entity: 'ticket',
         data: [
           {
-            ...ticket,
+            // ...ticket,
+            ticket_id: ticket.ticket_id,
             ticket_deadline: deadline,
             ticket_deadline_yellow: deadline_yellow,
             ticket_deadline_red: deadline_red,

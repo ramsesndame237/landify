@@ -22,19 +22,20 @@
     </div>
     <b-row>
       <b-col lg="8">
-        <b-row>
-          <additional-costs-card title="NEBENKOSTENABRECHNUNGEN" color="#ccc" cols="6" hours="54" percent="75"/>
-          <additional-costs-card title="NEBENKOSTENABRECHNUNGEN" color="#ccc" cols="6" hours="54" percent="75"/>
-        </b-row>
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-between align-items-center mb-2">
           <h2>Sub tasks</h2>
           <b-button variant="primary" @click="createSubTicket">Add Sub task</b-button>
         </div>
         <generic-modal ref="modal" table="ticket" :definition="ticketDef" table-definition-key="ticket"
                        title="Create a sub task" @reload-table="onNewTicket"/>
-        <validation-card title="Kunde XY" subtitle="Emeut an diese Aufgabe erinnert werden"/>
-        <validation-card title="Fililalleiter V" subtitle="Emeut an diese Aufgabe erinnert werden"/>
-        <validation-card title="Fililalleiter V" subtitle="Emeut an diese Aufgabe erinnert werden"/>
+        <sub-ticket-card v-for="(ticket,idx) in subTickets" :key="idx" :ticket="ticket"/>
+        <p v-if="subTickets.length===0" class="text-center">No sub ticket available</p>
+        <b-card v-if="entity.columns" class="mt-3" title="Timeline">
+          <app-timeline>
+            <app-timeline-item v-for="(column,idx) in entity.columns" :key="idx" :title="column.column_name"
+                               subtitle="" :time="column.ticket_move_time_in" variant="success"/>
+          </app-timeline>
+        </b-card>
       </b-col>
       <b-col lg="4">
         <div class="d-flex justify-content-between align-items-center">
@@ -51,19 +52,8 @@
           </b-dropdown>
         </div>
         <operation-recap-card/>
-        <operation-recap-card/>
-        <operation-recap-card/>
         <h4 class="font-weight-bolder">Documents</h4>
         <b-row>
-          <b-col lg="6">
-            <b-card>
-              <div class="">
-                <h6 style="color: #ccc">abcbcaoasjsijs</h6>
-                <h4 class="font-weight-bolder mb-2" style="color: black">Title</h4>
-                <b-button class="m-auto" variant="danger">Open</b-button>
-              </div>
-            </b-card>
-          </b-col>
           <b-col lg="6">
             <b-card>
               <div class="">
@@ -96,15 +86,20 @@ import {
   BIconCaretDown,
 } from 'bootstrap-vue'
 import AdditionalCostsCard from '@/views/app/CustomComponents/WP6/AdditionalCostsCard'
-import ValidationCard from '@/views/app/CustomComponents/WP6/ValidationCard'
 import OperationRecapCard from '@/views/app/CustomComponents/WP6/OperationRecapCard'
 import EditPageMixin from "@/views/app/Generic/EditPageMixin";
 import Table from '@/table'
 import GenericModal from "@/views/app/Generic/modal";
+import SubTicketCard from "@/views/app/CustomComponents/WP6/SubTicketCard";
+import AppTimeline from "@core/components/app-timeline/AppTimeline";
+import AppTimelineItem from "@core/components/app-timeline/AppTimelineItem";
 
 export default {
   name: 'OperationsPage',
   components: {
+    AppTimelineItem,
+    AppTimeline,
+    SubTicketCard,
     GenericModal,
     BButton,
     BCol,
@@ -113,7 +108,6 @@ export default {
     BCardBody,
     BIconAlarm,
     AdditionalCostsCard,
-    ValidationCard,
     BDropdown,
     BDropdownItem,
     BIconCalendarWeek,
@@ -123,26 +117,36 @@ export default {
   mixins: [EditPageMixin],
   data() {
     const ticketDef = JSON.parse(JSON.stringify(Table.ticket))
-    ticketDef.fields.push({
-      key: 'ticket_id_group',
-      type: 'list',
-      list: 'ticket',
-      listLabel: 'ticket_name',
-      visible: () => false,
-    })
-    const index = ticketDef.fields.findIndex(f => f.key === 'column_id')
+    let index = ticketDef.fields.findIndex(f => f.key === 'column_id')
     ticketDef.fields.splice(index, 1)
+    index = ticketDef.fields.findIndex(f => f.key === 'pos_id')
+    ticketDef.fields.splice(index, 1)
+    // ticketDef.fields.push({
+    //   key: 'ticket_id_group',
+    //   type: 'list',
+    //   list: 'ticket',
+    //   listLabel: 'ticket_name',
+    //   relationEntity: 'ticket_ticket_rel',
+    //   tableKey: 'ticket_id',
+    //   // visible: () => false,
+    // })
     return {
       ticketDef,
+      subTickets: [],
     }
   },
   methods: {
     createSubTicket() {
-      this.$refs.modal.openModal(true, { ticket_id_group: this.entity.ticket_id })
+      this.$refs.modal.openModal(true, { ticket_id_group: parseInt(this.entityId) })
     },
     async onNewTicket(ticket) {
-      // await this.moveToColumn(ticket, this.columns[0])
-      // this.loadTickets()
+      // Save subticket relation
+      await this.$api({
+        entity: 'ticket_ticket_rel',
+        action: 'create',
+        data: [{ ticket_id: ticket.ticket_id, ticket_id_group: parseInt(this.entityId), ticket_type: 'test' }],
+      })
+      this.subTickets.push(ticket)
     },
   },
   async mounted() {
@@ -153,6 +157,13 @@ export default {
         primaryKey: 'ticket_id',
       })
     }
+    // load subtickets
+    this.subTickets = (await this.$api({
+      entity: 'frontend_6_1_6_listall',
+      action: 'read-rich',
+      per_page: 1000000,
+      data: [{ ticket_id_group: this.entity.ticket_id }],
+    })).data.data.data
   },
 }
 </script>

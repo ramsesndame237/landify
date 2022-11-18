@@ -8,7 +8,7 @@
         <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
         <div v-else-if="field.type==='list'" :class="(field.withNew || field.ids) ? 'd-flex': ''">
-          <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
+          <v-select v-model="entity[field.key]" :disabled="disabled" :class="errors.length > 0 ? 'error':''"
                     :get-option-label="defaultLabelFunction[field.key]||(option=> option[field.listLabel])"
                     :placeholder="field.key" :options="listItems" transition="" :label="field.listLabel" class="w-100"
                     :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
@@ -79,6 +79,7 @@ export default {
     return {
       list: this.$store.state.table.listCache[this.field.list] || [],
       subEntity: { [this.field.key]: this.entity[this.field.key] },
+      subOriginalEntity: {},
       newValue: 'Create New Element',
       loading: false,
       promise: null,
@@ -262,15 +263,23 @@ export default {
       console.log('change')
       if (this.field.alwaysNew) {
         if (this.selectedValue) {
+          const originalInitialized = this.subOriginalEntity.__initialized
+          // selected value is unique
           if (this.field.onlyForm && this.$parent.$parent.isRelation) {
             this.subFormFields.forEach(field => {
-              if(!this.subEntity[field.key]) this.$set(this.subEntity, field.key, this.selectedValue[field.key])
+              // make sur that field that are not in the table are not cleared
+              if (!this.subEntity[field.key]) this.$set(this.subEntity, field.key, this.selectedValue[field.key])
+              if (!this.subOriginalEntity[field.key]) this.$set(this.subOriginalEntity, field.key, this.selectedValue[field.key])
             })
             return
           }
+          // selected value can change
           this.subFormFields.forEach(field => {
             this.$set(this.subEntity, field.key, this.selectedValue[field.key])
+            // set original value
+            if (!originalInitialized) this.$set(this.subOriginalEntity, field.key, this.selectedValue[field.key])
           })
+          this.subOriginalEntity.__initialized = true
         }
       }
     },

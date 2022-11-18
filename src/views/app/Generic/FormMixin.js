@@ -83,13 +83,15 @@ export default {
           if (field.alwaysNew) {
             const component = this.$refs.fields.find(f => f.field === field)
             if (!component) return
-            const subDefinition = component.subDefinition
+            const { subDefinition } = component
             this.getFormFields(subDefinition)
-              .forEach(field => {
-                if (this.initialData[field.key]) this.$set(component.subEntity, field.key, this.initialData[field.key])
+              .forEach(f => {
+                if (this.initialData[f.key]) {
+                  this.$set(component.subEntity, f.key, this.initialData[f.key])
+                  this.$set(component.subOriginalEntity, f.key, this.initialData[f.key])
+                }
               })
-            const subOriginalEntity = originalEntity[field.key] == null ? {} : component.list.find(i => i[field.key] === originalEntity[field.key])
-            return this.fillRelations(component.subEntity, subOriginalEntity || {}, this.getFormFields(subDefinition), field.list, this.getPrimaryKey(subDefinition))
+            return this.fillRelations(component.subEntity, component.subOriginalEntity, this.getFormFields(subDefinition), field.list, this.getPrimaryKey(subDefinition))
           }
         }))
     },
@@ -100,7 +102,7 @@ export default {
         .map(field => {
           const extras = { ...field.default }
           const column = field.tableKey || field.key
-          console.log('save relation on column', column)
+          console.log('save relation on column', column, originalEntity, entity)
           if (field.with) {
             (typeof field.with === 'string' ? [field.with] : field.with).forEach(val => {
               const withField = definition.fields.find(f => f.key === val)
@@ -108,7 +110,7 @@ export default {
               extras[withColumn] = entity[withField ? withField.key : val]
             })
           }
-          const isNew = originalEntity[field.key] == null
+          const isNew = originalEntity[field.key] == null && entity[field.key] != null
           if (!isNew && field.alwaysNew) return Promise.resolve()
           const entityName = field.relationEntity ?? (`${table}_${field.list}_rel`)
           const data = (Array.isArray(entity[field.key]) ? entity[field.key] : [entity[field.key]])
@@ -191,15 +193,14 @@ export default {
         return !field.hide && component && (field.type === 'list') && (component.hasNew || field.alwaysNew)
       })
         .map(field => {
-          const component = fieldComponents.find(f => f.field === field)
-          const create = component.hasNew || (field.alwaysNew && originalEntity[field.key] == null)
           const formField = fieldComponents.find(f => f.field === field)
-          const subDefinition = component.subDefinition
+          const create = formField.hasNew || (field.alwaysNew && originalEntity[field.key] == null)
+          const { subDefinition } = formField
           const data = create ? formField.subEntity : {
             ...formField.subEntity,
-            [field.key]: originalEntity[field.key]
+            [field.key]: originalEntity[field.key],
           }
-          const original = originalEntity[field.key] == null ? {} : formField.list.find(i => i[field.key] === originalEntity[field.key])
+          const original = formField.subOriginalEntity
           console.log(create, data, original, originalEntity)
           return this.saveEntity(data, original,
             this.getFormFields(subDefinition), formField.getSubFields(), field.list, subDefinition, this.getPrimaryKey(subDefinition), create)

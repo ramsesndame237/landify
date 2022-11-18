@@ -28,12 +28,12 @@ export default [
     resource: 'dashboard',
   },
   {
-    title: 'My Task and tickets',
+    title: key('ticket'),
     children: [
-      item('board'),
-      item('ticket'),
+      item('board', 'ticketboard'),
+      item('ticket', 'ticketlist'),
       {
-        title: 'Document Upload',
+        title: key('documentupload'),
         route: 'comming-soon',
       },
     ],
@@ -78,7 +78,7 @@ export default [
     ],
   },
   {
-    title: 'Rentals and contracts',
+    title: key('rentalsandcontracts'),
     children: [
       item('pos'),
       item('contract'),
@@ -92,7 +92,7 @@ export default [
     header: key('operations'),
   },
   {
-    title: 'Invoice and contradiction',
+    title: key('configurationinvoicecontradictiondata'),
     children: [
       item('invoice'),
       item('inspectionresult'),
@@ -102,7 +102,7 @@ export default [
     ],
   },
   {
-    title: 'Facility services',
+    title: key('facilityservices'),
     children: [
       item('ticket'),
       item('serviceobject'),
@@ -112,7 +112,7 @@ export default [
     header: key('configuration'),
   },
   {
-    title: 'Account data related',
+    title: key('accountdata'),
     children: [
       item('address'),
       item('city'),
@@ -127,7 +127,7 @@ export default [
     ],
   },
   {
-    title: 'Contract data related',
+    title: key('configurationcontractdata'),
     children: [
       item('criteria'),
       item('indexclause'),
@@ -146,7 +146,7 @@ export default [
     ],
   },
   {
-    title: 'Object data related',
+    title: key('configurationobjectdata'),
     children: [
       item('locationtype'),
       item('areatype'),
@@ -155,17 +155,17 @@ export default [
     ],
   },
   {
-    title: 'Invoice and contradiction related data',
+    title: key('configurationinvoicecontradictiondata'),
     children: [
       item('costtype'),
       {
-        title: 'Cost type abstract',
+        title: key('costtypeabstract'),
         route: 'comming-soon',
       },
       item('claimtype'),
       item('savingtype'),
       item('rating'),
-      item('resultcategorization'),
+      item('resultcategorization','resultcategory'),
       item('invoicecriteria'),
       item('invoicevaluetype'),
     ],
@@ -181,14 +181,14 @@ export default [
     ],
   },
   {
-    title: key('miscellaneous'),
+    title: key('configurationmisc'),
     children: [
       item('language'),
       item('country'),
       item('currency'),
       item('unit'),
       {
-        title: key('document_type'),
+        title: key('documenttype'),
         route: 'comming-soon',
       },
     ],
@@ -197,7 +197,7 @@ export default [
     header: key('administration'),
   },
   {
-    title: key('user'),
+    title: key('administrationuser'),
     children: [
       item('user', null, 'UserIcon'),
       item('team'),
@@ -205,10 +205,10 @@ export default [
     ],
   },
   {
-    title: key('rights'),
+    title: key('administrationrights'),
     children: [
-      item('role'),
-      item('tablename'),
+      item('role','authorization'),
+      item('tablename', 'table'),
       item('tablegroup'),
       item('crud'),
     ],
@@ -224,15 +224,15 @@ export default [
       },
     ],
   },
-  {
-    title: 'Import',
-    icon: 'CheckSquareIcon',
-    children: [
-      {
-        title: 'Import Xlsx file',
-        route: 'import',
-        icon: 'CheckSquareIcon',
-      },
-    ],
-  },
+  // {
+  //   title: 'Import',
+  //   icon: 'CheckSquareIcon',
+  //   children: [
+  //     {
+  //       title: 'Import Xlsx file',
+  //       route: 'import',
+  //       icon: 'CheckSquareIcon',
+  //     },
+  //   ],
+  // },
 ]

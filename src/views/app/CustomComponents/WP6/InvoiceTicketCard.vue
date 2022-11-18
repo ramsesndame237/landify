@@ -7,7 +7,7 @@
         <template v-slot:button-content>
           <feather-icon icon="MoreHorizontalIcon"/>
         </template>
-        <b-dropdown-item :to="{name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id}}">
+        <b-dropdown-item :to="{name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket}}">
           More details
         </b-dropdown-item>
       </b-dropdown>

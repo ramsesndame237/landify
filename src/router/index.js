@@ -101,11 +101,6 @@ const router = new VueRouter({
       component: () => import('@/views/app/Kanban/index.vue'),
     },
     {
-      name: 'advanced-kanban',
-      path: '/app/advanced-kanban',
-      component: () => import('@/views/app/Kanban/AdvancedKanban.vue'),
-    },
-    {
       name: 'table-positions-import',
       // table parameter is just to fix menu
       path: '/app/table/:table/import/:invoice',

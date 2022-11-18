@@ -6,15 +6,16 @@ PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER
 WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
 @import '@core/scss/vue/libs/vue-select.scss';
 @import '@core/scss/vue/libs/vue-flatpicker.scss';
-.nav.nav-pills .nav-item{
-  background:#F0f0f0;
+
+.nav.nav-pills .nav-item {
+  background: #F0f0f0;
 }
 
 .btn > img {
   margin-right: 5px;
 }
 
-.btn-xs{
+.btn-xs {
   padding: 3px 6px;
   border-radius: 5px;
   display: inline-flex;
@@ -24,11 +25,11 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 
 // Edit Entity Page
 
-.custom-card{
+.custom-card {
   padding: 0px 10px 0px 10px
 }
 
-.header{
+.header {
   background-color: white;
   display: flex;
   justify-content: space-between;
@@ -36,8 +37,14 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
   padding: 3px 0px 1px 0px;
   margin-bottom: 10px;
 }
+
 .first-bloc img {
   margin-right: 4px;
 }
 
 // vue select errors
+.v-select.error {
+  .vs__dropdown-toggle {
+    border-color: $danger;
+  }
+}
