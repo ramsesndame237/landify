@@ -21,11 +21,12 @@
       </b-button>
       <b-button v-if="onNewElement!=null && canCreate" @click="onNewElement" size="sm" variant="info" class="mr-1">
         <feather-icon icon="PlusCircleIcon" class="mr-50"/>
-        <span>New</span>
+        <span>{{ $t('button~new') }}</span>
       </b-button>
-      <b-button v-if="onDeleteElements!=null && canDelete" @click="onDeleteElements" size="sm" variant="primary" class="mr-1">
+      <b-button v-if="onDeleteElements!=null && canDelete" @click="onDeleteElements" size="sm" variant="primary"
+                class="mr-1">
         <feather-icon icon="Trash2Icon" class="mr-50"/>
-        <span>Delete</span>
+        <span>{{ $t('button~delete') }}</span>
       </b-button>
       <b-form-input debounce="500" id="filterInput" v-model="internalSearch" type="search" class="w-auto"
                     placeholder="Search.."/>

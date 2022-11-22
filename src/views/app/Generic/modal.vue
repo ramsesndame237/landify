@@ -7,7 +7,7 @@
       ref="form" :table="table" :definition="definition" :table-definition-key="tableDefinitionKey"
       :initial-data="initialData" :create="create" :is-relation="isRelation" inline :cols="12"/>
     <template v-slot:modal-footer>
-      <b-button variant="secondary" :disabled="loading" @click="$refs.modal.hide()">Cancel</b-button>
+      <b-button variant="secondary" :disabled="loading" @click="$refs.modal.hide()">{{$t('button~cancel')}}</b-button>
       <b-button v-if="!create || !withContinue" variant="primary" :disabled="loading" @click="handleOk">
         <b-spinner v-if="loading" small/>
         Save
@@ -15,13 +15,13 @@
       <b-dropdown v-else split text="Save" variant="primary" :disabled="loading" @click="handleOk" right>
         <template #button-content>
           <b-spinner v-if="loading" class="mr-1" small/>
-          <span>Save</span>
+          <span>{{ $t('button~save') }}</span>
         </template>
         <b-dropdown-item @click="handleOk($event, 1)" v-if="!isRelation">
-          Save and continue
+          {{ $t('button~save_continue') }}
         </b-dropdown-item>
         <b-dropdown-item v-if="create" @click="handleOk($event, 2)">
-          Save and create another
+          {{ $t('button~save_create') }}
         </b-dropdown-item>
       </b-dropdown>
     </template>

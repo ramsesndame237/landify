@@ -47,11 +47,11 @@ export default [
     title: key('contract'),
     children: [
       {
-        title: key('condition'),
+        title: key('contractcondition'),
         route: 'comming-soon',
       },
       {
-        title: key('deadline'),
+        title: key('contractdeadline'),
         route: 'comming-soon',
       },
       {
@@ -92,7 +92,7 @@ export default [
     header: key('operations'),
   },
   {
-    title: key('configurationinvoicecontradictiondata'),
+    title: key('invoicesandcontradictions'),
     children: [
       item('invoice'),
       item('inspectionresult'),

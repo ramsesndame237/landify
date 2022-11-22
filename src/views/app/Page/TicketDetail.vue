@@ -27,7 +27,7 @@
       <b-col lg="8">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <h2>Sub tasks</h2>
-          <b-button variant="primary" @click="createSubTicket">Add Sub task</b-button>
+          <b-button variant="primary" v-if="!entity.ticket_closed" @click="createSubTicket">Add Sub task</b-button>
         </div>
         <generic-modal ref="modal" table="ticket" :definition="ticketDef" table-definition-key="ticket"
                        title="Create a sub task" @reload-table="onNewTicket"/>

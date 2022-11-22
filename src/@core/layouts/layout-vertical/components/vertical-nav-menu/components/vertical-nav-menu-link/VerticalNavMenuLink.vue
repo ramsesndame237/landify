@@ -3,7 +3,7 @@
       'active': isActive,
       'disabled': item.disabled
     }">
-    <b-link v-bind="linkProps" class="d-flex align-items-center">
+    <b-link v-bind="linkProps" class="d-flex align-items-center" :title="t(item.title)">
       <feather-icon :icon="item.icon || 'CircleIcon'"/>
       <span class="menu-title text-truncate">{{ t(item.title) }}</span>
       <b-badge v-if="item.tag || hasErrors" pill :variant="item.tagVariant || 'primary'" class="mr-1 ml-auto">

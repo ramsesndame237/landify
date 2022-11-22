@@ -1,7 +1,8 @@
 <template>
-  <b-table :title="entityList||entity" ref="table" striped hover responsive :busy.sync="loading" :per-page="perPage"
-           :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
-           :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" @row-clicked="onRowClicked">
+  <b-table sticky-header :title="entityList||entity" ref="table" striped hover responsive :busy.sync="loading"
+           :per-page="perPage" :current-page="currentPage" :items="items || provider" :fields="allFields"
+           :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" :filter="search" select-mode="multi"
+           @row-clicked="onRowClicked">
     <template #cell(__selected)="data">
       <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"
                        :disabled="disabled" @change="onSelect(data.index)"/>
@@ -19,22 +20,23 @@
     </template>
 
     <template v-if="withActions" #cell(Actions)="data">
-      <b-button v-if="withView" size="xs" class="mr-1" style="margin-bottom: 3px" variant="outline-success" pill
-                @click="onViewElement ? onViewElement(currentItems[data.index]) :$router.push({name: 'table-view', params: {table: entityView || entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index], ids: currentItems.map(i => i[primaryKey])}})">
-        <feather-icon icon="EyeIcon" class="mr-50"/>
-        <span>{{ $t('app.btn.view') }}</span>
-      </b-button>
-      <b-button v-if="withEdit && canUpdate" size="xs" variant="outline-info" class="mr-1" style="margin-bottom: 3px"
-                pill
-                @click="onEditElement ? onEditElement(currentItems[data.index]) : $router.push({name: 'table-view', params: {table: entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index], ids: currentItems.map(i => i[primaryKey])}, query: {edit: 'true'}})">
-        <feather-icon icon="EditIcon" class="mr-50"/>
-        <span>{{ $t('app.btn.edit') }}</span>
-      </b-button>
-      <b-button v-if="withDelete && canDelete" size="xs" variant="outline-primary" style="margin-bottom: 3px"
-                @click="deleteElement(data.index)" pill>
-        <feather-icon icon="Trash2Icon" class="mr-50"/>
-        <span>{{ $t('app.btn.delete') }}</span>
-      </b-button>
+      <div class="text-nowrap">
+        <b-button v-if="withView" class=" btn-icon" style="margin-bottom: 3px" variant="flat-success" pill
+                  @click="onViewElement ? onViewElement(currentItems[data.index]) :$router.push({name: 'table-view', params: {table: entityView || entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index], ids: currentItems.map(i => i[primaryKey])}})">
+          <feather-icon icon="EyeIcon"/>
+          <!--        <span>{{ $t('button~view') }}</span>-->
+        </b-button>
+        <b-button v-if="withEdit && canUpdate" class="btn-icon" variant="flat-info" style="margin-bottom: 3px" pill
+                  @click="onEditElement ? onEditElement(currentItems[data.index]) : $router.push({name: 'table-view', params: {table: entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index], ids: currentItems.map(i => i[primaryKey])}, query: {edit: 'true'}})">
+          <feather-icon icon="EditIcon"/>
+          <!--        <span>{{ $t('button~edit') }}</span>-->
+        </b-button>
+        <b-button v-if="withDelete && canDelete" class="btn-icon" variant="flat-primary" style="margin-bottom: 3px"
+                  @click="deleteElement(data.index)" pill>
+          <feather-icon icon="Trash2Icon"/>
+          <!--        <span>{{ $t('button~delete') }}</span>-->
+        </b-button>
+      </div>
     </template>
   </b-table>
 </template>
@@ -97,6 +99,14 @@ export default {
     },
     allFields() {
       return [
+        ...(this.withActions ? [{
+          key: 'Actions',
+          stickyColumn: true,
+          tdClass: 'p-0',
+          variant: 'light',
+          thStyle: { width: '80px' }
+        }] : []),
+
         ...(this.selectable ? [{ key: '__selected' }] : []),
         ...this.fields.filter(f => !f.hideOnIndex).map(field => {
           const newField = { label: this.$t('attribute.' + field.key), sortable: true, ...field }
@@ -105,7 +115,6 @@ export default {
           // }
           return newField
         }),
-        ...(this.withActions ? ['Actions'] : []),
       ]
     },
     canDelete() {

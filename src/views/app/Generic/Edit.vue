@@ -10,15 +10,15 @@
           <div class="mr-1 d-flex">
             <b-button v-if="view && $can('update', table)" size="sm" variant="info" class="mr-1" @click="edit">
               <feather-icon icon="EditIcon" class="mr-50"/>
-              {{ $t('Edit') }}
+              {{ $t('button~edit') }}
             </b-button>
             <b-button v-else size="sm" variant="info" class="mr-1" @click="update" :disabled="loading">
               <b-spinner v-if="loading" small class="mr-50"/>
               <feather-icon v-else icon="SaveIcon" class="mr-50"/>
-              {{ $t('Save') }}
+              {{ $t('button~save') }}
             </b-button>
             <b-button v-if="!view" size="sm" variant="primary" @click="cancel">
-              {{ $t('Cancel') }}
+              {{ $t('button~cancel') }}
             </b-button>
           </div>
         </div>
@@ -39,8 +39,8 @@
     <b-card v-if="definition.relations && visibleRelations.length>0 && !create">
       <b-tabs ref="tabs" pills>
         <b-tab v-for="(relation, index) in visibleRelations" :key="index"
-               :title="$t('headline~'+(relation.entityView||relation.title)+'~tab')" :active="index===tabIndex"
-               lazy>
+               :title="$t(relation.title || ('headline~'+(relation.entityView||relation.entityForm)+'~tab'))"
+               :active="index===tabIndex" lazy>
           <data-tables :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
                        :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
                        :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
@@ -57,11 +57,11 @@
             <component v-if="currentTool()" :is="currentTool()"/>
             <b-button v-if="currentHasNew() && canCreateCurrent" class="mr-1" size="sm" variant="info"
                       @click="newElement">
-              New
+              {{ $t('button~new') }}
             </b-button>
             <b-button v-if="currentHasDelete() && canDeleteCurrent" class="mr-1" size="sm" variant="primary"
                       @click="deleteSelected">
-              Delete
+              {{ $t('button~delete') }}
             </b-button>
             <b-button v-if="currentHasFilter" @click="$emit('filter')" size="sm" variant="primary"
                       class="mr-1 btn-icon">

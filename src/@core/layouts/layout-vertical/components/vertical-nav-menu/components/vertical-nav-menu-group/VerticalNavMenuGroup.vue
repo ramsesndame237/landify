@@ -9,7 +9,7 @@
     }"
   >
     <b-link
-      class="d-flex align-items-center"
+      class="d-flex align-items-center" :title="t(item.title)"
       @click="() => updateGroupOpen(!isOpen)"
     >
       <feather-icon :icon="item.icon || 'CircleIcon'" />

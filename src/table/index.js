@@ -1290,7 +1290,6 @@ export default {
     ],
     relations: [
       {
-        title: 'Locations',
         primaryKey: 'location_id',
         entity: 'frontend_3_1_3_7',
         entityView: 'location',
@@ -1313,7 +1312,6 @@ export default {
         ],
       },
       {
-        title: 'Areas',
         primaryKey: 'area_id',
         entity: 'frontend_3_1_3_1',
         entityForm: 'area_pos_rel',
@@ -1347,7 +1345,6 @@ export default {
         ],
       },
       {
-        title: 'Contract',
         primaryKey: 'contract_id',
         entity: 'frontend_3_1_3_2',
         entityForm: 'contract_area_unit_usagetype_rel',
@@ -1374,7 +1371,14 @@ export default {
             key: 'area_id', sortable: true, type: 'list', list: 'area', listLabel: 'area_name',
           },
           {
-            key: 'unit_id', sortable: true, type: 'list', list: 'unit', listLabel: 'unit_name', hideOnIndex: true,
+            key: 'unit_id',
+            sortable: true,
+            composite: true,
+            type: 'list',
+            list: 'unit',
+            listLabel: 'unit_name',
+            hideOnIndex: true,
+            disableOnUpdate: true,
           },
           {
             key: 'usagetype_id',
@@ -1383,15 +1387,17 @@ export default {
             list: 'usagetype',
             listLabel: 'usagetype_name',
             hideOnIndex: true,
+            composite: true,
+            disableOnUpdate: true,
           },
           {
             key: 'contract_area_unit_usagetype_detail_description',
           },
           {
-            key: 'contract_area_unit_usagetype_mainusage',
+            key: 'contract_area_unit_usagetype_mainusage', type: 'boolean',
           },
           {
-            key: 'contract_area_unit_usagetype_valid_from_date', type: 'date', disableOnUpdate: true,
+            key: 'contract_area_unit_usagetype_valid_from_date', type: 'date', disableOnUpdate: true, composite: true,
           },
           {
             key: 'contract_area_unit_usagetype_valid_to_date', type: 'date',
@@ -1414,7 +1420,6 @@ export default {
         update: false,
       },
       {
-        title: 'Tag',
         primaryKey: 'tag_id',
         entity: 'frontend_3_1_3_3',
         entityForm: 'pos_tag_rel',
@@ -1435,7 +1440,6 @@ export default {
         ],
       },
       {
-        title: 'Tickets',
         primaryKey: 'ticket_id',
         entity: 'frontend_3_1_3_4',
         entityForm: 'pos_ticket_rel',
@@ -1462,7 +1466,7 @@ export default {
         delete: false,
       },
       {
-        title: 'Contradiction Packages',
+        title: 'contradictionpackage',
         entity: 'frontend_3_1_3_5',
         fields: [
           {
@@ -1482,7 +1486,6 @@ export default {
         delete: false,
       },
       {
-        title: 'Invoices',
         entityView: 'invoice',
         update: false,
         create: false,
@@ -1572,12 +1575,24 @@ export default {
           { key: 'contract_area_unit_usagetype_allocationspace_value', type: 'number' },
           { key: 'unit_name', hideOnForm: true },
           {
-            key: 'unit_id', type: 'list', list: 'unit', listLabel: 'unit_name', hideOnIndex: true, composite: true,
+            key: 'unit_id',
+            type: 'list',
+            disableOnUpdate: true,
+            list: 'unit',
+            listLabel: 'unit_name',
+            hideOnIndex: true,
+            composite: true,
           },
           { key: 'contract_area_unit_usagetype_mainusage', type: 'boolean' },
           { key: 'contract_begin_date', hideOnForm: true },
           { key: 'contract_end_date', hideOnForm: true },
-          { key: 'contract_area_unit_usagetype_valid_from_date', type: 'date', hideOnIndex: true, composite: true },
+          {
+            key: 'contract_area_unit_usagetype_valid_from_date',
+            disableOnUpdate: true,
+            type: 'date',
+            hideOnIndex: true,
+            composite: true
+          },
           {
             key: 'contract_area_unit_usagetype_valid_to_date',
             type: 'date',
@@ -1773,6 +1788,108 @@ export default {
 
     ],
     relations: [
+      {
+        entity: 'frontend',
+        entityView: 'company',
+        fields: [
+          { key: 'company_id' },
+          { key: 'company_name' },
+          { key: 'company_shortname' },
+          { key: 'city_name' },
+          { key: 'customergroup_name' },
+        ],
+        create: false,
+        update: false,
+        delete: false,
+      },
+      {
+        entity: 'frontend',
+        entityView: 'pos',
+        fields: [
+          { key: 'pos_id' },
+          { key: 'pos_name' },
+          { key: 'pos_branchnumber' },
+          { key: 'pos_name_external' },
+          { key: 'area_count' },
+        ],
+        create: false,
+        update: false,
+        delete: false,
+      },
+      {
+        entity: 'frontend',
+        entityView: 'area',
+        entityForm: 'contract_area_unit_usagetype_rel',
+        primaryKey: 'area_id',
+        fields: [
+          {
+            key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name', disableOnUpdate: true,
+          },
+          { key: 'area_name', hideOnForm: true },
+          { key: 'city_name', hideOnForm: true },
+          { key: 'country_name', hideOnForm: true },
+          { key: 'area_space_value', hideOnForm: true },
+          { key: 'contract_begin_date', hideOnForm: true },
+          { key: 'contract_end_date', hideOnForm: true },
+          { key: 'usagetype_name', hideOnForm: true },
+          {
+            key: 'contract_area_unit_usagetype_detail_description', hideOnIndex: true,
+          },
+
+          {
+            key: 'usagetype_id',
+            sortable: true,
+            type: 'list',
+            list: 'usagetype',
+            listLabel: 'usagetype_name',
+            hideOnIndex: true,
+            composite: true,
+          },
+          {
+            key: 'contract_area_unit_usagetype_rentalspace_value', type: 'number', hideOnIndex: true,
+          },
+          {
+            key: 'contract_area_unit_usagetype_allocationspace_value', type: 'number', hideOnIndex: true,
+          },
+          {
+            key: 'unit_id',
+            sortable: true,
+            type: 'list',
+            list: 'unit',
+            listLabel: 'unit_name',
+            hideOnIndex: true,
+            composite: true,
+          },
+          {
+            key: 'contract_area_unit_usagetype_mainusage', type: 'boolean',
+          },
+          {
+            key: 'contract_area_unit_usagetype_valid_from_date', type: 'date', disableOnUpdate: true, hideOnIndex: true,
+          },
+          {
+            key: 'contract_area_unit_usagetype_valid_to_date', type: 'date', hideOnIndex: true,
+          },
+        ],
+      },
+      {
+        entity: 'frontend',
+        entityView: 'partnercompany',
+        fields: [
+          { key: 'area_id' },
+          { key: 'location_id' },
+          { key: 'partnercompany_id' },
+          { key: 'partnercompany_name' },
+          { key: 'partnercompany_shortname' },
+          { key: 'city_name' },
+          { key: 'partnertype_name' },
+          { key: 'partnergroup_name' },
+          { key: 'location_partnercompany_partnertype_valid_from_date' },
+          { key: 'location_partnercompany_partnertype_valid_to_date' },
+        ],
+        create: false,
+        update: false,
+        delete: false,
+      },
       {
         title: 'Documents',
         primaryKey: 'document_id',
@@ -2434,7 +2551,7 @@ export default {
     ],
     relations: [
       {
-        title: 'Contract Document',
+        title: 'headline~invoice~tab~contract_document',
         entity: 'frontend_4_2_1_bottom',
         entityForm: 'document',
         primaryKey: 'document_id',
@@ -2457,7 +2574,7 @@ export default {
         },
       },
       {
-        title: 'Invoice Document',
+        title: 'headline~invoice~tab~invoice_document',
         entityForm: 'document_invoice_rel',
         primaryKey: 'document_id',
         fields: [
@@ -2477,7 +2594,7 @@ export default {
         },
       },
       {
-        title: 'Invoice Details',
+        // title: 'invoice_invoicevaluetype_rel',
         entity: 'frontend_4_2_2',
         entityForm: 'invoice_invoicevaluetype_rel',
         primaryKey: 'invoicevaluetype_id',
@@ -2497,7 +2614,7 @@ export default {
         ],
       },
       {
-        title: 'Invoice Criteria',
+        // title: 'Invoice Criteria',
         entity: 'frontend_4_2_3',
         entityForm: 'invoice_invoicecriteria_rel',
         primaryKey: 'invoicecriteria_id',
@@ -2515,7 +2632,7 @@ export default {
         ],
       },
       {
-        title: 'Invoice Deadlines',
+        // title: 'Invoice Deadlines',
         entity: 'frontend_4_2_4',
         entityForm: 'invoice_invoicedeadline_rel',
         primaryKey: 'invoicedeadline_id',
@@ -2534,7 +2651,7 @@ export default {
       },
       {
         tool: () => import('@/views/app/InvoicePositionTools.vue'),
-        title: 'Invoice Positions',
+        // title: 'Invoice Positions',
         entity: 'frontend_4_2_5',
         entityForm: 'invoice_invoiceposition_rel',
         primaryKey: 'invoiceposition_id',
@@ -2553,7 +2670,7 @@ export default {
         ],
       },
       {
-        title: 'Service Objects',
+        // title: 'Service Objects',
         entity: 'frontend_4_2_6',
         primaryKey: 'serviceobject_id',
         entityView: 'serviceobject',
@@ -2923,11 +3040,8 @@ export default {
   },
   board: {
     entity: 'frontend_6_1_4',
+    defaultSortField: 'board_id',
     fields: [
-      { key: 'board_id', auto: true },
-      { key: 'board_name' },
-      { key: 'board_description', type: 'textarea' },
-      { key: 'board_amount_columnx', hideOnForm: true },
       {
         key: 'btn',
         sortable: false,
@@ -2937,6 +3051,11 @@ export default {
         btnLabel: 'Kanban',
         getRoute: board => ({ name: 'table-kanban', params: { id: board.board_id, table: 'board' } }),
       },
+      { key: 'board_id', auto: true },
+      { key: 'board_name' },
+      { key: 'board_description', type: 'textarea' },
+      { key: 'board_amount_columnx', hideOnForm: true },
+
     ],
     relations: [
       {

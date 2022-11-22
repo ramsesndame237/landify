@@ -10,7 +10,7 @@
         <div class="d-flex align-items-center">
           <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
           <b-button variant="primary" class="mx-1" block @click="createTicket()">
-            New Ticket
+            {{ $t('button~newticket') }}
           </b-button>
           <b-form-input v-model="search" debounce="500" type="search" class="w-16" placeholder="Search.."/>
         </div>
