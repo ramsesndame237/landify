@@ -6,18 +6,9 @@
         <p class="mb-0">{{ entity.ticket_description }}</p>
       </div>
       <div>
-        <div class="bg-white p-1 mr-1 d-inline-block">
-          <strong class="mr-1">Customer Group:</strong>
-          <span>Some Group</span>
-        </div>
-        <div class="bg-white p-1 d-inline-block">
-          <strong class="mr-1">Company:</strong>
-          <span>Some Company</span>
-        </div>
-      </div>
-      <div>
-        <span class="mr-1">Filiale AB</span>
-        <strong>Verwalter XY</strong>
+        <b-button v-if="!entity.ticket_closed" variant="primary">
+          Edit
+        </b-button>
         <b-button variant="primary" class="ml-2" @click="toggleTicket(entity)">
           {{ entity.ticket_closed ? 'Re-open' : 'Close' }}
         </b-button>
@@ -25,6 +16,16 @@
     </div>
     <b-row>
       <b-col lg="8">
+        <b-card-actions title="Informations" action-collapse collapsed>
+          <table class="mt-2 mt-xl-0 w-100">
+            <tr v-for="(item,i) in items" :key="i">
+              <th class="pb-50 font-weight-bold">
+                {{ item[0] }}
+              </th>
+              <td class="pb-50">{{ item[1] }}</td>
+            </tr>
+          </table>
+        </b-card-actions>
         <div class="d-flex justify-content-between align-items-center mb-2">
           <h2>Sub tasks</h2>
           <b-button variant="primary" v-if="!entity.ticket_closed" @click="createSubTicket">Add Sub task</b-button>
@@ -41,20 +42,6 @@
         </b-card-actions>
       </b-col>
       <b-col lg="4">
-        <div class="d-flex justify-content-between align-items-center">
-          <h4 class="font-weight-bolder">Upcoming Events</h4>
-          <b-dropdown variant="outline-danger">
-            <template #button-content>
-              <b-icon-calendar-week class="mr-1"/>
-              <span>Calendar</span>
-              <!--            <b-icon-caret-down/>-->
-            </template>
-            <b-dropdown-item>option 1</b-dropdown-item>
-            <b-dropdown-item>option 2</b-dropdown-item>
-            <b-dropdown-item>option 3</b-dropdown-item>
-          </b-dropdown>
-        </div>
-        <operation-recap-card/>
         <h4 class="font-weight-bolder">Documents</h4>
         <b-row>
           <b-col lg="6">
@@ -100,7 +87,7 @@ import BCardActions from "@core/components/b-card-actions/BCardActions";
 import TicketMixin from "@/views/app/Kanban/TicketMixin";
 
 export default {
-  name: 'OperationsPage',
+  name: 'TicketDetail',
   components: {
     BCardActions,
     AppTimelineItem,
@@ -111,14 +98,6 @@ export default {
     BCol,
     BRow,
     BCard,
-    BCardBody,
-    BIconAlarm,
-    AdditionalCostsCard,
-    BDropdown,
-    BDropdownItem,
-    BIconCalendarWeek,
-    BIconCaretDown,
-    OperationRecapCard,
   },
   mixins: [EditPageMixin, TicketMixin],
   data() {
@@ -140,6 +119,16 @@ export default {
       ticketDef,
       subTickets: [],
     }
+  },
+  computed: {
+    items() {
+      return [
+        ['Customer Group', this.entity.customergroup_name],
+        ['Company', this.entity.company_name],
+        ['Deadline Yellow', this.entity.ticket_deadline_yellow],
+        ['Deadline Red', this.entity.ticket_deadline_red],
+      ]
+    },
   },
   methods: {
     createSubTicket() {
