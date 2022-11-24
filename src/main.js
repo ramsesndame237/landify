@@ -82,9 +82,13 @@ async function init() {
   // load acl after userdata is loaded
   require('@/libs/acl')
 
-  const data = await store.dispatch('app/fetchAppData')
-  console.log(data.attribute)
-  i18n.mergeLocaleMessage(store.state.app.lang, { attribute: data.attribute, ...data.global })
+  try {
+    const data = await store.dispatch('app/fetchAppData')
+    i18n.mergeLocaleMessage(store.state.app.lang, { attribute: data.attribute, ...data.global })
+  } catch (e) {
+    console.error(e);
+  }
+
   window.$vue = new Vue({
     router,
     store,
