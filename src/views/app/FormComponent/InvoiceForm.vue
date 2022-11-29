@@ -171,16 +171,17 @@ export default {
     async fetchContracts() {
       this.$refs.contracts.loading = true
       this.contracts = (await this.$api({
-        entity: 'contract',
+        entity: 'frontend_4_2_1_contract_selector',
         action: 'read-rich',
         filter_all: this.search,
+        data: [{pos_id: this.entity.pos_id}],
       })).data.data.data
       this.$refs.contracts.loading = false
     },
     async fetchAreas(contractId) {
       this.$refs.areas.loading = true
       this.areas = (await this.$api({
-        entity: 'frontend_3_4_1_1',
+        entity: 'frontend_3_2_3_1',
         action: 'read-rich',
         data: [{ contract_id: contractId }],
       })).data.data.data

@@ -112,7 +112,7 @@ export default [
     header: key('configuration'),
   },
   {
-    title: key('accountdata'),
+    title: key('configurationaccountdata'),
     children: [
       item('address'),
       item('city'),

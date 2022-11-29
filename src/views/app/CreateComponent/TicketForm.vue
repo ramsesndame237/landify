@@ -13,6 +13,9 @@
       :key="i" cols="12">
       <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField(field)"/>
     </b-col>
+    <b-col cols="12">
+      <field ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="userField"/>
+    </b-col>
   </b-row>
 </template>
 
@@ -37,6 +40,13 @@ export default {
         type: 'list',
         list: 'company',
         listLabel: 'company_name',
+        required: false,
+      },
+      userField: {
+        key: 'user_id',
+        listLabel: 'user_email',
+        type: 'list',
+        list: 'user',
         required: false,
       },
     }
