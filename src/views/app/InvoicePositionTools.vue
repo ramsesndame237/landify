@@ -182,16 +182,17 @@ export default {
         this.$errorToast('Please Select an invoice position')
         return
       }
-      this.$api({
-        entity: 'invoiceposition',
-        action: 'read-rich',
-        data: [{ invoiceposition_id: selected[0].invoiceposition_id }],
-      })
-        .then(({ data }) => {
-          this.selectedPosition = data.data.data[0]
-          this.setEntity()
-          this.$refs.modal.show()
-        })
+      // this.$api({
+      //   entity: 'frontend_4_2_5',
+      //   action: 'read-rich',
+      //   data: [{ invoiceposition_id: selected[0].invoiceposition_id }],
+      // })
+      //   .then(({ data }) => {
+      //     this.selectedPosition = data.data.data[0]
+      this.selectedPosition = selected[0]
+      this.setEntity()
+      this.$refs.modal.show()
+      // })
       // this.selectedPosition = selected[0]
       // this.$refs.modal.show()
     },

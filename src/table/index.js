@@ -1768,7 +1768,7 @@ export default {
     fields: [
       { key: 'contract_id', auto: true },
       { key: 'contract_name' },
-      { key: 'contracttype_id', hideOnForm: true },
+      { key: 'contracttype_name', hideOnForm: true },
       { key: 'location_name', hideOnForm: true },
       { key: 'owner_name', hideOnForm: true },
       { key: 'manager_name', hideOnForm: true },
