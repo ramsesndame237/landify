@@ -2690,25 +2690,31 @@ export default {
     ],
   },
   invoiceposition: {
+    fieldComponent: import('@/views/app/CreateComponent/InvoicePositionForm.vue'),
     fields: [
       { key: 'invoiceposition_id', auto: true },
+      {
+        key: 'externalcosttype_id',
+        type: 'list',
+        list: 'externalcosttype',
+        listLabel: 'externalcosttype_name',
+        hideOnIndex: true,
+      },
+      {
+        key: 'costtype_id', type: 'list', list: 'frontend_4_7_3_1', filterKey: 'externalcosttype_id', relationEntity: 'invoiceposition_costtype_rel', listLabel: 'costtype_id', hideOnIndex: true,
+      },
       { key: 'invoiceposition_name' },
       {
         key: 'unit_id', type: 'list', list: 'unit', listLabel: 'unit_name', hideOnIndex: true,
       },
       { key: 'invoiceposition_total_units', type: 'number' },
       { key: 'invoiceposition_units_customer', type: 'number', rules: { lower: ['@invoiceposition_total_units'] } },
-      { key: 'invoiceposition_costtype_invoice' },
       { key: 'costtype_name', hideOnForm: true },
-      {
-        key: 'costtype_id', type: 'list', list: 'costtype', listLabel: 'costtype_name', hideOnIndex: true,
-      },
-
       { key: 'invoiceposition_flat_rate', type: 'boolean' },
       { key: 'invoiceposition_amount_total', type: 'number' },
       { key: 'invoiceposition_amount_customer', type: 'number', rules: { lower: ['@invoiceposition_amount_total'] } },
       { key: 'invoiceposition_apportionable', type: 'boolean' },
-    ]
+    ],
   },
   inspectionresult: {
     create: false,
