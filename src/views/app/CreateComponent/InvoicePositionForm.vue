@@ -1,7 +1,7 @@
 <template>
   <b-row>
     <b-col v-for="(field,i) in formFields" :key="i" cols="12">
-      <field ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="field" />
+      <field ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="field"/>
     </b-col>
   </b-row>
 </template>
@@ -27,7 +27,7 @@ export default {
     'entity.externalcosttype_id': function () {
       if (!this.entity.invoiceposition_name) {
         const ectField = this.$refs.fields.find(f => f.field.key === 'externalcosttype_id')
-        this.entity.invoiceposition_name = ectField.selectedValue.externalcosttype_name
+        this.$set(this.entity, 'invoiceposition_name', ectField.selectedValue.externalcosttype_name.trim())
       }
     },
   },

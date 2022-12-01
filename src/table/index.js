@@ -2690,7 +2690,7 @@ export default {
     ],
   },
   invoiceposition: {
-    fieldComponent: import('@/views/app/CreateComponent/InvoicePositionForm.vue'),
+    fieldComponent: () => import('@/views/app/CreateComponent/InvoicePositionForm.vue'),
     fields: [
       { key: 'invoiceposition_id', auto: true },
       {
@@ -2701,7 +2701,13 @@ export default {
         hideOnIndex: true,
       },
       {
-        key: 'costtype_id', type: 'list', list: 'frontend_4_7_3_1', filterKey: 'externalcosttype_id', relationEntity: 'invoiceposition_costtype_rel', listLabel: 'costtype_id', hideOnIndex: true,
+        key: 'costtype_id',
+        type: 'list',
+        list: 'frontend_4_7_3_1',
+        filter_key: 'externalcosttype_id',
+        relationEntity: 'invoiceposition_costtype_rel',
+        listLabel: 'costtype_name',
+        hideOnIndex: true,
       },
       { key: 'invoiceposition_name' },
       {

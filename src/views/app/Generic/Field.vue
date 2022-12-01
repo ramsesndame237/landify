@@ -41,7 +41,7 @@
           <div :class="field.onlyForm?'':('mt-2 '+(inline ? '': 'ml-3'))">
             <component :is="subDefinition.fieldComponent" v-if="subDefinition.fieldComponent" ref="fieldComponent"
                        :entity="subEntity" :table-definition="subTableDefinition" :definition="subDefinition"
-                       :disabled="disabled"/>
+                       :form-fields="subFormFields" :disabled="disabled"/>
             <b-row v-else>
               <b-col v-for="(field,index) in subFormFields" :key="index" cols="12">
                 <field ref="fields" :disabled="disabled" :inline="inline" :entity="subEntity"
@@ -113,9 +113,10 @@ export default {
     },
     listItems() {
       if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
-        if (this.field.filter_key && this.filterValue) {
-          console.log('filter with value', this.filterValue)
-          return this.list.filter(e => e[this.field.filter_key] === this.filterValue)
+        const val = (this.filterValue || this.entity[this.field.filter_key])
+        if (this.field.filter_key && val) {
+          console.log('filter with value', val)
+          return this.list.filter(e => e[this.field.filter_key] === val)
         }
         return this.list
       }
