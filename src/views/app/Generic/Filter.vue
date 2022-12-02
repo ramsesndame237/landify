@@ -1,12 +1,11 @@
 <template>
   <!--modal-->
   <b-modal id="filter-modal" ref="modal" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary" centered
-           title="Filter" :size="vertical?'sm' : 'xl'" @ok="handleOk">
+           title="Filter" :size="isVertical?'sm' : 'lg'" @ok="handleOk">
     <validation-observer ref="form" v-slot="{ passes }">
       <b-form @submit.prevent="passes(handleOk)">
         <b-row>
-          <b-col v-for="(field,index) in definition.filters" :key="index" cols="12" :md="vertical?12:4"
-                 :lg="vertical?12:3">
+          <b-col v-for="(field,index) in definition.filters" :key="index" cols="12" :md="isVertical?12:4">
             <field ref="fields" :entity="data" :field="field"/>
           </b-col>
         </b-row>
@@ -48,7 +47,11 @@ export default {
       data: { ...this.initialData },
     }
   },
-  computed: {},
+  computed: {
+    isVertical() {
+      return this.vertical || this.definition.filter_vertical
+    }
+  },
   methods: {
     openModal() {
       this.$refs.modal.show()

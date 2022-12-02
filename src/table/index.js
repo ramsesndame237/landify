@@ -3125,7 +3125,72 @@ export default {
     ],
   },
   //endregion
-
+  conditionlist: {
+    title: 'headline~contractlist~condition',
+    entity: 'contract',
+    fields: [
+      { key: 'contract_number' },
+      { key: 'contract_name' },
+      { key: 'contract_status' },
+      { key: 'contracttype_name' },
+      { key: 'company_name' },
+      { key: 'location_name' },
+      { key: 'pos_branchname' },
+      { key: 'country_name' },
+      'owner',
+      'manager',
+      { key: 'criteria_name' },
+    ],
+    filter_vertical: true,
+    filters: [
+      { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
+      {
+        key: 'company_id',
+        type: 'list',
+        list: 'frontend_2_2_3_1',
+        listLabel: 'company_name',
+        filter_key: 'customergroup_id'
+      },
+      { key: 'pos_id', type: 'list', list: 'frontend_2_1_3_8', listLabel: 'pos_name', filter_key: 'company_id' },
+      { key: 'date', type: 'date' },
+    ],
+    create: false,
+    update: false,
+    delete: false,
+  },
+  deadlinelist: {
+    title: 'headline~contractlist~deadline',
+    entity: 'contract',
+    fields: [
+      { key: 'contract_number' },
+      { key: 'contract_name' },
+      { key: 'contract_status' },
+      { key: 'contracttype_name' },
+      { key: 'company_name' },
+      { key: 'location_name' },
+      { key: 'pos_branchname' },
+      { key: 'country_name' },
+      'owner',
+      'manager',
+      { key: 'criteria_name' },
+    ],
+    filter_vertical: true,
+    filters: [
+      { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
+      {
+        key: 'company_id',
+        type: 'list',
+        list: 'frontend_2_2_3_1',
+        listLabel: 'company_name',
+        filter_key: 'customergroup_id'
+      },
+      { key: 'pos_id', type: 'list', list: 'frontend_2_1_3_8', listLabel: 'pos_name', filter_key: 'company_id' },
+      { key: 'date', type: 'date' },
+    ],
+    create: false,
+    update: false,
+    delete: false,
+  },
 }
 
 function getContractCriteriaFields() {

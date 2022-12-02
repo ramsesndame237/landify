@@ -2,7 +2,8 @@
   <div class="p-1 ticket" :class="'ticket-'+deadlineColor">
     <div class="d-flex align-items-center mb-1">
       <b-avatar variant="light-secondary" text="I"/>
-      <h4 class="font-weight-bolder mb-0 ml-1" style="color: #ccc; font-size: 15px" :title="ticket.ticket_id">{{ ticket.ticket_name }}</h4>
+      <h4 class="font-weight-bolder mb-0 ml-1" style="color: #ccc; font-size: 15px" :title="ticket.ticket_id">
+        {{ ticket.ticket_name }}</h4>
       <b-dropdown variant="link-" toggle-class="p-0" right no-caret class="ml-auto">
         <template v-slot:button-content>
           <feather-icon icon="MoreHorizontalIcon"/>
@@ -21,7 +22,7 @@
       <span>{{ ticket.ticket_creation_time | format }}</span>
       <b-icon-clock-fill class="ml-auto"/>
     </div>
-    <div class="d-flex">
+    <div v-if="advanced" class="d-flex">
       <strong class="mr-1">Last change:</strong>
       <span>{{ ticket.ticket_last_change_time | format }}</span>
     </div>
@@ -30,12 +31,12 @@
       <span :class="deadlineColor?('text-'+deadlineColor):''">{{ deadlineForHuman }}</span>
       <b-icon-calendar-date :class="'ml-auto '+ (deadlineColor?('text-'+deadlineColor):'')"/>
     </div>
-    <div class="d-flex">
+    <div v-if="advanced" class="d-flex">
       <strong class="mr-1">Deadline Offset:</strong>
       <span :class="columnDeadlineColor?('text-'+columnDeadlineColor):''">{{ columnDeadlineForHuman }}</span>
       <b-icon-calendar-date :class="'ml-auto '+ (columnDeadlineColor?('text-'+columnDeadlineColor):'')"/>
     </div>
-    <div class="d-flex">
+    <div class="d-flex" v-if="advanced">
       <strong class="mr-1">Planned treatment week:</strong>
       <span>{{ ticket.ticket_planned_treatment_week }}</span>
     </div>
@@ -82,7 +83,16 @@ export default {
     BDropdownItem,
     CustomHorizontalProgress,
   },
+  filters: {
+    format(val) {
+      return moment(val).format('DD.MM.YYYY (HH:mm)')
+    },
+  },
   mixins: [TicketMixin],
+  props: {
+    ticket: Object,
+    advanced: Boolean,
+  },
   data() {
     return {
       deadline_red: moment(this.ticket.ticket_deadline_red),
@@ -90,14 +100,6 @@ export default {
       column_deadline_red: moment(this.ticket.columns[0].ticket_deadline_offset_red),
       column_deadline_yellow: moment(this.ticket.columns[0].ticket_deadline_offset_yellow),
     }
-  },
-  filters: {
-    format(val) {
-      return moment(val).format('DD.MM.YYYY (HH:mm)')
-    },
-  },
-  props: {
-    ticket: Object,
   },
   computed: {
     ...mapGetters({

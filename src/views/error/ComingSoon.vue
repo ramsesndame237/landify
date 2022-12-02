@@ -4,12 +4,8 @@
     <div class="misc-inner p-2 p-sm-3">
       <div class="w-100 text-center">
         <h2 class="mb-1">
-          Page comming soon 🚀
+          I'm creating a general design in Figma
         </h2>
-        <p class="mb-3">
-          We're creating something awesome.
-        </p>
-
         <b-img
           fluid
           :src="imgUrl"

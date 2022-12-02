@@ -8,6 +8,7 @@
             Board: {{ board_name }} </h4>
         </div>
         <div class="d-flex align-items-center">
+          <b-form-checkbox v-model="advanced" switch title="Advanced Mode" />
           <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
           <b-button variant="primary" class="mx-1" block @click="createTicket()">
             {{ $t('button~newticket') }}
@@ -24,7 +25,7 @@
         <feather-icon v-if="isQualityGate(stage)" class="text-primary" icon="StarIcon"/>
       </div>
       <div v-for="ticket in visibleTickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
-        <invoice-ticket-card :ticket="ticket"/>
+        <invoice-ticket-card :advanced="advanced" :ticket="ticket"/>
       </div>
     </kanban-board>
     <generic-modal ref="modal" :table="table" :definition="definition" :table-definition-key="table"
@@ -33,7 +34,7 @@
 </template>
 <script>
 import {
-  BAvatarGroup, BAvatar, BButton, BCard, BFormInput, BFormSelect,
+  BAvatarGroup, BAvatar, BButton, BCard, BFormInput, BFormSelect, BFormCheckbox
 } from 'bootstrap-vue'
 // eslint-disable-next-line import/extensions
 import GenericModal from '@/views/app/Generic/modal'
@@ -51,6 +52,7 @@ export default {
     BAvatarGroup,
     BAvatar,
     BButton,
+    BFormCheckbox,
     BFormSelect,
     BCard,
     BFormInput,
@@ -58,6 +60,7 @@ export default {
   data() {
     return {
       table: 'ticket',
+      advanced: true,
       search: '',
       filterOptions: [{ text: 'All openned', value: 0 }, { text: 'My tickets', value: 1 }, {
         text: 'All closed',
@@ -251,6 +254,7 @@ ul {
 .drag-container {
   //max-width: 1000px;
   margin: 20px auto;
+  overflow-x: auto;
 }
 
 .drag-list {
@@ -268,6 +272,8 @@ ul {
   position: relative;
   background: #E9E9E9;
   overflow: hidden;
+  //flex-basis: 250px;
+  min-width: 300px;
 
   @media (max-width: 690px) {
     margin-bottom: 30px;

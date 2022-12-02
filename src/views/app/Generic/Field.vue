@@ -8,7 +8,7 @@
         <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
         <div v-else-if="field.type==='list'" :class="(field.withNew || field.ids) ? 'd-flex': ''">
-          <v-select v-model="entity[field.key]" :disabled="disabled" :class="errors.length > 0 ? 'error':''"
+          <v-select v-model="entity[field.key]" :disabled="selectDisabled" :class="errors.length > 0 ? 'error':''"
                     :get-option-label="defaultLabelFunction[field.key]||(option=> option[field.listLabel])"
                     :placeholder="field.key" :options="listItems" transition="" :label="field.listLabel" class="w-100"
                     :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
@@ -105,6 +105,9 @@ export default {
     }
   },
   computed: {
+    selectDisabled(){
+      return this.disabled || (this.field.filter_key && !this.entity[this.field.filter_key])
+    },
     rules() {
       return this.getValidationRules(this.field)
     },
