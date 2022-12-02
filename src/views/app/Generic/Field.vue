@@ -105,7 +105,7 @@ export default {
     }
   },
   computed: {
-    selectDisabled(){
+    selectDisabled() {
       return this.disabled || (this.field.filter_key && !this.entity[this.field.filter_key])
     },
     rules() {
@@ -171,6 +171,15 @@ export default {
     })
   },
   methods: {
+    reset() {
+      if (this.field.type === 'boolean') {
+        // set false as default value
+        this.$set(this.entity, this.field.key, 0)
+      } else {
+        this.$set(this.entity, this.field.key, null)
+      }
+      (this.getSubFields() || []).forEach(sub => sub.reset())
+    },
     getPrimaryKey(definition) {
       return definition.primaryKey ?? definition.fields.find(f => f.auto).key
     },

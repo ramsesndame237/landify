@@ -183,13 +183,13 @@ export default {
         this.$router.push({ name: route.name, params: { id: this.entityId, table: route.params.table } })
       } else {
         const def = this.definition.relations[tabs.currentTab]
-        tabs.tabs[tabs.currentTab].$children[1].openModal(true, { [this.primaryKey]: this.entityId }, `headline~${def.entityView || def.title}~new`)
+        tabs.tabs[tabs.currentTab].$children[1].openModal(true, { [this.primaryKey]: this.entityId }, `headline~${def.entityForm || def.title}~new`)
       }
     },
     editElement(entity) {
       const { tabs } = this.$refs
       const def = this.definition.relations[tabs.currentTab]
-      tabs.tabs[tabs.currentTab].$children[1].openModal(false, entity, `headline~${def.entityView || def.title}~update`)
+      tabs.tabs[tabs.currentTab].$children[1].openModal(false, entity, `headline~${def.entityForm || def.title}~detail`)
     },
     reloadRelatedTable() {
       const { tabs } = this.$refs

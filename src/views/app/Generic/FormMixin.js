@@ -26,11 +26,11 @@ export default {
     cols: { default: 6 },
     inline: {
       type: Boolean,
-      default: false
+      default: false,
     },
     fetchData: {
       type: Boolean,
-      default: true
+      default: true,
     },
     entityId: { default: 0 },
   },
@@ -319,7 +319,10 @@ export default {
       this.entity = { ...this.definition.default, ...entity }
     },
     reset() {
-      if (this.$refs.fields) this.$refs.fields.forEach(f => f.subEntity = {})
+      if (this.$refs.fields) {
+        if (Array.isArray(this.$refs.fields)) this.$refs.fields.forEach(f => f.reset())
+        else this.$refs.fields.reset()
+      }
       this.entity = { ...this.initialData, ...this.originalEntity }
       this.$refs.form.reset()
       this.$refs.form.reset()

@@ -2661,7 +2661,7 @@ export default {
           { key: 'invoiceposition_name', hideOnForm: true },
           { key: 'invoiceposition_total_units', hideOnForm: true },
           { key: 'invoiceposition_units_customer', hideOnForm: true },
-          { key: 'invoiceposition_costtype_invoice', hideOnForm: true },
+          { key: 'externalcosttype_name', hideOnForm: true },
           { key: 'costtype_name', hideOnForm: true },
           { key: 'invoiceposition_flat_rate', type: 'boolean', hideOnForm: true },
           { key: 'invoiceposition_amount_total', hideOnForm: true },
@@ -3016,7 +3016,7 @@ export default {
     customPage: () => import('@/views/app/Page/TicketDetail.vue'),
     fieldComponent: () => import('@/views/app/CreateComponent/TicketForm.vue'),
     create: false,
-    entity: 'frontend_6_1_6',
+    entity: 'frontend_6_1_6_listall',
     fields: [
       { key: 'ticket_id', auto: true },
       { key: 'ticket_name' },
@@ -3190,6 +3190,12 @@ export default {
     create: false,
     update: false,
     delete: false,
+  },
+  document: {
+    fields: [
+      { key: 'document_name' },
+      // { key: 'document_content_type' },
+    ],
   },
 }
 

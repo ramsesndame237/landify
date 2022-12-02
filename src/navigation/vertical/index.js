@@ -40,7 +40,7 @@ export default [
   },
   {
     title: key('classification'),
-    route: 'comming-soon',
+    route: table('document'),
   },
   item('pos'),
   {
@@ -165,7 +165,7 @@ export default [
       item('claimtype'),
       item('savingtype'),
       item('rating'),
-      item('resultcategorization','resultcategory'),
+      item('resultcategorization', 'resultcategory'),
       item('invoicecriteria'),
       item('invoicevaluetype'),
     ],
@@ -207,7 +207,7 @@ export default [
   {
     title: key('administrationrights'),
     children: [
-      item('role','authorization'),
+      item('role', 'authorization'),
       item('tablename', 'table'),
       item('tablegroup'),
       item('crud'),

@@ -63,6 +63,10 @@
               <field ref="fields" :disabled="isDisabledFromName('invoice_number')" :entity="entity"
                      :table-definition="tableDefinition" :field="getField('invoice_number')"/>
             </b-col>
+            <b-col cols="12">
+              <field ref="fields" :disabled="isDisabledFromName('invoice_payment_date')" :entity="entity"
+                     :table-definition="tableDefinition" :field="getField('invoice_payment_date')"/>
+            </b-col>
           </b-row>
         </b-col>
         <b-col cols="5">
