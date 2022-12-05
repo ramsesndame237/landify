@@ -1298,15 +1298,9 @@ export default {
         delete: false,
         fields: [
           { key: 'location_name', hideOnForm: true },
-          { key: 'customergroup_name', hideOnForm: true },
           { key: 'manager_name', hideOnForm: true },
           { key: 'owner_name' },
-          { key: 'area_name' },
-          {
-            key: 'area_main_usage', hideOnForm: true,
-          }, {
-            key: 'area_space_value', hideOnForm: true,
-          },
+          { key: 'location_area_space_sum' },
           { key: 'city_name' },
           { key: 'city_zip' },
         ],
