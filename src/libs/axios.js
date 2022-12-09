@@ -8,7 +8,7 @@ const axiosIns = axios.create({
   // You can add your headers here
   // ================================
   baseURL: process.env.VUE_APP_BASE_URL || 'https://contabo.lx42.de/8001/',
-  timeout: 30000,
+  timeout: 120000,
   // headers: {'X-Custom-Header': 'foobar'}
 })
 

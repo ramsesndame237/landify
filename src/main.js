@@ -27,12 +27,18 @@ Vue.component('validation-observer', ValidationObserver)
 
 Vue.use(vueKanban)
 extend('email', email)
-extend('required', required)
+extend('required', {
+  ...required,
+  message: (_, values) => i18n.t('validations.messages.required', { _field_: i18n.t(`attribute.${values._field_}`) }),
+})
 extend('regex', regex)
 extend('required_if', required_if)
 extend('max', {
   ...max,
-  message: (_, values) => i18n.t('validations.messages.max', values),
+  message: (_, values) => i18n.t('validations.messages.max', {
+    ...values,
+    _field_: i18n.t(`attribute.${values._field_}`),
+  }),
 })
 extend('max_value', {
   ...max_value,
@@ -83,7 +89,13 @@ async function init() {
   require('@/libs/acl')
 
   try {
-    const data = await store.dispatch('app/fetchAppData')
+    let data = localStorage.getItem('app-data')
+    if (data) {
+      data = JSON.parse(data)
+      i18n.mergeLocaleMessage(store.state.app.lang, { attribute: data.attribute, ...data.global })
+    }
+    data = await store.dispatch('app/fetchAppData')
+    localStorage.setItem('app-data', JSON.stringify(data))
     i18n.mergeLocaleMessage(store.state.app.lang, { attribute: data.attribute, ...data.global })
   } catch (e) {
     console.error(e)

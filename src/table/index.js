@@ -1286,7 +1286,7 @@ export default {
       { key: 'pos_name_external', required: false },
       { key: 'location_count', hideOnForm: true },
       { key: 'area_count', hideOnForm: true },
-      { key: 'pos_first_year', type: 'number', required: false },
+      { key: 'pos_first_year', type: 'date', required: false },
     ],
     relations: [
       {
@@ -1436,7 +1436,7 @@ export default {
       {
         primaryKey: 'ticket_id',
         entity: 'frontend_3_1_3_4',
-        entityForm: 'pos_ticket_rel',
+        entityForm: 'ticket_pos_rel',
         fields: [
           {
             key: 'ticket_id',
@@ -1452,7 +1452,8 @@ export default {
           { key: 'ticket_deadline', hideOnForm: true },
           { key: 'ticket_deadline_yellow', hideOnForm: true },
           { key: 'ticket_deadline_red', hideOnForm: true },
-          { key: 'ticket_move_time', hideOnForm: true },
+          { key: 'ticket_move_time_in', hideOnForm: true },
+          { key: 'ticket_move_time_out', hideOnForm: true },
           { key: 'ticket_deadline_offset', hideOnForm: true },
         ],
         newRoute: { name: 'table-form', params: { table: 'ticket' } },
@@ -1783,7 +1784,7 @@ export default {
     ],
     relations: [
       {
-        entity: 'frontend',
+        entity: 'frontend_3_4_8',
         entityView: 'company',
         fields: [
           { key: 'company_id' },
@@ -1797,7 +1798,7 @@ export default {
         delete: false,
       },
       {
-        entity: 'frontend',
+        entity: 'frontend_3_4_9',
         entityView: 'pos',
         fields: [
           { key: 'pos_id' },
@@ -1811,7 +1812,7 @@ export default {
         delete: false,
       },
       {
-        entity: 'frontend',
+        entity: 'frontend_3_4_10',
         entityView: 'area',
         entityForm: 'contract_area_unit_usagetype_rel',
         primaryKey: 'area_id',
@@ -1866,7 +1867,7 @@ export default {
         ],
       },
       {
-        entity: 'frontend',
+        entity: 'frontend_3_4_11',
         entityView: 'partnercompany',
         fields: [
           { key: 'area_id' },
@@ -3028,6 +3029,13 @@ export default {
         relationEntity: 'ticket_pos_rel',
       },
       // {
+      //   key: 'user_id',
+      //   listLabel: 'user_email',
+      //   type: 'list',
+      //   list: 'user',
+      //   required: false,
+      // },
+      // {
       //   key: 'column_id', type: 'list', list: 'columnx', listLabel: 'column_name', visible: () => false,
       // },
       { key: 'column_name', hideOnForm: true },
@@ -3065,7 +3073,7 @@ export default {
     ],
     relations: [
       {
-        title: 'columnx',
+        title: 'headline~columnx~tab',
         entityForm: 'columnx_board_rel',
         entity: 'frontend_column_list',
         primaryKey: 'column_id',

@@ -9,12 +9,9 @@
              :entity="entity" :table-definition="tableDefinition" :field="getField('pos_id')"/>
     </b-col>
     <b-col
-      v-for="(field,i) in ['ticket_id','ticket_name','ticket_description','ticket_deadline','ticket_deadline_yellow','ticket_deadline_red','ticket_planned_treatment_week']"
+      v-for="(field,i) in ['ticket_id','ticket_name','ticket_description','ticket_deadline','ticket_deadline_yellow','ticket_deadline_red','ticket_planned_treatment_week', 'user_id']"
       :key="i" cols="12">
       <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField(field)"/>
-    </b-col>
-    <b-col cols="12">
-      <field ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="userField"/>
     </b-col>
   </b-row>
 </template>
@@ -41,14 +38,7 @@ export default {
         list: 'company',
         listLabel: 'company_name',
         required: false,
-      },
-      userField: {
-        key: 'user_id',
-        listLabel: 'user_email',
-        type: 'list',
-        list: 'user',
-        required: false,
-      },
+      }
     }
   },
   methods: {
