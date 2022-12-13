@@ -3194,9 +3194,12 @@ export default {
     delete: false,
   },
   document: {
+    entity: 'frontend_document_list',
     fields: [
       { key: 'document_id', hideOnForm: true },
       { key: 'document_name', hideOnForm: true },
+      { key: 'document_mime_type', hideOnForm: true },
+      { key: 'documenttype_name', hideOnForm: true },
       { key: 'files', hideOnIndex: true, type: 'file', rules: { size: 10000 } },
       // { key: 'document_content_type' },
     ],
