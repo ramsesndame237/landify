@@ -36,9 +36,9 @@
         "password" : "Geben Sie Ihr Passwort ein...",
         "password_confirm" : "Passwort bestätigen...",
         "automatic_based_on_id" : "(automatisch entsprechend der ausgewählten ID)",
-        "automatic" : "(automatisch)",
+        "automatic" : "(automatisch)"
       }
-    },
+    }
   },
   "general": {
     "error": "Ein Fehler ist aufgetreten"

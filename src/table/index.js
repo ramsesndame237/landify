@@ -3184,7 +3184,7 @@ export default {
         type: 'list',
         list: 'frontend_2_2_3_1',
         listLabel: 'company_name',
-        filter_key: 'customergroup_id'
+        filter_key: 'customergroup_id',
       },
       { key: 'pos_id', type: 'list', list: 'frontend_2_1_3_8', listLabel: 'pos_name', filter_key: 'company_id' },
       { key: 'date', type: 'date' },
@@ -3195,7 +3195,9 @@ export default {
   },
   document: {
     fields: [
-      { key: 'document_name' },
+      { key: 'document_id', hideOnForm: true },
+      { key: 'document_name', hideOnForm: true },
+      { key: 'files', hideOnIndex: true, type: 'file', rules: { size: 10000 } },
       // { key: 'document_content_type' },
     ],
   },

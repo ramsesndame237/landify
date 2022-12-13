@@ -5,7 +5,7 @@ import i18n from '@/libs/i18n'
 
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate'
 import {
-  required, email, max, regex, max_value, required_if,
+  required, email, max, regex, max_value, required_if, size
 } from 'vee-validate/dist/rules'
 import vueKanban from 'vue-kanban'
 import store from './store'
@@ -27,6 +27,13 @@ Vue.component('validation-observer', ValidationObserver)
 
 Vue.use(vueKanban)
 extend('email', email)
+extend('size', {
+  ...size,
+  message: (_, values) => i18n.t('validations.messages.size', {
+    ...values,
+    _field_: i18n.t(`attribute.${values._field_}`),
+  }),
+})
 extend('required', {
   ...required,
   message: (_, values) => i18n.t('validations.messages.required', { _field_: i18n.t(`attribute.${values._field_}`) }),
@@ -93,10 +100,12 @@ async function init() {
     if (data) {
       data = JSON.parse(data)
       i18n.mergeLocaleMessage(store.state.app.lang, { attribute: data.attribute, ...data.global })
+    } else {
+      // remove this else after and do this all the tiem
+      data = await store.dispatch('app/fetchAppData')
+      localStorage.setItem('app-data', JSON.stringify(data))
+      i18n.mergeLocaleMessage(store.state.app.lang, { attribute: data.attribute, ...data.global })
     }
-    data = await store.dispatch('app/fetchAppData')
-    localStorage.setItem('app-data', JSON.stringify(data))
-    i18n.mergeLocaleMessage(store.state.app.lang, { attribute: data.attribute, ...data.global })
   } catch (e) {
     console.error(e)
   }

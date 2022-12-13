@@ -42,9 +42,9 @@
         "password_confirm": "Confirm password...",
         "select": "Please select an option.",
         "automatic_based_on_id": "(automatically based on selected id)",
-        "automatic": "(automatically)",
-      },
-    },
+        "automatic": "(automatically)"
+      }
+    }
   },
   "general": {
     "error": "An error has occurred",
@@ -58,6 +58,7 @@
   "validations": {
     "messages": {
       "max": "{_field_} must contain maximum {length} characters",
+      "size": "{_field_} size must be less than {size}KB",
       "max_value": "{_field_} must be lower than {max}",
       "required": "{_field_} is required"
     }

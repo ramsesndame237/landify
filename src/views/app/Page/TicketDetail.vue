@@ -141,8 +141,17 @@ export default {
         action: 'create',
         data: [{ ticket_id: ticket.ticket_id, ticket_id_group: parseInt(this.entityId), ticket_type: 'test' }],
       })
-      this.subTickets.push(ticket)
+      this.fetchSubTickets()
     },
+    async fetchSubTickets() {
+      // load subtickets
+      this.subTickets = (await this.$api({
+        entity: 'frontend_6_1_6_listall',
+        action: 'read-rich',
+        per_page: 1000000,
+        data: [{ ticket_id_group: this.entity.ticket_id }],
+      })).data.data.data
+    }
   },
   async mounted() {
     if (!this.entity) {
@@ -152,13 +161,7 @@ export default {
         primaryKey: 'ticket_id',
       })
     }
-    // load subtickets
-    this.subTickets = (await this.$api({
-      entity: 'frontend_6_1_6_listall',
-      action: 'read-rich',
-      per_page: 1000000,
-      data: [{ ticket_id_group: this.entity.ticket_id }],
-    })).data.data.data
+    await this.fetchSubTickets()
   },
 }
 </script>

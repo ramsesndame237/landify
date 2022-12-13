@@ -229,6 +229,19 @@ export default {
               entity,
             }
           }
+          if (table === 'document') {
+            const formData = new FormData()
+            const files = fieldComponents.find(f => f.field.key === 'files').getFiles()
+            console.log('files', files)
+            for (let i = 0; i < files.length; i++) {
+              formData.append('files', files[i])
+            }
+            return this.$http.post('document/uploadfiles', formData, { headers: { 'content-type': 'form-data' } })
+              .then(({ data }) => {
+                console.log(data)
+                return data
+              })
+          }
           return this.$api({
             entity: table,
             action,
@@ -350,7 +363,7 @@ export default {
       return definition.fields.filter(f => !f.hideOnForm && (this.create || !f.hideOnUpdate) && (!this.create || !f.hideOnCreate))
     },
     getPrimaryKey(definition) {
-      return definition.primaryKey ?? definition.fields.find(f => f.auto).key
+      return definition.primaryKey ?? definition.fields.find(f => f.auto)?.key
     },
   },
   computed: {

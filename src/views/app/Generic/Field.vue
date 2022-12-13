@@ -3,7 +3,7 @@
     <b-form-group v-if="visible" :label="field.label||$t('attribute.'+field.key)" :label-for="'field-'+field.key"
                   :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null">
       <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled placeholder="Automaticaly generated ..."/>
-      <validation-provider v-else #default="{ errors }" :rules="rules" :name="field.key"
+      <validation-provider v-else #default="{ errors, validate }" :rules="rules" :name="field.key"
                            :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message&& tableDefinition.attribute_regexp_failure_message[field.key]}">
         <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
@@ -24,6 +24,9 @@
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
                     :placeholder="field.key" :options="yesNoOptions" transition="" label="label" class="w-100"
                     :reduce="i => i.value"/>
+        </div>
+        <div v-else-if="field.type==='file'">
+          <input ref="file" type="file" @change="validate" multiple required>
         </div>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
@@ -171,6 +174,9 @@ export default {
     })
   },
   methods: {
+    getFiles() {
+      return this.$refs.file.files
+    },
     reset() {
       if (this.field.type === 'boolean') {
         // set false as default value
