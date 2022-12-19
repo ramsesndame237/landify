@@ -1,20 +1,21 @@
 <template>
-  <div>
-    <b-row>
-      <b-col v-for="(field,index) in formFields.filter(f=> f.hide!==true)" :key="index" cols="12" :md="cols">
-        <field ref="fields" :disabled="disabled || field.disabled || (!create && field.disableOnUpdate)"
-               :inline="inline" :entity="entity" :table-definition="tableDefinition" :field="field"/>
-      </b-col>
-
-    </b-row>
-    <b-row>
-      <b-col
-        v-for="(key,i) in ['address_street', 'address_extra', 'address_house_number','city_name','city_zip','country_name']"
-        :key="i" md="6">
-        <field disabled :entity="address" :table-definition="{}" :field="{key, required: false}"/>
-      </b-col>
-    </b-row>
-  </div>
+  <validation-observer ref="form" v-slot="{ passes }">
+    <b-form @submit.prevent="passes(submit)">
+      <b-row>
+        <b-col v-for="(field,index) in formFields.filter(f=> f.hide!==true)" :key="index" cols="12" :md="cols">
+          <field ref="fields" :disabled="disabled || field.disabled || (!create && field.disableOnUpdate)"
+                 :inline="inline" :entity="entity" :table-definition="tableDefinition" :field="field"/>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col
+          v-for="(key,i) in ['address_street', 'address_extra', 'address_house_number','city_name','city_zip','country_name']"
+          :key="i" md="6">
+          <field disabled :entity="address" :table-definition="{}" :field="{key, required: false}"/>
+        </b-col>
+      </b-row>
+    </b-form>
+  </validation-observer>
 </template>
 
 <script>
