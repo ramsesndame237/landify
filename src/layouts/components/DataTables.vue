@@ -12,6 +12,9 @@
       <b-button v-else-if="data.field.type==='button'" size="xs" @click="$router.push(data.field.getRoute(data.item))">
         {{ data.field.btnLabel }}
       </b-button>
+      <a v-else-if="data.field.type==='download'" target="_blank" :href="$http.defaults.baseURL + data.field.getLink(data.item)">
+        {{ data.field.btnLabel }}
+      </a>
       <span v-else>{{ data.value }}</span>
     </template>
     <template #head(__selected)>
