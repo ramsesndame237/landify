@@ -1,3 +1,5 @@
+import { getDocumentLink } from "@/libs/utils";
+
 export default {
   // region Work Package 1
   user: {
@@ -1495,6 +1497,22 @@ export default {
           { key: 'invoice_payment_date', hideOnForm: true },
           { key: 'customergroup_name', hideOnForm: true },
           { key: 'partnercompany_name', hideOnForm: true },
+        ],
+      },
+      {
+        primaryKey: 'document_id',
+        entity: 'pos_document_rel',
+        update: false,
+        fields: [
+          {
+            key: 'document_id',
+            type: 'list',
+            list: 'frontend_document_list',
+            listLabel: 'document_name',
+            alwaysNew: true,
+            multiple: true,
+          },
+          { key: 'document_name', hideOnForm: true },
         ],
       },
     ],
@@ -3028,6 +3046,14 @@ export default {
         filter_key: 'company_id',
         relationEntity: 'ticket_pos_rel',
       },
+      {
+        key: 'contract_id',
+        listLabel: 'contract_name',
+        type: 'list',
+        list: 'frontend_4_2_1_contract_selector',
+        filter_key: 'pos_id',
+        relationEntity: 'ticket_contract_rel',
+      },
       // {
       //   key: 'user_id',
       //   listLabel: 'user_email',
@@ -3051,6 +3077,25 @@ export default {
       ticket_progress: 10,
       ticket_deadline: '2000-01-01 00:00:00',
     },
+    filters: [
+      { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
+      {
+        key: 'company_id',
+        type: 'list',
+        list: 'frontend_2_2_3_1',
+        listLabel: 'company_name',
+        filter_key: 'customergroup_id',
+      },
+      { key: 'pos_id', type: 'list', list: 'frontend_2_1_3_8', listLabel: 'pos_name', filter_key: 'company_id' },
+      {
+        key: 'contract_id',
+        listLabel: 'contract_name',
+        type: 'list',
+        list: 'frontend_4_2_1_contract_selector',
+        filter_key: 'pos_id',
+        required: false
+      },
+    ],
   },
   board: {
     entity: 'frontend_6_1_4',
@@ -3208,7 +3253,7 @@ export default {
         hideOnForm: true,
         label: 'Download',
         btnLabel: 'Download',
-        getLink: document => `/document/download/${document.document_id}`,
+        getLink: getDocumentLink,
       },
       // { key: 'document_content_type' },
     ],

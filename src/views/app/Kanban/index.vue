@@ -8,7 +8,11 @@
             Board: {{ board_name }} </h4>
         </div>
         <div class="d-flex align-items-center">
-          <b-form-checkbox v-model="advanced" switch title="Advanced Mode" />
+          <b-button @click="$refs.filter.openModal()" size="sm" variant="primary" class="mr-1 btn-icon">
+            <feather-icon icon="FilterIcon"/>
+          </b-button>
+          <generic-filter ref="filter" :table="table" :definition="definition" @filter="filter"/>
+          <b-form-checkbox v-model="advanced" switch title="Advanced Mode"/>
           <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
           <b-button variant="primary" class="mx-1" block @click="createTicket()">
             {{ $t('button~newticket') }}
@@ -43,10 +47,12 @@ import InvoiceTicketCard from '@/views/app/CustomComponents/WP6/InvoiceTicketCar
 import moment from 'moment-business-time'
 import { getUserData } from '@/auth/utils'
 import _ from 'lodash'
+import GenericFilter from "@/views/app/Generic/Filter";
 
 export default {
   name: 'Kanban',
   components: {
+    GenericFilter,
     InvoiceTicketCard,
     GenericModal,
     BAvatarGroup,
@@ -62,10 +68,9 @@ export default {
       table: 'ticket',
       advanced: true,
       search: '',
-      filterOptions: [{ text: 'All openned', value: 0 }, { text: 'My tickets', value: 1 }, {
-        text: 'All closed',
-        value: 2,
-      }],
+      filterOptions: [{ text: 'All openned', value: 0 }, { text: 'My tickets', value: 1 },
+        { text: 'All closed', value: 2 }, { text: 'Not assigned', value: 3 },
+      ],
       filterValue: 0,
       definition: Table.ticket,
       columns: [],
@@ -122,6 +127,10 @@ export default {
     this.loadTickets()
   },
   methods: {
+    filter(data) {
+      console.log('on filter', data)
+      this.loadTickets(data)
+    },
     isQualityGate(stage) {
       return this.columns.find(c => c.column_name === stage).column_is_qualitygate
     },
@@ -169,12 +178,12 @@ export default {
     createTicket() {
       this.$refs.modal.openModal(true, { column_id: this.columns[0].column_id })
     },
-    loadTickets() {
+    loadTickets(filterData) {
       this.$api({
         entity: 'frontend_6_1_6_listall',
         action: 'read-rich',
         per_page: 1000000,
-        data: [{ board_id: this.$route.params.id }],
+        data: [{ board_id: this.$route.params.id, ...filterData }],
       })
         .then(({ data }) => {
           const rawData = data.data.data

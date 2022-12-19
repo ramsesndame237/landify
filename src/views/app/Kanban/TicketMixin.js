@@ -1,5 +1,19 @@
 export default {
   methods: {
+    async moveToNextColumn() {
+      const result = await this.$swal({
+        title: 'Are you sure?',
+        text: 'This ticket will be moved to the next column',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-outline-danger ml-1',
+        },
+        buttonsStyling: false,
+      })
+    },
     async toggleTicket(ticket) {
       const result = await this.$swal({
         title: 'Are you sure?',

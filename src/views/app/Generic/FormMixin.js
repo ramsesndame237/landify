@@ -313,7 +313,16 @@ export default {
           this.loading = true
           return this.saveEntity(this.entity, this.originalEntity, this.formFields, this.$refs.fields, this.table, this.definition, this.primaryKey, this.create)
             .then(async data => {
-              const result = data.noupdate ? data.entity : data.data.data[0][0]
+              let result
+              // if no update on the model, just send initial entity
+              if (data.noupdate) result = data.entity
+              else if (data.data.data) {
+                // if the response is from alexander api
+                result = data.data.data[0][0]
+              } else {
+                // if it was documents from jordy
+                result = data.data
+              }
               await this.afterSaveHook(result)
               this.$successToast(data.noupdate ? 'OK' : data.data.message)
               // navigate to view page or reload table

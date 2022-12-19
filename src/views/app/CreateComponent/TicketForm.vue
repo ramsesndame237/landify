@@ -8,6 +8,10 @@
       <field ref="fields" :filter-value="entity.company_id" :disabled="disabled || entity.company_id==null"
              :entity="entity" :table-definition="tableDefinition" :field="getField('pos_id')"/>
     </b-col>
+    <b-col cols="12">
+      <field ref="fields" :filter-value="entity.pos_id" :disabled="disabled || entity.pos_id==null"
+             :entity="entity" :table-definition="tableDefinition" :field="getField('contract_id')"/>
+    </b-col>
     <b-col
       v-for="(field,i) in ['ticket_id','ticket_name','ticket_description','ticket_deadline','ticket_deadline_yellow','ticket_deadline_red','ticket_planned_treatment_week', 'user_id']"
       :key="i" cols="12">
