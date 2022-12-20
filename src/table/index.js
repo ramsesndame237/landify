@@ -1802,7 +1802,7 @@ export default {
     ],
     relations: [
       {
-        entity: 'frontend_3_4_8',
+        entity: 'frontend_3_4_3_8',
         entityView: 'company',
         fields: [
           { key: 'company_id' },
@@ -1816,7 +1816,7 @@ export default {
         delete: false,
       },
       {
-        entity: 'frontend_3_4_9',
+        entity: 'frontend_3_4_3_9',
         entityView: 'pos',
         fields: [
           { key: 'pos_id' },
@@ -1830,7 +1830,7 @@ export default {
         delete: false,
       },
       {
-        entity: 'frontend_3_4_10',
+        entity: 'frontend_3_4_3_10',
         entityView: 'area',
         entityForm: 'contract_area_unit_usagetype_rel',
         primaryKey: 'area_id',
@@ -1885,7 +1885,7 @@ export default {
         ],
       },
       {
-        entity: 'frontend_3_4_11',
+        entity: 'frontend_3_4_3_11',
         entityView: 'partnercompany',
         fields: [
           { key: 'area_id' },
@@ -3029,7 +3029,7 @@ export default {
     customPage: () => import('@/views/app/Page/TicketDetail.vue'),
     fieldComponent: () => import('@/views/app/CreateComponent/TicketForm.vue'),
     create: false,
-    entity: 'frontend_6_1_6_listall',
+    entity: 'frontend_6_1_6',
     fields: [
       { key: 'ticket_id', auto: true },
       { key: 'ticket_name' },
@@ -3053,6 +3053,7 @@ export default {
         list: 'frontend_4_2_1_contract_selector',
         filter_key: 'pos_id',
         relationEntity: 'ticket_contract_rel',
+        required: false,
       },
       // {
       //   key: 'user_id',
@@ -3078,22 +3079,32 @@ export default {
       ticket_deadline: '2000-01-01 00:00:00',
     },
     filters: [
-      { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
+      {
+        key: 'customergroup_id',
+        type: 'list',
+        list: 'customergroup',
+        listLabel: 'customergroup_name',
+        required: false,
+      },
       {
         key: 'company_id',
         type: 'list',
         list: 'frontend_2_2_3_1',
         listLabel: 'company_name',
         filter_key: 'customergroup_id',
+        required: false,
       },
-      { key: 'pos_id', type: 'list', list: 'frontend_2_1_3_8', listLabel: 'pos_name', filter_key: 'company_id' },
+      {
+        key: 'pos_id', type: 'list', list: 'frontend_2_1_3_8', listLabel: 'pos_name', filter_key: 'company_id',
+        required: false,
+      },
       {
         key: 'contract_id',
         listLabel: 'contract_name',
         type: 'list',
         list: 'frontend_4_2_1_contract_selector',
         filter_key: 'pos_id',
-        required: false
+        required: false,
       },
     ],
   },

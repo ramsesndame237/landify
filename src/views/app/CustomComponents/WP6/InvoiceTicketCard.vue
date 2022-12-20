@@ -18,6 +18,10 @@
     </div>
     <p>{{ ticket.ticket_description }}</p>
     <div class="d-flex">
+      <strong class="mr-1">Ticket ID:</strong>
+      <span>{{ ticket.ticket_id }}</span>
+    </div>
+    <div class="d-flex">
       <strong class="mr-1">Created At:</strong>
       <span>{{ ticket.ticket_creation_time | format }}</span>
       <b-icon-clock-fill class="ml-auto"/>

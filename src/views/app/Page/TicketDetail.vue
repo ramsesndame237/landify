@@ -2,8 +2,8 @@
   <div v-if="entity">
     <div class="d-flex justify-content-between align-items-center mb-1" >
       <div>
-        <h4 class="mb-0 font-weight-bolder">{{ entity.ticket_name }}</h4>
-        <p class="mb-0">{{ entity.ticket_description }}</p>
+        <h4 class="mb-0 font-weight-bolder">{{ entity.ticket_id }}</h4>
+        <p class="mb-0">{{ entity.ticket_name }}</p>
       </div>
       <div>
         <b-button v-if="!entity.ticket_closed" variant="primary" @click="moveToNextColumn">
@@ -19,7 +19,7 @@
     </div>
     <b-row>
       <b-col lg="8">
-        <b-card-actions title="Informations" action-collapse collapsed>
+        <b-card-actions title="Informations" action-collapse>
           <table class="mt-2 mt-xl-0 w-100">
             <tr v-for="(item,i) in items" :key="i">
               <th class="pb-50 font-weight-bold">
@@ -133,9 +133,10 @@ export default {
   computed: {
     items() {
       return [
+        ['Ticket ID', this.entity?.ticket_id],
         ['Customer Group', this.entity?.customergroup_name],
         ['Company', this.entity?.company_name],
-        ['Pos', this.entity?.pos_name],
+        ['Pos', this.entity?.pos_id],
         ['Contract', this.entity?.contract_name],
         ['Ticket Name', this.entity?.ticket_name],
         ['Ticket Description', this.entity?.ticket_description],
