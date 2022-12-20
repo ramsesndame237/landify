@@ -3174,10 +3174,10 @@ export default {
   //endregion
   conditionlist: {
     title: 'headline~contractlist~condition',
-    entity: 'contract',
+    entity: 'frontend_contractlist_criteria',
     fields: [
-      { key: 'contract_number' },
       { key: 'contract_name' },
+      { key: 'contract_number' },
       { key: 'contract_status' },
       { key: 'contracttype_name' },
       { key: 'company_name' },
@@ -3207,10 +3207,10 @@ export default {
   },
   deadlinelist: {
     title: 'headline~contractlist~deadline',
-    entity: 'contract',
+    entity: 'frontend_contractlist_recurringpayment',
     fields: [
-      { key: 'contract_number' },
       { key: 'contract_name' },
+      { key: 'contract_number' },
       { key: 'contract_status' },
       { key: 'contracttype_name' },
       { key: 'company_name' },
