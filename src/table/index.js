@@ -1888,8 +1888,8 @@ export default {
         entity: 'frontend_3_4_3_11',
         entityView: 'partnercompany',
         fields: [
-          { key: 'area_id' },
-          { key: 'location_id' },
+          // { key: 'area_id' },
+          // { key: 'location_id' },
           { key: 'partnercompany_id' },
           { key: 'partnercompany_name' },
           { key: 'partnercompany_shortname' },
