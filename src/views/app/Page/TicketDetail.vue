@@ -40,7 +40,7 @@
         <b-card-actions v-if="entity.columns" class="mt-3" title="Timeline" action-collapse collapsed>
           <app-timeline>
             <app-timeline-item v-for="(column,idx) in entity.columns" :key="idx" :title="column.column_name" subtitle=""
-                               :time="column.ticket_move_time_in" variant="success"/>
+                               :time="column.ticket_move_time_in" :variant="getColumnColor(column)"/>
           </app-timeline>
         </b-card-actions>
       </b-col>
@@ -88,6 +88,7 @@ import AppTimelineItem from "@core/components/app-timeline/AppTimelineItem";
 import BCardActions from "@core/components/b-card-actions/BCardActions";
 import TicketMixin from "@/views/app/Kanban/TicketMixin";
 import { getDocumentLink } from "@/libs/utils";
+import moment from 'moment'
 
 export default {
   name: 'TicketDetail',
@@ -146,6 +147,11 @@ export default {
     },
   },
   methods: {
+    getColumnColor(column){
+      if (moment(column.ticket_move_time_out).isAfter(column.ticket_deadline_offset_red)) return 'danger'
+      if (moment(column.ticket_move_time_out).isAfter(column.ticket_deadline_offset_yellow)) return 'warning'
+      return 'success'
+    },
     getDocumentLink,
     createSubTicket() {
       this.$refs.modal.openModal(true, { ticket_id_group: parseInt(this.entityId) })
