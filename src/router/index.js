@@ -135,6 +135,20 @@ const router = new VueRouter({
         ],
       },
     },
+    {
+      path: '/app/import-contract',
+      name: 'import-contract',
+      component: () => import('@/views/app/Page/ImportContract.vue'),
+      meta: {
+        pageTitle: 'Import Contract',
+        breadcrumb: [
+          {
+            text: 'Import contract',
+            active: true,
+          },
+        ],
+      },
+    },
 
     // authentication
     {

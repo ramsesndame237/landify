@@ -233,6 +233,11 @@ export default [
         route: 'import',
         icon: 'CheckSquareIcon',
       },
+      {
+        title: 'Import Contract',
+        route: 'import-contract',
+        icon: 'CheckSquareIcon',
+      },
     ],
   },
 ]

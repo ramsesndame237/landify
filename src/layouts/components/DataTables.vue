@@ -155,7 +155,7 @@ export default {
         entity: this.entityList || this.entity,
         order_by: sortBy,
         order_dir: sortDesc ? 'DESC' : 'ASC',
-        per_page: perPage,
+        per_page: perPage === 0 ? 1000000 : perPage,
         from: 0,
         current_page: currentPage,
         filter_all: filter ?? '',

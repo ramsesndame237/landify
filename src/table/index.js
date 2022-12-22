@@ -3029,7 +3029,7 @@ export default {
     customPage: () => import('@/views/app/Page/TicketDetail.vue'),
     fieldComponent: () => import('@/views/app/CreateComponent/TicketForm.vue'),
     create: false,
-    entity: 'frontend_6_1_6',
+    entity: 'frontend_6_1_6_overview',
     fields: [
       { key: 'ticket_id', auto: true },
       { key: 'ticket_name' },

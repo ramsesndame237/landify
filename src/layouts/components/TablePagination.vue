@@ -60,7 +60,7 @@ export default {
     pageOptions: {
       type: Array,
       default() {
-        return [2, 10, 20, 30]
+        return [10, 30, 100, { text: 'All', value: 100000 }]
       },
     },
     perPage: Number,
