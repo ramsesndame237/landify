@@ -21,7 +21,7 @@
           </div>
         </div>
         <div class="mt-2">
-          <b-button variant="danger" @click="upload(file)">Upload</b-button>
+          <b-button variant="danger" @click="upload(file)">Import</b-button>
         </div>
       </form>
       <div class="mt-5">
