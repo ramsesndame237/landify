@@ -72,7 +72,12 @@ export default {
             return Promise.reject(new Error('Invalid Form'))
           }
           this.$refs.modal.hide()
-          this.$emit('filter', this.data)
+          this.$emit('filter', Object.keys(this.data)
+            .filter(key => this.definition.filters.find(f => f.key === key && f.send !== false))
+            .reduce((obj, key) => {
+              obj[key] = this.data[key]
+              return obj
+            }, {}))
         })
     },
   },

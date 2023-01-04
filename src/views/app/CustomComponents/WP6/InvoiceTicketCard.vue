@@ -11,6 +11,9 @@
         <b-dropdown-item :to="{name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket}}">
           More details
         </b-dropdown-item>
+        <b-dropdown-item @click="$emit('assign')">
+          Assign To
+        </b-dropdown-item>
         <b-dropdown-item @click="toggleTicket(ticket)">
           {{ ticket.ticket_closed ? 'Re-open' : 'Close' }}
         </b-dropdown-item>

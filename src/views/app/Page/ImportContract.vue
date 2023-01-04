@@ -28,7 +28,7 @@
         <b-card v-if="success">
           <b-tabs ref="tabs" pills>
             <b-tab v-for="(entity, index) in entities" :key="index" :title="entity" lazy>
-              <data-tables :entity="entity" :with-actions="false" :fields="fields" :items="getResult(entity)"/>
+              <data-tables :entity="entity" :selectable="false" :with-actions="false" :fields="fields" :items="getResult(entity)"/>
             </b-tab>
           </b-tabs>
         </b-card>

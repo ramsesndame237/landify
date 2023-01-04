@@ -48,7 +48,7 @@ export default [
     children: [
       {
         title: key('contractcondition'),
-        route: table('conditionlist'),
+        route: { name: 'condition-list' },
       },
       {
         title: key('contractdeadline'),
@@ -56,7 +56,7 @@ export default [
       },
       {
         title: key('payment'),
-        route: "comming-soon",
+        route: 'comming-soon',
       },
     ],
   },

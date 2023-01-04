@@ -29,11 +29,13 @@
         <feather-icon v-if="isQualityGate(stage)" class="text-primary" icon="StarIcon"/>
       </div>
       <div v-for="ticket in visibleTickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
-        <invoice-ticket-card :advanced="advanced" :ticket="ticket"/>
+        <invoice-ticket-card :advanced="advanced" :ticket="ticket"
+                             @assign="$refs.assign.openModal(ticket, columns.find(c => c.column_id === ticket.columns[0].column_id).team_id)"/>
       </div>
     </kanban-board>
     <generic-modal ref="modal" :table="table" :definition="definition" :table-definition-key="table"
                    title="Create a new Ticket" @reload-table="onNewTicket"/>
+    <assign-user-modal ref="assign"/>
   </div>
 </template>
 <script>
@@ -48,10 +50,12 @@ import moment from 'moment-business-time'
 import { getUserData } from '@/auth/utils'
 import _ from 'lodash'
 import GenericFilter from "@/views/app/Generic/Filter";
+import AssignUserModal from "@/views/app/Kanban/AssignUserModal";
 
 export default {
   name: 'Kanban',
   components: {
+    AssignUserModal,
     GenericFilter,
     InvoiceTicketCard,
     GenericModal,
@@ -206,8 +210,12 @@ export default {
     },
     async onNewTicket(ticket) {
       await this.moveToColumn(ticket, this.columns[0])
+      const user = getUserData()
+      const user_id = user.user.user_id
+      await this.assignToUser(ticket, user_id)
       this.loadTickets()
     },
+
     async moveToColumn(ticket, column) {
       const now = moment()
       const deadline = now.clone().addWorkingTime(column.default_deadline_period, 'hours').format('YYYY-MM-DD HH:mm:ss')

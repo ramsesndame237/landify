@@ -106,6 +106,11 @@ const router = new VueRouter({
       path: '/app/table/:table/import/:invoice',
       component: () => import('@/views/app/InvoicePositionImport.vue'),
     },
+    {
+      name: 'condition-list',
+      path: '/app/condition-list',
+      component: () => import('@/views/app/Page/ConditionList.vue'),
+    },
     // Workpackage 7
     {
       path: '/app/backoffice',

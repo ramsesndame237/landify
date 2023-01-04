@@ -26,7 +26,7 @@
                     :reduce="i => i.value"/>
         </div>
         <div v-else-if="field.type==='file'">
-          <input ref="file" type="file" @change="validate" multiple required>
+          <input ref="file" type="file" @change="validate" :multiple="field.multiple" required>
         </div>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"

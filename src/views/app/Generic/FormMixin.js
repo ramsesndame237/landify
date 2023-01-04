@@ -206,7 +206,14 @@ export default {
             this.getFormFields(subDefinition), formField.getSubFields(), field.list, subDefinition, this.getPrimaryKey(subDefinition), create)
             .then(async data => {
               if (data.noupdate) return data.entity
-              const id = data.data.data[0][0][field.key]
+              let id
+              if (data.data.data) {
+                // if the response is from alexander api
+                id = data.data.data[0][0][field.key]
+              } else {
+                // if it was documents from jordy
+                id = data.data[0].document_id
+              }
               // if (field.key === 'address_id') {
               //   await this.saveAddressData(formField, create ? { address_id: id } : formField.list.find(e => e[field.key] === originalEntity[field.key]))
               // }
@@ -251,8 +258,8 @@ export default {
           })
             .then(async ({ data }) => {
               if (data.data.errors[0]) {
-                this.$errorToast(data.data.errors[0]['Failed executing sql'].err)
-                throw new Error(data.data.errors[0]['Failed executing sql'].err)
+                this.$errorToast(data.data.errors[0]['Failed executing sql']?.err)
+                throw new Error(data.data.errors[0]['Failed executing sql']?.err)
               } else {
                 try {
                   await this.saveRelations(table, definition, primaryKey, data.data.data[0][0][primaryKey], entity, originalEntity)

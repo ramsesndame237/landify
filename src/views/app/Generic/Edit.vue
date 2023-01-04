@@ -8,6 +8,7 @@
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
+            <notes class="mr-1" :primary-key="primaryKey" :id="entityId"/>
             <b-button v-if="view && $can('update', table)" size="sm" variant="info" class="mr-1" @click="edit">
               <feather-icon icon="EditIcon" class="mr-50"/>
               {{ $t('button~edit') }}
@@ -25,8 +26,6 @@
       </div>
     </b-card>
 
-    <p v-if="formReview" class="text-danger h4 mb-1 text-center" v-html="formReview"></p>
-
     <b-card class="">
       <component
         :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
@@ -34,7 +33,6 @@
         :is-relation="false" :disabled="view" :inline="false" :cols="6" :initial-data="entity" :entity-id="entityId"/>
     </b-card>
 
-    <p v-if="relationsReview" class="text-danger h4 mb-1 text-center" v-html="relationsReview"></p>
 
     <b-card v-if="definition.relations && visibleRelations.length>0 && !create">
       <b-tabs ref="tabs" pills>
@@ -92,14 +90,15 @@ import {
   BInputGroup,
   BInputGroupPrepend,
 } from 'bootstrap-vue'
-import Reviews from '@/table/review'
 import DataTables from '@/layouts/components/DataTables'
 import GenericModal from '@/views/app/Generic/modal'
 import EntityForm from "@/views/app/Generic/EntityForm";
 import EditPageMixin from "@/views/app/Generic/EditPageMixin";
+import Notes from "@/views/app/Generic/Notes";
 
 export default {
   components: {
+    Notes,
     EntityForm,
     GenericModal,
     DataTables,
@@ -127,13 +126,6 @@ export default {
     }
   },
   computed: {
-
-    formReview() {
-      return Reviews[this.table + '_form']
-    },
-    relationsReview() {
-      return Reviews[this.table + '_relations']
-    },
     currentHasFilter() {
       return this.visibleRelations[this.$refs.tabs?.currentTab]?.filters != null
     },
@@ -145,7 +137,7 @@ export default {
     },
     visibleRelations() {
       return this.definition.relations.filter(r => this.$can('read', r.entityForm))
-    }
+    },
   },
   mounted() {
     this.$watch('$refs.tabs.currentTab', (val) => {

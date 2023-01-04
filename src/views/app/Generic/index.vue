@@ -10,8 +10,6 @@
                       @filter="filter"/>
     </b-card>
 
-    <p v-if="currentReview" class="text-danger h4 mb-1 text-center" v-html="currentReview"></p>
-
     <b-card>
       <Datatable :key="table" ref="table" :search="search" :entity="table" :entity-list="definition.entity"
                  :with-delete="definition.delete !== false" :with-edit="definition.update !== false"
@@ -32,7 +30,6 @@ import {
 import TablePagination from '@/layouts/components/TablePagination.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
 import Tables from '../../../table'
-import Reviews from '../../../table/review'
 import GenericFilter from './Filter.vue'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
@@ -62,9 +59,6 @@ export default {
   computed: {
     definition() {
       return Tables[this.table]
-    },
-    currentReview() {
-      return Reviews[this.table]
     },
     useModalToCreate() {
       return this.definition.createModal !== false

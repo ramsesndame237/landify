@@ -1,3 +1,5 @@
+import moment from "moment-business-time";
+
 export default {
   methods: {
     async moveToNextColumn() {
@@ -37,4 +39,5 @@ export default {
       this.$successToast(ticket.ticket_closed ? 'The ticket is closed' : 'The ticket is open')
     },
   },
+
 }

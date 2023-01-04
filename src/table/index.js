@@ -319,12 +319,12 @@ export default {
   usertype: {
     fields: [
       { key: 'usertype_id', label: 'Id', auto: true },
-      { key: 'usertype_name', sortable: true },
+      { key: 'usertype_name' },
       {
         key: 'usertype_description',
-        sortable: true,
         type: 'textarea',
       },
+      { key: 'usertype_external', type: 'boolean' },
     ],
   },
   tablename: {
@@ -1500,16 +1500,18 @@ export default {
         ],
       },
       {
+        title: 'document',
         primaryKey: 'document_id',
-        entity: 'pos_document_rel',
+        entity: 'document_pos_rel',
         update: false,
         fields: [
           {
             key: 'document_id',
             type: 'list',
-            list: 'frontend_document_list',
+            list: 'document',
             listLabel: 'document_name',
             alwaysNew: true,
+            onlyForm: true,
             multiple: true,
           },
           { key: 'document_name', hideOnForm: true },
@@ -1907,21 +1909,21 @@ export default {
         title: 'Documents',
         primaryKey: 'document_id',
         entity: 'frontend_3_4_3_1_bottom',
-        entityForm: 'document',
+        entityForm: 'document_contract_documentcontracttype_rel',
         view: false,
-        create: false,
         fields: [
-          { key: 'document_id', disableOnUpdate: true },
-          { key: 'document_name' },
-          { key: 'documenttype_name', hideOnForm: true },
           {
-            key: 'documenttype_id',
+            key: 'document_id',
+            composite: true,
+            disableOnUpdate: true,
             type: 'list',
-            list: 'documenttype',
-            listLabel: 'documenttype_name',
-            hideOnIndex: true,
+            list: 'document',
+            onlyForm: true,
+            alwaysNew: true,
           },
-          { key: 'document_mime_type' },
+          { key: 'document_name', hideOnForm: true },
+          { key: 'documenttype_name', hideOnForm: true },
+          { key: 'document_mime_type', hideOnForm: true },
           { key: 'documentcontracttype_name', hideOnForm: true },
           {
             key: 'documentcontracttype_id',
@@ -1929,7 +1931,7 @@ export default {
             list: 'documentcontracttype',
             listLabel: 'documentcontracttype_name',
             hideOnIndex: true,
-            relationEntity: 'document_contract_documentcontracttype_rel',
+            composite: true,
           },
         ],
       },
@@ -3201,13 +3203,13 @@ export default {
     ],
     filter_vertical: true,
     filters: [
-      { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
+      { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name', send: false },
       {
         key: 'company_id',
         type: 'list',
         list: 'frontend_2_2_3_1',
         listLabel: 'company_name',
-        filter_key: 'customergroup_id'
+        filter_key: 'customergroup_id',
       },
       { key: 'pos_id', type: 'list', list: 'frontend_2_1_3_8', listLabel: 'pos_name', filter_key: 'company_id' },
       { key: 'date', type: 'date' },
@@ -3256,6 +3258,7 @@ export default {
       { key: 'document_name', hideOnForm: true },
       { key: 'document_mime_type', hideOnForm: true },
       { key: 'documenttype_name', hideOnForm: true },
+      { key: 'documenttype_id', type: 'list', list: 'documenttype', listLabel: 'documenttype_name', hideOnIndex: true },
       { key: 'files', hideOnIndex: true, type: 'file', rules: { size: 10000 } },
       {
         key: 'download',
