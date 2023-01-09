@@ -306,6 +306,9 @@ export default {
       console.log('row clicked', record)
       this.$set(record, '__selected', !record.__selected)
     },
+    downloadCsv(){
+
+    }
   },
 }
 </script>

@@ -161,6 +161,8 @@ export default {
     } else if (this.field.type === 'boolean') {
       // set false as default value
       if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, 0)
+    } else if (this.field.default) {
+      if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, this.field.default)
     }
   },
   beforeDestroy() {
@@ -181,6 +183,8 @@ export default {
       if (this.field.type === 'boolean') {
         // set false as default value
         this.$set(this.entity, this.field.key, 0)
+      } else if (this.field.default) {
+        this.$set(this.entity, this.field.key, this.field.default)
       } else {
         this.$set(this.entity, this.field.key, null)
       }

@@ -1,4 +1,5 @@
 import { getDocumentLink } from "@/libs/utils";
+import moment from 'moment'
 
 export default {
   // region Work Package 1
@@ -3189,30 +3190,62 @@ export default {
     title: 'headline~contractlist~condition',
     entity: 'frontend_contractlist_criteria',
     fields: [
+      { key: 'contract_id' },
       { key: 'contract_name' },
-      { key: 'contract_number' },
       { key: 'contract_status' },
       { key: 'contracttype_name' },
+      { key: 'contract_begin_date' },
+      { key: 'contract_end_date' },
+      { key: 'currency_name' },
+      { key: 'total_allocation_space' },
+      { key: 'total_rental_space' },
       { key: 'company_name' },
       { key: 'location_name' },
-      { key: 'pos_branchname' },
+      { key: 'pos_name' },
       { key: 'country_name' },
-      'owner',
-      'manager',
-      { key: 'criteria_name' },
+      'owner_name',
+      'manager_name',
+      { key: 'rent_per_month' },
+      { key: 'base_rent_per_area_mount' },
+      { key: 'advertising_per_month' },
+      { key: 'ancillary_cost_per_month' },
+      { key: 'heating_ancillary_cost_per_month' },
+
+      { key: 'local_rent_per_month' },
+      { key: 'local_base_rent_per_area_mount' },
+      { key: 'local_advertising_per_month' },
+      { key: 'local_ancillary_cost_per_month' },
+      { key: 'local_heating_ancillary_cost_per_month' },
+
     ],
     filter_vertical: true,
     filters: [
-      { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name', send: false },
+      {
+        key: 'customergroup_id',
+        required: false,
+        type: 'list',
+        list: 'customergroup',
+        listLabel: 'customergroup_name',
+        send: false
+      },
       {
         key: 'company_id',
+        required: false,
         type: 'list',
         list: 'frontend_2_2_3_1',
         listLabel: 'company_name',
         filter_key: 'customergroup_id',
       },
-      { key: 'pos_id', type: 'list', list: 'frontend_2_1_3_8', listLabel: 'pos_name', filter_key: 'company_id' },
-      { key: 'date', type: 'date' },
+      {
+        key: 'pos_id',
+        required: false,
+        type: 'list',
+        list: 'frontend_2_1_3_8',
+        listLabel: 'pos_name',
+        filter_key: 'company_id',
+      },
+      { key: 'date', type: 'date', default: moment().format('YYYY-MM-DD'), },
+      { key: 'currency_id', type: 'list', list: 'currency', listLabel: 'currency_name' },
     ],
     create: false,
     update: false,
@@ -3232,7 +3265,6 @@ export default {
       { key: 'country_name' },
       'owner',
       'manager',
-      { key: 'criteria_name' },
     ],
     filter_vertical: true,
     filters: [
@@ -3246,6 +3278,7 @@ export default {
       },
       { key: 'pos_id', type: 'list', list: 'frontend_2_1_3_8', listLabel: 'pos_name', filter_key: 'company_id' },
       { key: 'date', type: 'date' },
+      { key: 'currency_id', type: 'list', list: 'currency', listLabel: 'currency_name' },
     ],
     create: false,
     update: false,
