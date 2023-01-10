@@ -41,8 +41,10 @@ import {
 import BCardActions from '@core/components/b-card-actions/BCardActions'
 import Field from '@/views/app/Generic/Field'
 import _ from 'lodash'
+import moment from 'moment'
 import GenericFilter from '../Generic/Filter.vue'
 import Tables from '../../../table'
+import rates from './rates.json'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
 
@@ -92,8 +94,6 @@ export default {
         const currency = this.$refs.fields.find(f => f.field.key === 'currency_id').selectedValue
         const currencies = this.$refs.fields.find(f => f.field.key === 'currency_id').list
         const code = currency.currency_iso4217.toLowerCase()
-        // const currencyRates = (await this.$http.get(`https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/${code}.json`))
-        //   .data[code]
 
         const filteredData = (await this.$api({
           action: 'read-rich',
@@ -103,6 +103,7 @@ export default {
         })).data.data.data
 
         const ids = filteredData.map(c => c.contract_id)
+        const date = moment(this.data.date)
 
         const masterData = (await this.$api({
           action: 'read-rich',
@@ -116,19 +117,21 @@ export default {
             'contract_end_date', 'contract_first_possible_end_date', 'contract_creation_time',
             'contract_last_change_time', 'contract_migration_checked', 'contracttype_name', 'currency_name', 'currency_id',
             'contracttype_description', 'company_name', 'location_name', 'pos_name', 'country_name', 'owner_name', 'manager_name'])
-          obj.areas = r.map(i => _.pick(i, ['area_id',
-            'area_name',
-            'areatype_id',
-            'areatype_name',
-            'contract_area_unit_usagetype_detail_description',
-            'contract_area_unit_usagetype_valid_from_date',
-            'contract_area_unit_usagetype_valid_to_date',
-            'contract_area_unit_usagetype_rentalspace_value',
-            'contract_area_unit_usagetype_allocationspace_value',
-            'unit_id',
-            'unit_name']))
+          obj.areas = r
+            .filter(ar => date.isBetween(ar.contract_area_unit_usagetype_valid_from_date, ar.contract_area_unit_usagetype_valid_to_date))
+            .map(i => _.pick(i, ['area_id',
+              'area_name',
+              'areatype_id',
+              'areatype_name',
+              'contract_area_unit_usagetype_detail_description',
+              'contract_area_unit_usagetype_valid_from_date',
+              'contract_area_unit_usagetype_valid_to_date',
+              'contract_area_unit_usagetype_rentalspace_value',
+              'contract_area_unit_usagetype_allocationspace_value',
+              'unit_id',
+              'unit_name']))
 
-          obj.total_allocation_space = _.sumBy(obj.areas.filter(ar => (['Parkfläche', 'Werbefläche'].indexOf(ar.areatype_name) >= 0)), 'contract_area_unit_usagetype_allocationspace_value')
+          obj.total_allocation_space = _.sumBy(obj.areas.filter(ar => (['Parkfläche', 'Werbefläche'].indexOf(ar.areatype_name) === -1)), 'contract_area_unit_usagetype_allocationspace_value')
           obj.total_rental_space = _.sumBy(obj.areas.filter(ar => (['Hauptfläche'].indexOf(ar.areatype_name) >= 0)), 'contract_area_unit_usagetype_rentalspace_value')
           return obj
         })
@@ -162,9 +165,11 @@ export default {
               'choice_name']))
           }
 
-          if (contract.choices.find(c => c.criteria_name === 'aktueller Vertragstyp' && c.choice_name === 'gekündigt')) {
-            contract.contract_status = 'Terminated'
+          const cc = contract.choices.find(c => c.criteria_name === 'aktueller Vertragstyp')
+          if (cc) {
+            contract.contract_status = cc.choice_name
           } else {
+            // check the
             contract.contract_status = 'Unknown'
           }
         })
@@ -205,56 +210,68 @@ export default {
         contracts.forEach(contract => {
           if (!groups[contract.contract_id]) contract.reccuringPayments = []
           else {
-            contract.reccuringPayments = groups[contract.contract_id].map(i => _.pick(i, [
-              'recurringpayment_id',
-              'recurringpayment_sum_per_month',
-              'recurringpayment_condition_percentage',
-              'recurringpayment_percentage',
-              'recurringpayment_begin_date',
-              'recurringpayment_end_date',
-              'recurringpayment_condition_comment',
-              'recurringpayment_maturity_date',
-              'recurringpayment_maturity_daily_range',
-              'recurringpayment_maturity_monthly_range',
-              'recurringpayment_value_deposit',
-              'recurringpayment_name',
-              'recurringpayment_description',
-              'recurringpaymenttype_name',
-              'recurringpaymenttype_description',
-              'indexclause_id',
-              'indexclause_baseyear',
-              'indexclause_begin_date',
-              'indexclause_name',
-              'indexclause_adjustment_description',
-              'indexclause_adjustment_rule',
-              'indexclause_indextransmission_percent',
-              'indexclause_minimal_percent_change_agreed',
-              'indexclause_minimal_point_change_agreed',
-              'maturitytype_name',
-              'maturitytype_description']))
+            contract.reccuringPayments = groups[contract.contract_id]
+              .filter(i => date.isBetween(i.recurringpayment_begin_date, i.recurringpayment_end_date))
+              .map(i => _.pick(i, [
+                'recurringpayment_id',
+                'recurringpayment_sum_per_month',
+                'recurringpayment_condition_percentage',
+                'recurringpayment_percentage',
+                'recurringpayment_begin_date',
+                'recurringpayment_end_date',
+                'recurringpayment_condition_comment',
+                'recurringpayment_maturity_date',
+                'recurringpayment_maturity_daily_range',
+                'recurringpayment_maturity_monthly_range',
+                'recurringpayment_value_deposit',
+                'recurringpayment_name',
+                'recurringpayment_description',
+                'recurringpaymenttype_name',
+                'recurringpaymenttype_description',
+                'indexclause_id',
+                'indexclause_baseyear',
+                'indexclause_begin_date',
+                'indexclause_name',
+                'indexclause_adjustment_description',
+                'indexclause_adjustment_rule',
+                'indexclause_indextransmission_percent',
+                'indexclause_minimal_percent_change_agreed',
+                'indexclause_minimal_point_change_agreed',
+                'maturitytype_name',
+                'maturitytype_description']))
           }
 
-          contract.rent_per_month = contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '1-Basismiete')?.recurringpayment_sum_per_month || 0
-          contract.base_rent_per_area_mount = (contract.rent_per_month / contract.total_allocation_space).toFixed(2)
-          contract.advertising_per_month = contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '6-Werbekosten')?.recurringpayment_sum_per_month || 0
-          contract.ancillary_cost_per_month = contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '5-Nebenkostenpauschale')?.recurringpayment_sum_per_month || 0
-          contract.heating_ancillary_cost_per_month = _.sumBy(contract.reccuringPayments.find(r => (['4-Nebenkostenvorauszahlung', '7-Heizkostenvorauszahlung'].indexOf(r.recurringpaymenttype_name) >= 0)), 'recurringpayment_sum_per_month') || 0
+          contract.rent_per_month = this.getRecurringPaymentMonthValue(contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '1-Basismiete')).toFixed(2)
+          contract.base_rent_per_area_mount = contract.total_allocation_space > 0 ? (contract.rent_per_month / contract.total_allocation_space).toFixed(2) : 0
+          contract.advertising_per_month = this.getRecurringPaymentMonthValue(contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '6-Werbekosten')).toFixed(2)
+          contract.ancillary_cost_per_month = this.getRecurringPaymentMonthValue(contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '5-Nebenkostenpauschale')).toFixed(2)
+          contract.heating_ancillary_cost_per_month = _.sum(contract.reccuringPayments.filter(r => (['4-Nebenkostenvorauszahlung', '7-Heizkostenvorauszahlung'].indexOf(r.recurringpaymenttype_name) >= 0)).map(rc => this.getRecurringPaymentMonthValue(rc))).toFixed(2)
 
           const contractCurrency = currencies.find(c => c.currency_id === contract.currency_id)
-          // if (contractCurrency) {
-          //   const rate = currencyRates[contractCurrency.currency_iso4217]
-          //   contract.local_rent_per_month = (contract.rent_per_month / rate).toFixed(2)
-          //   contract.local_base_rent_per_area_mount = (contract.base_rent_per_area_mount / rate).toFixed(2)
-          //   contract.local_advertising_per_month = (contract.advertising_per_month / rate).toFixed(2)
-          //   contract.local_ancillary_cost_per_month = (contract.ancillary_cost_per_month / rate).toFixed(2)
-          //   contract.local_heating_ancillary_cost_per_month = (contract.rancillary_cost_per_month / rate).toFixed(2)
-          // }
+          if (contractCurrency) {
+            const rate = rates[code][contractCurrency.currency_iso4217]
+            contract.local_rent_per_month = (contract.rent_per_month / rate).toFixed(2)
+            contract.local_base_rent_per_area_mount = (contract.base_rent_per_area_mount / rate).toFixed(2)
+            contract.local_advertising_per_month = (contract.advertising_per_month / rate).toFixed(2)
+            contract.local_ancillary_cost_per_month = (contract.ancillary_cost_per_month / rate).toFixed(2)
+            contract.local_heating_ancillary_cost_per_month = (contract.rancillary_cost_per_month / rate).toFixed(2)
+          }
         })
 
         this.items = contracts
       } finally {
         this.loading = false
       }
+    },
+    getRecurringPaymentMonthValue(rc) {
+      if (!rc) return 0
+      let val = rc.recurringpayment_sum_per_month
+      if (rc.maturitytype_name === 'Intervall') {
+        val /= rc.recurringpayment_maturity_monthly_range
+      } else {
+        val /= 12
+      }
+      return val
     },
     reset() {
       this.data = {}

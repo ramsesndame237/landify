@@ -1844,9 +1844,10 @@ export default {
           { key: 'area_name', hideOnForm: true },
           { key: 'city_name', hideOnForm: true },
           { key: 'country_name', hideOnForm: true },
-          { key: 'area_space_value', hideOnForm: true },
-          { key: 'contract_begin_date', hideOnForm: true },
-          { key: 'contract_end_date', hideOnForm: true },
+          { key: 'contract_area_unit_usagetype_allocationspace_value', hideOnForm: true },
+          { key: 'contract_area_unit_usagetype_rentalspace_value', hideOnForm: true },
+          { key: 'contract_area_unit_usagetype_valid_from_date', hideOnForm: true },
+          { key: 'contract_area_unit_usagetype_valid_to_date', hideOnForm: true },
           { key: 'usagetype_name', hideOnForm: true },
           {
             key: 'contract_area_unit_usagetype_detail_description', hideOnIndex: true,
@@ -2314,7 +2315,7 @@ export default {
       {
         key: 'recurringpayment_sum_per_month',
         hideOnIndex: true,
-        visible: visibleByRecurringPaymentType([1, 3, 4, 5, 6]),
+        visible: visibleByRecurringPaymentType([1, 3, 4, 5, 6,7]),
       },
       {
         key: 'recurringpayment_condition_percentage',
