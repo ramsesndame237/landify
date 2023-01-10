@@ -7,7 +7,7 @@ import moment from 'moment'
 const axiosIns = axios.create({
   // You can add your headers here
   // ================================
-  baseURL: process.env.VUE_APP_BASE_URL || 'https://contabo.lx42.de/8001',
+  baseURL: process.env.VUE_APP_BASE_URL || 'https://vmd86703.contaboserver.net/8001',
   timeout: 120000,
   // headers: {'X-Custom-Header': 'foobar'}
 })

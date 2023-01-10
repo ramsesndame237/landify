@@ -10,8 +10,8 @@ module.exports = {
   lintOnSave: false,
   devServer: {
     // proxy: 'http://127.0.0.1:8001/',
-    // proxy: 'https://vmd86703.contaboserver.net/',
-    proxy: 'https://contabo.lx42.de/',
+    proxy: 'https://vmd86703.contaboserver.net/',
+    // proxy: 'https://contabo.lx42.de/',
   },
   css: {
     loaderOptions: {
