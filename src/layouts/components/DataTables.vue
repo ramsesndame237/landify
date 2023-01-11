@@ -309,7 +309,7 @@ export default {
     downloadCsv() {
       const fields = this.allFields.filter(f => (['Actions', '__selected'].indexOf(f.key) === -1))
       let csvContent = "data:text/csv;charset=utf-8,"
-        + fields.map(f => f.key).join(',') + '\n'
+        + fields.map(f => f.key).join(',').replaceAll('\r', '').replaceAll('\n', '') + '\n'
         + this.items.map(item => fields.map(f => item[f.key]).join(',')).join('\n')
 
       const encodedUri = encodeURI(csvContent)
