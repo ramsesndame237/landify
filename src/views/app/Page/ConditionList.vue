@@ -16,7 +16,10 @@
         </b-form>
       </validation-observer>
       <div class="text-right">
-        <b-button variant="info" :disabled="loading" @click="reset">
+        <b-button variant="success" :disabled="loading || items.length === 0" @click="download">
+          Download
+        </b-button>
+        <b-button variant="info" class="ml-1" :disabled="loading" @click="reset">
           Reset
         </b-button>
         <b-button variant="primary" :disabled="loading" class="ml-1" @click="filter">
@@ -30,6 +33,24 @@
       <Datatable :key="table" ref="table" :selectable="false" :search="search" :entity="table" :with-delete="false"
                  :with-edit="false" :fields="definition.fields" :items="items"/>
     </b-card>
+
+    <b-row>
+      <b-col lg="4" md="6">
+        <b-card title="Totals" v-if="items.length>0">
+          <table class="mt-2 mt-xl-0 w-100">
+            <tr>
+              <th class="pb-50 font-weight-bold">Total Rental Space</th>
+              <td class="pb-50">{{ total_rental_space }}</td>
+            </tr>
+            <tr>
+              <th class="pb-50 font-weight-bold">Total rent per month</th>
+              <td class="pb-50">{{ total_rent_per_month }}</td>
+            </tr>
+          </table>
+        </b-card>
+      </b-col>
+    </b-row>
+
   </div>
 </template>
 
@@ -82,6 +103,17 @@ export default {
     definition() {
       return Tables[this.table]
     },
+    total_rental_space() {
+      return _.sumBy(this.items, 'total_rental_space')
+    },
+    total_rent_per_month() {
+      return _.sumBy(this.items, item => (parseFloat(item.local_rent_per_month) || 0)).toFixed(2)
+    },
+  },
+  watch: {
+    'data.currency_id': function () {
+      this.updateCurrencyValues()
+    },
   },
   methods: {
     async filter() {
@@ -90,11 +122,6 @@ export default {
       this.loading = true
       const filter = _.pick(this.data, ['customergroup_id', 'company_id', 'pos_id'])
       try {
-        // get currency data
-        const currency = this.$refs.fields.find(f => f.field.key === 'currency_id').selectedValue
-        const currencies = this.$refs.fields.find(f => f.field.key === 'currency_id').list
-        const code = currency.currency_iso4217.toLowerCase()
-
         const filteredData = (await this.$api({
           action: 'read-rich',
           entity: 'frontend_contractlist_master',
@@ -246,22 +273,32 @@ export default {
           contract.advertising_per_month = this.getRecurringPaymentMonthValue(contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '6-Werbekosten')).toFixed(2)
           contract.ancillary_cost_per_month = this.getRecurringPaymentMonthValue(contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '5-Nebenkostenpauschale')).toFixed(2)
           contract.heating_ancillary_cost_per_month = _.sum(contract.reccuringPayments.filter(r => (['4-Nebenkostenvorauszahlung', '7-Heizkostenvorauszahlung'].indexOf(r.recurringpaymenttype_name) >= 0)).map(rc => this.getRecurringPaymentMonthValue(rc))).toFixed(2)
-
-          const contractCurrency = currencies.find(c => c.currency_id === contract.currency_id)
-          if (contractCurrency) {
-            const rate = rates[code][contractCurrency.currency_iso4217]
-            contract.local_rent_per_month = (contract.rent_per_month / rate).toFixed(2)
-            contract.local_base_rent_per_area_mount = (contract.base_rent_per_area_mount / rate).toFixed(2)
-            contract.local_advertising_per_month = (contract.advertising_per_month / rate).toFixed(2)
-            contract.local_ancillary_cost_per_month = (contract.ancillary_cost_per_month / rate).toFixed(2)
-            contract.local_heating_ancillary_cost_per_month = (contract.rancillary_cost_per_month / rate).toFixed(2)
-          }
         })
 
         this.items = contracts
+        this.updateCurrencyValues()
       } finally {
         this.loading = false
       }
+    },
+    updateCurrencyValues() {
+      console.log('update_currency')
+      // get currency data
+      const currency = this.$refs.fields.find(f => f.field.key === 'currency_id').selectedValue
+      if (!currency) return
+      const currencies = this.$refs.fields.find(f => f.field.key === 'currency_id').list
+      const code = currency.currency_iso4217.toLowerCase()
+      this.items.forEach(contract => {
+        const contractCurrency = currencies.find(c => c.currency_id === contract.currency_id)
+        if (contractCurrency) {
+          const rate = rates[code][contractCurrency.currency_iso4217.toLowerCase()]
+          contract.local_rent_per_month = (contract.rent_per_month / rate).toFixed(2)
+          contract.local_base_rent_per_area_mount = (contract.base_rent_per_area_mount / rate).toFixed(2)
+          contract.local_advertising_per_month = (contract.advertising_per_month / rate).toFixed(2)
+          contract.local_ancillary_cost_per_month = (contract.ancillary_cost_per_month / rate).toFixed(2)
+          this.$set(contract, 'local_heating_ancillary_cost_per_month', (contract.heating_ancillary_cost_per_month / rate).toFixed(2))
+        }
+      })
     },
     getRecurringPaymentMonthValue(rc) {
       if (!rc) return 0
@@ -277,6 +314,9 @@ export default {
       this.data = {}
       this.$refs.form.reset()
       this.items = []
+    },
+    download() {
+      this.$refs.table.downloadCsv()
     },
   },
 }

@@ -307,8 +307,18 @@ export default {
       this.$set(record, '__selected', !record.__selected)
     },
     downloadCsv() {
+      const fields = this.allFields.filter(f => (['Actions', '__selected'].indexOf(f.key) === -1))
+      let csvContent = "data:text/csv;charset=utf-8,"
+        + fields.map(f => f.key).join(',') + '\n'
+        + this.items.map(item => fields.map(f => item[f.key]).join(',')).join('\n')
 
-    }
+      const encodedUri = encodeURI(csvContent)
+      const link = document.createElement("a")
+      link.setAttribute("href", encodedUri)
+      link.setAttribute("download", "export.csv")
+      document.body.appendChild(link)
+      link.click()
+    },
   },
 }
 </script>
