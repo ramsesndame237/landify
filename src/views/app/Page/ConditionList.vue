@@ -130,6 +130,10 @@ export default {
         })).data.data.data
 
         const ids = filteredData.map(c => c.contract_id)
+        if (!ids.length) {
+          this.items = []
+          throw new Error('no data')
+        }
         const date = moment(this.data.date)
 
         const masterData = (await this.$api({
