@@ -30,11 +30,21 @@
     </b-card-actions>
 
     <b-card>
-      <Datatable :key="table" ref="table" :selectable="false" :search="search" :entity="table" :with-delete="false"
-                 :with-edit="false" :fields="definition.fields" :items="items"/>
+      <div class="mb-1" v-if="table==='conditions'">
+        <!--        <b-form-input debounce="500" id="filterInput" v-model="search" type="search" class="w-auto"-->
+        <!--                      placeholder="Search.."/>-->
+        <b-form-group label="Currency" label-cols="auto">
+          <b-form-checkbox v-model="eurCurrency" name="check-button" switch inline>
+            {{ eurCurrency ? 'EUR' : 'Local' }}
+          </b-form-checkbox>
+        </b-form-group>
+      </div>
+      <Datatable :key="table" ref="table" blank-link :selectable="false" :search="search"
+                 primary-key-column="contract_id" entity="contract" :with-delete="false" :with-edit="false"
+                 :fields="definition.fields" :items="items"/>
     </b-card>
 
-    <b-row>
+    <b-row v-if="table==='conditions'">
       <b-col lg="4" md="6">
         <b-card title="Totals" v-if="items.length>0">
           <table class="mt-2 mt-xl-0 w-100">
@@ -94,25 +104,111 @@ export default {
       initialSortBy: payload?.sortBy,
       initialSortDesc: payload?.sortDesc ?? true,
       items: [],
-      table: 'conditionlist',
       data: {},
       loading: false,
+      eurCurrency: false,
     }
   },
   computed: {
     definition() {
-      return Tables[this.table]
+      return {
+        title: 'headline~contractlist~condition',
+        entity: 'frontend_contractlist_criteria',
+        fields: [
+          ...(this.table === 'deadlines' ? ['notice_of_termination', 'action_date'] : []),
+          { key: 'contract_id' },
+          { key: 'contract_name' },
+          { key: 'contract_status' },
+          { key: 'contracttype_name' },
+          { key: 'contract_begin_date' },
+          { key: 'contract_end_date' },
+          { key: 'max_contract_end_date' },
+          { key: 'company_name' },
+          { key: 'location_name' },
+          { key: 'pos_name' },
+          { key: 'country_name' },
+          { key: 'total_allocation_space' },
+          { key: 'total_rental_space' },
+          'owner_name',
+          'manager_name',
+          ...(this.table === 'conditions' ? [{ key: 'currency_name' },
+            { key: 'rent_per_month' },
+            { key: 'base_rent_per_area_amount' },
+            { key: 'advertising_per_month' },
+            { key: 'ancillary_cost_per_month' },
+            { key: 'heating_ancillary_cost_per_month' },
+            'index_adjustment_lease',
+            'index_adjustment_rate_in_percent',
+            'staggered_minimum_rent',
+            'turnover_rent',
+            'securities_related_to_contract'] : []),
+          ...(this.table === 'deadlines' ? ['contract_ends_automatically',
+            'next_termination_date_tenant',
+            'next_termination_date_landlord',
+            'next_option_renewal',
+            'next_special_termination_date_tenant',
+            'automatic_renewal_by_month',
+            'available_options',
+            'special_termination_tenant',
+            'special_termination_landlord',
+            'status_negociations',
+            'date_of_status_determination',
+            'comment_negociation',
+          ] : []),
+          'comment',
+          { key: 'missing_documents', type: 'html' },
+          'state',
+          'negociator',
+        ],
+        filter_vertical: true,
+        filters: [
+          {
+            key: 'customergroup_id',
+            required: false,
+            type: 'list',
+            list: 'customergroup',
+            listLabel: 'customergroup_name',
+            send: false,
+          },
+          {
+            key: 'company_id',
+            required: false,
+            type: 'list',
+            list: 'frontend_2_2_3_1',
+            listLabel: 'company_name',
+            filter_key: 'customergroup_id',
+          },
+          {
+            key: 'pos_id',
+            required: false,
+            type: 'list',
+            list: 'frontend_2_1_3_8',
+            listLabel: 'pos_name',
+            filter_key: 'company_id',
+          },
+          { key: 'date', type: 'date', default: moment().format('YYYY-MM-DD') },
+        ],
+        create: false,
+        update: false,
+        delete: false,
+      }
+    },
+    table() {
+      return this.$route.name === 'condition-list' ? 'conditions' : 'deadlines'
     },
     total_rental_space() {
       return _.sumBy(this.items, 'total_rental_space')
     },
     total_rent_per_month() {
-      return _.sumBy(this.items, item => (parseFloat(item.local_rent_per_month) || 0)).toFixed(2)
+      return _.sumBy(this.items, item => (parseFloat(item.rent_per_month) || 0)).toFixed(2)
     },
   },
   watch: {
-    'data.currency_id': function () {
-      this.updateCurrencyValues()
+    eurCurrency() {
+      if (this.table === 'conditions') this.updateCurrencyValues()
+    },
+    table() {
+      this.reset()
     },
   },
   methods: {
@@ -120,7 +216,7 @@ export default {
       const valid = await this.$refs.form.validate()
       if (!valid) return
       this.loading = true
-      const filter = _.pick(this.data, ['customergroup_id', 'company_id', 'pos_id'])
+      const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id']).omitBy(_.isNil).value()
       try {
         const filteredData = (await this.$api({
           action: 'read-rich',
@@ -146,7 +242,7 @@ export default {
         const contracts = Object.values(_.groupBy(masterData, 'contract_id')).map(r => {
           const obj = _.pick(r[0], ['contract_id', 'contract_name', 'contract_begin_date',
             'contract_end_date', 'contract_first_possible_end_date', 'contract_creation_time',
-            'contract_last_change_time', 'contract_migration_checked', 'contracttype_name', 'currency_name', 'currency_id',
+            'contract_last_change_time', 'contract_migration_checked', 'contracttype_name', 'currency_name', 'currency_id', 'currency_short', 'currency_iso', 'currency_iso4217',
             'contracttype_description', 'company_name', 'location_name', 'pos_name', 'country_name', 'owner_name', 'manager_name'])
           obj.areas = r
             .filter(ar => date.isBetween(ar.contract_area_unit_usagetype_valid_from_date, ar.contract_area_unit_usagetype_valid_to_date))
@@ -200,8 +296,8 @@ export default {
           if (cc) {
             contract.contract_status = cc.choice_name
           } else {
-            // check the
-            contract.contract_status = 'Unknown'
+            // check the date
+            contract.contract_status = date.isAfter(contract.contract_end_date) ? 'Terminated' : 'Running'
           }
         })
 
@@ -227,6 +323,17 @@ export default {
               'contract_specialright_automatic_renewal_in_months',
               'specialright_name',
               'specialright_description']))
+
+            if (this.table !== 'deadlines') return
+            let sr = contract.specialRights.find(csr => csr.specialright_name === 'Kündigungstermin Mieter')
+            contract.notice_of_termination = sr ? 'Yes' : 'No'
+            contract.action = sr?.contract_specialright_termination_date
+
+            sr = contract.specialRights.find(csr => csr.specialright_name === 'Sonderkündigung Mieter')
+            contract.special_termination_tenant = sr?.contract_specialright_description
+
+            sr = contract.specialRights.find(csr => csr.specialright_name === 'Sonderkündigung Vermieter')
+            contract.special_termination_landlord = sr?.contract_specialright_description
           }
         })
 
@@ -242,7 +349,7 @@ export default {
           if (!groups[contract.contract_id]) contract.reccuringPayments = []
           else {
             contract.reccuringPayments = groups[contract.contract_id]
-              .filter(i => date.isBetween(i.recurringpayment_begin_date, i.recurringpayment_end_date))
+              // .filter(i => date.isBetween(i.recurringpayment_begin_date, i.recurringpayment_end_date))
               .map(i => _.pick(i, [
                 'recurringpayment_id',
                 'recurringpayment_sum_per_month',
@@ -272,15 +379,57 @@ export default {
                 'maturitytype_description']))
           }
 
-          contract.rent_per_month = this.getRecurringPaymentMonthValue(contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '1-Basismiete')).toFixed(2)
-          contract.base_rent_per_area_mount = contract.total_allocation_space > 0 ? (contract.rent_per_month / contract.total_allocation_space).toFixed(2) : 0
+          if (this.table !== 'conditions') return
+
+          const rcBasismiete = contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '1-Basismiete')
+
+          contract.rent_per_month = this.getRecurringPaymentMonthValue(rcBasismiete).toFixed(2)
+          contract.base_rent_per_area_amount = contract.total_allocation_space > 0 ? (contract.rent_per_month / contract.total_allocation_space).toFixed(2) : 0
           contract.advertising_per_month = this.getRecurringPaymentMonthValue(contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '6-Werbekosten')).toFixed(2)
           contract.ancillary_cost_per_month = this.getRecurringPaymentMonthValue(contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '5-Nebenkostenpauschale')).toFixed(2)
           contract.heating_ancillary_cost_per_month = _.sum(contract.reccuringPayments.filter(r => (['4-Nebenkostenvorauszahlung', '7-Heizkostenvorauszahlung'].indexOf(r.recurringpaymenttype_name) >= 0)).map(rc => this.getRecurringPaymentMonthValue(rc))).toFixed(2)
+
+          contract.local_rent_per_month = contract.rent_per_month
+          contract.local_base_rent_per_area_amount = contract.base_rent_per_area_amount
+          contract.local_advertising_per_month = contract.advertising_per_month
+          contract.local_ancillary_cost_per_month = contract.ancillary_cost_per_month
+          contract.local_heating_ancillary_cost_per_month = contract.heating_ancillary_cost_per_month
+
+          contract.index_adjustment_lease = rcBasismiete ? `${rcBasismiete.indexclause_adjustment_description} - ${rcBasismiete.indexclause_minimal_percent_change_aggreed || rcBasismiete.indexclause_minimal_point_change_agreed}` : ''
+          contract.index_adjustment_rate_in_percent = rcBasismiete?.indexclause_indextransmission_percent
+
+          const rcStaffe = _(contract.reccuringPayments).filter(r => r.recurringpaymenttype_name === '3-Staffelmiete' && date.isBefore(r.recurringpayment_begin_date)).orderBy('recurringpayment_begin_date').values()[0]
+          if (rcStaffe) {
+            contract.staggered_minimum_rent = 'Yes, ' + rcStaffe.recurringpayment_begin_date
+          }
+
+          const rcUmsat = contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '2-Umsatzmiete')
+          contract.turnover_rent = rcUmsat?.recurringpayment_condition_percentage
+          const val = rcUmsat?.recurringpayment_value_deposit
+          contract.securities_related_to_contract = val != null ? (val ? 'yes' : 'no') : ''
+          contract.type_of_rental_security = ''
+
+        })
+
+        let tickets = (await this.$api({
+          action: 'read-rich',
+          entity: 'frontend_6_1_6_listall',
+          per_page: 10000000,
+          data: ids.map(id => ({ contract_id: id, ticket_closed: 0 })),
+        })).data.data.data
+        tickets = _.groupBy(tickets, 'contract_id')
+
+        contracts.forEach(contract => {
+          contract.missing_documents = _(tickets[contract.contract_id]).uniqBy('ticket_id').map('ticket_id')
+            .map(id => {
+              const route = this.$router.resolve({ name: 'table-view', params: { table: 'ticket', id } })
+              return `<a target="_blank" href="${route.href}">${id}</a>`
+            })
+            .join('<br>')
         })
 
         this.items = contracts
-        this.updateCurrencyValues()
+        if (this.table === 'conditions') this.updateCurrencyValues()
       } finally {
         this.loading = false
       }
@@ -288,19 +437,24 @@ export default {
     updateCurrencyValues() {
       console.log('update_currency')
       // get currency data
-      const currency = this.$refs.fields.find(f => f.field.key === 'currency_id').selectedValue
-      if (!currency) return
-      const currencies = this.$refs.fields.find(f => f.field.key === 'currency_id').list
-      const code = currency.currency_iso4217.toLowerCase()
+      const code = 'eur'
       this.items.forEach(contract => {
-        const contractCurrency = currencies.find(c => c.currency_id === contract.currency_id)
-        if (contractCurrency) {
-          const rate = rates[code][contractCurrency.currency_iso4217.toLowerCase()]
-          contract.local_rent_per_month = (contract.rent_per_month / rate).toFixed(2)
-          contract.local_base_rent_per_area_mount = (contract.base_rent_per_area_mount / rate).toFixed(2)
-          contract.local_advertising_per_month = (contract.advertising_per_month / rate).toFixed(2)
-          contract.local_ancillary_cost_per_month = (contract.ancillary_cost_per_month / rate).toFixed(2)
-          this.$set(contract, 'local_heating_ancillary_cost_per_month', (contract.heating_ancillary_cost_per_month / rate).toFixed(2))
+        if (!this.eurCurrency) {
+          this.$set(contract, 'rent_per_month', contract.local_rent_per_month)
+          this.$set(contract, 'base_rent_per_area_amount', contract.local_base_rent_per_area_amount)
+          this.$set(contract, 'advertising_per_month', contract.local_advertising_per_month)
+          this.$set(contract, 'ancillary_cost_per_month', contract.local_ancillary_cost_per_month)
+          this.$set(contract, 'heating_ancillary_cost_per_mont', contract.local_heating_ancillary_cost_per_month)
+          return
+        }
+        if (contract.currency_short) {
+          const rate = rates[code][contract.currency_short.toLowerCase()]
+          if (!rate) return
+          this.$set(contract, 'rent_per_month', (contract.local_rent_per_month / rate).toFixed(2))
+          this.$set(contract, 'base_rent_per_area_amount', (contract.local_base_rent_per_area_amount / rate).toFixed(2))
+          this.$set(contract, 'advertising_per_month', (contract.local_advertising_per_month / rate).toFixed(2))
+          this.$set(contract, 'ancillary_cost_per_month', (contract.local_ancillary_cost_per_month / rate).toFixed(2))
+          this.$set(contract, 'heating_ancillary_cost_per_month', (contract.local_heating_ancillary_cost_per_month / rate).toFixed(2))
         }
       })
     },
@@ -315,7 +469,7 @@ export default {
       return val
     },
     reset() {
-      this.data = {}
+      this.data = { date: this.definition.filters.find(f => f.key === 'date').default }
       this.$refs.form.reset()
       this.items = []
     },

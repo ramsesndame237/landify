@@ -97,11 +97,15 @@ async function init() {
 
   try {
     let data = localStorage.getItem('app-data')
-    if (data) {
-      data = JSON.parse(data)
+    try {
+      if (data) data = JSON.parse(data)
+    } catch (e) {
+      data = null
+    }
+    if (data && data.lang === store.state.app.lang) {
       i18n.mergeLocaleMessage(store.state.app.lang, { attribute: data.attribute, ...data.global })
     } else {
-      // remove this else after and do this all the tiem
+      // remove this else after and do this all the item
       data = await store.dispatch('app/fetchAppData')
       localStorage.setItem('app-data', JSON.stringify(data))
       i18n.mergeLocaleMessage(store.state.app.lang, { attribute: data.attribute, ...data.global })

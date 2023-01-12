@@ -28,10 +28,10 @@
 
       <b-row class="align-items-center">
         <b-col sm="9" class="center-col">
-          <b-card-text>
-            Value:
-            <span style="font-size: 18px; font-weight: 600" :style="{ color: color }" class="value"> {{ value }}</span>
-          </b-card-text>
+<!--          <b-card-text>-->
+<!--            Value:-->
+<!--            <span style="font-size: 18px; font-weight: 600" :style="{ color: color }" class="value"> {{ value }}</span>-->
+<!--          </b-card-text>-->
           <b-progress :value="percent" max="100" height="6px" :variant="variant"></b-progress>
           <div style="display: flex; justify-content: space-between; margin-top: 8px">
             <h6>% from overall</h6>

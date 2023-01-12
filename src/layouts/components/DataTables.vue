@@ -15,6 +15,7 @@
       <a v-else-if="data.field.type==='download'" target="_blank" :href="data.field.getLink(data.item)">
         {{ data.field.btnLabel }}
       </a>
+      <div v-else-if="data.field.type==='html'" v-html="data.value"></div>
       <span v-else>{{ data.value }}</span>
     </template>
     <template #head(__selected)>
@@ -25,7 +26,7 @@
     <template v-if="withActions" #cell(Actions)="data">
       <div class="text-nowrap">
         <b-button v-if="withView" class=" btn-icon" style="margin-bottom: 3px" variant="flat-success" pill
-                  @click="onViewElement ? onViewElement(currentItems[data.index]) :$router.push({name: 'table-view', params: {table: entityView || entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index], ids: currentItems.map(i => i[primaryKey])}})">
+                  @click="onViewClick(data)">
           <feather-icon icon="EyeIcon"/>
           <!--        <span>{{ $t('button~view') }}</span>-->
         </b-button>
@@ -62,6 +63,7 @@ export default {
     entityView: { type: String, required: false },
     fields: { type: Array, required: true },
     primaryKeyColumn: { type: String },
+    blankLink: { type: Boolean, default: false },
     withView: { type: Boolean, default: true },
     withEdit: { type: Boolean, default: true },
     withDelete: { type: Boolean, default: true },
@@ -145,6 +147,25 @@ export default {
     },
   },
   methods: {
+    onViewClick(data) {
+      if (this.onViewElement) {
+        this.onViewElement(this.currentItems[data.index])
+        return
+      }
+      const routeData = {
+        name: 'table-view',
+        params: {
+          table: this.entityView || this.entity,
+          id: this.currentItems[data.index][this.primaryKey],
+          entity: this.currentItems[data.index],
+          ids: this.currentItems.map(i => i[this.primaryKey]),
+        },
+      }
+      if (this.blankLink) {
+        const route = this.$router.resolve(routeData)
+        window.open(route.href, '_blank')
+      } else this.$router.push(routeData)
+    },
     provider(ctx) {
       console.log('ctx', ctx)
       const {

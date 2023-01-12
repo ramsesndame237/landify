@@ -111,6 +111,11 @@ const router = new VueRouter({
       path: '/app/condition-list',
       component: () => import('@/views/app/Page/ConditionList.vue'),
     },
+    {
+      name: 'deadline-list',
+      path: '/app/deadline-list',
+      component: () => import('@/views/app/Page/ConditionList.vue'),
+    },
     // Workpackage 7
     {
       path: '/app/backoffice',

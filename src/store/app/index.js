@@ -61,6 +61,7 @@ export default {
       })).data.data.data
 
       return {
+        lang: state.lang,
         global: globalTranslations.filter(t => t.translation_lang === state.lang.toUpperCase())
           .reduce((prev, current) => {
             prev[current.translation_id] = current.translation_text

@@ -52,7 +52,7 @@ export default [
       },
       {
         title: key('contractdeadline'),
-        route: table('deadlinelist'),
+        route: { name: 'deadline-list' },
       },
       {
         title: key('payment'),
