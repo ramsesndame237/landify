@@ -39,7 +39,7 @@
           </b-form-checkbox>
         </b-form-group>
       </div>
-      <Datatable :key="table" ref="table" blank-link :selectable="false" :search="search"
+      <Datatable :key="table" ref="table" :selectable="false" :search="search"
                  primary-key-column="contract_id" entity="contract" :with-delete="false" :with-edit="false"
                  :fields="definition.fields" :items="items"/>
     </b-card>
@@ -126,6 +126,7 @@ export default {
           { key: 'company_name' },
           { key: 'location_name' },
           { key: 'pos_name' },
+          { key: 'pos_branchnumber' },
           { key: 'country_name' },
           { key: 'total_allocation_space' },
           { key: 'total_rental_space' },
@@ -413,7 +414,7 @@ export default {
 
         let tickets = (await this.$api({
           action: 'read-rich',
-          entity: 'frontend_6_1_6_listall',
+          entity: 'frontend_6_1_6_overview',
           per_page: 10000000,
           data: ids.map(id => ({ contract_id: id, ticket_closed: 0 })),
         })).data.data.data

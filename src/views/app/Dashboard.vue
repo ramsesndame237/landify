@@ -2,15 +2,12 @@
   <div>
     <h3>OPEN TICKETS</h3>
     <b-row>
-      <summary-card title="CRITICAL" value="24.055.432 €" color="#FF7A00"
-                    :percent="(criticalIds.length/total).toFixed(0)" :number="criticalIds.length" variant="warning"
-                    cols="4"/>
-      <summary-card title="NEAR DEADLINE" value="56.916.314 €" color="#343a40"
-                    :percent="(nearDeadlineIds.length/total).toFixed(0)" :number="nearDeadlineIds.length" variant="dark"
-                    cols="4"/>
-      <summary-card title="OVER DUE" value="19.215.612 €" color="#D51130"
-                    :percent="(overdueIds.length/total).toFixed(0)" :number="overdueIds.length" variant="danger"
-                    cols="4"/>
+      <summary-card title="BEFORE DEADLINE" color="#343a40" :percent="(nearDeadlineIds.length/total).toFixed(0)"
+                    :number="nearDeadlineIds.length" variant="dark" cols="4"/>
+      <summary-card title="AFTER YELLOW" color="#FF7A00" :percent="(criticalIds.length/total).toFixed(0)"
+                    :number="criticalIds.length" variant="warning" cols="4"/>
+      <summary-card title="AFTER RED" color="#D51130" :percent="(overdueIds.length/total).toFixed(0)"
+                    :number="overdueIds.length" variant="danger" cols="4"/>
     </b-row>
     <!--    <b-row>-->
     <!--      <b-col lg="12">-->
