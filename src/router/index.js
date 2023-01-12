@@ -29,10 +29,10 @@ const router = new VueRouter({
       name: 'home',
       component: () => import('@/views/app/Dashboard.vue'),
       meta: {
-        pageTitle: 'app.page_title.dashboard',
+        pageTitle: 'headline~dashboard',
         breadcrumb: [
           {
-            text: 'app.page_title.dashboard',
+            text: 'headline~dashboard',
             active: true,
           },
         ],
@@ -196,7 +196,7 @@ const router = new VueRouter({
       name: 'misc-not-authorized',
       component: () => import('@/views/error/NotAuthorized.vue'),
       meta: {
-        layout: 'full',
+        // layout: 'full',
         resource: 'Auth',
       },
     },
@@ -230,7 +230,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, _, next) => {
   const isLoggedIn = isUserLoggedIn()
-  console.log(to)
+  console.log(to, canNavigate(to), 'navigation')
   if (!canNavigate(to)) {
     // Redirect to login if not logged in
     if (!isLoggedIn) return next({ name: 'login' })

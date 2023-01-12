@@ -1,6 +1,6 @@
 <template>
   <b-col :lg="cols">
-    <b-card>
+    <b-card class="cursor-pointer">
       <div class="d-flex align-items-center">
         <div class="bigdot d-flex justify-content-center align-content-center"
              :style="{'background-color': color+'80'}">
@@ -13,17 +13,6 @@
           </svg>
         </div>
         <b-card-title class="card-title mr-auto mb-0">{{ title }}</b-card-title>
-        <div>
-          <div class="dropdown-btn" @click="showDropdown">
-            <feather-icon icon="MoreHorizontalIcon" width="30" ></feather-icon>
-          </div>
-          <b-dropdown no-caret right text="" variant="transparent" class="chart-dropdown" toggle-class="p-50" size="sm"
-                      ref="dropdown">
-            <b-dropdown-item v-for="option in options" :key="option">
-              {{ option }}
-            </b-dropdown-item>
-          </b-dropdown>
-        </div>
       </div>
 
       <b-row class="align-items-center">
@@ -34,7 +23,7 @@
 <!--          </b-card-text>-->
           <b-progress :value="percent" max="100" height="6px" :variant="variant"></b-progress>
           <div style="display: flex; justify-content: space-between; margin-top: 8px">
-            <h6>% from overall</h6>
+            <h6>{{$t('headline~dashboard~subframe~open_tickets_statusbar')}}</h6>
             <h6>{{ percent }}%</h6>
           </div>
         </b-col>
@@ -61,6 +50,7 @@ import {
   BIconFlag,
   BIconStopwatch,
   BIconThreeDots,
+  BIconCaretRight,
 } from 'bootstrap-vue'
 
 export default {
@@ -79,6 +69,7 @@ export default {
     BIconFlag,
     BIconStopwatch,
     BIconThreeDots,
+    BIconCaretRight,
   },
   data() {
     return {

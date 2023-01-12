@@ -15,7 +15,7 @@
                  :with-delete="definition.delete !== false" :with-edit="definition.update !== false"
                  :default-sort-column="initialSortBy||definition.defaultSortField" :default-sort-desc="initialSortDesc"
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
-                 :fields="definition.fields" :primary-key-column="definition.primaryKey"/>
+                 :fields="definition.fields" :primary-key-column="definition.primaryKey" :ids="ids"/>
     </b-card>
     <generic-modal :cache-key="table+'-'" @reload-table="$refs.table.reload()" :table="table" :definition="definition"
                    with-continue :table-definition-key="table" :title="`headline~${table}~new`" ref="modal"/>
@@ -54,6 +54,7 @@ export default {
       initialSortBy: payload?.sortBy,
       initialSortDesc: payload?.sortDesc ?? true,
       table: this.$route.params.table,
+      ids: this.$route.params.ids,
     }
   },
   computed: {

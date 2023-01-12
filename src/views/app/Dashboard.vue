@@ -2,12 +2,15 @@
   <div>
     <h3>OPEN TICKETS</h3>
     <b-row>
-      <summary-card title="BEFORE DEADLINE" color="#343a40" :percent="(nearDeadlineIds.length/total).toFixed(0)"
-                    :number="nearDeadlineIds.length" variant="dark" cols="4"/>
-      <summary-card title="AFTER YELLOW" color="#FF7A00" :percent="(criticalIds.length/total).toFixed(0)"
-                    :number="criticalIds.length" variant="warning" cols="4"/>
-      <summary-card title="AFTER RED" color="#D51130" :percent="(overdueIds.length/total).toFixed(0)"
-                    :number="overdueIds.length" variant="danger" cols="4"/>
+      <summary-card :title="$t('headline~dashboard~subframe~open_tickets_intime')" color="#343a40"
+                    :percent="(nearDeadlineIds.length/total).toFixed(0)" :number="nearDeadlineIds.length" variant="dark"
+                    cols="4" @click.native="show(nearDeadlineIds)"/>
+      <summary-card :title="$t('headline~dashboard~subframe~open_tickets_afteryellow')" color="#FF7A00"
+                    :percent="(criticalIds.length/total).toFixed(0)" :number="criticalIds.length" variant="warning"
+                    cols="4" @click.native="show(criticalIds)"/>
+      <summary-card :title="$t('headline~dashboard~subframe~open_tickets_afterred')" color="#D51130"
+                    :percent="(overdueIds.length/total).toFixed(0)" :number="overdueIds.length" variant="danger"
+                    cols="4" @click.native="show(overdueIds)"/>
     </b-row>
     <!--    <b-row>-->
     <!--      <b-col lg="12">-->
@@ -59,6 +62,11 @@ export default {
       criticalIds: [],
     }
   },
+  methods: {
+    show(ids) {
+      this.$router.push({ name: 'table', params: { table: 'ticket', ids } })
+    },
+  },
   async mounted() {
     const { data } = (await this.$api({
       action: 'read-rich',
@@ -71,11 +79,6 @@ export default {
     this.overdueIds = data.filter(t => today.isAfter(t.ticket_deadline_red)).map(t => t.ticket_id)
     this.nearDeadlineIds = data.filter(t => today.isBefore(t.ticket_deadline_yellow)).map(t => t.ticket_id)
     this.criticalIds = data.filter(t => today.isBetween(t.ticket_deadline_yellow, t.ticket_deadline_red)).map(t => t.ticket_id)
-  },
-  methods: {
-    showDropdown() {
-      this.$refs.dropdown.show()
-    },
   },
 }
 </script>
