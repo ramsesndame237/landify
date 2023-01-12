@@ -26,7 +26,7 @@ export default {
   methods: {
     openModal(ticket, team_id) {
       this.ticket = ticket
-      this.team_id = team_id
+      this.entity.team_id = team_id
       this.$refs.modal.show()
     },
     async assignUserTicket() {
@@ -39,11 +39,12 @@ export default {
           ticket_id: this.ticket.ticket_id,
           column_id: this.ticket.columns[0].column_id,
           user_id: this.entity.user_id,
-          // ticket_columnx_user_creationtime: moment().format('YYYY-MM-DD HH:mm:ss'),
+          ticket_columnx_user_creationtime: moment().format('YYYY-MM-DD HH:mm:ss'),
         }],
       }))
       this.$refs.modal.hide()
-      this.$successToast("User is assigned to the ticket")
+      this.$successToast('User is assigned to the ticket')
+      this.$emit('reload')
     },
   },
 }

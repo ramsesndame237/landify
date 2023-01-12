@@ -52,7 +52,7 @@
       <b-progress max="100" :value="ticket.ticket_progress" style="margin-bottom: 2px;"></b-progress>
     </div>
     <div class="values d-flex justify-content-between align-items-center font-weight-light">
-      <div class="hours">Team A</div>
+      <div class="hours">{{ ticket.columns[0].user_email_assigned }}</div>
       <div class="percents">{{ ticket.ticket_progress + '%' }}</div>
     </div>
   </div>

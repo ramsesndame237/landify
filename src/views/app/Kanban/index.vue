@@ -30,12 +30,12 @@
       </div>
       <div v-for="ticket in visibleTickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
         <invoice-ticket-card :advanced="advanced" :ticket="ticket"
-                             @assign="$refs.assign.openModal(ticket, columns.find(c => c.column_id === ticket.columns[0].column_id).team_id)"/>
+                             @assign="$refs.assign.openModal(ticket, ticket.columns[0].team_id)"/>
       </div>
     </kanban-board>
     <generic-modal ref="modal" :table="table" :definition="definition" :table-definition-key="table"
                    title="Create a new Ticket" @reload-table="onNewTicket"/>
-    <assign-user-modal ref="assign"/>
+    <assign-user-modal ref="assign" @reload="loadTickets"/>
   </div>
 </template>
 <script>
@@ -202,7 +202,7 @@ export default {
               'ticket_planned_treatment_week',
               'ticket_closed',
               'ticket_progress'])
-            obj.columns = _.orderBy(r, 'ticket_move_time_in', 'desc').map(i => _.pick(i, ['ticket_id', 'column_id', 'column_name', 'ticket_move_time_in', 'ticket_move_time_out', 'ticket_deadline_offset', 'ticket_deadline_offset_yellow', 'ticket_deadline_offset_red']))
+            obj.columns = _.orderBy(r, 'ticket_move_time_in', 'desc').map(i => _.pick(i, ['ticket_id', 'column_id', 'column_name', 'user_email_assigned', 'user_id_assigned', 'team_name', 'team_id', 'ticket_move_time_in', 'ticket_move_time_out', 'ticket_deadline_offset', 'ticket_deadline_offset_yellow', 'ticket_deadline_offset_red']))
             obj.column_name = obj.columns[0].column_name
             return obj
           })
