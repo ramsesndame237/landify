@@ -3,13 +3,13 @@
     <h3>OPEN TICKETS</h3>
     <b-row>
       <summary-card :title="$t('headline~dashboard~subframe~open_tickets_intime')" color="#343a40"
-                    :percent="(nearDeadlineIds.length/total).toFixed(0)" :number="nearDeadlineIds.length" variant="dark"
+                    :percent="(nearDeadlineIds.length*100/total).toFixed(0)" :number="nearDeadlineIds.length" variant="dark"
                     cols="4" @click.native="show(nearDeadlineIds)"/>
       <summary-card :title="$t('headline~dashboard~subframe~open_tickets_afteryellow')" color="#FF7A00"
-                    :percent="(criticalIds.length/total).toFixed(0)" :number="criticalIds.length" variant="warning"
+                    :percent="(criticalIds.length*100/total).toFixed(0)" :number="criticalIds.length" variant="warning"
                     cols="4" @click.native="show(criticalIds)"/>
       <summary-card :title="$t('headline~dashboard~subframe~open_tickets_afterred')" color="#D51130"
-                    :percent="(overdueIds.length/total).toFixed(0)" :number="overdueIds.length" variant="danger"
+                    :percent="(overdueIds.length*100/total).toFixed(0)" :number="overdueIds.length" variant="danger"
                     cols="4" @click.native="show(overdueIds)"/>
     </b-row>
     <!--    <b-row>-->

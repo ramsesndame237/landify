@@ -153,7 +153,7 @@ export default {
         // laoding form
         // this.fetchContracts()
         this.contracts = (await this.$api({
-          entity: 'contract',
+          entity: 'frontend_3_4_1_1',
           action: 'read-rich',
           data: [{ contract_id: val }],
         })).data.data.data

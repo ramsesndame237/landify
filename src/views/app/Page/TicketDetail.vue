@@ -1,6 +1,6 @@
 <template>
   <div v-if="entity">
-    <div class="d-flex justify-content-between align-items-center mb-1" >
+    <div class="d-flex justify-content-between align-items-center mb-1">
       <div>
         <h4 class="mb-0 font-weight-bolder">{{ entity.ticket_id }}</h4>
         <p class="mb-0">{{ entity.ticket_name }}</p>
@@ -21,11 +21,44 @@
       <b-col lg="8">
         <b-card-actions title="Informations" action-collapse>
           <table class="mt-2 mt-xl-0 w-100">
-            <tr v-for="(item,i) in items" :key="i">
-              <th class="pb-50 font-weight-bold">
-                {{ item[0] }}
-              </th>
-              <td class="pb-50">{{ item[1] }}</td>
+            <tr>
+              <th class="pb-50 font-weight-bold">Ticket ID</th>
+              <td class="pb-50">{{ entity.ticket_id }}</td>
+            </tr>
+            <tr>
+              <th class="pb-50 font-weight-bold">Customer Group</th>
+              <td class="pb-50">
+                <router-link v-if="entity.customergroup_id"
+                             :to="{name:'table-view',params: {table: 'customergroup', id: entity.customergroup_id}}">
+                  {{ entity.customergroup_name }}
+                </router-link>
+              </td>
+            <tr>
+              <th class="pb-50 font-weight-bold">Company</th>
+              <td class="pb-50">
+                <router-link v-if="entity.company_id"
+                             :to="{name:'table-view',params: {table: 'company', id: entity.company_id}}">
+                  {{ entity.company_name }}
+                </router-link>
+              </td>
+            </tr>
+            <tr>
+              <th class="pb-50 font-weight-bold">Pos</th>
+              <td class="pb-50">
+                <router-link v-if="entity.pos_id"
+                             :to="{name:'table-view',params: {table: 'pos', id: entity.pos_id}}">
+                  {{ entity.pos_name }}
+                </router-link>
+              </td>
+            </tr>
+            <tr>
+              <th class="pb-50 font-weight-bold">Contract</th>
+              <td class="pb-50">
+                <router-link v-if="entity.contract_id"
+                             :to="{name:'table-view',params: {table: 'contract', id: entity.contract_id}}">
+                  {{ entity.contract_name }}
+                </router-link>
+              </td>
             </tr>
           </table>
         </b-card-actions>
@@ -133,22 +166,17 @@ export default {
   computed: {
     items() {
       return [
-        ['Ticket ID', this.entity?.ticket_id],
-        ['Customer Group', this.entity?.customergroup_name],
-        ['Company', this.entity?.company_name],
-        ['Pos', this.entity?.pos_id],
-        ['Contract', this.entity?.contract_name],
         ['Ticket Name', this.entity?.ticket_name],
         ['Ticket Description', this.entity?.ticket_description],
-        ['Active Column', ''],
-        ['Assigned To', ''],
+        ['Active Column', this.entity.columns[0].column_name],
+        ['Assigned To', this.entity.columns[0].user_email_assigned],
         ['Deadline Yellow', this.entity?.ticket_deadline_yellow],
         ['Deadline Red', this.entity?.ticket_deadline_red],
       ]
     },
   },
   methods: {
-    getColumnColor(column){
+    getColumnColor(column) {
       if (moment(column.ticket_move_time_out).isAfter(column.ticket_deadline_offset_red)) return 'danger'
       if (moment(column.ticket_move_time_out).isAfter(column.ticket_deadline_offset_yellow)) return 'warning'
       return 'success'

@@ -3,7 +3,7 @@
            :title="'Assign user to ticket '+ ticket.ticket_name" size="md" @ok="assignUserTicket">
     <validation-observer ref="form">
       <field
-        :field="{key: 'user_id', type:'list',listLabel: 'user_email', list: 'user_team_grp', ...(team_id?{filter_key: 'team_id'}: {})}"
+        :field="{key: 'user_id', type:'list',listLabel: 'user_email', list: 'user_team_grp', ...(entity.team_id?{filter_key: 'team_id'}: {})}"
         :entity="entity" :filter-value="team_id" inline="true"/>
     </validation-observer>
   </b-modal>
