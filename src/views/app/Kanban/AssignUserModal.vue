@@ -1,10 +1,9 @@
 <template>
-  <b-modal ref="modal" ok-title="Assign" cancel-title="Cancel" modal-class="modal-primary" centered
+  <b-modal ref="modal" ok-title="Assign" cancel-title="Cancel" modal-class="modal-primary" centered :busy="loading"
            :title="'Assign user to ticket '+ ticket.ticket_name" size="md" @ok="assignUserTicket">
     <validation-observer ref="form">
-      <field
-        :field="{key: 'user_id', type:'list',listLabel: 'user_email', list: 'user_team_grp', ...(entity.team_id?{filter_key: 'team_id'}: {})}"
-        :entity="entity" :filter-value="team_id" inline="true"/>
+      <field :field="{key: 'user_id', type:'list',listLabel: 'user_email', list: 'user', ids, noShowButton: true}"
+             :entity="entity" inline="true"/>
     </validation-observer>
   </b-modal>
 </template>
@@ -20,30 +19,37 @@ export default {
     return {
       entity: {},
       ticket: {},
-      team_id: null,
+      ids: [],
+      loading: false,
     }
   },
   methods: {
-    openModal(ticket, team_id) {
+    openModal(ticket, ids) {
       this.ticket = ticket
-      this.entity.team_id = team_id
+      this.ids = ids
       this.$refs.modal.show()
     },
-    async assignUserTicket() {
+    async assignUserTicket(e) {
+      e.preventDefault()
       const valid = await this.$refs.form.validate()
       if (!valid) return
-      (await this.$api({
-        entity: 'ticket_columnx_user_rel',
-        action: 'create',
-        data: [{
-          ticket_id: this.ticket.ticket_id,
-          column_id: this.ticket.columns[0].column_id,
-          user_id: this.entity.user_id,
-          ticket_columnx_user_creationtime: moment().format('YYYY-MM-DD HH:mm:ss'),
-        }],
-      }))
-      this.$refs.modal.hide()
+      this.loading = true
+      try {
+        (await this.$api({
+          entity: 'ticket_columnx_user_rel',
+          action: 'create',
+          data: [{
+            ticket_id: this.ticket.ticket_id,
+            column_id: this.ticket.columns[0].column_id,
+            user_id: this.entity.user_id,
+            ticket_columnx_user_creationtime: moment().format('YYYY-MM-DD HH:mm:ss'),
+          }],
+        }))
+      } finally {
+        this.loading = false
+      }
       this.$successToast('User is assigned to the ticket')
+      this.$refs.modal.hide()
       this.$emit('reload')
     },
   },

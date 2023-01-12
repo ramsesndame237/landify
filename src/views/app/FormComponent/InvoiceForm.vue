@@ -6,7 +6,7 @@
           <b-row>
             <b-col cols="12" class="d-flex justify-content-between">
               <span class="text-uppercase">Ticket_id</span>
-              <span class="text-uppercase">Unknow</span>
+              <span class="text-uppercase">{{ entity.ticket_id }}</span>
             </b-col>
             <b-col cols="12" class="d-flex justify-content-between mb-1">
               <span class="text-uppercase">Invoice_id</span>
@@ -52,8 +52,8 @@
                      :field="companyField"/>
             </b-col>
             <b-col cols="12">
-              <field ref="fields" :filter-value="entity.company_id" :disabled="disabled || entity.company_id==null" :entity="entity"
-                     :table-definition="tableDefinition" :field="posField"/>
+              <field ref="fields" :filter-value="entity.company_id" :disabled="disabled || entity.company_id==null"
+                     :entity="entity" :table-definition="tableDefinition" :field="posField"/>
             </b-col>
             <b-col cols="12">
               <field ref="fields" :disabled="isDisabledFromName('invoice_description')" :entity="entity"
@@ -128,6 +128,8 @@ export default {
         { key: 'area_name' },
         { key: 'pos_name' },
         { key: 'location_name' },
+        { key: 'contract_area_unit_usagetype_valid_from_date' },
+        { key: 'contract_area_unit_usagetype_valid_to_date' },
       ],
       contracts: [],
       areas: [],
@@ -178,7 +180,7 @@ export default {
         entity: 'frontend_4_2_1_contract_selector',
         action: 'read-rich',
         filter_all: this.search,
-        data: [{pos_id: this.entity.pos_id}],
+        data: [{ pos_id: this.entity.pos_id }],
       })).data.data.data
       this.$refs.contracts.loading = false
     },
@@ -189,7 +191,7 @@ export default {
         action: 'read-rich',
         data: [{ contract_id: contractId }],
       })).data.data.data
-      this.areas.filter(a => this.originalEntity.area_id.indexOf(a.area_id) >= 0)
+      this.areas.filter(a => (this.originalEntity.area_id || []).indexOf(a.area_id) >= 0)
         .forEach(a => this.$set(a, '__selected', true))
       this.$refs.areas.loading = false
     },

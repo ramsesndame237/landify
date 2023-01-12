@@ -2505,6 +2505,7 @@ export default {
     formComponent: () => import('../views/app/FormComponent/InvoiceForm.vue'),
     fields: [
       { key: 'invoice_id', auto: true },
+      { key: 'ticket_id', type: 'list', list: 'ticket', relationEntity: 'ticket_invoice_rel', hideOnIndex: true },
       { key: 'invoice_date', type: 'date' },
       { key: 'invoice_date_of_order', type: 'date', hideOnIndex: true },
       { key: 'invoice_contract_year', disabled: true, type: 'number' },

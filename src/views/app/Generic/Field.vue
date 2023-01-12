@@ -16,7 +16,7 @@
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm">New
           </b-button>
-          <b-button v-if="field.ids" class="ml-2 text-nowrap" variant="info" @click="showAll=!showAll">
+          <b-button v-if="field.ids && !field.noShowButton" class="ml-2 text-nowrap" variant="info" @click="showAll=!showAll">
             {{ showAll ? 'Show Created' : 'Show All' }}
           </b-button>
         </div>
