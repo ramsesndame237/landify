@@ -39,9 +39,8 @@
           </b-form-checkbox>
         </b-form-group>
       </div>
-      <Datatable :key="table" ref="table" :selectable="false" :search="search"
-                 primary-key-column="contract_id" entity="contract" :with-delete="false" :with-edit="false"
-                 :fields="definition.fields" :items="items"/>
+      <Datatable :key="table" ref="table" :selectable="false" :search="search" primary-key-column="contract_id"
+                 entity="contract" :with-delete="false" :with-edit="false" :fields="definition.fields" :items="items"/>
     </b-card>
 
     <b-row v-if="table==='conditions'">
@@ -242,7 +241,7 @@ export default {
 
         const contracts = Object.values(_.groupBy(masterData, 'contract_id')).map(r => {
           const obj = _.pick(r[0], ['contract_id', 'contract_name', 'contract_begin_date',
-            'contract_end_date', 'contract_first_possible_end_date', 'contract_creation_time',
+            'contract_end_date', 'contract_first_possible_end_date', 'contract_creation_time','pos_branchnumber',
             'contract_last_change_time', 'contract_migration_checked', 'contracttype_name', 'currency_name', 'currency_id', 'currency_short', 'currency_iso', 'currency_iso4217',
             'contracttype_description', 'company_name', 'location_name', 'pos_name', 'country_name', 'owner_name', 'manager_name'])
           obj.areas = r
@@ -313,7 +312,7 @@ export default {
         contracts.forEach(contract => {
           if (!groups[contract.contract_id]) contract.specialRights = []
           else {
-            contract.specialRights = groups[contract.contract_id].map(i => _.pick(i, [
+            contract.specialRights = _.sortBy(groups[contract.contract_id].map(i => _.pick(i, [
               'contract_specialright_date',
               'contract_specialright_termination_date',
               'contract_specialright_description',
@@ -323,16 +322,39 @@ export default {
               'contract_specialright_is_obsolete',
               'contract_specialright_automatic_renewal_in_months',
               'specialright_name',
-              'specialright_description']))
+              'specialright_description'])), 'contract_specialright_termination_date')
 
             if (this.table !== 'deadlines') return
             let sr = contract.specialRights.find(csr => csr.specialright_name === 'Kündigungstermin Mieter')
             contract.notice_of_termination = sr ? 'Yes' : 'No'
-            contract.action = sr?.contract_specialright_termination_date
+            contract.action_date = sr?.contract_specialright_termination_date || sr?.sr?.contract_specialright_prior_notice_date
 
+            // 20
+            sr = contract.specialRights.find(csr => csr.specialright_name === 'Kündigungstermin Mieter')
+            contract.next_termination_date_tenant = sr?.contract_specialright_termination_date
+
+            // 21
+            sr = contract.specialRights.find(csr => csr.specialright_name === 'Kündigungstermin Vermieter')
+            contract.next_termination_date_landloard = sr?.contract_specialright_termination_date
+
+            // 22
+            sr = contract.specialRights.filter(csr => csr.specialright_name === 'Optionsverlängerung')
+            sr = sr.find(csr => moment().isBefore(csr.contract_specialright_termination_date)) || sr[0]
+            contract.next_option_renewal = sr?.contract_specialright_termination_date
+
+            // 23
+            sr = contract.specialRights.find(csr => csr.specialright_name === 'Sonderkündigungstermin Mieter')
+            contract.next_special_termination_tenant = sr?.contract_specialright_description
+
+            // 25
+            sr = contract.specialRights.find(csr => csr.specialright_name === 'Optionsausübung')
+            contract.available_options = sr ? 'Yes' : ''
+
+            // 26
             sr = contract.specialRights.find(csr => csr.specialright_name === 'Sonderkündigung Mieter')
             contract.special_termination_tenant = sr?.contract_specialright_description
 
+            // 27
             sr = contract.specialRights.find(csr => csr.specialright_name === 'Sonderkündigung Vermieter')
             contract.special_termination_landlord = sr?.contract_specialright_description
           }
@@ -414,7 +436,7 @@ export default {
 
         let tickets = (await this.$api({
           action: 'read-rich',
-          entity: 'frontend_6_1_6_overview',
+          entity: 'frontend_6_1_6_listall',
           per_page: 10000000,
           data: ids.map(id => ({ contract_id: id, ticket_closed: 0 })),
         })).data.data.data
@@ -427,6 +449,21 @@ export default {
               return `<a target="_blank" href="${route.href}">${id}</a>`
             })
             .join('<br>')
+
+          if (this.table === 'deadlines') {
+            const ticket = _(tickets[contract.contract_id]).filter(t => t.board_name === 'contradictionpackage-Kanban-Board')
+              .orderBy('ticket_move_time_in', 'desc').values()[0]
+            if (ticket) {
+              const route = this.$router.resolve({
+                name: 'table-view',
+                params: { table: 'ticket', id: ticket.ticket_id },
+              })
+              // 28
+              contract.status_negociations = `<a target="_blank" href="${route.href}">${ticket.ticket_id}</a>, ${ticket.column_name}, ${ticket.ticket_creation_time}`
+              // 29
+              contract.date_of_status_determination = ticket.ticket_move_time_in
+            }
+          }
         })
 
         this.items = contracts
