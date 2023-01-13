@@ -149,7 +149,7 @@
           </div>
           <generic-modal ref="documentModal" table="document" :definition="documentDef" table-definition-key="document"
                          title="Add new documents" @reload-table="onNewDocuments"/>
-          <generic-modal ref="ticketModal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
+          <generic-modal ref="ticketModal" table="ticket" :definition="ticketDef" table-definition-key="ticket"
                          title="Update the ticket" @reload-table="onTicketUpdate"/>
         </b-col>
       </b-row>
