@@ -16,14 +16,15 @@
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm">New
           </b-button>
-          <b-button v-if="field.ids && !field.noShowButton" class="ml-2 text-nowrap" variant="info" @click="showAll=!showAll">
+          <b-button v-if="field.ids && !field.noShowButton" class="ml-2 text-nowrap" variant="info"
+                    @click="showAll=!showAll">
             {{ showAll ? 'Show Created' : 'Show All' }}
           </b-button>
         </div>
-        <div v-else-if="field.type==='yesno'">
+        <div v-else-if="field.type==='yesno' || field.type==='custom-select'">
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
-                    :placeholder="field.key" :options="yesNoOptions" transition="" label="label" class="w-100"
-                    :reduce="i => i.value"/>
+                    :placeholder="field.key" :options="field.type==='yesno'?yesNoOptions: field.items" transition=""
+                    label="label" class="w-100" :reduce="i => i.value"/>
         </div>
         <div v-else-if="field.type==='file'">
           <input ref="file" type="file" @change="validate" :multiple="field.multiple" required>

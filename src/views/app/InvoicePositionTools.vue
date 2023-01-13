@@ -36,7 +36,7 @@
       </validation-observer>
       <data-tables :fields="fields" entity="invoiceposition" :items="splitedPositions" :with-actions="false"/>
       <template v-slot:modal-footer>
-        <b-button variant="secondary" :disabled="loading" @click="$refs.modal.hide()">Cancel</b-button>
+        <b-button variant="warning" :disabled="loading" @click="$refs.modal.hide()">Cancel</b-button>
         <b-button variant="primary" :disabled="loading" @click="submit">
           <b-spinner v-if="loading" small/>
           Save

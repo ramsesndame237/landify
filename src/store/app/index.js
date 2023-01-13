@@ -77,7 +77,7 @@ export default {
       // get user, user roles, role_tables_crud, role_tablegroup_crud, tablegroup_table
       const data = {}
       data.user = (await api({
-        entity: 'user',
+        entity: 'frontend_1_1_2_1',
         filter: { user_email: email },
         action: 'read-rich',
       })).data.data.data[0]

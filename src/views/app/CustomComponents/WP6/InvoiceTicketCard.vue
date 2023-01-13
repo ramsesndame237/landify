@@ -1,7 +1,7 @@
 <template>
   <div class="p-1 ticket" :class="'ticket-'+deadlineColor">
     <div class="d-flex align-items-center mb-1">
-      <b-avatar variant="light-secondary" text="I"/>
+      <b-avatar variant="light-warning" text="I"/>
       <h4 class="font-weight-bolder mb-0 ml-1" style="color: #ccc; font-size: 15px" :title="ticket.ticket_id">
         {{ ticket.ticket_name }}</h4>
       <b-dropdown variant="link-" toggle-class="p-0" right no-caret class="ml-auto">

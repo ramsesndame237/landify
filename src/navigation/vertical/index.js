@@ -44,7 +44,7 @@ export default [
   },
   item('pos'),
   {
-    title: key('contract'),
+    title: key('contractlists'),
     children: [
       {
         title: key('contractcondition'),
@@ -229,7 +229,7 @@ export default [
     icon: 'CheckSquareIcon',
     children: [
       {
-        title: 'Import Xlsx file',
+        title: 'Import Data',
         route: 'import',
         icon: 'CheckSquareIcon',
       },

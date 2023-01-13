@@ -4,29 +4,31 @@
       <!--UPLOAD-->
       <form enctype="multipart/form-data" novalidate>
         <h1>Upload A File</h1>
+
         <div class="dropbox">
-          <input type="file" :name="uploadFieldName" :disabled="isSaving" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                 class="input-file" @change="currentStatus = 4; fileCount = $event.target.files.length; file = $event.target.files[0]"
-          >
+          <input type="file" :name="uploadFieldName" :disabled="isSaving"
+                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                 class="input-file"
+                 @change="currentStatus = 4; fileCount = $event.target.files.length; file = $event.target.files[0]">
           <p v-if="isInitial">
-            Drag your file here to begin<br> or click to browse
-          </p>
+            Drag your file here to begin<br> or click to browse </p>
           <p v-if="isCharged">
-            File charged
-          </p>
+            File charged </p>
           <p v-if="isSaving" class="loader">
-            <b-icon-arrow-repeat />
+            <b-icon-arrow-repeat/>
           </p>
           <div v-if="isSuccess" class="loader">
-            <b-icon-check />
+            <b-icon-check/>
             <h4>done</h4>
           </div>
         </div>
+        <b-form-group class="mt-2" label="Table to import" >
+          <b-form-radio-group v-model="table"
+                              :options="['Partner Company','Company','Contact Person','Location','Pos','Area']"
+                              name="radio-inline"/>
+        </b-form-group>
         <div class="mt-2">
-          <b-button
-            variant="danger"
-            @click="upload(file)"
-          >Upload</b-button>
+          <b-button variant="danger" @click="upload(file)">Upload</b-button>
         </div>
       </form>
       <div class="mt-5" v-if="result">
@@ -50,7 +52,11 @@ import { BCardActions } from '@core/components/b-card-actions'
 import readXlsxFile from 'read-excel-file'
 import { importPartnercompany, importCompany } from '@/import'
 
-const STATUS_INITIAL = 0; const STATUS_SAVING = 1; const STATUS_SUCCESS = 2; const STATUS_FAILED = 3; const STATUS_CHARGED = 4
+const STATUS_INITIAL = 0;
+const STATUS_SAVING = 1;
+const STATUS_SUCCESS = 2;
+const STATUS_FAILED = 3;
+const STATUS_CHARGED = 4
 export default {
   name: 'ImportPage',
   components: {
@@ -71,6 +77,7 @@ export default {
       result: [],
       errors: [],
       errorsCnt: 0,
+      table: ''
     }
   },
   computed: {
@@ -101,7 +108,8 @@ export default {
       this.uploadError = null
     },
     async upload(file) {
-      if (file == null) return
+      if (!this.table) return this.$errorToast('Please select a table')
+      if (file == null) return this.$errorToast('Please insert a file')
       this.currentStatus = STATUS_SAVING
 
       let rapport = {
@@ -123,64 +131,64 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  .dropbox {
-    outline: 2px dashed grey; /* the dash box */
-    outline-offset: -10px;
-    background: lightcyan;
-    color: dimgray;
-    padding: 10px 10px;
-    min-height: 200px; /* minimum height */
-    position: relative;
-    cursor: pointer;
+.dropbox {
+  outline: 2px dashed grey; /* the dash box */
+  outline-offset: -10px;
+  background: lightcyan;
+  color: dimgray;
+  padding: 10px 10px;
+  min-height: 200px; /* minimum height */
+  position: relative;
+  cursor: pointer;
+}
+
+.input-file {
+  opacity: 0; /* invisible but it's there! */
+  width: 100%;
+  height: 200px;
+  position: absolute;
+  cursor: pointer;
+}
+
+.dropbox:hover {
+  background: lightblue; /* when mouse over to the drop zone, change color */
+}
+
+.dropbox p {
+  font-size: 1.2em;
+  text-align: center;
+  padding: 50px 0;
+}
+
+.dropbox .loader {
+  font-size: 50px;
+  font-weight: 700;
+  text-align: center;
+  padding: 70px 0;
+}
+
+.bi-arrow-repeat {
+  -animation: spin .7s infinite linear;
+  -webkit-animation: spin2 .7s infinite linear;
+}
+
+@-webkit-keyframes spin2 {
+  from {
+    -webkit-transform: rotate(0deg);
   }
 
-  .input-file {
-    opacity: 0; /* invisible but it's there! */
-    width: 100%;
-    height: 200px;
-    position: absolute;
-    cursor: pointer;
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: scale(1) rotate(0deg);
   }
 
-  .dropbox:hover {
-    background: lightblue; /* when mouse over to the drop zone, change color */
+  to {
+    transform: scale(1) rotate(360deg);
   }
-
-  .dropbox p {
-    font-size: 1.2em;
-    text-align: center;
-    padding: 50px 0;
-  }
-
-  .dropbox .loader {
-    font-size: 50px;
-    font-weight: 700;
-    text-align: center;
-    padding: 70px 0;
-  }
-
-  .bi-arrow-repeat {
-    -animation: spin .7s infinite linear;
-    -webkit-animation: spin2 .7s infinite linear;
-  }
-
-  @-webkit-keyframes spin2 {
-    from {
-      -webkit-transform: rotate(0deg);
-    }
-
-    to {
-      -webkit-transform: rotate(360deg);
-    }
-  }
-
-  @keyframes spin {
-    from {
-      transform: scale(1) rotate(0deg);
-    }
-
-    to {
-      transform: scale(1) rotate(360deg);
-    }
-  }
+}
 </style>

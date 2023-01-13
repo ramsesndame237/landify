@@ -12,7 +12,7 @@
       </b-form>
     </validation-observer>
     <template v-slot:modal-footer>
-      <b-button variant="secondary" @click="$refs.modal.hide()">
+      <b-button variant="warning" @click="$refs.modal.hide()">
         Cancel
       </b-button>
       <b-button variant="info" @click="reset">

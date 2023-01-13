@@ -115,8 +115,8 @@ export default {
         entity: 'frontend_contractlist_criteria',
         fields: [
           ...(this.table === 'deadlines' ? ['notice_of_termination', 'action_date'] : []),
-          { key: 'contract_id' },
-          { key: 'contract_name' },
+          { key: 'contract_id', stickyColumn: true, variant: 'light', },
+          { key: 'contract_name', stickyColumn: true, variant: 'light', },
           { key: 'contract_status' },
           { key: 'contracttype_name' },
           { key: 'contract_begin_date' },
@@ -241,7 +241,7 @@ export default {
 
         const contracts = Object.values(_.groupBy(masterData, 'contract_id')).map(r => {
           const obj = _.pick(r[0], ['contract_id', 'contract_name', 'contract_begin_date',
-            'contract_end_date', 'contract_first_possible_end_date', 'contract_creation_time','pos_branchnumber',
+            'contract_end_date', 'contract_first_possible_end_date', 'contract_creation_time', 'pos_branchnumber',
             'contract_last_change_time', 'contract_migration_checked', 'contracttype_name', 'currency_name', 'currency_id', 'currency_short', 'currency_iso', 'currency_iso4217',
             'contracttype_description', 'company_name', 'location_name', 'pos_name', 'country_name', 'owner_name', 'manager_name'])
           obj.areas = r
@@ -299,6 +299,10 @@ export default {
             // check the date
             contract.contract_status = date.isAfter(contract.contract_end_date) ? 'Terminated' : 'Running'
           }
+          if (this.table === 'deadlines') {
+            contract.notice_of_termination = (cc && cc.choice_name === 'gekündigt') ? 'Yes' : 'No'
+            contract.action_date = cc?.contract_criteria_value
+          }
         })
 
         const specialRightsData = (await this.$api({
@@ -325,9 +329,7 @@ export default {
               'specialright_description'])), 'contract_specialright_termination_date')
 
             if (this.table !== 'deadlines') return
-            let sr = contract.specialRights.find(csr => csr.specialright_name === 'Kündigungstermin Mieter')
-            contract.notice_of_termination = sr ? 'Yes' : 'No'
-            contract.action_date = sr?.contract_specialright_termination_date || sr?.sr?.contract_specialright_prior_notice_date
+            let sr
 
             // 20
             sr = contract.specialRights.find(csr => csr.specialright_name === 'Kündigungstermin Mieter')

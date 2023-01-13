@@ -222,6 +222,7 @@ export default {
       user_password: 'Fsa!0dsadad',
       user_mobile: '+491511234456',
     },
+    note: 'frontend_0_8_13',
   },
   role: {
     fields: [
@@ -739,6 +740,7 @@ export default {
         ],
       },
     ],
+    note: 'frontend_0_8_11',
   },
   contactperson: {
     entity: 'frontend_2_3_1',
@@ -792,6 +794,7 @@ export default {
         // onlyForm: true,
       },
     ],
+    note: 'frontend_0_8_10',
   },
   payment: {
     entity: 'frontend_2_4_1',
@@ -997,6 +1000,7 @@ export default {
         ],
       },
     ],
+    note: 'frontend_0_8_4',
   },
   partnergroup: {
     primaryKey: 'partnergroup_id',
@@ -1522,6 +1526,7 @@ export default {
     default: {
       pos_internal_id: '56',
     },
+    note: 'frontend_0_8_3',
   },
   area: {
     entity: 'frontend_3_2_1',
@@ -1656,6 +1661,7 @@ export default {
         ],
       },
     ],
+    note: 'frontend_0_8_12',
   },
   location: {
     entity: 'frontend_3_3_1',
@@ -1778,6 +1784,7 @@ export default {
         ],
       },
     ],
+    note: 'frontend_0_8_5',
   },
   contract: {
     entity: 'frontend_3_4_1_1',
@@ -2086,6 +2093,7 @@ export default {
         ],
       },
     ],
+    note: 'frontend_0_8_1',
   },
   serviceobject: {
     entity: 'frontend_3_5_1',
@@ -2706,6 +2714,7 @@ export default {
         ],
       },
     ],
+    note: 'frontend_0_8_6',
   },
   invoiceposition: {
     fieldComponent: () => import('@/views/app/CreateComponent/InvoicePositionForm.vue'),
@@ -2832,6 +2841,7 @@ export default {
         listLabel: 'claimtype_name',
       },
     ],
+    note: 'frontend_0_8_7',
   },
   costtype: {
     entity: 'frontend_4_7_1',
@@ -2980,6 +2990,7 @@ export default {
       contradiction_comment_for_customer: 'dsfsdfds',
       contradiction_addendum_necessary: 0
     },
+    note: 'frontend_0_8_8',
   },
   contradictionpackage: {
     customPage: () => import('@/views/app/Page/ContradictionPackage.vue'),
@@ -3017,6 +3028,7 @@ export default {
         key: 'savingtype_id', type: 'list', list: 'savingtype', listLabel: 'savingtype_name',
       },
     ],
+    note: 'frontend_0_8_9',
   },
   contradictionpoint: {
     fields: [
@@ -3112,6 +3124,7 @@ export default {
         required: false,
       },
     ],
+    note: 'frontend_0_8_2',
   },
   board: {
     entity: 'frontend_6_1_4',
