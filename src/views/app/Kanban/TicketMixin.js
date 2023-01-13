@@ -129,6 +129,7 @@ export default {
     },
     async moveToColumn(ticket, column) {
       const now = moment()
+      const user = getUserData()
       const deadline = now.clone().addWorkingTime(column.default_deadline_period, 'hours').format('YYYY-MM-DD HH:mm:ss')
       const deadline_yellow = now.clone().addWorkingTime(column.default_deadline_yellow, 'hours').format('YYYY-MM-DD HH:mm:ss')
       const deadline_red = now.clone().addWorkingTime(column.default_deadline_red, 'hours').format('YYYY-MM-DD HH:mm:ss')
@@ -143,6 +144,7 @@ export default {
             ticket_deadline_offset: deadline,
             ticket_deadline_offset_yellow: deadline_yellow,
             ticket_deadline_offset_red: deadline_red,
+            user_id: user.user.user_id,
           },
         ],
       })).data.data.data[0][0]
@@ -154,7 +156,8 @@ export default {
           action: 'update',
           entity: 'ticket_columnx_rel',
           data: [{
-            ..._.pick(ticket.columns[0], ['ticket_id', 'column_id', 'ticket_move_time_in']),
+            ..._.pick(ticket.columns[0], ['ticket_id', 'column_id']),
+            ticket_move_time_in: moment(ticket.columns[0].ticket_move_time_in).format('YYYY-MM-DD HH:mm:ss'),
             ticket_move_time_out: now.format('YYYY-MM-DD HH:mm:ss'),
           }],
         })).data.data.data[0][0]
@@ -164,10 +167,10 @@ export default {
     currentUserInTeam(teamId) {
       const user = getUserData()
       const email = user.user.user_email
-      return this.teams.find(team => team.team_id === teamId && team.user_email === email && moment().isBetween(moment(team.user_team_valid_from), moment(team.user_team_valid_to), 'day')) != null
+      return this.teams.find(team => team.team_id === teamId && team.user_email === email && moment().isBetween(team.user_team_valid_from, team.user_team_valid_to, 'day')) != null
     },
     userIdsOfTeam(teamId) {
-      return this.teams.filter(team => team.team_id === teamId && moment().isBetween(moment(team.user_team_valid_from), moment(team.user_team_valid_to), 'day')).map(t => t.user_id)
+      return this.teams.filter(team => team.team_id === teamId && moment().isBetween(team.user_team_valid_from, team.user_team_valid_to, 'day')).map(t => t.user_id)
     },
   },
 

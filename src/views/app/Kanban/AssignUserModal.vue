@@ -2,7 +2,7 @@
   <b-modal ref="modal" ok-title="Assign" cancel-title="Cancel" modal-class="modal-primary" centered :busy="loading"
            :title="'Assign user to ticket '+ ticket.ticket_name" size="md" @ok="assignUserTicket">
     <validation-observer ref="form">
-      <field :field="{key: 'user_id', type:'list',listLabel: 'user_email', list: 'user', ids, noShowButton: true}"
+      <field :key="ids" :field="{key: 'user_id', type:'list',listLabel: 'user_email', list: 'user', ids, noShowButton: true}"
              :entity="entity" inline="true"/>
     </validation-observer>
   </b-modal>
@@ -27,6 +27,7 @@ export default {
     openModal(ticket, ids) {
       this.ticket = ticket
       this.ids = ids
+      this.entity = {}
       this.$refs.modal.show()
     },
     async assignUserTicket(e) {

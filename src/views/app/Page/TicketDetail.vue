@@ -315,7 +315,7 @@ export default {
   async mounted() {
     this.loading = true
     try {
-      if (!this.entity) {
+      if (!this.entity || !this.entity.columns) {
         await this.loadSingleTicket(false)
         this.entity = this.tickets[0]
         await this.loadStages(this.entity.board_id)

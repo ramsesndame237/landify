@@ -317,6 +317,31 @@ export default {
       { key: 'team_name', sortable: true },
       { key: 'team_description', type: 'textarea' },
     ],
+    relations: [
+      {
+        title: 'Users',
+        primaryKey: 'user_id',
+        entity: 'user_team_grp',
+        entityForm: 'user_team_rel',
+        entityView: 'team',
+        fields: [
+          {
+            key: 'user_id',
+            type: 'list',
+            list: 'user',
+            listLabel: 'user_email',
+            disableOnUpdate: true,
+          },
+          { key: 'team_name', sortable: true, hideOnForm: true },
+          {
+            key: 'user_team_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,
+          },
+          {
+            key: 'user_team_valid_to', required: false, type: 'date', rules: { date_after: ['@user_team_valid_from'] },
+          },
+        ],
+      },
+    ],
   },
   usertype: {
     fields: [

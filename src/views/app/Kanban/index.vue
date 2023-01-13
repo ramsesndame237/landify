@@ -136,10 +136,11 @@ export default {
     }
   },
   methods: {
-    loadBoardTickets(data, loader = true) {
+    async loadBoardTickets(data, loader = true) {
       if (loader) this.loading = true
       try {
-        this.loadTickets({ board_id: this.board_id, ...data })
+        await this.loadTickets({ board_id: this.board_id, ...data })
+        console.log(this.tickets);
       } finally {
         if (loader) this.loading = false
       }
