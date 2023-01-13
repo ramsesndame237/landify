@@ -74,12 +74,12 @@
                   </router-link>
                 </td>
               </tr>
-              <tr v-if="invoiceTicket">
+              <tr>
                 <th class="pb-50 font-weight-bold">Invoice</th>
                 <td class="pb-50">
                   <router-link v-if="entity.invoice_id"
                                :to="{name:'table-view',params: {table: 'invoice', id: entity.invoice_id}}">
-                    {{ entity.invoice_name }}
+                    {{ entity.invoice_number }}
                   </router-link>
                 </td>
               </tr>
