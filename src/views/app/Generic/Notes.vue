@@ -12,11 +12,11 @@
           <div class="d-flex justify-content-between">
             <div class="d-flex align-items-center gap-1">
               <h4>{{ note.user_email }}</h4>
-              <b-button v-if="note.user_id === user_id" class="btn-icon" variant="flat-info" pill
+              <b-button v-if="note[creatorKey] === user_id" class="btn-icon" variant="flat-info" pill
                         @click="onUpdateClick(note)">
                 <feather-icon icon="EditIcon"/>
               </b-button>
-              <b-button v-if="note.user_id === user_id" class="btn-icon" variant="flat-primary" pill
+              <b-button v-if="note[creatorKey] === user_id" class="btn-icon" variant="flat-primary" pill
                         @click="deleteNote(note)">
                 <feather-icon icon="Trash2Icon"/>
               </b-button>
@@ -87,6 +87,7 @@ export default {
       create: false,
       title: '',
       initialData: null,
+      creatorKey: this.primaryKey === 'user_id' ? 'user_id_creator' : 'user_id',
     }
   },
   mounted() {
@@ -121,7 +122,11 @@ export default {
           action: 'create',
           entity: this.noteRel,
           data: [
-            { [this.primaryKey]: this.id, user_id: this.user_id, note_id: note.note_id },
+            {
+              [this.primaryKey === 'user_id' ? 'user_id_user' : this.primaryKey]: this.id,
+              [this.creatorKey]: this.user_id,
+              note_id: note.note_id,
+            },
           ],
         })
         this.$refs.noteModal.hide()
@@ -152,7 +157,11 @@ export default {
           entity: this.note,
           action: 'read-rich',
           data: [
-            { [this.primaryKey]: this.id, note_del: 0, ...(this.is_internal ? {} : { note_visibility: 1 }) },
+            {
+              [this.primaryKey === 'user_id' ? 'user_id_user' : this.primaryKey]: this.id,
+              note_del: 0,
+              ...(this.is_internal ? {} : { note_visibility: 1 }),
+            },
           ],
         })).data.data.data
       } finally {
