@@ -101,7 +101,7 @@ export default {
               'invoice_id','invoice_number',
               'contract_name', 'contract_id', 'company_name', 'company_id', 'pos_id', 'pos_name', 'customergroup_id', 'customergroup_name',
             ])
-            obj.columns = _.orderBy(r, 'ticket_move_time_in', 'desc').map(i => _.pick(i, ['ticket_id', 'column_id', 'column_name', 'user_email_assigned', 'user_id_assigned', 'team_name', 'team_id', 'ticket_move_time_in', 'ticket_move_time_out', 'ticket_deadline_offset', 'ticket_deadline_offset_yellow', 'ticket_deadline_offset_red']))
+            obj.columns = _.orderBy(r, 'ticket_move_time_in', 'desc').map(i => _.pick(i, ['ticket_id', 'column_id', 'column_name', 'user_email_assigned','user_id','user_email', 'user_id_assigned', 'team_name', 'team_id', 'ticket_move_time_in', 'ticket_move_time_out', 'ticket_deadline_offset', 'ticket_deadline_offset_yellow', 'ticket_deadline_offset_red']))
             obj.column_name = obj.columns[0].column_name
             return obj
           })
@@ -157,8 +157,8 @@ export default {
           action: 'update',
           entity: 'ticket_columnx_rel',
           data: [{
-            ..._.pick(ticket.columns[0], ['ticket_id', 'column_id']),
-            ticket_move_time_in: moment(ticket.columns[0].ticket_move_time_in).format('YYYY-MM-DD HH:mm:ss'),
+            ..._.pick(ticket.columns[1], ['ticket_id', 'column_id']),
+            ticket_move_time_in: moment(ticket.columns[1].ticket_move_time_in).format('YYYY-MM-DD HH:mm:ss'),
             ticket_move_time_out: now.format('YYYY-MM-DD HH:mm:ss'),
           }],
         })).data.data.data[0][0]

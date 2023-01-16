@@ -9,7 +9,7 @@ require valid-user
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /kim_pro_frontend [L]
+  RewriteRule . /kim_pro_frontend/index.html [L]
 </IfModule>
 
 # DISABLE CACHING

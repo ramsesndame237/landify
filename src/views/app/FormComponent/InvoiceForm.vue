@@ -6,7 +6,11 @@
           <b-row>
             <b-col cols="12" class="d-flex justify-content-between">
               <span class="text-uppercase">Ticket_id</span>
-              <span class="text-uppercase">{{ entity.ticket_id }}</span>
+              <span v-if="entity.ticket_id" class="text-uppercase">
+                <b-link :to="{name: 'table-view', params: {table: 'ticket', id: entity.ticket_id}}">{{
+                    entity.ticket_id
+                  }}</b-link>
+              </span>
             </b-col>
             <b-col cols="12" class="d-flex justify-content-between mb-1">
               <span class="text-uppercase">Invoice_id</span>

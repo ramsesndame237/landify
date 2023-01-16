@@ -15,7 +15,7 @@
             Move to next column
           </b-button>
           <b-button v-if="!entity.ticket_closed" variant="primary" class="ml-2" @click="updateTicket">
-            Edit
+            {{ $t('button~edit') }}
           </b-button>
           <b-button variant="primary" class="ml-2" @click="toggleTicket(entity)">
             {{ entity.ticket_closed ? 'Re-open' : 'Close' }}
@@ -121,7 +121,7 @@
             <app-timeline>
               <app-timeline-item v-for="(column,idx) in entity.columns" :key="idx" :title="column.column_name"
                                  subtitle=""
-                                 :time="(column.user_email_assigned?'':(column.user_email_assigned+' - '))+column.ticket_move_time_in"
+                                 :time="(column.user_email?(column.user_email+' - '):'')+column.ticket_move_time_in"
                                  :variant="getColumnColor(column)"/>
             </app-timeline>
           </b-card-actions>
@@ -276,7 +276,7 @@ export default {
       await this.fetchDocuments()
     },
     async onTicketUpdate(ticket) {
-      // this.entity = ticket
+      await this.loadSingleTicket()
     },
     async fetchSubTickets() {
       // load subtickets
