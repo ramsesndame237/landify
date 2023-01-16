@@ -87,6 +87,10 @@ export default {
         data: [{ user_id: data.user.user_id }],
       }, { root: true })).filter(r => (moment(r.user_role_valid_from).isBefore(now) && moment(r.user_role_valid_to).isAfter(now)))
       const hasRoles = data.roles.length > 0
+      data.access = hasRoles ? (await dispatch('table/fetchList', {
+        entity: 'role_access_grp',
+        data: data.roles.map(r => ({ role_id: r.role_id })),
+      }, { root: true })) : []
       data.tables = hasRoles ? (await dispatch('table/fetchList', {
         entity: 'role_tablename_crud_grp',
         data: data.roles.map(r => ({ role_id: r.role_id })),

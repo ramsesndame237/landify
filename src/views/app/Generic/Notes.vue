@@ -1,8 +1,10 @@
 <template>
   <div>
-    <b-button v-b-modal.note-list variant="primary">
-      Notes
-    </b-button>
+    <feather-icon v-b-modal.note-list icon="BookmarkIcon" size="21" class="text-primary" :badge="notes.length"/>
+
+    <!--    <b-button  variant="primary" badge="5">-->
+    <!--      Notes-->
+    <!--    </b-button>-->
     <!-- modal -->
     <b-modal id="note-list" size="lg" title="Notes">
       <b-overlay :show="loadingNotes">

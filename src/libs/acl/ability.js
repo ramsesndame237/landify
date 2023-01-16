@@ -37,6 +37,7 @@ export const defineRules = () => {
       subject: tgt.table_name,
     })))
   })
+  if (userData.access) rules.push(...userData.access.map(access => ({ action: access.access_name, subject: 'menu' })))
   return rules
 }
 

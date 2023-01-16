@@ -7,8 +7,8 @@
           <span>{{ $t(title) }}</span>
         </div>
         <div class="d-flex align-items-center">
-          <div class="mr-1 d-flex">
-            <notes v-if="definition.note" class="mr-1" :primary-key="primaryKey" :id="entityId" :note="definition.note"
+          <div class="mr-1 d-flex align-items-center">
+            <notes v-if="definition.note" class="mr-2" :primary-key="primaryKey" :id="entityId" :note="definition.note"
                    :note-rel="'note_user_'+table+'_rel'"/>
             <b-button v-if="view && $can('update', table)" size="sm" variant="info" class="mr-1" @click="edit">
               <feather-icon icon="EditIcon" class="mr-50"/>

@@ -7,8 +7,16 @@ function item(tablename, title, icon) {
     title: `menu~${title || tablename}`,
     route: table(tablename),
     // icon: 'UserIcon',
-    action: 'read',
-    resource: tablename,
+    action: `menu~${title || tablename}`,
+    resource: 'menu',
+  }
+}
+
+function headerItem(key) {
+  return {
+    header: `menu~${key}`,
+    action: `menu~${key}`,
+    resource: 'menu',
   }
 }
 
@@ -17,15 +25,13 @@ function key(val) {
 }
 
 export default [
-  {
-    header: key('main'),
-  },
+  headerItem('main'),
   {
     title: key('dashboard'),
     route: 'home',
     icon: 'HomeIcon',
-    action: 'read',
-    resource: 'dashboard',
+    action: 'menu~dashboard',
+    resource: 'menu',
   },
   {
     title: key('ticket'),
@@ -64,9 +70,7 @@ export default [
     title: key('newbus'),
     route: { name: 'new-business', params: { id: 1 } },
   },
-  {
-    header: key('masterdata'),
-  },
+  headerItem('masterdata'),
   {
     title: key('accountdata'),
     children: [
@@ -88,9 +92,7 @@ export default [
       item('serviceobject'),
     ],
   },
-  {
-    header: key('operations'),
-  },
+  headerItem('operations'),
   {
     title: key('invoicesandcontradictions'),
     children: [
@@ -108,9 +110,7 @@ export default [
       item('serviceobject'),
     ],
   },
-  {
-    header: key('configuration'),
-  },
+  headerItem('configuration'),
   {
     title: key('configurationaccountdata'),
     children: [
@@ -193,9 +193,7 @@ export default [
       },
     ],
   },
-  {
-    header: key('administration'),
-  },
+  headerItem('administration'),
   {
     title: key('administrationuser'),
     children: [

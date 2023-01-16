@@ -2,7 +2,7 @@
   <b-modal ref="modal" ok-title="Assign" cancel-title="Cancel" modal-class="modal-primary" centered :busy="loading"
            :title="'Assign user to ticket '+ ticket.ticket_name" size="md" @ok="assignUserTicket">
     <validation-observer ref="form">
-      <field :key="ids" :field="{key: 'user_id', type:'list',listLabel: 'user_email', list: 'user', ids, noShowButton: true}"
+      <field :field="{key: 'user_id', type:'list',listLabel: 'user_email', list: 'user', ids, noShowButton: true}"
              :entity="entity" inline="true"/>
     </validation-observer>
   </b-modal>
