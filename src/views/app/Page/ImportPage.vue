@@ -5,41 +5,36 @@
       <form enctype="multipart/form-data" novalidate>
         <h1>Upload A File</h1>
         <div class="dropbox">
-          <input type="file" :name="uploadFieldName" :disabled="isSaving" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                 class="input-file" @change="currentStatus = 4; fileCount = $event.target.files.length; file = $event.target.files[0]"
-          >
+          <input type="file" :name="uploadFieldName" :disabled="isSaving"
+                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                 class="input-file"
+                 @change="currentStatus = 4; fileCount = $event.target.files.length; file = $event.target.files[0]">
           <p v-if="isInitial">
-            Drag your file here to begin<br> or click to browse
-          </p>
+            Drag your file here to begin<br> or click to browse </p>
           <p v-if="isCharged">
-            File charged
-          </p>
+            File charged </p>
           <p v-if="isSaving" class="loader">
-            <b-icon-arrow-repeat />
+            <b-icon-arrow-repeat/>
           </p>
           <div v-if="isSuccess" class="loader">
-            <b-icon-check />
+            <b-icon-check/>
             <h4>done</h4>
           </div>
         </div>
-        <b-form-group class="mt-2" label="Table to import" >
+        <b-form-group class="mt-2" label="Table to import">
           <b-form-radio-group v-model="table"
                               :options="['Partner Company','Company','Contact Person','Location','Pos','Area']"
                               name="radio-inline"/>
         </b-form-group>
         <div class="mt-2">
-          <b-button
-            variant="danger"
-            @click="upload(file)"
-          >Upload</b-button>
+          <b-button variant="danger" @click="upload(file)">Upload</b-button>
         </div>
       </form>
       <div v-if="result" class="mt-5">
-        <b-table responsive="sm" :items="result" />
+        <b-table responsive="sm" :items="result"/>
       </div>
       <h2 v-if="errors.length > 0" style="font-weight: 700" class="mt-5 mb-3">
-        Errors
-      </h2>
+        Errors </h2>
       <div v-for="(error, idx) in errors" :key="idx" class="errors">
         <div v-if="error.errors.length > 0" class="mb-3">
           <b-card-actions action-collapse collapsed :title="`${error.Table} - (${error.errors.length})`">
@@ -67,7 +62,11 @@ import {
   importArea
 } from '@/import'
 
-const STATUS_INITIAL = 0; const STATUS_SAVING = 1; const STATUS_SUCCESS = 2; const STATUS_FAILED = 3; const STATUS_CHARGED = 4
+const STATUS_INITIAL = 0;
+const STATUS_SAVING = 1;
+const STATUS_SUCCESS = 2;
+const STATUS_FAILED = 3;
+const STATUS_CHARGED = 4
 const stats = {
   Imported: 0,
   Success: 0,
@@ -96,6 +95,7 @@ export default {
       result: [],
       errors: [],
       errorsCnt: 0,
+      table: null,
     }
   },
   computed: {
@@ -130,63 +130,66 @@ export default {
       if (file == null) return this.$errorToast('Please insert a file')
       this.currentStatus = STATUS_SAVING
 
-      // Import Partner Comapnies
-      await readXlsxFile(file, { sheet: 'Partner Company' }).then(async data => {
-        console.log(data.length)
-        this.$successToast('Table Partner Company upload started.')
-        this.result.push({Table: 'Partner Company', ...stats})
-        this.errors.push({Table: 'Partner Company', errors: []})
-        await importPartnercompany(this, data)
-        this.$successToast('Table Partner Company upload finished')
-      })
-
-      // Import Companies
-      await readXlsxFile(file, { sheet: 'Company' }).then(async data => {
-        this.$successToast('Table Partner Company upload started')
-        this.result.push({Table: 'Company', ...stats})
-        this.errors.push({Table: 'Company', errors: []})
-        await importCompany(this, data)
-        this.$successToast('Table Company upload finished')
-      })
-
-      // Import Contact Person
-      await readXlsxFile(file, { sheet: 'Contact Person' }).then(async data => {
-        return
-        this.result.push({Table: 'Contact Person', ...stats})
-        this.errors.push({Table: 'Contact Person', errors: []})
-        await importContactPerson(this, data)
-      })
-
-      // Import Location
-      await readXlsxFile(file, { sheet: 'Location' }).then(async data => {
-        return
-        this.$successToast('Table Partner Company upload started')
-        this.result.push({Table: 'Location', ...stats})
-        this.errors.push({Table: 'Location', errors: []})
-        await importLocation(this, data)
-        this.$successToast('Table Location upload finished')
-      })
-
-      // Import Pos
-      await readXlsxFile(file, { sheet: 'Pos' }).then(async data => {
-        return
-        this.$successToast('Table Partner Pos upload started')
-        this.result.push({Table: 'Pos', ...stats})
-        this.errors.push({Table: 'Pos', errors: []})
-        await importPos(this, data)
-        this.$successToast('Table Pos upload finished')
-      })
-
-      // Import Area
-      await readXlsxFile(file, { sheet: 'Area' }).then(async data => {
-        return
-        this.$successToast('Table Partner Area upload started')
-        this.result.push({Table: 'Area', ...stats})
-        this.errors.push({Table: 'Area', errors: []})
-        await importArea(this, data)
-        this.$successToast('Table Area upload finished')
-      })
-
+      switch (this.table) {
+        case 'Partner Company':
+          // Import Partner Comapnies
+          await readXlsxFile(file, { sheet: 'Partner Company' }).then(async data => {
+            this.$successToast('Table Partner Company upload started.')
+            this.result.push({ Table: 'Partner Company', ...stats })
+            this.errors.push({ Table: 'Partner Company', errors: [] })
+            await importPartnercompany(this, data)
+            this.$successToast('Table Partner Company upload finished')
+          })
+          break
+        case 'Company':
+          // Import Companies
+          await readXlsxFile(file, { sheet: 'Company' }).then(async data => {
+            this.$successToast('Table Partner Company upload started')
+            this.result.push({ Table: 'Company', ...stats })
+            this.errors.push({ Table: 'Company', errors: [] })
+            await importCompany(this, data)
+            this.$successToast('Table Company upload finished')
+          })
+          break
+        case 'Contact Person':
+          // Import Contact Person
+          await readXlsxFile(file, { sheet: 'Contact Person' }).then(async data => {
+            this.result.push({ Table: 'Contact Person', ...stats })
+            this.errors.push({ Table: 'Contact Person', errors: [] })
+            await importContactPerson(this, data)
+          })
+          break
+        case 'Location':
+          // Import Location
+          await readXlsxFile(file, { sheet: 'Location' }).then(async data => {
+            this.$successToast('Table Partner Company upload started')
+            this.result.push({ Table: 'Location', ...stats })
+            this.errors.push({ Table: 'Location', errors: [] })
+            await importLocation(this, data)
+            this.$successToast('Table Location upload finished')
+          })
+          break
+        case 'Pos':
+          // Import Pos
+          await readXlsxFile(file, { sheet: 'Pos' }).then(async data => {
+            this.$successToast('Table Partner Pos upload started')
+            this.result.push({ Table: 'Pos', ...stats })
+            this.errors.push({ Table: 'Pos', errors: [] })
+            await importPos(this, data)
+            this.$successToast('Table Pos upload finished')
+          })
+          break
+        case 'Area':
+          // Import Area
+          await readXlsxFile(file, { sheet: 'Area' }).then(async data => {
+            this.$successToast('Table Partner Area upload started')
+            this.result.push({ Table: 'Area', ...stats })
+            this.errors.push({ Table: 'Area', errors: [] })
+            await importArea(this, data)
+            this.$successToast('Table Area upload finished')
+          })
+          break
+      }
       this.currentStatus = STATUS_SUCCESS
     },
   },
