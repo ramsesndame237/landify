@@ -3097,16 +3097,7 @@ export default {
         relationEntity: 'ticket_contract_rel',
         required: false,
       },
-      // {
-      //   key: 'user_id',
-      //   listLabel: 'user_email',
-      //   type: 'list',
-      //   list: 'user',
-      //   required: false,
-      // },
-      // {
-      //   key: 'column_id', type: 'list', list: 'columnx', listLabel: 'column_name', visible: () => false,
-      // },
+
       { key: 'column_name', hideOnForm: true },
       { key: 'board_name', hideOnForm: true },
       { key: 'contract_id', hideOnForm: true },

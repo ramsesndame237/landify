@@ -52,7 +52,7 @@ export default {
   },
   methods: {
     fillRelations(entity, originalEntity, formFields, table, primaryKey) {
-      return Promise.all(formFields.filter(field => field.type === 'list')
+      return Promise.all(formFields.filter(field => field.type === 'list' && field.relationEntity !== false)
         .map(async field => {
           console.log("Fill relations", field, table, primaryKey, entity)
           if (entity[field.key] == null) {
@@ -98,7 +98,7 @@ export default {
     saveRelations(table, definition, primaryKey, entityId, entity, originalEntity) {
       const keys = [definition.primaryKey, ...(definition.fields.filter(f => f.composite)
         .map(f => f.key))]
-      return Promise.all(definition.fields.filter(field => field.type === 'list' && keys.indexOf(field.key) === -1 && (entity[field.key] !== originalEntity[field.key] || !!field.with))
+      return Promise.all(definition.fields.filter(field => field.type === 'list' && field.relationEntity !== false && keys.indexOf(field.key) === -1 && (entity[field.key] !== originalEntity[field.key] || !!field.with))
         .map(field => {
           const extras = { ...field.default }
           const column = field.tableKey || field.key

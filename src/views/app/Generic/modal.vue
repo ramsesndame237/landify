@@ -4,7 +4,7 @@
            :title="$t(forceTitle || title)" size="lg" :busy="loading" @ok="handleOk">
     <component
       :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
-      ref="form" :table="table" :definition="definition" :table-definition-key="tableDefinitionKey"
+      ref="form" :fetch-data="fetchData" :table="table" :definition="definition" :table-definition-key="tableDefinitionKey"
       :initial-data="initialData" :create="create" :is-relation="isRelation" inline :cols="12"/>
     <p v-if="['headline~document~new','headline~document_contract_documentcontracttype_rel~new'].indexOf(forceTitle)>=0"
        class="text-danger text-center">No ticket will be created for this document</p>
@@ -48,6 +48,7 @@ export default {
     title: String,
     isRelation: Boolean,
     withContinue: { type: Boolean, default: false },
+    fetchData: { type: Boolean, default: true },
   },
   data() {
     return {
