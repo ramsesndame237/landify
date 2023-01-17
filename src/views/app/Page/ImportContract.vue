@@ -71,6 +71,7 @@ export default {
       fields: [
         { key: 'id' },
         { key: 'name' },
+        { key: 'reason' },
         { key: 'status' },
       ],
       result: {},

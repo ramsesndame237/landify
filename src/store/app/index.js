@@ -78,7 +78,7 @@ export default {
       const data = {}
       data.user = (await api({
         entity: 'frontend_1_1_2_1',
-        filter: { user_email: email },
+        data: [{ user_email: email }],
         action: 'read-rich',
       })).data.data.data[0]
       const now = moment()
