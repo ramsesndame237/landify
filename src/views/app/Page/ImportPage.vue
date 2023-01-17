@@ -28,7 +28,20 @@
         <b-card v-if="success">
           <b-tabs ref="tabs" pills>
             <b-tab v-for="(entity, index) in entities" :key="index" :title="entity" lazy>
-              <data-tables :entity="entity" :selectable="false" :with-actions="false" :fields="fields" :items="getResult(entity)"/>
+              <table v-if="result[entity]" class="mt-2 mt-xl-0 w-100">
+                <tr>
+                  <th class="pb-50 font-weight-bold">Total</th>
+                  <td class="pb-50">{{ getCount(entity) }}</td>
+                  <th class="pb-50 font-weight-bold">Inserted</th>
+                  <td class="pb-50">{{ getCount(entity, 'success') }}</td>
+                  <th class="pb-50 font-weight-bold">Updated</th>
+                  <td class="pb-50">{{ getCount(entity, 'updated') }}</td>
+                  <th class="pb-50 font-weight-bold">Failed</th>
+                  <td class="pb-50">{{ getCount(entity, 'failed') }}</td>
+                </tr>
+              </table>
+              <data-tables :entity="entity" :selectable="false" :with-actions="false" :fields="fields"
+                           :items="getResult(entity)"/>
             </b-tab>
           </b-tabs>
         </b-card>
@@ -77,8 +90,7 @@ export default {
       result: {},
     }
   },
-  computed: {
-  },
+  computed: {},
   mounted() {
     this.reset()
   },
@@ -91,6 +103,11 @@ export default {
         ...this.result[entity].failed.map(e => ({ ...e, status: 'failed' })),
       ]
     },
+    getCount(entity, status) {
+      const results = this.result[entity]
+      if (!status) return results.success.length + results.updated.length + results.failed.length
+      return results[status].length
+    },
     reset() {
       // reset form to initial state
       this.currentStatus = 0
@@ -98,7 +115,7 @@ export default {
       this.uploadError = null
     },
     async upload(file) {
-      if (!file) this.$errorToast('Please insert a file')
+      if (!file) return this.$errorToast('Please insert a file')
       const formData = new FormData
       formData.append('file', file)
       this.processing = true
