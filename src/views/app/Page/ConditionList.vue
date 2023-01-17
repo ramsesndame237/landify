@@ -301,7 +301,7 @@ export default {
           }
           if (this.table === 'deadlines') {
             contract.notice_of_termination = (cc && cc.choice_name === 'gekündigt') ? 'Yes' : 'No'
-            contract.action_date = cc?.contract_criteria_value
+            // contract.action_date = cc?.contract_criteria_value
           }
         })
 
@@ -330,6 +330,9 @@ export default {
 
             if (this.table !== 'deadlines') return
             let sr
+
+            sr = _(contract.specialRights).filter(r => r.specialright_name === 'Optionsausübung' && date.isBefore(r.contract_specialright_prior_notice_date)).orderBy('contract_specialright_prior_notice_date').value()[0]
+            contract.action_date = sr?.contract_specialright_prior_notice_date
 
             // 20
             sr = contract.specialRights.find(csr => csr.specialright_name === 'Kündigungstermin Mieter')
@@ -423,7 +426,7 @@ export default {
           contract.index_adjustment_lease = rcBasismiete ? `${rcBasismiete.indexclause_adjustment_description} - ${rcBasismiete.indexclause_minimal_percent_change_aggreed || rcBasismiete.indexclause_minimal_point_change_agreed}` : ''
           contract.index_adjustment_rate_in_percent = rcBasismiete?.indexclause_indextransmission_percent
 
-          const rcStaffe = _(contract.reccuringPayments).filter(r => r.recurringpaymenttype_name === '3-Staffelmiete' && date.isBefore(r.recurringpayment_begin_date)).orderBy('recurringpayment_begin_date').values()[0]
+          const rcStaffe = _(contract.reccuringPayments).filter(r => r.recurringpaymenttype_name === '3-Staffelmiete' && date.isBefore(r.recurringpayment_begin_date)).orderBy('recurringpayment_begin_date').value()[0]
           if (rcStaffe) {
             contract.staggered_minimum_rent = 'Yes, ' + rcStaffe.recurringpayment_begin_date
           }
@@ -454,7 +457,7 @@ export default {
 
           if (this.table === 'deadlines') {
             const ticket = _(tickets[contract.contract_id]).filter(t => t.board_name === 'contradictionpackage-Kanban-Board')
-              .orderBy('ticket_move_time_in', 'desc').values()[0]
+              .orderBy('ticket_move_time_in', 'desc').value()[0]
             if (ticket) {
               const route = this.$router.resolve({
                 name: 'table-view',
