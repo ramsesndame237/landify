@@ -27,19 +27,19 @@
       <div class="mt-5">
         <b-card v-if="success">
           <b-tabs ref="tabs" pills>
-            <table v-if="result[entity]" class="mt-2 mt-xl-0 w-100">
-              <tr>
-                <th class="pb-50 font-weight-bold">Total</th>
-                <td class="pb-50">{{ getCount(entity) }}</td>
-                <th class="pb-50 font-weight-bold">Inserted</th>
-                <td class="pb-50">{{ getCount(entity, 'success') }}</td>
-                <th class="pb-50 font-weight-bold">Updated</th>
-                <td class="pb-50">{{ getCount(entity, 'updated') }}</td>
-                <th class="pb-50 font-weight-bold">Failed</th>
-                <td class="pb-50">{{ getCount(entity, 'failed') }}</td>
-              </tr>
-            </table>
             <b-tab v-for="(entity, index) in entities" :key="index" :title="entity" lazy>
+              <table v-if="result[entity]" class="mt-2 mt-xl-0 w-100">
+                <tr>
+                  <th class="pb-50 font-weight-bold">Total</th>
+                  <td class="pb-50">{{ getCount(entity) }}</td>
+                  <th class="pb-50 font-weight-bold">Inserted</th>
+                  <td class="pb-50">{{ getCount(entity, 'success') }}</td>
+                  <th class="pb-50 font-weight-bold">Updated</th>
+                  <td class="pb-50">{{ getCount(entity, 'updated') }}</td>
+                  <th class="pb-50 font-weight-bold">Failed</th>
+                  <td class="pb-50">{{ getCount(entity, 'failed') }}</td>
+                </tr>
+              </table>
               <data-tables :entity="entity" :selectable="false" :with-actions="false" :fields="fields" :items="getResult(entity)"/>
             </b-tab>
           </b-tabs>
@@ -115,7 +115,7 @@ export default {
       this.uploadError = null
     },
     async upload(file) {
-      if (!file) this.$errorToast('Please insert a file')
+      if (!file) return this.$errorToast('Please insert a file')
       const formData = new FormData
       formData.append('file', file)
       this.processing = true
