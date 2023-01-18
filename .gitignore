@@ -29,5 +29,5 @@ yarn-error.log*
 /docs/.temp
 package-lock.json
 yarn.lock
-.env
+.env*
 Import/Attributes.xlsx
