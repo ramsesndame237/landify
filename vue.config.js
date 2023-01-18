@@ -4,9 +4,10 @@ const path = require('path')
 // const packageJson = fs.readFileSync('./package.json')
 // const version = JSON.parse(packageJson).version || 0
 
-const prodPath = process.env.CI_PROJECT_NAME ?? 'kim_pro_frontend'
+// for gitlab
+// const prodPath = process.env.CI_PROJECT_NAME ?? 'kim_pro_frontend'
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production' ? `/${prodPath}/` : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? `/${process.env.PUBLIC_PATH}` : '/',
   lintOnSave: false,
   devServer: {
     // proxy: 'http://127.0.0.1:8001/',
