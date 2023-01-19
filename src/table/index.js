@@ -2743,6 +2743,8 @@ export default {
   },
   invoiceposition: {
     fieldComponent: () => import('@/views/app/CreateComponent/InvoicePositionForm.vue'),
+    create: false,
+    entity: 'frontend_4_5_1',
     fields: [
       { key: 'invoiceposition_id', auto: true },
       {
@@ -2772,6 +2774,42 @@ export default {
       { key: 'invoiceposition_amount_total', type: 'number' },
       { key: 'invoiceposition_amount_customer', type: 'number', rules: { lower: ['@invoiceposition_amount_total'] } },
       { key: 'invoiceposition_apportionable', type: 'boolean' },
+    ],
+    filters: [
+      {
+        key: 'customergroup_id',
+        required: false,
+        type: 'list',
+        list: 'customergroup',
+        listLabel: 'customergroup_name',
+        send: false,
+      },
+      {
+        key: 'company_id',
+        required: false,
+        type: 'list',
+        list: 'frontend_2_2_3_1',
+        listLabel: 'company_name',
+        filter_key: 'customergroup_id',
+      },
+      {
+        key: 'pos_id',
+        required: false,
+        type: 'list',
+        list: 'frontend_2_1_3_8',
+        listLabel: 'pos_name',
+        filter_key: 'company_id',
+      },
+      {
+        key: 'contract_id',
+        required: false,
+        type: 'list',
+        list: 'frontend_4_2_1_contract_selector',
+        listLabel: 'contract_name',
+        filter_key: 'pos_id',
+      },
+      { key: 'billing_year', required: false, type: 'number' },
+      { key: 'invoice_id', required: false, type: 'list', list: 'invoice', listLabel: 'invoice_name' },
     ],
   },
   inspectionresult: {

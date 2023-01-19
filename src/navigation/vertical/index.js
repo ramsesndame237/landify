@@ -97,6 +97,7 @@ export default [
     title: key('invoicesandcontradictions'),
     children: [
       item('invoice'),
+      item('invoiceposition'),
       item('inspectionresult'),
       item('trackrecord'),
       item('contradiction'),
