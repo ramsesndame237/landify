@@ -3,12 +3,14 @@
     <b-col :cols="create?6:4">
       <div class="bg-white d-flex justify-content-between align-items-center p-1">
         <h4 class="mb-0">{{ $t(title) }}</h4>
-        <div class="mr-1 d-flex">
-          <b-button v-if="view" size="sm" variant="info" class="mr-1" @click="edit">
+        <div class="d-flex align-items-center">
+          <notes v-if="definition.note" :primary-key="primaryKey" :id="entityId" :note="definition.note"
+                 :note-rel="'note_user_'+table+'_rel'"/>
+          <b-button v-if="view" size="sm" variant="info" class="ml-1" @click="edit">
             <feather-icon icon="EditIcon" class="mr-50"/>
             {{ $t('Edit') }}
           </b-button>
-          <b-button v-else size="sm" variant="info" class="mr-1" @click="update" :disabled="loading">
+          <b-button v-else size="sm" variant="info" class="ml-1" @click="update" :disabled="loading">
             <b-spinner v-if="loading" small class="mr-50"/>
             <feather-icon v-else icon="SaveIcon" class="mr-50"/>
             {{ $t('Save') }}
@@ -90,11 +92,12 @@ import Field from "@/views/app/Generic/Field";
 import DataTables from "@/layouts/components/DataTables";
 import Table from '@/table'
 import GenericFilter from '../Generic/Filter.vue';
+import Notes from "@/views/app/Generic/Notes";
 
 export default {
   name: 'ContradictionPackage',
   mixins: [EditPageMixin],
-  components: { DataTables, Field, EntityForm, BRow, BCol, BCard, BButton, BFormInput, BSpinner, GenericFilter },
+  components: { Notes, DataTables, Field, EntityForm, BRow, BCol, BCard, BButton, BFormInput, BSpinner, GenericFilter },
   data() {
     return {
       contradictionFields: Table.contradiction.fields.slice(0, 2),

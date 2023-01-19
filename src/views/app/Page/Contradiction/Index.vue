@@ -7,20 +7,21 @@
           <span>{{ $t(title) }}</span>
         </div>
         <div class="d-flex align-items-center">
-          <div class="mr-1 d-flex">
-            <b-button v-if="view" size="sm" variant="info" class="mr-1" @click="edit">
-              <feather-icon icon="EditIcon" class="mr-50"/>
-              {{ $t('Edit') }}
-            </b-button>
-            <b-button v-else size="sm" variant="info" class="mr-1" @click="update" :disabled="loading">
-              <b-spinner v-if="loading" small class="mr-50"/>
-              <feather-icon v-else icon="SaveIcon" class="mr-50"/>
-              {{ $t('Save') }}
-            </b-button>
-            <b-button v-if="!view" size="sm" variant="primary" @click="cancel">
-              {{ $t('Cancel') }}
-            </b-button>
-          </div>
+          <notes v-if="definition.note" class="mr-2" :primary-key="primaryKey" :id="entityId" :note="definition.note"
+                 :note-rel="'note_user_'+table+'_rel'"/>
+          <b-button v-if="view" size="sm" variant="info" class="mr-1" @click="edit">
+            <feather-icon icon="EditIcon" class="mr-50"/>
+            {{ $t('Edit') }}
+          </b-button>
+          <b-button v-else size="sm" variant="info" class="mr-1" @click="update" :disabled="loading">
+            <b-spinner v-if="loading" small class="mr-50"/>
+            <feather-icon v-else icon="SaveIcon" class="mr-50"/>
+            {{ $t('Save') }}
+          </b-button>
+          <b-button v-if="!view" size="sm" variant="primary" @click="cancel">
+            {{ $t('Cancel') }}
+          </b-button>
+
         </div>
       </div>
     </b-card>
@@ -54,10 +55,11 @@ import { BTabs, BTab, BCard, BButton, BSpinner } from "bootstrap-vue"
 import EntityForm from "@/views/app/Generic/EntityForm";
 import ContradictionForm from "@/views/app/FormComponent/ContradictionForm";
 import ContradictionPoint from "@/views/app/Page/Contradiction/ContradictionPoint";
+import Notes from "@/views/app/Generic/Notes";
 
 export default {
   name: 'Index',
-  components: { ContradictionPoint, ContradictionForm, BTab, BTabs, BCard, BButton , BSpinner},
+  components: { Notes, ContradictionPoint, ContradictionForm, BTab, BTabs, BCard, BButton, BSpinner },
   mixins: [EditPageMixin],
 }
 </script>

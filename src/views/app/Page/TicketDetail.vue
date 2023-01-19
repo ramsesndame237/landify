@@ -6,7 +6,9 @@
           <h4 class="mb-0 font-weight-bolder">{{ entity.ticket_id }}</h4>
           <p class="mb-0">{{ entity.ticket_name }}</p>
         </div>
-        <div>
+        <div class="d-flex align-items-center">
+          <notes v-if="definition.note" class="mr-2" :primary-key="primaryKey" :id="entityId" :note="definition.note"
+                 :note-rel="'note_user_'+table+'_rel'"/>
           <b-button v-if="!entity.ticket_closed" variant="primary"
                     @click="$refs.assign.openModal(entity, userIdsOfTeam(entity.columns[0].team_id))">
             Assign to user
@@ -176,10 +178,12 @@ import TicketMixin from "@/views/app/Kanban/TicketMixin";
 import { getDocumentLink } from "@/libs/utils";
 import moment from 'moment'
 import AssignUserModal from "@/views/app/Kanban/AssignUserModal";
+import Notes from "@/views/app/Generic/Notes";
 
 export default {
   name: 'TicketDetail',
   components: {
+    Notes,
     AssignUserModal,
     BCardActions,
     AppTimelineItem,
