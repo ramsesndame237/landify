@@ -11,26 +11,26 @@
                  :note-rel="'note_user_'+table+'_rel'"/>
           <b-button v-if="!entity.ticket_closed" variant="primary"
                     @click="$refs.assign.openModal(entity, userIdsOfTeam(entity.columns[0].team_id))">
-            Assign to user
+            {{ $t('button~assignto') }}
           </b-button>
           <b-button v-if="canMoveToNext" class="ml-2" variant="primary" @click="moveToNext">
-            Move to next column
+            {{ $t('button~movetonextcolumn') }}
           </b-button>
           <b-button v-if="!entity.ticket_closed" variant="primary" class="ml-2" @click="updateTicket">
             {{ $t('button~edit') }}
           </b-button>
           <b-button variant="primary" class="ml-2" @click="toggleTicket(entity)">
-            {{ entity.ticket_closed ? 'Re-open' : 'Close' }}
+            {{ $t('button~ticket~' + (entity.ticket_closed ? 'reopen' : 'close')) }}
           </b-button>
           <assign-user-modal ref="assign" @reload="loadSingleTicket"/>
         </div>
       </div>
       <b-row>
         <b-col lg="8">
-          <b-card-actions title="Informations" action-collapse>
+          <b-card-actions :title="$t('headline~ticket~information')" action-collapse>
             <table class="mt-2 mt-xl-0 w-100">
               <tr>
-                <th class="pb-50 font-weight-bold">Board</th>
+                <th class="pb-50 font-weight-bold">{{ $t('attribute.board_name') }}</th>
                 <td class="pb-50">
                   <router-link v-if="entity.board_id"
                                :to="{name:'table-kanban',params: {table:'board',id: entity.board_id}}">
@@ -39,11 +39,11 @@
                 </td>
               <tr>
               <tr>
-                <th class="pb-50 font-weight-bold">Ticket ID</th>
+                <th class="pb-50 font-weight-bold">{{ $t('attribute.ticket_id') }}</th>
                 <td class="pb-50">{{ entity.ticket_id }}</td>
               </tr>
               <tr>
-                <th class="pb-50 font-weight-bold">Customer Group</th>
+                <th class="pb-50 font-weight-bold">{{ $t('attribute.customergroup_name') }}</th>
                 <td class="pb-50">
                   <router-link v-if="entity.customergroup_id"
                                :to="{name:'table-view',params: {table: 'customergroup', id: entity.customergroup_id}}">
@@ -51,7 +51,7 @@
                   </router-link>
                 </td>
               <tr>
-                <th class="pb-50 font-weight-bold">Company</th>
+                <th class="pb-50 font-weight-bold">{{ $t('attribute.company_name') }}</th>
                 <td class="pb-50">
                   <router-link v-if="entity.company_id"
                                :to="{name:'table-view',params: {table: 'company', id: entity.company_id}}">
@@ -60,7 +60,7 @@
                 </td>
               </tr>
               <tr>
-                <th class="pb-50 font-weight-bold">Pos</th>
+                <th class="pb-50 font-weight-bold">{{ $t('attribute.pos_name') }}</th>
                 <td class="pb-50">
                   <router-link v-if="entity.pos_id" :to="{name:'table-view',params: {table: 'pos', id: entity.pos_id}}">
                     {{ entity.pos_name }}
@@ -68,7 +68,7 @@
                 </td>
               </tr>
               <tr>
-                <th class="pb-50 font-weight-bold">Contract</th>
+                <th class="pb-50 font-weight-bold">{{ $t('attribute.contract_name') }}</th>
                 <td class="pb-50">
                   <router-link v-if="entity.contract_id"
                                :to="{name:'table-view',params: {table: 'contract', id: entity.contract_id}}">
@@ -77,7 +77,7 @@
                 </td>
               </tr>
               <tr>
-                <th class="pb-50 font-weight-bold">Invoice</th>
+                <th class="pb-50 font-weight-bold">{{ $t('attribute.invoice_number') }}</th>
                 <td class="pb-50">
                   <router-link v-if="entity.invoice_id"
                                :to="{name:'table-view',params: {table: 'invoice', id: entity.invoice_id}}">
@@ -86,40 +86,42 @@
                 </td>
               </tr>
               <tr>
-                <th class="pb-50 font-weight-bold">Ticket Name</th>
+                <th class="pb-50 font-weight-bold">{{ $t('attribute.ticket_name') }}</th>
                 <td class="pb-50">{{ entity.ticket_name }}</td>
               </tr>
               <tr>
-                <th class="pb-50 font-weight-bold">Ticket Description</th>
+                <th class="pb-50 font-weight-bold">{{ $t('attribute.ticket_description') }}</th>
                 <td class="pb-50">{{ entity.ticket_description }}</td>
               </tr>
               <tr>
-                <th class="pb-50 font-weight-bold">Active Column</th>
+                <th class="pb-50 font-weight-bold">{{ $t('attribute.column_name') }}</th>
                 <td class="pb-50">{{ entity.columns[0].column_name }}</td>
               </tr>
               <tr>
-                <th class="pb-50 font-weight-bold">Assigned To</th>
-                <td class="pb-50">{{ entity.columns[0].user_email_assigned }}</td>
+                <th class="pb-50 font-weight-bold">{{ $t('attribute.user_email') }}</th>
+                <td class="pb-50">{{ entity.columns[0].user_email }}</td>
               </tr>
               <tr>
-                <th class="pb-50 font-weight-bold">Deadline Yellow</th>
+                <th class="pb-50 font-weight-bold">{{ $t('attribute.ticket_deadline_yellow') }}</th>
                 <td class="pb-50">{{ entity.ticket_deadline_yellow }}</td>
               </tr>
               <tr>
-                <th class="pb-50 font-weight-bold">Deadline Red</th>
+                <th class="pb-50 font-weight-bold">{{ $t('attribute.ticket_deadline_red') }}</th>
                 <td class="pb-50">{{ entity.ticket_deadline_red }}</td>
               </tr>
             </table>
           </b-card-actions>
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <h2>Sub tasks</h2>
-            <b-button variant="primary" v-if="!entity.ticket_closed" @click="createSubTicket">Add Sub task</b-button>
+            <h2>{{ $t('headline~ticket~subtasks') }}</h2>
+            <b-button variant="primary" v-if="!entity.ticket_closed" @click="createSubTicket">
+              {{ $t('button~newsubtask') }}
+            </b-button>
           </div>
           <generic-modal ref="modal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
-                         title="Create a sub task" @reload-table="onNewTicket"/>
+                         :title="$t('headline~ticket~newsubtask')" @reload-table="onNewTicket"/>
           <sub-ticket-card v-for="(ticket,idx) in subTickets" :key="idx" :ticket="ticket"/>
-          <p v-if="subTickets.length===0" class="text-center">No sub ticket available</p>
-          <b-card-actions v-if="entity.columns" class="mt-3" title="Timeline" action-collapse collapsed>
+          <p v-if="subTickets.length===0" class="text-center">{{$t('headline~ticket~nosubticket')}}</p>
+          <b-card-actions v-if="entity.columns" class="mt-3" :title="$t('headline~ticket~timeline')" action-collapse collapsed>
             <app-timeline>
               <app-timeline-item v-for="(column,idx) in entity.columns" :key="idx" :title="column.column_name"
                                  subtitle=""
@@ -129,7 +131,7 @@
           </b-card-actions>
         </b-col>
         <b-col lg="4">
-          <h4 class="font-weight-bolder">Documents</h4>
+          <h4 class="font-weight-bolder">{{$t('headline~ticket~documents')}}</h4>
           <b-row>
             <b-col v-for="(document,i) in documents" :key="i" md="6">
               <b-card>
@@ -137,22 +139,22 @@
                   <h6 style="color: #ccc">{{ document.document_name }}</h6>
                   <h4 class="font-weight-bolder mb-2" style="color: black">{{ document.document_mime_type }}</h4>
                   <b-link class="m-auto" variant="danger" target="_blank" :href="getDocumentLink(document)">
-                    Open
+                    {{$t('button~open')}}
                   </b-link>
                 </div>
               </b-card>
             </b-col>
           </b-row>
           <div>
-            <b-button variant="primary" @click="createDocument">Add a new document</b-button>
+            <b-button variant="primary" @click="createDocument">{{$t('button~newdocument')}}</b-button>
           </div>
           <div class="mt-2">
-            <b-button variant="primary" @click="createInvoice">Create new Invoice</b-button>
+            <b-button variant="primary" @click="createInvoice">{{$t('button~newinvoice')}}</b-button>
           </div>
           <generic-modal ref="documentModal" table="document" :definition="documentDef" table-definition-key="document"
-                         title="Add new documents" @reload-table="onNewDocuments"/>
-          <generic-modal ref="ticketModal" :fetch-data="false" table="ticket" :definition="ticketDef" table-definition-key="ticket"
-                         title="Update the ticket" @reload-table="onTicketUpdate"/>
+                         :title="$t('headline~document~new')" @reload-table="onNewDocuments"/>
+          <generic-modal ref="ticketModal" :fetch-data="false" table="ticket" :definition="ticketDef"
+                         table-definition-key="ticket" title="Update the ticket" @reload-table="onTicketUpdate"/>
         </b-col>
       </b-row>
     </div>

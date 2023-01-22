@@ -4,15 +4,16 @@
            :title="$t(forceTitle || title)" size="lg" :busy="loading" @ok="handleOk">
     <component
       :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
-      ref="form" :fetch-data="fetchData" :table="table" :definition="definition" :table-definition-key="tableDefinitionKey"
-      :initial-data="initialData" :create="create" :is-relation="isRelation" inline :cols="12"/>
+      ref="form" :fetch-data="fetchData" :table="table" :definition="definition"
+      :table-definition-key="tableDefinitionKey" :initial-data="initialData" :create="create" :is-relation="isRelation"
+      inline :cols="12"/>
     <p v-if="['headline~document~new','headline~document_contract_documentcontracttype_rel~new'].indexOf(forceTitle)>=0"
        class="text-danger text-center">No ticket will be created for this document</p>
     <template v-slot:modal-footer>
       <b-button variant="warning" :disabled="loading" @click="$refs.modal.hide()">{{ $t('button~cancel') }}</b-button>
       <b-button v-if="!create || !withContinue" variant="primary" :disabled="loading" @click="handleOk">
         <b-spinner v-if="loading" small/>
-        Save
+        {{ $t('button~save') }}
       </b-button>
       <b-dropdown v-else split text="Save" variant="primary" :disabled="loading" @click="handleOk" right>
         <template #button-content>

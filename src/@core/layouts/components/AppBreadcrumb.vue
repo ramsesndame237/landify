@@ -28,11 +28,11 @@
     <b-col class="content-header-right text-md-right d-md-block d-none mb-1" md="4" cols="12" v-if="showPaginator">
       <b-button class="mr-1" variant="primary" size="sm" title="Previous" v-if="hasPrevious" @click="onPrevious">
         <feather-icon icon="ArrowLeftIcon" class="mr-1"/>
-        <span>Previous</span>
+        <span>{{ $t('button~previous') }}</span>
       </b-button>
       <b-button class="mr-1" variant="primary" size="sm" title="Next" @click="onNext" v-if="hasNext">
         <feather-icon icon="ArrowRightIcon" class="mr-1"/>
-        <span>Next</span>
+        <span>{{ $t('button~next') }}</span>
       </b-button>
     </b-col>
   </b-row>

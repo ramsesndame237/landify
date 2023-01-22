@@ -1,15 +1,15 @@
 <template>
   <div class="d-flex justify-content-between flex-wrap" style="padding: 10px">
     <b-form-group class="mb-0">
-      <label class="d-inline-block text-sm-left mr-50">Show</label>
+      <label class="d-inline-block text-sm-left mr-50">{{ $t('headline~general~subframe~show') }}</label>
       <b-form-select id="perPageSelect" v-model="perPage" style="width: 60px" size="sm" :options="pageOptions"
                      class="w-10"/>
-      <label class="d-inline-block text-sm-left ml-50">Entries</label>
+      <label class="d-inline-block text-sm-left ml-50">{{ $t('headline~general~subframe~entries') }}</label>
     </b-form-group>
 
     <div class="d-flex align-items-center">
-      <span class="mr-1">show {{ (currentPage - 1) * perPage + 1 }} to {{ Math.min(perPage * currentPage, totalRows) }}
-        of {{ totalRows }} entries
+      <span class="mr-1">
+        {{ $t('headline~general~subframe~pagination').replace('x', (currentPage - 1) * perPage + 1).replace('y', Math.min(perPage * currentPage, totalRows)).replace('z', totalRows) }}
       </span>
       <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" align="center" class="my-0"
                     first-number last-number prev-class="prev-item" next-class="next-item"/>

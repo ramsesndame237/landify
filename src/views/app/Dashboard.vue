@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>OPEN TICKETS</h3>
+    <h3>{{$t('headline~dashboard~subframe~open_tickets')}}</h3>
     <b-row>
       <summary-card :title="$t('headline~dashboard~subframe~open_tickets_intime')" color="#343a40"
                     :percent="(nearDeadlineIds.length*100/total).toFixed(0)" :number="nearDeadlineIds.length" variant="dark"

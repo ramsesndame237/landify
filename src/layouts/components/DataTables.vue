@@ -108,6 +108,7 @@ export default {
           key: 'Actions',
           stickyColumn: true,
           tdClass: 'p-0',
+          label: this.$t('attribute.general_actions'),
           variant: 'light',
           thStyle: { width: '80px' }
         }] : []),

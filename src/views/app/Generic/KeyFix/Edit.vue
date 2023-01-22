@@ -5,6 +5,7 @@
 <script>
 import table from '@/table/index'
 import Edit from '../Edit.vue'
+import Table from "@/table";
 
 export default {
   name: 'EditPage',
@@ -37,7 +38,7 @@ export default {
     },
   },
   beforeRouteEnter(to, from, next) {
-    to.meta.pageTitle = `List of ${to.params.table}`
+    to.meta.pageTitle = Table[to.params.table]?.title || `headline~${to.params.table}~list`
     to.meta.breadcrumb = [
       {
         text: to.params.table,
@@ -53,7 +54,7 @@ export default {
   },
   beforeRouteUpdate(to, from, next) {
     this.handleRouteChange(() => {
-      to.meta.pageTitle = `List of ${to.params.table}`
+      to.meta.pageTitle = Table[to.params.table]?.title || `headline~${to.params.table}~list`
       to.meta.breadcrumb = [
         {
           text: to.params.table,

@@ -9,42 +9,42 @@
           <feather-icon icon="MoreHorizontalIcon"/>
         </template>
         <b-dropdown-item :to="{name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket}}">
-          More details
+          {{$t('button~moredetails')}}
         </b-dropdown-item>
         <b-dropdown-item @click="$emit('assign')">
-          Assign To
+          {{$t('button~assignto')}}
         </b-dropdown-item>
         <b-dropdown-item @click="toggleTicket(ticket)">
-          {{ ticket.ticket_closed ? 'Re-open' : 'Close' }}
+          {{ $t(ticket.ticket_closed ? 'button~ticket~reopen' : 'button~ticket~close') }}
         </b-dropdown-item>
       </b-dropdown>
     </div>
     <p>{{ ticket.ticket_description }}</p>
     <div class="d-flex">
-      <strong class="mr-1">Ticket ID:</strong>
+      <strong class="mr-1">{{$t('attribute.ticket_id')}}:</strong>
       <span>{{ ticket.ticket_id }}</span>
     </div>
     <div class="d-flex">
-      <strong class="mr-1">Created At:</strong>
+      <strong class="mr-1">{{$t('attribute.ticket_creation_time')}}:</strong>
       <span>{{ ticket.ticket_creation_time | format }}</span>
       <b-icon-clock-fill class="ml-auto"/>
     </div>
     <div v-if="advanced" class="d-flex">
-      <strong class="mr-1">Last change:</strong>
+      <strong class="mr-1">{{$t('attribute.ticket_last_change_time')}}:</strong>
       <span>{{ ticket.ticket_last_change_time | format }}</span>
     </div>
     <div class="d-flex">
-      <strong class="mr-1">Deadline:</strong>
+      <strong class="mr-1">{{$t('attribute.ticket_deadline')}}:</strong>
       <span :class="deadlineColor?('text-'+deadlineColor):''">{{ deadlineForHuman }}</span>
       <b-icon-calendar-date :class="'ml-auto '+ (deadlineColor?('text-'+deadlineColor):'')"/>
     </div>
     <div v-if="advanced" class="d-flex">
-      <strong class="mr-1">Deadline Offset:</strong>
+      <strong class="mr-1">{{$t('attribute.ticket_deadline_offset')}}:</strong>
       <span :class="columnDeadlineColor?('text-'+columnDeadlineColor):''">{{ columnDeadlineForHuman }}</span>
       <b-icon-calendar-date :class="'ml-auto '+ (columnDeadlineColor?('text-'+columnDeadlineColor):'')"/>
     </div>
     <div class="d-flex" v-if="advanced">
-      <strong class="mr-1">Planned treatment week:</strong>
+      <strong class="mr-1">{{$t('attribute.ticket_planned_treatment_week')}}:</strong>
       <span>{{ ticket.ticket_planned_treatment_week }}</span>
     </div>
 

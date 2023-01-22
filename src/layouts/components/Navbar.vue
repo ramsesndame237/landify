@@ -52,17 +52,17 @@
         <b-dropdown-item link-class="d-flex align-items-center"
                          :to="{name: 'table-view', params: {table: 'user', id: userData.user.user_id}}">
           <feather-icon size="16" icon="UserIcon" class="mr-50"/>
-          <span> {{ $t('app.navbar.profile') }} </span>
+          <span> {{ $t('header~profile') }} </span>
         </b-dropdown-item>
 
         <b-dropdown-item link-class="d-flex align-items-center" :to="{name: 'comming-soon'}">
           <feather-icon size="16" icon="MailIcon" class="mr-50"/>
-          <span>{{ $t('app.navbar.inbox') }} </span>
+          <span>{{ $t('header~inbox') }} </span>
         </b-dropdown-item>
 
         <b-dropdown-item link-class="d-flex align-items-center" :to="{name: 'table', params: {table: 'ticket'}}">
           <feather-icon size="16" icon="CheckSquareIcon" class="mr-50"/>
-          <span>{{ $t('app.navbar.task') }} </span>
+          <span>{{ $t('header~tasks') }} </span>
         </b-dropdown-item>
 
         <!--        <b-dropdown-item link-class="d-flex align-items-center">-->
@@ -74,7 +74,7 @@
 
         <b-dropdown-item link-class="d-flex align-items-center" @click="logout">
           <feather-icon size="16" icon="LogOutIcon" class="mr-50"/>
-          <span>{{ $t('app.navbar.logout') }} </span>
+          <span>{{ $t('header~logout') }} </span>
         </b-dropdown-item>
       </b-nav-item-dropdown>
     </b-navbar-nav>

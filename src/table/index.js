@@ -1466,6 +1466,7 @@ export default {
         ],
       },
       {
+        title: 'headline~ticket~tab',
         primaryKey: 'ticket_id',
         entity: 'frontend_3_1_3_4',
         entityForm: 'ticket_pos_rel',
@@ -1493,7 +1494,7 @@ export default {
         delete: false,
       },
       {
-        title: 'contradictionpackage',
+        title: 'headline~contradictionpackage~tab',
         entity: 'frontend_3_1_3_5',
         fields: [
           {
@@ -1530,7 +1531,7 @@ export default {
         ],
       },
       {
-        title: 'document',
+        title: 'headline~document~tab',
         primaryKey: 'document_id',
         entity: 'document_pos_rel',
         update: false,
@@ -3185,11 +3186,10 @@ export default {
     defaultSortField: 'board_id',
     fields: [
       {
-        key: 'btn',
+        key: 'board_button',
         sortable: false,
         type: 'button',
         hideOnForm: true,
-        label: 'Button',
         btnLabel: 'Kanban',
         getRoute: board => ({ name: 'table-kanban', params: { id: board.board_id, table: 'board' } }),
       },

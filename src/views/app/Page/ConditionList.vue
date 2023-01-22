@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-card-actions title="Filter" action-collapse>
+    <b-card-actions :title="$t('general~filter')" action-collapse>
       <!--      <div class="d-flex align-items-center">-->
       <!--        <b-form-input debounce="500" id="filterInput" v-model="search" type="search" class="w-auto"-->
       <!--                      placeholder="Search.."/>-->
@@ -17,14 +17,14 @@
       </validation-observer>
       <div class="text-right">
         <b-button variant="success" :disabled="loading || items.length === 0" @click="download">
-          Download
+          {{ $t('button~download') }}
         </b-button>
         <b-button variant="info" class="ml-1" :disabled="loading" @click="reset">
-          Reset
+          {{ $t('button~reset') }}
         </b-button>
         <b-button variant="primary" :disabled="loading" class="ml-1" @click="filter">
           <b-spinner v-if="loading" class="mr-1" small/>
-          Apply
+          {{ $t('button~apply') }}
         </b-button>
       </div>
     </b-card-actions>
@@ -151,14 +151,14 @@ export default {
             'available_options',
             'special_termination_tenant',
             'special_termination_landlord',
-            'status_negociations',
+            'status_negotiations',
             'date_of_status_determination',
-            'comment_negociation',
+            'comment_negotiation',
           ] : []),
           'comment',
           { key: 'missing_documents', type: 'html' },
           'state',
-          'negociator',
+          'negotiator',
         ],
         filter_vertical: true,
         filters: [
@@ -464,7 +464,7 @@ export default {
                 params: { table: 'ticket', id: ticket.ticket_id },
               })
               // 28
-              contract.status_negociations = `<a target="_blank" href="${route.href}">${ticket.ticket_id}</a>, ${ticket.column_name}, ${ticket.ticket_creation_time}`
+              contract.status_negotiations = `<a target="_blank" href="${route.href}">${ticket.ticket_id}</a>, ${ticket.column_name}, ${ticket.ticket_creation_time}`
               // 29
               contract.date_of_status_determination = ticket.ticket_move_time_in
             }
