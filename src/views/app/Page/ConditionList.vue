@@ -186,6 +186,13 @@ export default {
             listLabel: 'pos_name',
             filter_key: 'company_id',
           },
+          {
+            key: 'country_id',
+            required: false,
+            type: 'list',
+            list: 'country',
+            listLabel: 'country_name',
+          },
           { key: 'date', type: 'date', default: moment().format('YYYY-MM-DD') },
         ],
         create: false,
@@ -216,7 +223,7 @@ export default {
       const valid = await this.$refs.form.validate()
       if (!valid) return
       this.loading = true
-      const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id']).omitBy(_.isNil).value()
+      const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
       try {
         const filteredData = (await this.$api({
           action: 'read-rich',

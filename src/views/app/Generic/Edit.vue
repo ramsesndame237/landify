@@ -34,12 +34,16 @@
         :is-relation="false" :disabled="view" :inline="false" :cols="6" :initial-data="entity" :entity-id="entityId"/>
     </b-card>
 
+    <template v-if="table==='invoice' && $refs.tabs">
+      <invoice-stats/>
+    </template>
 
     <b-card v-if="definition.relations && visibleRelations.length>0 && !create">
       <b-tabs ref="tabs" pills>
         <b-tab v-for="(relation, index) in visibleRelations" :key="index"
                :title="$t(relation.title || ('headline~'+(relation.entityView||relation.entityForm)+'~tab'))"
-               :active="index===tabIndex" lazy>
+               :active="index===tabIndex"
+               :lazy="(!(table==='invoice'&&(['invoicevaluetype_id','invoiceposition_id'].indexOf(relation.primaryKey)>=0)))">
           <data-tables :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
                        :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
                        :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
@@ -96,9 +100,11 @@ import GenericModal from '@/views/app/Generic/modal'
 import EntityForm from "@/views/app/Generic/EntityForm";
 import EditPageMixin from "@/views/app/Generic/EditPageMixin";
 import Notes from "@/views/app/Generic/Notes";
+import InvoiceStats from "@/views/app/CustomComponents/InvoiceStats";
 
 export default {
   components: {
+    InvoiceStats,
     Notes,
     EntityForm,
     GenericModal,
