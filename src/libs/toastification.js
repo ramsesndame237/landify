@@ -18,7 +18,7 @@ Vue.use(Toast, {
 })
 
 Vue.prototype.$errorToast = function (title) {
-  this.$toast({
+  Vue.prototype.$toast({
     component: ToastificationContent,
     props: {
       title: title || this.$t('general.error'),
@@ -29,7 +29,7 @@ Vue.prototype.$errorToast = function (title) {
 }
 
 Vue.prototype.$successToast = function (title) {
-  this.$toast({
+  Vue.prototype.$toast({
     component: ToastificationContent,
     props: {
       title,
@@ -38,3 +38,6 @@ Vue.prototype.$successToast = function (title) {
     },
   })
 }
+
+export const successToast = Vue.prototype.$successToast
+export const errorToast = Vue.prototype.$errorToast

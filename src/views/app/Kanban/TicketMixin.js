@@ -54,6 +54,29 @@ export default {
       }
       return true
     },
+    async moveToPreviousColumn(ticket) {
+      const column = this.columns.find(c => c.column_name === this.entity.columns[1].column_name)
+      const result = await this.$swal({
+        title: 'Are you sure?',
+        text: `This ticket will be moved back to the column: ${column.column_name}`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-outline-danger ml-1',
+        },
+        buttonsStyling: false,
+      })
+      if (!result.value) return false
+      this.loading = true
+      try {
+        await this.moveToColumn(ticket, column)
+      } finally {
+        this.loading = false
+      }
+      return true
+    },
     async toggleTicket(ticket) {
       const result = await this.$swal({
         title: 'Are you sure?',
@@ -98,10 +121,10 @@ export default {
               'ticket_planned_treatment_week',
               'ticket_closed',
               'ticket_progress',
-              'invoice_id','invoice_number',
+              'invoice_id', 'invoice_number',
               'contract_name', 'contract_id', 'company_name', 'company_id', 'pos_id', 'pos_name', 'customergroup_id', 'customergroup_name',
             ])
-            obj.columns = _.orderBy(r, 'ticket_move_time_in', 'desc').map(i => _.pick(i, ['ticket_id', 'column_id', 'column_name', 'user_email_assigned','user_id','user_email', 'user_id_assigned', 'team_name', 'team_id', 'ticket_move_time_in', 'ticket_move_time_out', 'ticket_deadline_offset', 'ticket_deadline_offset_yellow', 'ticket_deadline_offset_red']))
+            obj.columns = _.orderBy(r, 'ticket_move_time_in', 'desc').map(i => _.pick(i, ['ticket_id', 'column_id', 'column_name', 'rank_order', 'user_email_assigned', 'user_id', 'user_email', 'user_id_assigned', 'team_name', 'team_id', 'ticket_move_time_in', 'ticket_move_time_out', 'ticket_deadline_offset', 'ticket_deadline_offset_yellow', 'ticket_deadline_offset_red']))
             obj.column_name = obj.columns[0].column_name
             return obj
           })

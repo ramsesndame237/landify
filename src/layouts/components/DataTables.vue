@@ -8,7 +8,9 @@
                        :disabled="disabled" @change="onSelect(data.index)"/>
     </template>
     <template #cell()="data">
-      <b-form-checkbox v-if="data.field.type==='boolean'" disabled="" v-model="data.value" :value="1"/>
+      <b-form-checkbox v-if="data.field.type==='boolean'" v-model="data.value" :disabled="!data.field.editable"
+                       :value="1" :unchecked-value="0"
+                       @change="data.field.onChange ? data.field.onChange(data) : null"/>
       <b-button v-else-if="data.field.type==='button'" size="xs" @click="$router.push(data.field.getRoute(data.item))">
         {{ data.field.btnLabel }}
       </b-button>

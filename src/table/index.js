@@ -1,5 +1,7 @@
-import { getDocumentLink } from "@/libs/utils";
+import { getDocumentLink } from '@/libs/utils'
 import moment from 'moment'
+import { api } from '@/libs/axios'
+import { successToast, errorToast } from '@/libs/toastification'
 
 export default {
   // region Work Package 1
@@ -400,7 +402,9 @@ export default {
     fields: [
       { key: 'customergroup_id', auto: true },
       { key: 'customergroup_name' },
-      { key: 'customergroup_description', hideOnIndex: true, type: 'textarea', required: false },
+      {
+        key: 'customergroup_description', hideOnIndex: true, type: 'textarea', required: false,
+      },
       { key: 'company_count', hideOnForm: true },
     ],
     relations: [
@@ -693,7 +697,9 @@ export default {
         entityForm: 'company_bankdata_rel',
         primaryKey: 'bankdata_id',
         fields: [
-          { key: 'bankdata_id', type: 'list', list: 'bankdata', alwaysNew: true, onlyForm: true },
+          {
+            key: 'bankdata_id', type: 'list', list: 'bankdata', alwaysNew: true, onlyForm: true,
+          },
           { key: 'bankdata_bank_name', hideOnForm: true },
           { key: 'bankdata_account_number', hideOnForm: true },
           { key: 'bankdata_iban', hideOnForm: true },
@@ -729,7 +735,9 @@ export default {
         entityForm: 'company_payment_rel',
         entityView: 'payment',
         fields: [
-          { key: 'payment_id', type: 'list', list: 'payment', alwaysNew: true, onlyForm: true, without: 'company_id' },
+          {
+            key: 'payment_id', type: 'list', list: 'payment', alwaysNew: true, onlyForm: true, without: 'company_id',
+          },
           { key: 'payment_info', hideOnForm: true },
           { key: 'payment_debitor', hideOnForm: true },
           { key: 'payment_value', type: 'number', hideOnForm: true },
@@ -782,7 +790,7 @@ export default {
       { key: 'contactperson_shortname', hideOnIndex: true },
       { key: 'contactperson_function', rules: { required: false } },
       {
-        key: 'user_id', type: 'list', list: 'user', listLabel: 'user_email', rules: { required: false }
+        key: 'user_id', type: 'list', list: 'user', listLabel: 'user_email', rules: { required: false },
       },
       {
         key: 'contactdetails_id',
@@ -893,7 +901,9 @@ export default {
         update: false,
         delete: false,
         fields: [
-          { key: 'ticket_id', type: 'list', list: 'ticket', listLabel: 'ticket_name' },
+          {
+            key: 'ticket_id', type: 'list', list: 'ticket', listLabel: 'ticket_name',
+          },
           { key: 'ticket_name', hideOnForm: true },
           { key: 'column_id', hideOnForm: true },
           { key: 'board_name', hideOnForm: true },
@@ -911,7 +921,9 @@ export default {
         delete: false,
         entityView: 'contradiction',
         fields: [
-          { key: 'contradiction_id', type: 'list', list: 'contradiction', listLabel: 'contradiction_name' },
+          {
+            key: 'contradiction_id', type: 'list', list: 'contradiction', listLabel: 'contradiction_name',
+          },
           { key: 'contradiction_name', hideOnForm: true },
           { key: 'contradiction_last_change_time', hideOnForm: true },
           { key: 'contradiction_letter_send_time', hideOnForm: true },
@@ -930,7 +942,9 @@ export default {
         delete: false,
         entityView: 'invoice',
         fields: [
-          { key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_description' },
+          {
+            key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_description',
+          },
           { key: 'invoice_date', type: 'date', hideOnForm: true },
           { key: 'invoice_contract_year', type: 'number', hideOnForm: true },
           { key: 'Invoice_company_name', hideOnForm: true },
@@ -952,7 +966,7 @@ export default {
             list: 'contactperson',
             listLabel: 'contactperson_lastname',
             alwaysNew: true,
-            onlyForm: true
+            onlyForm: true,
           },
           { key: 'contactperson_lastname', hideOnForm: true },
           { key: 'contactperson_firstname', hideOnForm: true },
@@ -970,7 +984,9 @@ export default {
         entityForm: 'location_partnercompany_partnertype_rel',
         entityView: 'location',
         fields: [
-          { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name' },
+          {
+            key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name',
+          },
           { key: 'location_name', hideOnForm: true },
           { key: 'partnercompany_name', hideOnForm: true },
           { key: 'partnertype_name', hideOnForm: true },
@@ -1003,7 +1019,9 @@ export default {
         entityForm: 'user_partnercompany_rel',
         entityView: 'user',
         fields: [
-          { key: 'user_id', type: 'list', list: 'user', listLabel: 'user_lastname' },
+          {
+            key: 'user_id', type: 'list', list: 'user', listLabel: 'user_lastname',
+          },
           { key: 'user_lastname', hideOnForm: true },
           { key: 'user_firstname', hideOnForm: true },
           { key: 'user_email', hideOnForm: true },
@@ -1037,7 +1055,9 @@ export default {
       // {
       //   key: 'partnertype_id', hideOnIndex: true, type: 'list', list: 'partnertype', listLabel: 'partnertype_name',
       // },
-      { key: 'partnergroup_description', hideOnIndex: true, type: 'textarea', required: false },
+      {
+        key: 'partnergroup_description', hideOnIndex: true, type: 'textarea', required: false,
+      },
       { key: 'partnercompany_count', hideOnForm: true },
     ],
     relations: [
@@ -1049,7 +1069,9 @@ export default {
         entityView: 'partnercompany',
         update: false,
         fields: [
-          { key: 'partnercompany_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name' },
+          {
+            key: 'partnercompany_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name',
+          },
           { key: 'partnercompany_name', hideOnForm: true },
           { key: 'partnertype_name', hideOnForm: true },
           { key: 'city_name', hideOnForm: true },
@@ -1064,7 +1086,9 @@ export default {
         entityForm: 'user_partnergroup_rel',
         entityView: 'user',
         fields: [
-          { key: 'user_id', type: 'list', list: 'user', listLabel: 'user_email', disableOnUpdate: true },
+          {
+            key: 'user_id', type: 'list', list: 'user', listLabel: 'user_email', disableOnUpdate: true,
+          },
           { key: 'user_lastname', hideOnForm: true },
           { key: 'user_firstname', hideOnForm: true },
           { key: 'user_email', hideOnForm: true },
@@ -1096,7 +1120,7 @@ export default {
             list: 'contactperson',
             listLabel: 'contactperson_name',
             alwaysNew: true,
-            onlyForm: true
+            onlyForm: true,
           },
           { key: 'contactperson_lastname', hideOnForm: true },
           { key: 'contactperson_firstname', hideOnForm: true },
@@ -1594,7 +1618,9 @@ export default {
         with: ['area_usagetype_valid_from_date', 'area_usagetype_valid_to_date'],
       },
       { key: 'area_usagetype_valid_from_date', type: 'date', hideOnIndex: true },
-      { key: 'area_usagetype_valid_to_date', type: 'date', hideOnIndex: true, required: false },
+      {
+        key: 'area_usagetype_valid_to_date', type: 'date', hideOnIndex: true, required: false,
+      },
     ],
     relations: [
       {
@@ -1638,7 +1664,7 @@ export default {
             disableOnUpdate: true,
             type: 'date',
             hideOnIndex: true,
-            composite: true
+            composite: true,
           },
           {
             key: 'contract_area_unit_usagetype_valid_to_date',
@@ -1695,9 +1721,15 @@ export default {
     fields: [
       { key: 'location_id', auto: true },
       { key: 'location_name' },
-      { key: 'location_objectdescription', type: 'textarea', hideOnIndex: true, required: false },
-      { key: 'location_total_area', type: 'number', hideOnIndex: true, required: false },
-      { key: 'location_start_date', type: 'date', hideOnIndex: true, required: false },
+      {
+        key: 'location_objectdescription', type: 'textarea', hideOnIndex: true, required: false,
+      },
+      {
+        key: 'location_total_area', type: 'number', hideOnIndex: true, required: false,
+      },
+      {
+        key: 'location_start_date', type: 'date', hideOnIndex: true, required: false,
+      },
       { key: 'owner_name', hideOnForm: true },
       { key: 'manager_name', hideOnForm: true },
       { key: 'locationtype_name', hideOnForm: true },
@@ -2090,7 +2122,7 @@ export default {
             list: 'criteria',
             listLabel: 'criteria_name',
             composite: true,
-            disableOnUpdate: true
+            disableOnUpdate: true,
           },
           { key: 'criteria_name', hideOnForm: true },
           ...getContractCriteriaFields(),
@@ -2106,7 +2138,9 @@ export default {
         create: false,
         update: false,
         fields: [
-          { key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_description' },
+          {
+            key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_description',
+          },
           { key: 'invoice_date', type: 'date', hideOnForm: true },
           { key: 'invoice_payment_date', type: 'date', hideOnForm: true },
           { key: 'invoice_creation_time', hideOnForm: true },
@@ -2128,7 +2162,9 @@ export default {
       { key: 'serviceobject_name' },
       { key: 'serviceobject_external_name', required: false },
       { key: 'serviceobjecttype_name', hideOnForm: true },
-      { key: 'serviceobject_description', type: 'textarea', hideOnIndex: true, required: false },
+      {
+        key: 'serviceobject_description', type: 'textarea', hideOnIndex: true, required: false,
+      },
       {
         key: 'serviceobjecttype_id',
         type: 'list',
@@ -2219,7 +2255,9 @@ export default {
         entityForm: 'contract_specialright_rel',
         entityView: 'contract',
         fields: [
-          { key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name' },
+          {
+            key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name',
+          },
           { key: 'contract_name', hideOnForm: true },
           { key: 'contract_specialright_description', type: 'textarea' },
           { key: 'contract_specialright_date', type: 'date' },
@@ -2363,7 +2401,9 @@ export default {
       },
       { key: 'recurringpayment_begin_date', type: 'date', hideOnIndex: true },
       { key: 'recurringpayment_end_date', type: 'date', hideOnIndex: true },
-      { key: 'recurringpayment_condition_comment', hideOnIndex: true, type: 'textarea', required: false },
+      {
+        key: 'recurringpayment_condition_comment', hideOnIndex: true, type: 'textarea', required: false,
+      },
       {
         key: 'maturitytype_id',
         type: 'list',
@@ -2539,7 +2579,9 @@ export default {
     formComponent: () => import('../views/app/FormComponent/InvoiceForm.vue'),
     fields: [
       { key: 'invoice_id', auto: true },
-      { key: 'ticket_id', type: 'list', list: 'ticket', relationEntity: 'ticket_invoice_rel', hideOnIndex: true },
+      {
+        key: 'ticket_id', type: 'list', list: 'ticket', relationEntity: 'ticket_invoice_rel', hideOnIndex: true,
+      },
       { key: 'invoice_date', type: 'date' },
       { key: 'invoice_date_of_order', type: 'date', hideOnIndex: true },
       { key: 'invoice_contract_year', disabled: true, type: 'number' },
@@ -2709,13 +2751,21 @@ export default {
         primaryKey: 'invoiceposition_id',
         view: false,
         fields: [
-          { key: 'invoiceposition_id', type: 'list', list: 'invoiceposition', alwaysNew: true, onlyForm: true },
+          {
+            key: 'invoiceposition_id', type: 'list', list: 'invoiceposition', alwaysNew: true, onlyForm: true,
+          },
           { key: 'invoiceposition_name', hideOnForm: true },
           { key: 'invoiceposition_total_units', hideOnForm: true },
           { key: 'invoiceposition_units_customer', hideOnForm: true },
           { key: 'externalcosttype_name', hideOnForm: true },
           { key: 'costtype_name', hideOnForm: true },
-          { key: 'invoiceposition_flat_rate', type: 'boolean', hideOnForm: true },
+          {
+            key: 'invoiceposition_flat_rate',
+            type: 'boolean',
+            editable: true,
+            onChange: updateInvoiceFlatRate,
+            hideOnForm: true,
+          },
           { key: 'invoiceposition_amount_total', hideOnForm: true },
           { key: 'invoiceposition_amount_customer', hideOnForm: true },
           { key: 'invoiceposition_apportionable', type: 'boolean', hideOnForm: true },
@@ -2771,7 +2821,12 @@ export default {
       { key: 'invoiceposition_total_units', type: 'number' },
       { key: 'invoiceposition_units_customer', type: 'number', rules: { lower: ['@invoiceposition_total_units'] } },
       { key: 'costtype_name', hideOnForm: true },
-      { key: 'invoiceposition_flat_rate', type: 'boolean' },
+      {
+        key: 'invoiceposition_flat_rate',
+        type: 'boolean',
+        editable: true,
+        onChange: updateInvoiceFlatRate,
+      },
       { key: 'invoiceposition_amount_total', type: 'number' },
       { key: 'invoiceposition_amount_customer', type: 'number', rules: { lower: ['@invoiceposition_amount_total'] } },
       { key: 'invoiceposition_apportionable', type: 'boolean' },
@@ -2810,7 +2865,9 @@ export default {
         filter_key: 'pos_id',
       },
       { key: 'billing_year', required: false, type: 'number' },
-      { key: 'invoice_id', required: false, type: 'list', list: 'invoice', listLabel: 'invoice_name' },
+      {
+        key: 'invoice_id', required: false, type: 'list', list: 'invoice', listLabel: 'invoice_name',
+      },
     ],
   },
   inspectionresult: {
@@ -2868,14 +2925,14 @@ export default {
         type: 'list',
         list: 'partnercompany',
         listLabel: 'partnercompany_name',
-        tableKey: 'partnercompany_id'
+        tableKey: 'partnercompany_id',
       },
       {
         key: 'manager_id',
         type: 'list',
         list: 'partnercompany',
         listLabel: 'partnercompany_name',
-        tableKey: 'partnercompany_id'
+        tableKey: 'partnercompany_id',
       },
       {
         key: 'inspectionresultimpacttype_id',
@@ -2925,7 +2982,9 @@ export default {
         update: false,
         view: false,
         fields: [
-          { key: 'externalcosttype_id', type: 'list', list: 'externalcosttype', listLabel: 'externalcosttype_name' },
+          {
+            key: 'externalcosttype_id', type: 'list', list: 'externalcosttype', listLabel: 'externalcosttype_name',
+          },
           { key: 'externalcosttype_name', hideOnForm: true },
         ],
       },
@@ -3008,7 +3067,7 @@ export default {
     ],
   },
   // endregion
-  //region Workpackage 5
+  // region Workpackage 5
   contradiction: {
     customPage: () => import('@/views/app/Page/Contradiction/Index.vue'),
     createModal: false,
@@ -3052,7 +3111,7 @@ export default {
       contradiction_signature1: 0,
       contradiction_signature2: 0,
       contradiction_comment_for_customer: 'dsfsdfds',
-      contradiction_addendum_necessary: 0
+      contradiction_addendum_necessary: 0,
     },
     note: 'frontend_0_8_8',
   },
@@ -3104,8 +3163,8 @@ export default {
       { key: 'contradictionpoint_inspectionresult_rating_value_grey' },
     ],
   },
-  //endregion
-  //region Work Package 6
+  // endregion
+  // region Work Package 6
   ticket: {
     customPage: () => import('@/views/app/Page/TicketDetail.vue'),
     fieldComponent: () => import('@/views/app/CreateComponent/TicketForm.vue'),
@@ -3167,7 +3226,11 @@ export default {
         required: false,
       },
       {
-        key: 'pos_id', type: 'list', list: 'frontend_2_1_3_8', listLabel: 'pos_name', filter_key: 'company_id',
+        key: 'pos_id',
+        type: 'list',
+        list: 'frontend_2_1_3_8',
+        listLabel: 'pos_name',
+        filter_key: 'company_id',
         required: false,
       },
       {
@@ -3206,10 +3269,12 @@ export default {
         entity: 'frontend_column_list',
         primaryKey: 'column_id',
         fields: [
-          { key: 'column_id', type: 'list', list: 'columnx', alwaysNew: true, onlyForm: true },
+          {
+            key: 'column_id', type: 'list', list: 'columnx', alwaysNew: true, onlyForm: true,
+          },
           { key: 'column_name', hideOnForm: true },
           { key: 'column_description', type: 'textarea', hideOnForm: true },
-          { key: 'column_is_qualitygate', type: 'boolean', hideOnForm: true, },
+          { key: 'column_is_qualitygate', type: 'boolean', hideOnForm: true },
           { key: 'team_name', hideOnForm: true },
           { key: 'rank_order', type: 'number' },
         ],
@@ -3222,8 +3287,12 @@ export default {
       { key: 'column_name' },
       { key: 'column_description', type: 'textarea' },
       { key: 'column_is_qualitygate', type: 'boolean' },
-      { key: 'default_value_id', type: 'list', list: 'defaultvalue', alwaysNew: true, onlyForm: true },
-      { key: 'team_id', type: 'list', list: 'team', listLabel: 'team_name', required: false },
+      {
+        key: 'default_value_id', type: 'list', list: 'defaultvalue', alwaysNew: true, onlyForm: true,
+      },
+      {
+        key: 'team_id', type: 'list', list: 'team', listLabel: 'team_name', required: false,
+      },
     ],
   },
   defaultvalue: {
@@ -3251,10 +3320,12 @@ export default {
       { key: 'trackrecord_comment' },
     ],
     filters: [
-      { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
+      {
+        key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name',
+      },
     ],
   },
-  //endregion
+  // endregion
   document: {
     entity: 'frontend_document_list',
     fields: [
@@ -3262,8 +3333,12 @@ export default {
       { key: 'document_name', hideOnForm: true },
       { key: 'document_mime_type', hideOnForm: true },
       { key: 'documenttype_name', hideOnForm: true },
-      { key: 'documenttype_id', type: 'list', list: 'documenttype', listLabel: 'documenttype_name', hideOnIndex: true },
-      { key: 'files', hideOnIndex: true, type: 'file', rules: { size: 10000 } },
+      {
+        key: 'documenttype_id', type: 'list', list: 'documenttype', listLabel: 'documenttype_name', hideOnIndex: true,
+      },
+      {
+        key: 'files', hideOnIndex: true, type: 'file', rules: { size: 10000 },
+      },
       {
         key: 'download',
         sortable: false,
@@ -3292,7 +3367,9 @@ function getContractCriteriaFields() {
       filter_value: null,
       mandatoryIfListEmpty: true,
     },
-    { key: 'contract_criteria_valid_from_date', type: 'date', composite: true, disableOnUpdate: true },
+    {
+      key: 'contract_criteria_valid_from_date', type: 'date', composite: true, disableOnUpdate: true,
+    },
     { key: 'contract_criteria_valid_to_date', type: 'date' },
     { key: 'contract_criteria_exists', type: 'boolean' },
     { key: 'criteriatype_name', hideOnForm: true },
@@ -3310,4 +3387,19 @@ function visibleByRecurringPaymentType(indexes) {
     const selected = list.find(i => i.recurringpaymenttype_id === entity.recurringpaymenttype_id)
     return selected ? indexes.indexOf(parseInt(selected.recurringpaymenttype_name.split('-')[0])) >= 0 : false
   }
+}
+
+async function updateInvoiceFlatRate(data) {
+  console.log('change', data)
+  await api({
+    entity: 'invoiceposition',
+    action: 'update',
+    data: [
+      {
+        invoiceposition_id: data.item.invoiceposition_id,
+        invoiceposition_flat_rate: data.value,
+      },
+    ],
+  })
+  successToast('Value updated')
 }

@@ -1,6 +1,6 @@
 <template>
   <b-overlay :show="loading">
-    <div v-if="entity">
+    <div v-if="entity && entity.columns">
       <div class="d-flex justify-content-between align-items-center mb-1">
         <div>
           <h4 class="mb-0 font-weight-bolder">{{ entity.ticket_id }}</h4>
@@ -13,7 +13,10 @@
                     @click="$refs.assign.openModal(entity, userIdsOfTeam(entity.columns[0].team_id))">
             {{ $t('button~assignto') }}
           </b-button>
-          <b-button v-if="canMoveToNext" class="ml-2" variant="primary" @click="moveToNext">
+          <b-button v-if="canMoveBack()" class="ml-2" variant="primary" @click="moveBack">
+            {{ $t('button~moveback') }}
+          </b-button>
+          <b-button v-if="canMoveToNext()" class="ml-2" variant="primary" @click="moveToNext">
             {{ $t('button~movetonextcolumn') }}
           </b-button>
           <b-button v-if="!entity.ticket_closed" variant="primary" class="ml-2" @click="updateTicket">
@@ -120,18 +123,19 @@
           <generic-modal ref="modal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
                          :title="$t('headline~ticket~newsubtask')" @reload-table="onNewTicket"/>
           <sub-ticket-card v-for="(ticket,idx) in subTickets" :key="idx" :ticket="ticket"/>
-          <p v-if="subTickets.length===0" class="text-center">{{$t('headline~ticket~nosubticket')}}</p>
-          <b-card-actions v-if="entity.columns" class="mt-3" :title="$t('headline~ticket~timeline')" action-collapse collapsed>
+          <p v-if="subTickets.length===0" class="text-center">{{ $t('headline~ticket~nosubticket') }}</p>
+          <b-card-actions v-if="entity.columns" class="mt-3" :title="$t('headline~ticket~timeline')" action-collapse
+                          collapsed>
             <app-timeline>
               <app-timeline-item v-for="(column,idx) in entity.columns" :key="idx" :title="column.column_name"
                                  subtitle=""
                                  :time="(column.user_email?(column.user_email+' - '):'')+column.ticket_move_time_in"
-                                 :variant="getColumnColor(column)"/>
+                                 :variant="getColumnColor(column,idx)"/>
             </app-timeline>
           </b-card-actions>
         </b-col>
         <b-col lg="4">
-          <h4 class="font-weight-bolder">{{$t('headline~ticket~documents')}}</h4>
+          <h4 class="font-weight-bolder">{{ $t('headline~ticket~documents') }}</h4>
           <b-row>
             <b-col v-for="(document,i) in documents" :key="i" md="6">
               <b-card>
@@ -139,17 +143,17 @@
                   <h6 style="color: #ccc">{{ document.document_name }}</h6>
                   <h4 class="font-weight-bolder mb-2" style="color: black">{{ document.document_mime_type }}</h4>
                   <b-link class="m-auto" variant="danger" target="_blank" :href="getDocumentLink(document)">
-                    {{$t('button~open')}}
+                    {{ $t('button~open') }}
                   </b-link>
                 </div>
               </b-card>
             </b-col>
           </b-row>
           <div>
-            <b-button variant="primary" @click="createDocument">{{$t('button~newdocument')}}</b-button>
+            <b-button variant="primary" @click="createDocument">{{ $t('button~newdocument') }}</b-button>
           </div>
           <div class="mt-2">
-            <b-button variant="primary" @click="createInvoice">{{$t('button~newinvoice')}}</b-button>
+            <b-button variant="primary" @click="createInvoice">{{ $t('button~newinvoice') }}</b-button>
           </div>
           <generic-modal ref="documentModal" table="document" :definition="documentDef" table-definition-key="document"
                          :title="$t('headline~document~new')" @reload-table="onNewDocuments"/>
@@ -229,6 +233,16 @@ export default {
     invoiceTicket() {
       return true
     },
+  },
+  methods: {
+    canMoveBack() {
+      if (!this.entity) return false
+      if (this.entity.ticket_closed) return false
+      if (!this.entity.columns[1]) return false
+      if (this.entity.columns[1].rank_order > this.entity.columns[0].rank_order) return false
+      const column_name = this.entity.columns[1].column_name
+      return this.config.accepts(null, { dataset: { status: column_name } }, { dataset: { status: this.entity.column_name } })
+    },
     canMoveToNext() {
       if (!this.entity) return false
       if (this.entity.ticket_closed) return false
@@ -236,15 +250,18 @@ export default {
       if (colIdx === this.columns.length - 1) return false
       return this.config.accepts(null, { dataset: { status: this.columns[colIdx + 1].column_name } }, { dataset: { status: this.entity.column_name } })
     },
-  },
-  methods: {
     async moveToNext() {
       const result = await this.moveToNextColumn(this.entity)
       if (result) await this.loadSingleTicket()
     },
-    getColumnColor(column) {
-      if (moment(column.ticket_move_time_out).isAfter(column.ticket_deadline_offset_red)) return 'danger'
-      if (moment(column.ticket_move_time_out).isAfter(column.ticket_deadline_offset_yellow)) return 'warning'
+    async moveBack() {
+      const result = await this.moveToPreviousColumn(this.entity)
+      if (result) await this.loadSingleTicket()
+    },
+    getColumnColor(column, idx) {
+      const date = idx === 0 ? moment() : moment(column.ticket_move_time_out)
+      if (date.isAfter(column.ticket_deadline_offset_red)) return 'danger'
+      if (date.isAfter(column.ticket_deadline_offset_yellow)) return 'warning'
       return 'success'
     },
     getDocumentLink,
