@@ -159,6 +159,20 @@ const router = new VueRouter({
         ],
       },
     },
+    {
+      path: '/app/incoming-mails',
+      name: 'incoming-mails',
+      component: () => import('@/views/app/Page/IncomingMails.vue'),
+      meta: {
+        pageTitle: 'Email Listing and Processing',
+        breadcrumb: [
+          {
+            text: 'Incoming Mails',
+            active: true,
+          },
+        ],
+      },
+    },
 
     // authentication
     {

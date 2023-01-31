@@ -1,6 +1,20 @@
 import Vue from 'vue'
 import FeatherIcon from '@core/components/feather-icon/FeatherIcon.vue'
-import { BButton, BCard, BFormCheckbox, BFormGroup, BFormRadioGroup, BLink, BOverlay, BSpinner } from 'bootstrap-vue'
+import {
+  BButton,
+  BCard,
+  BFormCheckbox,
+  BFormGroup,
+  BFormRadioGroup,
+  BLink,
+  BOverlay,
+  BSpinner,
+  BThead,
+  BTr,
+  BTh,
+  BTd,
+  BTbody, BRow, BCol
+} from 'bootstrap-vue'
 import { BCardActions } from '@core/components/b-card-actions';
 
 Vue.component(FeatherIcon.name, FeatherIcon)
@@ -13,3 +27,10 @@ Vue.component('b-link', BLink)
 Vue.component('b-form-radio-group', BFormRadioGroup)
 Vue.component('b-card', BCard)
 Vue.component('b-card-actions', BCardActions)
+Vue.component('b-thead', BThead)
+Vue.component('b-th', BTh)
+Vue.component('b-td', BTd)
+Vue.component('b-tr', BTr)
+Vue.component('b-tbody', BTbody)
+Vue.component('b-row', BRow)
+Vue.component('b-col', BCol)

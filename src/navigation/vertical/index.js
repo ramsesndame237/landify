@@ -40,13 +40,13 @@ export default [
       item('ticket', 'ticketlist'),
       {
         title: key('documentupload'),
-        route: 'comming-soon',
+        route: 'document-classification',
       },
     ],
   },
   {
     title: key('classification'),
-    route: table('document'),
+    route: 'incoming-mails',
   },
   item('pos'),
   {

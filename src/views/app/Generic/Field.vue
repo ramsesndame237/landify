@@ -1,12 +1,14 @@
 <template>
   <div>
-    <b-form-group v-if="visible" :label="field.label||$t('attribute.'+field.key)" :label-for="'field-'+field.key"
-                  :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null">
-      <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled :placeholder="$t('attribute.general_automaticid')"/>
+    <b-form-group v-if="visible" :label="field.noLabel ? '' : (field.label || $t('attribute.'+field.key))"
+                  :label-for="'field-'+field.key" :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null">
+      <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled
+                    :placeholder="$t('attribute.general_automaticid')"/>
       <validation-provider v-else #default="{ errors, validate }" :rules="rules" :name="field.key"
                            :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message&& tableDefinition.attribute_regexp_failure_message[field.key]}">
         <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
+        <div v-else-if="field.type==='html'" v-html="entity[field.key]" class="p-1 border bg-secondary bg-lighten-5 rounded"></div>
         <div v-else-if="field.type==='list'" :class="(field.withNew || field.ids) ? 'd-flex': ''">
           <v-select v-model="entity[field.key]" :disabled="selectDisabled" :class="errors.length > 0 ? 'error':''"
                     :get-option-label="defaultLabelFunction[field.key]||(option=> option[field.listLabel])"
@@ -246,6 +248,7 @@ export default {
       return this.$refs.fields || this.$children[0].$children.filter(c => c.$options.name === 'Field')
     },
     async fetchList() {
+      if(this.field.noFetch) return
       if (this.list.length === 0) this.loading = true
       let { list } = this.field
       if (list === 'address') {
