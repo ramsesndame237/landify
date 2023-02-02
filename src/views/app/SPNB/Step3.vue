@@ -1,7 +1,7 @@
 <template>
   <b-row>
     <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
-      {{ $t('app.content.create_location') }}
+      {{ $t('headline~new_business~title~location') }}
     </b-col>
     <b-col cols="12" md="6">
       <entity-form ref="form" table="location" :definition="definition" table-definition-key="location" create

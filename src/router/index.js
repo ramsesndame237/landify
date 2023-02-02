@@ -86,10 +86,10 @@ const router = new VueRouter({
       name: 'new-business',
       component: () => import('@/views/app/SPNB/Index.vue'),
       meta: {
-        pageTitle: 'app.page_title.s_p_n_b',
+        pageTitle: 'headline~new_business',
         breadcrumb: [
           {
-            text: 'app.page_title.s_p_n_b',
+            text: 'headline~new_business',
             active: true,
           },
         ],

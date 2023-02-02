@@ -1,7 +1,7 @@
 <template>
   <b-row>
     <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
-      {{ $t('app.content.create_customer_group') }}
+      {{ $t('headline~new_business~title~customergroup') }}
     </b-col>
     <b-col cols="12" md="6">
       <field :field="{key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name'}"

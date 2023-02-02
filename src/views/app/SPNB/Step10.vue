@@ -1,7 +1,7 @@
 <template>
   <b-row>
     <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
-      Create new Contract Recurring Payment
+      {{ $t('headline~new_business~title~contract') }}
     </b-col>
     <b-col cols="12" md="6">
       <entity-form ref="form" table="recurringpayment" :definition="definition" table-definition-key="recurringpayment"

@@ -3,13 +3,13 @@
     <b-card body-class="p-0">
       <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
         <div class="d-flex align-items-center">
-          <span>{{ $t('app.content.create_new_business') }}</span>
+          <span>{{ $t('headline~new_business~subframe') }}</span>
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
             <b-button size="sm" class="d-flex align-items-center" variant="primary">
-              <img src="@/assets/images/pages/deleteIcons.svg" alt="">
-              {{ $t('app.btn.cancel') }}
+<!--              <img src="@/assets/images/pages/deleteIcons.svg" alt="">-->
+              {{ $t('button~cancel') }}
             </b-button>
           </div>
         </div>
@@ -20,7 +20,7 @@
         <b-card class="" style="position:sticky; top: 20px">
           <b-row>
             <b-col cols="12" class="b-light d-flex justify-content-between">
-              <span> {{ $t('app.content.progress') }} :</span>
+              <span> {{ $t('headline~new_business~subframe~progress') }} :</span>
               <span class="text-primary"> {{ steps_progress }} %</span>
             </b-col>
             <b-col cols="12" class="p-1">
@@ -78,10 +78,10 @@
                class=" d-flex pt-5 pb-5 mb-2 justify-content-center align-items-center col-12">
             <img src="@/assets/images/icons/smile.png" alt="">
           </div>
-          <b-col cols="12" class="d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center justify-content-between">
             <div>
               <small>
-                {{ $t('app.content.new_busness_text_btn_msg') }}
+                {{ $t('headline~new_business~subframe~customergroup') }}
               </small>
             </div>
             <div class="d-flex align-items-center justify-content-between">
@@ -99,7 +99,7 @@
                 {{ $t('app.btn.next') }}
               </b-button>
             </div>
-          </b-col>
+          </div>
         </b-card>
       </b-col>
     </b-row>
@@ -146,73 +146,62 @@ export default {
   data() {
     return {
       ticket: {},
-      user: [
-        {
-          id: 1,
-          full_name: 'NYA',
-          first_name: 'Josue',
-          email: 'josue.nya@gohze.org',
-          last_login: '2022/04/20',
-          user_type: 'developer',
-          company: 'Gohze',
-        },
-      ],
       current_step: 1,
       max_steps: 10,
       completed_step: 0,
       steps_progress: 0,
       steps_tabs: [
         {
-          text: this.$t('app.tab.customer_group'),
+          text: this.$t('headline~new_business~progress~customergroup'),
           completed: false,
           step: 1,
         },
         {
-          text: this.$t('app.tab.customers'),
+          text: this.$t('headline~new_business~progress~company'),
           completed: false,
           step: 2,
         },
         {
-          text: this.$t('app.tab.location'),
+          text: this.$t('headline~new_business~progress~location'),
           completed: false,
           step: 3,
         },
         {
-          text: this.$t('app.tab.area'),
+          text: this.$t('headline~new_business~progress~area'),
           completed: false,
           step: 4,
         },
         {
-          text: this.$t('app.tab.pos'),
+          text: this.$t('headline~new_business~progress~pos'),
           completed: false,
           step: 5,
         },
         {
-          text: this.$t('app.tab.contract'),
+          text: this.$t('headline~new_business~progress~contract'),
           completed: false,
           step: 6,
         },
 
         {
-          text: this.$t('app.tab.contract'),
+          text: this.$t('headline~new_business~progress~contract'),
           completed: false,
           step: 7,
           sub_step: true,
         },
         {
-          text: this.$t('app.tab.contract'),
+          text: this.$t('headline~new_business~progress~contract'),
           completed: false,
           step: 8,
           sub_step: true,
         },
         {
-          text: this.$t('app.tab.contract'),
+          text: this.$t('headline~new_business~progress~contract'),
           completed: false,
           step: 9,
           sub_step: true,
         },
         {
-          text: this.$t('app.tab.contract'),
+          text: this.$t('headline~new_business~progress~contract'),
           completed: false,
           step: 10,
           sub_step: true,
