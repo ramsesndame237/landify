@@ -575,7 +575,7 @@ export default {
       { key: 'contactdetails_phone', sortable: true, hideOnForm: true },
       { key: 'contactdetails_email', sortable: true, hideOnForm: true },
       {
-        key: 'No of contactpersons', sortable: true, hideOnForm: true,
+        key: 'contactpersons_count', sortable: true, hideOnForm: true,
       },
     ],
     relations: [
