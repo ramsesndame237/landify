@@ -9,7 +9,8 @@
         <div class="d-flex align-items-center">
           <notes v-if="definition.note" class="mr-2" :primary-key="primaryKey" :id="entityId" :note="definition.note"
                  :note-rel="'note_user_'+table+'_rel'"/>
-          <b-button v-if="!entity.ticket_closed" variant="primary"
+          <b-button variant="primary" @click="createInvoice">{{ $t('button~newinvoice') }}</b-button>
+          <b-button v-if="!entity.ticket_closed" variant="primary" class="ml-2"
                     @click="$refs.assign.openModal(entity, userIdsOfTeam(entity.columns[0].team_id))">
             {{ $t('button~assignto') }}
           </b-button>
@@ -152,9 +153,26 @@
           <div>
             <b-button variant="primary" @click="createDocument">{{ $t('button~newdocument') }}</b-button>
           </div>
-          <div class="mt-2">
-            <b-button variant="primary" @click="createInvoice">{{ $t('button~newinvoice') }}</b-button>
-          </div>
+
+
+          <b-card-actions :title="$t('headline~ticket~emails')" class="mt-2" action-collapse>
+            <b-table-simple>
+              <b-thead>
+                <b-tr>
+                  <b-th>Email From</b-th>
+                  <b-th>Email To</b-th>
+                  <b-th>Email Subject</b-th>
+                </b-tr>
+              </b-thead>
+              <tbody>
+
+              </tbody>
+            </b-table-simple>
+            <div class="text-right">
+              <b-button variant="primary" @click="$refs.emailModal.show(false)">New Email</b-button>
+            </div>
+          </b-card-actions>
+          <email-modal ref="emailModal"/>
           <generic-modal ref="documentModal" table="document" :definition="documentDef" table-definition-key="document"
                          :title="$t('headline~document~new')" @reload-table="onNewDocuments"/>
           <generic-modal ref="ticketModal" :fetch-data="false" table="ticket" :definition="ticketDef"
@@ -185,10 +203,13 @@ import { getDocumentLink } from "@/libs/utils";
 import moment from 'moment'
 import AssignUserModal from "@/views/app/Kanban/AssignUserModal";
 import Notes from "@/views/app/Generic/Notes";
+import _ from 'lodash'
+import EmailModal from "@/views/app/Page/EmailModal";
 
 export default {
   name: 'TicketDetail',
   components: {
+    EmailModal,
     Notes,
     AssignUserModal,
     BCardActions,
@@ -233,6 +254,21 @@ export default {
     invoiceTicket() {
       return true
     },
+  },
+  async mounted() {
+    this.loading = true
+    try {
+      if (!this.entity || !this.entity.columns) {
+        await this.loadSingleTicket(false)
+        this.entity = this.tickets[0]
+        await this.loadStages(this.entity.board_id)
+      }
+      await this.fetchSubTickets()
+      await this.fetchDocuments()
+      await this.fetchEmail()
+    } finally {
+      this.loading = false
+    }
   },
   methods: {
     canMoveBack() {
@@ -325,6 +361,20 @@ export default {
         data: results.map(r => ({ document_id: r.document_id })),
       })).data.data.data
     },
+    async fetchEmail() {
+      const results = (await this.$api({
+        entity: 'email_ticket_grp',
+        action: 'read-rich',
+        per_page: 100000,
+        data: [{ ticket_id: this.entity.ticket_id }],
+      })).data.data.data
+      if (!results.length) return
+      this.emails = _.groupBy(results, 'email_id').map(r => {
+        const obj = _.pick(r[0], ['email_id', 'email_from', 'email_to', 'email_cc', 'email_subject', 'email_body'])
+        obj.documents = r.map(d => _.pick(d, ['document_id', 'document_name', 'document_content']))
+        return obj
+      }).values()
+    },
     async loadSingleTicket(loader = true) {
       if (loader) this.loading = true
       try {
@@ -334,20 +384,6 @@ export default {
         if (loader) this.loading = false
       }
     },
-  },
-  async mounted() {
-    this.loading = true
-    try {
-      if (!this.entity || !this.entity.columns) {
-        await this.loadSingleTicket(false)
-        this.entity = this.tickets[0]
-        await this.loadStages(this.entity.board_id)
-      }
-      await this.fetchSubTickets()
-      await this.fetchDocuments()
-    } finally {
-      this.loading = false
-    }
   },
 }
 </script>

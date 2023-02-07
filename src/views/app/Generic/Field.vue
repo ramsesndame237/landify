@@ -8,7 +8,18 @@
                            :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message&& tableDefinition.attribute_regexp_failure_message[field.key]}">
         <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
-        <div v-else-if="field.type==='html'" v-html="entity[field.key]" class="p-1 border bg-secondary bg-lighten-5 rounded"></div>
+        <div v-else-if="field.type==='html'" class="message-editor">
+          <quill-editor :id="'quill-content-'+field.key" :disabled="disabled" v-model="entity[field.key]" :options="editorOption">
+            <div :id="'quill-toolbar-'+field.key" slot="toolbar" class="d-flex border-bottom-0">
+              <!-- Add a bold button -->
+              <button class="ql-bold"/>
+              <button class="ql-italic"/>
+              <button class="ql-underline"/>
+              <button class="ql-align"/>
+              <button class="ql-link"/>
+            </div>
+          </quill-editor>
+        </div>
         <div v-else-if="field.type==='list'" :class="(field.withNew || field.ids) ? 'd-flex': ''">
           <v-select v-model="entity[field.key]" :disabled="selectDisabled" :class="errors.length > 0 ? 'error':''"
                     :get-option-label="defaultLabelFunction[field.key]||(option=> option[field.listLabel])"
@@ -29,7 +40,8 @@
                     label="label" class="w-100" :reduce="i => i.value"/>
         </div>
         <div v-else-if="field.type==='file'">
-          <input ref="file" type="file" @change="validate" :multiple="field.multiple" required>
+          <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
+                       drop-placeholder="Drop file here..." :multiple="field.multiple" required @change="validate"/>
         </div>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
@@ -64,12 +76,13 @@
 <script>
 import Fuse from 'fuse.js'
 import {
-  BButton, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow,
+  BButton, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow,
 } from 'bootstrap-vue'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
 import { snakeToTitle } from '@/libs/utils'
 import Table from '@/table/index'
+import { quillEditor } from 'vue-quill-editor'
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -78,7 +91,8 @@ function isEmpty(val) {
 export default {
   name: 'Field',
   components: {
-    BFormInput, BFormGroup, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol, BFormCheckbox,
+    quillEditor,
+    BFormInput, BFormFile, BFormGroup, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol, BFormCheckbox,
   },
   props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition'],
   data() {
@@ -108,6 +122,12 @@ export default {
         { value: 1, label: 'Yes' },
         { value: 0, label: 'No' },
       ],
+      editorOption: {
+        modules: {
+          toolbar: '#quill-toolbar-' + this.field.key,
+        },
+        placeholder: 'Type Text Here...',
+      },
     }
   },
   computed: {
@@ -248,7 +268,7 @@ export default {
       return this.$refs.fields || this.$children[0].$children.filter(c => c.$options.name === 'Field')
     },
     async fetchList() {
-      if(this.field.noFetch) return
+      if (this.field.noFetch) return
       if (this.list.length === 0) this.loading = true
       let { list } = this.field
       if (list === 'address') {
@@ -315,6 +335,12 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@core/scss/vue/libs/quill.scss';
+//@import '~quill/dist/quill.core.css';
+//// eslint-disable-next-line
+//@import '~quill/dist/quill.snow.css';
+//// eslint-disable-next-line
+//@import '~quill/dist/quill.bubble.css';
 
 .hide-main {
   > label {

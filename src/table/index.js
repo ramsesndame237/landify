@@ -3076,6 +3076,8 @@ export default {
       { key: 'contradiction_id', auto: true },
       { key: 'contradiction_name' },
       { key: 'contradiction_last_change_time', hideOnForm: true },
+      { key: 'contradictionpoint_text', type: 'html', hideOnIndex: true },
+      { key: 'contradictionpoint_text_customer', type: 'html', hideOnIndex: true },
       { key: 'contradictiontask_count', hideOnForm: true },
       { key: 'contradictionpoint_count', hideOnForm: true },
     ],
