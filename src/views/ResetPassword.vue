@@ -3,32 +3,27 @@
     <div class="auth-inner py-2">
 
       <!-- Login v1 -->
-      <b-card v-if="!show" class="mb-0 card-transparent shadow-none">
-        <b-link class="brand-logo">
-          <vuexy-logo/>
-        </b-link>
-        <b-card-text class="mb-2 text-center">
-          {{ message }}
-        </b-card-text>
-      </b-card>
-      <b-card v-if="show" class="mb-0 card-transparent shadow-none">
+      <b-card class="mb-0 card-transparent shadow-none">
         <b-link class="brand-logo">
           <vuexy-logo/>
         </b-link>
 
         <b-card-title class="mb-1 font-weight-bolder">
-          Login
+          Forgot Password
         </b-card-title>
         <b-card-text class="mb-2">
-          Welcome, enter your login credentials to proceed (Hello World!)
+          <span>{{
+              !isSend ? 'Please enter your email address and Verify it from your Mail box.' : 'Congragulations your email is verified please enter your new password.'
+            }}</span>
+
         </b-card-text>
 
         <!-- form -->
-        <validation-observer ref="loginForm" #default="{invalid}">
+        <validation-observer ref="form" #default="{invalid}">
           <b-form class="auth-login-form mt-2" @submit.prevent>
 
             <!-- email -->
-            <b-form-group>
+            <b-form-group v-if="!isSend">
               <validation-provider #default="{ errors }" name="Email" rules="required|email">
                 <b-input-group class="input-group-merge" :class="errors.length > 0 ? 'is-invalid':null">
                   <b-input-group-prepend is-text>
@@ -43,7 +38,7 @@
             </b-form-group>
 
             <!-- password -->
-            <b-form-group>
+            <b-form-group v-if="isSend">
               <validation-provider #default="{ errors }" name="Password" rules="required">
                 <b-input-group class="input-group-merge" :class="errors.length > 0 ? 'is-invalid':null">
                   <b-input-group-prepend is-text>
@@ -60,22 +55,39 @@
               </validation-provider>
             </b-form-group>
 
-            <!-- checkbox -->
-            <b-form-group>
-              <div class="d-flex justify-content-between">
-                <b-form-checkbox id="remember-me" v-model="status" name="checkbox-1">
-                  Remember Me
-                </b-form-checkbox>
-                <b-link :to="{name:'forgot-password'}">
-                  <small>Forgot Password?</small>
-                </b-link>
-              </div>
+            <!-- re-enter password -->
+            <b-form-group v-if="isSend">
+              <validation-provider #default="{ errors }" name="Password" rules="required">
+                <b-input-group class="input-group-merge" :class="errors.length > 0 ? 'is-invalid':null">
+                  <b-input-group-prepend is-text>
+                    <feather-icon class="cursor-pointer" icon="LockIcon"/>
+                  </b-input-group-prepend>
+                  <b-form-input id="password" v-model="password" :type="passwordFieldType" class="form-control-merge"
+                                :state="errors.length > 0 ? false:null" name="login-password"
+                                placeholder="Re-enter Password"/>
+
+                  <b-input-group-append is-text>
+                    <feather-icon class="cursor-pointer" :icon="passwordToggleIcon" @click="togglePasswordVisibility"/>
+                  </b-input-group-append>
+                </b-input-group>
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
             </b-form-group>
+
+            <b-card-text v-if="isSend" class="mt-3">
+              <div class="d-flex mx-auto">
+                <svg class="mr-1" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <rect width="14" height="14" rx="7" fill="#D51130"/>
+                </svg>
+
+                <span class="text-sm-left">Minimum length, allowed/mandatory characters, upper/lower case, numbers, special characters, etc.</span>
+              </div>
+            </b-card-text>
 
             <!-- submit button -->
             <div class="text-center">
-              <b-button variant="primary" type="submit" style="display: inline-flex" pill @click="validationForm">
-                <span style="line-height: 24px" class="mr-1">Login</span>
+              <b-button variant="primary" type="submit" pill @click="validationForm()">
+                <span style="line-height: 24px" class="mr-1">{{ !isSend ? 'Send' : 'Continue' }}</span>
                 <b-spinner v-if="loading" style="width: 24px;height: 24px"/>
                 <feather-icon v-else size="24" icon="ArrowRightIcon"/>
               </b-button>
@@ -84,12 +96,19 @@
           </b-form>
         </validation-observer>
 
-<!--        <b-card-text class="text-center mt-2">-->
-<!--          <span>Dont have an account? </span>-->
-<!--          <b-link :to="{name:'register'}">-->
-<!--            <span>Sign Up</span>-->
-<!--          </b-link>-->
-<!--        </b-card-text>-->
+        <b-card-text class="text-center mt-2">
+          <!--          <span>Already have an account? </span>-->
+          <b-link :to="{name:'login'}">
+            <span>Sign In</span>
+          </b-link>
+        </b-card-text>
+
+        <!--        <b-card-text class="text-center mt-2">-->
+        <!--          <span>Don't have an account? </span>-->
+        <!--          <b-link :to="{name:'register'}">-->
+        <!--            <span>Sign Up</span>-->
+        <!--          </b-link>-->
+        <!--        </b-card-text>-->
       </b-card>
       <!-- /Login v1 -->
     </div>
@@ -111,16 +130,11 @@ import {
   BInputGroupAppend,
   BInputGroupPrepend,
   BFormCheckbox,
-  BSpinner,
 } from 'bootstrap-vue'
 import VuexyLogo from '@core/layouts/components/Logo.vue'
 import { required, email } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
-import ToastificationContent from '@core/components/toastification/ToastificationContent'
-import useJwt from "@/auth/jwt/useJwt";
-import { getHomeRouteForLoggedInUser } from "@/auth/utils";
-import { defineRules } from "@/libs/acl/ability";
-import BrowserId from 'browser-id'
+import ToastificationContent from "@core/components/toastification/ToastificationContent";
 
 export default {
   components: {
@@ -138,22 +152,20 @@ export default {
     BInputGroupAppend,
     BInputGroupPrepend,
     BFormCheckbox,
-    BSpinner,
     ValidationProvider,
     ValidationObserver,
   },
   mixins: [togglePasswordVisibility],
   data() {
     return {
+      isSend: false,
       userEmail: '',
       password: '',
       status: '',
-      loading: false,
       // validation rules
       required,
       email,
-      show: true,
-      message: '',
+      loading: false,
     }
   },
   computed: {
@@ -162,32 +174,21 @@ export default {
     },
   },
   methods: {
-
     validationForm() {
-      this.$refs.loginForm.validate().then(success => {
+      // console.log('submited==========>>>>>>>>>')
+      this.$refs.form.validate().then(success => {
         if (success) {
-          const data = {
-            user_email: this.userEmail,
-            user_password: this.password,
-            user_browser_hash: BrowserId(),
-          }
           this.loading = true
-          this.$http.post('/auth/login', data).then(async resp => {
-            if (!resp.data.user_token) {
-              this.message = resp.data.message
-              this.show = false
-              return
-            }
-            useJwt.setToken(resp.data.user_token)
-            localStorage.setItem('userEmail', resp.data.user.user_email)
-            return useJwt.redirectAfterLogin(this)
-          })
-            .catch(e => {
-              let title
-              if (e.response) {
-                title = e.response.data.detail
-              }
-              this.$errorToast(title)
+          this.$http.post('/auth/reset-password/' + this.userEmail, {})
+            .then(() => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Form Submitted',
+                  icon: 'EditIcon',
+                  variant: 'success',
+                },
+              })
             })
             .finally(() => this.loading = false)
         }

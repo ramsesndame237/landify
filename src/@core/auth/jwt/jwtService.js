@@ -1,3 +1,8 @@
+import ability, { defineRules } from '@/libs/acl/ability'
+import { getHomeRouteForLoggedInUser } from '@/auth/utils'
+import ToastificationContent from '@core/components/toastification/ToastificationContent'
+import useJwt from '@/auth/jwt/useJwt'
+import { initialAbility } from '@/libs/acl/config'
 import jwtDefaultConfig from './jwtDefaultConfig'
 
 export default class JwtService {
@@ -26,7 +31,8 @@ export default class JwtService {
         // If token is present add it to request's Authorization Header
         if (accessToken) {
           // eslint-disable-next-line no-param-reassign
-          config.headers.Authorization = `${this.jwtConfig.tokenType} ${accessToken}`
+          // config.headers.Authorization = `${this.jwtConfig.tokenType} ${accessToken}`
+          config.headers.Authorization = `${accessToken}`
         }
         return config
       },
@@ -106,6 +112,35 @@ export default class JwtService {
   refreshToken() {
     return this.axiosIns.post(this.jwtConfig.refreshEndpoint, {
       refreshToken: this.getRefreshToken(),
+    })
+  }
+
+  async logout() {
+    await this.axiosIns.post('/auth/logout/', {}, { query: { access_token: this.getToken() } })
+    // ? You just removed token from localStorage. If you like, you can also make API call to backend to blacklist used token
+    localStorage.removeItem(useJwt.jwtConfig.storageTokenKeyName)
+    localStorage.removeItem(useJwt.jwtConfig.storageRefreshTokenKeyName)
+
+    // Remove userData from localStorage
+    localStorage.removeItem('userData')
+
+    // Reset ability
+    ability.update(initialAbility)
+  }
+
+  async redirectAfterLogin($vm) {
+    const userData = await $vm.$store.dispatch('app/fetchUserData', localStorage.getItem('userEmail'))
+    console.log(userData)
+    $vm.$ability.update(defineRules())
+    // get full user data
+    await $vm.$router.replace(getHomeRouteForLoggedInUser(''))
+    $vm.$toast({
+      component: ToastificationContent,
+      props: {
+        title: 'Welcome back to ZELOS',
+        icon: 'successIcon',
+        variant: 'success',
+      },
     })
   }
 }

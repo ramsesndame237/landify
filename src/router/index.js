@@ -196,6 +196,16 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/auth/verification/:token',
+      name: 'verify-token',
+      component: () => import('@/views/VerifyToken.vue'),
+      meta: {
+        layout: 'full',
+        resource: 'Auth',
+        redirectIfLoggedIn: true,
+      },
+    },
+    {
       path: '/register',
       name: 'register',
       component: () => import('@/views/Register.vue'),

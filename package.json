@@ -1,6 +1,6 @@
 {
   "name": "zelos",
-  "version": "6.4.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -25,6 +25,7 @@
     "axios-mock-adapter": "1.19.0",
     "bootstrap": "4.6.0",
     "bootstrap-vue": "2.21.1",
+    "browser-id": "^2.0.24",
     "chart.js": "2.9.4",
     "core-js": "^3.25.2",
     "echarts": "5.2.1",
