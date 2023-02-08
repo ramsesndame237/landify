@@ -116,7 +116,7 @@ export default class JwtService {
   }
 
   async logout() {
-    await this.axiosIns.post('/auth/logout/', {}, { query: { access_token: this.getToken() } })
+    // await this.axiosIns.post('/auth/logout/', {}, { query: { access_token: this.getToken() } })
     // ? You just removed token from localStorage. If you like, you can also make API call to backend to blacklist used token
     localStorage.removeItem(useJwt.jwtConfig.storageTokenKeyName)
     localStorage.removeItem(useJwt.jwtConfig.storageRefreshTokenKeyName)
