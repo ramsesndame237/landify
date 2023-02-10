@@ -134,6 +134,37 @@
                                  :variant="getColumnColor(column,idx)"/>
             </app-timeline>
           </b-card-actions>
+          <b-card-actions no-body="dd" :title="$t('headline~ticket~emails')" class="mt-2" action-collapse>
+            <b-overlay :show="loadingEmail">
+              <b-table-simple class="table-responsive">
+                <b-thead>
+                  <b-tr>
+                    <b-th></b-th>
+                    <b-th>Date</b-th>
+                    <b-th>To</b-th>
+                    <b-th>Subject</b-th>
+                  </b-tr>
+                </b-thead>
+                <b-tbody>
+                  <b-tr v-for="(email,i) in emails" :key="i">
+                    <b-td>
+                      <b-button class=" btn-icon" variant="flat-success" pill
+                                @click="$refs.emailModal.show(true,email)">
+                        <feather-icon icon="EyeIcon"/>
+                      </b-button>
+                    </b-td>
+                    <b-td>{{ email.email_received_datetime }}</b-td>
+                    <b-td>{{ email.email_to }}</b-td>
+                    <b-td>{{ email.email_subject }}</b-td>
+                  </b-tr>
+                </b-tbody>
+              </b-table-simple>
+            </b-overlay>
+            <div class="text-right p-1">
+              <b-button variant="primary" @click="$refs.emailModal.show(false)">New Email</b-button>
+            </div>
+          </b-card-actions>
+          <email-modal ref="emailModal" @reload="fetchEmail"/>
         </b-col>
         <b-col lg="4">
           <h4 class="font-weight-bolder">{{ $t('headline~ticket~documents') }}</h4>
@@ -154,25 +185,6 @@
             <b-button variant="primary" @click="createDocument">{{ $t('button~newdocument') }}</b-button>
           </div>
 
-
-          <b-card-actions :title="$t('headline~ticket~emails')" class="mt-2" action-collapse>
-            <b-table-simple>
-              <b-thead>
-                <b-tr>
-                  <b-th>Email From</b-th>
-                  <b-th>Email To</b-th>
-                  <b-th>Email Subject</b-th>
-                </b-tr>
-              </b-thead>
-              <tbody>
-
-              </tbody>
-            </b-table-simple>
-            <div class="text-right">
-              <b-button variant="primary" @click="$refs.emailModal.show(false)">New Email</b-button>
-            </div>
-          </b-card-actions>
-          <email-modal ref="emailModal"/>
           <generic-modal ref="documentModal" table="document" :definition="documentDef" table-definition-key="document"
                          :title="$t('headline~document~new')" @reload-table="onNewDocuments"/>
           <generic-modal ref="ticketModal" :fetch-data="false" table="ticket" :definition="ticketDef"
@@ -248,6 +260,8 @@ export default {
       subTickets: [],
       documents: [],
       loading: false,
+      emails: [],
+      loadingEmail: false,
     }
   },
   computed: {
@@ -362,18 +376,24 @@ export default {
       })).data.data.data
     },
     async fetchEmail() {
-      const results = (await this.$api({
-        entity: 'email_ticket_grp',
-        action: 'read-rich',
-        per_page: 100000,
-        data: [{ ticket_id: this.entity.ticket_id }],
-      })).data.data.data
-      if (!results.length) return
-      this.emails = _.groupBy(results, 'email_id').map(r => {
-        const obj = _.pick(r[0], ['email_id', 'email_from', 'email_to', 'email_cc', 'email_subject', 'email_body'])
-        obj.documents = r.map(d => _.pick(d, ['document_id', 'document_name', 'document_content']))
-        return obj
-      }).values()
+      this.loadingEmail = true
+      try {
+        const results = (await this.$api({
+          entity: 'email_ticket_grp',
+          action: 'read-rich',
+          per_page: 100000,
+          data: [{ ticket_id: this.entity.ticket_id }],
+        })).data.data.data
+        if (!results.length) return
+        console.log(results)
+        this.emails = Object.values(_.groupBy(results, 'email_id')).map(r => {
+          const obj = _.pick(r[0], ['email_id', 'email_from', 'email_received_datetime', 'email_to', 'email_cc', 'email_subject', 'email_body'])
+          obj.documents = r.map(d => _.pick(d, ['document_id', 'document_name', 'document_content']))
+          return obj
+        })
+      } finally {
+        this.loadingEmail = false
+      }
     },
     async loadSingleTicket(loader = true) {
       if (loader) this.loading = true

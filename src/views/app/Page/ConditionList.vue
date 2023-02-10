@@ -250,7 +250,7 @@ export default {
           const obj = _.pick(r[0], ['contract_id', 'contract_name', 'contract_begin_date',
             'contract_end_date', 'contract_first_possible_end_date', 'contract_creation_time', 'pos_branchnumber',
             'contract_last_change_time', 'contract_migration_checked', 'contracttype_name', 'currency_name', 'currency_id', 'currency_short', 'currency_iso', 'currency_iso4217',
-            'contracttype_description', 'company_name', 'location_name', 'pos_name', 'country_name', 'owner_name', 'manager_name'])
+            'contracttype_description', 'company_name', 'location_name', 'pos_name', 'contactperson_name', 'country_name', 'owner_name', 'manager_name'])
           obj.areas = r
             .filter(ar => date.isBetween(ar.contract_area_unit_usagetype_valid_from_date, ar.contract_area_unit_usagetype_valid_to_date))
             .map(i => _.pick(i, ['area_id',

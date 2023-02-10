@@ -38,6 +38,11 @@ export default {
         // hideOnCreate: true,
         required: false,
       },
+      {
+        key: 'user_password',
+        type: 'password',
+        required: false,
+      },
     ],
     updateComponent: () => import('@/views/app/FormComponent/UserForm'),
     relations: [
@@ -221,7 +226,7 @@ export default {
       user_locked: 0,
       user_wrong_password_counter: 0,
       user_password_reset_required: 0,
-      user_password: 'Fsa!0dsadad',
+      // user_password: 'Fsa!0dsadad',
       user_mobile: '+491511234456',
     },
     note: 'frontend_0_8_13',
@@ -1343,6 +1348,15 @@ export default {
       { key: 'location_count', hideOnForm: true },
       { key: 'area_count', hideOnForm: true },
       { key: 'pos_first_year', type: 'date', required: false },
+      {
+        key: 'contactperson_id',
+        type: 'list',
+        list: 'frontend_2_1_3_5',
+        listLabel: 'contactperson_name',
+        hideOnIndex: true,
+        relationEntity: 'contactperson_pos_rel',
+        filter_key: 'company_id',
+      },
     ],
     relations: [
       {

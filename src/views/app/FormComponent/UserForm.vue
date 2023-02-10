@@ -9,10 +9,8 @@
         </b-col>
         <!-- Field: user_password -->
         <b-col cols="12" md="6">
-          <b-form-group label="Password" label-for="password">
-            <b-form-input id="password" v-model="entity.user_password" :disabled="disabled" type="password"
-                          auto-complete="new-password"/>
-          </b-form-group>
+          <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
+                 :field="getField('user_password')"/>
         </b-col>
 
         <!-- Field user_reset-required -->

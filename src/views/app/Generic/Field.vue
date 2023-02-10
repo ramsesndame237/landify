@@ -9,7 +9,8 @@
         <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
         <div v-else-if="field.type==='html'" class="message-editor">
-          <quill-editor :id="'quill-content-'+field.key" :disabled="disabled" v-model="entity[field.key]" :options="editorOption">
+          <quill-editor :id="'quill-content-'+field.key" :disabled="disabled" v-model="entity[field.key]"
+                        :options="editorOption">
             <div :id="'quill-toolbar-'+field.key" slot="toolbar" class="d-flex border-bottom-0">
               <!-- Add a bold button -->
               <button class="ql-bold"/>
@@ -22,10 +23,10 @@
         </div>
         <div v-else-if="field.type==='list'" :class="(field.withNew || field.ids) ? 'd-flex': ''">
           <v-select v-model="entity[field.key]" :disabled="selectDisabled" :class="errors.length > 0 ? 'error':''"
-                    :get-option-label="defaultLabelFunction[field.key]||(option=> option[field.listLabel])"
-                    :placeholder="field.key" :options="listItems" transition="" :label="field.listLabel" class="w-100"
-                    :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
-                    @input="onChange"/>
+                    :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
+                    :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
+                    :label="field.listLabel" class="w-100" :loading="loading"
+                    :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch" @input="onChange"/>
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm">New
           </b-button>
@@ -43,6 +44,16 @@
           <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
                        drop-placeholder="Drop file here..." :multiple="field.multiple" required @change="validate"/>
         </div>
+        <b-input-group v-else-if="field.type==='password'" class="input-group-merge"
+                       :class="errors.length > 0 ? 'is-invalid':null">
+          <b-form-input v-model="entity[field.key]" :disabled="disabled" :type="passwordFieldType"
+                        class="form-control-merge" :state="errors.length > 0 ? false:null" :name="field.key"
+                        placeholder="Password"/>
+
+          <b-input-group-append is-text>
+            <feather-icon class="cursor-pointer" :icon="passwordToggleIcon" @click="togglePasswordVisibility"/>
+          </b-input-group-append>
+        </b-input-group>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
                     class="form-control"/>
@@ -83,6 +94,7 @@ import vSelect from 'vue-select'
 import { snakeToTitle } from '@/libs/utils'
 import Table from '@/table/index'
 import { quillEditor } from 'vue-quill-editor'
+import { togglePasswordVisibility } from "@core/mixins/ui/forms";
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -94,6 +106,7 @@ export default {
     quillEditor,
     BFormInput, BFormFile, BFormGroup, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol, BFormCheckbox,
   },
+  mixins: [togglePasswordVisibility],
   props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition'],
   data() {
     return {
@@ -107,6 +120,7 @@ export default {
       defaultLabelFunction: {
         address_id: option => `${option.city_zip || ''} - ${option.city_name || ''} - ${option.address_street || ''}`,
         invoice_id: option => `${option.invoice_id || ''} - ${option.invoice_number || ''} - ${option.invoice_date || ''}`,
+        contactperson_id: option => `${option.contactperson_firstname} ${option.contactperson_lastname}`,
       },
       dateConfig: {
         allowInput: true,
@@ -131,6 +145,9 @@ export default {
     }
   },
   computed: {
+    passwordToggleIcon() {
+      return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
+    },
     selectDisabled() {
       return this.disabled || (this.field.filter_key && !this.entity[this.field.filter_key])
     },
@@ -172,6 +189,10 @@ export default {
     selectedValue() {
       return this.field.type === 'list' ? this.list.find(e => e[this.field.key] === this.entity[this.field.key]) : this.entity[this.field.key]
     },
+    selectedValues() {
+      return this.field.type === 'list' ? this.list.filter(e => this.entity[this.field.key].indexOf(e[this.field.key]) >= 0) : []
+    },
+
   },
   watch: {
     list() {

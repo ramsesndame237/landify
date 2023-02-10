@@ -81,7 +81,7 @@ export default {
               })
           }
           if (field.alwaysNew) {
-            const component = this.$refs.fields.find(f => f.field === field)
+            const component = this.getFieldComponents().find(f => f.field === field)
             if (!component) return
             const { subDefinition } = component
             this.getFormFields(subDefinition)
@@ -188,6 +188,7 @@ export default {
     },
     createNewEntities(fieldComponents, formFields, entity, originalEntity) {
       if (!Array.isArray(fieldComponents)) return Promise.resolve()
+      console.log("new entities", fieldComponents, formFields)
       return Promise.all(formFields.filter(field => {
         const component = fieldComponents.find(f => f.field === field)
         return !field.hide && component && (field.type === 'list') && (component.hasNew || field.alwaysNew)
@@ -225,6 +226,7 @@ export default {
     },
     saveEntity(entity, originalEntity, formFields, fieldComponents, table, definition, primaryKey, create) {
       const action = create ? 'create' : 'update'
+      console.log("Save Entity", table, entity, originalEntity, formFields)
       return this.createNewEntities(fieldComponents, formFields, entity, originalEntity)
         .then(async () => {
           /// if we updating and we have no changes
@@ -311,6 +313,12 @@ export default {
           })
       }
     },
+    getFieldComponents() {
+      if (this.definition.fieldComponent) {
+        return this.$refs.fieldComponent.$children.filter(c => c.$options.name === 'Field')
+      }
+      return this.$refs.fields || this.$children.filter(c => c.$options.name === 'Field')
+    },
     submit() {
       return this.$refs.form.validate()
         .then(success => {
@@ -318,7 +326,7 @@ export default {
             return Promise.reject(new Error('Invalid Form'))
           }
           this.loading = true
-          return this.saveEntity(this.entity, this.originalEntity, this.formFields, this.$refs.fields, this.table, this.definition, this.primaryKey, this.create)
+          return this.saveEntity(this.entity, this.originalEntity, this.formFields, this.getFieldComponents(), this.table, this.definition, this.primaryKey, this.create)
             .then(async data => {
               let result
               // if no update on the model, just send initial entity
@@ -345,7 +353,15 @@ export default {
         })
     },
     setData(entity) {
-      this.entity = { ...this.definition.default, ...entity }
+      this.entity = {
+        ...this.definition.default,
+        ...this.definition.fields
+          .filter(field => field.type !== 'password')
+          .reduce((a, field) => ({
+            ...a,
+            [field.key]: entity[field.key],
+          }), {}),
+      }
     },
     reset() {
       if (this.$refs.fields) {
@@ -359,11 +375,11 @@ export default {
     async loadDefinition() {
       const { data } = await this.$api({
         action: 'read-rich',
-        entity: this.table
+        entity: this.table,
       })
       this.$store.commit('table/setDefinition', {
         data,
-        table: this.table
+        table: this.table,
       })
     },
     getField(key) {
@@ -380,6 +396,11 @@ export default {
     },
     getPrimaryKey(definition) {
       return definition.primaryKey ?? definition.fields.find(f => f.auto)?.key
+    },
+    hasChanges() {
+      return this.formFields
+        // .filter(f => f.type !== 'list')
+        .findIndex(f => this.entity[f.key] !== this.originalEntity[f.key]) >= 0
     },
   },
   computed: {

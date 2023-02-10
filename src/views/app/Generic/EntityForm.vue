@@ -1,7 +1,7 @@
 <template>
   <validation-observer ref="form" v-slot="{ passes }">
     <b-form @submit.prevent="passes(submit)">
-      <component :is="definition.fieldComponent" v-if="definition.fieldComponent" :entity="entity" :create="create"
+      <component :is="definition.fieldComponent"  v-if="definition.fieldComponent" ref="fieldComponent" :entity="entity" :create="create"
                  :table-definition="tableDefinition" :definition="definition" :disabled="disabled" :formFields="formFields"/>
       <b-row v-else>
         <b-col v-for="(field,index) in formFields.filter(f=> f.hide!==true)" :key="index" cols="12" :md="cols">

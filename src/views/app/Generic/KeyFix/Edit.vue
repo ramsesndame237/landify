@@ -18,7 +18,7 @@ export default {
   methods: {
     async handleRouteChange(next) {
       console.log('before route leave', this)
-      if (!this.$refs.edit.view) {
+      if (!this.$refs.edit.view && this.$refs.edit.$refs.form.hasChanges()) {
         const result = await this.$swal({
           title: 'Are you sure you want to leave?',
           text: 'Your changes will be loosed',
