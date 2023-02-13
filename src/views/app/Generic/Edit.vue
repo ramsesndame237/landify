@@ -10,6 +10,13 @@
           <div class="mr-1 d-flex align-items-center">
             <notes v-if="definition.note" class="mr-2" :primary-key="primaryKey" :id="entityId" :note="definition.note"
                    :note-rel="'note_user_'+table+'_rel'"/>
+            <template v-if="view">
+              <b-button v-for="(action,i) in definition.actions" :key="i" @click="action.onClick(entity)"
+                        size="sm" variant="primary" class="mr-1">
+                <!--        <feather-icon icon="Trash2Icon" class="mr-50"/>-->
+                <span>{{ action.text }}</span>
+              </b-button>
+            </template>
             <b-button v-if="view && $can('update', table)" size="sm" variant="info" class="mr-1" @click="edit">
               <feather-icon icon="EditIcon" class="mr-50"/>
               {{ $t('button~edit') }}

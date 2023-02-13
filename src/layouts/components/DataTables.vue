@@ -240,6 +240,13 @@ export default {
         item.__selected = false
       })
     },
+    onAction(action) {
+      const selected = this.getSelected()
+      if (!selected.length) {
+        return this.$errorToast('No element selected')
+      }
+      return action.onClick(selected, this)
+    },
     deleteSelected() {
       const selected = this.getSelected()
       if (!selected.length) {

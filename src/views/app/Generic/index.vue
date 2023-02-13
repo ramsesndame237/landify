@@ -5,7 +5,8 @@
                         :on-new-element="definition.create ===false ? null : onNewElement" :total-rows="totalRows"
                         :with-filter="definition.filters && definition.filters.length > 0"
                         :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
-                        @filter="$refs.filter.openModal()"/>
+                        :actions="definition.actions"
+                        @action="(a)=>$refs.table.onAction(a)" @filter="$refs.filter.openModal()"/>
       <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
                       @filter="filter"/>
     </b-card>

@@ -9,13 +9,16 @@
 
     <div class="d-flex align-items-center">
       <span class="mr-1">
-        {{ $t('headline~general~subframe~pagination').replace('x', (currentPage - 1) * perPage + 1).replace('y', Math.min(perPage * currentPage, totalRows)).replace('z', totalRows) }}
+        {{
+          $t('headline~general~subframe~pagination').replace('x', (currentPage - 1) * perPage + 1).replace('y', Math.min(perPage * currentPage, totalRows)).replace('z', totalRows)
+        }}
       </span>
       <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" align="center" class="my-0"
                     first-number last-number prev-class="prev-item" next-class="next-item"/>
     </div>
 
     <div class="d-flex align-items-center">
+      <slot/>
       <b-button v-if="withFilter" @click="$emit('filter')" size="sm" variant="primary" class="mr-1 btn-icon">
         <feather-icon icon="FilterIcon"/>
       </b-button>
@@ -27,6 +30,11 @@
                 class="mr-1">
         <feather-icon icon="Trash2Icon" class="mr-50"/>
         <span>{{ $t('button~delete') }}</span>
+      </b-button>
+      <b-button v-for="(action,i) in actions" :key="i"  @click="$emit('action', action)" size="sm" variant="primary"
+                class="mr-1">
+        <!--        <feather-icon icon="Trash2Icon" class="mr-50"/>-->
+        <span>{{ action.text }}</span>
       </b-button>
       <b-form-input debounce="500" id="filterInput" v-model="internalSearch" type="search" class="w-auto"
                     placeholder="Search.."/>
@@ -68,6 +76,7 @@ export default {
     search: String,
     totalRows: Number,
     entity: String,
+    actions: Array,
   },
   data() {
     return { internalSearch: this.search }

@@ -11,7 +11,7 @@
         <div v-else-if="field.type==='html'" class="message-editor">
           <quill-editor :id="'quill-content-'+field.key" :disabled="disabled" v-model="entity[field.key]"
                         :options="editorOption">
-            <div :id="'quill-toolbar-'+field.key" slot="toolbar" class="d-flex border-bottom-0">
+            <div v-if="!disabled" :id="'quill-toolbar-'+field.key" slot="toolbar" class="d-flex border-bottom-0">
               <!-- Add a bold button -->
               <button class="ql-bold"/>
               <button class="ql-italic"/>

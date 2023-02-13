@@ -2657,6 +2657,14 @@ export default {
         key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_name',
       },
     ],
+    actions: [
+      {
+        text: 'Start contradiction',
+        onClick(invoices, vm) {
+
+        },
+      },
+    ],
     relations: [
       {
         title: 'headline~invoice~tab~contract_document',

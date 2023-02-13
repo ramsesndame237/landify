@@ -162,9 +162,9 @@ export default {
     fetch() {
       const payload = {
         action: 'read-rich',
-        entity: 'email',
-        order_by: this.sortBy,
-        order_dir: this.sortDesc ? 'DESC' : 'ASC',
+        entity: 'classification_document_grp',
+        // order_by: this.sortBy,
+        // order_dir: this.sortDesc ? 'DESC' : 'ASC',
         per_page: this.perPage === 0 ? 1000000 : this.perPage,
         from: 0,
         current_page: this.currentPage,

@@ -13,7 +13,7 @@ import {
   BTr,
   BTh,
   BTd,
-  BTbody, BRow, BCol, BInputGroup, BInputGroupAppend, BTableSimple
+  BTbody, BRow, BCol, BInputGroup, BInputGroupAppend, BTableSimple, BFormSelect
 } from 'bootstrap-vue'
 import { BCardActions } from '@core/components/b-card-actions';
 
@@ -37,3 +37,4 @@ Vue.component('b-col', BCol)
 Vue.component('b-input-group', BInputGroup)
 Vue.component('b-input-group-append', BInputGroupAppend)
 Vue.component('b-table-simple', BTableSimple)
+Vue.component('b-form-select', BFormSelect)

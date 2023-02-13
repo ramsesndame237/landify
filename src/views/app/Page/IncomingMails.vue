@@ -3,7 +3,11 @@
     <b-card body-class="p-0">
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"
                         :total-rows="totalRows" :with-filter="definition.filters && definition.filters.length > 0"
-                        @filter="$refs.filter.openModal()"/>
+                        @filter="$refs.filter.openModal()">
+        <div class="mr-1">
+          <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
+        </div>
+      </table-pagination>
       <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"/>
     </b-card>
     <b-row class="mt-2">
@@ -56,6 +60,12 @@ export default {
       definition: {
         filters: [{ key: 'ticket_id', type: 'list', list: 'ticket', listLabel: 'ticket_name' }],
       },
+      filterValue: 0,
+      filterOptions: [
+        { text: 'All mails', value: 0 },
+        { text: 'New', value: 1 },
+        { text: 'Not processed', value: 2 },
+      ],
     }
   },
   methods: {},
