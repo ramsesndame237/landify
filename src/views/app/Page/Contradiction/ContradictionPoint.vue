@@ -1,5 +1,7 @@
 <template>
   <div>
+    <generic-modal :cache-key="table+'-'" @reload-table="$refs.table.reload()" :table="table" :definition="definition"
+                   with-continue :table-definition-key="table" :title="`headline~${table}~new`" ref="modal"/>
     <b-card body-class="p-0">
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage"
                         :on-new-element="onNewElement" :total-rows="totalRows"
@@ -22,11 +24,12 @@
 import DataTables from "@/layouts/components/DataTables";
 import TablePagination from "@/layouts/components/TablePagination";
 import Table from '@/table'
-import {BCard, BButton} from "bootstrap-vue";
+import { BCard, BButton } from "bootstrap-vue";
+import GenericModal from "@/views/app/Generic/modal";
 
 export default {
   name: 'ContradictionPoint',
-  components: { TablePagination, DataTables, BCard, BButton },
+  components: { GenericModal, TablePagination, DataTables, BCard, BButton },
   data() {
     return {
       search: '',
@@ -37,12 +40,14 @@ export default {
       initialSortBy: '',
       initialSortDesc: false,
       definition: Table.contradictionpoint,
+      table: 'contradiction',
     }
   },
   methods: {
     onNewElement() {
-    }
-  }
+      this.$refs.modal.openModal(true)
+    },
+  },
 }
 </script>
 
