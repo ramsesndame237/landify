@@ -8,7 +8,7 @@
                         :on-delete-elements="()=> $refs.table.deleteSelected()" @filter="$refs.filter.openModal()"/>
     </b-card>
     <b-card>
-      <DataTables ref="table" :search="search" entity="contradictionpoint" :entity-list="definition.entity"
+      <DataTables ref="table" :search="search" :entity="table" :entity-list="definition.entity"
                   :default-sort-desc="initialSortDesc" :per-page="perPage" :current-page="currentPage"
                   :total-rows.sync="totalRows" :fields="definition.fields" :primary-key-column="definition.primaryKey"/>
       <div class="text-center">
@@ -40,7 +40,7 @@ export default {
       initialSortBy: '',
       initialSortDesc: false,
       definition: Table.contradictionpoint,
-      table: 'contradiction',
+      table: 'contradictionpoint',
     }
   },
   methods: {

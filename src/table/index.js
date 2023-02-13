@@ -3178,6 +3178,10 @@ export default {
       { key: 'contradictionpoint_text', type: 'html', hideOnIndex: true },
       { key: 'contradictionpoint_text_customer', type: 'html', hideOnIndex: true },
     ],
+    default: {
+      contradictionpoint_legally_clear: 1,
+      contradictionpoint_hidden: 0
+    },
   },
   // endregion
   // region Work Package 6
