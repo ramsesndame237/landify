@@ -28,7 +28,7 @@
 
         </div>
       </div>
-      <mail-table :search="search" :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"/>
+      <mail-table :search="search" :per-page="0" :current-page.sync="currentPage" :total-rows.sync="totalRows"/>
     </b-card>
 
   </div>

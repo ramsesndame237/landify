@@ -81,7 +81,10 @@ export default {
         invoiceposition_name: false,
         invoiceposition_costtype_invoice: false,
         costtype_name: false,
+        externalcosttype_name: false,
+        unit_name: false,
         invoiceposition_flat_rate: false,
+        invoiceposition_apportionable: false,
         invoiceposition_total_units: false,
         invoiceposition_units_customer: false,
         invoiceposition_amount_total: false,
@@ -95,7 +98,16 @@ export default {
           key: 'costtype_name',
           __selected: false,
         },
+        {
+          key: 'externalcosttype_name',
+          __selected: false,
+        },
+        {
+          key: 'unit_name',
+          __selected: false,
+        },
         { key: 'invoiceposition_flat_rate', type: 'boolean', __selected: false },
+        { key: 'invoiceposition_apportionable', type: 'boolean', __selected: false },
         { key: 'invoiceposition_total_units', type: 'number', __selected: false },
         { key: 'invoiceposition_units_customer', type: 'number', __selected: false },
         { key: 'invoiceposition_amount_total', type: 'number', __selected: false },
@@ -106,14 +118,41 @@ export default {
       perPage: 1000,
       currentPage: 1,
       filters: [
-        { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
-        { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name' },
-        { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name' },
-        { key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name' },
-        { key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name' },
+        {
+          key: 'customergroup_id',
+          type: 'list',
+          list: 'customergroup',
+          listLabel: 'customergroup_name',
+          required: false,
+        },
+        {
+          key: 'company_id',
+          type: 'list',
+          list: 'frontend_2_2_3_1',
+          listLabel: 'company_name',
+          filter_key: 'customergroup_id',
+          required: false,
+        },
+        {
+          key: 'pos_id',
+          type: 'list',
+          list: 'frontend_2_1_3_8',
+          listLabel: 'pos_name',
+          filter_key: 'company_id',
+          required: false,
+        },
+        {
+          key: 'contract_id',
+          listLabel: 'contract_name',
+          type: 'list',
+          list: 'frontend_4_2_1_contract_selector',
+          filter_key: 'pos_id',
+          required: false,
+        },
+        // { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name' },
         { key: 'invoice_contract_year', type: 'number' },
         { key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_name' },
-        { key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name' },
+        // { key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name' },
       ],
       show: false,
     }
@@ -182,6 +221,7 @@ export default {
           entity: 'invoice_invoiceposition_rel',
           data: relations,
         })
+
         const typeRel = []
         response.data.data.data.forEach((el, idx) => {
           if (!el[0]) return
@@ -193,11 +233,53 @@ export default {
           }
         })
         // create costtype relation
-        await this.$api({
-          action: 'create',
-          entity: 'invoiceposition_costtype_rel',
-          data: typeRel,
+        if (typeRel.length) {
+          await this.$api({
+            action: 'create',
+            entity: 'invoiceposition_costtype_rel',
+            data: typeRel,
+          })
+        }
+
+        const externalRel = []
+        response.data.data.data.forEach((el, idx) => {
+          if (!el[0]) return
+          if (selectedItems[idx].meta.externalcosttype_name && selectedItems[idx].externalcosttype_id) {
+            externalRel.push({
+              externalcosttype_id: selectedItems[idx].externalcosttype_id,
+              invoiceposition_id: el[0].invoiceposition_id,
+            })
+          }
         })
+
+        // create externalcosttype relation
+        if (externalRel.length) {
+          await this.$api({
+            action: 'create',
+            entity: 'invoiceposition_externalcosttype_rel',
+            data: externalRel,
+          })
+        }
+
+        const unitRel = []
+        response.data.data.data.forEach((el, idx) => {
+          if (!el[0]) return
+          if (selectedItems[idx].meta.unit_name && selectedItems[idx].unit_id) {
+            unitRel.push({
+              unit_id: selectedItems[idx].unit_id,
+              invoiceposition_id: el[0].invoiceposition_id,
+            })
+          }
+        })
+
+        // create unit relation
+        if (unitRel.length) {
+          await this.$api({
+            action: 'create',
+            entity: 'invoiceposition_unit_rel',
+            data: unitRel,
+          })
+        }
 
         await this.$router.push({ name: 'table-view', params: { table: 'invoice', id: invoice_id }, query: { tab: 5 } })
       } finally {

@@ -2660,8 +2660,21 @@ export default {
     actions: [
       {
         text: 'Start contradiction',
-        onClick(invoices, vm) {
-
+        loading: false,
+        async onClick(invoices, vm) {
+          console.log(invoices)
+          try {
+            // this.loading = true
+            const { data } = await vm.$http.post('/contradiction_generators/start', {
+              invoice_ids: Array.isArray(invoices) ? invoices.map(i => i.invoice_id) : [invoices.invoice_id],
+            })
+            vm.$successToast('Contradictions generated')
+          } catch (e) {
+            console.error(e)
+            vm.$errorToast('Generator Error')
+          } finally {
+            // this.loading = false
+          }
         },
       },
     ],
@@ -3188,7 +3201,7 @@ export default {
     ],
     default: {
       contradictionpoint_legally_clear: 1,
-      contradictionpoint_hidden: 0
+      contradictionpoint_hidden: 0,
     },
   },
   // endregion

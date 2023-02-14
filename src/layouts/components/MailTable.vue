@@ -25,8 +25,8 @@
         <b-tbody :key="idx">
           <mail-tr :item="item" @show-content="showMailContent(item)"/>
         </b-tbody>
-        <template v-if="item.childrens">
-          <b-tbody v-for="(child,idx) in item.childrens" :key="idx">
+        <template v-if="item.documents">
+          <b-tbody v-for="(child,idx) in item.documents" :key="idx">
             <mail-tr :item="child" child/>
           </b-tbody>
         </template>
@@ -114,9 +114,10 @@ export default {
     currentItems: {
       deep: true,
       handler() {
-        if (this.currentItems.length === 0) return
-        if (this.currentItems.filter(item => !item.__selected).length === 0) this.selected = true
-        else if (this.currentItems.filter(item => item.__selected).length === 0) this.selected = false
+        // if (this.currentItems.length === 0) return
+        // if (this.currentItems.filter(item => !item.__selected).length === 0) this.selected = true
+        // else if (this.currentItems.filter(item => item.__selected).length === 0) this.selected = false
+
       },
     },
     selected() {
@@ -137,7 +138,7 @@ export default {
     },
     fetchList() {
       return Promise.all([
-        'ticket', 'frontend_2_1_3_8', 'frontend_4_2_1_contract_selector', 'classification'
+        'frontend_6_1_6_overview', 'frontend_2_1_3_8', 'frontend_4_2_1_contract_selector', 'classification'
       ].map((list) => this.$store.dispatch('table/fetchList', { entity: list })))
     },
     onViewClick(data) {
@@ -162,9 +163,9 @@ export default {
     fetch() {
       const payload = {
         action: 'read-rich',
-        entity: 'classification_document_grp',
-        // order_by: this.sortBy,
-        // order_dir: this.sortDesc ? 'DESC' : 'ASC',
+        entity: 'email',
+        order_by: this.sortBy,
+        order_dir: this.sortDesc ? 'DESC' : 'ASC',
         per_page: this.perPage === 0 ? 1000000 : this.perPage,
         from: 0,
         current_page: this.currentPage,
@@ -179,9 +180,9 @@ export default {
       }
       this.loading = true
       return this.$api(payload)
-        .then(({ data }) => {
+        .then(async ({ data }) => {
           console.log(data)
-          const items = this.processData(data)
+          const items = await this.processData(data)
           // set in cache
           this.$store.commit('table/setTableCache', { key: cacheKey, data })
           return items
@@ -199,13 +200,53 @@ export default {
     getCacheKey(payload) {
       return this.entity + '-' + JSON.stringify(payload)
     },
-    processData(data) {
+    async processData(data) {
       this.$emit('update:totalRows', data.data.links.pagination.total)
       data.data.data.forEach(el => {
         el.__selected = false
       })
       // this.$store.commit('table/setDefinition', { data, table: this.table })
-      this.items = data.data.data
+      const items = data.data.data
+      const filterData = items.map(i => ({ email_id: i.email_id }))
+      let email_documents = (await this.$api({
+        action: 'read-rich',
+        entity: 'document_email_grp',
+        // data: filterData,
+      })).data.data.data
+      let email_classfications = (await this.$api({
+        action: 'read-rich',
+        entity: 'classification_email_grp',
+        data: filterData,
+      })).data.data.data
+      let document_classfications = (await this.$api({
+        action: 'read-rich',
+        entity: 'classification_document_grp',
+        data: filterData,
+      })).data.data.data
+      items.forEach(item => {
+        // item.documents = email_documents.filter(d => d.email_id === item.email_id)
+        const cl = email_classfications.find(c => c.email_id === item.email_id)
+        if (cl) {
+          Object.keys(cl).forEach(k => (item[k] = cl[k]))
+        }
+
+
+        // process ticket data
+        let id = item.email_subject.match(/^#\d+/g)
+        if (id) {
+          const ticket_id = parseInt(id[0].substr(1))
+          item.ticket_id = ticket_id
+          const list = this.$store.state.table.listCache['frontend_6_1_6_overview']
+          console.log('ticket_id', ticket_id)
+          const el = list.find(e => e.ticket_id === item.ticket_id)
+          if(el){
+            item.pos_id = el.pos_id
+            item.contract_id = el.contract_id
+          }
+
+        }
+      })
+      this.items = items
       return this.items
     },
     getSelected() {

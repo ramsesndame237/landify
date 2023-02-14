@@ -12,10 +12,10 @@
       <field :field="ticketIdField" :entity="item"/>
     </b-td>
     <b-td class="td-form">
-      <field :field="posIdField" :entity="item"/>
+      <field :field="posIdField" :entity="item" :disabled="item.ticket_id!=null"/>
     </b-td>
     <b-td class="td-form">
-      <field :field="contractIdField" :entity="item"/>
+      <field :field="contractIdField" :entity="item" :disabled="item.ticket_id!=null"/>
     </b-td>
     <b-td>
       <b-form-checkbox v-model="item.attachment" disabled="" :value="1" :unchecked-value="0"/>
@@ -26,7 +26,7 @@
     <b-td class="td-form">
       <field :field="classificationIdField" :entity="item"/>
     </b-td>
-    <b-td >
+    <b-td>
       <div class="d-flex align-items-center">
         <b-button class="btn-icon" variant="flat-success" pill>
           <feather-icon icon="CheckIcon" size="24"/>
@@ -53,7 +53,7 @@ export default {
       ticketIdField: {
         key: 'ticket_id',
         type: 'list',
-        list: 'ticket',
+        list: 'frontend_6_1_6_overview',
         listLabel: 'ticket_name',
         noLabel: true,
         noFetch: true,
@@ -88,11 +88,24 @@ export default {
       },
     }
   },
+  watch: {
+    'item.ticket_id': function (val) {
+      if (val) {
+        const list = this.$store.state.table.listCache['frontend_6_1_6_overview']
+        const el = list.find(e => e.ticket_id === this.item.ticket_id)
+        if (el) {
+          this.item.pos_id = el.pos_id
+          this.item.contract_id = el.contract_id
+        }
+      } else {
+      }
+    },
+  },
 }
 </script>
 
 <style scoped>
-.td-form{
+.td-form {
   padding-left: 4px !important;
   padding-right: 4px !important;
   min-width: 150px;

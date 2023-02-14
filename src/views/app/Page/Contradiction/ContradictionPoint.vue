@@ -1,14 +1,15 @@
 <template>
   <div>
     <generic-modal :cache-key="table+'-'" @reload-table="$refs.table.reload()" :table="table" :definition="definition"
-                   with-continue :table-definition-key="table" :title="`headline~${table}~new`" ref="modal"/>
+                is-relation   with-continue :table-definition-key="table" :title="`headline~${table}~new`" ref="modal"/>
     <b-card body-class="p-0">
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage"
                         :on-new-element="onNewElement" :total-rows="totalRows"
                         :on-delete-elements="()=> $refs.table.deleteSelected()" @filter="$refs.filter.openModal()"/>
     </b-card>
     <b-card>
-      <DataTables ref="table" :search="search" :entity="table" :entity-list="definition.entity"
+      <DataTables ref="table" :search="search" :entity="table" entity-list="contradiction_contradictionpoint_grp"
+                  second-key="contradiction_id" :second-key-value="$route.params.id"
                   :default-sort-desc="initialSortDesc" :per-page="perPage" :current-page="currentPage"
                   :total-rows.sync="totalRows" :fields="definition.fields" :primary-key-column="definition.primaryKey"/>
       <div class="text-center">
