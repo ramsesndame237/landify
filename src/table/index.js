@@ -3190,6 +3190,7 @@ export default {
   },
   contradictionpoint: {
     fields: [
+      { key: 'contradictionpoint_id', auto: true },
       { key: 'contradictionpoint_rank' },
       { key: 'contradictionpoint_title' },
       { key: 'contradictionpoint_inspectionresult_rating_value_green' },

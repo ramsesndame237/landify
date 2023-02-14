@@ -199,6 +199,7 @@ export default {
         })
         return el
       })
+      if (data.length === 0) return this.$errorToast('No Data selected')
       this.transfering = true
       try {
         const response = await this.$api({
@@ -298,9 +299,11 @@ export default {
         per_page: perPage,
         from: 0,
         current_page: currentPage,
-        filter: this.filterData,
         filter_all: filter ?? '',
         lang: this.$i18n.locale,
+      }
+      if (Object.keys(this.filterData).length) {
+        payload.data = [this.filterData]
       }
       return this.$api(payload)
         .then(({ data }) => {
