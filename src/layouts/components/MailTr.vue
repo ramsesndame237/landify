@@ -1,7 +1,7 @@
 <template>
   <b-tr>
     <b-td>{{ item.email_id }}</b-td>
-    <b-td>{{ item.email_date_received }}</b-td>
+    <b-td>{{ item.email_received_datetime }}</b-td>
     <b-td>{{ item.email_from }}</b-td>
     <b-td>{{ item.email_to }}</b-td>
     <b-td>
@@ -24,7 +24,7 @@
       {{ item.file_name }}
     </b-td>
     <b-td class="td-form">
-      <field :field="classificationIdField" :entity="item"/>
+      <field :field="boardIdField" :entity="item"/>
     </b-td>
     <b-td>
       <div class="d-flex align-items-center">
@@ -78,11 +78,11 @@ export default {
         noLabel: true,
         noFetch: true,
       },
-      classificationIdField: {
-        key: 'classification_id',
+      boardIdField: {
+        key: 'board_id',
         type: 'list',
-        list: 'classification',
-        listLabel: 'classification_name',
+        list: 'board',
+        listLabel: 'board_name',
         noLabel: true,
         noFetch: true,
       },

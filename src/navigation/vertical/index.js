@@ -54,20 +54,28 @@ export default [
     children: [
       {
         title: key('contractcondition'),
+        action: 'menu~contractcondition',
+        resource: 'menu',
         route: { name: 'condition-list' },
       },
       {
         title: key('contractdeadline'),
+        action: 'menu~contractdeadline',
+        resource: 'menu',
         route: { name: 'deadline-list' },
       },
       {
         title: key('payment'),
+        action: 'menu~payment',
+        resource: 'menu',
         route: 'comming-soon',
       },
     ],
   },
   {
     title: key('newbus'),
+    action: 'menu~newbus',
+    resource: 'menu',
     route: { name: 'new-business', params: { id: 1 } },
   },
   headerItem('masterdata'),

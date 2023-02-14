@@ -3190,7 +3190,7 @@ export default {
   },
   contradictionpoint: {
     fields: [
-      { key: 'contradictionpoint_id', auto: true },
+      { key: 'contradictionpoint_id', auto: true, hideOnForm: true },
       { key: 'contradictionpoint_rank' },
       { key: 'contradictionpoint_title' },
       { key: 'contradictionpoint_inspectionresult_rating_value_green' },
@@ -3319,6 +3319,18 @@ export default {
           { key: 'column_is_qualitygate', type: 'boolean', hideOnForm: true },
           { key: 'team_name', hideOnForm: true },
           { key: 'rank_order', type: 'number' },
+        ],
+      },
+      {
+        title: 'headline~documenttype~tab',
+        entityForm: 'documenttype_board_rel',
+        entity: 'documenttype_board_rel',
+        primaryKey: 'documenttype_id',
+        fields: [
+          {
+            key: 'documenttype_id', type: 'list', list: 'documenttype', onlyForm: true,
+          },
+          { key: 'documenttype_name', hideOnForm: true },
         ],
       },
     ],

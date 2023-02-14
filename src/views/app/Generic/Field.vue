@@ -9,7 +9,10 @@
         <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
         <div v-else-if="field.type==='html'" class="message-editor">
-          <quill-editor :id="'quill-content-'+field.key" :disabled="disabled" v-model="entity[field.key]"
+          <template v-if="disabled">
+            <div v-html="entity[field.key]" class="p-1 border rounded"></div>
+          </template>
+          <quill-editor v-else :id="'quill-content-'+field.key" :disabled="disabled" v-model="entity[field.key]"
                         :options="editorOption">
             <div :id="'quill-toolbar-'+field.key" slot="toolbar" class="d-flex border-bottom-0">
               <!-- Add a bold button -->
@@ -370,6 +373,13 @@ export default {
 
   > div > span {
     display: none;
+  }
+}
+
+.message-editor table{
+  td,th{
+    border: 1px solid #ccc;
+    padding: 2px;
   }
 }
 </style>

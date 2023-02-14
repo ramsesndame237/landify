@@ -150,7 +150,7 @@ export default {
           required: false,
         },
         // { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name' },
-        { key: 'invoice_contract_year', type: 'number' },
+        // { key: 'invoice_contract_year', type: 'number' },
         { key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_name' },
         // { key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name' },
       ],
@@ -302,6 +302,7 @@ export default {
         filter_all: filter ?? '',
         lang: this.$i18n.locale,
       }
+      // const filterData
       if (Object.keys(this.filterData).length) {
         payload.data = [this.filterData]
       }

@@ -13,7 +13,7 @@
           <b-th class="text-center">Contract Id</b-th>
           <b-th>Attachment</b-th>
           <b-th>File Name</b-th>
-          <b-th class="text-center">Classification</b-th>
+          <b-th class="text-center">Board</b-th>
           <b-th class="text-center">Action</b-th>
         </b-tr>
       </b-thead>
@@ -47,7 +47,7 @@
           <field :field="{key: 'email_id'}" :entity="item" disabled/>
         </b-col>
         <b-col cols="6">
-          <field :field="{key: 'email_date_received'}" :entity="item" disabled/>
+          <field :field="{key: 'email_received_datetime'}" :entity="item" disabled/>
         </b-col>
         <b-col cols="6">
           <field :field="{key: 'email_from'}" :entity="item" disabled/>
@@ -138,7 +138,7 @@ export default {
     },
     fetchList() {
       return Promise.all([
-        'frontend_6_1_6_overview', 'frontend_2_1_3_8', 'frontend_4_2_1_contract_selector', 'classification'
+        'frontend_6_1_6_overview', 'frontend_2_1_3_8', 'frontend_4_2_1_contract_selector', 'board',
       ].map((list) => this.$store.dispatch('table/fetchList', { entity: list })))
     },
     onViewClick(data) {
@@ -171,6 +171,7 @@ export default {
         current_page: this.currentPage,
         filter_all: this.filter ?? '',
         lang: this.$i18n.locale,
+        data: [{ email_to: 'zelos@seybold-fm.com,' }],
       }
       // retrieve from cache
       const cacheKey = this.getCacheKey(payload)
@@ -210,8 +211,8 @@ export default {
       const filterData = items.map(i => ({ email_id: i.email_id }))
       let email_documents = (await this.$api({
         action: 'read-rich',
-        entity: 'document_email_grp',
-        // data: filterData,
+        entity: 'email_document_grp',
+        data: filterData,
       })).data.data.data
       let email_classfications = (await this.$api({
         action: 'read-rich',
@@ -224,7 +225,8 @@ export default {
         data: filterData,
       })).data.data.data
       items.forEach(item => {
-        // item.documents = email_documents.filter(d => d.email_id === item.email_id)
+        let documents = email_documents.filter(d => d.email_id === item.email_id && d.document_id != null)
+        documents = item.documents.map(d => ({...d, ...item}))
         const cl = email_classfications.find(c => c.email_id === item.email_id)
         if (cl) {
           Object.keys(cl).forEach(k => (item[k] = cl[k]))
@@ -239,7 +241,7 @@ export default {
           const list = this.$store.state.table.listCache['frontend_6_1_6_overview']
           console.log('ticket_id', ticket_id)
           const el = list.find(e => e.ticket_id === item.ticket_id)
-          if(el){
+          if (el) {
             item.pos_id = el.pos_id
             item.contract_id = el.contract_id
           }
