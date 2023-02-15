@@ -11,7 +11,7 @@ import {
   BSpinner,
   BThead,
   BTr,
-  BTh,
+  BTh, BCollapse,
   BTd,
   BTbody, BRow, BCol, BInputGroup, BInputGroupAppend, BTableSimple, BFormSelect
 } from 'bootstrap-vue'
@@ -38,3 +38,4 @@ Vue.component('b-input-group', BInputGroup)
 Vue.component('b-input-group-append', BInputGroupAppend)
 Vue.component('b-table-simple', BTableSimple)
 Vue.component('b-form-select', BFormSelect)
+Vue.component('b-collapse', BCollapse)

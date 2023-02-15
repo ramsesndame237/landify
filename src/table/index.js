@@ -2863,7 +2863,9 @@ export default {
         onChange: updateInvoiceFlatRate,
       },
       { key: 'invoiceposition_amount_total', type: 'number' },
-      { key: 'invoiceposition_amount_customer', type: 'number', rules: { lower: ['@invoiceposition_amount_total'] } },
+      { key: 'invoiceposition_amount_customer', type: 'number',
+        // rules: { lower: ['@invoiceposition_amount_total'] }
+      },
       { key: 'invoiceposition_apportionable', type: 'boolean' },
     ],
     filters: [

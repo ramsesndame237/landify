@@ -1,12 +1,16 @@
 <template>
   <b-tr>
-    <b-td>{{ item.email_id }}</b-td>
-    <b-td>{{ item.email_received_datetime }}</b-td>
-    <b-td>{{ item.email_from }}</b-td>
-    <b-td>{{ item.email_to }}</b-td>
     <b-td>
-      {{ item.email_subject }}
-      <feather-icon class="text-success" icon="EyeIcon" size="24" @click="$emit('show-content')"/>
+      <feather-icon v-if="item.documents && item.documents.length>0" v-b-toggle="'collapse-'+item.email_id"
+                    icon="ChevronDownIcon" size="24"/>
+    </b-td>
+    <b-td>{{ child ? '' : item.email_id }}</b-td>
+    <b-td>{{ child ? '' : item.email_received_datetime }}</b-td>
+    <b-td>{{ child ? '' : item.email_from }}</b-td>
+    <b-td>{{ child ? '' : item.email_to }}</b-td>
+    <b-td>
+      {{ child ? '' : item.email_subject }}
+      <feather-icon v-if="!child" class="text-success" icon="EyeIcon" size="24" @click="$emit('show-content')"/>
     </b-td>
     <b-td class="td-form">
       <field :field="ticketIdField" :entity="item"/>
@@ -18,20 +22,25 @@
       <field :field="contractIdField" :entity="item" :disabled="item.ticket_id!=null"/>
     </b-td>
     <b-td>
-      <b-form-checkbox v-model="item.attachment" disabled="" :value="1" :unchecked-value="0"/>
+      <b-form-checkbox :checked="item.document_id?1:0" disabled="" :value="1" :unchecked-value="0"/>
     </b-td>
     <b-td>
-      {{ item.file_name }}
+      <b-link v-if="item.document_id" class="m-auto" variant="danger" target="_blank" :href="getDocumentLink(item)">
+        {{ item.document_name }}
+      </b-link>
     </b-td>
     <b-td class="td-form">
-      <field :field="boardIdField" :entity="item"/>
+      <field v-if="item.document_id" :field="documenttypeIdField" :entity="item"/>
+    </b-td>
+    <b-td class="td-form">
+      <field :field="boardIdField" :entity="item" :disabled="!!item.documenttype_id"/>
     </b-td>
     <b-td>
-      <div class="d-flex align-items-center">
-        <b-button class="btn-icon" variant="flat-success" pill>
+      <div class="d-flex align-items-center" v-if="item.classification_id && !item.ticket_created">
+        <b-button class="btn-icon" variant="flat-success" pill @click="$emit('classify')">
           <feather-icon icon="CheckIcon" size="24"/>
         </b-button>
-        <b-button class="btn-icon" variant="flat-danger" style="margin-bottom: 3px" pill>
+        <b-button class="btn-icon" variant="flat-danger" style="margin-bottom: 3px" pill @click="$emit('reject')">
           <feather-icon icon="XIcon" size="24"/>
         </b-button>
       </div>
@@ -41,12 +50,18 @@
 
 <script>
 import Field from "@/views/app/Generic/Field";
+import { getDocumentLink } from "@/libs/utils";
+import { VBToggle } from 'bootstrap-vue'
 
 export default {
-  name: "MailTr",
+  name: 'MailTr',
   components: { Field },
   props: {
     item: {},
+    child: Boolean,
+  },
+  directives: {
+    'b-toggle': VBToggle,
   },
   data() {
     return {
@@ -86,6 +101,14 @@ export default {
         noLabel: true,
         noFetch: true,
       },
+      documenttypeIdField: {
+        key: 'documenttype_id',
+        type: 'list',
+        list: 'documenttype',
+        listLabel: 'documenttype_name',
+        noLabel: true,
+        noFetch: true,
+      },
     }
   },
   watch: {
@@ -100,7 +123,17 @@ export default {
       } else {
       }
     },
+    'item.documenttype_id': function (val) {
+      if (val) {
+        const list = this.$store.state.table.listCache['documenttype']
+        const el = list.find(e => e.documenttype_id === this.item.documenttype_id)
+        if (el) {
+          this.item.board_id = el.board_id
+        }
+      }
+    },
   },
+  methods: { getDocumentLink },
 }
 </script>
 

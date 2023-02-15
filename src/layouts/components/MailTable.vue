@@ -3,6 +3,7 @@
     <b-table-simple sticky-header ref="table" striped hover responsive>
       <b-thead>
         <b-tr>
+          <b-th></b-th>
           <b-th>Email Id</b-th>
           <b-th>Email received date</b-th>
           <b-th>Email From</b-th>
@@ -13,6 +14,7 @@
           <b-th class="text-center">Contract Id</b-th>
           <b-th>Attachment</b-th>
           <b-th>File Name</b-th>
+          <b-th class="text-center">DocumentType</b-th>
           <b-th class="text-center">Board</b-th>
           <b-th class="text-center">Action</b-th>
         </b-tr>
@@ -23,13 +25,13 @@
       <!--    </template>-->
       <template v-for="(item,idx) in items">
         <b-tbody :key="idx">
-          <mail-tr :item="item" @show-content="showMailContent(item)"/>
+          <mail-tr :item="item" @show-content="showMailContent(item)" @classify="classify(item)"
+                   @reject="reject(item)"/>
         </b-tbody>
-        <template v-if="item.documents">
-          <b-tbody v-for="(child,idx) in item.documents" :key="idx">
-            <mail-tr :item="child" child/>
-          </b-tbody>
-        </template>
+        <b-tbody v-if="item.documents.length>0" :id="'collapse'+item.email_id">
+          <mail-tr v-for="(child,idx) in item.documents" :key="idx" :item="child" child @classify="classify(item)"
+                   @reject="reject(item)"/>
+        </b-tbody>
       </template>
       <!--    <template v-if="withActions" #cell(Actions)="data">-->
       <!--      <div class="text-nowrap">-->
@@ -69,6 +71,8 @@ import {
 } from 'bootstrap-vue'
 import MailTr from "@/layouts/components/MailTr";
 import Field from "@/views/app/Generic/Field";
+import moment from "moment-business-time";
+import { getUserData } from "@/auth/utils";
 
 export default {
   components: {
@@ -128,17 +132,127 @@ export default {
     },
   },
   async mounted() {
+    // this.loading = true
     await this.fetchList()
     await this.fetch()
   },
   methods: {
+    async classify(item) {
+      console.log(item);
+      if (!item.ticket_id) {
+        if (!item.pos_id) return this.$errorToast('Please select a pos')
+        if (!item.contract_id) return this.$errorToast('Please select a contract')
+        if (!item.board_id) return this.$errorToast('Please select a board')
+      }
+      this.loading = true
+      try {
+        let ticket_id = null
+        // create ticket
+        if (item.ticket_id) {
+          // create subticket
+          const subticket = (await this.$api({
+            action: 'create',
+            entity: 'ticket',
+            data: [
+              { ticket_name: item.email_subject, ticket_progress: 0, ticket_closed: 0 },
+            ],
+          })).data.data.data[0][0]
+
+          await this.$api({
+            action: 'create',
+            entity: 'ticket_ticket_rel',
+            data: [{ ticket_id_group: item.ticket_id, ticket_id: subticket.ticket_id }]
+          })
+          ticket_id = subticket.ticket_id
+        } else {
+          // create ticket
+          const ticket = (await this.$api({
+            action: 'create',
+            entity: 'ticket',
+            data: [
+              { ticket_name: item.email_subject, ticket_progress: 0, ticket_closed: 0 },
+            ],
+          })).data.data.data[0][0]
+          // get first column of selected board
+          const column = (await this.$api({
+            entity: 'frontend_column_list',
+            action: 'read-rich',
+            order_by: 'rank_order',
+            order_dir: 'ASC',
+            data: [{ board_id: item.board_id }],
+          })).data.data.data[0]
+
+          const now = moment()
+          const user = getUserData()
+          const deadline = now.clone().addWorkingTime(column.default_deadline_period, 'hours').format('YYYY-MM-DD HH:mm:ss')
+          const deadline_yellow = now.clone().addWorkingTime(column.default_deadline_yellow, 'hours').format('YYYY-MM-DD HH:mm:ss')
+          const deadline_red = now.clone().addWorkingTime(column.default_deadline_red, 'hours').format('YYYY-MM-DD HH:mm:ss')
+
+          const columnTicket = (await this.$api({
+            action: 'create',
+            entity: 'ticket_columnx_rel',
+            data: [
+              {
+                ticket_id: ticket.ticket_id,
+                column_id: column.column_id,
+                ticket_move_time_in: now.format('YYYY-MM-DD HH:mm:ss'),
+                ticket_deadline_offset: deadline,
+                ticket_deadline_offset_yellow: deadline_yellow,
+                ticket_deadline_offset_red: deadline_red,
+                user_id: user.user.user_id,
+              },
+            ],
+          })).data.data.data[0][0]
+
+          ticket_id = ticket.ticket_id
+        }
+        this.$api({
+          action: 'update',
+          entity: item.document_id ? 'classification_document_classficationtype_rel' : 'classification_email_classficationtype_rel',
+          data: [
+            {
+              classification_id: item.classification_id,
+              ...(item.document_id ? { document_id: item.document_id } : { email_id: item.email_id }),
+              ticket_id,
+              ticket_created: 1,
+            },
+          ],
+        })
+      } catch (e) {
+        console.error(e)
+      } finally {
+        this.loading = false
+      }
+
+    },
+    reject(item) {
+      this.loading = true
+      try {
+        this.$api({
+          action: 'update',
+          entity: item.document_id ? 'classification_document_classficationtype_rel' : 'classification_email_classficationtype_rel',
+          data: [
+            {
+              id: item.id,
+              classification_id: item.classification_id,
+              ...(item.document_id ? { document_id: item.document_id } : { email_id: item.email_id }),
+              dismissed: 1,
+            },
+          ],
+        })
+      } catch (e) {
+        console.error(e)
+      } finally {
+        this.loading = false
+      }
+    },
     showMailContent(email) {
       this.item = email
       this.$refs.mailContent.show()
     },
     fetchList() {
       return Promise.all([
-        'frontend_6_1_6_overview', 'frontend_2_1_3_8', 'frontend_4_2_1_contract_selector', 'board',
+        'frontend_6_1_6_overview', 'frontend_2_1_3_8', 'frontend_4_2_1_contract_selector', 'board', 'documenttype'
       ].map((list) => this.$store.dispatch('table/fetchList', { entity: list })))
     },
     onViewClick(data) {
@@ -171,7 +285,7 @@ export default {
         current_page: this.currentPage,
         filter_all: this.filter ?? '',
         lang: this.$i18n.locale,
-        data: [{ email_to: 'zelos@seybold-fm.com,' }],
+        // data: [{ email_to: 'zelos@seybold-fm.com,' }],
       }
       // retrieve from cache
       const cacheKey = this.getCacheKey(payload)
@@ -209,30 +323,46 @@ export default {
       // this.$store.commit('table/setDefinition', { data, table: this.table })
       const items = data.data.data
       const filterData = items.map(i => ({ email_id: i.email_id }))
-      let email_documents = (await this.$api({
+      const email_documents = (await this.$api({
         action: 'read-rich',
         entity: 'email_document_grp',
+        per_page: 1000000,
         data: filterData,
       })).data.data.data
-      let email_classfications = (await this.$api({
+      const email_classfications = (await this.$api({
         action: 'read-rich',
-        entity: 'classification_email_grp',
+        // entity: 'classification_email_grp',
+        entity: 'classification_email_classficationtype_rel',
+        per_page: 1000000,
         data: filterData,
       })).data.data.data
-      let document_classfications = (await this.$api({
+      const document_classfications = (await this.$api({
         action: 'read-rich',
-        entity: 'classification_document_grp',
+        // entity: 'classification_document_grp',
+        entity: 'classification_document_classficationtype_rel',
+        per_page: 1000000,
         data: filterData,
       })).data.data.data
+      email_documents.forEach(item => {
+        const cl = document_classfications.find(c => c.document_id === item.document_id)
+        if (cl) {
+          Object.keys(cl).forEach(k => (item[k] = cl[k]))
+        }
+      })
       items.forEach(item => {
         let documents = email_documents.filter(d => d.email_id === item.email_id && d.document_id != null)
-        documents = item.documents.map(d => ({...d, ...item}))
+        if (documents.length >= 1) {
+          Object.assign(item, documents[0])
+        }
+        if (documents.length > 1) {
+          item.documents = documents.slice(1).map(d => ({ ...d, ...item, documents: [] }))
+        } else {
+          item.documents = []
+        }
         const cl = email_classfications.find(c => c.email_id === item.email_id)
         if (cl) {
           Object.keys(cl).forEach(k => (item[k] = cl[k]))
         }
-
-
         // process ticket data
         let id = item.email_subject.match(/^#\d+/g)
         if (id) {

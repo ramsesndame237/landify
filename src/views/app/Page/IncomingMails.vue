@@ -10,16 +10,16 @@
       </table-pagination>
       <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"/>
     </b-card>
-    <b-row class="mt-2">
-      <summary-card :title="$t('NKA Invoice Tickets created')" color="#343a40" :percent="(10*100/40).toFixed(0)"
-                    :number="10" variant="dark" cols="3"/>
-      <summary-card :title="$t('Contract Tickets created')" color="#FF7A00" :percent="(10*100/40).toFixed(0)"
-                    :number="10" variant="warning" cols="3"/>
-      <summary-card :title="$t('Facility Man. Tickets created')" color="#D51130" :percent="(10*100/40).toFixed(0)"
-                    :number="10" variant="danger" cols="3"/>
-      <summary-card :title="$t('incoming mails dismissed')" color="#D51130" :percent="(10*100/40).toFixed(0)"
-                    :number="10" variant="danger" cols="3"/>
-    </b-row>
+<!--    <b-row class="mt-2">-->
+<!--      <summary-card :title="$t('NKA Invoice Tickets created')" color="#343a40" :percent="(10*100/40).toFixed(0)"-->
+<!--                    :number="10" variant="dark" cols="3"/>-->
+<!--      <summary-card :title="$t('Contract Tickets created')" color="#FF7A00" :percent="(10*100/40).toFixed(0)"-->
+<!--                    :number="10" variant="warning" cols="3"/>-->
+<!--      <summary-card :title="$t('Facility Man. Tickets created')" color="#D51130" :percent="(10*100/40).toFixed(0)"-->
+<!--                    :number="10" variant="danger" cols="3"/>-->
+<!--      <summary-card :title="$t('incoming mails dismissed')" color="#D51130" :percent="(10*100/40).toFixed(0)"-->
+<!--                    :number="10" variant="danger" cols="3"/>-->
+<!--    </b-row>-->
     <b-card class="mt-2">
       <div class="d-flex justify-content-between">
         <h5>New Emails</h5>
