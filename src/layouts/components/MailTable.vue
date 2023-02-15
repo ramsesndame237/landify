@@ -211,6 +211,7 @@ export default {
           entity: item.document_id ? 'classification_document_classficationtype_rel' : 'classification_email_classficationtype_rel',
           data: [
             {
+              // id: item.id,
               classification_id: item.classification_id,
               ...(item.document_id ? { document_id: item.document_id } : { email_id: item.email_id }),
               ticket_id,
@@ -285,7 +286,7 @@ export default {
         current_page: this.currentPage,
         filter_all: this.filter ?? '',
         lang: this.$i18n.locale,
-        // data: [{ email_to: 'zelos@seybold-fm.com,' }],
+        data: [{ email_to: 'zelos@seybold-fm.com,' }],
       }
       // retrieve from cache
       const cacheKey = this.getCacheKey(payload)
@@ -331,15 +332,15 @@ export default {
       })).data.data.data
       const email_classfications = (await this.$api({
         action: 'read-rich',
-        // entity: 'classification_email_grp',
-        entity: 'classification_email_classficationtype_rel',
+        entity: 'classification_email_grp',
+        // entity: 'classification_email_classficationtype_rel',
         per_page: 1000000,
         data: filterData,
       })).data.data.data
       const document_classfications = (await this.$api({
         action: 'read-rich',
-        // entity: 'classification_document_grp',
-        entity: 'classification_document_classficationtype_rel',
+        entity: 'classification_document_grp',
+        // entity: 'classification_document_classficationtype_rel',
         per_page: 1000000,
         data: filterData,
       })).data.data.data
@@ -356,6 +357,7 @@ export default {
         }
         if (documents.length > 1) {
           item.documents = documents.slice(1).map(d => ({ ...d, ...item, documents: [] }))
+            .filter(d => !d.ticket_created)
         } else {
           item.documents = []
         }
@@ -378,7 +380,7 @@ export default {
 
         }
       })
-      this.items = items
+      this.items = items.filter(d => !d.ticket_created)
       return this.items
     },
     getSelected() {

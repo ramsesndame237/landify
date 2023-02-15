@@ -3326,7 +3326,7 @@ export default {
       {
         title: 'headline~documenttype~tab',
         entityForm: 'documenttype_board_rel',
-        entity: 'documenttype_board_rel',
+        entity: 'documenttype_board_grp',
         primaryKey: 'documenttype_id',
         fields: [
           {

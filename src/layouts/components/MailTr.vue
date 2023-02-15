@@ -115,18 +115,18 @@ export default {
     'item.ticket_id': function (val) {
       if (val) {
         const list = this.$store.state.table.listCache['frontend_6_1_6_overview']
-        const el = list.find(e => e.ticket_id === this.item.ticket_id)
+        const el = list.find(e => e.ticket_id === val)
+        console.log('el', el.pos_name);
         if (el) {
-          this.item.pos_id = el.pos_id
-          this.item.contract_id = el.contract_id
+          this.$set(this.item, 'pos_id', el.pos_id)
+          this.$set(this.item, 'contract_id', el.contract_id)
         }
-      } else {
       }
     },
     'item.documenttype_id': function (val) {
       if (val) {
         const list = this.$store.state.table.listCache['documenttype']
-        const el = list.find(e => e.documenttype_id === this.item.documenttype_id)
+        const el = list.find(e => e.documenttype_id === val)
         if (el) {
           this.item.board_id = el.board_id
         }
