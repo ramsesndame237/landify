@@ -232,16 +232,22 @@ export default [
     ],
   },
   {
-    title: 'Import',
+    title: key('import'),
     icon: 'CheckSquareIcon',
+    action: 'menu~import',
+    resource: 'menu',
     children: [
       {
-        title: 'Import Data',
+        title: key('importstandard'),
+        action: 'menu~importstandard',
+        resource: 'menu',
         route: 'import',
         icon: 'CheckSquareIcon',
       },
       {
-        title: 'Import Contract',
+        title: key('importcontract'),
+        action: 'menu~importcontract',
+        resource: 'menu',
         route: 'import-contract',
         icon: 'CheckSquareIcon',
       },

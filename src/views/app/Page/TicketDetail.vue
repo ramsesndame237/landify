@@ -136,7 +136,7 @@
           </b-card-actions>
           <b-card-actions no-body="dd" :title="$t('headline~ticket~emails')" class="mt-2" action-collapse>
             <b-overlay :show="loadingEmail">
-              <b-table-simple class="table-responsive">
+              <b-table-simple class="mail-table">
                 <b-thead>
                   <b-tr>
                     <b-th></b-th>
@@ -169,14 +169,16 @@
         <b-col lg="4">
           <h4 class="font-weight-bolder">{{ $t('headline~ticket~documents') }}</h4>
           <b-row>
-            <b-col v-for="(document,i) in documents" :key="i" md="6">
+            <b-col v-for="(document,i) in documents" :key="i">
               <b-card>
                 <div class="">
                   <h6 style="color: #ccc">{{ document.document_name }}</h6>
-                  <h4 class="font-weight-bolder mb-2" style="color: black">{{ document.document_mime_type }}</h4>
-                  <b-link class="m-auto" variant="danger" target="_blank" :href="getDocumentLink(document)">
-                    {{ $t('button~open') }}
-                  </b-link>
+                  <div class="d-flex justify-content-between">
+                    <h5 class="font-weight-bolder" style="color: black">{{ document.document_mime_type }}</h5>
+                    <b-link  variant="danger" target="_blank" :href="getDocumentLink(document)">
+                      <feather-icon icon="EyeIcon"/>
+                    </b-link>
+                  </div>
                 </div>
               </b-card>
             </b-col>
@@ -409,5 +411,7 @@ export default {
 </script>
 
 <style scoped>
-
+.mail-table{
+  word-break: break-word;
+}
 </style>

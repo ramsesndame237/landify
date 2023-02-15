@@ -1571,8 +1571,11 @@ export default {
       {
         title: 'headline~document~tab',
         primaryKey: 'document_id',
-        entity: 'document_pos_rel',
+        entityForm: 'document_pos_rel',
+        entity: 'frontend_3_1_3_8',
         update: false,
+        create: false,
+        delete: false,
         fields: [
           {
             key: 'document_id',
@@ -2863,7 +2866,8 @@ export default {
         onChange: updateInvoiceFlatRate,
       },
       { key: 'invoiceposition_amount_total', type: 'number' },
-      { key: 'invoiceposition_amount_customer', type: 'number',
+      {
+        key: 'invoiceposition_amount_customer', type: 'number',
         // rules: { lower: ['@invoiceposition_amount_total'] }
       },
       { key: 'invoiceposition_apportionable', type: 'boolean' },

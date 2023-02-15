@@ -1,6 +1,6 @@
 <template>
-  <b-modal ref="mailContent" title="Mail Content" size="lg" :ok-title="view?'Close':'Save'" :ok-only="view" @ok="submit"
-           :busy="loading">
+  <b-modal ref="mailContent" title="Mail Content" size="lg" :ok-title="view?$t('button~close'):$t('button~email~send')"
+           :ok-only="view" @ok="submit" :busy="loading">
     <b-overlay :show="loading">
       <b-row>
         <b-col v-if="view" cols="6">
@@ -13,9 +13,14 @@
           <field :field="{key: 'email_from'}" :entity="item" disabled/>
         </b-col>
         <b-col cols="6">
-          <field ref="contactperson" :field="{key: 'contactperson_id', type:'list', multiple: true, list: 'frontend_2_3_1', listLabel: 'contactperson_email',
-            listLabel: option => `${option.user_email} - ${option.contactperson_firstname} ${option.contactperson_lastname}`}"
-                 :entity="item" disabled/>
+          <field v-if="view" :field="{key: 'email_to'}" :entity="item" disabled/>
+          <b-form-group v-else label="Email To">
+            <vue-tags-input v-model="tag" :tags="tags" :validation="validation" :autocomplete-items="filteredItems"
+                            @tags-changed="newTags => tags = newTags"/>
+          </b-form-group>
+          <!--          <field v-else ref="contactperson" :field="{key: 'contactperson_id', type:'list', multiple: true, list: 'frontend_2_3_1', listLabel: 'contactperson_email',-->
+          <!--            listLabel: option => `${option.user_email} - ${option.contactperson_firstname} ${option.contactperson_lastname}`}"-->
+          <!--                 :entity="item" disabled/>-->
         </b-col>
         <b-col cols="12">
           <field :field="{key: 'email_subject'}" :entity="item" :disabled="view"/>
@@ -41,16 +46,38 @@
 <script>
 import Field from '@/views/app/Generic/Field'
 import { getDocumentLink } from "@/libs/utils";
+import VueTagsInput from '@johmun/vue-tags-input';
+import {
+  email,
+} from 'vee-validate/dist/rules'
 
 export default {
   name: 'EmailModal',
-  components: { Field },
+  components: { Field, VueTagsInput },
   data() {
     return {
       item: {},
       view: true,
       loading: false,
+      tag: '',
+      tags: [],
+      contactpersons: [],
+      validation: [{
+        classes: 'invalid',
+        rule: tag => !email.validate(tag.text),
+        disableAdd: true,
+      }],
     }
+  },
+  computed: {
+    filteredItems() {
+      return this.contactpersons.filter(i => {
+        return i.user_email && i.user_email.toLowerCase().indexOf(this.tag.toLowerCase()) !== -1
+      }).map(i => i.user_email)
+    },
+  },
+  async mounted() {
+    this.contactpersons = await this.$store.dispatch('table/fetchList', { entity: 'frontend_2_3_1' })
   },
   methods: {
     getDocumentLink,
@@ -58,7 +85,7 @@ export default {
       if (view) {
         this.item = item
       } else {
-        this.item = { email_from: 'test@seybold-fm.com' }
+        this.item = { email_from: 'zelos@seybold-fm.com' }
       }
       this.view = view
       this.$refs.mailContent.show()
@@ -81,7 +108,7 @@ export default {
         }
 
         await this.$http.post('/emails/send', {
-          email_to: this.$refs.contactperson.selectedValues.map(v => v.user_email).filter(v => !!v),
+          email_to: this.tags.map(t => t.text),
           email_subject: this.item.email_subject,
           email_body: this.item.email_body,
           email_attachements: this.item.attachments || [],

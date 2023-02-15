@@ -154,7 +154,12 @@ export default {
             action: 'create',
             entity: 'ticket',
             data: [
-              { ticket_name: item.email_subject, ticket_progress: 0, ticket_closed: 0 },
+              {
+                ticket_name: item.email_subject,
+                // ticket_description: item.email_body,
+                ticket_progress: 0,
+                ticket_closed: 0,
+              },
             ],
           })).data.data.data[0][0]
 
@@ -170,9 +175,30 @@ export default {
             action: 'create',
             entity: 'ticket',
             data: [
-              { ticket_name: item.email_subject, ticket_progress: 0, ticket_closed: 0 },
+              {
+                ticket_name: item.email_subject,
+                // ticket_description: item.email_body,
+                ticket_progress: 0,
+                ticket_closed: 0,
+              },
             ],
           })).data.data.data[0][0]
+
+          await this.$api({
+            action: 'create',
+            entity: 'ticket_pos_rel',
+            data: [{ ticket_id: ticket.ticket_id, pos_id: item.pos_id }],
+          })
+
+          if (item.contract_id) {
+            await this.$api({
+              action: 'create',
+              entity: 'ticket_contract_rel',
+              data: [{ ticket_id: ticket.ticket_id, pos_id: item.contract_id }],
+            })
+          }
+
+
           // get first column of selected board
           const column = (await this.$api({
             entity: 'frontend_column_list',
@@ -332,8 +358,8 @@ export default {
       })).data.data.data
       const email_classfications = (await this.$api({
         action: 'read-rich',
-        entity: 'classification_email_grp',
-        // entity: 'classification_email_classficationtype_rel',
+        // entity: 'classification_email_grp',
+        entity: 'classification_email_classficationtype_rel',
         per_page: 1000000,
         data: filterData,
       })).data.data.data
@@ -356,8 +382,9 @@ export default {
           Object.assign(item, documents[0])
         }
         if (documents.length > 1) {
-          item.documents = documents.slice(1).map(d => ({ ...d, ...item, documents: [] }))
+          item.documents = documents.slice(1).map(d => ({ ...item, ...d, documents: [] }))
             .filter(d => !d.ticket_created)
+          console.log("New Documents", item.email_id, item.documents)
         } else {
           item.documents = []
         }
