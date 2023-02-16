@@ -25,7 +25,7 @@ export const defineRules = () => {
 
   if (!userData) return rules
   rules.push({ action: 'read', subject: 'dashboard' })
-  if (['johndoe@example.com', 'raoul.dzoukou@gohze.org', 'c.trebuth@digitalsuxess.de'].indexOf(userEmail) >= 0) {
+  if (['johndoe@example.com', 'raoul.dzoukou@gohze.org1', 'c.trebuth@digitalsuxess.de'].indexOf(userEmail) >= 0) {
     rules.push({ action: 'manage', subject: 'all' })
   }
   const validTables = userData.tables

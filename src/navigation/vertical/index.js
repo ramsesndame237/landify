@@ -2,10 +2,10 @@ function table(name) {
   return { name: 'table', params: { table: name } }
 }
 
-function item(tablename, title, icon) {
+function item(tablename, title, route) {
   return {
     title: `menu~${title || tablename}`,
-    route: table(tablename),
+    route: route || table(tablename),
     // icon: 'UserIcon',
     action: `menu~${title || tablename}`,
     resource: 'menu',
@@ -44,10 +44,7 @@ export default [
       },
     ],
   },
-  {
-    title: key('classification'),
-    route: 'incoming-mails',
-  },
+  item('classification', null, 'incoming-mails'),
   item('pos'),
   {
     title: key('contractlists'),

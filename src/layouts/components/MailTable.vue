@@ -1,22 +1,34 @@
 <template>
   <b-overlay :show="loading">
-    <b-table-simple sticky-header ref="table" striped hover responsive>
+    <b-table-simple ref="table" sticky-header striped hover responsive>
       <b-thead>
         <b-tr>
-          <b-th></b-th>
+          <b-th/>
           <b-th>Email Id</b-th>
           <b-th>Email received date</b-th>
           <b-th>Email From</b-th>
           <b-th>Email To</b-th>
           <b-th>Email Subject</b-th>
-          <b-th class="text-center">Ticket Id</b-th>
-          <b-th class="text-center">Pos Id</b-th>
-          <b-th class="text-center">Contract Id</b-th>
+          <b-th class="text-center">
+            Ticket Id
+          </b-th>
+          <b-th class="text-center">
+            Pos Id
+          </b-th>
+          <b-th class="text-center">
+            Contract Id
+          </b-th>
           <b-th>Attachment</b-th>
           <b-th>File Name</b-th>
-          <b-th class="text-center">DocumentType</b-th>
-          <b-th class="text-center">Board</b-th>
-          <b-th class="text-center">Action</b-th>
+          <b-th class="text-center">
+            DocumentType
+          </b-th>
+          <b-th class="text-center">
+            Board
+          </b-th>
+          <b-th class="text-center">
+            Action
+          </b-th>
         </b-tr>
       </b-thead>
       <!--    <template #cell(__selected)="data">-->
@@ -69,10 +81,10 @@
 import {
   BTable, BButton, BFormCheckbox, BTableSimple,
 } from 'bootstrap-vue'
-import MailTr from "@/layouts/components/MailTr";
-import Field from "@/views/app/Generic/Field";
-import moment from "moment-business-time";
-import { getUserData } from "@/auth/utils";
+import MailTr from '@/layouts/components/MailTr'
+import Field from '@/views/app/Generic/Field'
+import moment from 'moment-business-time'
+import { getUserData } from '@/auth/utils'
 import _ from 'lodash'
 
 export default {
@@ -133,13 +145,13 @@ export default {
     },
   },
   async mounted() {
-    // this.loading = true
+    this.loading = true
     await this.fetchList()
     await this.fetch()
   },
   methods: {
     async classify(item) {
-      console.log(item);
+      console.log(item)
       if (!item.ticket_id) {
         if (!item.pos_id) return this.$errorToast('Please select a pos')
         if (!item.contract_id) return this.$errorToast('Please select a contract')
@@ -167,7 +179,7 @@ export default {
           await this.$api({
             action: 'create',
             entity: 'ticket_ticket_rel',
-            data: [{ ticket_id_group: item.ticket_id, ticket_id: subticket.ticket_id }]
+            data: [{ ticket_id_group: item.ticket_id, ticket_id: subticket.ticket_id }],
           })
           ticket_id = subticket.ticket_id
         } else {
@@ -198,7 +210,6 @@ export default {
               data: [{ ticket_id: ticket.ticket_id, pos_id: item.contract_id }],
             })
           }
-
 
           // get first column of selected board
           const column = (await this.$api({
@@ -233,30 +244,38 @@ export default {
 
           ticket_id = ticket.ticket_id
         }
-        this.$api({
+        const result = (await this.$api({
           action: 'update',
           entity: item.document_id ? 'classification_document_classficationtype_rel' : 'classification_email_classficationtype_rel',
           data: [
             {
               id: item.id,
               classification_id: item.classification_id,
-              ...(item.document_id ? { document_id: item.document_id } : { email_id: item.email_id }),
+              ...(item.document_id ? {
+                document_id: item.document_id,
+                documenttype_id: item.documenttype_id,
+              } : { email_id: item.email_id }),
               ticket_id,
               ticket_created: 1,
             },
           ],
-        })
+        })).data.data.data[0][0]
+        if (result) {
+          item.ticket_created = true
+          this.$successToast('Classification Done')
+        } else {
+          this.$errorToast('Error, Please try again')
+        }
       } catch (e) {
         console.error(e)
       } finally {
         this.loading = false
       }
-
     },
-    reject(item) {
+    async reject(item) {
       this.loading = true
       try {
-        this.$api({
+        const result = (await this.$api({
           action: 'update',
           entity: item.document_id ? 'classification_document_classficationtype_rel' : 'classification_email_classficationtype_rel',
           data: [
@@ -264,10 +283,16 @@ export default {
               id: item.id,
               classification_id: item.classification_id,
               ...(item.document_id ? { document_id: item.document_id } : { email_id: item.email_id }),
-              dismissed: 1,
+              classification_dismissed: 1,
             },
           ],
-        })
+        })).data.data.data[0][0]
+        if (result) {
+          this.$successToast('Ticket Dismissed')
+          item.classification_dismissed = true
+        } else {
+          this.$errorToast('Error, Please try again')
+        }
       } catch (e) {
         console.error(e)
       } finally {
@@ -280,8 +305,8 @@ export default {
     },
     fetchList() {
       return Promise.all([
-        'frontend_6_1_6_overview', 'frontend_2_1_3_8', 'frontend_4_2_1_contract_selector', 'board', 'documenttype'
-      ].map((list) => this.$store.dispatch('table/fetchList', { entity: list })))
+        'frontend_6_1_6_overview', 'frontend_2_1_3_8', 'frontend_4_2_1_contract_selector', 'board', 'documenttype',
+      ].map(list => this.$store.dispatch('table/fetchList', { entity: list })))
     },
     onViewClick(data) {
       if (this.onViewElement) {
@@ -319,6 +344,7 @@ export default {
       const cacheKey = this.getCacheKey(payload)
       const fromCache = this.$store.getters['table/tableCache'](cacheKey)
       if (fromCache) {
+        this.loading = false
         return this.processData(fromCache)
       }
       this.loading = true
@@ -341,7 +367,7 @@ export default {
         })
     },
     getCacheKey(payload) {
-      return this.entity + '-' + JSON.stringify(payload)
+      return `${this.entity}-${JSON.stringify(payload)}`
     },
     async processData(data) {
       this.$emit('update:totalRows', data.data.links.pagination.total)
@@ -369,7 +395,7 @@ export default {
         // entity: 'classification_document_grp',
         entity: 'classification_document_classficationtype_rel',
         per_page: 1000000,
-        data: _.uniqBy(email_documents, 'document_id').map(ed => ({ document_id: ed.document_id })),
+        data: _.uniqBy(email_documents, 'document_id').filter(i => i.document_id != null).map(ed => ({ document_id: ed.document_id })),
       })).data.data.data
       email_documents.forEach(item => {
         const cl = document_classfications.find(c => c.document_id === item.document_id)
@@ -378,14 +404,14 @@ export default {
         }
       })
       items.forEach(item => {
-        let documents = email_documents.filter(d => d.email_id === item.email_id && d.document_id != null)
+        const documents = email_documents.filter(d => d.email_id === item.email_id && d.document_id != null)
         if (documents.length >= 1) {
           Object.assign(item, documents[0])
         }
         if (documents.length > 1) {
           item.documents = documents.slice(1).map(d => ({ ...item, ...d, documents: [] }))
             .filter(d => !d.ticket_created)
-          console.log("New Documents", item.email_id, item.documents)
+          console.log('New Documents', item.email_id, item.documents)
         } else {
           item.documents = []
         }
@@ -394,18 +420,17 @@ export default {
           Object.keys(cl).forEach(k => (item[k] = cl[k]))
         }
         // process ticket data
-        let id = item.email_subject.match(/^#\d+/g)
+        const id = item.email_subject.match(/^#\d+/g)
         if (id) {
           const ticket_id = parseInt(id[0].substr(1))
           item.ticket_id = ticket_id
-          const list = this.$store.state.table.listCache['frontend_6_1_6_overview']
+          const list = this.$store.state.table.listCache.frontend_6_1_6_overview
           console.log('ticket_id', ticket_id)
           const el = list.find(e => e.ticket_id === item.ticket_id)
           if (el) {
             item.pos_id = el.pos_id
             item.contract_id = el.contract_id
           }
-
         }
       })
       this.items = items.filter(d => !d.ticket_created)
@@ -470,7 +495,7 @@ export default {
           if (count > 0) this.$successToast(`${count} Element(s) where deleted`)
           else this.$errorToast(`${count} Element(s) where deleted`)
           // this.$successToast(this.$t(entities.length > 1 ? 'notification.elements_deleted' : 'notification.element_deleted'))
-          this.$store.commit('table/deleteTableCacheKeyFromPrefix', this.entity + '-')
+          this.$store.commit('table/deleteTableCacheKeyFromPrefix', `${this.entity}-`)
           // if all elements where deleted, go to page 1
           if (this.currentItems.length === count) {
             this.$emit('update:currentPage', 1)

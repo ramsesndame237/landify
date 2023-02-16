@@ -136,6 +136,8 @@ const router = new VueRouter({
       name: 'import',
       component: () => import('@/views/app/Page/ImportPage.vue'),
       meta: {
+        action: 'menu~importstandard',
+        resource: 'menu',
         pageTitle: 'Import',
         breadcrumb: [
           {
@@ -150,6 +152,8 @@ const router = new VueRouter({
       name: 'import-contract',
       component: () => import('@/views/app/Page/ImportContract.vue'),
       meta: {
+        action: 'menu~importcontract',
+        resource: 'menu',
         pageTitle: 'Import Contract',
         breadcrumb: [
           {
@@ -164,6 +168,8 @@ const router = new VueRouter({
       name: 'incoming-mails',
       component: () => import('@/views/app/Page/IncomingMails.vue'),
       meta: {
+        action: 'menu~classification',
+        resource: 'menu',
         pageTitle: 'Email Listing and Processing',
         breadcrumb: [
           {
