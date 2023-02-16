@@ -3334,7 +3334,7 @@ export default {
         primaryKey: 'documenttype_id',
         fields: [
           {
-            key: 'documenttype_id', type: 'list', list: 'documenttype', onlyForm: true,
+            key: 'documenttype_id', type: 'list', list: 'documenttype', listLabel: 'documenttype_name',
           },
           { key: 'documenttype_name', hideOnForm: true },
         ],

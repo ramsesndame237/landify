@@ -73,6 +73,7 @@ import MailTr from "@/layouts/components/MailTr";
 import Field from "@/views/app/Generic/Field";
 import moment from "moment-business-time";
 import { getUserData } from "@/auth/utils";
+import _ from 'lodash'
 
 export default {
   components: {
@@ -237,7 +238,7 @@ export default {
           entity: item.document_id ? 'classification_document_classficationtype_rel' : 'classification_email_classficationtype_rel',
           data: [
             {
-              // id: item.id,
+              id: item.id,
               classification_id: item.classification_id,
               ...(item.document_id ? { document_id: item.document_id } : { email_id: item.email_id }),
               ticket_id,
@@ -365,10 +366,10 @@ export default {
       })).data.data.data
       const document_classfications = (await this.$api({
         action: 'read-rich',
-        entity: 'classification_document_grp',
-        // entity: 'classification_document_classficationtype_rel',
+        // entity: 'classification_document_grp',
+        entity: 'classification_document_classficationtype_rel',
         per_page: 1000000,
-        data: filterData,
+        data: _.uniqBy(email_documents, 'document_id').map(ed => ({ document_id: ed.document_id })),
       })).data.data.data
       email_documents.forEach(item => {
         const cl = document_classfications.find(c => c.document_id === item.document_id)

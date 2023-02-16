@@ -2,7 +2,7 @@
   <b-tr>
     <b-td>
       <feather-icon v-if="item.documents && item.documents.length>0" v-b-toggle="'collapse-'+item.email_id"
-                    icon="ChevronDownIcon" size="24"/>
+                    :icon="open?'ChevronUpIcon':'ChevronDownIcon'" size="24" @click="toggle"/>
     </b-td>
     <b-td>{{ child ? '' : item.email_id }}</b-td>
     <b-td>{{ child ? '' : item.email_received_datetime }}</b-td>
@@ -33,7 +33,7 @@
       <field v-if="item.document_id" :field="documenttypeIdField" :entity="item"/>
     </b-td>
     <b-td class="td-form">
-      <field :field="boardIdField" :entity="item" :disabled="!!item.documenttype_id"/>
+      <field :field="boardIdField" :entity="item" :disabled="item.ticket_id!=null"/>
     </b-td>
     <b-td>
       <div class="d-flex align-items-center" v-if="item.classification_id && !item.ticket_created">
@@ -109,6 +109,7 @@ export default {
         noLabel: true,
         noFetch: true,
       },
+      open: true,
     }
   },
   watch: {
@@ -120,6 +121,7 @@ export default {
         if (el) {
           this.$set(this.item, 'pos_id', el.pos_id)
           this.$set(this.item, 'contract_id', el.contract_id)
+          this.$set(this.item, 'board_id', el.board_id)
         }
       }
     },
@@ -133,7 +135,16 @@ export default {
       }
     },
   },
-  methods: { getDocumentLink },
+  methods: {
+    getDocumentLink,
+    toggle() {
+      const el = document.getElementById('collapse' + this.item.email_id)
+      // if (this.open) el.style.height = 0
+      // else el.style.height = 'auto'
+      this.open = !this.open
+      el.hidden = !el.hidden
+    },
+  },
 }
 </script>
 
