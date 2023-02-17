@@ -154,7 +154,7 @@ export default {
       console.log(item)
       if (!item.ticket_id) {
         if (!item.pos_id) return this.$errorToast('Please select a pos')
-        if (!item.contract_id) return this.$errorToast('Please select a contract')
+        // if (!item.contract_id) return this.$errorToast('Please select a contract')
         if (!item.board_id) return this.$errorToast('Please select a board')
       }
       this.loading = true
@@ -189,7 +189,7 @@ export default {
             entity: 'ticket',
             data: [
               {
-                ticket_name: item.email_subject,
+                ticket_name: item.email_subject.substr(0,20),
                 // ticket_description: item.email_body,
                 ticket_progress: 0,
                 ticket_closed: 0,
@@ -245,8 +245,8 @@ export default {
           ticket_id = ticket.ticket_id
         }
         const result = (await this.$api({
-          action: 'update',
-          entity: item.document_id ? 'classification_document_classficationtype_rel' : 'classification_email_classficationtype_rel',
+          action: item.classification_id ? 'update' : 'create',
+          entity: item.document_id ? 'classification_document_classficationtype_rel' : 'email_ticket_classification_rel',
           data: [
             {
               id: item.id,
@@ -277,7 +277,7 @@ export default {
       try {
         const result = (await this.$api({
           action: 'update',
-          entity: item.document_id ? 'classification_document_classficationtype_rel' : 'classification_email_classficationtype_rel',
+          entity: item.document_id ? 'classification_document_classficationtype_rel' : 'email_ticket_classification_rel',
           data: [
             {
               id: item.id,
@@ -386,7 +386,7 @@ export default {
       const email_classfications = (await this.$api({
         action: 'read-rich',
         // entity: 'classification_email_grp',
-        entity: 'classification_email_classficationtype_rel',
+        entity: 'email_ticket_classification_rel',
         per_page: 1000000,
         data: filterData,
       })).data.data.data
@@ -401,17 +401,19 @@ export default {
         const cl = document_classfications.find(c => c.document_id === item.document_id)
         if (cl) {
           Object.keys(cl).forEach(k => (item[k] = cl[k]))
+          console.log('set cl', item, cl)
         }
       })
       items.forEach(item => {
         const documents = email_documents.filter(d => d.email_id === item.email_id && d.document_id != null)
         if (documents.length >= 1) {
-          Object.assign(item, documents[0])
+          Object.keys(documents[0]).forEach(k => (item[k] = documents[0][k]))
+          console.log('New Documents', item.email_id, item)
         }
         if (documents.length > 1) {
           item.documents = documents.slice(1).map(d => ({ ...item, ...d, documents: [] }))
             .filter(d => !d.ticket_created)
-          console.log('New Documents', item.email_id, item.documents)
+          // console.log('New Documents', item.email_id, item.documents)
         } else {
           item.documents = []
         }

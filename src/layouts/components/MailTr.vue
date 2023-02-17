@@ -35,8 +35,8 @@
     <b-td class="td-form">
       <field :field="boardIdField" :entity="item" :disabled="item.ticket_id!=null"/>
     </b-td>
-    <b-td>
-      <div class="d-flex align-items-center" v-if="item.classification_id && !item.ticket_created && !item.classification_dismissed">
+    <b-td class="text-center">
+      <div class="d-flex align-items-center" v-if="!item.ticket_created && !item.classification_dismissed">
         <b-button class="btn-icon" variant="flat-success" pill @click="$emit('classify')">
           <feather-icon icon="CheckIcon" size="24"/>
         </b-button>
@@ -44,6 +44,8 @@
           <feather-icon icon="XIcon" size="24"/>
         </b-button>
       </div>
+      <span v-if="item.ticket_created" class="text-success">Done</span>
+      <span v-if="item.classification_dismissed" class="text-danger">Dismissed</span>
     </b-td>
   </b-tr>
 </template>

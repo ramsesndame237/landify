@@ -87,6 +87,8 @@ const router = new VueRouter({
       component: () => import('@/views/app/SPNB/Index.vue'),
       meta: {
         pageTitle: 'headline~new_business',
+        action: 'menu~newbus',
+        resource: 'menu',
         breadcrumb: [
           {
             text: 'headline~new_business',
@@ -166,6 +168,22 @@ const router = new VueRouter({
     {
       path: '/app/incoming-mails',
       name: 'incoming-mails',
+      component: () => import('@/views/app/Page/IncomingMails.vue'),
+      meta: {
+        action: 'menu~classification',
+        resource: 'menu',
+        pageTitle: 'Email Listing and Processing',
+        breadcrumb: [
+          {
+            text: 'Incoming Mails',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/app/classification-summary',
+      name: 'classification-summary',
       component: () => import('@/views/app/Page/IncomingMails.vue'),
       meta: {
         action: 'menu~classification',

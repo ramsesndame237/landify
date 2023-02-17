@@ -1,6 +1,7 @@
 import { $themeBreakpoints } from '@themeConfig'
 import { api } from '@/libs/axios'
 import moment from 'moment'
+import _ from 'lodash'
 
 function getUserLanguage() {
   let lang = localStorage.getItem('current-lang')
@@ -101,7 +102,7 @@ export default {
       }, { root: true })) : []
       data.tablegroup_tables = hasRoles ? (await dispatch('table/fetchList', {
         entity: 'tablename_tablegroup_grp',
-        data: data.tablegroups.map(t => ({ tablegroup_id: t.tablegroup_id })),
+        data: _.uniqBy(data.tablegroups, 'tablegroup_id').map(t => ({ tablegroup_id: t.tablegroup_id })),
       }, { root: true })) : []
       localStorage.setItem('userData', JSON.stringify(data))
     },

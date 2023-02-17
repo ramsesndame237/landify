@@ -41,10 +41,17 @@ export default [
       {
         title: key('documentupload'),
         route: 'document-classification',
-      },
+      }
     ],
   },
   item('classification', null, 'incoming-mails'),
+  {
+    title: `menu~summary`,
+    route: 'classification-summary',
+    // icon: 'UserIcon',
+    action: `menu~classification`,
+    resource: 'menu',
+  },
   item('pos'),
   {
     title: key('contractlists'),
@@ -203,7 +210,7 @@ export default [
   {
     title: key('administrationuser'),
     children: [
-      item('user', null, 'UserIcon'),
+      item('user'),
       item('team'),
       item('usertype'),
     ],
