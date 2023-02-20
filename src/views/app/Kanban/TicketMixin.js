@@ -9,7 +9,7 @@ export default {
       teams: [],
       config: {
         // Don't allow blocks to be moved out of the approved stage
-        accepts: (block, target, source) => {
+        accepts: (block, target, source, isback) => {
           // console.log(target.dataset, source.dataset, 'moved')
           if (this.columns.length === 0) return false
           const columnSourceIdx = this.columns.findIndex(c => c.column_name === source.dataset.status)
@@ -19,6 +19,7 @@ export default {
           let isInTeam = true
           if (teamId) isInTeam = this.currentUserInTeam(teamId)
           if (!isInTeam) return false
+          if (isback) return true
           // +1 -1 movements
           if (columnTargetIdx === columnSourceIdx + 1 || columnTargetIdx === columnSourceIdx - 1) return true
           // target column before next quality gate column

@@ -295,7 +295,7 @@ export default {
       if (!this.entity.columns[1]) return false
       if (this.entity.columns[1].rank_order > this.entity.columns[0].rank_order) return false
       const column_name = this.entity.columns[1].column_name
-      return this.config.accepts(null, { dataset: { status: column_name } }, { dataset: { status: this.entity.column_name } })
+      return this.config.accepts(null, { dataset: { status: column_name } }, { dataset: { status: this.entity.column_name } }, true)
     },
     canMoveToNext() {
       if (!this.entity) return false
