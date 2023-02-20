@@ -38,10 +38,10 @@ export default [
     children: [
       item('board', 'ticketboard'),
       item('ticket', 'ticketlist'),
-      {
-        title: key('documentupload'),
-        route: 'document-classification',
-      }
+      // {
+      //   title: key('documentupload'),
+      //   route: 'document-classification',
+      // }
     ],
   },
   item('classification', null, 'incoming-mails'),
@@ -68,12 +68,12 @@ export default [
         resource: 'menu',
         route: { name: 'deadline-list' },
       },
-      {
-        title: key('payment'),
-        action: 'menu~payment',
-        resource: 'menu',
-        route: 'comming-soon',
-      },
+      // {
+      //   title: key('payment'),
+      //   action: 'menu~payment',
+      //   resource: 'menu',
+      //   route: 'comming-soon',
+      // },
     ],
   },
   {
@@ -132,10 +132,7 @@ export default [
       item('contacttitle'),
       item('contactsalutation'),
       item('partnertype'),
-      {
-        title: key('product'),
-        route: 'comming-soon',
-      },
+      item('product'),
       item('tag'),
     ],
   },
@@ -148,10 +145,7 @@ export default [
       item('recurringpayment'),
       item('choice'),
       item('contracttype'),
-      {
-        title: key('document_contract_type'),
-        route: 'comming-soon',
-      },
+      item('documentcontracttype'),
       item('criteriatype'),
       item('maturitytype'),
       item('recurringpaymenttype'),
@@ -171,10 +165,10 @@ export default [
     title: key('configurationinvoicecontradictiondata'),
     children: [
       item('costtype'),
-      {
-        title: key('costtypeabstract'),
-        route: 'comming-soon',
-      },
+      // {
+      //   title: key('costtypeabstract'),
+      //   route: 'comming-soon',
+      // },
       item('claimtype'),
       item('savingtype'),
       item('rating'),

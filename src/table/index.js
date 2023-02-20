@@ -2546,6 +2546,21 @@ export default {
       { key: 'contracttype_description', type: 'textarea' },
     ],
   },
+  documentcontracttype: {
+    fields: [
+      { key: 'documentcontracttype_id', auto: true },
+      { key: 'documentcontracttype_name' },
+      { key: 'documentcontracttype_description', type: 'textarea' },
+    ],
+  },
+  product: {
+    fields: [
+      { key: 'product_id', auto: true },
+      { key: 'product_name' },
+      { key: 'product_short' },
+      { key: 'product_description', type: 'textarea' },
+    ],
+  },
   criteriatype: {
     fields: [
       { key: 'criteriatype_id', auto: true },
