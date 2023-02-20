@@ -45,13 +45,13 @@ export default [
     ],
   },
   item('classification', null, 'incoming-mails'),
-  {
-    title: `menu~summary`,
-    route: 'classification-summary',
-    // icon: 'UserIcon',
-    action: `menu~classification`,
-    resource: 'menu',
-  },
+  // {
+  //   title: `menu~summary`,
+  //   route: 'classification-summary',
+  //   // icon: 'UserIcon',
+  //   action: `menu~classification`,
+  //   resource: 'menu',
+  // },
   item('pos'),
   {
     title: key('contractlists'),

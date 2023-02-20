@@ -11,6 +11,7 @@ export default {
         // Don't allow blocks to be moved out of the approved stage
         accepts: (block, target, source) => {
           // console.log(target.dataset, source.dataset, 'moved')
+          if (this.columns.length === 0) return false
           const columnSourceIdx = this.columns.findIndex(c => c.column_name === source.dataset.status)
           const columnTargetIdx = this.columns.findIndex(c => c.column_name === target.dataset.status)
           // check if user is in the right team

@@ -8,7 +8,7 @@
         <template v-slot:button-content>
           <feather-icon icon="MoreHorizontalIcon"/>
         </template>
-        <b-dropdown-item :to="{name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket}}">
+        <b-dropdown-item @click="$emit('moredetails')">
           {{$t('button~moredetails')}}
         </b-dropdown-item>
         <b-dropdown-item @click="$emit('assign')">

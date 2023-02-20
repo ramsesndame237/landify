@@ -146,8 +146,8 @@ export default {
   },
   async mounted() {
     this.loading = true
-    await this.fetchList()
     await this.fetch()
+    await this.fetchList()
   },
   methods: {
     async classify(item) {
@@ -189,7 +189,7 @@ export default {
             entity: 'ticket',
             data: [
               {
-                ticket_name: item.email_subject.substr(0,20),
+                ticket_name: item.email_subject.substr(0, 20),
                 // ticket_description: item.email_body,
                 ticket_progress: 0,
                 ticket_closed: 0,
@@ -245,11 +245,10 @@ export default {
           ticket_id = ticket.ticket_id
         }
         const result = (await this.$api({
-          action: item.classification_id ? 'update' : 'create',
-          entity: item.document_id ? 'classification_document_classficationtype_rel' : 'email_ticket_classification_rel',
+          action: item.document_id ? (item.classification_id ? 'update' : 'create') : 'create',
+          entity: item.document_id ? 'classification_document_classficationtype_rel' : 'email_ticket_rel',
           data: [
             {
-              id: item.id,
               classification_id: item.classification_id,
               ...(item.document_id ? {
                 document_id: item.document_id,
@@ -275,15 +274,24 @@ export default {
     async reject(item) {
       this.loading = true
       try {
+        const action = item.document_id ? (item.classification_id ? 'update' : 'create') : 'create'
         const result = (await this.$api({
-          action: 'update',
-          entity: item.document_id ? 'classification_document_classficationtype_rel' : 'email_ticket_classification_rel',
+          action,
+          entity: item.document_id ? 'classification_document_classficationtype_rel' : 'email_ticket_rel',
           data: [
             {
-              id: item.id,
-              classification_id: item.classification_id,
-              ...(item.document_id ? { document_id: item.document_id } : { email_id: item.email_id }),
+
+              ...(item.document_id ? {
+                document_id: item.document_id,
+                classification_id: item.classification_id,
+              } : { email_id: item.email_id }),
               classification_dismissed: 1,
+              ...(action === 'create' ? {
+                documenttype_id: 1,
+                classification_id: 1,
+                ticket_id: 0,
+                ticket_created: 0,
+              } : {}),
             },
           ],
         })).data.data.data[0][0]
@@ -331,6 +339,7 @@ export default {
       const payload = {
         action: 'read-rich',
         entity: 'email',
+        attributes: ['email_id', 'email_subject', 'email_to', 'email_sent_datetime', 'email_received_datetime'],
         order_by: this.sortBy,
         order_dir: this.sortDesc ? 'DESC' : 'ASC',
         per_page: this.perPage === 0 ? 1000000 : this.perPage,
@@ -338,7 +347,7 @@ export default {
         current_page: this.currentPage,
         filter_all: this.filter ?? '',
         lang: this.$i18n.locale,
-        data: [{ email_to: 'zelos@seybold-fm.com,' }],
+        data: [{ email_to: 'zelos@seybold-fm.com' }],
       }
       // retrieve from cache
       const cacheKey = this.getCacheKey(payload)
@@ -379,6 +388,7 @@ export default {
       const filterData = items.map(i => ({ email_id: i.email_id }))
       const email_documents = (await this.$api({
         action: 'read-rich',
+        attribute: ['email_id', 'document_id', 'document_name'],
         entity: 'email_document_grp',
         per_page: 1000000,
         data: filterData,
@@ -386,7 +396,7 @@ export default {
       const email_classfications = (await this.$api({
         action: 'read-rich',
         // entity: 'classification_email_grp',
-        entity: 'email_ticket_classification_rel',
+        entity: 'email_ticket_rel',
         per_page: 1000000,
         data: filterData,
       })).data.data.data

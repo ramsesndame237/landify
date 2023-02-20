@@ -129,7 +129,6 @@
                           collapsed>
             <app-timeline>
               <app-timeline-item v-for="(column,idx) in entity.columns" :key="idx" :title="column.column_name"
-                                 subtitle=""
                                  :time="(column.user_email?(column.user_email+' - '):'')+column.ticket_move_time_in"
                                  :variant="getColumnColor(column,idx)"/>
             </app-timeline>
@@ -175,7 +174,7 @@
                   <h6 style="color: #ccc">{{ document.document_name }}</h6>
                   <div class="d-flex justify-content-between">
                     <h5 class="font-weight-bolder" style="color: black">{{ document.document_mime_type }}</h5>
-                    <b-link  variant="danger" target="_blank" :href="getDocumentLink(document)">
+                    <b-link variant="danger" target="_blank" :href="getDocumentLink(document)">
                       <feather-icon icon="EyeIcon"/>
                     </b-link>
                   </div>
@@ -278,6 +277,9 @@ export default {
         await this.loadSingleTicket(false)
         this.entity = this.tickets[0]
         await this.loadStages(this.entity.board_id)
+      } else {
+        this.columns = this.$route.params.columns
+        this.teams = this.$route.params.teams
       }
       await this.fetchSubTickets()
       await this.fetchDocuments()
@@ -411,7 +413,7 @@ export default {
 </script>
 
 <style scoped>
-.mail-table{
+.mail-table {
   word-break: break-word;
 }
 </style>

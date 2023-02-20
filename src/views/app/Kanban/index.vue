@@ -33,7 +33,7 @@
 
         </div>
         <div v-for="ticket in visibleTickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
-          <invoice-ticket-card :advanced="advanced" :ticket="ticket"
+          <invoice-ticket-card :advanced="advanced" :ticket="ticket" @moredetails="$router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
                                @assign="$refs.assign.openModal(ticket, userIdsOfTeam(ticket.columns[0].team_id))"/>
         </div>
       </kanban-board>
