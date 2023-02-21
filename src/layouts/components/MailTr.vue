@@ -1,8 +1,8 @@
 <template>
-  <b-tr>
+  <b-tr @click="toggle">
     <b-td>
       <feather-icon v-if="item.documents && item.documents.length>0" v-b-toggle="'collapse-'+item.email_id"
-                    :icon="item.open?'ChevronUpIcon':'ChevronDownIcon'" size="24" @click="toggle"/>
+                    :icon="item.open?'ChevronUpIcon':'ChevronDownIcon'" size="24"/>
     </b-td>
     <b-td>{{ child ? '' : item.email_id }}</b-td>
     <b-td>{{ child ? '' : item.email_received_datetime }}</b-td>
@@ -165,6 +165,7 @@ export default {
   methods: {
     getDocumentLink,
     toggle() {
+      if (!this.item.documents.length) return
       const el = document.getElementById('collapse' + this.item.email_id)
       // if (this.open) el.style.height = 0
       // else el.style.height = 'auto'
