@@ -274,30 +274,23 @@ export default {
     async reject(item) {
       this.loading = true
       try {
-        const action = item.document_id ? (item.classification_id ? 'update' : 'create') : 'create'
         const result = (await this.$api({
-          action,
-          entity: item.document_id ? 'classification_document_classficationtype_rel' : 'email_ticket_rel',
+          action: 'update',
+          entity: item.document_id ? 'classification_document_classficationtype_rel' : 'email',
           data: [
             {
-
               ...(item.document_id ? {
                 document_id: item.document_id,
                 classification_id: item.classification_id,
-              } : { email_id: item.email_id }),
-              classification_dismissed: 1,
-              ...(action === 'create' ? {
-                documenttype_id: 1,
-                classification_id: 1,
-                ticket_id: 0,
-                ticket_created: 0,
-              } : {}),
+                classification_dismissed: 1,
+              } : { email_id: item.email_id, email_dismissed: 1, }),
             },
           ],
         })).data.data.data[0][0]
         if (result) {
           this.$successToast('Ticket Dismissed')
-          item.classification_dismissed = true
+          if (item.document_id) item.classification_dismissed = true
+          else item.email_dismissed = true
         } else {
           this.$errorToast('Error, Please try again')
         }
@@ -313,7 +306,8 @@ export default {
     },
     fetchList() {
       return Promise.all([
-        'frontend_6_1_6_overview', 'frontend_2_1_3_8', 'frontend_4_2_1_contract_selector', 'board', 'documenttype',
+        'frontend_6_1_6_overview', 'frontend_2_1_3_8', 'frontend_4_2_1_contract_selector',
+        'board', 'documenttype', 'documenttype_board_grp',
       ].map(list => this.$store.dispatch('table/fetchList', { entity: list })))
     },
     onViewClick(data) {
@@ -347,7 +341,7 @@ export default {
         current_page: this.currentPage,
         filter_all: this.filter ?? '',
         lang: this.$i18n.locale,
-        data: [{ email_to: 'zelos@seybold-fm.com' }],
+        data: [{ email_to: 'zelos@seybold-fm.com,' }],
       }
       // retrieve from cache
       const cacheKey = this.getCacheKey(payload)
@@ -416,17 +410,9 @@ export default {
       })
       items.forEach(item => {
         const documents = email_documents.filter(d => d.email_id === item.email_id && d.document_id != null)
-        if (documents.length >= 1) {
-          Object.keys(documents[0]).forEach(k => (item[k] = documents[0][k]))
-          console.log('New Documents', item.email_id, item)
-        }
-        if (documents.length > 1) {
-          item.documents = documents.slice(1).map(d => ({ ...item, ...d, documents: [] }))
-            .filter(d => !d.ticket_created)
-          // console.log('New Documents', item.email_id, item.documents)
-        } else {
-          item.documents = []
-        }
+        item.documents = documents.map(d => ({ ...item, ...d, documents: [] }))
+        // .filter(d => !d.ticket_created)
+        // console.log('New Documents', item.email_id, item.documents)
         const cl = email_classfications.find(c => c.email_id === item.email_id)
         if (cl) {
           Object.keys(cl).forEach(k => (item[k] = cl[k]))
@@ -445,7 +431,8 @@ export default {
           }
         }
       })
-      this.items = items.filter(d => !d.ticket_created)
+      this.items = items
+      // .filter(d => !d.ticket_created)
       return this.items
     },
     getSelected() {

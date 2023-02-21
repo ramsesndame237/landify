@@ -13,13 +13,13 @@
       <feather-icon v-if="!child" class="text-success" icon="EyeIcon" size="24" @click="$emit('show-content')"/>
     </b-td>
     <b-td class="td-form">
-      <field :field="ticketIdField" :entity="item"/>
+      <field :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/>
     </b-td>
     <b-td class="td-form">
-      <field :field="posIdField" :entity="item" :disabled="item.ticket_id!=null"/>
+      <field :field="posIdField" :entity="item" :disabled="is_dismissed || is_done || item.ticket_id!=null"/>
     </b-td>
     <b-td class="td-form">
-      <field :field="contractIdField" :entity="item" :disabled="item.ticket_id!=null"/>
+      <field :field="contractIdField" :entity="item" :disabled="is_dismissed|| is_done ||item.ticket_id!=null"/>
     </b-td>
     <b-td>
       <b-form-checkbox :checked="item.document_id?1:0" disabled="" :value="1" :unchecked-value="0"/>
@@ -30,13 +30,14 @@
       </b-link>
     </b-td>
     <b-td class="td-form">
-      <field v-if="item.document_id" :field="documenttypeIdField" :entity="item"/>
+      <field v-if="item.documenttype_id" :field="documenttypeIdField" :entity="item"
+             :disabled="is_dismissed|| is_done"/>
     </b-td>
     <b-td class="td-form">
-      <field :field="boardIdField" :entity="item" :disabled="item.ticket_id!=null"/>
+      <field :field="boardIdField" :entity="item" :disabled="is_dismissed|| is_done || item.ticket_id!=null"/>
     </b-td>
     <b-td class="text-center">
-      <div class="d-flex align-items-center" v-if="!item.ticket_created && !item.classification_dismissed">
+      <div class="d-flex align-items-center" v-if="!is_done && !is_dismissed">
         <b-button class="btn-icon" variant="flat-success" pill @click="$emit('classify')">
           <feather-icon icon="CheckIcon" size="24"/>
         </b-button>
@@ -44,8 +45,8 @@
           <feather-icon icon="XIcon" size="24"/>
         </b-button>
       </div>
-      <span v-if="item.ticket_created" class="text-success">Done</span>
-      <span v-if="item.classification_dismissed" class="text-danger">Dismissed</span>
+      <span v-if="is_done" class="text-success">Done</span>
+      <span v-if="is_dismissed" class="text-danger">Dismissed</span>
     </b-td>
   </b-tr>
 </template>
@@ -114,6 +115,14 @@ export default {
       open: true,
     }
   },
+  computed: {
+    is_dismissed() {
+      return this.item.document_id ? this.item.classification_dismissed : this.item.email_dismissed
+    },
+    is_done() {
+      return this.item.document_id ? this.item.ticket_created : !!this.item.ticket_id
+    },
+  },
   watch: {
     'item.ticket_id': function (val) {
       if (val) {
@@ -128,14 +137,11 @@ export default {
       }
     },
     'item.documenttype_id': function (val) {
-      if (val) {
-        const list = this.$store.state.table.listCache['documenttype']
-        const el = list.find(e => e.documenttype_id === val)
-        if (el) {
-          this.item.board_id = el.board_id
-        }
-      }
+      this.onDocumentTypeChange()
     },
+  },
+  mounted() {
+    this.onDocumentTypeChange()
   },
   methods: {
     getDocumentLink,
@@ -145,6 +151,20 @@ export default {
       // else el.style.height = 'auto'
       this.open = !this.open
       el.hidden = !el.hidden
+    },
+    onDocumentTypeChange() {
+      console.log("documenttype change");
+      if (this.item.ticket_id) return
+      const val = this.item.documenttype_id
+      if (val) {
+        const list = this.$store.state.table.listCache['documenttype_board_grp']
+        const el = list.find(e => e.documenttype_id === val)
+        if (el) {
+          this.$set(this.item, 'board_id', el.board_id)
+        }
+      } else {
+        this.$set(this.item, 'board_id', null)
+      }
     },
   },
 }
