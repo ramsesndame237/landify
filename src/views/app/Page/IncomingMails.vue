@@ -2,24 +2,23 @@
   <div>
     <b-card body-class="p-0">
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"
-                        :total-rows="totalRows" :with-filter="definition.filters && definition.filters.length > 0"
-                        @filter="$refs.filter.openModal()">
+                        :total-rows="totalRows">
         <div class="mr-1">
           <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
         </div>
       </table-pagination>
-      <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"/>
+<!--      <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"/>-->
     </b-card>
-<!--    <b-row class="mt-2">-->
-<!--      <summary-card :title="$t('NKA Invoice Tickets created')" color="#343a40" :percent="(10*100/40).toFixed(0)"-->
-<!--                    :number="10" variant="dark" cols="3"/>-->
-<!--      <summary-card :title="$t('Contract Tickets created')" color="#FF7A00" :percent="(10*100/40).toFixed(0)"-->
-<!--                    :number="10" variant="warning" cols="3"/>-->
-<!--      <summary-card :title="$t('Facility Man. Tickets created')" color="#D51130" :percent="(10*100/40).toFixed(0)"-->
-<!--                    :number="10" variant="danger" cols="3"/>-->
-<!--      <summary-card :title="$t('incoming mails dismissed')" color="#D51130" :percent="(10*100/40).toFixed(0)"-->
-<!--                    :number="10" variant="danger" cols="3"/>-->
-<!--    </b-row>-->
+    <!--    <b-row class="mt-2">-->
+    <!--      <summary-card :title="$t('NKA Invoice Tickets created')" color="#343a40" :percent="(10*100/40).toFixed(0)"-->
+    <!--                    :number="10" variant="dark" cols="3"/>-->
+    <!--      <summary-card :title="$t('Contract Tickets created')" color="#FF7A00" :percent="(10*100/40).toFixed(0)"-->
+    <!--                    :number="10" variant="warning" cols="3"/>-->
+    <!--      <summary-card :title="$t('Facility Man. Tickets created')" color="#D51130" :percent="(10*100/40).toFixed(0)"-->
+    <!--                    :number="10" variant="danger" cols="3"/>-->
+    <!--      <summary-card :title="$t('incoming mails dismissed')" color="#D51130" :percent="(10*100/40).toFixed(0)"-->
+    <!--                    :number="10" variant="danger" cols="3"/>-->
+    <!--    </b-row>-->
     <b-card class="mt-2">
       <div class="d-flex justify-content-between">
         <h5>New Emails</h5>
@@ -28,7 +27,8 @@
 
         </div>
       </div>
-      <mail-table :search="search" :per-page="0" :current-page.sync="currentPage" :total-rows.sync="totalRows"/>
+      <mail-table :filter-value="filterValue" :search="search" :per-page="0" :current-page.sync="currentPage"
+                  :total-rows.sync="totalRows"/>
     </b-card>
 
   </div>
@@ -60,11 +60,11 @@ export default {
       definition: {
         filters: [{ key: 'ticket_id', type: 'list', list: 'ticket', listLabel: 'ticket_name' }],
       },
-      filterValue: 0,
+      filterValue: 1,
       filterOptions: [
         { text: 'All mails', value: 0 },
-        { text: 'New', value: 1 },
-        { text: 'Not processed', value: 2 },
+        { text: 'Not processed', value: 1 },
+        { text: 'Processed', value: 2 },
       ],
     }
   },

@@ -1,6 +1,6 @@
 <template>
   <b-overlay :show="loading">
-    <b-table-simple ref="table" sticky-header striped hover responsive>
+    <b-table-simple ref="table" sticky-header striped hover responsive style="min-height: 50vh">
       <b-thead>
         <b-tr>
           <b-th/>
@@ -18,7 +18,7 @@
           <b-th class="text-center">
             Contract Id
           </b-th>
-          <b-th>Attachment</b-th>
+          <b-th>Attachments</b-th>
           <b-th>File Name</b-th>
           <b-th class="text-center">
             DocumentType
@@ -35,16 +35,25 @@
       <!--      <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"-->
       <!--                       :disabled="disabled" @change="onSelect(data.index)"/>-->
       <!--    </template>-->
-      <template v-for="(item,idx) in items">
+      <template v-for="(item,idx) in filteredEmail">
         <b-tbody :key="idx">
           <mail-tr :item="item" @show-content="showMailContent(item)" @classify="classify(item)"
                    @reject="reject(item)"/>
         </b-tbody>
-        <b-tbody v-if="item.documents.length>0" :id="'collapse'+item.email_id">
-          <mail-tr v-for="(child,idx) in item.documents" :key="idx" :item="child" child @classify="classify(item)"
-                   @reject="reject(item)"/>
-        </b-tbody>
+        <transition :key="'c'+idx" name="slide">
+          <b-tbody v-if="item.documents.length>0" v-show="item.open" :id="'collapse'+item.email_id">
+            <mail-tr v-for="(child,idx) in filteredDocuments(item.documents)" :key="idx" :item="child" child
+                     @classify="classify(child)" @reject="reject(child)" style="background-color: white !important;"/>
+          </b-tbody>
+        </transition>
       </template>
+      <b-tbody v-if="filteredEmail.length===0">
+        <b-tr>
+          <b-td colspan="14" class="text-center">
+            No Data available
+          </b-td>
+        </b-tr>
+      </b-tbody>
       <!--    <template v-if="withActions" #cell(Actions)="data">-->
       <!--      <div class="text-nowrap">-->
       <!--        <b-button v-if="withView" class=" btn-icon" style="margin-bottom: 3px" variant="flat-success" pill-->
@@ -86,6 +95,7 @@ import Field from '@/views/app/Generic/Field'
 import moment from 'moment-business-time'
 import { getUserData } from '@/auth/utils'
 import _ from 'lodash'
+import Fuse from "fuse.js";
 
 export default {
   components: {
@@ -101,12 +111,13 @@ export default {
     perPage: Number,
     currentPage: Number,
     totalRows: Number,
+    filterValue: {},
   },
   data() {
     return {
       loading: false,
-      sortBy: 'email_id',
-      sortDesc: this.defaultSortDesc,
+      sortBy: 'email_received_datetime',
+      sortDesc: 'DESC',
       selected: false,
       items: [],
       filterData: { ...this.initialFilter },
@@ -125,6 +136,29 @@ export default {
     },
     canUpdate() {
       return this.$can('update', this.entityForm || this.entity)
+    },
+    filteredEmail() {
+      let prefiltered = this.items.filter(email => {
+        if (this.filterValue === 0) return true
+        if (this.filterValue === 1) {
+          if (email.email_dismissed) return false
+          if (email.ticket_id_created) return false
+          if (email.documents.every(d => d.ticket_created || d.classification_dismissed)) return false
+          return true
+        }
+        if (email.email_dismissed) return true
+        if (email.ticket_id_created) return true
+        if (email.documents.find(d => d.ticket_created || d.classification_dismissed)) return true
+        return false
+      })
+      if (this.search && prefiltered[0]) {
+        const fuse = new Fuse(prefiltered, {
+          keys: Object.keys(prefiltered[0]),
+          shouldSort: true,
+        })
+        prefiltered = fuse.search(this.search).map(({ item }) => item)
+      }
+      return prefiltered
     },
   },
   watch: {
@@ -146,10 +180,21 @@ export default {
   },
   async mounted() {
     this.loading = true
-    await this.fetch()
     await this.fetchList()
+    await this.fetch()
   },
   methods: {
+    filteredDocuments(documents) {
+      return documents.filter(document => {
+        if (this.filterValue === 0) return true
+        if (this.filterValue === 1) {
+          if (document.ticket_created || document.classification_dismissed) return false
+        } else {
+          if (!document.ticket_created && !document.classification_dismissed) return false
+        }
+        return true
+      })
+    },
     async classify(item) {
       console.log(item)
       if (!item.ticket_id) {
@@ -160,6 +205,7 @@ export default {
       this.loading = true
       try {
         let ticket_id = null
+        let success = true
         // create ticket
         if (item.ticket_id) {
           // create subticket
@@ -244,24 +290,38 @@ export default {
 
           ticket_id = ticket.ticket_id
         }
-        const result = (await this.$api({
-          action: item.document_id ? (item.classification_id ? 'update' : 'create') : 'create',
-          entity: item.document_id ? 'classification_document_classficationtype_rel' : 'email_ticket_rel',
-          data: [
-            {
-              classification_id: item.classification_id,
-              ...(item.document_id ? {
+
+        if (item.document_id) {
+          success = (await this.$api({
+            action: 'update',
+            entity: 'classification_document_classficationtype_rel',
+            data: [
+              {
+                classification_id: item.classification_id,
                 document_id: item.document_id,
                 documenttype_id: item.documenttype_id,
-              } : { email_id: item.email_id }),
-              ticket_id,
-              ticket_created: 1,
-            },
-          ],
-        })).data.data.data[0][0]
-        if (result) {
-          item.ticket_created = true
-          this.$successToast('Classification Done')
+                ticket_id,
+                ticket_created: 1,
+              },
+            ],
+          })).data.data.data[0][0]
+        }
+        await this.$api({
+          action: 'create',
+          entity: 'email_ticket_rel',
+          data: [{
+            ticket_id: item.ticket_id || ticket_id,
+            email_id: item.email_id,
+          }],
+        })
+
+        if (success) {
+          if (item.document_id) item.ticket_created = true
+          else {
+            item.ticket_id_created = ticket_id
+            if (!item.ticket_id) item.ticket_id = ticket_id
+          }
+          this.$successToast('Ticket Created')
         } else {
           this.$errorToast('Error, Please try again')
         }
@@ -283,7 +343,7 @@ export default {
                 document_id: item.document_id,
                 classification_id: item.classification_id,
                 classification_dismissed: 1,
-              } : { email_id: item.email_id, email_dismissed: 1, }),
+              } : { email_id: item.email_id, email_dismissed: 1 }),
             },
           ],
         })).data.data.data[0][0]
@@ -345,11 +405,11 @@ export default {
       }
       // retrieve from cache
       const cacheKey = this.getCacheKey(payload)
-      const fromCache = this.$store.getters['table/tableCache'](cacheKey)
-      if (fromCache) {
-        this.loading = false
-        return this.processData(fromCache)
-      }
+      // const fromCache = this.$store.getters['table/tableCache'](cacheKey)
+      // if (fromCache) {
+      //   this.loading = false
+      //   return this.processData(fromCache)
+      // }
       this.loading = true
       return this.$api(payload)
         .then(async ({ data }) => {
@@ -389,15 +449,15 @@ export default {
       })).data.data.data
       const email_classfications = (await this.$api({
         action: 'read-rich',
-        // entity: 'classification_email_grp',
-        entity: 'email_ticket_rel',
+        entity: 'frontend_email_ticketcreated',
+        // entity: 'email_ticket_rel',
         per_page: 1000000,
         data: filterData,
       })).data.data.data
       const document_classfications = (await this.$api({
         action: 'read-rich',
-        // entity: 'classification_document_grp',
-        entity: 'classification_document_classficationtype_rel',
+        entity: 'frontend_document_ticketcreated',
+        // entity: 'classification_document_classficationtype_rel',
         per_page: 1000000,
         data: _.uniqBy(email_documents, 'document_id').filter(i => i.document_id != null).map(ed => ({ document_id: ed.document_id })),
       })).data.data.data
@@ -405,17 +465,22 @@ export default {
         const cl = document_classfications.find(c => c.document_id === item.document_id)
         if (cl) {
           Object.keys(cl).forEach(k => (item[k] = cl[k]))
+          if (cl.ticket_id_group) item.ticket_id = cl.ticket_id_group
           console.log('set cl', item, cl)
         }
       })
       items.forEach(item => {
+        item.open = false
         const documents = email_documents.filter(d => d.email_id === item.email_id && d.document_id != null)
         item.documents = documents.map(d => ({ ...item, ...d, documents: [] }))
         // .filter(d => !d.ticket_created)
         // console.log('New Documents', item.email_id, item.documents)
         const cl = email_classfications.find(c => c.email_id === item.email_id)
         if (cl) {
-          Object.keys(cl).forEach(k => (item[k] = cl[k]))
+          item.ticket_id_created = cl.ticket_id
+          item.ticket_id = cl.ticket_id
+          if (cl.ticket_id_group) item.ticket_id = cl.ticket_id_group
+          // Object.keys(cl).forEach(k => (item[k] = cl[k]))
         }
         // process ticket data
         const id = item.email_subject.match(/^#\d+/g)
@@ -536,3 +601,37 @@ export default {
   },
 }
 </script>
+
+<style>
+.slide-enter-active {
+  -moz-transition-duration: 0.3s;
+  -webkit-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -moz-transition-timing-function: ease-in;
+  -webkit-transition-timing-function: ease-in;
+  -o-transition-timing-function: ease-in;
+  transition-timing-function: ease-in;
+}
+
+.slide-leave-active {
+  -moz-transition-duration: 0.3s;
+  -webkit-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -moz-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+  -webkit-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+  -o-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+  transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+}
+
+.slide-enter-to, .slide-leave {
+  max-height: 1000px;
+  overflow: hidden;
+}
+
+.slide-enter, .slide-leave-to {
+  overflow: hidden;
+  max-height: 0;
+}
+</style>
