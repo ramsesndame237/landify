@@ -112,11 +112,19 @@ const router = new VueRouter({
       name: 'condition-list',
       path: '/app/condition-list',
       component: () => import('@/views/app/Page/ConditionList.vue'),
+      meta: {
+        action: 'menu~contractcondition',
+        resource: 'menu',
+      },
     },
     {
       name: 'deadline-list',
       path: '/app/deadline-list',
       component: () => import('@/views/app/Page/ConditionList.vue'),
+      meta: {
+        action: 'menu~contractdeadline',
+        resource: 'menu',
+      },
     },
     // Workpackage 7
     {

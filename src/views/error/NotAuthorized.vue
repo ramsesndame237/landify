@@ -1,8 +1,8 @@
 <template>
   <div class="misc-wrapper">
-    <b-link class="brand-logo">
-      <vuexy-logo />
-    </b-link>
+<!--    <b-link class="brand-logo">-->
+<!--      <vuexy-logo />-->
+<!--    </b-link>-->
 
     <div class="misc-inner p-2 p-sm-3">
       <div class="w-100 text-center">
