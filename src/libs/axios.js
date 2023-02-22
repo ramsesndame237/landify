@@ -40,7 +40,7 @@ Vue.prototype.$http = axiosIns
 Vue.prototype.$api = data => {
   return axiosIns.post(`/api/?${data.entity}`, { a: data })
     .catch(error => {
-      if (data.entity !== '1__log') {
+      if (data.entity !== '1__log' && error.response?.status !== 401) {
         console.log('my error', error)
         const userEmail = localStorage.getItem('userEmail')
         axiosIns.post('/api/?log', {

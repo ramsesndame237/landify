@@ -1,5 +1,6 @@
 import { $themeBreakpoints } from '@themeConfig'
 import { api } from '@/libs/axios'
+import axiosIns from '@/libs/axios'
 import moment from 'moment'
 import _ from 'lodash'
 
@@ -48,13 +49,13 @@ export default {
   actions: {
     async fetchAppData({ state }) {
       // get translations
-      const globalTranslations = (await api({
+      const globalTranslations = (await axiosIns.post('/specific-api', {
         entity: '1__translation_i18n',
         action: 'read-rich',
         per_page: 1000000,
         lang: state.lang,
       })).data.data.data
-      const attributeTranslations = (await api({
+      const attributeTranslations = (await axiosIns.post('/specific-api', {
         entity: '1__attribute_i18n',
         action: 'read-rich',
         per_page: 1000000,
