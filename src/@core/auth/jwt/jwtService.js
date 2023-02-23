@@ -4,6 +4,7 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 import useJwt from '@/auth/jwt/useJwt'
 import { initialAbility } from '@/libs/acl/config'
 import jwtDefaultConfig from './jwtDefaultConfig'
+import store from '@/store'
 
 export default class JwtService {
   // Will be used by this service for making API calls
@@ -34,6 +35,7 @@ export default class JwtService {
           // config.headers.Authorization = `${this.jwtConfig.tokenType} ${accessToken}`
           config.headers.Authorization = `${accessToken}`
         }
+        config.headers['Current-Language'] = store.state.app.lang
         return config
       },
       error => Promise.reject(error),

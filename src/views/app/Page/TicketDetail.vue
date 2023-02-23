@@ -177,6 +177,7 @@
                     <b-link variant="danger" target="_blank" :href="getDocumentLink(document)">
                       <feather-icon icon="EyeIcon"/>
                     </b-link>
+                    <b-link :to="{name:'sign-document', params: {id: document.document_id}}" class="ml-2">Sign</b-link>
                   </div>
                 </div>
               </b-card>

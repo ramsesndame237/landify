@@ -220,7 +220,6 @@ export default [
   },
   {
     title: 'Work Package 7',
-    icon: 'CheckSquareIcon',
     children: [
       {
         title: 'BackOffice',
@@ -231,7 +230,6 @@ export default [
   },
   {
     title: key('import'),
-    icon: 'CheckSquareIcon',
     action: 'menu~import',
     resource: 'menu',
     children: [
@@ -240,14 +238,12 @@ export default [
         action: 'menu~importstandard',
         resource: 'menu',
         route: 'import',
-        icon: 'CheckSquareIcon',
       },
       {
         title: key('importcontract'),
         action: 'menu~importcontract',
         resource: 'menu',
         route: 'import-contract',
-        icon: 'CheckSquareIcon',
       },
     ],
   },

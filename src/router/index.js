@@ -205,7 +205,16 @@ const router = new VueRouter({
         ],
       },
     },
-
+    {
+      path: '/app/sign-document',
+      name: 'sign-document',
+      component: () => import('@/views/app/Page/SignDocument'),
+      meta: {
+        action: 'menu~classification',
+        resource: 'menu',
+        pageTitle: 'Sign a document',
+      },
+    },
     // authentication
     {
       path: '/login',
