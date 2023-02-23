@@ -2063,6 +2063,10 @@ export default {
             key: 'recurringpaymenttype_name',
             hideOnForm: true,
           },
+          {
+            key: 'recurringpayment_sum_per_month',
+            hideOnForm: true,
+          },
           { key: 'recurringpayment_begin_date', type: 'date', hideOnForm: true },
           {
             key: 'recurringpaymenttype_name',

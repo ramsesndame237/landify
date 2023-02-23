@@ -143,7 +143,7 @@ export default {
         if (this.filterValue === 1) {
           if (email.email_dismissed) return false
           if (email.ticket_id_created) return false
-          if (email.documents.every(d => d.ticket_created || d.classification_dismissed)) return false
+          if (email.documents.length > 0 && email.documents.every(d => d.ticket_created || d.classification_dismissed)) return false
           return true
         }
         if (email.email_dismissed) return true
