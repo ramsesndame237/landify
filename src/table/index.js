@@ -1990,10 +1990,10 @@ export default {
         delete: false,
       },
       {
-        title: 'Documents',
         primaryKey: 'document_id',
         entity: 'frontend_3_4_3_1_bottom',
         entityForm: 'document_contract_documentcontracttype_rel',
+        entityView: 'document',
         view: false,
         fields: [
           {
@@ -2020,7 +2020,6 @@ export default {
         ],
       },
       {
-        title: 'Specials Rights',
         primaryKey: 'specialright_id',
         entity: 'frontend_3_4_3_2',
         entityForm: 'contract_specialright_rel',
@@ -2031,16 +2030,20 @@ export default {
           },
           { key: 'specialright_name', hideOnForm: true },
           { key: 'contract_specialright_description', type: 'textarea', required: false },
-          { key: 'contract_specialright_date', type: 'date', composite: true },
+          {
+            key: 'contract_specialright_date', type: 'date', composite: true, hideOnForm: true,
+          },
           { key: 'contract_specialright_prior_notice_date', type: 'date' },
           { key: 'contract_specialright_termination_date', type: 'date', composite: true },
           { key: 'contract_specialright_automatic_renewal_in_months', type: 'number', required: false },
           { key: 'contract_specialright_is_passive', type: 'boolean' },
           { key: 'contract_specialright_is_availed', type: 'boolean' },
         ],
+        default: {
+          contract_specialright_date: '1990-01-01',
+        },
       },
       {
-        title: 'Recurring payment',
         primaryKey: 'recurringpayment_id',
         entity: 'frontend_3_4_3_3',
         entityForm: 'contract_recurringpayment_rel',
@@ -2082,7 +2085,6 @@ export default {
         ],
       },
       {
-        title: 'Service Objects',
         primaryKey: 'serviceobject_id',
         entity: 'frontend_3_4_3_7',
         entityForm: 'serviceobject_contract_rel',
@@ -2112,7 +2114,6 @@ export default {
         ],
       },
       {
-        title: 'Cost Types',
         primaryKey: 'costtype_id',
         entity: 'frontend_3_4_3_5',
         entityForm: 'contract_costtype_rel',
@@ -2130,7 +2131,6 @@ export default {
       },
 
       {
-        title: 'Contract criterias',
         primaryKey: 'criteria_id',
         entity: 'frontend_3_4_3_4',
         entityForm: 'contract_criteria_rel',
@@ -2151,7 +2151,6 @@ export default {
         // update: false,
       },
       {
-        title: 'Invoices',
         primaryKey: 'invoice_id',
         entity: 'frontend_3_4_3_6',
         entityForm: 'invoice_contract_rel',

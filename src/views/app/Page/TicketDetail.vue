@@ -139,9 +139,9 @@
                 <b-thead>
                   <b-tr>
                     <b-th></b-th>
-                    <b-th>Date</b-th>
-                    <b-th>To</b-th>
-                    <b-th>Subject</b-th>
+                    <b-th>{{$t('attribute.email_received_datetime')}}</b-th>
+                    <b-th>{{$t('attribute.email_from')}}</b-th>
+                    <b-th>{{$t('attribute.email_subject')}}</b-th>
                   </b-tr>
                 </b-thead>
                 <b-tbody>
@@ -153,7 +153,7 @@
                       </b-button>
                     </b-td>
                     <b-td>{{ email.email_received_datetime }}</b-td>
-                    <b-td>{{ email.email_to }}</b-td>
+                    <b-td>{{ email.email_from }}</b-td>
                     <b-td>{{ email.email_subject }}</b-td>
                   </b-tr>
                 </b-tbody>

@@ -11,8 +11,8 @@
             <notes v-if="definition.note" class="mr-2" :primary-key="primaryKey" :id="entityId" :note="definition.note"
                    :note-rel="'note_user_'+table+'_rel'"/>
             <template v-if="view">
-              <b-button v-for="(action,i) in definition.actions" :key="i" :disabled="action.loading" @click="onAction(action)"
-                        size="sm" variant="primary" class="mr-1">
+              <b-button v-for="(action,i) in definition.actions" :key="i" :disabled="action.loading"
+                        @click="onAction(action)" size="sm" variant="primary" class="mr-1">
                 <!--        <feather-icon icon="Trash2Icon" class="mr-50"/>-->
                 <span>{{ action.text }}</span>
               </b-button>
@@ -150,7 +150,7 @@ export default {
       return this.$can('create', this.visibleRelations[this.$refs.tabs?.currentTab]?.entityForm)
     },
     visibleRelations() {
-      return this.definition.relations.filter(r => this.$can('read', r.entityForm))
+      return this.definition.relations.filter(r => this.$can('read', r.entityForm || r.entityView))
     },
   },
   mounted() {
