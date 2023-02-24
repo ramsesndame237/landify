@@ -2031,7 +2031,7 @@ export default {
           { key: 'specialright_name', hideOnForm: true },
           { key: 'contract_specialright_description', type: 'textarea', required: false },
           {
-            key: 'contract_specialright_date', type: 'date', composite: true, hideOnForm: true,
+            key: 'contract_specialright_date', type: 'date', composite: true, hideOnForm: true, hideOnIndex: true,
           },
           { key: 'contract_specialright_prior_notice_date', type: 'date' },
           { key: 'contract_specialright_termination_date', type: 'date', composite: true },

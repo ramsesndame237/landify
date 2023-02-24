@@ -1,9 +1,0 @@
--user_manager
--country_currency
--access_protocol
--text_templates
--users_rights
--user_type
--master_data
--customer_group
--contact_person
