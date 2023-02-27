@@ -13,7 +13,7 @@ import {
   BTr,
   BTh, BCollapse,
   BTd,
-  BTbody, BRow, BCol, BInputGroup, BInputGroupAppend, BTableSimple, BFormSelect
+  BTbody, BRow, BCol, BInputGroup, BInputGroupAppend, BTableSimple, BFormSelect, BFormInput
 } from 'bootstrap-vue'
 import { BCardActions } from '@core/components/b-card-actions';
 
@@ -22,6 +22,7 @@ Vue.component('b-button', BButton)
 Vue.component('b-overlay', BOverlay)
 Vue.component('b-spinner', BSpinner)
 Vue.component('b-form-group', BFormGroup)
+Vue.component('b-form-input', BFormInput)
 Vue.component('b-form-checkbox', BFormCheckbox)
 Vue.component('b-link', BLink)
 Vue.component('b-form-radio-group', BFormRadioGroup)

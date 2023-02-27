@@ -2824,7 +2824,12 @@ export default {
           },
           { key: 'invoiceposition_amount_total', hideOnForm: true },
           { key: 'invoiceposition_amount_customer', hideOnForm: true },
-          { key: 'invoiceposition_apportionable', type: 'boolean', hideOnForm: true },
+          {
+            key: 'invoiceposition_apportionable', type: 'boolean',
+            editable: true,
+            onChange: updateInvoiceApportionable,
+            hideOnForm: true
+          },
         ],
       },
       {
@@ -2888,7 +2893,12 @@ export default {
         key: 'invoiceposition_amount_customer', type: 'number',
         // rules: { lower: ['@invoiceposition_amount_total'] }
       },
-      { key: 'invoiceposition_apportionable', type: 'boolean' },
+      {
+        key: 'invoiceposition_apportionable',
+        type: 'boolean',
+        editable: true,
+        onChange: updateInvoiceApportionable,
+      },
     ],
     filters: [
       {
@@ -3476,6 +3486,21 @@ async function updateInvoiceFlatRate(data) {
       {
         invoiceposition_id: data.item.invoiceposition_id,
         invoiceposition_flat_rate: data.value,
+      },
+    ],
+  })
+  successToast('Value updated')
+}
+
+async function updateInvoiceApportionable(data) {
+  console.log('change', data)
+  await api({
+    entity: 'invoiceposition',
+    action: 'update',
+    data: [
+      {
+        invoiceposition_id: data.item.invoiceposition_id,
+        invoiceposition_apportionable: data.value,
       },
     ],
   })
