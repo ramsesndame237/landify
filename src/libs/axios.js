@@ -40,29 +40,29 @@ Vue.prototype.$http = axiosIns
 Vue.prototype.$api = data => {
   return axiosIns.post(`/api/?${data.entity}`, { a: data })
     .catch(error => {
-      if (data.entity !== '1__log' && error.response?.status !== 401) {
-        console.log('my error', error)
-        const userEmail = localStorage.getItem('userEmail')
-        axiosIns.post('/api/?log', {
-          a: {
-            action: 'create',
-            entity: '1__log',
-            data: [
-              {
-                log_json_request: data,
-                log_timestamp: moment().format('YYYY-MM-DD HH:mm'),
-                log_json: {
-                  user_email: userEmail,
-                  url: window.location.href,
-                  status: error.response?.status,
-                  response: error.response?.data,
-                  message: error.message,
-                },
-              },
-            ],
-          },
-        })
-      }
+      // if (data.entity !== '1__log' && error.response?.status !== 401) {
+      //   console.log('my error', error)
+      //   const userEmail = localStorage.getItem('userEmail')
+      //   axiosIns.post('/api/?log', {
+      //     a: {
+      //       action: 'create',
+      //       entity: '1__log',
+      //       data: [
+      //         {
+      //           log_json_request: data,
+      //           log_timestamp: moment().format('YYYY-MM-DD HH:mm'),
+      //           log_json: {
+      //             user_email: userEmail,
+      //             url: window.location.href,
+      //             status: error.response?.status,
+      //             response: error.response?.data,
+      //             message: error.message,
+      //           },
+      //         },
+      //       ],
+      //     },
+      //   })
+      // }
       return Promise.reject(error)
     })
 }
