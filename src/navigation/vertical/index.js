@@ -247,4 +247,10 @@ export default [
       },
     ],
   },
+  {
+    title: key('translation'),
+    action: 'menu~import',
+    resource: 'menu',
+    route: table('1__translation_i18n'),
+  },
 ]
