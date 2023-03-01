@@ -11,17 +11,19 @@ export default {
       {
         key: 'user_id', label: 'Id', auto: true, hideOnForm: true,
       },
-      { key: 'user_firstname', label: 'First Name', sortable: true },
-      { key: 'user_lastname', label: 'Last Name', sortable: true },
+      { key: 'user_firstname', sortable: true },
+      { key: 'user_lastname', sortable: true },
       {
-        key: 'user_email', label: 'Email', sortable: true, type: 'email',
+        key: 'user_email', sortable: true, type: 'email',
       },
       {
-        key: 'user_last_login_time', label: 'Last login', sortable: true, hideOnForm: true,
+        key: 'user_last_login_time', sortable: true, hideOnForm: true,
+      },
+      {
+        key: 'user_last_activity_time', sortable: true, hideOnForm: true,
       },
       {
         key: 'usertype_id',
-        label: 'User Type',
         hideOnIndex: true,
         type: 'list',
         list: 'usertype',
@@ -41,6 +43,7 @@ export default {
       {
         key: 'user_password',
         type: 'password',
+        hideOnIndex: true,
         required: false,
       },
     ],
@@ -3437,6 +3440,14 @@ export default {
         getLink: getDocumentLink,
       },
       // { key: 'document_content_type' },
+    ],
+  },
+  '1__translation_i18n': {
+    primaryKey: 'translation_id',
+    fields: [
+      { key: 'translation_id', disableOnUpdate: true },
+      { key: 'translation_lang' },
+      { key: 'translation_text' },
     ],
   },
 }

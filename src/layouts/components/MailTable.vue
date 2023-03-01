@@ -454,7 +454,7 @@ export default {
         per_page: 1000000,
         data: filterData,
       })).data.data.data
-      const document_classfications = (await this.$api({
+      const document_classifications = (await this.$api({
         action: 'read-rich',
         entity: 'frontend_document_ticketcreated',
         // entity: 'classification_document_classficationtype_rel',
@@ -462,7 +462,7 @@ export default {
         data: _.uniqBy(email_documents, 'document_id').filter(i => i.document_id != null).map(ed => ({ document_id: ed.document_id })),
       })).data.data.data
       email_documents.forEach(item => {
-        const cl = document_classfications.find(c => c.document_id === item.document_id)
+        const cl = document_classifications.find(c => c.document_id === item.document_id)
         if (cl) {
           Object.keys(cl).forEach(k => (item[k] = cl[k]))
           if (cl.ticket_id_group) item.ticket_id = cl.ticket_id_group
