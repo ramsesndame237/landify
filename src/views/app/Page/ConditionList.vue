@@ -252,7 +252,7 @@ export default {
             'contract_last_change_time', 'contract_migration_checked', 'contracttype_name', 'currency_name', 'currency_id', 'currency_short', 'currency_iso', 'currency_iso4217',
             'contracttype_description', 'company_name', 'location_name', 'pos_name', 'contactperson_firstname', 'contactperson_lastname', 'country_name', 'owner_name', 'manager_name'])
           obj.areas = r
-            .filter(ar => date.isBetween(ar.contract_area_unit_usagetype_valid_from_date, ar.contract_area_unit_usagetype_valid_to_date))
+            .filter(ar => date.isBetween(ar.contract_area_unit_usagetype_valid_from_date, ar.contract_area_unit_usagetype_valid_to_date, "day", "[]"))
             .map(i => _.pick(i, ['area_id',
               'area_name',
               'areatype_id',
@@ -339,7 +339,7 @@ export default {
             if (this.table !== 'deadlines') return
             let sr
 
-            sr = _(contract.specialRights).filter(r => r.specialright_name === 'Optionsausübung' && date.isBefore(r.contract_specialright_prior_notice_date)).orderBy('contract_specialright_prior_notice_date').value()[0]
+            sr = _(contract.specialRights).filter(r => r.specialright_name === 'Optionsausübung' && date.isSameOrBefore(r.contract_specialright_prior_notice_date)).orderBy('contract_specialright_prior_notice_date').value()[0]
             contract.action_date = sr?.contract_specialright_prior_notice_date
 
             // 20
@@ -352,7 +352,7 @@ export default {
 
             // 22
             sr = contract.specialRights.filter(csr => csr.specialright_name === 'Optionsverlängerung')
-            sr = sr.find(csr => moment().isBefore(csr.contract_specialright_termination_date)) || sr[0]
+            sr = sr.find(csr => moment().isSameOrBefore(csr.contract_specialright_termination_date)) || sr[0]
             contract.next_option_renewal = sr?.contract_specialright_termination_date
 
             // 23
@@ -417,7 +417,7 @@ export default {
 
           if (this.table !== 'conditions') return
 
-          const rcBasismiete = contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '1-Basismiete' && date.isBetween(r.recurringpayment_begin_date, r.recurringpayment_end_date))
+          const rcBasismiete = contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '1-Basismiete' && date.isBetween(r.recurringpayment_begin_date, r.recurringpayment_end_date, "day", "[]"))
 
           contract.rent_per_month = this.getRecurringPaymentMonthValue(rcBasismiete).toFixed(2)
           contract.base_rent_per_area_amount = contract.total_allocation_space > 0 ? (contract.rent_per_month / contract.total_allocation_space).toFixed(2) : 0
@@ -434,7 +434,7 @@ export default {
           contract.index_adjustment_lease = rcBasismiete ? `${rcBasismiete.indexclause_adjustment_description} - ${rcBasismiete.indexclause_minimal_percent_change_aggreed || rcBasismiete.indexclause_minimal_point_change_agreed}` : ''
           contract.index_adjustment_rate_in_percent = rcBasismiete?.indexclause_indextransmission_percent
 
-          const rcStaffe = _(contract.reccuringPayments).filter(r => r.recurringpaymenttype_name === '3-Staffelmiete' && date.isBefore(r.recurringpayment_begin_date)).orderBy('recurringpayment_begin_date').value()[0]
+          const rcStaffe = _(contract.reccuringPayments).filter(r => r.recurringpaymenttype_name === '3-Staffelmiete' && date.isSameOrBefore(r.recurringpayment_begin_date)).orderBy('recurringpayment_begin_date').value()[0]
           if (rcStaffe) {
             contract.staggered_minimum_rent = 'Yes, ' + rcStaffe.recurringpayment_begin_date
           }
