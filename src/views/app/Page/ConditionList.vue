@@ -417,7 +417,7 @@ export default {
 
           if (this.table !== 'conditions') return
 
-          const rcBasismiete = contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '1-Basismiete')
+          const rcBasismiete = contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '1-Basismiete' && date.isBetween(r.recurringpayment_begin_date, r.recurringpayment_end_date))
 
           contract.rent_per_month = this.getRecurringPaymentMonthValue(rcBasismiete).toFixed(2)
           contract.base_rent_per_area_amount = contract.total_allocation_space > 0 ? (contract.rent_per_month / contract.total_allocation_space).toFixed(2) : 0
