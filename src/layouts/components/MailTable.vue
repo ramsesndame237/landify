@@ -1,6 +1,6 @@
 <template>
   <b-overlay :show="loading">
-    <b-table-simple ref="table" sticky-header striped hover responsive style="min-height: 50vh">
+    <b-table-simple ref="table" class="mail-table" sticky-header striped hover responsive style="min-height: 50vh">
       <b-thead>
         <b-tr>
           <b-th/>
@@ -42,8 +42,8 @@
         </b-tbody>
         <transition :key="'c'+idx" name="slide">
           <b-tbody v-if="item.documents.length>0" v-show="item.open" :id="'collapse'+item.email_id">
-            <mail-tr v-for="(child,idx) in filteredDocuments(item.documents)" :key="idx" :item="child" child
-                     @classify="classify(child)" @reject="reject(child)" style="background-color: white !important;"/>
+            <mail-tr v-for="(child,idx) in item.documents" :key="idx" :item="child" child @classify="classify(child)"
+                     @reject="reject(child)" style="background-color: white !important;"/>
           </b-tbody>
         </transition>
       </template>
@@ -143,12 +143,12 @@ export default {
         if (this.filterValue === 1) {
           if (email.email_dismissed) return false
           if (email.ticket_id_created) return false
-          if (email.documents.length > 0 && email.documents.every(d => d.ticket_created || d.classification_dismissed)) return false
+          // if (email.documents.length > 0 && email.documents.every(d => d.ticket_created || d.classification_dismissed) && (!email.email_dismissed && !email.ticket_id_created)) return false
           return true
         }
         if (email.email_dismissed) return true
         if (email.ticket_id_created) return true
-        if (email.documents.find(d => d.ticket_created || d.classification_dismissed)) return true
+        // if (email.documents.every(d => d.ticket_created || d.classification_dismissed)) return true
         return false
       })
       if (this.search && prefiltered[0]) {
@@ -179,7 +179,6 @@ export default {
     },
   },
   async mounted() {
-    this.loading = true
     await this.fetchList()
     await this.fetch()
   },
@@ -253,7 +252,7 @@ export default {
             await this.$api({
               action: 'create',
               entity: 'ticket_contract_rel',
-              data: [{ ticket_id: ticket.ticket_id, pos_id: item.contract_id }],
+              data: [{ ticket_id: ticket.ticket_id, contract_id: item.contract_id }],
             })
           }
 
@@ -305,6 +304,15 @@ export default {
               },
             ],
           })).data.data.data[0][0]
+
+          await this.$api({
+            action: 'create',
+            entity: 'ticket_document_rel',
+            data: [{
+              ticket_id: item.ticket_id || ticket_id,
+              document_id: item.document_id,
+            }],
+          })
         }
         await this.$api({
           action: 'create',
@@ -316,10 +324,10 @@ export default {
         })
 
         if (success) {
-          if (item.document_id) item.ticket_created = true
+          if (item.document_id) this.$set(item, 'ticket_created', true)
           else {
-            item.ticket_id_created = ticket_id
-            if (!item.ticket_id) item.ticket_id = ticket_id
+            this.$set(item, 'ticket_id_created', ticket_id)
+            if (!item.ticket_id) this.$set(item, 'ticket_id', ticket_id)
           }
           this.$successToast('Ticket Created')
         } else {
@@ -348,9 +356,9 @@ export default {
           ],
         })).data.data.data[0][0]
         if (result) {
-          this.$successToast('Ticket Dismissed')
-          if (item.document_id) item.classification_dismissed = true
-          else item.email_dismissed = true
+          this.$successToast(item.document_id ? 'Document Dismissed' : 'Mail Dismissed')
+          if (item.document_id) this.$set(item, 'classification_dismissed', true)
+          else this.$set(item, 'email_dismissed', true)
         } else {
           this.$errorToast('Error, Please try again')
         }
@@ -364,11 +372,16 @@ export default {
       this.item = email
       this.$refs.mailContent.show()
     },
-    fetchList() {
-      return Promise.all([
-        'frontend_6_1_6_overview', 'frontend_2_1_3_8', 'frontend_4_2_1_contract_selector',
-        'board', 'documenttype', 'documenttype_board_grp',
-      ].map(list => this.$store.dispatch('table/fetchList', { entity: list })))
+    async fetchList() {
+      this.loading = true
+      try {
+        await Promise.all([
+          'frontend_6_1_6_overview', 'frontend_2_1_3_8', 'frontend_4_2_1_contract_selector',
+          'board', 'documenttype', 'documenttype_board_grp',
+        ].map(list => this.$store.dispatch('table/fetchList', { entity: list })))
+      } finally {
+        this.loading = false
+      }
     },
     onViewClick(data) {
       if (this.onViewElement) {
@@ -389,7 +402,11 @@ export default {
         window.open(route.href, '_blank')
       } else this.$router.push(routeData)
     },
-    fetch() {
+    async refresh() {
+      if (this.loading) return
+      await this.fetch()
+    },
+    async fetch() {
       const payload = {
         action: 'read-rich',
         entity: 'email',
@@ -410,6 +427,7 @@ export default {
       //   this.loading = false
       //   return this.processData(fromCache)
       // }
+      if (this.loading) return
       this.loading = true
       return this.$api(payload)
         .then(async ({ data }) => {
@@ -472,7 +490,7 @@ export default {
       items.forEach(item => {
         item.open = false
         const documents = email_documents.filter(d => d.email_id === item.email_id && d.document_id != null)
-        item.documents = documents.map(d => ({ ...item, ...d, documents: [] }))
+        item.documents = documents.map(d => ({ email_id: item.email_id, ...d }))
         // .filter(d => !d.ticket_created)
         // console.log('New Documents', item.email_id, item.documents)
         const cl = email_classfications.find(c => c.email_id === item.email_id)
@@ -633,5 +651,9 @@ export default {
 .slide-enter, .slide-leave-to {
   overflow: hidden;
   max-height: 0;
+}
+
+.mail-table .vs__dropdown-menu {
+  min-width: 300px;
 }
 </style>

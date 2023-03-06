@@ -9,7 +9,7 @@
     </span>
 
     <span class="float-md-right d-none d-md-block">
-      {{ version }}
+      #{{ version }} - {{ buildTime }}
     </span>
   </p>
 </template>
@@ -22,10 +22,12 @@ export default {
   components: {
     BLink,
   },
-  computed: {
-    ...mapState({
-      version: 'app/commitVersion',
-    }),
+  data() {
+    return {
+      version: this.$store.state.app.commitVersion,
+      buildTime: process.env.VUE_APP_BUILD_TIME,
+    }
   },
+  computed: {},
 }
 </script>

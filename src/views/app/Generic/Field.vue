@@ -25,11 +25,12 @@
           </quill-editor>
         </div>
         <div v-else-if="field.type==='list'" :class="(field.withNew || field.ids) ? 'd-flex': ''">
-          <v-select v-model="entity[field.key]" :disabled="selectDisabled" :class="errors.length > 0 ? 'error':''"
+          <v-select :dropdown-should-open="true" v-model="entity[field.key]" :disabled="selectDisabled" :class="errors.length > 0 ? 'error':''"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
                     :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
-                    :label="field.listLabel" class="w-100" :loading="loading"
-                    :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch" @input="onChange"/>
+                    :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
+                    :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
+                    @input="onChange"/>
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm">New
           </b-button>
@@ -294,21 +295,27 @@ export default {
     async fetchList() {
       if (this.field.noFetch) return
       if (this.list.length === 0) this.loading = true
-      let { list } = this.field
-      if (list === 'address') {
-        list = this.subDefinition.entity
-        await this.$store.dispatch('table/fetchTableDefinition', 'address')
-        await this.$store.dispatch('table/fetchTableDefinition', 'city')
+      try {
+        let { list } = this.field
+        if (list === 'address') {
+          list = this.subDefinition.entity
+          await this.$store.dispatch('table/fetchTableDefinition', 'address')
+          await this.$store.dispatch('table/fetchTableDefinition', 'city')
+        }
+        const payload = { entity: this.field.entityList || list }
+        if (this.field.onlyForm && this.entity[this.field.key]) {
+          payload.data = [{ [this.field.key]: this.entity[this.field.key] }]
+        }
+        this.list = await this.$store.dispatch('table/fetchList', payload)
+        if (this.field.entityList) {
+          await this.$store.dispatch('table/fetchTableDefinition', list)
+        }
+      } catch (e) {
+        console.error(e)
+        this.$errorToast(e.response ? e.response.data?.detail : 'Unknow Error')
+      } finally {
+        this.loading = false
       }
-      const payload = { entity: this.field.entityList || list }
-      if (this.field.onlyForm && this.entity[this.field.key]) {
-        payload.data = [{ [this.field.key]: this.entity[this.field.key] }]
-      }
-      this.list = await this.$store.dispatch('table/fetchList', payload)
-      if (this.field.entityList) {
-        await this.$store.dispatch('table/fetchTableDefinition', list)
-      }
-      this.loading = false
     },
     getValidationRules(field) {
       let definition = this.tableDefinition
@@ -376,8 +383,8 @@ export default {
   }
 }
 
-.message-editor table{
-  td,th{
+.message-editor table {
+  td, th {
     border: 1px solid #ccc;
     padding: 2px;
   }

@@ -139,9 +139,10 @@
                 <b-thead>
                   <b-tr>
                     <b-th></b-th>
-                    <b-th>{{$t('attribute.email_received_datetime')}}</b-th>
-                    <b-th>{{$t('attribute.email_from')}}</b-th>
-                    <b-th>{{$t('attribute.email_subject')}}</b-th>
+                    <b-th>{{ $t('attribute.email_received_datetime') }}</b-th>
+                    <b-th>{{ $t('attribute.email_from') }}</b-th>
+                    <b-th>{{ $t('attribute.email_subject') }}</b-th>
+                    <b-th>{{ $t('attribute.documents') }}</b-th>
                   </b-tr>
                 </b-thead>
                 <b-tbody>
@@ -155,6 +156,10 @@
                     <b-td>{{ email.email_received_datetime }}</b-td>
                     <b-td>{{ email.email_from }}</b-td>
                     <b-td>{{ email.email_subject }}</b-td>
+                    <b-td>
+                      <b-form-checkbox v-if="email.documents.length" :checked="1" disabled
+                                       :value="email.documents.length>0?1:0" :unchecked-value="0"/>
+                    </b-td>
                   </b-tr>
                 </b-tbody>
               </b-table-simple>
@@ -392,10 +397,15 @@ export default {
           data: [{ ticket_id: this.entity.ticket_id }],
         })).data.data.data
         if (!results.length) return
-        console.log(results)
+        const documents = (await this.$api({
+          entity: 'email_document_grp',
+          action: 'read-rich',
+          perPage: 100000,
+          data: results.map(r => ({ email_id: r.email_id })),
+        })).data.data.data
         this.emails = Object.values(_.groupBy(results, 'email_id')).map(r => {
           const obj = _.pick(r[0], ['email_id', 'email_from', 'email_received_datetime', 'email_to', 'email_cc', 'email_subject', 'email_body'])
-          obj.documents = r.map(d => _.pick(d, ['document_id', 'document_name', 'document_content']))
+          obj.documents = documents.filter(d => d.email_id === r[0].email_id)
           return obj
         })
       } finally {
