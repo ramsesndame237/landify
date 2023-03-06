@@ -326,14 +326,12 @@ export default {
             }],
           })
         }
-
-
         if (success) {
           if (item.document_id) this.$set(item, 'ticket_created', true)
           else {
             this.$set(item, 'ticket_id_created', ticket_id)
-            if (!item.ticket_id) this.$set(item, 'ticket_id', ticket_id)
           }
+          if (!item.ticket_id) this.$set(item, 'ticket_id', ticket_id)
           this.$successToast('Ticket Created')
         } else {
           this.$errorToast('Error, Please try again')
