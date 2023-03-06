@@ -33,7 +33,8 @@
 
         </div>
         <div v-for="ticket in visibleTickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
-          <invoice-ticket-card :advanced="advanced" :ticket="ticket" @moredetails="$router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
+          <invoice-ticket-card :advanced="advanced" :ticket="ticket"
+                               @moredetails="$router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
                                @assign="$refs.assign.openModal(ticket, userIdsOfTeam(ticket.columns[0].team_id))"/>
         </div>
       </kanban-board>
@@ -80,8 +81,14 @@ export default {
       table: 'ticket',
       advanced: true,
       search: '',
-      filterOptions: [{ text: this.$t('header~board~status~open'), value: 0 }, { text: this.$t('header~board~status~my'), value: 1 },
-        { text: this.$t('header~board~status~closed'), value: 2 }, { text: this.$t('header~board~status~notassigned'), value: 3 },
+      filterOptions: [{
+        text: this.$t('header~board~status~open'),
+        value: 0
+      }, { text: this.$t('header~board~status~my'), value: 1 },
+        { text: this.$t('header~board~status~closed'), value: 2 }, {
+          text: this.$t('header~board~status~notassigned'),
+          value: 3
+        },
       ],
       filterValue: 0,
       definition: Table.ticket,
@@ -169,7 +176,16 @@ export default {
       // this.blocks.find(b => b.id === Number(id)).status = status;
     },
     createTicket() {
-      this.$refs.modal.openModal(true, { column_id: this.columns[0].column_id })
+      const now = moment()
+      const column = this.columns[0]
+      const deadline_yellow = now.clone().addWorkingTime(column.default_deadline_yellow, 'hours').format('YYYY-MM-DD HH:mm:ss')
+      const deadline_red = now.clone().addWorkingTime(column.default_deadline_red, 'hours').format('YYYY-MM-DD HH:mm:ss')
+      this.$refs.modal.openModal(true, {
+        column_id: column.column_id,
+        ticket_deadline_yellow: deadline_yellow,
+        ticket_deadline_red: deadline_red,
+        ticket_planned_treatment_week: 'KW42',
+      })
     },
     async onNewTicket(ticket) {
       await this.moveToColumn(ticket, this.columns[0])
@@ -197,6 +213,7 @@ ul {
   //max-width: 1000px;
   margin: 20px auto;
   overflow-x: auto;
+  min-height: 50vh;
 }
 
 .drag-list {
