@@ -328,7 +328,9 @@ export default {
     },
     getDocumentLink,
     createSubTicket() {
-      this.$refs.modal.openModal(true, { ticket_id_group: parseInt(this.entityId) })
+      this.$refs.modal.openModal(true, { ticket_id_group: parseInt(this.entityId),
+
+      })
     },
     createDocument() {
       this.$refs.documentModal.openModal(true, {})

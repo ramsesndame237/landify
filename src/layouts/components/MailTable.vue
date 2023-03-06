@@ -205,6 +205,7 @@ export default {
       try {
         let ticket_id = null
         let success = true
+        let updateTicketList = false
         // create ticket
         if (item.ticket_id) {
           // create subticket
@@ -288,6 +289,7 @@ export default {
           })).data.data.data[0][0]
 
           ticket_id = ticket.ticket_id
+          updateTicketList = true
         }
 
         if (item.document_id) {
@@ -333,8 +335,14 @@ export default {
         } else {
           this.$errorToast('Error, Please try again')
         }
+
+        if (updateTicketList) {
+          await this.$store.dispatch('table/fetchList', { entity: 'frontend_6_1_6_overview' })
+        }
       } catch (e) {
         console.error(e)
+        if (e.response) this.$errorToast(e.response.data.detail)
+        else this.$errorToast(e.message)
       } finally {
         this.loading = false
       }
