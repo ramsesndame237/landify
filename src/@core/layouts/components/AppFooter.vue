@@ -9,7 +9,7 @@
     </span>
 
     <span class="float-md-right d-none d-md-block">
-      # {{ version }}
+      #{{ version }} - {{ buildTime }}
     </span>
   </p>
 </template>
@@ -25,6 +25,7 @@ export default {
   data() {
     return {
       version: this.$store.state.app.commitVersion,
+      buildTime: process.env.VUE_APP_BUILD_TIME,
     }
   },
   computed: {},
