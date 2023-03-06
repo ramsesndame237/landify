@@ -2,7 +2,7 @@
   <b-tr>
     <b-td @click="toggle">
       <feather-icon v-if="item.documents && item.documents.length>0" v-b-toggle="'collapse-'+item.email_id"
-                    :icon="item.open?'ChevronUpIcon':'ChevronDownIcon'" size="24"/>
+                    :icon="item.open?'ChevronDownIcon':'ChevronRightIcon'" size="24"/>
     </b-td>
     <b-td @click="toggle">{{ child ? '' : item.email_id }}</b-td>
     <b-td @click="toggle">{{ child ? '' : item.email_received_datetime }}</b-td>
@@ -60,7 +60,7 @@
       </router-link>
     </b-td>
     <b-td class="text-center">
-      <div v-if="visible && !is_done && !is_dismissed && (item.document_id ? item.classfication_id : true)"
+      <div v-if="visible && !is_done && !is_dismissed && (item.document_id ? item.classification_id : true)"
            class="d-flex align-items-center">
         <b-button class="btn-icon" variant="flat-success" pill @click="$emit('classify')">
           <feather-icon icon="CheckIcon" size="24"/>

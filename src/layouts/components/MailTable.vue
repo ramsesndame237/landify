@@ -268,9 +268,9 @@ export default {
 
           const now = moment()
           const user = getUserData()
-          const deadline = now.clone().addWorkingTime(column.default_deadline_period, 'hours').format('YYYY-MM-DD HH:mm:ss')
-          const deadline_yellow = now.clone().addWorkingTime(column.default_deadline_yellow, 'hours').format('YYYY-MM-DD HH:mm:ss')
-          const deadline_red = now.clone().addWorkingTime(column.default_deadline_red, 'hours').format('YYYY-MM-DD HH:mm:ss')
+          const deadline = now.clone().addWorkingTime(column.default_deadline_period || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
+          const deadline_yellow = now.clone().addWorkingTime(column.default_deadline_yellow || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
+          const deadline_red = now.clone().addWorkingTime(column.default_deadline_red || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
 
           const columnTicket = (await this.$api({
             action: 'create',
@@ -526,78 +526,6 @@ export default {
       // .filter(d => !d.ticket_created)
       return this.items
     },
-    getSelected() {
-      return this.currentItems.filter(item => item.__selected)
-    },
-    deselectAll() {
-      this.currentItems.forEach(item => {
-        item.__selected = false
-      })
-    },
-    deleteSelected() {
-      const selected = this.getSelected()
-      if (!selected.length) {
-        return this.$errorToast('No element selected')
-      }
-      // show confirm box
-      return this.deleteEntities(selected)
-    },
-    deleteElement(index) {
-      return this.deleteEntities([this.currentItems[index]])
-    },
-    deleteEntities(entities) {
-      this.$swal({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, delete it!',
-        customClass: {
-          confirmButton: 'btn btn-primary',
-          cancelButton: 'btn btn-outline-danger ml-1',
-        },
-        buttonsStyling: false,
-      }).then(async result => {
-        if (!result.value) return
-        const entityToDelete = this.fields.find(f => f.alwaysNew)
-        const data = {
-          action: 'delete',
-          entity: this.entityForm || this.entity,
-          data: entities.map(entity => (this.fields.filter(field => field.composite).reduce(((acc, currentValue) => {
-            acc[currentValue.key] = entity[currentValue.key]
-            return acc
-          }), {
-            [this.primaryKey]: entity[this.primaryKey],
-            [this.secondKey]: entity[this.secondKey],
-          }))),
-        }
-
-        this.$api(data).then(async resp => {
-          if (entityToDelete) {
-            try {
-              await this.$api({ ...data, entity: entityToDelete.list })
-            } catch (e) {
-              console.error(e)
-            }
-          }
-
-          const count = resp.data.data.rowcount
-          if (count > 0) this.$successToast(`${count} Element(s) where deleted`)
-          else this.$errorToast(`${count} Element(s) where deleted`)
-          // this.$successToast(this.$t(entities.length > 1 ? 'notification.elements_deleted' : 'notification.element_deleted'))
-          this.$store.commit('table/deleteTableCacheKeyFromPrefix', `${this.entity}-`)
-          // if all elements where deleted, go to page 1
-          if (this.currentItems.length === count) {
-            this.$emit('update:currentPage', 1)
-          }
-          this.$refs.table.refresh()
-        })
-          .catch(e => {
-            console.error(e)
-            this.$errorToast()
-          })
-      })
-    },
     selectAll() {
       const newVal = this.selected
       this.currentItems.forEach(item => {
@@ -610,19 +538,6 @@ export default {
     filter(data) {
       this.filterData = { ...data }
       this.reload()
-    },
-    onSelect(index) {
-      console.log('index', index)
-      if (!this.multiSelect) {
-        this.currentItems.forEach((item, idx) => {
-          if (idx !== index) this.$set(item, '__selected', false)
-        })
-        this.$emit('selected', this.currentItems[index])
-      }
-    },
-    onRowClicked(record, index) {
-      console.log('row clicked', record)
-      this.$set(record, '__selected', !record.__selected)
     },
   },
 }
