@@ -1,6 +1,6 @@
 <template>
   <b-overlay :show="loading">
-    <b-table-simple ref="table" sticky-header striped hover responsive style="min-height: 50vh">
+    <b-table-simple ref="table" class="mail-table" sticky-header striped hover responsive style="min-height: 50vh">
       <b-thead>
         <b-tr>
           <b-th/>
@@ -42,8 +42,8 @@
         </b-tbody>
         <transition :key="'c'+idx" name="slide">
           <b-tbody v-if="item.documents.length>0" v-show="item.open" :id="'collapse'+item.email_id">
-            <mail-tr v-for="(child,idx) in item.documents" :key="idx" :item="child" child
-                     @classify="classify(child)" @reject="reject(child)" style="background-color: white !important;"/>
+            <mail-tr v-for="(child,idx) in item.documents" :key="idx" :item="child" child @classify="classify(child)"
+                     @reject="reject(child)" style="background-color: white !important;"/>
           </b-tbody>
         </transition>
       </template>
@@ -304,6 +304,15 @@ export default {
               },
             ],
           })).data.data.data[0][0]
+
+          await this.$api({
+            action: 'create',
+            entity: 'ticket_document_rel',
+            data: [{
+              ticket_id: item.ticket_id || ticket_id,
+              document_id: item.document_id,
+            }],
+          })
         }
         await this.$api({
           action: 'create',
@@ -642,5 +651,9 @@ export default {
 .slide-enter, .slide-leave-to {
   overflow: hidden;
   max-height: 0;
+}
+
+.mail-table .vs__dropdown-menu {
+  min-width: 300px;
 }
 </style>
