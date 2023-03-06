@@ -309,7 +309,7 @@ export default {
 
           await this.$api({
             action: 'create',
-            entity: 'ticket_document_rel',
+            entity: 'document_ticket_rel',
             data: [{
               ticket_id: item.ticket_id || ticket_id,
               document_id: item.document_id,
