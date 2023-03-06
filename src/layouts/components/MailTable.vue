@@ -315,15 +315,18 @@ export default {
               document_id: item.document_id,
             }],
           })
+        } else {
+          // see later if we can remove this from else
+          await this.$api({
+            action: 'create',
+            entity: 'email_ticket_rel',
+            data: [{
+              ticket_id: item.ticket_id || ticket_id,
+              email_id: item.email_id,
+            }],
+          })
         }
-        await this.$api({
-          action: 'create',
-          entity: 'email_ticket_rel',
-          data: [{
-            ticket_id: item.ticket_id || ticket_id,
-            email_id: item.email_id,
-          }],
-        })
+
 
         if (success) {
           if (item.document_id) this.$set(item, 'ticket_created', true)
