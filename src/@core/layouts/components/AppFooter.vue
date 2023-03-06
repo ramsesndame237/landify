@@ -9,7 +9,7 @@
     </span>
 
     <span class="float-md-right d-none d-md-block">
-      {{ version }}
+      # {{ version }}
     </span>
   </p>
 </template>
@@ -22,10 +22,11 @@ export default {
   components: {
     BLink,
   },
-  computed: {
-    ...mapState({
-      version: 'app/commitVersion',
-    }),
+  data() {
+    return {
+      version: this.$store.state.app.commitVersion,
+    }
   },
+  computed: {},
 }
 </script>

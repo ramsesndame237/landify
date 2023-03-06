@@ -1,4 +1,6 @@
 const path = require('path')
+const { gitDescribe, gitDescribeSync } = require('git-describe')
+process.env.VUE_APP_GIT_HASH = gitDescribeSync().hash
 // const fs = require('fs')
 // const webpack = require('webpack')
 // const packageJson = fs.readFileSync('./package.json')

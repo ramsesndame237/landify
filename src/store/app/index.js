@@ -18,7 +18,7 @@ export default {
     windowWidth: 0,
     shallShowOverlay: false,
     packageVersion: process.env.PACKAGE_VERSION || '0',
-    commitVersion: process.env.CI_VERSION || '',
+    commitVersion: process.env.VUE_APP_GIT_HASH,
     commitDate: process.env.CI_DATE || '',
     now: moment(),
     lang: getUserLanguage(),
