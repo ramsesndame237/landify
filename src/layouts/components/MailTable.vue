@@ -214,7 +214,7 @@ export default {
             entity: 'ticket',
             data: [
               {
-                ticket_name: item.email_subject,
+                ticket_name: item.email_subject.substr(0, 20),
                 // ticket_description: item.email_body,
                 ticket_progress: 0,
                 ticket_closed: 0,
