@@ -2,16 +2,17 @@
   <div>
     <b-card body-class="p-0">
       <div class="d-flex justify-content-end flex-wrap" style="padding: 10px">
-        <div class="mr-1">
+        <b-button variant="primary" @click="$refs.table.refresh()">Refresh</b-button>
+        <div class="mx-1">
           <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
         </div>
         <b-form-input v-model="search" id="filterInput" debounce="500" type="search" class="w-auto"
                       placeholder="Search.."/>
       </div>
-<!--      <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"-->
-<!--                        :total-rows="totalRows">-->
-<!--      </table-pagination>-->
-<!--      <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"/>-->
+      <!--      <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"-->
+      <!--                        :total-rows="totalRows">-->
+      <!--      </table-pagination>-->
+      <!--      <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"/>-->
     </b-card>
     <!--    <b-row class="mt-2">-->
     <!--      <summary-card :title="$t('NKA Invoice Tickets created')" color="#343a40" :percent="(10*100/40).toFixed(0)"-->
@@ -31,7 +32,7 @@
 
         </div>
       </div>
-      <mail-table :filter-value="filterValue" :search="search" :per-page="0" :current-page.sync="currentPage"
+      <mail-table ref="table" :filter-value="filterValue" :search="search" :per-page="0" :current-page.sync="currentPage"
                   :total-rows.sync="totalRows"/>
     </b-card>
 

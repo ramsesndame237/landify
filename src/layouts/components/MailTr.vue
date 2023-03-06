@@ -1,13 +1,13 @@
 <template>
-  <b-tr @click="toggle">
-    <b-td>
+  <b-tr>
+    <b-td @click="toggle">
       <feather-icon v-if="item.documents && item.documents.length>0" v-b-toggle="'collapse-'+item.email_id"
                     :icon="item.open?'ChevronUpIcon':'ChevronDownIcon'" size="24"/>
     </b-td>
-    <b-td>{{ child ? '' : item.email_id }}</b-td>
-    <b-td>{{ child ? '' : item.email_received_datetime }}</b-td>
-    <b-td>{{ child ? '' : item.email_from }}</b-td>
-    <b-td>{{ child ? '' : item.email_to }}</b-td>
+    <b-td @click="toggle">{{ child ? '' : item.email_id }}</b-td>
+    <b-td @click="toggle">{{ child ? '' : item.email_received_datetime }}</b-td>
+    <b-td @click="toggle">{{ child ? '' : item.email_from }}</b-td>
+    <b-td @click="toggle">{{ child ? '' : item.email_to }}</b-td>
     <b-td>
       {{ child ? '' : item.email_subject }}
       <feather-icon v-if="!child" class="text-success" icon="EyeIcon" size="24" @click="$emit('show-content')"/>
@@ -60,7 +60,8 @@
       </router-link>
     </b-td>
     <b-td class="text-center">
-      <div v-if="visible && !is_done && !is_dismissed" class="d-flex align-items-center">
+      <div v-if="visible && !is_done && !is_dismissed && (item.document_id ? item.classfication_id : true)"
+           class="d-flex align-items-center">
         <b-button class="btn-icon" variant="flat-success" pill @click="$emit('classify')">
           <feather-icon icon="CheckIcon" size="24"/>
         </b-button>
@@ -95,7 +96,7 @@ export default {
         key: 'ticket_id',
         type: 'list',
         list: 'frontend_6_1_6_overview',
-        listLabel: 'ticket_name',
+        listLabel: item => `${item.ticket_id} - ${item.ticket_name}`,
         noLabel: true,
         noFetch: true,
         required: false,
@@ -165,7 +166,7 @@ export default {
   methods: {
     getDocumentLink,
     toggle() {
-      if (!this.item.documents.length) return
+      if (!this.item.documents || !this.item.documents.length) return
       const el = document.getElementById('collapse' + this.item.email_id)
       // if (this.open) el.style.height = 0
       // else el.style.height = 'auto'

@@ -25,11 +25,12 @@
           </quill-editor>
         </div>
         <div v-else-if="field.type==='list'" :class="(field.withNew || field.ids) ? 'd-flex': ''">
-          <v-select v-model="entity[field.key]" :disabled="selectDisabled" :class="errors.length > 0 ? 'error':''"
+          <v-select :dropdown-should-open="true" v-model="entity[field.key]" :disabled="selectDisabled" :class="errors.length > 0 ? 'error':''"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
                     :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
-                    :label="field.listLabel" class="w-100" :loading="loading"
-                    :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch" @input="onChange"/>
+                    :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
+                    :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
+                    @input="onChange"/>
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm">New
           </b-button>
