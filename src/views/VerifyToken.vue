@@ -76,8 +76,12 @@ export default {
       message: '',
     }
   },
+  mounted() {
+    this.verify()
+  },
   methods: {
     verify() {
+      this.loading = true
       this.$http.post('/auth/login/2fa', {
         user_browser_hash: BrowserId(),
         login_activity_2fa_token: this.$route.params.token,
@@ -88,14 +92,11 @@ export default {
           useJwt.redirectAfterLogin(this)
         })
         .catch((e) => {
-          this.message = e.response.data.detail
+          this.message = this.$t(e.response.data.detail)
           this.loading = false
         })
     },
   },
-  mounted() {
-    this.verify()
-  }
 }
 </script>
 

@@ -176,12 +176,15 @@
             <b-col v-for="(document,i) in documents" :key="i">
               <b-card>
                 <div class="">
-                  <h6 style="color: #ccc">{{ document.document_name }}</h6>
                   <div class="d-flex justify-content-between">
-                    <h5 class="font-weight-bolder" style="color: black">{{ document.document_mime_type }}</h5>
+                    <h5>{{ document.document_name + ' - ' + (document.document_type_name || '') }}</h5>
                     <b-link variant="danger" target="_blank" :href="getDocumentLink(document)">
                       <feather-icon icon="EyeIcon"/>
                     </b-link>
+                  </div>
+                  <h5 class="font-weight-bolder" style="color: black">{{ document.document_mime_type }}</h5>
+                  <div class="d-flex justify-content-between">
+                    <h6>{{ document.document_entry_time }}</h6>
                     <b-link :to="{name:'sign-document', params: {id: document.document_id, entity: document}}"
                             class="ml-2">Sign
                     </b-link>
@@ -328,7 +331,8 @@ export default {
     },
     getDocumentLink,
     createSubTicket() {
-      this.$refs.modal.openModal(true, { ticket_id_group: parseInt(this.entityId),
+      this.$refs.modal.openModal(true, {
+        ticket_id_group: parseInt(this.entityId),
 
       })
     },

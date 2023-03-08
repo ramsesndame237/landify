@@ -10,3 +10,11 @@ export const getYearFormDateString = date => date?.split('-')[0]
 export const getDocumentLink = document => {
   return `${axios.defaults.baseURL}/document/download/${document.document_id}`
 }
+
+export const getSignImageLink = document => {
+  return `${axios.defaults.baseURL}/documents-sign/image/${document.document_id}`
+}
+
+export const getStampedDocumentLink = document => {
+  return `${axios.defaults.baseURL}/documents-sign/stamp/${document.document_id}`
+}

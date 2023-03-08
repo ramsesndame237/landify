@@ -500,8 +500,6 @@ export default {
         item.open = false
         const documents = email_documents.filter(d => d.email_id === item.email_id && d.document_id != null)
         item.documents = documents.map(d => ({ email_id: item.email_id, ...d }))
-        // .filter(d => !d.ticket_created)
-        // console.log('New Documents', item.email_id, item.documents)
         const cl = email_classfications.find(c => c.email_id === item.email_id)
         if (cl) {
           item.ticket_id_created = cl.ticket_id
@@ -513,13 +511,17 @@ export default {
         const id = item.email_subject.match(/^#\d+/g)
         if (id) {
           const ticket_id = parseInt(id[0].substr(1))
-          item.ticket_id = ticket_id
           const list = this.$store.state.table.listCache.frontend_6_1_6_overview
-          console.log('ticket_id', ticket_id)
-          const el = list.find(e => e.ticket_id === item.ticket_id)
+          const el = list.find(e => e.ticket_id === ticket_id)
           if (el) {
+            item.ticket_id = el.ticket_id
             item.pos_id = el.pos_id
             item.contract_id = el.contract_id
+            item.documents.forEach(document => {
+              document.ticket_id = el.ticket_id
+              document.pos_id = el.pos_id
+              document.contract_id = el.contract_id
+            })
           }
         }
       })

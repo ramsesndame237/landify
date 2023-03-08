@@ -174,7 +174,7 @@ export default {
           this.loading = true
           this.$http.post('/auth/login', data).then(async resp => {
             if (!resp.data.user_token) {
-              this.message = resp.data.message
+              this.message = this.$t(resp.data.message)
               this.show = false
               return
             }
@@ -187,7 +187,7 @@ export default {
               if (e.response) {
                 title = e.response.data.detail
               }
-              this.$errorToast(title)
+              this.$errorToast(this.$t(title))
             })
             .finally(() => this.loading = false)
         }
