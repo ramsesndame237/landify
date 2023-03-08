@@ -1,0 +1,39 @@
+name: Frontend CI
+on:
+  push:
+    branches: [ "staging" ]
+  pull_request:
+    branches: [ "staging" ]
+
+jobs:
+  continuous-integration:
+    runs-on: ubuntu-latest
+    steps:      # Step 1
+      - uses: actions/checkout@v3
+
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag kimpro-ci-test:$(date +%s)
+
+      - name: Deploy to Server
+        uses: easingthemes/ssh-deploy@main
+        env:
+            SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+            REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+            REMOTE_USER: ${{ secrets.REMOTE_USER }}
+            REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
+            TARGET: ${{ secrets.REMOTE_TARGET }}
+            SCRIPT_BEFORE: |
+              whoami
+              ls -alsh
+              rm -rf /home/admin/staging/Kimpro_Frontend/
+              mkdir /home/admin/staging/Kimpro_Frontend/
+            SCRIPT_AFTER: |
+              whoami
+              ls -alsh
+              cd /home/admin/staging/Kimpro_Frontend/
+              docker build . -t zelos-app-staging
+              docker stop kim_pro_frontend_staging
+              docker run -d --restart always -p 3335:80 zelos-app-staging --name kim_pro_frontend_staging
+
+              echo $RSYNC_STDOUT
+            EXCLUDE: .git/,  .github/,  python/__pycache__/, python/.pytest_cache/
