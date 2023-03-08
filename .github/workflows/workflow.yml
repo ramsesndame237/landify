@@ -34,6 +34,6 @@ jobs:
               docker build . -t zelos-app-staging
               docker stop kim_pro_frontend_staging
               docker run -d --restart always -p 3335:80 zelos-app-staging --name kim_pro_frontend_staging
-
+              echo "staging deployed successfully"
               echo $RSYNC_STDOUT
             EXCLUDE: .git/,  .github/,  python/__pycache__/, python/.pytest_cache/
