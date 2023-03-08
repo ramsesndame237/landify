@@ -6,7 +6,7 @@
       :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
       ref="form" :fetch-data="fetchData" :table="table" :definition="definition"
       :table-definition-key="tableDefinitionKey" :initial-data="initialData" :create="create" :is-relation="isRelation"
-      inline :cols="12"/>
+      inline :cols="12" @submit="handleOk"/>
     <p v-if="['headline~document~new','headline~document_contract_documentcontracttype_rel~new'].indexOf(forceTitle)>=0"
        class="text-danger text-center">No ticket will be created for this document</p>
     <template v-slot:modal-footer>
@@ -69,7 +69,7 @@ export default {
     },
     handleOk(bvModalEvt, redirect) {
       // Prevent modal from closing
-      bvModalEvt.preventDefault()
+      if (bvModalEvt) bvModalEvt.preventDefault()
       // Trigger submit handler
       this.loading = true
       this.$refs.form.submit()

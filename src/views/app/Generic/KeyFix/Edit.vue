@@ -53,6 +53,8 @@ export default {
     next()
   },
   beforeRouteUpdate(to, from, next) {
+    // if it is tab update
+    if (to.params.id === from.params.id) return next()
     this.handleRouteChange(() => {
       to.meta.pageTitle = Table[to.params.table]?.title || `headline~${to.params.table}~list`
       to.meta.breadcrumb = [

@@ -12,20 +12,21 @@
           <template v-if="disabled">
             <div v-html="entity[field.key]" class="p-1 border rounded"></div>
           </template>
-          <quill-editor v-else :id="'quill-content-'+field.key" :disabled="disabled" v-model="entity[field.key]"
-                        :options="editorOption">
-            <div :id="'quill-toolbar-'+field.key" slot="toolbar" class="d-flex border-bottom-0">
-              <!-- Add a bold button -->
-              <button class="ql-bold"/>
-              <button class="ql-italic"/>
-              <button class="ql-underline"/>
-              <button class="ql-align"/>
-              <button class="ql-link"/>
-            </div>
-          </quill-editor>
+          <ckeditor v-else :id="'ckcontent-'+field.key" v-model="entity[field.key]" :disabled="disabled"
+                    :editor="editor" :config="editorOption">
+            <!--            <div :id="'quill-toolbar-'+field.key" slot="toolbar" class="d-flex border-bottom-0">-->
+            <!--              &lt;!&ndash; Add a bold button &ndash;&gt;-->
+            <!--              <button class="ql-bold"/>-->
+            <!--              <button class="ql-italic"/>-->
+            <!--              <button class="ql-underline"/>-->
+            <!--              <button class="ql-align"/>-->
+            <!--              <button class="ql-link"/>-->
+            <!--            </div>-->
+          </ckeditor>
         </div>
         <div v-else-if="field.type==='list'" :class="(field.withNew || field.ids) ? 'd-flex': ''">
-          <v-select :dropdown-should-open="true" v-model="entity[field.key]" :disabled="selectDisabled" :class="errors.length > 0 ? 'error':''"
+          <v-select :dropdown-should-open="true" v-model="entity[field.key]" :disabled="selectDisabled"
+                    :class="errors.length > 0 ? 'error':''"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
                     :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
                     :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
@@ -97,7 +98,9 @@ import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
 import { snakeToTitle } from '@/libs/utils'
 import Table from '@/table/index'
-import { quillEditor } from 'vue-quill-editor'
+// import { quillEditor } from 'vue-quill-editor'
+import CKEditor from '@ckeditor/ckeditor5-vue2'
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import { togglePasswordVisibility } from "@core/mixins/ui/forms";
 
 function isEmpty(val) {
@@ -107,7 +110,7 @@ function isEmpty(val) {
 export default {
   name: 'Field',
   components: {
-    quillEditor,
+    ckeditor: CKEditor.component,
     BFormInput, BFormFile, BFormGroup, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol, BFormCheckbox,
   },
   mixins: [togglePasswordVisibility],
@@ -140,11 +143,12 @@ export default {
         { value: 1, label: 'Yes' },
         { value: 0, label: 'No' },
       ],
+      editor: ClassicEditor,
       editorOption: {
-        modules: {
-          toolbar: '#quill-toolbar-' + this.field.key,
-        },
-        placeholder: 'Type Text Here...',
+        // modules: {
+        //   toolbar: '#quill-toolbar-' + this.field.key,
+        // },
+        // placeholder: 'Type Text Here...',
       },
     }
   },

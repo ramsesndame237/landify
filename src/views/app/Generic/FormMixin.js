@@ -352,6 +352,9 @@ export default {
             .finally(() => this.loading = false)
         })
     },
+    emitSubmit() {
+      this.$emit('submit')
+    },
     setData(entity) {
       this.entity = {
         ...this.definition.default,
@@ -393,6 +396,10 @@ export default {
     },
     getFormFields(definition) {
       return definition.fields.filter(f => !f.hideOnForm && (this.create || !f.hideOnUpdate) && (!this.create || !f.hideOnCreate))
+        .map(field => {
+          if (typeof field === 'string') return { key: field }
+          return field
+        })
     },
     getPrimaryKey(definition) {
       return definition.primaryKey ?? definition.fields.find(f => f.auto)?.key
