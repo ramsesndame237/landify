@@ -98,7 +98,6 @@ import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
 import { snakeToTitle } from '@/libs/utils'
 import Table from '@/table/index'
-// import { quillEditor } from 'vue-quill-editor'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import { togglePasswordVisibility } from "@core/mixins/ui/forms";
@@ -370,12 +369,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@core/scss/vue/libs/quill.scss';
-//@import '~quill/dist/quill.core.css';
-//// eslint-disable-next-line
-//@import '~quill/dist/quill.snow.css';
-//// eslint-disable-next-line
-//@import '~quill/dist/quill.bubble.css';
 
 .hide-main {
   > label {
