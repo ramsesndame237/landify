@@ -212,11 +212,11 @@ export default {
       return el?.documenttype_name
     },
     onDocumentTypeChange() {
-      console.log("documenttype change");
+      console.log("documenttype change")
       if (this.item.ticket_id) return
       const val = this.item.documenttype_id
       if (val) {
-        const list = this.$store.state.table.listCache['documenttype_board_grp']
+        const list = this.$store.state.table.listCache['board']
         if (!list) return
         const el = list.find(e => e.documenttype_id === val)
         if (el) {
