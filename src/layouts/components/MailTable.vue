@@ -467,6 +467,7 @@ export default {
       items.forEach(item => {
         item.open = false
         // process ticket data
+        if (!item.email_subject) return
         const id = item.email_subject.match(/^#\d+/g)
         if (id) {
           const ticket_id = parseInt(id[0].substr(1))
