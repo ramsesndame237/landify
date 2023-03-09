@@ -384,10 +384,15 @@ export default {
     async fetchList() {
       this.loading = true
       try {
-        await Promise.all([
-          'frontend_6_1_6_overview', 'frontend_2_1_3_8', 'frontend_4_2_1_contract_selector',
-          'board', 'documenttype', 'documenttype_board_grp',
-        ].map(list => this.$store.dispatch('table/fetchList', { entity: list })))
+        const { data } = await this.$http.get('/classifications/email/data')
+        await this.$store.dispatch('table/setListData', { entity: 'frontend_6_1_6_overview', data: data.ticket })
+        await this.$store.dispatch('table/setListData', { entity: 'frontend_2_1_3_8', data: data.pos })
+        await this.$store.dispatch('table/setListData', {
+          entity: 'frontend_4_2_1_contract_selector',
+          data: data.contract,
+        })
+        await this.$store.dispatch('table/setListData', { entity: 'board', data: data.board })
+        await this.$store.dispatch('table/setListData', { entity: 'documenttype', data: data.documenttype })
       } finally {
         this.loading = false
       }

@@ -295,7 +295,7 @@ export default {
     },
     * sequenceGenerator(minVal, maxVal) {
       let currVal = minVal
-      while (currVal < maxVal) {
+      while (currVal <= maxVal) {
         yield currVal++
       }
     },
