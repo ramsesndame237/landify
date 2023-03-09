@@ -35,7 +35,7 @@
       <!--      <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"-->
       <!--                       :disabled="disabled" @change="onSelect(data.index)"/>-->
       <!--    </template>-->
-      <template v-for="(item,idx) in filteredEmail">
+      <template v-for="(item,idx) in items">
         <b-tbody :key="idx">
           <mail-tr :item="item" @show-content="showMailContent(item)" @classify="classify(item)"
                    @reject="reject(item)"/>
@@ -47,7 +47,7 @@
           </b-tbody>
         </transition>
       </template>
-      <b-tbody v-if="filteredEmail.length===0">
+      <b-tbody v-if="items.length===0">
         <b-tr>
           <b-td colspan="14" class="text-center">
             No Data available
@@ -162,20 +162,17 @@ export default {
     },
   },
   watch: {
-    currentItems: {
-      deep: true,
-      handler() {
-        // if (this.currentItems.length === 0) return
-        // if (this.currentItems.filter(item => !item.__selected).length === 0) this.selected = true
-        // else if (this.currentItems.filter(item => item.__selected).length === 0) this.selected = false
-
-      },
+    perPage() {
+      this.fetch()
     },
-    selected() {
-      this.selectAll()
+    currentPage() {
+      this.fetch()
     },
-    items() {
-      this.currentItems = this.items
+    search() {
+      this.fetch()
+    },
+    filterValue() {
+      this.fetch()
     },
   },
   async mounted() {
@@ -422,17 +419,14 @@ export default {
     },
     async fetch() {
       const payload = {
-        action: 'read-rich',
-        entity: 'email',
-        attributes: ['email_id', 'email_subject', 'email_to', 'email_sent_datetime', 'email_received_datetime'],
-        order_by: this.sortBy,
-        order_dir: this.sortDesc ? 'DESC' : 'ASC',
-        per_page: this.perPage === 0 ? 1000000 : this.perPage,
-        from: 0,
-        current_page: this.currentPage,
-        filter_all: this.filter ?? '',
+        // order_by: this.sortBy,
+        // order_dir: this.sortDesc ? 'DESC' : 'ASC',
+        size: this.perPage === 0 ? 1000000 : this.perPage,
+        page: this.currentPage,
+        query: this.search,
         lang: this.$i18n.locale,
-        data: [{ email_to: 'zelos@seybold-fm.com,' }],
+        filter: this.filterValue,
+        // data: [{ email_to: 'zelos@seybold-fm.com,' }],
       }
       // retrieve from cache
       const cacheKey = this.getCacheKey(payload)
@@ -443,12 +437,12 @@ export default {
       // }
       if (this.loading) return
       this.loading = true
-      return this.$api(payload)
+      return this.$http.get('/classifications/email/', { params: payload })
         .then(async ({ data }) => {
           console.log(data)
           const items = await this.processData(data)
           // set in cache
-          this.$store.commit('table/setTableCache', { key: cacheKey, data })
+          // this.$store.commit('table/setTableCache', { key: cacheKey, data })
           return items
         })
         .catch(e => {
@@ -465,12 +459,18 @@ export default {
       return `${this.entity}-${JSON.stringify(payload)}`
     },
     async processData(data) {
-      this.$emit('update:totalRows', data.data.links.pagination.total)
-      data.data.data.forEach(el => {
+      this.$emit('update:totalRows', data.total)
+      data.items.forEach(el => {
         el.__selected = false
       })
+      const items = data.items
+      items.forEach(item => {
+        item.open = false
+      })
+      this.items = items
+      return this.items
+
       // this.$store.commit('table/setDefinition', { data, table: this.table })
-      const items = data.data.data
       const filterData = items.map(i => ({ email_id: i.email_id }))
       const email_documents = (await this.$api({
         action: 'read-rich',
@@ -530,9 +530,7 @@ export default {
           }
         }
       })
-      this.items = items
-      // .filter(d => !d.ticket_created)
-      return this.items
+
     },
     selectAll() {
       const newVal = this.selected
