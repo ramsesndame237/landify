@@ -466,6 +466,27 @@ export default {
       const items = data.items
       items.forEach(item => {
         item.open = false
+        // process ticket data
+        const id = item.email_subject.match(/^#\d+/g)
+        if (id) {
+          const ticket_id = parseInt(id[0].substr(1))
+          const list = this.$store.state.table.listCache.frontend_6_1_6_overview
+          const el = list.find(e => e.ticket_id === ticket_id)
+          if (el) {
+            if (!item.ticket_id) {
+              item.ticket_id = el.ticket_id
+              item.pos_id = el.pos_id
+              item.contract_id = el.contract_id
+            }
+            item.documents.forEach(document => {
+              if (!document.ticket_id) {
+                document.ticket_id = el.ticket_id
+                document.pos_id = el.pos_id
+                document.contract_id = el.contract_id
+              }
+            })
+          }
+        }
       })
       this.items = items
       return this.items
@@ -512,23 +533,7 @@ export default {
           if (cl.ticket_id_group) item.ticket_id = cl.ticket_id_group
           // Object.keys(cl).forEach(k => (item[k] = cl[k]))
         }
-        // process ticket data
-        const id = item.email_subject.match(/^#\d+/g)
-        if (id) {
-          const ticket_id = parseInt(id[0].substr(1))
-          const list = this.$store.state.table.listCache.frontend_6_1_6_overview
-          const el = list.find(e => e.ticket_id === ticket_id)
-          if (el) {
-            item.ticket_id = el.ticket_id
-            item.pos_id = el.pos_id
-            item.contract_id = el.contract_id
-            item.documents.forEach(document => {
-              document.ticket_id = el.ticket_id
-              document.pos_id = el.pos_id
-              document.contract_id = el.contract_id
-            })
-          }
-        }
+
       })
 
     },
