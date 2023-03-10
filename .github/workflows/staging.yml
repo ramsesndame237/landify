@@ -11,8 +11,8 @@ jobs:
     steps:      # Step 1
       - uses: actions/checkout@v3
 
-      - name: Build the Docker image
-        run: echo 'building ... ' # docker build . --file Dockerfile --tag kimpro-ci-test:$(date +%s)
+      - name: Test and Build the Docker image
+        run: docker build . --file Dockerfile --tag kimpro-ci-test:$(date +%s)
 
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@main
