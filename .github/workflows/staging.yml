@@ -24,16 +24,27 @@ jobs:
             TARGET: ${{ secrets.REMOTE_TARGET }}
             SCRIPT_BEFORE: |
               whoami
-              ls -alsh
+              ls -lsh
               rm -rf /home/admin/staging/Kimpro_Frontend/
               mkdir /home/admin/staging/Kimpro_Frontend/
+              touch /home/admin/staging/Kimpro_Frontend/.env
+              echo VUE_APP_BASE_URL=https://api.production.seybold-fm.com/ &>> /home/admin/staging/Kimpro_Frontend/.env
+              echo PUBLIC_PATH="" &>> /home/admin/staging/Kimpro_Frontend/.env
+
             SCRIPT_AFTER: |
               whoami
-              ls -alsh
+              ls -lsh
               cd /home/admin/staging/Kimpro_Frontend/
+              
+              echo "Docker jobs ..."
               docker build . -t zelos-app-staging
               docker stop kim_pro_frontend_staging
-              docker run -d --restart always -p 3335:80 zelos-app-staging --name kim_pro_frontend_staging
-              echo "staging deployed successfully"
+              docker rm kim_pro_frontend_staging
+              docker run --name kim_pro_frontend_staging --restart always -d  -p 3335:80 zelos-app-staging 
+              
+              echo "staging deployed successfully..."
               echo $RSYNC_STDOUT
             EXCLUDE: .git/,  .github/,  python/__pycache__/, python/.pytest_cache/
+
+
+
