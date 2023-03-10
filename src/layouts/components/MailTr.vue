@@ -1,5 +1,5 @@
 <template>
-  <b-tr>
+  <b-tr @click="display">
     <b-td @click="toggle">
       <feather-icon v-if="item.documents && item.documents.length>0" v-b-toggle="'collapse-'+item.email_id"
                     :icon="item.open?'ChevronDownIcon':'ChevronRightIcon'" size="24"/>
@@ -164,6 +164,9 @@ export default {
     this.onTicketIdChange()
   },
   methods: {
+    display() {
+      console.log(this.item)
+    },
     getDocumentLink,
     toggle() {
       if (!this.item.documents || !this.item.documents.length) return
