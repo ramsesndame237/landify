@@ -28,7 +28,7 @@ jobs:
               rm -rf /home/admin/staging/Kimpro_Frontend/
               mkdir /home/admin/staging/Kimpro_Frontend/
               touch /home/admin/staging/Kimpro_Frontend/.env
-              echo VUE_APP_BASE_URL=https://api.production.seybold-fm.com/ &>> /home/admin/staging/Kimpro_Frontend/.env
+              echo VUE_APP_BASE_URL=https://api.development.seybold-fm.com/ &>> /home/admin/staging/Kimpro_Frontend/.env
               echo PUBLIC_PATH="" &>> /home/admin/staging/Kimpro_Frontend/.env
 
             SCRIPT_AFTER: |
