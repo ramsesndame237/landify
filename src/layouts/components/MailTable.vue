@@ -466,6 +466,10 @@ export default {
       const items = data.items
       items.forEach(item => {
         item.open = false
+        item.documents.forEach(document => {
+          document.email_subject = item.email_subject
+          document.email_id = item.email_id
+        })
         // process ticket data
         if (!item.email_subject) return
         const id = item.email_subject.match(/^#\d+/g)

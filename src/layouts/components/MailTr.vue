@@ -16,7 +16,7 @@
       <field v-if="visible" :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/>
       <router-link v-if="is_done" target="_blank"
                    :to="{name: 'table-view', params: {table: 'ticket',id: item.ticket_id}}">
-        {{ item.ticket_id + ' - ' + getTicketName() }}
+        {{ item.ticket_id_created + ' - ' + getTicketName() }}
       </router-link>
     </b-td>
     <b-td class="td-form">
@@ -191,7 +191,7 @@ export default {
     },
     getTicketName() {
       const list = this.$store.state.table.listCache['frontend_6_1_6_overview']
-      const el = list.find(e => e.ticket_id === this.item.ticket_id)
+      const el = list.find(e => e.ticket_id === this.item.ticket_id_created)
       return el?.ticket_name
     },
     getPosName() {

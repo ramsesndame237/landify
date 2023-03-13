@@ -3347,6 +3347,7 @@ export default {
         entityForm: 'columnx_board_rel',
         entity: 'frontend_column_list',
         primaryKey: 'column_id',
+        view: false,
         fields: [
           {
             key: 'column_id', type: 'list', list: 'columnx', alwaysNew: true, onlyForm: true,

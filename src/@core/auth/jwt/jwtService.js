@@ -48,31 +48,43 @@ export default class JwtService {
         // const { config, response: { status } } = error
         const { config, response } = error
         const originalRequest = config
-
+        const { $vue } = window
         // if (status === 401) {
-        if (response && response.status === 401) {
-          if (!this.isAlreadyFetchingAccessToken) {
-            this.isAlreadyFetchingAccessToken = true
-            this.refreshToken().then(r => {
-              this.isAlreadyFetchingAccessToken = false
+        if (response.status === 403) {
+          $vue.$errorToast($vue.$t('general.unauthorized'))
+        } else if (response.status === 503) {
+          $vue.$errorToast($vue.$t('general.server_down'))
+        }
 
-              // Update accessToken in localStorage
-              this.setToken(r.data.accessToken)
-              this.setRefreshToken(r.data.refreshToken)
-
-              this.onAccessTokenFetched(r.data.accessToken)
+        if (response && (response.status === 401 || response.status === 403)) {
+          // just push to login
+          this.logout()
+            .then(() => {
+              $vue.$router.push({ name: 'login' })
             })
-          }
-          const retryOriginalRequest = new Promise(resolve => {
-            this.addSubscriber(accessToken => {
-              // Make sure to assign accessToken according to your response.
-              // Check: https://pixinvent.ticksy.com/ticket/2413870
-              // Change Authorization header
-              originalRequest.headers.Authorization = `${this.jwtConfig.tokenType} ${accessToken}`
-              resolve(this.axiosIns(originalRequest))
-            })
-          })
-          return retryOriginalRequest
+          return Promise.reject(error)
+          // if (!this.isAlreadyFetchingAccessToken) {
+          //   this.isAlreadyFetchingAccessToken = true
+          //   this.refreshToken().then(r => {
+          //     this.isAlreadyFetchingAccessToken = false
+          //
+          //     // Update accessToken in localStorage
+          //     this.setToken(r.data.accessToken)
+          //     this.setRefreshToken(r.data.refreshToken)
+          //
+          //     this.onAccessTokenFetched(r.data.accessToken)
+          //   })
+          // }
+          // const retryOriginalRequest = new Promise(resolve => {
+          //   this.addSubscriber(accessToken => {
+          //     // Make sure to assign accessToken according to your response.
+          //     // Check: https://pixinvent.ticksy.com/ticket/2413870
+          //     // Change Authorization header
+          //     originalRequest.headers.Authorization = `${this.jwtConfig.tokenType} ${accessToken}`
+          //     resolve(this.axiosIns(originalRequest))
+          //   })
+          // })
+          // return retryOriginalRequest
         }
         return Promise.reject(error)
       },
