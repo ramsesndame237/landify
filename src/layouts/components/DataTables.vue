@@ -295,11 +295,11 @@ export default {
           }
 
           const count = resp.data.data.rowcount
-          if (count > 0) this.$successToast(`${count} Element(s) where deleted`)
-          else this.$errorToast(`${count} Element(s) where deleted`)
+          if (count > 0) this.$successToast(`${count} Element${count > 1 ? 's' : ''} were deleted`)
+          else this.$errorToast(`${count} Element${count > 1 ? 's' : ''} were deleted`)
           // this.$successToast(this.$t(entities.length > 1 ? 'notification.elements_deleted' : 'notification.element_deleted'))
           this.$store.commit('table/deleteTableCacheKeyFromPrefix', this.entity + '-')
-          // if all elements where deleted, go to page 1
+          // if all elements were deleted, go to page 1
           if (this.currentItems.length === count) {
             this.$emit('update:currentPage', 1)
           }
@@ -340,8 +340,8 @@ export default {
     downloadCsv() {
       const fields = this.allFields.filter(f => (['Actions', '__selected'].indexOf(f.key) === -1))
       let csvContent = "data:text/csv;charset=utf-8,"
-        + fields.map(f => f.key).join(',').replaceAll('\r', '').replaceAll('\n', '') + '\n'
-        + this.items.map(item => fields.map(f => item[f.key]).join(',')).join('\n')
+        + fields.map(f => f.key).join(';').replaceAll('\r', '').replaceAll('\n', '') + '\n'
+        + this.items.map(item => fields.map(f => item[f.key]).join(';')).join('\n')
 
       const encodedUri = encodeURI(csvContent)
       const link = document.createElement("a")

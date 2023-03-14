@@ -284,7 +284,8 @@ export default {
       return true
     },
     canStamp() {
-      return this.entity.columns[0].colum_has_stamp
+      if (!this.entity || !this.entity.columns) return false
+      return this.columns.find(c => c.column_id === this.entity.columns[0].column_id).column_has_stamp
     },
   },
   async mounted() {

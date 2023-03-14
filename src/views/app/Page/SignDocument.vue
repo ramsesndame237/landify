@@ -174,12 +174,15 @@ export default {
             data,
           })).data.data.data.forEach(result => {
             console.log(result);
-            data.find(d => d.document_stamp_page == result.document_stamp_page).document_stamp_id = result.document_stamp_id
+            data.find(d => d.document_stamp_page === result[0].document_stamp_page).document_stamp_id = result.document_stamp_id
           })
           update = true
         }
         if (!update) this.$errorToast('There is no changes')
-        else this.$successToast('Positions saved')
+        else {
+          (await this.$http.get(`/documents-sign/stamp/${this.entity.document_id}`))
+          this.$successToast('Positions saved')
+        }
       } catch (e) {
         console.error(e)
         this.$errorToast(e.message || 'Unknow Error')

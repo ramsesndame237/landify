@@ -3445,21 +3445,26 @@ export default {
       // { key: 'document_content_type' },
     ],
   },
-  '1__translation_i18n': {
+  '1__translation': {
+    inlineEdit: true,
     primaryKey: 'translation_id',
     fields: [
       { key: 'translation_id', disableOnUpdate: true },
-      { key: 'translation_lang' },
+      { key: 'translation_lang', composite: true, disableOnUpdate: true },
       { key: 'translation_text' },
     ],
   },
-  '1__attribute_i18n': {
+  '1__attribute_nice': {
+    inlineEdit: true,
     primaryKey: 'attribute_name',
     fields: [
       { key: 'attribute_name', disableOnUpdate: true },
-      'attribute_lang',
+      { key: 'attribute_lang', composite: true, disableOnUpdate: true },
       { key: 'attribute_nice_name' },
     ],
+    default: {
+      attribute_nice_name_group: '',
+    },
   },
 }
 

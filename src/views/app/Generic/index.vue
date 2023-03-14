@@ -5,8 +5,8 @@
                         :on-new-element="definition.create ===false ? null : onNewElement" :total-rows="totalRows"
                         :with-filter="definition.filters && definition.filters.length > 0"
                         :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
-                        :actions="definition.actions"
-                        @action="(a)=>$refs.table.onAction(a)" @filter="$refs.filter.openModal()"/>
+                        :actions="definition.actions" @action="(a)=>$refs.table.onAction(a)"
+                        @filter="$refs.filter.openModal()"/>
       <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
                       @filter="filter"/>
     </b-card>
@@ -16,9 +16,10 @@
                  :with-delete="definition.delete !== false" :with-edit="definition.update !== false"
                  :default-sort-column="initialSortBy||definition.defaultSortField" :default-sort-desc="initialSortDesc"
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
-                 :fields="definition.fields" :primary-key-column="definition.primaryKey" :ids="ids"/>
+                 :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
+                 :primary-key-column="definition.primaryKey" :ids="ids"/>
     </b-card>
-    <generic-modal :cache-key="table+'-'" @reload-table="$refs.table.reload()" :table="table" :definition="definition"
+    <generic-modal :fetch-data="false" :cache-key="table+'-'" @reload-table="$refs.table.reload()" :table="table" :definition="definition"
                    with-continue :table-definition-key="table" :title="`headline~${table}~new`" ref="modal"/>
   </div>
 </template>
@@ -88,6 +89,9 @@ export default {
     },
     reset() {
       this.filter({})
+    },
+    editElement(entity) {
+      this.$refs.modal.openModal(false, entity, `headline~${this.definition.entityForm || this.definition.entity}~detail`)
     },
     onNewElement() {
       if (this.useModalToCreate) this.$refs.modal.openModal(true, {})
