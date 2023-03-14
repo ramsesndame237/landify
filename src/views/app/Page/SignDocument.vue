@@ -174,7 +174,7 @@ export default {
             data,
           })).data.data.data.forEach(result => {
             console.log(result);
-            data.find(d => d.document_stamp_page === result.document_stamp_page).document_stamp_id = result.document_stamp_id
+            data.find(d => d.document_stamp_page == result.document_stamp_page).document_stamp_id = result.document_stamp_id
           })
           update = true
         }

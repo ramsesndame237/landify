@@ -289,6 +289,8 @@ export default {
           updateTicketList = true
         }
 
+        const master_ticket_id = item.ticket_id || ticket_id
+
         if (item.document_id) {
           success = (await this.$api({
             action: 'update',
@@ -308,7 +310,7 @@ export default {
             action: 'create',
             entity: 'document_ticket_rel',
             data: [{
-              ticket_id: item.ticket_id || ticket_id,
+              ticket_id: master_ticket_id,
               document_id: item.document_id,
             }],
           })
@@ -318,17 +320,15 @@ export default {
             action: 'create',
             entity: 'email_ticket_rel',
             data: [{
-              ticket_id: item.ticket_id || ticket_id,
+              ticket_id: master_ticket_id,
               email_id: item.email_id,
             }],
           })
         }
         if (success) {
           if (item.document_id) this.$set(item, 'ticket_created', true)
-          else {
-            this.$set(item, 'ticket_id_created', ticket_id)
-          }
-          if (!item.ticket_id) this.$set(item, 'ticket_id', ticket_id)
+          this.$set(item, 'ticket_id_created', master_ticket_id)
+          if (item.ticket_id) this.$set(item, 'subticket_id_created', ticket_id)
           this.$successToast('Ticket Created')
         } else {
           this.$errorToast('Error, Please try again')
@@ -466,7 +466,12 @@ export default {
       const items = data.items
       items.forEach(item => {
         item.open = false
+        item.documents.forEach(document => {
+          document.email_subject = item.email_subject
+          document.email_id = item.email_id
+        })
         // process ticket data
+        if (!item.email_subject) return
         const id = item.email_subject.match(/^#\d+/g)
         if (id) {
           const ticket_id = parseInt(id[0].substr(1))
