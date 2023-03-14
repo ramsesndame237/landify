@@ -253,4 +253,10 @@ export default [
     resource: 'menu',
     route: table('1__translation_i18n'),
   },
+  {
+    title: key('attribute'),
+    action: 'menu~import',
+    resource: 'menu',
+    route: table('1__attribute_i18n'),
+  },
 ]

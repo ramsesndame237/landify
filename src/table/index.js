@@ -3355,6 +3355,7 @@ export default {
           { key: 'column_name', hideOnForm: true },
           { key: 'column_description', type: 'textarea', hideOnForm: true },
           { key: 'column_is_qualitygate', type: 'boolean', hideOnForm: true },
+          { key: 'column_has_stamp', type: 'boolean', hideOnForm: true },
           { key: 'team_name', hideOnForm: true },
           { key: 'rank_order', type: 'number' },
         ],
@@ -3450,6 +3451,14 @@ export default {
       { key: 'translation_id', disableOnUpdate: true },
       { key: 'translation_lang' },
       { key: 'translation_text' },
+    ],
+  },
+  '1__attribute_i18n': {
+    primaryKey: 'attribute_name',
+    fields: [
+      { key: 'attribute_name', disableOnUpdate: true },
+      'attribute_lang',
+      { key: 'attribute_nice_name' },
     ],
   },
 }

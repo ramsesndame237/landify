@@ -14,17 +14,17 @@
           <b-button v-else size="sm" variant="primary" class="ml-1" @click="removeCropper()">
             remove
           </b-button>
-          <b-button size="sm" variant="primary" class="mx-1"
-                    @click="$refs.modal.openModal(!information,{document_id: entity.document_id, ...information})">
-            Informations
-          </b-button>
         </div>
         <div class="d-flex align-items-center">
+          <b-button size="sm" variant="primary" class="mx-1"
+                    @click="$refs.modal.openModal(!information,{document_id: entity.document_id, ...information})">
+            Edit Stamp
+          </b-button>
           <b-button size="sm" variant="primary" class="mr-1" @click="savePositions">
-            Save positions
+            Save
           </b-button>
           <b-link target="_blank" size="sm" variant="primary" class="mr-1" :href="getStampedDocumentLink(entity)">
-            Document with Stamp
+            Document Stamped
           </b-link>
         </div>
       </div>
