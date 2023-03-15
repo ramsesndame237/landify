@@ -122,6 +122,7 @@ export default {
       items: [],
       filterData: { ...this.initialFilter },
       item: null,
+      listLoaded: false,
     }
   },
   computed: {
@@ -390,6 +391,7 @@ export default {
         })
         await this.$store.dispatch('table/setListData', { entity: 'board', data: data.board })
         await this.$store.dispatch('table/setListData', { entity: 'documenttype', data: data.documenttype })
+        this.listLoaded = true
       } finally {
         this.loading = false
       }
@@ -436,6 +438,7 @@ export default {
       //   return this.processData(fromCache)
       // }
       if (this.loading) return
+      if (!this.listLoaded) await this.fetchList()
       this.loading = true
       return this.$http.get('/classifications/email/', { params: payload })
         .then(async ({ data }) => {
