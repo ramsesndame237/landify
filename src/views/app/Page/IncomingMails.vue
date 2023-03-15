@@ -1,17 +1,17 @@
 <template>
   <div>
     <b-card body-class="p-0">
-      <div class="d-flex justify-content-end flex-wrap" style="padding: 10px">
+      <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"
+                        :total-rows="totalRows">
+        <!--        <div class="d-flex justify-content-end flex-wrap" style="padding: 10px">-->
         <b-button variant="primary" @click="$refs.table.refresh()">Refresh</b-button>
         <div class="mx-1">
           <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
         </div>
-        <b-form-input v-model="search" id="filterInput" debounce="500" type="search" class="w-auto"
-                      placeholder="Search.."/>
-      </div>
-      <!--      <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"-->
-      <!--                        :total-rows="totalRows">-->
-      <!--      </table-pagination>-->
+        <!--                <b-form-input v-model="search" id="filterInput" debounce="500" type="search" class="w-auto"-->
+        <!--                              placeholder="Search.."/>-->
+        <!--        </div>-->
+      </table-pagination>
       <!--      <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"/>-->
     </b-card>
     <!--    <b-row class="mt-2">-->
@@ -32,8 +32,8 @@
 
         </div>
       </div>
-      <mail-table ref="table" :filter-value="filterValue" :search="search" :per-page="0" :current-page.sync="currentPage"
-                  :total-rows.sync="totalRows"/>
+      <mail-table ref="table" :filter-value="filterValue" :search="search" :per-page="perPage"
+                  :current-page.sync="currentPage" :total-rows.sync="totalRows"/>
     </b-card>
 
   </div>
@@ -65,11 +65,11 @@ export default {
       definition: {
         filters: [{ key: 'ticket_id', type: 'list', list: 'ticket', listLabel: 'ticket_name' }],
       },
-      filterValue: 1,
+      filterValue: 0,
       filterOptions: [
-        { text: 'All mails', value: 0 },
-        { text: 'Not processed', value: 1 },
-        { text: 'Processed', value: 2 },
+        { text: 'All mails', value: null },
+        { text: 'Not processed', value: 0 },
+        { text: 'Processed', value: 1 },
       ],
     }
   },

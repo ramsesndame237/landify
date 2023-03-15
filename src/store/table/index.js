@@ -79,6 +79,10 @@ export default {
           return data.data.data
         })
     },
+    setListData(context, { entity, data }) {
+      Vue.set(context.state.listCache, entity, data)
+      // context.commit('setDefinition', { data, table: entity })
+    },
     fetchList(context, { entity, data }) {
       return api({
         action: 'read-rich',

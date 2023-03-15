@@ -177,16 +177,19 @@
               <b-card>
                 <div class="">
                   <div class="d-flex justify-content-between">
-                    <h5>{{ document.document_name + ' - ' + (document.document_type_name || '') }}</h5>
-                    <b-link variant="danger" target="_blank" :href="getDocumentLink(document)">
+                    <h5>{{
+                        document.document_name + (document.document_already_stamp ? '(Stamped)' : '') + ' - ' + (document.document_type_name || '')
+                      }}</h5>
+                    <b-link variant="danger" target="_blank" :href="getLink(document)">
                       <feather-icon icon="EyeIcon"/>
                     </b-link>
                   </div>
                   <h5 class="font-weight-bolder" style="color: black">{{ document.document_mime_type }}</h5>
                   <div class="d-flex justify-content-between">
                     <h6>{{ document.document_entry_time }}</h6>
-                    <b-link :to="{name:'sign-document', params: {id: document.document_id, entity: document}}"
-                            class="ml-2">Sign
+                    <b-link v-if="!document.document_already_stamp && canStamp"
+                            :to="{name:'sign-document', params: {id: document.document_id, entity: document}}"
+                            class="ml-2">Stamp
                     </b-link>
                   </div>
                 </div>
@@ -223,7 +226,7 @@ import AppTimeline from "@core/components/app-timeline/AppTimeline";
 import AppTimelineItem from "@core/components/app-timeline/AppTimelineItem";
 import BCardActions from "@core/components/b-card-actions/BCardActions";
 import TicketMixin from "@/views/app/Kanban/TicketMixin";
-import { getDocumentLink } from "@/libs/utils";
+import { getDocumentLink, getStampedDocumentLink } from "@/libs/utils";
 import moment from 'moment'
 import AssignUserModal from "@/views/app/Kanban/AssignUserModal";
 import Notes from "@/views/app/Generic/Notes";
@@ -280,6 +283,9 @@ export default {
     invoiceTicket() {
       return true
     },
+    canStamp() {
+      return this.entity.columns[0].colum_has_stamp
+    },
   },
   async mounted() {
     this.loading = true
@@ -330,6 +336,10 @@ export default {
       return 'success'
     },
     getDocumentLink,
+    getLink(document) {
+      if (document.document_already_stamp) return getStampedDocumentLink(document)
+      return getDocumentLink(document)
+    },
     createSubTicket() {
       this.$refs.modal.openModal(true, {
         ticket_id_group: parseInt(this.entityId),
@@ -392,6 +402,12 @@ export default {
         per_page: 1000,
         data: results.map(r => ({ document_id: r.document_id })),
       })).data.data.data
+      // this.documents = (await this.$api({
+      //   entity: 'ticket_document_grp',
+      //   action: 'read-rich',
+      //   per_page: 100000,
+      //   data: [{ ticket_id: this.entity.ticket_id }],
+      // })).data.data.data
     },
     async fetchEmail() {
       this.loadingEmail = true

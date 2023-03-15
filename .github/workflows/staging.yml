@@ -1,9 +1,9 @@
 name: Frontend CI
 on:
   push:
-    branches: [ "staging, master" ]
+    branches: [ "staging", "master" ]
   pull_request:
-    branches: [ "staging, master" ]
+    branches: [ "staging", "master" ]
 
 jobs:
   continuous-integration:
@@ -11,8 +11,8 @@ jobs:
     steps:      # Step 1
       - uses: actions/checkout@v3
 
-      - name: Build the Docker image
-        run: echo 'building ... ' # docker build . --file Dockerfile --tag kimpro-ci-test:$(date +%s)
+      - name: Test and Build the Docker image
+        run: docker build . --file Dockerfile --tag kimpro-ci-test:$(date +%s)
 
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@main
@@ -23,17 +23,28 @@ jobs:
             REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
             TARGET: ${{ secrets.REMOTE_TARGET }}
             SCRIPT_BEFORE: |
-              sudo whoami
-              sudo ls -alsh
-              sudo rm -rf /home/admin/staging/Kimpro_Frontend/
-              sudo mkdir /home/admin/staging/Kimpro_Frontend/
+              whoami
+              ls -lsh
+              rm -rf /home/admin/staging/Kimpro_Frontend/
+              mkdir /home/admin/staging/Kimpro_Frontend/
+              touch /home/admin/staging/Kimpro_Frontend/.env
+              echo VUE_APP_BASE_URL=https://api.development.seybold-fm.com/ &>> /home/admin/staging/Kimpro_Frontend/.env
+              echo PUBLIC_PATH="" &>> /home/admin/staging/Kimpro_Frontend/.env
+
             SCRIPT_AFTER: |
-              sudo whoami
-              sudo ls -alsh
-              sudo cd /home/admin/staging/Kimpro_Frontend/
-              sudo docker build . -t zelos-app-staging
-              sudo docker stop kim_pro_frontend_staging
-              sudo docker run -d --restart always -p 3335:80 zelos-app-staging --name kim_pro_frontend_staging
-              sudo echo "staging deployed successfully"
-              sudo echo $RSYNC_STDOUT
+              whoami
+              ls -lsh
+              cd /home/admin/staging/Kimpro_Frontend/
+              
+              echo "Docker jobs ..."
+              docker build . -t zelos-app-staging
+              docker stop kim_pro_frontend_staging
+              docker rm kim_pro_frontend_staging
+              docker run --name kim_pro_frontend_staging --restart always -d  -p 3335:80 zelos-app-staging 
+              
+              echo "staging deployed successfully..."
+              echo $RSYNC_STDOUT
             EXCLUDE: .git/,  .github/,  python/__pycache__/, python/.pytest_cache/
+
+
+

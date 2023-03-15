@@ -87,7 +87,7 @@ export default {
   },
   computed: {
     activeStamp() {
-      return this.positions.find(p => p.document_stamp_page === this.page)
+      return this.positions.find(p => p.document_stamp_page === this.page && !p.delete)
     },
   },
   watch: {
@@ -152,6 +152,7 @@ export default {
             entity: 'document_stamp',
             data,
           })
+          this.positions = this.positions.filter(p => !p.delete)
           update = true
         }
         // to update
@@ -167,10 +168,13 @@ export default {
         // to create
         data = this.positions.filter(p => !p.document_stamp_id)
         if (data.length) {
-          await this.$api({
+          (await this.$api({
             action: 'create',
             entity: 'document_stamp',
             data,
+          })).data.data.data.forEach(result => {
+            console.log(result);
+            data.find(d => d.document_stamp_page == result.document_stamp_page).document_stamp_id = result.document_stamp_id
           })
           update = true
         }
@@ -222,10 +226,10 @@ export default {
       task.promise.then(() => {
         if (this.activeStamp) {
           this.initCropper([(this.activeStamp.document_stamp_position_x * canvas.width) / 100,
-            (this.activeStamp.document_stamp_position_y * canvas.height) / 100, (this.activeStamp.document_stamp_position_width * canvas.width) / 100,
-            (this.activeStamp.document_stamp_position_height * canvas.height) / 100])
+            (this.activeStamp.document_stamp_position_y * canvas.height) / 100, (this.activeStamp.document_stamp_width * canvas.width) / 100,
+            (this.activeStamp.document_stamp_height * canvas.height) / 100])
         } else if (this.jcrop) {
-          this.jcrop.destroy()
+          this.destroyJcrop()
           this.jcrop = null
           this.jcropActive = false
         }
@@ -251,8 +255,9 @@ export default {
         const canvas = document.getElementById('canvas')
         activeStamp.document_stamp_position_x = 100 * (this.jcrop.active.pos.x / canvas.width)
         activeStamp.document_stamp_position_y = 100 * (this.jcrop.active.pos.y / canvas.height)
-        activeStamp.document_stamp_position_width = 100 * (this.jcrop.active.pos.w / canvas.width)
-        activeStamp.document_stamp_position_height = 100 * (this.jcrop.active.pos.h / canvas.height)
+        activeStamp.document_stamp_width = 100 * (this.jcrop.active.pos.w / canvas.width)
+        activeStamp.document_stamp_height = 100 * (this.jcrop.active.pos.h / canvas.height)
+        delete activeStamp.delete
       }
     },
     getDocumentLink,
@@ -265,9 +270,9 @@ export default {
       this.savePosition(this.page)
     },
     destroyJcrop() {
-      console.log(this.$refs.target.children.length, this.$refs.target.children)
-      for (let i = 0; i < this.$refs.target.children.length; i++) {
-        const child = this.$refs.target.children[i]
+      const childrens = Array.from(this.$refs.target.children)
+      for (let i = 0; i < childrens.length; i++) {
+        const child = childrens[i]
         console.log(child, i)
         if (child.tagName !== 'CANVAS') child.remove()
       }
@@ -290,7 +295,7 @@ export default {
     },
     * sequenceGenerator(minVal, maxVal) {
       let currVal = minVal
-      while (currVal < maxVal) {
+      while (currVal <= maxVal) {
         yield currVal++
       }
     },

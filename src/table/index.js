@@ -3347,6 +3347,7 @@ export default {
         entityForm: 'columnx_board_rel',
         entity: 'frontend_column_list',
         primaryKey: 'column_id',
+        view: false,
         fields: [
           {
             key: 'column_id', type: 'list', list: 'columnx', alwaysNew: true, onlyForm: true,
@@ -3378,6 +3379,7 @@ export default {
       { key: 'column_name' },
       { key: 'column_description', type: 'textarea' },
       { key: 'column_is_qualitygate', type: 'boolean' },
+      { key: 'column_has_stamp', type: 'boolean' },
       {
         key: 'default_value_id', type: 'list', list: 'defaultvalue', alwaysNew: true, onlyForm: true,
       },

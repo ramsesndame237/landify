@@ -20,52 +20,8 @@ const axiosFileIns = axios.create({
   headers: { 'Content-Type': 'multipart/form-data', Authorization: 'Bearer johndoe@example.com' },
 })
 
-axiosIns.interceptors.response.use(response => response,
-  error => {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    const { $vue } = window
-    if (error.response) {
-      if (error.response.status === 403) {
-        $vue.$errorToast($vue.$t('general.unauthorized'))
-      } else if (error.response.status === 503) {
-        $vue.$errorToast($vue.$t('general.server_down'))
-      }
-    }
-
-    // Do something with response error
-    return Promise.reject(error)
-  })
-
 Vue.prototype.$http = axiosIns
-Vue.prototype.$api = data => {
-  return axiosIns.post(`/api/?${data.entity}`, { a: data })
-    .catch(error => {
-      // if (data.entity !== '1__log' && error.response?.status !== 401) {
-      //   console.log('my error', error)
-      //   const userEmail = localStorage.getItem('userEmail')
-      //   axiosIns.post('/api/?log', {
-      //     a: {
-      //       action: 'create',
-      //       entity: '1__log',
-      //       data: [
-      //         {
-      //           log_json_request: data,
-      //           log_timestamp: moment().format('YYYY-MM-DD HH:mm'),
-      //           log_json: {
-      //             user_email: userEmail,
-      //             url: window.location.href,
-      //             status: error.response?.status,
-      //             response: error.response?.data,
-      //             message: error.message,
-      //           },
-      //         },
-      //       ],
-      //     },
-      //   })
-      // }
-      return Promise.reject(error)
-    })
-}
+Vue.prototype.$api = data => axiosIns.post(`/api/?${data.entity}`, { a: data })
 Vue.prototype.$upload = data => axiosFileIns.post('/uploadxlsx/', data)
 
 export default axiosIns

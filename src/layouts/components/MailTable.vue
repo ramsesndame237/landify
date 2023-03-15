@@ -35,7 +35,7 @@
       <!--      <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"-->
       <!--                       :disabled="disabled" @change="onSelect(data.index)"/>-->
       <!--    </template>-->
-      <template v-for="(item,idx) in filteredEmail">
+      <template v-for="(item,idx) in items">
         <b-tbody :key="idx">
           <mail-tr :item="item" @show-content="showMailContent(item)" @classify="classify(item)"
                    @reject="reject(item)"/>
@@ -47,7 +47,7 @@
           </b-tbody>
         </transition>
       </template>
-      <b-tbody v-if="filteredEmail.length===0">
+      <b-tbody v-if="items.length===0">
         <b-tr>
           <b-td colspan="14" class="text-center">
             No Data available
@@ -162,20 +162,17 @@ export default {
     },
   },
   watch: {
-    currentItems: {
-      deep: true,
-      handler() {
-        // if (this.currentItems.length === 0) return
-        // if (this.currentItems.filter(item => !item.__selected).length === 0) this.selected = true
-        // else if (this.currentItems.filter(item => item.__selected).length === 0) this.selected = false
-
-      },
+    perPage() {
+      this.fetch()
     },
-    selected() {
-      this.selectAll()
+    currentPage() {
+      this.fetch()
     },
-    items() {
-      this.currentItems = this.items
+    search() {
+      this.fetch()
+    },
+    filterValue() {
+      this.fetch()
     },
   },
   async mounted() {
@@ -292,6 +289,8 @@ export default {
           updateTicketList = true
         }
 
+        const master_ticket_id = item.ticket_id || ticket_id
+
         if (item.document_id) {
           success = (await this.$api({
             action: 'update',
@@ -311,7 +310,7 @@ export default {
             action: 'create',
             entity: 'document_ticket_rel',
             data: [{
-              ticket_id: item.ticket_id || ticket_id,
+              ticket_id: master_ticket_id,
               document_id: item.document_id,
             }],
           })
@@ -321,17 +320,15 @@ export default {
             action: 'create',
             entity: 'email_ticket_rel',
             data: [{
-              ticket_id: item.ticket_id || ticket_id,
+              ticket_id: master_ticket_id,
               email_id: item.email_id,
             }],
           })
         }
         if (success) {
           if (item.document_id) this.$set(item, 'ticket_created', true)
-          else {
-            this.$set(item, 'ticket_id_created', ticket_id)
-          }
-          if (!item.ticket_id) this.$set(item, 'ticket_id', ticket_id)
+          this.$set(item, 'ticket_id_created', master_ticket_id)
+          if (item.ticket_id) this.$set(item, 'subticket_id_created', ticket_id)
           this.$successToast('Ticket Created')
         } else {
           this.$errorToast('Error, Please try again')
@@ -384,10 +381,15 @@ export default {
     async fetchList() {
       this.loading = true
       try {
-        await Promise.all([
-          'frontend_6_1_6_overview', 'frontend_2_1_3_8', 'frontend_4_2_1_contract_selector',
-          'board', 'documenttype', 'documenttype_board_grp',
-        ].map(list => this.$store.dispatch('table/fetchList', { entity: list })))
+        const { data } = await this.$http.get('/classifications/email/data')
+        await this.$store.dispatch('table/setListData', { entity: 'frontend_6_1_6_overview', data: data.ticket })
+        await this.$store.dispatch('table/setListData', { entity: 'frontend_2_1_3_8', data: data.pos })
+        await this.$store.dispatch('table/setListData', {
+          entity: 'frontend_4_2_1_contract_selector',
+          data: data.contract,
+        })
+        await this.$store.dispatch('table/setListData', { entity: 'board', data: data.board })
+        await this.$store.dispatch('table/setListData', { entity: 'documenttype', data: data.documenttype })
       } finally {
         this.loading = false
       }
@@ -417,17 +419,14 @@ export default {
     },
     async fetch() {
       const payload = {
-        action: 'read-rich',
-        entity: 'email',
-        attributes: ['email_id', 'email_subject', 'email_to', 'email_sent_datetime', 'email_received_datetime'],
-        order_by: this.sortBy,
-        order_dir: this.sortDesc ? 'DESC' : 'ASC',
-        per_page: this.perPage === 0 ? 1000000 : this.perPage,
-        from: 0,
-        current_page: this.currentPage,
-        filter_all: this.filter ?? '',
+        // order_by: this.sortBy,
+        // order_dir: this.sortDesc ? 'DESC' : 'ASC',
+        size: this.perPage === 0 ? 1000000 : this.perPage,
+        page: this.currentPage,
+        query: this.search,
         lang: this.$i18n.locale,
-        data: [{ email_to: 'zelos@seybold-fm.com,' }],
+        filter: this.filterValue,
+        // data: [{ email_to: 'zelos@seybold-fm.com,' }],
       }
       // retrieve from cache
       const cacheKey = this.getCacheKey(payload)
@@ -438,12 +437,12 @@ export default {
       // }
       if (this.loading) return
       this.loading = true
-      return this.$api(payload)
+      return this.$http.get('/classifications/email/', { params: payload })
         .then(async ({ data }) => {
           console.log(data)
           const items = await this.processData(data)
           // set in cache
-          this.$store.commit('table/setTableCache', { key: cacheKey, data })
+          // this.$store.commit('table/setTableCache', { key: cacheKey, data })
           return items
         })
         .catch(e => {
@@ -460,12 +459,44 @@ export default {
       return `${this.entity}-${JSON.stringify(payload)}`
     },
     async processData(data) {
-      this.$emit('update:totalRows', data.data.links.pagination.total)
-      data.data.data.forEach(el => {
+      this.$emit('update:totalRows', data.total)
+      data.items.forEach(el => {
         el.__selected = false
       })
+      const items = data.items
+      items.forEach(item => {
+        item.open = false
+        item.documents.forEach(document => {
+          document.email_subject = item.email_subject
+          document.email_id = item.email_id
+        })
+        // process ticket data
+        if (!item.email_subject) return
+        const id = item.email_subject.match(/^#\d+/g)
+        if (id) {
+          const ticket_id = parseInt(id[0].substr(1))
+          const list = this.$store.state.table.listCache.frontend_6_1_6_overview
+          const el = list.find(e => e.ticket_id === ticket_id)
+          if (el) {
+            if (!item.ticket_id) {
+              item.ticket_id = el.ticket_id
+              item.pos_id = el.pos_id
+              item.contract_id = el.contract_id
+            }
+            item.documents.forEach(document => {
+              if (!document.ticket_id) {
+                document.ticket_id = el.ticket_id
+                document.pos_id = el.pos_id
+                document.contract_id = el.contract_id
+              }
+            })
+          }
+        }
+      })
+      this.items = items
+      return this.items
+
       // this.$store.commit('table/setDefinition', { data, table: this.table })
-      const items = data.data.data
       const filterData = items.map(i => ({ email_id: i.email_id }))
       const email_documents = (await this.$api({
         action: 'read-rich',
@@ -507,27 +538,9 @@ export default {
           if (cl.ticket_id_group) item.ticket_id = cl.ticket_id_group
           // Object.keys(cl).forEach(k => (item[k] = cl[k]))
         }
-        // process ticket data
-        const id = item.email_subject.match(/^#\d+/g)
-        if (id) {
-          const ticket_id = parseInt(id[0].substr(1))
-          const list = this.$store.state.table.listCache.frontend_6_1_6_overview
-          const el = list.find(e => e.ticket_id === ticket_id)
-          if (el) {
-            item.ticket_id = el.ticket_id
-            item.pos_id = el.pos_id
-            item.contract_id = el.contract_id
-            item.documents.forEach(document => {
-              document.ticket_id = el.ticket_id
-              document.pos_id = el.pos_id
-              document.contract_id = el.contract_id
-            })
-          }
-        }
+
       })
-      this.items = items
-      // .filter(d => !d.ticket_created)
-      return this.items
+
     },
     selectAll() {
       const newVal = this.selected

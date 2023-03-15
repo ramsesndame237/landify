@@ -1,5 +1,5 @@
 <template>
-  <b-tr>
+  <b-tr @click="display">
     <b-td @click="toggle">
       <feather-icon v-if="item.documents && item.documents.length>0" v-b-toggle="'collapse-'+item.email_id"
                     :icon="item.open?'ChevronDownIcon':'ChevronRightIcon'" size="24"/>
@@ -16,7 +16,7 @@
       <field v-if="visible" :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/>
       <router-link v-if="is_done" target="_blank"
                    :to="{name: 'table-view', params: {table: 'ticket',id: item.ticket_id}}">
-        {{ item.ticket_id + ' - ' + getTicketName() }}
+        {{ item.ticket_id_created + ' - ' + getTicketName() }}
       </router-link>
     </b-td>
     <b-td class="td-form">
@@ -164,6 +164,9 @@ export default {
     this.onTicketIdChange()
   },
   methods: {
+    display() {
+      console.log(this.item)
+    },
     getDocumentLink,
     toggle() {
       if (!this.item.documents || !this.item.documents.length) return
@@ -188,7 +191,7 @@ export default {
     },
     getTicketName() {
       const list = this.$store.state.table.listCache['frontend_6_1_6_overview']
-      const el = list.find(e => e.ticket_id === this.item.ticket_id)
+      const el = list.find(e => e.ticket_id === this.item.ticket_id_created)
       return el?.ticket_name
     },
     getPosName() {
@@ -212,11 +215,11 @@ export default {
       return el?.documenttype_name
     },
     onDocumentTypeChange() {
-      console.log("documenttype change");
+      console.log("documenttype change")
       if (this.item.ticket_id) return
       const val = this.item.documenttype_id
       if (val) {
-        const list = this.$store.state.table.listCache['documenttype_board_grp']
+        const list = this.$store.state.table.listCache['board']
         if (!list) return
         const el = list.find(e => e.documenttype_id === val)
         if (el) {
