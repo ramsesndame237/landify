@@ -6,7 +6,6 @@ on:
     
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
   
 jobs:
 
@@ -51,7 +50,7 @@ jobs:
           file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.branch-name.outputs.current_branch }}
+          tags: ${{ env.REGISTRY }}/digitalsuxess/kimpro_frontend:${{ steps.branch-name.outputs.current_branch }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
