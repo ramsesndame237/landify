@@ -6,7 +6,7 @@ on:
     
 env:
   REGISTRY: registry.gitlab.com
-  IMAGE_NAME: kevmaxsarl/digital-suxess-ag/zelos/api
+  IMAGE_NAME: kevmaxsarl/digital-suxess-ag/zelos/frontend
   
 jobs:
 
