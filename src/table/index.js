@@ -410,7 +410,6 @@ export default {
     fields: [
       { key: 'customergroup_id', auto: true },
       { key: 'customergroup_name' },
-      { key: 'customergroup_is_internal', type: 'boolean' },
       {
         key: 'customergroup_description', hideOnIndex: true, type: 'textarea', required: false,
       },
@@ -442,6 +441,8 @@ export default {
         entityForm: 'contactperson_customergroup_rel',
         entityView: 'contactperson',
         update: false,
+        // change from franck
+        create: false,
         formComponent: () => import('@/views/app/FormComponent/CustomerGroupContactPerson.vue'),
         fields: [
           {
@@ -453,6 +454,7 @@ export default {
             alwaysNew: true,
             onlyForm: true,
           },
+          { key: 'company_name', hideOnForm: true },
           { key: 'contactperson_lastname', sortable: true, hideOnForm: true },
           { key: 'contactperson_firstname', sortable: true, hideOnForm: true },
           { key: 'contactsalutation_name', sortable: true, hideOnForm: true },
@@ -1060,6 +1062,7 @@ export default {
     fields: [
       { key: 'partnergroup_id', auto: true },
       { key: 'partnergroup_name' },
+      { key: 'partnergroup_is_internal', type: 'boolean' },
       // { key: 'partnertype_name', hideOnForm: true },
       // {
       //   key: 'partnertype_id', hideOnIndex: true, type: 'list', list: 'partnertype', listLabel: 'partnertype_name',

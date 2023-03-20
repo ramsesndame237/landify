@@ -455,19 +455,27 @@ export default {
           document.email_id = item.email_id
           if (!document.classification_id) {
             // fix classification
-            const c = (await this.$api({
+            let classification = (await this.$api({
+              action: 'create',
+              entity: 'classification',
+              data: [
+                {},
+              ],
+            })).data.data.data[0][0]
+
+            let relData = (await this.$api({
               action: 'create',
               entity: 'classification_document_classficationtype_rel',
               data: [
                 {
                   document_id: document.document_id,
-                  // documenttype_id: item.documenttype_id,
-                  // ticket_id,
+                  classification_id: classification.classification_id,
                   ticket_created: 0,
+                  documenttype_id: 0,
                 },
               ],
-            })).data.data.data[0]
-            document.classification_id = c.classification_id
+            })).data.data.data[0][0]
+            this.$set(document, 'classification_id', classification.classification_id)
           }
         })
         // process ticket data

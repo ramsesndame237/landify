@@ -237,6 +237,6 @@ export default {
 .td-form {
   padding-left: 4px !important;
   padding-right: 4px !important;
-  min-width: 150px;
+  min-width: 250px;
 }
 </style>
