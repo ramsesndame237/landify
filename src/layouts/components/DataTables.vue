@@ -106,7 +106,7 @@ export default {
     },
     allFields() {
       return [
-        ...(this.selectable ? [{ key: '__selected' }] : []),
+        ...(this.selectable ? [{ key: '__selected', thStyle: { width: '50px' } }] : []),
         ...(this.withActions ? [{
           key: 'Actions',
           stickyColumn: true,
