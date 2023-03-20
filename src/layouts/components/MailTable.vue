@@ -450,12 +450,24 @@ export default {
       const items = data.items
       items.forEach(item => {
         item.open = false
-        item.documents.forEach(document => {
+        item.documents.forEach(async document => {
           document.email_subject = item.email_subject
           document.email_id = item.email_id
           if (!document.classification_id) {
             // fix classification
-
+            const c = (await this.$api({
+              action: 'create',
+              entity: 'classification_document_classficationtype_rel',
+              data: [
+                {
+                  document_id: document.document_id,
+                  // documenttype_id: item.documenttype_id,
+                  // ticket_id,
+                  ticket_created: 0,
+                },
+              ],
+            })).data.data.data[0]
+            document.classification_id = c.classification_id
           }
         })
         // process ticket data

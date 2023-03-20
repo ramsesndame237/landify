@@ -106,16 +106,15 @@ export default {
     },
     allFields() {
       return [
+        ...(this.selectable ? [{ key: '__selected' }] : []),
         ...(this.withActions ? [{
           key: 'Actions',
           stickyColumn: true,
           tdClass: 'p-0',
           label: this.$t('attribute.general_actions'),
           variant: 'light',
-          thStyle: { width: '80px' }
+          thStyle: { width: '80px' },
         }] : []),
-
-        ...(this.selectable ? [{ key: '__selected' }] : []),
         ...this.fields.filter(f => !f.hideOnIndex).map(field => {
           if (typeof field === 'string') field = { key: field }
           const newField = { label: this.$t('attribute.' + field.key), sortable: true, ...field }
