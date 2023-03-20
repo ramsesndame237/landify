@@ -410,6 +410,7 @@ export default {
     fields: [
       { key: 'customergroup_id', auto: true },
       { key: 'customergroup_name' },
+      { key: 'customergroup_is_internal', type: 'boolean' },
       {
         key: 'customergroup_description', hideOnIndex: true, type: 'textarea', required: false,
       },

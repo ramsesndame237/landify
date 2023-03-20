@@ -182,7 +182,7 @@ export default {
             entity: 'document_stamp',
             data,
           })).data.data.data.forEach(result => {
-            console.log(result);
+            console.log(result)
             data.find(d => d.document_stamp_page === result[0].document_stamp_page).document_stamp_id = result.document_stamp_id
           })
           update = true

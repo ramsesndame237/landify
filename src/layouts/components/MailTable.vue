@@ -396,25 +396,6 @@ export default {
         this.loading = false
       }
     },
-    onViewClick(data) {
-      if (this.onViewElement) {
-        this.onViewElement(this.currentItems[data.index])
-        return
-      }
-      const routeData = {
-        name: 'table-view',
-        params: {
-          table: this.entityView || this.entity,
-          id: this.currentItems[data.index][this.primaryKey],
-          entity: this.currentItems[data.index],
-          ids: this.currentItems.map(i => i[this.primaryKey]),
-        },
-      }
-      if (this.blankLink) {
-        const route = this.$router.resolve(routeData)
-        window.open(route.href, '_blank')
-      } else this.$router.push(routeData)
-    },
     async refresh() {
       if (this.loading) return
       await this.fetch()
@@ -472,6 +453,10 @@ export default {
         item.documents.forEach(document => {
           document.email_subject = item.email_subject
           document.email_id = item.email_id
+          if (!document.classification_id) {
+            // fix classification
+
+          }
         })
         // process ticket data
         if (!item.email_subject) return
@@ -498,52 +483,6 @@ export default {
       })
       this.items = items
       return this.items
-
-      // this.$store.commit('table/setDefinition', { data, table: this.table })
-      const filterData = items.map(i => ({ email_id: i.email_id }))
-      const email_documents = (await this.$api({
-        action: 'read-rich',
-        attribute: ['email_id', 'document_id', 'document_name'],
-        entity: 'email_document_grp',
-        per_page: 1000000,
-        data: filterData,
-      })).data.data.data
-      const email_classfications = (await this.$api({
-        action: 'read-rich',
-        entity: 'frontend_email_ticketcreated',
-        // entity: 'email_ticket_rel',
-        per_page: 1000000,
-        data: filterData,
-      })).data.data.data
-      const document_classifications = (await this.$api({
-        action: 'read-rich',
-        entity: 'frontend_document_ticketcreated',
-        // entity: 'classification_document_classficationtype_rel',
-        per_page: 1000000,
-        data: _.uniqBy(email_documents, 'document_id').filter(i => i.document_id != null).map(ed => ({ document_id: ed.document_id })),
-      })).data.data.data
-      email_documents.forEach(item => {
-        const cl = document_classifications.find(c => c.document_id === item.document_id)
-        if (cl) {
-          Object.keys(cl).forEach(k => (item[k] = cl[k]))
-          if (cl.ticket_id_group) item.ticket_id = cl.ticket_id_group
-          console.log('set cl', item, cl)
-        }
-      })
-      items.forEach(item => {
-        item.open = false
-        const documents = email_documents.filter(d => d.email_id === item.email_id && d.document_id != null)
-        item.documents = documents.map(d => ({ email_id: item.email_id, ...d }))
-        const cl = email_classfications.find(c => c.email_id === item.email_id)
-        if (cl) {
-          item.ticket_id_created = cl.ticket_id
-          item.ticket_id = cl.ticket_id
-          if (cl.ticket_id_group) item.ticket_id = cl.ticket_id_group
-          // Object.keys(cl).forEach(k => (item[k] = cl[k]))
-        }
-
-      })
-
     },
     selectAll() {
       const newVal = this.selected
