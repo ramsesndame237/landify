@@ -28,6 +28,7 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
+            
       - 
         name: Get branch name
         id: branch-name
@@ -36,6 +37,7 @@ jobs:
       -
         name: Update env file
         run: cp ./${{ steps.branch-name.outputs.current_branch }}.env ./.env
+
 
       -
         name: Login to ghcr
