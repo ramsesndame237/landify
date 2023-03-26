@@ -35,7 +35,7 @@ export default class JwtService {
           // config.headers.Authorization = `${this.jwtConfig.tokenType} ${accessToken}`
           config.headers.Authorization = `${accessToken}`
         }
-        config.headers['Current-Language'] = store.state.app.lang
+        config.headers['Accept-Language'] = store.state.app.lang
         return config
       },
       error => Promise.reject(error),
