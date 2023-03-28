@@ -84,15 +84,20 @@ export default [
   },
   headerItem('masterdata'),
   {
-    title: key('accountdata'),
+    title: key('company_base'),
     children: [
       item('customergroup'),
       item('company'),
-      item('partnergroup'),
-      item('partnercompany'),
-      item('contactperson'),
     ],
   },
+  {
+    title: key('partnercompany_base'),
+    children: [
+      item('partnergroup'),
+      item('partnercompany'),
+    ],
+  },
+  item('contactperson'),
   {
     title: key('rentalsandcontracts'),
     children: [
@@ -165,6 +170,7 @@ export default [
     title: key('configurationinvoicecontradictiondata'),
     children: [
       item('costtype'),
+      item('textmodule'),
       // {
       //   title: key('costtypeabstract'),
       //   route: 'comming-soon',

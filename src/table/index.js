@@ -3080,6 +3080,21 @@ export default {
       },
     ],
   },
+  textmodule: {
+    create: false,
+    delete: false,
+    entity: 'textmodule_country_grp',
+    fields: [
+      { key: 'textmodule_id', auto: true },
+      { key: 'textmodule_name' },
+      { key: 'textmodule_description' },
+      { key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', hideOnIndex: true },
+      { key: 'country_name', hideOnForm: true },
+    ],
+    filters: [
+      { key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', required: false },
+    ],
+  },
   claimtype: {
     entity: 'frontend_4_8_1',
     fields: [
