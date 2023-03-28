@@ -1791,42 +1791,44 @@ export default {
             key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name',
           },
           { key: 'area_space_value', hideOnForm: true },
+          { key: 'areatype_name', hideOnForm: true },
           { key: 'pos_name', hideOnForm: true },
-          { key: 'contract_name', hideOnForm: true },
-          { key: 'contract_area_unit_usagetype_rentalspace_value', hideOnForm: true },
-          { key: 'contract_area_unit_usagetype_allocationspace_value', hideOnForm: true },
-          { key: 'unit_name', hideOnForm: true },
-          { key: 'usagetype_name', hideOnForm: true },
-          { key: 'contract_area_unit_usagetype_valid_from_date', type: 'date', hideOnForm: true },
-          { key: 'contract_area_unit_usagetype_valid_to_date', type: 'date', hideOnForm: true },
+          { key: 'company_name', hideOnForm: true },
+          // { key: 'contract_name', hideOnForm: true },
+          // { key: 'contract_area_unit_usagetype_rentalspace_value', hideOnForm: true },
+          // { key: 'contract_area_unit_usagetype_allocationspace_value', hideOnForm: true },
+          // { key: 'unit_name', hideOnForm: true },
+          // { key: 'usagetype_name', hideOnForm: true },
+          // { key: 'contract_area_unit_usagetype_valid_from_date', type: 'date', hideOnForm: true },
+          // { key: 'contract_area_unit_usagetype_valid_to_date', type: 'date', hideOnForm: true },
         ],
       },
-      {
-        title: 'Service Objects',
-        entity: 'frontend_3_3_3_2',
-        entityView: 'serviceobject',
-        create: false,
-        delete: false,
-        update: false,
-        primaryKey: 'serviceobject_id',
-        fields: [
-          {
-            key: 'serviceobject_id',
-            type: 'list',
-            list: 'serviceobject',
-            alwaysNew: true,
-            onlyForm: true,
-          },
-          { key: 'serviceobject_id', hideOnForm: true },
-          { key: 'serviceobject_name', hideOnForm: true },
-          { key: 'serviceobject_external_name', hideOnForm: true },
-          { key: 'serviceobjecttype_name', hideOnForm: true },
-          { key: 'serviceobject_description', type: 'textarea', hideOnForm: true },
-          { key: 'area_id', hideOnForm: true },
-          { key: 'area_name' },
-          { key: 'areatype_name' },
-        ],
-      },
+      // {
+      //   title: 'Service Objects',
+      //   entity: 'frontend_3_3_3_2',
+      //   entityView: 'serviceobject',
+      //   create: false,
+      //   delete: false,
+      //   update: false,
+      //   primaryKey: 'serviceobject_id',
+      //   fields: [
+      //     {
+      //       key: 'serviceobject_id',
+      //       type: 'list',
+      //       list: 'serviceobject',
+      //       alwaysNew: true,
+      //       onlyForm: true,
+      //     },
+      //     { key: 'serviceobject_id', hideOnForm: true },
+      //     { key: 'serviceobject_name', hideOnForm: true },
+      //     { key: 'serviceobject_external_name', hideOnForm: true },
+      //     { key: 'serviceobjecttype_name', hideOnForm: true },
+      //     { key: 'serviceobject_description', type: 'textarea', hideOnForm: true },
+      //     { key: 'area_id', hideOnForm: true },
+      //     { key: 'area_name' },
+      //     { key: 'areatype_name' },
+      //   ],
+      // },
       {
         title: 'Partner Companies',
         entity: 'frontend_3_3_3_3',
@@ -1939,10 +1941,6 @@ export default {
           { key: 'contract_area_unit_usagetype_valid_to_date', hideOnForm: true },
           { key: 'usagetype_name', hideOnForm: true },
           {
-            key: 'contract_area_unit_usagetype_detail_description', hideOnIndex: true,
-          },
-
-          {
             key: 'usagetype_id',
             sortable: true,
             type: 'list',
@@ -1952,10 +1950,7 @@ export default {
             composite: true,
           },
           {
-            key: 'contract_area_unit_usagetype_rentalspace_value', type: 'number', hideOnIndex: true,
-          },
-          {
-            key: 'contract_area_unit_usagetype_allocationspace_value', type: 'number', hideOnIndex: true,
+            key: 'contract_area_unit_usagetype_detail_description',type: 'textarea', hideOnIndex: true,
           },
           {
             key: 'unit_id',
@@ -1965,9 +1960,10 @@ export default {
             listLabel: 'unit_name',
             hideOnIndex: true,
             composite: true,
+            disabled: true,
           },
           {
-            key: 'contract_area_unit_usagetype_mainusage', type: 'boolean',
+            key: 'contract_area_unit_usagetype_rentalspace_value', type: 'number', hideOnIndex: true,
           },
           {
             key: 'contract_area_unit_usagetype_valid_from_date', type: 'date', disableOnUpdate: true, hideOnIndex: true,
@@ -1975,7 +1971,17 @@ export default {
           {
             key: 'contract_area_unit_usagetype_valid_to_date', type: 'date', hideOnIndex: true,
           },
+          {
+            key: 'contract_area_unit_usagetype_allocationspace_value', type: 'number', hideOnIndex: true,
+          },
+          {
+            key: 'contract_area_unit_usagetype_mainusage', type: 'boolean',
+          },
+
         ],
+        default: {
+          unit_id: 1,
+        },
       },
       {
         entity: 'frontend_3_4_3_11',
