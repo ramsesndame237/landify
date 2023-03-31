@@ -21,6 +21,9 @@ import '@/libs/toastification'
 import '@/libs/sweet-alerts'
 import '@/auth/jwt/useJwt'
 
+import ability from '@/libs/acl'
+import { defineRules } from "@/libs/acl/ability";
+
 // Vee validate
 Vue.component('validation-provider', ValidationProvider)
 Vue.component('validation-observer', ValidationObserver)
@@ -92,9 +95,6 @@ Vue.config.productionTip = false
 const userEmail = localStorage.getItem('userEmail')
 
 async function init() {
-  // load acl after userdata is loaded
-  require('@/libs/acl')
-
   try {
     let data = localStorage.getItem('app-data')
     try {
@@ -124,7 +124,10 @@ async function init() {
 
 if (userEmail) {
   store.dispatch('app/fetchUserData', userEmail)
-    .finally(init)
+    .finally(() => {
+      ability.update(defineRules())
+      return init()
+    })
 } else {
   init()
 }

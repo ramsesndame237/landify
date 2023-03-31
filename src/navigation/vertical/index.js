@@ -88,6 +88,9 @@ export default [
     children: [
       item('customergroup'),
       item('company'),
+      item('pos'),
+      item('area'),
+
     ],
   },
   {
@@ -101,9 +104,7 @@ export default [
   {
     title: key('rentalsandcontracts'),
     children: [
-      item('pos'),
       item('contract'),
-      item('area'),
       item('location'),
       item('payment'),
       item('serviceobject'),

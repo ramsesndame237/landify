@@ -41,7 +41,7 @@
           <!--                    class="badge-minimal" badge-variant="success"/>-->
           <div class="d-sm-flex d-none user-nav">
             <p class="user-name font-weight-bolder mb-0">
-              {{ userData.user.user_email }}
+              {{ userData.user_email }}
               <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M6 7L0.803848 0.25H11.1962L6 7Z" fill="#888888"/>
               </svg>
@@ -50,7 +50,7 @@
         </template>
 
         <b-dropdown-item link-class="d-flex align-items-center"
-                         :to="{name: 'table-view', params: {table: 'user', id: userData.user.user_id}}">
+                         :to="{name: 'table-view', params: {table: 'user', id: userData.user_id}}">
           <feather-icon size="16" icon="UserIcon" class="mr-50"/>
           <span> {{ $t('header~profile') }} </span>
         </b-dropdown-item>
@@ -112,7 +112,7 @@ export default {
   },
   data() {
     return {
-      userData: JSON.parse(localStorage.getItem('userData'))
+      userData: JSON.parse(localStorage.getItem('userData')),
     }
   },
   methods: {

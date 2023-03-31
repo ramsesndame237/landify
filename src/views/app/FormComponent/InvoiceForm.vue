@@ -2,7 +2,7 @@
   <validation-observer ref="form" v-slot="{ passes }">
     <b-form @submit.prevent="passes(submit)">
       <b-row>
-        <b-col cols="7">
+        <b-col cols="6">
           <b-row>
             <b-col cols="12" class="d-flex justify-content-between">
               <span class="text-uppercase">Ticket_id</span>
@@ -73,7 +73,7 @@
             </b-col>
           </b-row>
         </b-col>
-        <b-col cols="5">
+        <b-col cols="6">
           <div class="d-flex justify-content-between align-items-center flex-wrap mb-1">
             <span>Select respective contract to area</span>
             <b-form-input debounce="500" id="filterInput" v-model="search" type="search" class="w-auto"

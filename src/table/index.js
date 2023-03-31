@@ -1873,7 +1873,7 @@ export default {
   contract: {
     entity: 'frontend_3_4_1_1',
     fields: [
-      { key: 'contract_id', auto: true },
+      { key: 'contract_id', auto: true, hideOnIndex: true },
       { key: 'contract_name' },
       { key: 'contracttype_name', hideOnForm: true },
       { key: 'location_name', hideOnForm: true },
@@ -1950,7 +1950,7 @@ export default {
             composite: true,
           },
           {
-            key: 'contract_area_unit_usagetype_detail_description',type: 'textarea', hideOnIndex: true,
+            key: 'contract_area_unit_usagetype_detail_description', type: 'textarea', hideOnIndex: true,
           },
           {
             key: 'unit_id',
@@ -2713,29 +2713,29 @@ export default {
       },
     ],
     relations: [
-      {
-        title: 'headline~invoice~tab~contract_document',
-        entity: 'frontend_4_2_1_bottom',
-        entityForm: 'document',
-        primaryKey: 'document_id',
-        create: false,
-        delete: false,
-        fields: [
-          {
-            key: 'invoice_id',
-            type: 'list',
-            relationEntity: 'document_invoice_rel',
-            hideOnForm: true,
-            hideOnIndex: true,
-          },
-          { key: 'document_name' },
-          { key: 'document_content' },
-          { key: 'document_entry_time', hideOnForm: true },
-        ],
-        default: {
-          document_mime_type: 'png',
-        },
-      },
+      // {
+      //   title: 'headline~invoice~tab~contract_document',
+      //   entity: 'frontend_4_2_1_bottom',
+      //   entityForm: 'document',
+      //   primaryKey: 'document_id',
+      //   create: false,
+      //   delete: false,
+      //   fields: [
+      //     {
+      //       key: 'invoice_id',
+      //       type: 'list',
+      //       relationEntity: 'document_invoice_rel',
+      //       hideOnForm: true,
+      //       hideOnIndex: true,
+      //     },
+      //     { key: 'document_name' },
+      //     { key: 'document_content' },
+      //     { key: 'document_entry_time', hideOnForm: true },
+      //   ],
+      //   default: {
+      //     document_mime_type: 'png',
+      //   },
+      // },
       {
         title: 'headline~invoice~tab~invoice_document',
         entityForm: 'document_invoice_rel',
@@ -3100,6 +3100,7 @@ export default {
     filters: [
       { key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', required: false },
     ],
+    filter_vertical: true,
   },
   claimtype: {
     entity: 'frontend_4_8_1',
