@@ -207,7 +207,7 @@ export default {
     },
   },
   async created() {
-    if (this.field.type === 'list') {
+    if (this.field.type === 'list' && !this.field.filter_key) {
       await this.fetchList()
     } else if (this.field.type === 'boolean') {
       // set false as default value
@@ -225,6 +225,11 @@ export default {
     this.$watch(`entity.${this.field.key}`, () => {
       this.onChange()
     })
+    if (this.field.filter_key) {
+      this.$watch(`entity.${this.field.filter_key}`, () => {
+        this.fetchList(true)
+      })
+    }
   },
   methods: {
     getFiles() {
@@ -295,9 +300,9 @@ export default {
       }
       return this.$refs.fields || this.$children[0].$children.filter(c => c.$options.name === 'Field')
     },
-    async fetchList() {
+    async fetchList(force) {
       if (this.field.noFetch) return
-      if (this.list.length === 0) this.loading = true
+      if (this.list.length === 0 || force) this.loading = true
       try {
         let { list } = this.field
         if (list === 'address') {
@@ -308,6 +313,9 @@ export default {
         const payload = { entity: this.field.entityList || list }
         if (this.field.onlyForm && this.entity[this.field.key]) {
           payload.data = [{ [this.field.key]: this.entity[this.field.key] }]
+        }
+        if (this.field.filter_key) {
+          payload.data = [{ [this.field.filter_key]: this.entity[this.field.filter_key] }]
         }
         this.list = await this.$store.dispatch('table/fetchList', payload)
         if (this.field.entityList) {

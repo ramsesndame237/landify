@@ -105,6 +105,7 @@ export default [
     title: key('rentalsandcontracts'),
     children: [
       item('contract'),
+      item('invoice'),
       item('location'),
       item('payment'),
       item('serviceobject'),
@@ -114,7 +115,6 @@ export default [
   {
     title: key('invoicesandcontradictions'),
     children: [
-      item('invoice'),
       item('invoiceposition'),
       item('inspectionresult'),
       item('trackrecord'),
