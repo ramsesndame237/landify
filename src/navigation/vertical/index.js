@@ -84,21 +84,28 @@ export default [
   },
   headerItem('masterdata'),
   {
-    title: key('accountdata'),
+    title: key('company_base'),
     children: [
       item('customergroup'),
       item('company'),
-      item('partnergroup'),
-      item('partnercompany'),
-      item('contactperson'),
+      item('pos'),
+      item('area'),
+
     ],
   },
   {
+    title: key('partnercompany_base'),
+    children: [
+      item('partnergroup'),
+      item('partnercompany'),
+    ],
+  },
+  item('contactperson'),
+  {
     title: key('rentalsandcontracts'),
     children: [
-      item('pos'),
       item('contract'),
-      item('area'),
+      item('invoice'),
       item('location'),
       item('payment'),
       item('serviceobject'),
@@ -108,7 +115,6 @@ export default [
   {
     title: key('invoicesandcontradictions'),
     children: [
-      item('invoice'),
       item('invoiceposition'),
       item('inspectionresult'),
       item('trackrecord'),
@@ -165,6 +171,7 @@ export default [
     title: key('configurationinvoicecontradictiondata'),
     children: [
       item('costtype'),
+      item('textmodule'),
       // {
       //   title: key('costtypeabstract'),
       //   route: 'comming-soon',
@@ -251,6 +258,12 @@ export default [
     title: key('translation'),
     action: 'menu~import',
     resource: 'menu',
-    route: table('1__translation_i18n'),
+    route: table('1__translation'),
+  },
+  {
+    title: key('attribute'),
+    action: 'menu~import',
+    resource: 'menu',
+    route: table('1__attribute_nice'),
   },
 ]

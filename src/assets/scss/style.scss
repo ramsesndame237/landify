@@ -53,3 +53,16 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 .b-table-sticky-header {
   max-height: 70vh !important;
 }
+
+.vs__selected-options {
+  flex-wrap: nowrap;
+  max-width: calc(100% - 25px); /* change this to `- 40px` if you're supporting a `clearable` field; I was not */
+}
+
+.vs__selected {
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  overflow: hidden;
+}

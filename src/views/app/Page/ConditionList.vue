@@ -156,7 +156,7 @@ export default {
             'comment_negotiation',
           ] : []),
           'comment',
-          { key: 'missing_documents', type: 'html' },
+          { key: 'missing_documents', type: 'html', export_key: 'missing_documents_export' },
           'state',
           'negotiator',
         ],
@@ -456,12 +456,13 @@ export default {
         tickets = _.groupBy(tickets, 'contract_id')
 
         contracts.forEach(contract => {
-          contract.missing_documents = _(tickets[contract.contract_id]).uniqBy('ticket_id').map('ticket_id')
-            .map(id => {
-              const route = this.$router.resolve({ name: 'table-view', params: { table: 'ticket', id } })
-              return `<a target="_blank" href="${route.href}">${id}</a>`
-            })
+          const ticket_ids = _(tickets[contract.contract_id]).uniqBy('ticket_id').map('ticket_id')
+          contract.missing_documents = ticket_ids.map(id => {
+            const route = this.$router.resolve({ name: 'table-view', params: { table: 'ticket', id } })
+            return `<a target="_blank" href="${route.href}">${id}</a>`
+          })
             .join('<br>')
+          contract.missing_documents_export = ticket_ids.join(', ')
 
           if (this.table === 'deadlines') {
             const ticket = _(tickets[contract.contract_id]).filter(t => t.board_name === 'contradictionpackage-Kanban-Board')

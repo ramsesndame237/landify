@@ -1,5 +1,5 @@
 <template>
-  <b-table sticky-header :title="entityList||entity" ref="table" striped hover responsive :busy.sync="loading"
+  <b-table ref="table" sticky-header :title="entityList||entity" striped hover responsive :busy.sync="loading"
            :per-page="perPage" :current-page="currentPage" :items="items || provider" :fields="allFields"
            :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" :filter="search" select-mode="multi"
            @row-clicked="onRowClicked">
@@ -17,12 +17,12 @@
       <a v-else-if="data.field.type==='download'" target="_blank" :href="data.field.getLink(data.item)">
         {{ data.field.btnLabel }}
       </a>
-      <div v-else-if="data.field.type==='html'" v-html="data.value"></div>
+      <div v-else-if="data.field.type==='html'" v-html="data.value"/>
       <span v-else>{{ data.value }}</span>
     </template>
     <template #head(__selected)>
       <b-form-checkbox v-if="multiSelect" v-model="selected" :disabled="disabled"/>
-      <span v-else></span>
+      <span v-else/>
     </template>
 
     <template v-if="withActions" #cell(Actions)="data">
@@ -37,8 +37,8 @@
           <feather-icon icon="EditIcon"/>
           <!--        <span>{{ $t('button~edit') }}</span>-->
         </b-button>
-        <b-button v-if="withDelete && canDelete" class="btn-icon" variant="flat-primary" style="margin-bottom: 3px"
-                  @click="deleteElement(data.index)" pill>
+        <b-button v-if="withDelete && canDelete" class="btn-icon" variant="flat-primary" style="margin-bottom: 3px" pill
+                  @click="deleteElement(data.index)">
           <feather-icon icon="Trash2Icon"/>
           <!--        <span>{{ $t('button~delete') }}</span>-->
         </b-button>
@@ -48,9 +48,7 @@
 </template>
 
 <script>
-import {
-  BTable, BButton, BFormCheckbox,
-} from 'bootstrap-vue'
+import { BButton, BFormCheckbox, BTable, } from 'bootstrap-vue'
 
 export default {
   components: {
@@ -106,23 +104,19 @@ export default {
     },
     allFields() {
       return [
+        ...(this.selectable ? [{ key: '__selected', thStyle: { width: '50px' } }] : []),
         ...(this.withActions ? [{
           key: 'Actions',
           stickyColumn: true,
           tdClass: 'p-0',
           label: this.$t('attribute.general_actions'),
           variant: 'light',
-          thStyle: { width: '80px' }
+          thStyle: { width: '80px' },
         }] : []),
-
-        ...(this.selectable ? [{ key: '__selected' }] : []),
-        ...this.fields.filter(f => !f.hideOnIndex).map(field => {
-          if (typeof field === 'string') field = { key: field }
-          const newField = { label: this.$t('attribute.' + field.key), sortable: true, ...field }
-          // if (newField.type === 'list') {
-          //   newField.key = newField.listLabel
-          // }
-          return newField
+        ...this.fields.filter(f => !f.hideOnIndex && !f.auto).map(field => {
+          let newField = field
+          if (typeof field === 'string') newField = { key: field }
+          return { label: this.$t(`attribute.${newField.key}`), sortable: true, ...newField }
         }),
       ]
     },
@@ -221,7 +215,7 @@ export default {
         })
     },
     getCacheKey(payload) {
-      return this.entity + '-' + JSON.stringify(payload)
+      return `${this.entity}-${JSON.stringify(payload)}`
     },
     processData(data) {
       this.$emit('update:totalRows', data.data.links.pagination.total)
@@ -295,11 +289,11 @@ export default {
           }
 
           const count = resp.data.data.rowcount
-          if (count > 0) this.$successToast(`${count} Element(s) where deleted`)
-          else this.$errorToast(`${count} Element(s) where deleted`)
+          if (count > 0) this.$successToast(`${count} Element${count > 1 ? 's' : ''} were deleted`)
+          else this.$errorToast(`${count} Element${count > 1 ? 's' : ''} were deleted`)
           // this.$successToast(this.$t(entities.length > 1 ? 'notification.elements_deleted' : 'notification.element_deleted'))
-          this.$store.commit('table/deleteTableCacheKeyFromPrefix', this.entity + '-')
-          // if all elements where deleted, go to page 1
+          this.$store.commit('table/deleteTableCacheKeyFromPrefix', `${this.entity}-`)
+          // if all elements were deleted, go to page 1
           if (this.currentItems.length === count) {
             this.$emit('update:currentPage', 1)
           }
@@ -339,14 +333,13 @@ export default {
     },
     downloadCsv() {
       const fields = this.allFields.filter(f => (['Actions', '__selected'].indexOf(f.key) === -1))
-      let csvContent = "data:text/csv;charset=utf-8,"
-        + fields.map(f => f.key).join(',').replaceAll('\r', '').replaceAll('\n', '') + '\n'
-        + this.items.map(item => fields.map(f => item[f.key]).join(',')).join('\n')
+      let csvContent = `${fields.map(f => this.$t(`attribute.${f.key}`)).join(';').replaceAll('\r', '').replaceAll('\n', '')}\n${
+        this.items.map(item => fields.map(f => item[f.export_key || f.key]).join(';')).join('\n')}`
+      csvContent = `data:text/csv;charset=utf-8,%EF%BB%BF${encodeURI(csvContent)}`
 
-      const encodedUri = encodeURI(csvContent)
-      const link = document.createElement("a")
-      link.setAttribute("href", encodedUri)
-      link.setAttribute("download", "export.csv")
+      const link = document.createElement('a')
+      link.setAttribute('href', csvContent)
+      link.setAttribute('download', 'export.csv')
       document.body.appendChild(link)
       link.click()
     },

@@ -84,6 +84,10 @@ export default {
       // context.commit('setDefinition', { data, table: entity })
     },
     fetchList(context, { entity, data }) {
+      if (entity === 'document') {
+        console.warn('Fetch of documents is disabled')
+        return []
+      }
       return api({
         action: 'read-rich',
         entity,
