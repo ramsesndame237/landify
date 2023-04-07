@@ -187,8 +187,8 @@
                   <h5 class="font-weight-bolder" style="color: black">{{ document.document_mime_type }}</h5>
                   <div class="d-flex justify-content-between">
                     <h6>{{ document.document_entry_time }}</h6>
-                    <b-link v-if="!document.document_already_stamp && canStamp"
-                            :to="{name:'sign-document', params: {id: document.document_id, entity: document}}"
+                    <b-link v-if="!document.document_already_stamp && canStamp(document)"
+                            :to="{name:'sign-document', params: {id: document.document_id,ticket_id: entity.ticket_id, entity: document}}"
                             class="ml-2">Stamp
                     </b-link>
                   </div>
@@ -282,10 +282,7 @@ export default {
   computed: {
     invoiceTicket() {
       return true
-    },
-    canStamp() {
-      return this.entity.columns[0].colum_has_stamp
-    },
+    }
   },
   async mounted() {
     this.loading = true
@@ -306,6 +303,11 @@ export default {
     }
   },
   methods: {
+    canStamp(document) {
+      if (!this.entity || !this.entity.columns) return false
+      if (document.document_mime_type !== 'application/pdf') return false
+      return this.columns.find(c => c.column_id === this.entity.columns[0].column_id).column_has_stamp
+    },
     canMoveBack() {
       if (!this.entity) return false
       if (this.entity.ticket_closed) return false

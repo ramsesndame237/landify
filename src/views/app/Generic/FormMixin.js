@@ -356,10 +356,13 @@ export default {
       this.$emit('submit')
     },
     setData(entity) {
+
       this.entity = {
+        ...this.entity,
         ...this.definition.default,
         ...this.definition.fields
           .filter(field => field.type !== 'password')
+          .filter(field => entity[field.key] != null)
           .reduce((a, field) => ({
             ...a,
             [field.key]: entity[field.key],

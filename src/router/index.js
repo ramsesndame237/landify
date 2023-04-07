@@ -206,7 +206,7 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/app/sign-document/:id',
+      path: '/app/sign-document/:id/ticket/:ticket_id',
       name: 'sign-document',
       component: () => import('@/views/app/Page/SignDocument'),
       meta: {

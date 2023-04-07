@@ -5,7 +5,7 @@
                     :icon="item.open?'ChevronDownIcon':'ChevronRightIcon'" size="24"/>
     </b-td>
     <b-td @click="toggle">{{ child ? '' : item.email_id }}</b-td>
-    <b-td @click="toggle">{{ child ? '' : item.email_received_datetime }}</b-td>
+    <b-td @click="toggle">{{ child ? '' : formatDate(item.email_received_datetime,true) }}</b-td>
     <b-td @click="toggle">{{ child ? '' : item.email_from }}</b-td>
     <b-td @click="toggle">{{ child ? '' : item.email_to }}</b-td>
     <b-td>
@@ -77,7 +77,7 @@
 
 <script>
 import Field from "@/views/app/Generic/Field";
-import { getDocumentLink } from "@/libs/utils";
+import { getDocumentLink, formatDate } from "@/libs/utils";
 import { VBToggle } from 'bootstrap-vue'
 
 export default {
@@ -164,6 +164,7 @@ export default {
     this.onTicketIdChange()
   },
   methods: {
+    formatDate,
     display() {
       console.log(this.item)
     },
@@ -237,6 +238,6 @@ export default {
 .td-form {
   padding-left: 4px !important;
   padding-right: 4px !important;
-  min-width: 150px;
+  min-width: 250px;
 }
 </style>

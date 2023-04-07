@@ -1,5 +1,5 @@
 import { Ability, AbilityBuilder } from '@casl/ability'
-
+import _ from 'lodash'
 //  Read ability from localStorage
 // * Handles auto fetching previous abilities if already logged in user
 // ? You can update this if you store user abilities to more secure place
@@ -28,16 +28,20 @@ export const defineRules = () => {
   if (['raoul.dzoukou@gohze.org1'].indexOf(userEmail) >= 0) {
     rules.push({ action: 'manage', subject: 'all' })
   }
-  const validTables = userData.tables
-  const validTableGroups = userData.tablegroups
-  rules.push(...validTables.map(table => ({ action: getAction(table.crud), subject: table.table_name })))
-  validTableGroups.forEach(group => {
-    rules.push(...userData.tablegroup_tables.filter(tgt => tgt.tablegroup_id === group.tablegroup_id).map(tgt => ({
-      action: getAction(group.crud),
-      subject: tgt.table_name,
-    })))
-  })
-  if (userData.access) rules.push(...userData.access.map(access => ({ action: access.access_name, subject: 'menu' })))
+  //
+  try {
+    userData.roles.forEach(role => {
+      rules.push(..._.flatten(role.tablegroups.map(tg => tg.tablename.map(tn => ({
+        action: getAction(tg.crud),
+        subject: tn,
+      })))))
+      rules.push(...role.tablenames.map(table => ({ action: getAction(table.crud), subject: table.table_name })))
+      rules.push(...role.access.map(access => ({ action: access.access_name, subject: 'menu' })))
+    })
+  } catch (e) {
+    console.error(e)
+  }
+
   return rules
 }
 

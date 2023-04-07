@@ -51,12 +51,16 @@ export default class JwtService {
         const { $vue } = window
         // if (status === 401) {
         if (response.status === 403) {
-          $vue.$errorToast($vue.$t('general.unauthorized'))
+          if (error.response.data?.detail) {
+            $vue.$errorToast($vue.$t((error.response.data?.detail)))
+          } else {
+            $vue.$errorToast($vue.$t('general.unauthorized'))
+          }
         } else if (response.status === 503) {
           $vue.$errorToast($vue.$t('general.server_down'))
         }
 
-        if (response && (response.status === 401 || response.status === 403)) {
+        if (response && (response.status === 401)) {
           // just push to login
           this.logout()
             .then(() => {

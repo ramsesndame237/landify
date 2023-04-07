@@ -3,28 +3,35 @@
     <b-card body-class="p-1">
       <div class="d-flex justify-content-between">
         <div class="d-flex align-items-center">
-          <b-form-group class="mb-0">
-            <label class="d-inline-block text-sm-left mr-50">Page</label>
-            <b-form-select id="perPageSelect" v-model="page" style="width: 60px" size="sm" :options="options"
-                           class="w-10"/>
-          </b-form-group>
-          <b-button v-if="!jcropActive" size="sm" variant="primary" class="ml-1" @click="initCropper()">
-            Insert
-          </b-button>
-          <b-button v-else size="sm" variant="primary" class="ml-1" @click="removeCropper()">
-            remove
-          </b-button>
+          <b-link class="btn btn-primary btn-sm mr-2"
+                  :to="{name: 'table-view',params: {table: 'ticket', id: $route.params.ticket_id}}">
+            <feather-icon icon="ArrowLeftIcon"/>
+            Back to Ticket
+          </b-link>
           <b-button size="sm" variant="primary" class="mx-1"
                     @click="$refs.modal.openModal(!information,{document_id: entity.document_id, ...information})">
-            Informations
+            Edit Stamp
           </b-button>
         </div>
         <div class="d-flex align-items-center">
-          <b-button size="sm" variant="primary" class="mr-1" @click="savePositions">
-            Save positions
+          <label class="d-inline-block text-sm-left mr-50">Page</label>
+          <b-pagination v-model="page" :total-rows="pages" :per-page="1" align="center" class="my-0" first-number
+                        last-number prev-class="prev-item" next-class="next-item"/>
+        </div>
+        <div class="d-flex align-items-center">
+
+          <b-button v-if="!jcropActive" size="sm" variant="primary" class="mr-1" @click="initCropper()">
+            Insert
           </b-button>
-          <b-link target="_blank" size="sm" variant="primary" class="mr-1" :href="getStampedDocumentLink(entity)">
-            Document with Stamp
+          <b-button v-else size="sm" variant="primary" class="mr-1" @click="removeCropper()">
+            remove
+          </b-button>
+          <b-button size="sm" variant="primary" class="mr-1" @click="savePositions">
+            Apply Stamp
+          </b-button>
+          <b-link v-if="entity.document_has_stamp" target="_blank" size="sm" variant="primary" class="mr-1"
+                  :href="getStampedDocumentLink(entity)">
+            Document Stamped
           </b-link>
         </div>
       </div>
@@ -46,6 +53,7 @@
 <script>
 import { getDocumentLink, getSignImageLink, getStampedDocumentLink } from '@/libs/utils'
 import GenericModal from "@/views/app/Generic/modal";
+import { BPagination } from "bootstrap-vue";
 // import pdf from 'pdfvuer'
 // import 'pdfjs-dist/build/pdf.worker.entry' // not needed since v1.9.1
 
@@ -60,7 +68,7 @@ class SvgWidget extends Jcrop.Widget {
 
 export default {
   name: 'SignDocument',
-  components: { GenericModal },
+  components: { GenericModal, BPagination },
   data() {
     return {
       entity: this.$route.params.entity || {},
@@ -138,6 +146,7 @@ export default {
     onInformationSaved(entity) {
       this.information = entity
       this.loadImage()
+      if (this.jcropActive) this.loadPage(this.page)
     },
     async savePositions() {
       this.loading = true
@@ -173,13 +182,16 @@ export default {
             entity: 'document_stamp',
             data,
           })).data.data.data.forEach(result => {
-            console.log(result);
-            data.find(d => d.document_stamp_page == result.document_stamp_page).document_stamp_id = result.document_stamp_id
+            console.log(result)
+            data.find(d => d.document_stamp_page === result[0].document_stamp_page).document_stamp_id = result.document_stamp_id
           })
           update = true
         }
         if (!update) this.$errorToast('There is no changes')
-        else this.$successToast('Positions saved')
+        else {
+          (await this.$http.get(`/documents-sign/stamp/${this.entity.document_id}`))
+          this.$successToast('Positions saved')
+        }
       } catch (e) {
         console.error(e)
         this.$errorToast(e.message || 'Unknow Error')
@@ -188,11 +200,16 @@ export default {
       }
     },
     async loadImage() {
-      const resp = await this.$http.get(this.getSignImageLink(this.entity), { responseType: 'arraybuffer' })
-      this.src = `data:${resp.headers['content-type']};base64,${Buffer.from(resp.data).toString('base64')}`
-      const { w, h } = await this.getImageDimensions()
-      this.width = w
-      this.height = h
+      try {
+        const resp = await this.$http.get(this.getSignImageLink(this.entity), { responseType: 'arraybuffer' })
+        this.src = `data:${resp.headers['content-type']};base64,${Buffer.from(resp.data).toString('base64')}`
+        const { w, h } = await this.getImageDimensions()
+        this.width = w
+        this.height = h
+      } catch (e) {
+        this.$errorToast('Impossible to load the stamp image')
+        throw e
+      }
     },
     async getImageDimensions() {
       return new Promise((resolved, rejected) => {
