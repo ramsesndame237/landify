@@ -78,6 +78,7 @@ export default {
           prev[current.attribute_name] = current.attribute_nice_name
           return prev
         }, {}),
+        date: moment().toISOString(),
       }
     },
     async fetchUserData({ dispatch }, email) {

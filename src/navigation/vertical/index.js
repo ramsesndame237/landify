@@ -220,6 +220,7 @@ export default [
     title: key('administrationrights'),
     children: [
       item('role', 'authorization'),
+      item('access'),
       item('tablename', 'table'),
       item('tablegroup'),
       item('crud'),

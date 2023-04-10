@@ -234,6 +234,12 @@ export default {
     },
     note: 'frontend_0_8_13',
   },
+  access: {
+    fields: [
+      { key: 'access_id', auto: true, required: false },
+      { key: 'access_name' },
+    ],
+  },
   role: {
     fields: [
       { key: 'role_id', label: 'Role ID', auto: true },
@@ -251,7 +257,12 @@ export default {
         view: false,
         fields: [
           {
-            key: 'access_id', label: 'ID', sortable: true, type: 'list', list: 'access', listLabel: 'access_name',
+            key: 'access_id',
+            label: 'ID',
+            sortable: true,
+            type: 'list',
+            list: 'access',
+            listLabel: 'access_name',
           },
           { key: 'access_name', sortable: true, hideOnForm: true },
         ],
@@ -3147,9 +3158,37 @@ export default {
     fields: [
       { key: 'textmodule_id', auto: true },
       { key: 'textmodule_name' },
-      { key: 'textmodule_description' },
-      { key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', hideOnIndex: true },
       { key: 'country_name', hideOnForm: true },
+      { key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', hideOnIndex: true },
+      { key: 'textmodule_description', type: 'textarea' },
+      { key: 'textmodule_templatetext',hideOnIndex: true, type: 'html' },
+      { key: 'textmodule_text_left',hideOnIndex: true, type: 'html' },
+      {
+        key: 'textmodule_text_right_0',
+        hideOnIndex: true,
+        type: 'html',
+        visible: entity => entity.textmodule_number_of_text_blocks > 0,
+      }, {
+        key: 'textmodule_text_right_1',
+        hideOnIndex: true,
+        type: 'html',
+        visible: entity => entity.textmodule_number_of_text_blocks > 1,
+      }, {
+        key: 'textmodule_text_right_2',
+        hideOnIndex: true,
+        type: 'html',
+        visible: entity => entity.textmodule_number_of_text_blocks > 2,
+      }, {
+        key: 'textmodule_text_right_3',
+        hideOnIndex: true,
+        type: 'html',
+        visible: entity => entity.textmodule_number_of_text_blocks > 3,
+      }, {
+        key: 'textmodule_text_right_4',
+        hideOnIndex: true,
+        type: 'html',
+        visible: entity => entity.textmodule_number_of_text_blocks > 4,
+      },
     ],
     filters: [
       { key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', required: false },
