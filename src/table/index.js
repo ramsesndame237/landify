@@ -3161,8 +3161,8 @@ export default {
       { key: 'country_name', hideOnForm: true },
       { key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', hideOnIndex: true },
       { key: 'textmodule_description', type: 'textarea' },
-      { key: 'textmodule_templatetext',hideOnIndex: true, type: 'html' },
-      { key: 'textmodule_text_left',hideOnIndex: true, type: 'html' },
+      { key: 'textmodule_templatetext', hideOnIndex: true, type: 'html' },
+      { key: 'textmodule_text_left', hideOnIndex: true, type: 'html' },
       {
         key: 'textmodule_text_right_0',
         hideOnIndex: true,
