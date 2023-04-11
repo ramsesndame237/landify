@@ -177,7 +177,6 @@ export default {
     },
   },
   async mounted() {
-    await this.fetchList()
     await this.fetch()
   },
   methods: {
@@ -380,7 +379,7 @@ export default {
       this.$refs.mailContent.show()
     },
     async fetchList() {
-      this.loading = true
+      // this.loading = true
       try {
         const { data } = await this.$http.get('/classifications/email/data')
         await this.$store.dispatch('table/setListData', { entity: 'frontend_6_1_6_overview', data: data.ticket })
@@ -392,8 +391,8 @@ export default {
         await this.$store.dispatch('table/setListData', { entity: 'board', data: data.board })
         await this.$store.dispatch('table/setListData', { entity: 'documenttype', data: data.documenttype })
         this.listLoaded = true
-      } finally {
-        this.loading = false
+      } catch (e) {
+        console.error(e)
       }
     },
     async refresh() {
@@ -412,32 +411,26 @@ export default {
         // data: [{ email_to: 'zelos@seybold-fm.com,' }],
       }
       // retrieve from cache
-      const cacheKey = this.getCacheKey(payload)
+      // const cacheKey = this.getCacheKey(payload)
       // const fromCache = this.$store.getters['table/tableCache'](cacheKey)
       // if (fromCache) {
       //   this.loading = false
       //   return this.processData(fromCache)
       // }
       if (this.loading) return
-      if (!this.listLoaded) await this.fetchList()
       this.loading = true
-      return this.$http.get('/classifications/email/', { params: payload })
-        .then(async ({ data }) => {
-          console.log(data)
-          const items = await this.processData(data)
-          // set in cache
-          // this.$store.commit('table/setTableCache', { key: cacheKey, data })
-          return items
-        })
-        .catch(e => {
-          console.log(e)
-          const title = e.response?.data.detail
-          this.$errorToast(title)
-          return null
-        })
-        .finally(() => {
-          this.loading = false
-        })
+
+      const promises = [this.$http.get('/classifications/email/', { params: payload })]
+      if (!this.listLoaded) promises.push(this.fetchList())
+      const [result0, result1] = await Promise.allSettled(promises)
+      console.log(result0, result1)
+      if (result0.status === 'fulfilled') {
+        await this.processData(result0.value.data)
+      } else {
+        const title = result0.value.response?.data.detail
+        this.$errorToast(title)
+      }
+      this.loading = false
     },
     getCacheKey(payload) {
       return `${this.entity}-${JSON.stringify(payload)}`

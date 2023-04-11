@@ -127,6 +127,7 @@ async function init() {
 if (userEmail) {
   store.dispatch('app/fetchUserData', userEmail)
     .finally(() => {
+      console.log('init')
       ability.update(defineRules())
       return init()
     })
