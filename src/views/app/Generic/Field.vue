@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-form-group v-if="visible" :label="field.noLabel ? '' : (field.label || $t('attribute.'+field.key))"
+    <b-form-group v-if="visible" :label=" (field.noLabel|| noLabel) ? '' : (field.label || $t('attribute.'+field.key))"
                   :label-for="'field-'+field.key" :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null">
       <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled
                     :placeholder="$t('attribute.general_automaticid')"/>
@@ -13,19 +13,10 @@
             <div v-html="entity[field.key]" class="p-1 border rounded"></div>
           </template>
           <ckeditor v-else :id="'ckcontent-'+field.key" v-model="entity[field.key]" :disabled="disabled"
-                    :editor="editor" :config="editorOption">
-            <!--            <div :id="'quill-toolbar-'+field.key" slot="toolbar" class="d-flex border-bottom-0">-->
-            <!--              &lt;!&ndash; Add a bold button &ndash;&gt;-->
-            <!--              <button class="ql-bold"/>-->
-            <!--              <button class="ql-italic"/>-->
-            <!--              <button class="ql-underline"/>-->
-            <!--              <button class="ql-align"/>-->
-            <!--              <button class="ql-link"/>-->
-            <!--            </div>-->
-          </ckeditor>
+                    :editor="editor" :config="editorOption"/>
         </div>
         <div v-else-if="field.type==='list'" :class="(field.withNew || field.ids) ? 'd-flex': ''">
-          <v-select :dropdown-should-open="true" v-model="entity[field.key]" :disabled="selectDisabled"
+          <v-select v-model="entity[field.key]" :dropdown-should-open="true" :disabled="selectDisabled"
                     :class="errors.length > 0 ? 'error':''"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
                     :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
@@ -113,7 +104,7 @@ export default {
     BFormInput, BFormFile, BFormGroup, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol, BFormCheckbox,
   },
   mixins: [togglePasswordVisibility],
-  props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition'],
+  props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition', 'noLabel'],
   data() {
     return {
       list: this.$store.state.table.listCache[this.field.list] || [],

@@ -17,15 +17,17 @@
                 <span>{{ action.text }}</span>
               </b-button>
             </template>
-            <b-button v-if="view && $can('update', table)" size="sm" variant="info" class="mr-1" @click="edit">
-              <feather-icon icon="EditIcon" class="mr-50"/>
-              {{ $t('button~edit') }}
-            </b-button>
-            <b-button v-else size="sm" variant="info" class="mr-1" @click="update" :disabled="loading">
-              <b-spinner v-if="loading" small class="mr-50"/>
-              <feather-icon v-else icon="SaveIcon" class="mr-50"/>
-              {{ $t('button~save') }}
-            </b-button>
+            <template v-if="definition.update !== false && $can('update', table)">
+              <b-button v-if="view" size="sm" variant="info" class="mr-1" @click="edit">
+                <feather-icon icon="EditIcon" class="mr-50"/>
+                {{ $t('button~edit') }}
+              </b-button>
+              <b-button v-else size="sm" variant="info" class="mr-1" @click="update" :disabled="loading">
+                <b-spinner v-if="loading" small class="mr-50"/>
+                <feather-icon v-else icon="SaveIcon" class="mr-50"/>
+                {{ $t('button~save') }}
+              </b-button>
+            </template>
             <b-button v-if="!view" size="sm" variant="primary" @click="cancel">
               {{ $t('button~cancel') }}
             </b-button>

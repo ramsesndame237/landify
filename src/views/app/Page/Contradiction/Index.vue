@@ -32,9 +32,9 @@
                           :initial-data="entity" :entity-id="entityId"/>
     </b-card>
 
-    <b-tabs ref="tabs" pills v-if="!create" nav-class="bg-white p-1">
+    <b-tabs v-if="!create" ref="tabs" v-model="activeTab" pills nav-class="bg-white p-1">
       <b-tab title="Contradiction Points" active lazy>
-        <contradiction-point/>
+        <contradiction-point @go-to-reductions="activeTab=1"/>
       </b-tab>
       <b-tab title="Inspection result" lazy>
 
@@ -60,6 +60,11 @@ import Notes from "@/views/app/Generic/Notes";
 export default {
   name: 'Index',
   components: { Notes, ContradictionPoint, ContradictionForm, BTab, BTabs, BCard, BButton, BSpinner },
+  data() {
+    return {
+      activeTab: 0,
+    }
+  },
   mixins: [EditPageMixin],
 }
 </script>

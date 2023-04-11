@@ -172,6 +172,8 @@ export default [
     children: [
       item('costtype'),
       item('textmodule'),
+      item('texttemplate'),
+      item('texttemplate_variable'),
       // {
       //   title: key('costtypeabstract'),
       //   route: 'comming-soon',

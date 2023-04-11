@@ -197,7 +197,7 @@ export default {
           const formField = fieldComponents.find(f => f.field === field)
           const create = formField.hasNew || (field.alwaysNew && originalEntity[field.key] == null)
           const { subDefinition } = formField
-          const data = create ? formField.subEntity : {
+          const data = create ? { ...subDefinition.default, ...formField.subEntity } : {
             ...formField.subEntity,
             [field.key]: originalEntity[field.key],
           }

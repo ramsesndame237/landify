@@ -11,10 +11,37 @@ export default {
       {
         key: 'user_id', label: 'Id', auto: true, hideOnForm: true,
       },
+      {
+        key: 'user_email', sortable: true, type: 'email',
+      },
+      {
+        key: 'user_password',
+        type: 'password',
+        hideOnIndex: true,
+        required: false,
+      },
+      { key: 'user_password_reset_required', hideOnIndex: true },
       { key: 'user_firstname', sortable: true },
       { key: 'user_lastname', sortable: true },
       {
-        key: 'user_email', sortable: true, type: 'email',
+        key: 'firmengroup_type',
+        type: 'custom-select',
+        items: [
+          { value: 1, label: 'Yes' },
+          { value: 0, label: 'No' },
+        ],
+      },
+      {
+        key: 'partnergroup_id', type: 'list', list: 'partnergroup', listLabel: 'partnergroup_name',
+      },
+      {
+        key: 'partnercompany_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name',
+      },
+      {
+        key: 'companygroup_id', type: 'list', list: 'companygroup', listLabel: 'companygroup_name',
+      },
+      {
+        key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name',
       },
       {
         key: 'user_last_login_time', sortable: true, hideOnForm: true,
@@ -38,12 +65,6 @@ export default {
         listLabel: 'contactperson_lastname',
         relationEntity: 'contactperson_user_rel',
         // hideOnCreate: true,
-        required: false,
-      },
-      {
-        key: 'user_password',
-        type: 'password',
-        hideOnIndex: true,
         required: false,
       },
     ],
@@ -3195,6 +3216,32 @@ export default {
     ],
     filter_vertical: true,
   },
+  texttemplate: {
+    create: false,
+    delete: false,
+    update: false,
+    entity: 'texttemplate',
+    fields: [
+      { key: 'texttemplate_id' },
+      'texttemplate_name',
+      'texttemplate_code',
+      { key: 'texttemplate_content_de', type: 'textarea', hideOnIndex: true },
+      { key: 'texttemplate_content_fr', type: 'textarea', hideOnIndex: true },
+      { key: 'texttemplate_content_en', type: 'textarea', hideOnIndex: true },
+    ],
+  },
+  texttemplate_variable: {
+    create: false,
+    delete: false,
+    update: false,
+    entity: 'texttemplate_variable',
+    fields: [
+      { key: 'texttemplate_variable_id' },
+      { key: 'texttemplate_variable_name' },
+      { key: 'texttemplate_variable_example' },
+      { key: 'texttemplate_id', type: 'list', listLabel: 'texttemplate_name', list: 'texttemplate', hideOnIndex: true },
+    ],
+  },
   claimtype: {
     entity: 'frontend_4_8_1',
     fields: [
@@ -3345,16 +3392,22 @@ export default {
     note: 'frontend_0_8_9',
   },
   contradictionpoint: {
+    fieldComponent: () => import('@/views/app/CreateComponent/ContradictionPoint'),
     fields: [
       { key: 'contradictionpoint_id', auto: true, hideOnForm: true },
       { key: 'contradictionpoint_rank' },
       { key: 'contradictionpoint_title' },
-      { key: 'contradictionpoint_inspectionresult_rating_value_green' },
-      { key: 'contradictionpoint_inspectionresult_rating_value_amber' },
-      { key: 'contradictionpoint_inspectionresult_rating_value_red' },
-      { key: 'contradictionpoint_inspectionresult_rating_value_grey' },
+      { key: 'contradictionpoint_maximum_claim_green', type: 'number', required: false, },
+      { key: 'contradictionpoint_maximum_claim_yellow', type: 'number', required: false, },
+      { key: 'contradictionpoint_maximum_claim_red', type: 'number', required: false, },
+      { key: 'contradictionpoint_accommodation_standard_green', type: 'number', hideOnIndex: true, required: false, },
+      { key: 'contradictionpoint_accommodation_standard_yellow', type: 'number', hideOnIndex: true, required: false, },
+      { key: 'contradictionpoint_accommodation_standard_red', type: 'number', hideOnIndex: true, required: false, },
+      { key: 'contradictionpoint_additional_accommodation', type: 'number', hideOnIndex: true, required: false, },
+      { key: 'contradictionpoint_owner_offer', type: 'number', hideOnIndex: true, required: false, },
       { key: 'contradictionpoint_text', type: 'html', hideOnIndex: true },
       { key: 'contradictionpoint_text_customer', type: 'html', hideOnIndex: true },
+      { key: 'textmodule_id', type: 'list', list: 'textmodule', listLabel: 'textmodule_name', hideOnIndex: true },
     ],
     default: {
       contradictionpoint_legally_clear: 1,
