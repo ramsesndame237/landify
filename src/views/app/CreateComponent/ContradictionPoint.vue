@@ -68,15 +68,15 @@
             </b-td>
 
             <b-td v-if="extended">
-              <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition" no-label="true"
+              <field :disabled="true" :entity="entity" :table-definition="tableDefinition" no-label="true"
                      :field="{key: 'test', required: false, type:'number'}"/>
             </b-td>
             <b-td v-if="extended">
-              <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition" no-label="true"
+              <field :disabled="true" :entity="entity" :table-definition="tableDefinition" no-label="true"
                      :field="{key: 'test', required: false, type:'number'}"/>
             </b-td>
             <b-td v-if="extended">
-              <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition" no-label="true"
+              <field :disabled="true" :entity="entity" :table-definition="tableDefinition" no-label="true"
                      :field="{key: 'test', required: false, type:'number'}"/>
             </b-td>
           </b-tr>
@@ -96,15 +96,15 @@
             </b-td>
 
             <b-td v-if="extended">
-              <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition" no-label="true"
+              <field :disabled="true" :entity="entity" :table-definition="tableDefinition" no-label="true"
                      :field="{key: 'test', required: false, type:'number'}"/>
             </b-td>
             <b-td v-if="extended">
-              <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition" no-label="true"
+              <field :disabled="true" :entity="entity" :table-definition="tableDefinition" no-label="true"
                      :field="{key: 'test', required: false, type:'number'}"/>
             </b-td>
             <b-td v-if="extended">
-              <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition" no-label="true"
+              <field :disabled="true" :entity="entity" :table-definition="tableDefinition" no-label="true"
                      :field="{key: 'test', required: false, type:'number'}"/>
             </b-td>
           </b-tr>
@@ -116,7 +116,7 @@
             </b-td>
             <b-td colspan="2"></b-td>
             <b-td v-if="extended">
-              <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition" no-label="true"
+              <field :disabled="true" :entity="entity" :table-definition="tableDefinition" no-label="true"
                      :field="{key: 'test', required: false, type:'number'}"/>
             </b-td>
             <b-td v-if="extended" colspan="2"></b-td>
@@ -140,7 +140,7 @@
             </b-td>
             <b-td colspan="2"></b-td>
             <b-td v-if="extended">
-              <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition" no-label="true"
+              <field :disabled="true" :entity="entity" :table-definition="tableDefinition" no-label="true"
                      :field="{key: 'test', required: false, type:'number'}"/>
             </b-td>
             <b-td colspan="2" v-if="extended"></b-td>
