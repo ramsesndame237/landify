@@ -33,10 +33,24 @@
     </b-card>
 
     <b-tabs v-if="!create" ref="tabs" v-model="activeTab" pills nav-class="bg-white p-1">
-      <b-tab title="Contradiction Points" active lazy>
-        <contradiction-point @go-to-reductions="activeTab=1"/>
+      <b-tab title="Contradiction Points" active>
+        <contradiction-point ref="points" @go-to-reductions="activeTab=1" @items="updateItems"/>
       </b-tab>
       <b-tab title="Inspection result" lazy>
+        <b-card body-class="p-0" class="mb-1">
+          <div class="d-flex justify-content-end" style="padding: 7px">
+            <b-button :disabled="saving" @click="saveReductions" variant="primary">
+              <b-spinner v-if="saving" class="mr-1" small/>
+              <span>{{ $t('button~save') }}</span>
+            </b-button>
+          </div>
+        </b-card>
+        <b-card>
+          <div v-for="(item,i) in activeItems" :key="i" class="mb-3">
+            <h4>{{ item.contradictionpoint_rank + ' - ' + item.contradictionpoint_title }}</h4>
+            <reduction-amount :entity="item" :disabled="saving"/>
+          </div>
+        </b-card>
 
       </b-tab>
       <b-tab title="Documents and communication" lazy>
@@ -56,16 +70,47 @@ import EntityForm from "@/views/app/Generic/EntityForm";
 import ContradictionForm from "@/views/app/FormComponent/ContradictionForm";
 import ContradictionPoint from "@/views/app/Page/Contradiction/ContradictionPoint";
 import Notes from "@/views/app/Generic/Notes";
+import ReductionAmount from '@/views/app/CreateComponent/ReductionAmount';
+import { clone } from '@/libs/utils'
 
 export default {
   name: 'Index',
-  components: { Notes, ContradictionPoint, ContradictionForm, BTab, BTabs, BCard, BButton, BSpinner },
+  components: { ReductionAmount, Notes, ContradictionPoint, ContradictionForm, BTab, BTabs, BCard, BButton, BSpinner },
+  mixins: [EditPageMixin],
   data() {
     return {
       activeTab: 0,
+      saving: false,
+      activeItems: [],
     }
   },
-  mixins: [EditPageMixin],
+  methods: {
+    updateItems(items) {
+      console.log('on update', items)
+      this.activeItems = clone(items)
+    },
+    saveReductions() {
+      if (this.saving) return
+      this.saving = true
+      this.$api({
+        action: 'update',
+        entity: 'contradictionpoint',
+        data: this.activeItems,
+      })
+        .then(() => {
+          this.$store.commit('table/deleteTableCacheKeyFromPrefix', 'contradictionpoint-')
+          this.$refs.points.$refs.table.reload()
+          this.$successToast('Reduction amounts Saved')
+        })
+        .catch(e => {
+          console.error(e)
+          this.$errorToast(e.message)
+        })
+        .finally(() => {
+          this.saving = false
+        })
+    },
+  },
 }
 </script>
 

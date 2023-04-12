@@ -224,6 +224,7 @@ export default {
       })
       this.$store.commit('table/setDefinition', { data, table: this.table })
       this.currentItems = data.data.data
+      this.$emit('items', this.currentItems)
       return this.currentItems
     },
     getSelected() {

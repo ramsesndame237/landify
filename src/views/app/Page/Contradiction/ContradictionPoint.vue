@@ -13,7 +13,7 @@
                   entity-list="contradiction_contradictionpoint_grp" second-key="contradiction_id"
                   :second-key-value="$route.params.id" :default-sort-desc="initialSortDesc" :per-page="perPage"
                   :current-page="currentPage" :total-rows.sync="totalRows" :fields="contradictionpointDefinition.fields"
-                  :primary-key-column="contradictionpointDefinition.primaryKey"/>
+                  :primary-key-column="contradictionpointDefinition.primaryKey" @items="onItems"/>
       <div class="text-center">
         <b-button variant="primary" @click="generatePoints">
           <b-spinner small v-if="loading"/>
@@ -61,6 +61,10 @@ export default {
   methods: {
     onNewElement() {
       this.$refs.modal.openModal(true)
+    },
+    onItems(items) {
+      console.log('on items', items)
+      this.$emit('items', items)
     },
     generatePoints() {
       this.loading = true
