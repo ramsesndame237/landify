@@ -52,6 +52,10 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 // Datatables
 .b-table-sticky-header {
   max-height: 70vh !important;
+
+  th {
+    white-space: nowrap;
+  }
 }
 
 .vs__selected-options {

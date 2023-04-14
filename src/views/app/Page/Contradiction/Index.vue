@@ -53,8 +53,14 @@
         </b-card>
 
       </b-tab>
-      <b-tab title="Documents and communication" lazy>
+      <b-tab title="Contract" lazy>
 
+      </b-tab>
+      <b-tab title="Partial Invoice" lazy>
+
+      </b-tab>
+      <b-tab title="Documents and communication" lazy>
+        <correspondance-form/>
       </b-tab>
       <b-tab title="Preview" lazy>
 
@@ -72,10 +78,24 @@ import ContradictionPoint from "@/views/app/Page/Contradiction/ContradictionPoin
 import Notes from "@/views/app/Generic/Notes";
 import ReductionAmount from '@/views/app/CreateComponent/ReductionAmount';
 import { clone } from '@/libs/utils'
+import Field from "@/views/app/Generic/Field";
+import CorrespondanceForm from "@/views/app/Page/Contradiction/CorrespondanceForm";
 
 export default {
   name: 'Index',
-  components: { ReductionAmount, Notes, ContradictionPoint, ContradictionForm, BTab, BTabs, BCard, BButton, BSpinner },
+  components: {
+    CorrespondanceForm,
+    Field,
+    ReductionAmount,
+    Notes,
+    ContradictionPoint,
+    ContradictionForm,
+    BTab,
+    BTabs,
+    BCard,
+    BButton,
+    BSpinner
+  },
   mixins: [EditPageMixin],
   data() {
     return {

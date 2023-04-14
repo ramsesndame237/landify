@@ -1386,7 +1386,7 @@ export default {
       { key: 'pos_name_external', required: false },
       // { key: 'location_count', hideOnForm: true },
       { key: 'area_count', hideOnForm: true },
-      { key: 'pos_first_year', type: 'date', required: false },
+      { key: 'pos_first_year', type: 'date', required: false, hideOnIndex: true },
       {
         key: 'contactperson_id',
         type: 'list',
@@ -3313,9 +3313,12 @@ export default {
     fields: [
       { key: 'contradiction_id', auto: true },
       { key: 'contradiction_name' },
-      { key: 'contradiction_last_change_time', hideOnForm: true },
-      { key: 'contradictiontask_count', hideOnForm: true },
-      { key: 'contradictionpoint_count', hideOnForm: true },
+      { key: 'contradiction_last_change_time', hideOnUpdate: true, hideOnIndex: true },
+      { key: 'pos_name', hideOnForm: true },
+      { key: 'company_name', hideOnForm: true },
+      { key: 'contradiction_creation_time', hideOnForm: true },
+      // { key: 'contradictiontask_count', hideOnForm: true },
+      // { key: 'contradictionpoint_count', hideOnForm: true },
     ],
     filters: [
       {
@@ -3454,7 +3457,7 @@ export default {
       // { key: 'contract_name', hideOnForm: true },
       { key: 'pos_id', hideOnForm: true },
       { key: 'pos_name', hideOnForm: true },
-      { key: 'sub_ticket_count', hideOnForm: true },
+      // { key: 'sub_ticket_count', hideOnForm: true },
 
     ],
     default: {

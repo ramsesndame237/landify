@@ -1,51 +1,57 @@
 <template>
   <div class="">
-    <div class="container">
-      <!--UPLOAD-->
-      <form enctype="multipart/form-data" novalidate>
-        <h1>Upload A File</h1>
-        <div class="dropbox">
-          <input type="file" :name="uploadFieldName" :disabled="processing"
-                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                 class="input-file" @change="fileCount = $event.target.files.length; file = $event.target.files[0]">
-          <p v-if="!file">
-            Drag your file here to begin<br> or click to browse </p>
-          <p v-if="file">
-            File charged </p>
-          <p v-if="processing" class="loader">
-            <b-icon-arrow-repeat/>
-          </p>
-          <div v-if="success" class="loader">
-            <b-icon-check/>
-            <h4>done</h4>
-          </div>
+    <!--UPLOAD-->
+    <form enctype="multipart/form-data" novalidate>
+      <h1>Upload A File</h1>
+      <div class="dropbox">
+        <input type="file" :name="uploadFieldName" :disabled="processing"
+               accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+               class="input-file" @change="fileCount = $event.target.files.length; file = $event.target.files[0]">
+        <p v-if="!file">
+          Drag your file here to begin<br> or click to browse </p>
+        <p v-if="file">
+          File charged </p>
+        <p v-if="processing" class="loader">
+          <b-icon-arrow-repeat/>
+        </p>
+        <div v-if="success" class="loader">
+          <b-icon-check/>
+          <h4>done</h4>
         </div>
-        <div class="mt-2">
-          <b-button variant="danger" @click="upload(file)">Import</b-button>
-        </div>
-      </form>
-      <div class="mt-5">
-        <b-card v-if="success">
-          <b-tabs ref="tabs" pills>
-            <b-tab v-for="(entity, index) in entities" :key="index" :title="entity" lazy>
-              <table v-if="result[entity]" class="mt-2 mt-xl-0 w-100">
-                <tr>
-                  <th class="pb-50 font-weight-bold">Total</th>
-                  <td class="pb-50">{{ getCount(entity) }}</td>
-                  <th class="pb-50 font-weight-bold">Inserted</th>
-                  <td class="pb-50">{{ getCount(entity, 'success') }}</td>
-                  <th class="pb-50 font-weight-bold">Updated</th>
-                  <td class="pb-50">{{ getCount(entity, 'updated') }}</td>
-                  <th class="pb-50 font-weight-bold">Failed</th>
-                  <td class="pb-50">{{ getCount(entity, 'failed') }}</td>
-                </tr>
-              </table>
-              <data-tables :entity="entity" :selectable="false" :with-actions="false" :fields="fields"
-                           :items="getResult(entity)"/>
-            </b-tab>
-          </b-tabs>
-        </b-card>
       </div>
+      <div class="mt-2">
+        <b-button variant="danger" @click="upload(file)">Import</b-button>
+      </div>
+    </form>
+    <div class="mt-5">
+      <b-card>
+        <b-tabs ref="tabs" pills>
+          <b-tab v-for="(entity, index) in entities" :key="index" :title="entity" lazy>
+            <table v-if="result[entity]" class="mt-2 mt-xl-0 w-100">
+              <tr>
+                <th class="pb-50 font-weight-bold">Total</th>
+                <td class="pb-50">{{ getCount(entity) }}</td>
+                <th class="pb-50 font-weight-bold">Inserted</th>
+                <td class="pb-50">{{ getCount(entity, 'added') }}</td>
+                <th class="pb-50 font-weight-bold">Updated</th>
+                <td class="pb-50">{{ getCount(entity, 'updated') }}</td>
+                <th class="pb-50 font-weight-bold">Unchanged</th>
+                <td class="pb-50">{{ getCount(entity, 'unchanged') }}</td>
+                <th class="pb-50 font-weight-bold">Failed</th>
+                <td class="pb-50">{{ getCount(entity, 'failed') }}</td>
+              </tr>
+            </table>
+            <data-tables :entity="entity" :selectable="false" :with-actions="false" :fields="fields"
+                         :items="getResult(entity)"/>
+          </b-tab>
+          <template #tabs-end>
+            <div>
+              <label for="">Status</label>
+              <b-form-select v-model="status" :options="status"/>
+            </div>
+          </template>
+        </b-tabs>
+      </b-card>
     </div>
   </div>
 </template>
@@ -82,12 +88,29 @@ export default {
         'partner_companies', 'companies', 'contact_persons', 'locations', 'pos', 'areas'
       ],
       fields: [
-        { key: 'id' },
-        { key: 'name' },
-        { key: 'reason' },
+        { key: 'line' },
         { key: 'status' },
+        { key: 'partnercompany_name' },
+        { key: 'partnercompany_shortname' },
+        { key: 'partnergroup_name', },
+        { key: 'city_zip', },
+        { key: 'city_name', },
+        { key: 'address_street' },
+        { key: 'address_house_number' },
+        { key: 'address_extra' },
+        { key: 'country_name' },
+        { key: 'contactdetails_email', },
+        { key: 'contactdetails_phone' },
+        { key: 'contactdetails_mobile' },
+        { key: 'contactdetails_fax' },
+        // { key: 'contactdetails_salestaxno' },
+        // { key: 'contactdetails_commercialregisterno' },
+        // { key: 'contactdetails_website' },
       ],
       result: {},
+      statusList: ['added', 'updated', 'unchanged', 'failed'],
+      status: '',
+
     }
   },
   computed: {},
@@ -98,14 +121,24 @@ export default {
     getResult(entity) {
       if (!this.result[entity]) return []
       return [
-        ...this.result[entity].success.map(e => ({ ...e, status: 'success' })),
-        ...this.result[entity].updated.map(e => ({ ...e, status: 'updated' })),
-        ...this.result[entity].failed.map(e => ({ ...e, status: 'failed' })),
+        ...this.result[entity].added.map(e => ({ ...this.getEntity(e), status: 'added' })),
+        ...this.result[entity].updated.map(e => ({ ...this.getEntity(e), status: 'updated' })),
+        ...this.result[entity].unchanged.map(e => ({ ...this.getEntity(e), status: 'unchanged' })),
+        ...this.result[entity].failed.map(e => ({ ...this.getEntity(e), status: 'failed' })),
       ]
+    },
+    getEntity(e) {
+      return {
+        ...e,
+        ...e.colunms.reduce((obj, c) => {
+          obj[c.name] = c.new_value
+          return obj
+        }, {})
+      }
     },
     getCount(entity, status) {
       const results = this.result[entity]
-      if (!status) return results.success.length + results.updated.length + results.failed.length
+      if (!status) return results.added.length + results.updated.length + results.unchanged.length + results.failed.length
       return results[status].length
     },
     reset() {
@@ -118,11 +151,12 @@ export default {
       if (!file) return this.$errorToast('Please insert a file')
       const formData = new FormData
       formData.append('file', file)
+      formData.append('leaves', ['Partner Company'])
       this.processing = true
-      this.$http.post('provisionings/partnercompany', formData, { headers: { 'content-type': 'form-data' } })
+      this.$http.post('provisionings/partnercompany/checking', formData, { headers: { 'content-type': 'form-data' } })
         .then(({ data }) => {
           console.log(data)
-          this.result = data.data.data
+          this.result = data.data
           this.success = true
         })
         .catch(() => {
