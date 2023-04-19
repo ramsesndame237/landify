@@ -5,6 +5,8 @@ import useJwt from '@/auth/jwt/useJwt'
 import { initialAbility } from '@/libs/acl/config'
 import jwtDefaultConfig from './jwtDefaultConfig'
 import store from '@/store'
+import BrowserId from 'browser-id'
+import router from '@/router'
 
 export default class JwtService {
   // Will be used by this service for making API calls
@@ -59,36 +61,40 @@ export default class JwtService {
         } else if (response.status === 503) {
           $vue.$errorToast($vue.$t('general.server_down'))
         }
-
-        if (response && (response.status === 401)) {
-          // just push to login
-          this.logout()
-            .then(() => {
-              $vue.$router.push({ name: 'login' })
+        if (response && response.status === 401 && ['/auth/refresh/token'].indexOf(config.url) === -1) {
+          if (!this.isAlreadyFetchingAccessToken) {
+            this.isAlreadyFetchingAccessToken = true
+            this.refreshToken().then(r => {
+              // Update accessToken in localStorage
+              this.setToken(r.data.user_token)
+              this.setRefreshToken(r.data.user_refresh_token)
+              this.onAccessTokenFetched(r.data.user_token)
+            }).catch(e => {
+              console.error(e)
+              // just push to login
+              this.logout()
+                .then(() => {
+                  this.onAccessTokenFetched('')
+                  router.push({ name: 'login' })
+                })
+            }).finally(() => {
+              this.isAlreadyFetchingAccessToken = false
             })
-          return Promise.reject(error)
-          // if (!this.isAlreadyFetchingAccessToken) {
-          //   this.isAlreadyFetchingAccessToken = true
-          //   this.refreshToken().then(r => {
-          //     this.isAlreadyFetchingAccessToken = false
-          //
-          //     // Update accessToken in localStorage
-          //     this.setToken(r.data.accessToken)
-          //     this.setRefreshToken(r.data.refreshToken)
-          //
-          //     this.onAccessTokenFetched(r.data.accessToken)
-          //   })
-          // }
-          // const retryOriginalRequest = new Promise(resolve => {
-          //   this.addSubscriber(accessToken => {
-          //     // Make sure to assign accessToken according to your response.
-          //     // Check: https://pixinvent.ticksy.com/ticket/2413870
-          //     // Change Authorization header
-          //     originalRequest.headers.Authorization = `${this.jwtConfig.tokenType} ${accessToken}`
-          //     resolve(this.axiosIns(originalRequest))
-          //   })
-          // })
-          // return retryOriginalRequest
+          }
+          const retryOriginalRequest = new Promise((resolve, reject) => {
+            this.addSubscriber(accessToken => {
+              if (!accessToken) {
+                reject(new Error('Invalid refresh token'))
+                return
+              }
+              // Make sure to assign accessToken according to your response.
+              // Check: https://pixinvent.ticksy.com/ticket/2413870
+              // Change Authorization header
+              originalRequest.headers.Authorization = `${accessToken}`
+              resolve(this.axiosIns(originalRequest))
+            })
+          })
+          return retryOriginalRequest
         }
         return Promise.reject(error)
       },
@@ -129,7 +135,8 @@ export default class JwtService {
 
   refreshToken() {
     return this.axiosIns.post(this.jwtConfig.refreshEndpoint, {
-      refreshToken: this.getRefreshToken(),
+      user_browser_hash: BrowserId(),
+      user_refresh_token: this.getRefreshToken(),
     })
   }
 

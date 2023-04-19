@@ -1,5 +1,5 @@
 <template>
-  <b-table ref="table" sticky-header :title="entityList||entity" striped hover responsive :busy.sync="loading"
+  <b-table ref="table" sticky-header striped hover responsive :busy.sync="loading"
            :per-page="perPage" :current-page="currentPage" :items="items || provider" :fields="allFields"
            :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" :filter="search" select-mode="multi"
            @row-clicked="onRowClicked">
@@ -224,6 +224,7 @@ export default {
       })
       this.$store.commit('table/setDefinition', { data, table: this.table })
       this.currentItems = data.data.data
+      this.$emit('items', this.currentItems)
       return this.currentItems
     },
     getSelected() {

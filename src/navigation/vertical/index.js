@@ -172,6 +172,8 @@ export default [
     children: [
       item('costtype'),
       item('textmodule'),
+      item('texttemplate'),
+      item('texttemplate_variable'),
       // {
       //   title: key('costtypeabstract'),
       //   route: 'comming-soon',
@@ -220,6 +222,7 @@ export default [
     title: key('administrationrights'),
     children: [
       item('role', 'authorization'),
+      item('access'),
       item('tablename', 'table'),
       item('tablegroup'),
       item('crud'),

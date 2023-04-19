@@ -78,33 +78,11 @@ export default {
           prev[current.attribute_name] = current.attribute_nice_name
           return prev
         }, {}),
+        date: moment().toISOString(),
       }
     },
-    async fetchUserData({ dispatch }, email) {
-      // get user, user roles, role_tables_crud, role_tablegroup_crud, tablegroup_table
+    async fetchUserData() {
       const user = (await axiosIns.get('/user/')).data
-      // const now = moment()
-      // data.roles = (await dispatch('table/fetchList', {
-      //   entity: 'user_role_grp',
-      //   data: [{ user_id: data.user.user_id }],
-      // }, { root: true })).filter(r => (moment(r.user_role_valid_from).isBefore(now) && moment(r.user_role_valid_to).isAfter(now)))
-      // const hasRoles = data.roles.length > 0
-      // data.access = hasRoles ? (await dispatch('table/fetchList', {
-      //   entity: 'role_access_grp',
-      //   data: data.roles.map(r => ({ role_id: r.role_id })),
-      // }, { root: true })) : []
-      // data.tables = hasRoles ? (await dispatch('table/fetchList', {
-      //   entity: 'role_tablename_crud_grp',
-      //   data: data.roles.map(r => ({ role_id: r.role_id })),
-      // }, { root: true })) : []
-      // data.tablegroups = hasRoles ? (await dispatch('table/fetchList', {
-      //   entity: 'role_tablegroup_crud_grp',
-      //   data: data.roles.map(r => ({ role_id: r.role_id })),
-      // }, { root: true })) : []
-      // data.tablegroup_tables = hasRoles ? (await dispatch('table/fetchList', {
-      //   entity: 'tablename_tablegroup_grp',
-      //   data: _.uniqBy(data.tablegroups, 'tablegroup_id').map(t => ({ tablegroup_id: t.tablegroup_id })),
-      // }, { root: true })) : []
       localStorage.setItem('userData', JSON.stringify(user))
     },
   },

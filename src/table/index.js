@@ -11,10 +11,66 @@ export default {
       {
         key: 'user_id', label: 'Id', auto: true, hideOnForm: true,
       },
-      { key: 'user_firstname', sortable: true },
-      { key: 'user_lastname', sortable: true },
       {
         key: 'user_email', sortable: true, type: 'email',
+      },
+      {
+        key: 'user_password',
+        type: 'password',
+        hideOnIndex: true,
+        required: false,
+      },
+      { key: 'user_password_reset_required', hideOnIndex: true, type: 'boolean' },
+      { key: 'user_firstname', sortable: true },
+      { key: 'user_lastname', sortable: true },
+      { key: 'user_name_abbreviation', sortable: true, hideOnIndex: true },
+      { key: 'user_function', sortable: true, hideOnIndex: true },
+      {
+        key: 'firmengroup_type',
+        type: 'custom-select',
+        hideOnIndex: true,
+        items: [
+          { value: 1, label: 'Company' },
+          { value: 0, label: 'Partner Company' },
+        ],
+      },
+      {
+        key: 'partnergroup_id',
+        type: 'list',
+        send: false,
+        list: 'partnergroup',
+        listLabel: 'partnergroup_name',
+        hideOnIndex: true,
+        visible: entity => entity.firmengroup_type === 0,
+      },
+      {
+        key: 'partnercompany_id',
+        type: 'list',
+        list: 'frontend_2_5_1',
+        listLabel: 'partnercompany_name',
+        filter_key: 'partnergroup_id',
+        relationEntity: 'user_partnercompany_rel',
+        hideOnIndex: true,
+        visible: entity => entity.firmengroup_type === 0,
+      },
+      {
+        key: 'customergroup_id',
+        type: 'list',
+        send: false,
+        list: 'customergroup',
+        listLabel: 'customergroup_name',
+        hideOnIndex: true,
+        visible: entity => entity.firmengroup_type === 1,
+      },
+      {
+        key: 'company_id',
+        type: 'list',
+        list: 'frontend_2_2_3_1',
+        listLabel: 'company_name',
+        filter_key: 'customergroup_id',
+        relationEntity: 'user_company_rel',
+        hideOnIndex: true,
+        visible: entity => entity.firmengroup_type === 1,
       },
       {
         key: 'user_last_login_time', sortable: true, hideOnForm: true,
@@ -31,6 +87,16 @@ export default {
       },
       { key: 'usertype_name', hideOnForm: true },
       {
+        key: 'address_id',
+        hideOnIndex: true,
+        type: 'list',
+        list: 'address',
+        listLabel: 'address_street',
+        withNew: true,
+        alwaysNew: true,
+        onlyForm: true,
+      },
+      {
         key: 'contactperson_id',
         hideOnIndex: true,
         type: 'list',
@@ -38,12 +104,6 @@ export default {
         listLabel: 'contactperson_lastname',
         relationEntity: 'contactperson_user_rel',
         // hideOnCreate: true,
-        required: false,
-      },
-      {
-        key: 'user_password',
-        type: 'password',
-        hideOnIndex: true,
         required: false,
       },
     ],
@@ -234,6 +294,12 @@ export default {
     },
     note: 'frontend_0_8_13',
   },
+  access: {
+    fields: [
+      { key: 'access_id', auto: true, required: false },
+      { key: 'access_name' },
+    ],
+  },
   role: {
     fields: [
       { key: 'role_id', label: 'Role ID', auto: true },
@@ -251,7 +317,12 @@ export default {
         view: false,
         fields: [
           {
-            key: 'access_id', label: 'ID', sortable: true, type: 'list', list: 'access', listLabel: 'access_name',
+            key: 'access_id',
+            label: 'ID',
+            sortable: true,
+            type: 'list',
+            list: 'access',
+            listLabel: 'access_name',
           },
           { key: 'access_name', sortable: true, hideOnForm: true },
         ],
@@ -1354,7 +1425,7 @@ export default {
       { key: 'pos_name_external', required: false },
       // { key: 'location_count', hideOnForm: true },
       { key: 'area_count', hideOnForm: true },
-      { key: 'pos_first_year', type: 'date', required: false },
+      { key: 'pos_first_year', type: 'date', required: false, hideOnIndex: true },
       {
         key: 'contactperson_id',
         type: 'list',
@@ -1889,6 +1960,7 @@ export default {
         list: 'frontend_2_2_3_1',
         listLabel: 'company_name',
         filter_key: 'customergroup_id',
+        send: false,
         hideOnIndex: true,
         hideOnUpdate: true,
       },
@@ -1898,14 +1970,16 @@ export default {
         list: 'frontend_2_1_3_8',
         listLabel: 'pos_name',
         filter_key: 'company_id',
+        send: false,
         hideOnIndex: true,
         hideOnUpdate: true,
       },
       {
         key: 'location_id',
         type: 'list',
-        list: 'pos_location_rel',
+        list: 'frontend_3_1_3_7',
         listLabel: 'location_name',
+        relationEntity: 'contract_location_rel',
         filter_key: 'pos_id',
         hideOnIndex: true,
         hideOnUpdate: true,
@@ -1932,7 +2006,7 @@ export default {
         list: 'currency',
         listLabel: 'currency_name',
         hideOnIndex: true,
-        hideOnUpdate: true
+        hideOnUpdate: true,
       },
       {
         key: 'contracttype_id',
@@ -1940,7 +2014,7 @@ export default {
         list: 'contracttype',
         listLabel: 'contracttype_name',
         hideOnIndex: true,
-        hideOnUpdate: true
+        hideOnUpdate: true,
       },
 
 
@@ -3147,14 +3221,68 @@ export default {
     fields: [
       { key: 'textmodule_id', auto: true },
       { key: 'textmodule_name' },
-      { key: 'textmodule_description' },
-      { key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', hideOnIndex: true },
       { key: 'country_name', hideOnForm: true },
+      { key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', hideOnIndex: true },
+      { key: 'textmodule_description', type: 'textarea' },
+      { key: 'textmodule_templatetext', hideOnIndex: true, type: 'html' },
+      { key: 'textmodule_text_left', hideOnIndex: true, type: 'html' },
+      {
+        key: 'textmodule_text_right_0',
+        hideOnIndex: true,
+        type: 'html',
+        visible: entity => entity.textmodule_number_of_text_blocks > 0,
+      }, {
+        key: 'textmodule_text_right_1',
+        hideOnIndex: true,
+        type: 'html',
+        visible: entity => entity.textmodule_number_of_text_blocks > 1,
+      }, {
+        key: 'textmodule_text_right_2',
+        hideOnIndex: true,
+        type: 'html',
+        visible: entity => entity.textmodule_number_of_text_blocks > 2,
+      }, {
+        key: 'textmodule_text_right_3',
+        hideOnIndex: true,
+        type: 'html',
+        visible: entity => entity.textmodule_number_of_text_blocks > 3,
+      }, {
+        key: 'textmodule_text_right_4',
+        hideOnIndex: true,
+        type: 'html',
+        visible: entity => entity.textmodule_number_of_text_blocks > 4,
+      },
     ],
     filters: [
       { key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', required: false },
     ],
     filter_vertical: true,
+  },
+  texttemplate: {
+    create: false,
+    delete: false,
+    update: false,
+    entity: 'texttemplate',
+    fields: [
+      { key: 'texttemplate_id' },
+      'texttemplate_name',
+      'texttemplate_code',
+      { key: 'texttemplate_content_de', type: 'textarea', hideOnIndex: true },
+      { key: 'texttemplate_content_fr', type: 'textarea', hideOnIndex: true },
+      { key: 'texttemplate_content_en', type: 'textarea', hideOnIndex: true },
+    ],
+  },
+  texttemplate_variable: {
+    create: false,
+    delete: false,
+    update: false,
+    entity: 'texttemplate_variable',
+    fields: [
+      { key: 'texttemplate_variable_id' },
+      { key: 'texttemplate_variable_name' },
+      { key: 'texttemplate_variable_example' },
+      { key: 'texttemplate_id', type: 'list', listLabel: 'texttemplate_name', list: 'texttemplate', hideOnIndex: true },
+    ],
   },
   claimtype: {
     entity: 'frontend_4_8_1',
@@ -3227,9 +3355,12 @@ export default {
     fields: [
       { key: 'contradiction_id', auto: true },
       { key: 'contradiction_name' },
-      { key: 'contradiction_last_change_time', hideOnForm: true },
-      { key: 'contradictiontask_count', hideOnForm: true },
-      { key: 'contradictionpoint_count', hideOnForm: true },
+      { key: 'contradiction_last_change_time', hideOnUpdate: true, hideOnIndex: true },
+      { key: 'pos_name', hideOnForm: true },
+      { key: 'company_name', hideOnForm: true },
+      { key: 'contradiction_creation_time', hideOnForm: true },
+      // { key: 'contradictiontask_count', hideOnForm: true },
+      // { key: 'contradictionpoint_count', hideOnForm: true },
     ],
     filters: [
       {
@@ -3306,16 +3437,22 @@ export default {
     note: 'frontend_0_8_9',
   },
   contradictionpoint: {
+    fieldComponent: () => import('@/views/app/CreateComponent/ContradictionPoint'),
     fields: [
       { key: 'contradictionpoint_id', auto: true, hideOnForm: true },
       { key: 'contradictionpoint_rank' },
       { key: 'contradictionpoint_title' },
-      { key: 'contradictionpoint_inspectionresult_rating_value_green' },
-      { key: 'contradictionpoint_inspectionresult_rating_value_amber' },
-      { key: 'contradictionpoint_inspectionresult_rating_value_red' },
-      { key: 'contradictionpoint_inspectionresult_rating_value_grey' },
+      { key: 'contradictionpoint_maximum_claim_green', type: 'number', required: false, },
+      { key: 'contradictionpoint_maximum_claim_yellow', type: 'number', required: false, },
+      { key: 'contradictionpoint_maximum_claim_red', type: 'number', required: false, },
+      { key: 'contradictionpoint_accommodation_standard_green', type: 'number', hideOnIndex: true, required: false, },
+      { key: 'contradictionpoint_accommodation_standard_yellow', type: 'number', hideOnIndex: true, required: false, },
+      { key: 'contradictionpoint_accommodation_standard_red', type: 'number', hideOnIndex: true, required: false, },
+      { key: 'contradictionpoint_additional_accommodation', type: 'number', hideOnIndex: true, required: false, },
+      { key: 'contradictionpoint_owner_offer', type: 'number', hideOnIndex: true, required: false, },
       { key: 'contradictionpoint_text', type: 'html', hideOnIndex: true },
       { key: 'contradictionpoint_text_customer', type: 'html', hideOnIndex: true },
+      { key: 'textmodule_id', type: 'list', list: 'textmodule', listLabel: 'textmodule_name', hideOnIndex: true },
     ],
     default: {
       contradictionpoint_legally_clear: 1,
@@ -3362,7 +3499,7 @@ export default {
       // { key: 'contract_name', hideOnForm: true },
       { key: 'pos_id', hideOnForm: true },
       { key: 'pos_name', hideOnForm: true },
-      { key: 'sub_ticket_count', hideOnForm: true },
+      // { key: 'sub_ticket_count', hideOnForm: true },
 
     ],
     default: {
