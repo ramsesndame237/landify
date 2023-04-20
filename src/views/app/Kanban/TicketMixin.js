@@ -170,7 +170,7 @@ export default {
             ticket_deadline_offset: deadline,
             ticket_deadline_offset_yellow: deadline_yellow,
             ticket_deadline_offset_red: deadline_red,
-            user_id: user.user.user_id,
+            user_id: user.user_id,
           },
         ],
       })).data.data.data[0][0]
@@ -192,7 +192,7 @@ export default {
     },
     currentUserInTeam(teamId) {
       const user = getUserData()
-      const email = user.user.user_email
+      const email = user.user_email
       return this.teams.find(team => team.team_id === teamId && team.user_email === email && moment().isBetween(team.user_team_valid_from, team.user_team_valid_to, 'day')) != null
     },
     userIdsOfTeam(teamId) {
