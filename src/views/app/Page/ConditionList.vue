@@ -157,7 +157,7 @@ export default {
           ] : []),
           'comment',
           { key: 'missing_documents', type: 'html', export_key: 'missing_documents_export' },
-          'state',
+          // 'state',
           'negotiator',
         ],
         filter_vertical: true,
