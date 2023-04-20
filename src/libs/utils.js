@@ -11,7 +11,7 @@ export const getDocumentLink = document => {
 }
 
 export const getSignImageLink = document => {
-  return `${axios.defaults.baseURL}/documents-sign/image/${document.document_id}`
+  return `/documents-sign/image/${document.document_id}`
 }
 
 export const getStampedDocumentLink = document => {
