@@ -526,7 +526,8 @@ export default {
       this.items = []
     },
     download() {
-      this.$refs.table.downloadCsv()
+      const filename = `${this.$t(`menu~${this.table === 'conditions' ? 'contractcondition' : 'contractdeadline'}`)}-Export_${moment().format('DD_MM_YYYY')}.csv`
+      this.$refs.table.downloadCsv(filename)
     },
   },
 }
