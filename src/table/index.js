@@ -295,7 +295,13 @@ export default {
     },
     note: 'frontend_0_8_13',
     submit(vm) {
-      return (vm.create ? vm.$http.post('/users', vm.entity) : vm.$http.put(`/users/${vm.entityId}`, vm.entity))
+      const data = { ...vm.entity }
+      const addressField = vm.$refs.fields.find(f => f.field.key === 'address_id')
+      data.address = addressField.subEntity
+      const cityField = addressField.getSubFields().find(f => f.field.key === 'city_id')
+      data.address.city = cityField.subEntity
+      console.log(data)
+      return (vm.create ? vm.$http.post('/users', data) : vm.$http.put(`/users/${vm.entityId}`, data))
         .then(() => {
           vm.$successToast(vm.create ? 'User Created' : 'User Updated')
         })
