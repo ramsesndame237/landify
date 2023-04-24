@@ -109,7 +109,7 @@ export default {
           return !ticket.ticket_closed
         }
         if (this.filterValue === 1) {
-          return ticket.columns[0].user_id_assigned === user.user.user_id
+          return ticket.columns[0].user_id_assigned === user.user_id
         }
         if (this.filterValue === 2) {
           return ticket.ticket_closed
