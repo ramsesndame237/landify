@@ -293,6 +293,12 @@ export default {
       user_mobile: '+491511234456',
     },
     note: 'frontend_0_8_13',
+    submit(vm) {
+      return vm.$http.post('/users', vm.entity)
+        .then(() => {
+          vm.$successToast(vm.create ? 'User Created' : 'User Updated')
+        })
+    },
   },
   access: {
     fields: [

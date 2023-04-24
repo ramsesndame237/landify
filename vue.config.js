@@ -15,9 +15,7 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? `/${process.env.PUBLIC_PATH}` : '/',
   lintOnSave: false,
   devServer: {
-    // proxy: 'http://127.0.0.1:8001/',
-    proxy: 'https://vmd86703.contaboserver.net/',
-    // proxy: 'https://contabo.lx42.de/',
+    proxy: 'https://api.dev-zelos.de',
   },
   css: {
     loaderOptions: {

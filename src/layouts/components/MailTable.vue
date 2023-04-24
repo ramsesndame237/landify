@@ -280,7 +280,7 @@ export default {
                 ticket_deadline_offset: deadline,
                 ticket_deadline_offset_yellow: deadline_yellow,
                 ticket_deadline_offset_red: deadline_red,
-                user_id: user.user.user_id,
+                user_id: user.user_id,
               },
             ],
           })).data.data.data[0][0]
