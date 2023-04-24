@@ -85,7 +85,6 @@ export default {
         list: 'usertype',
         listLabel: 'usertype_name',
       },
-      { key: 'usertype_name', hideOnForm: true },
       {
         key: 'address_id',
         hideOnIndex: true,
@@ -96,6 +95,8 @@ export default {
         alwaysNew: true,
         onlyForm: true,
       },
+      { key: 'user_fix_phonenumber', hideOnIndex: true },
+      { key: 'user_mobile' },
       {
         key: 'contactperson_id',
         hideOnIndex: true,
@@ -294,10 +295,14 @@ export default {
     },
     note: 'frontend_0_8_13',
     submit(vm) {
-      return vm.$http.post('/users', vm.entity)
+      return (vm.create ? vm.$http.post('/users', vm.entity) : vm.$http.put(`/users/${vm.entityId}`, vm.entity))
         .then(() => {
           vm.$successToast(vm.create ? 'User Created' : 'User Updated')
         })
+    },
+    fetch(vm) {
+      return vm.$http.get(`/users/${vm.entityId}`, vm.entity)
+        .then(resp => resp.data)
     },
   },
   access: {
@@ -1431,7 +1436,9 @@ export default {
       { key: 'pos_name_external', required: false },
       // { key: 'location_count', hideOnForm: true },
       { key: 'area_count', hideOnForm: true },
-      { key: 'pos_first_year', type: 'date', required: false, hideOnIndex: true },
+      {
+        key: 'pos_first_year', type: 'date', required: false, hideOnIndex: true,
+      },
       {
         key: 'contactperson_id',
         type: 'list',
@@ -1990,10 +1997,18 @@ export default {
         hideOnIndex: true,
         hideOnUpdate: true,
       },
-      { key: 'customergroup_name', hideOnIndex: true, hideOnCreate: true, disabled: true },
-      { key: 'company_name', hideOnIndex: true, hideOnCreate: true, disabled: true },
-      { key: 'location_name', hideOnIndex: true, hideOnCreate: true, disabled: true },
-      { key: 'pos_name', hideOnIndex: true, hideOnCreate: true, disabled: true },
+      {
+        key: 'customergroup_name', hideOnIndex: true, hideOnCreate: true, disabled: true,
+      },
+      {
+        key: 'company_name', hideOnIndex: true, hideOnCreate: true, disabled: true,
+      },
+      {
+        key: 'location_name', hideOnIndex: true, hideOnCreate: true, disabled: true,
+      },
+      {
+        key: 'pos_name', hideOnIndex: true, hideOnCreate: true, disabled: true,
+      },
       { key: 'contracttype_name', hideOnCreate: true, disabled: true },
       { key: 'contract_name' },
       { key: 'location_name', hideOnForm: true },
@@ -2022,7 +2037,6 @@ export default {
         hideOnIndex: true,
         hideOnUpdate: true,
       },
-
 
     ],
     relations: [
@@ -2895,10 +2909,11 @@ export default {
           { key: 'invoiceposition_amount_total', hideOnForm: true },
           { key: 'invoiceposition_amount_customer', hideOnForm: true },
           {
-            key: 'invoiceposition_apportionable', type: 'boolean',
+            key: 'invoiceposition_apportionable',
+            type: 'boolean',
             editable: true,
             onChange: updateInvoiceApportionable,
-            hideOnForm: true
+            hideOnForm: true,
           },
         ],
       },
@@ -3228,7 +3243,9 @@ export default {
       { key: 'textmodule_id', auto: true },
       { key: 'textmodule_name' },
       { key: 'country_name', hideOnForm: true },
-      { key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', hideOnIndex: true },
+      {
+        key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', hideOnIndex: true,
+      },
       { key: 'textmodule_description', type: 'textarea' },
       { key: 'textmodule_templatetext', hideOnIndex: true, type: 'html' },
       { key: 'textmodule_text_left', hideOnIndex: true, type: 'html' },
@@ -3260,7 +3277,9 @@ export default {
       },
     ],
     filters: [
-      { key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', required: false },
+      {
+        key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', required: false,
+      },
     ],
     filter_vertical: true,
   },
@@ -3287,7 +3306,9 @@ export default {
       { key: 'texttemplate_variable_id' },
       { key: 'texttemplate_variable_name' },
       { key: 'texttemplate_variable_example' },
-      { key: 'texttemplate_id', type: 'list', listLabel: 'texttemplate_name', list: 'texttemplate', hideOnIndex: true },
+      {
+        key: 'texttemplate_id', type: 'list', listLabel: 'texttemplate_name', list: 'texttemplate', hideOnIndex: true,
+      },
     ],
   },
   claimtype: {
@@ -3448,17 +3469,29 @@ export default {
       { key: 'contradictionpoint_id', auto: true, hideOnForm: true },
       { key: 'contradictionpoint_rank' },
       { key: 'contradictionpoint_title' },
-      { key: 'contradictionpoint_maximum_claim_green', type: 'number', required: false, },
-      { key: 'contradictionpoint_maximum_claim_yellow', type: 'number', required: false, },
-      { key: 'contradictionpoint_maximum_claim_red', type: 'number', required: false, },
-      { key: 'contradictionpoint_accommodation_standard_green', type: 'number', hideOnIndex: true, required: false, },
-      { key: 'contradictionpoint_accommodation_standard_yellow', type: 'number', hideOnIndex: true, required: false, },
-      { key: 'contradictionpoint_accommodation_standard_red', type: 'number', hideOnIndex: true, required: false, },
-      { key: 'contradictionpoint_additional_accommodation', type: 'number', hideOnIndex: true, required: false, },
-      { key: 'contradictionpoint_owner_offer', type: 'number', hideOnIndex: true, required: false, },
+      { key: 'contradictionpoint_maximum_claim_green', type: 'number', required: false },
+      { key: 'contradictionpoint_maximum_claim_yellow', type: 'number', required: false },
+      { key: 'contradictionpoint_maximum_claim_red', type: 'number', required: false },
+      {
+        key: 'contradictionpoint_accommodation_standard_green', type: 'number', hideOnIndex: true, required: false,
+      },
+      {
+        key: 'contradictionpoint_accommodation_standard_yellow', type: 'number', hideOnIndex: true, required: false,
+      },
+      {
+        key: 'contradictionpoint_accommodation_standard_red', type: 'number', hideOnIndex: true, required: false,
+      },
+      {
+        key: 'contradictionpoint_additional_accommodation', type: 'number', hideOnIndex: true, required: false,
+      },
+      {
+        key: 'contradictionpoint_owner_offer', type: 'number', hideOnIndex: true, required: false,
+      },
       { key: 'contradictionpoint_text', type: 'html', hideOnIndex: true },
       { key: 'contradictionpoint_text_customer', type: 'html', hideOnIndex: true },
-      { key: 'textmodule_id', type: 'list', list: 'textmodule', listLabel: 'textmodule_name', hideOnIndex: true },
+      {
+        key: 'textmodule_id', type: 'list', list: 'textmodule', listLabel: 'textmodule_name', hideOnIndex: true,
+      },
     ],
     default: {
       contradictionpoint_legally_clear: 1,
