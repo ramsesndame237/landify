@@ -59,7 +59,14 @@
           <field ref="contactPersonField" :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
                  :field="getField('contactperson_id')"/>
         </b-col>
-
+        <b-col cols="12" md="6">
+          <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
+                 :field="getField('user_mobile')"/>
+        </b-col>
+        <b-col cols="12" md="6">
+          <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
+                 :field="getField('user_fix_phonenumber')"/>
+        </b-col>
       </b-row>
     </b-form>
   </validation-observer>

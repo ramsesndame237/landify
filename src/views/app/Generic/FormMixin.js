@@ -434,11 +434,12 @@ export default {
     }
     if (this.create) return
     if (!this.isRelation && this.fetchData) {
-      const entity = await this.$store.dispatch('table/fetchSingleItem', {
-        entity: this.table,
-        primaryKey: this.primaryKey,
-        id: this.entityId || this.initialData[this.primaryKey],
-      })
+      const entity = await (this.definition.fetch ? this.definition.fetch(this) :
+        this.$store.dispatch('table/fetchSingleItem', {
+          entity: this.table,
+          primaryKey: this.primaryKey,
+          id: this.entityId || this.initialData[this.primaryKey],
+        }))
       if (!entity) {
         this.$errorToast(`The entity with the id "${this.entityId}" doesnt exists`)
       } else {

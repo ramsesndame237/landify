@@ -104,5 +104,7 @@ export default {
 </script>
 
 <style scoped>
-
+.btn{
+  white-space: nowrap;
+}
 </style>
