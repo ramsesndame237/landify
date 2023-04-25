@@ -11,8 +11,8 @@
         <p v-if="file">File charged </p>
       </div>
       <b-form-group class="mt-2" label="Tables to import">
-        <b-form-radio-group v-model="table" :options="entities.map(entity => ({text: titles[entity], value: entity}))"
-                            name="radio-inline"/>
+        <b-form-checkbox-group v-model="tables"
+                               :options="entities.map(entity => ({text: titles[entity], value: titles[entity]}))"/>
       </b-form-group>
       <div class="mt-2">
         <b-button variant="danger" :disabled="loading" @click="upload">
@@ -48,7 +48,7 @@
                     <b-form-checkbox v-model="selected[entity]" :disabled="disabled" @change="onSelectChange(entity)"/>
                   </b-th>
                   <b-th>Line</b-th>
-                  <b-th v-for="(field,i) in fields" :key="i">{{ $t('attribute.' + field.key) }}</b-th>
+                  <b-th v-for="(field,i) in fields[entity]" :key="i">{{ $t('attribute.' + field) }}</b-th>
                   <!--                  <b-th class="text-center">-->
                   <!--                    Action-->
                   <!--                  </b-th>-->
@@ -56,18 +56,18 @@
               </b-thead>
               <b-tbody>
                 <b-tr v-if="getResult(entity).length===0">
-                  <b-td :colspan="3+fields.length" class="text-center">No Data available</b-td>
+                  <b-td :colspan="3+fields[entity].length" class="text-center">No Data available</b-td>
                 </b-tr>
                 <b-tr v-for="(row, i) in getResult(entity)" :key="i">
                   <b-td>
                     <b-form-checkbox v-model="row.__selected" :disabled="disabled"/>
                   </b-td>
                   <b-td>{{ row.line }}</b-td>
-                  <template v-for="(column,i) in fields">
-                    <b-td v-if="row[column.key]" :key="i"
-                          :title="row[column.key].old_value ? `Old Value: ${row[column.key].old_value}`: null"
-                          :style="{background: row[column.key].color}">
-                      {{ row[column.key].new_value }}
+                  <template v-for="(column,i) in fields[entity]">
+                    <b-td v-if="row[column]" :key="i"
+                          :title="row[column].old_value ? `Old Value: ${row[column].old_value}`: null"
+                          :style="{background: row[column].color}">
+                      {{ row[column].new_value }}
                     </b-td>
                     <b-td v-else :key="i"/>
                   </template>
@@ -118,38 +118,63 @@ export default {
       errors: [],
       errorsCnt: 0,
       disabled: false,
-      table: 'partner_companies',
+      tables: [],
       entities: [
         'partner_companies', 'companies', 'contact_persons', 'locations', 'pos', 'areas'
       ],
       titles: {
-        'partner_companies': 'Partner Companies',
-        'companies': 'Companies',
-        'contact_persons': 'Contact persons',
-        'locations': 'Locations',
-        'pos': 'Point of sales',
-        'areas': 'Areas'
+        'partner_companies': 'Partner Company',
+        'companies': 'Company',
+        'contact_persons': 'Contact Person',
+        'locations': 'Location',
+        'pos': 'Pos',
+        'areas': 'Area'
       },
       selected: {},
-      fields: [
-        { key: 'status' },
-        { key: 'partnercompany_name' },
-        { key: 'partnercompany_shortname' },
-        { key: 'partnergroup_name', },
-        { key: 'city_zip', },
-        { key: 'city_name', },
-        { key: 'address_street' },
-        { key: 'address_house_number' },
-        { key: 'address_extra' },
-        { key: 'country_name' },
-        { key: 'contactdetails_email', },
-        { key: 'contactdetails_phone' },
-        { key: 'contactdetails_mobile' },
-        { key: 'contactdetails_fax' },
-        // { key: 'contactdetails_salestaxno' },
-        // { key: 'contactdetails_commercialregisterno' },
-        // { key: 'contactdetails_website' },
-      ],
+      fields: {
+        'partner_companies': [
+          'status',
+          'partnercompany_name',
+          'partnercompany_shortname',
+          'partnergroup_name',
+          'city_zip',
+          'city_name',
+          'address_street',
+          'address_house_number',
+          'address_extra',
+          'country_name',
+          'contactdetails_email',
+          'contactdetails_phone',
+          'contactdetails_mobile',
+          'contactdetails_fax',
+          // { key: 'contactdetails_salestaxno' },
+          // { key: 'contactdetails_commercialregisterno' },
+          // { key: 'contactdetails_website' },
+        ],
+        'companies': ['company_name', 'company_shortname', 'customergroup_name', 'company_template_coverletter_subject',
+          'company_template_coverletter_text', 'city_zip', 'city_name', 'address_street', 'address_house_number',
+          'address_extra', 'country_name', 'contactdetails_email', 'contactdetails_phone', 'contactdetails_mobile',
+          'contactdetails_fax', 'companydetails_salestaxno', 'companydetails_commercialregisterno',
+          'companydetails_website', 'bankdata_iban', 'bankdata_bic', 'bankdata_name', 'payment_date',
+          'payment_debitor', 'payment_info', 'payment_objectreference', 'payment_type', 'payment_value'
+        ],
+        'contact_persons': ['contactperson_firstname', 'contactperson_lastname', 'contactperson_department',
+          'contactperson_shortname', 'contactperson_function', 'user_email', 'contactdetails_email',
+          'contactdetails_phone', 'contactdetails_mobile', 'contactdetails_fax', 'company_name', 'customergroup_name',
+          'partnercompany_name', 'city_name', 'address_street', 'address_house_number', 'address_extra'
+          , 'contactsalutation_name', 'contacttitle_name', 'city_zip', 'country_name'
+        ],
+        'locations': ['location_name', 'location_objectdescription', 'location_total_area', 'location_start_date',
+          'partnercompany_name', 'location_partnercompany_partnertype_valid_from_date',
+          'location_partnercompany_partnertype_valid_to_date', 'partnercompany_name',
+          'location_partnercompany_partnertype_valid_from_date', 'location_partnercompany_partnertype_valid_to_date',
+          'locationtype_name', 'city_name', 'address_street', 'address_house_number', 'address_extra', 'city_zip',
+          'country_name'
+        ],
+        'pos': ['pos_name', 'pos_branchnumber', 'pos_name_external', 'pos_first_year', 'company_name', 'tag_name',],
+        'areas': ['area_name', 'area_name_external', 'area_space_value', 'location_name', 'usagetype_name',
+          'areatype_name', 'pos_name', 'area_usagetype_valid_from_date', 'area_usagetype_valid_to_date']
+      },
       result: null,
       statusList: [
         { text: 'All', value: '' },
@@ -198,10 +223,10 @@ export default {
     },
     async upload() {
       if (!this.file) return this.$errorToast('Please insert a file')
-      if (!this.table) return this.$errorToast('Please select a table')
+      if (!this.tables.length) return this.$errorToast('Please select a table')
       const formData = new FormData
       formData.append('file', this.file)
-      formData.append('leaves', ['Partner Company'])
+      formData.append('leaves', this.tables)
       this.loading = true
       this.$http.post('/provisionings/partnercompany/checking', formData, { headers: { 'content-type': 'form-data' } })
         .then(({ data }) => {
