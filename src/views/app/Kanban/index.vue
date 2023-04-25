@@ -81,13 +81,14 @@ export default {
       table: 'ticket',
       advanced: true,
       search: '',
-      filterOptions: [{
-        text: this.$t('header~board~status~open'),
-        value: 0
-      }, { text: this.$t('header~board~status~my'), value: 1 },
+      filterOptions: [
+        {
+          text: this.$t('header~board~status~open'), value: 0,
+        },
+        { text: this.$t('header~board~status~my'), value: 1 },
         { text: this.$t('header~board~status~closed'), value: 2 }, {
           text: this.$t('header~board~status~notassigned'),
-          value: 3
+          value: 3,
         },
       ],
       filterValue: 0,
