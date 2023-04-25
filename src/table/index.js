@@ -3507,6 +3507,7 @@ export default {
   // endregion
   // region Work Package 6
   ticket: {
+    customIndex: () => import('@/views/app/Page/TicketList'),
     customPage: () => import('@/views/app/Page/TicketDetail.vue'),
     fieldComponent: () => import('@/views/app/CreateComponent/TicketForm.vue'),
     create: false,

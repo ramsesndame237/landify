@@ -1,14 +1,20 @@
 <template>
-  <index :key="$route.path"/>
+  <component :is="definition.customIndex || 'index'" :key="$route.path"/>
 </template>
 
 <script>
 import Table from '@/table'
 import Index from '../index'
+import table from "@/table";
 
 export default {
   name: 'IndexPage',
   components: { Index },
+  computed: {
+    definition() {
+      return table[this.$route.params.table]
+    },
+  },
   beforeRouteEnter(to, from, next) {
     to.meta.pageTitle = Table[to.params.table]?.title || `headline~${to.params.table}~list`
     next()

@@ -9,18 +9,23 @@
         <b-col v-if="view" cols="6">
           <field :field="{key: 'email_received_datetime'}" :entity="item" disabled/>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12">
           <field :field="{key: 'email_from'}" :entity="item" disabled/>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12">
           <field v-if="view" :field="{key: 'email_to'}" :entity="item" disabled/>
-          <b-form-group v-else label="Email To">
-            <vue-tags-input v-model="tag" :tags="tags" :validation="validation" :autocomplete-items="filteredItems"
-                            @tags-changed="newTags => tags = newTags"/>
+          <b-form-group v-else :label="$t('attribute.email_to')">
+            <vue-tags-input v-model="tag" :tags="tags" :validation="validation" :autocomplete-items="filteredItems(tag)"
+                            :placeholder="$t('attribute.email_to')" @tags-changed="newTags => tags = newTags"/>
           </b-form-group>
-          <!--          <field v-else ref="contactperson" :field="{key: 'contactperson_id', type:'list', multiple: true, list: 'frontend_2_3_1', listLabel: 'contactperson_email',-->
-          <!--            listLabel: option => `${option.user_email} - ${option.contactperson_firstname} ${option.contactperson_lastname}`}"-->
-          <!--                 :entity="item" disabled/>-->
+        </b-col>
+        <b-col cols="12">
+          <field v-if="view" :field="{key: 'email_cc'}" :entity="item" disabled/>
+          <b-form-group v-else :label="$t('attribute.email_cc')">
+            <vue-tags-input v-model="tag_cc" :tags="tags_cc" :validation="validation"
+                            :autocomplete-items="filteredItems(tag_cc)" :placeholder="$t('attribute.email_cc')"
+                            @tags-changed="newTags => tags_cc = newTags"/>
+          </b-form-group>
         </b-col>
         <b-col cols="12">
           <field :field="{key: 'email_subject'}" :entity="item" :disabled="view"/>
@@ -46,7 +51,7 @@
 <script>
 import Field from '@/views/app/Generic/Field'
 import { getDocumentLink } from "@/libs/utils";
-import VueTagsInput from '@johmun/vue-tags-input';
+import VueTagsInput from '@johmun/vue-tags-input'
 import {
   email,
 } from 'vee-validate/dist/rules'
@@ -60,7 +65,9 @@ export default {
       view: true,
       loading: false,
       tag: '',
+      tag_cc: '',
       tags: [],
+      tags_cc: [],
       contactpersons: [],
       validation: [{
         classes: 'invalid',
@@ -69,17 +76,16 @@ export default {
       }],
     }
   },
-  computed: {
-    filteredItems() {
-      return this.contactpersons.filter(i => {
-        return i.user_email && i.user_email.toLowerCase().indexOf(this.tag.toLowerCase()) !== -1
-      }).map(i => i.user_email)
-    },
-  },
+  computed: {},
   async mounted() {
     this.contactpersons = await this.$store.dispatch('table/fetchList', { entity: 'frontend_2_3_1' })
   },
   methods: {
+    filteredItems(tag) {
+      return this.contactpersons.filter(i => {
+        return i.user_email && i.user_email.toLowerCase().indexOf(tag.toLowerCase()) !== -1
+      }).map(i => i.user_email)
+    },
     getDocumentLink,
     show(view, item) {
       if (view) {
@@ -109,6 +115,7 @@ export default {
 
         await this.$http.post('/emails/send', {
           email_to: this.tags.map(t => t.text),
+          email_cc: this.tags_cc.map(t => t.text),
           email_subject: this.item.email_subject,
           email_body: this.item.email_body,
           email_attachements: this.item.attachments || [],
@@ -128,5 +135,7 @@ export default {
 </script>
 
 <style scoped>
-
+.vue-tags-input {
+  max-width: 100% !important;
+}
 </style>
