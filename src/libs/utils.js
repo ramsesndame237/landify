@@ -11,12 +11,14 @@ export const getDocumentLink = document => {
 }
 
 export const getSignImageLink = document => {
-  return `${axios.defaults.baseURL}/documents-sign/image/${document.document_id}`
+  return `/documents-sign/image/${document.document_id}`
 }
 
 export const getStampedDocumentLink = document => {
   return `${axios.defaults.baseURL}/document/download/stamp/${document.document_id}`
 }
+
+export const clone = obj => JSON.parse(JSON.stringify(obj))
 
 export const getDateFormat = (time = false) => {
   const lang = window.$vue.$store.state.app.lang

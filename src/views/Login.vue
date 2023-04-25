@@ -179,6 +179,7 @@ export default {
               return
             }
             useJwt.setToken(resp.data.user_token)
+            useJwt.setRefreshToken(resp.data.user_refresh_token)
             localStorage.setItem('userEmail', resp.data.user.user_email)
             return useJwt.redirectAfterLogin(this)
           })

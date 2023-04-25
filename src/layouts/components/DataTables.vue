@@ -1,8 +1,7 @@
 <template>
-  <b-table ref="table" sticky-header :title="entityList||entity" striped hover responsive :busy.sync="loading"
-           :per-page="perPage" :current-page="currentPage" :items="items || provider" :fields="allFields"
-           :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" :filter="search" select-mode="multi"
-           @row-clicked="onRowClicked">
+  <b-table ref="table" sticky-header striped hover responsive :busy.sync="loading" :per-page="perPage"
+           :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
+           :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" @row-clicked="onRowClicked">
     <template #cell(__selected)="data">
       <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"
                        :disabled="disabled" @change="onSelect(data.index)"/>
@@ -224,6 +223,7 @@ export default {
       })
       this.$store.commit('table/setDefinition', { data, table: this.table })
       this.currentItems = data.data.data
+      this.$emit('items', this.currentItems)
       return this.currentItems
     },
     getSelected() {
@@ -331,7 +331,7 @@ export default {
       console.log('row clicked', record)
       this.$set(record, '__selected', !record.__selected)
     },
-    downloadCsv() {
+    downloadCsv(filename = 'export.csv') {
       const fields = this.allFields.filter(f => (['Actions', '__selected'].indexOf(f.key) === -1))
       let csvContent = `${fields.map(f => this.$t(`attribute.${f.key}`)).join(';').replaceAll('\r', '').replaceAll('\n', '')}\n${
         this.items.map(item => fields.map(f => item[f.export_key || f.key]).join(';')).join('\n')}`
@@ -339,7 +339,7 @@ export default {
 
       const link = document.createElement('a')
       link.setAttribute('href', csvContent)
-      link.setAttribute('download', 'export.csv')
+      link.setAttribute('download', filename)
       document.body.appendChild(link)
       link.click()
     },

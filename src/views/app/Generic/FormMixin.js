@@ -197,7 +197,7 @@ export default {
           const formField = fieldComponents.find(f => f.field === field)
           const create = formField.hasNew || (field.alwaysNew && originalEntity[field.key] == null)
           const { subDefinition } = formField
-          const data = create ? formField.subEntity : {
+          const data = create ? { ...subDefinition.default, ...formField.subEntity } : {
             ...formField.subEntity,
             [field.key]: originalEntity[field.key],
           }
@@ -326,6 +326,10 @@ export default {
             return Promise.reject(new Error('Invalid Form'))
           }
           this.loading = true
+          if (this.definition.submit) {
+            return this.definition.submit(this, this.entity, this.create)
+              .finally(() => this.loading = false)
+          }
           return this.saveEntity(this.entity, this.originalEntity, this.formFields, this.getFieldComponents(), this.table, this.definition, this.primaryKey, this.create)
             .then(async data => {
               let result

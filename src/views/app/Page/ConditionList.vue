@@ -157,7 +157,7 @@ export default {
           ] : []),
           'comment',
           { key: 'missing_documents', type: 'html', export_key: 'missing_documents_export' },
-          'state',
+          // 'state',
           'negotiator',
         ],
         filter_vertical: true,
@@ -526,7 +526,8 @@ export default {
       this.items = []
     },
     download() {
-      this.$refs.table.downloadCsv()
+      const filename = `${this.$t(`menu~${this.table === 'conditions' ? 'contractcondition' : 'contractdeadline'}`)}-Export_${moment().format('DD_MM_YYYY')}.csv`
+      this.$refs.table.downloadCsv(filename)
     },
   },
 }

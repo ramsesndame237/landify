@@ -23,6 +23,7 @@ import '@/auth/jwt/useJwt'
 
 import ability from '@/libs/acl'
 import { defineRules } from "@/libs/acl/ability";
+import moment from "moment";
 
 // Vee validate
 Vue.component('validation-provider', ValidationProvider)
@@ -102,7 +103,8 @@ async function init() {
     } catch (e) {
       data = null
     }
-    if (data && data.lang === store.state.app.lang) {
+    // caching is only for 24 hours
+    if (data && data.lang === store.state.app.lang && data.date && moment().diff(moment(data.date), 'h') < 24) {
       i18n.mergeLocaleMessage(store.state.app.lang, { attribute: data.attribute, ...data.global })
     } else {
       // remove this else after and do this all the item
@@ -125,6 +127,7 @@ async function init() {
 if (userEmail) {
   store.dispatch('app/fetchUserData', userEmail)
     .finally(() => {
+      console.log('init')
       ability.update(defineRules())
       return init()
     })
