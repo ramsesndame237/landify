@@ -25,22 +25,22 @@
       <b-card>
         <b-tabs ref="tabs" pills>
           <b-tab v-for="(entity, index) in entities.filter(e => !!result[e])" :key="index" :title="titles[entity]" lazy>
-            <table v-if="result[entity]" class="my-2 table w-100">
-              <thead>
-              <tr>
-                <th class="pb-50 font-weight-bold">Total</th>
-                <th class="pb-50">{{ getCount(entity) }}</th>
-                <th class="pb-50 font-weight-bold">Inserted</th>
-                <th class="pb-50">{{ getCount(entity, 'added') }}</th>
-                <th class="pb-50 font-weight-bold">Updated</th>
-                <th class="pb-50">{{ getCount(entity, 'updated') }}</th>
-                <th class="pb-50 font-weight-bold">Unchanged</th>
-                <th class="pb-50">{{ getCount(entity, 'unchanged') }}</th>
-                <th class="pb-50 font-weight-bold">Failed</th>
-                <th class="pb-50">{{ getCount(entity, 'failed') }}</th>
-              </tr>
-              </thead>
-            </table>
+            <!--            <table v-if="result[entity]" class="my-2 table w-100">-->
+            <!--              <thead>-->
+            <!--              <tr>-->
+            <!--                <th class="pb-50 font-weight-bold">Total</th>-->
+            <!--                <th class="pb-50">{{ getCount(entity) }}</th>-->
+            <!--                <th class="pb-50 font-weight-bold">Inserted</th>-->
+            <!--                <th class="pb-50">{{ getCount(entity, 'added') }}</th>-->
+            <!--                <th class="pb-50 font-weight-bold">Updated</th>-->
+            <!--                <th class="pb-50">{{ getCount(entity, 'updated') }}</th>-->
+            <!--                <th class="pb-50 font-weight-bold">Unchanged</th>-->
+            <!--                <th class="pb-50">{{ getCount(entity, 'unchanged') }}</th>-->
+            <!--                <th class="pb-50 font-weight-bold">Failed</th>-->
+            <!--                <th class="pb-50">{{ getCount(entity, 'failed') }}</th>-->
+            <!--              </tr>-->
+            <!--              </thead>-->
+            <!--            </table>-->
             <b-table-simple class="table-responsive">
               <b-thead>
                 <b-tr>
@@ -78,7 +78,16 @@
           </b-tab>
           <template #tabs-end>
             <div class=" d-flex align-items-center ml-auto">
-              <b-button variant="primary">Import All</b-button>
+<!--              <b-button variant="primary">Import All</b-button>-->
+              <b-dropdown split text="Import Selected" variant="primary" :disabled="loading" right>
+                <template #button-content>
+                  <b-spinner v-if="loading" class="mr-1" small/>
+                  <span>Import Selected</span>
+                </template>
+                <b-dropdown-item>
+                  Import All
+                </b-dropdown-item>
+              </b-dropdown>
               <label class="mx-1">Status</label>
               <b-form-select v-model="status" :options="statusList" style="width: 100px"/>
             </div>
@@ -133,7 +142,6 @@ export default {
       selected: {},
       fields: {
         'partner_companies': [
-          'status',
           'partnercompany_name',
           'partnercompany_shortname',
           'partnergroup_name',
@@ -265,6 +273,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.table, .table t-body th {
+  font-size: 12px;
+}
+
 .dropbox {
   outline: 2px dashed grey; /* the dash box */
   outline-offset: -10px;
