@@ -48,6 +48,7 @@
 
 <script>
 import { BButton, BFormCheckbox, BTable, } from 'bootstrap-vue'
+import { formatDate } from "@/libs/utils";
 
 export default {
   components: {
@@ -115,7 +116,11 @@ export default {
         ...this.fields.filter(f => !f.hideOnIndex && !f.auto).map(field => {
           let newField = field
           if (typeof field === 'string') newField = { key: field }
-          return { label: this.$t(`attribute.${newField.key}`), sortable: true, ...newField }
+          const f = { label: this.$t(`attribute.${newField.key}`), sortable: true, ...newField }
+          if (f.type === 'date') {
+            f.formatter = val => formatDate(val, f.time)
+          }
+          return f
         }),
       ]
     },

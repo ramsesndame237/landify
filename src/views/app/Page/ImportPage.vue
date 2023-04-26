@@ -58,37 +58,47 @@
                 <b-tr v-if="getResult(entity).length===0">
                   <b-td :colspan="3+fields[entity].length" class="text-center">No Data available</b-td>
                 </b-tr>
-                <b-tr v-for="(row, i) in getResult(entity)" :key="i">
-                  <b-td>
-                    <b-form-checkbox v-model="row.__selected" :disabled="disabled"/>
-                  </b-td>
-                  <b-td>{{ row.line }}</b-td>
-                  <template v-for="(column,i) in fields[entity]">
-                    <b-td v-if="row[column]" :key="i"
-                          :title="row[column].old_value ? `Old Value: ${row[column].old_value}`: null"
-                          :style="{background: row[column].color}">
-                      {{ row[column].new_value }}
+                <template v-for="(row, i) in getResult(entity)">
+                  <b-tr :key="i">
+                    <b-td>
+                      <b-form-checkbox v-model="row.__selected" :disabled="disabled"/>
                     </b-td>
-                    <b-td v-else :key="i"/>
-                  </template>
+                    <b-td class="d-flex align-items-center">
+                      <feather-icon @click="()=> row.show_old = !row.show_old"
+                                    :icon="row.show_old?'ChevronUpIcon':'ChevronDownIcon'" size="20"/>
+                      <span class="ml-1">{{ row.line }}</span>
+                    </b-td>
+                    <template v-for="(column,i) in fields[entity]">
+                      <b-td v-if="row[column]" :key="i"
+                            :title="row[column].reason"
+                            :style="{background: row[column].color}">
+                        {{ row[column].new_value }}
+                      </b-td>
+                      <b-td v-else :key="i"/>
+                    </template>
+                  </b-tr>
+                  <!--                  Old Values-->
+                  <b-tr v-if="row.show_old" :key="i+'n'" class="table-secondary">
+                    <b-td></b-td>
+                    <b-td></b-td>
+                    <b-td v-for="(column,i) in fields[entity]" :key="i">
+                      {{ row[column] ? row[column].old_value : '' }}
+                    </b-td>
+                  </b-tr>
+                </template>
 
-                </b-tr>
               </b-tbody>
             </b-table-simple>
           </b-tab>
           <template #tabs-end>
             <div class=" d-flex align-items-center ml-auto">
-<!--              <b-button variant="primary">Import All</b-button>-->
-              <b-dropdown split text="Import Selected" variant="primary" :disabled="loading" right>
-                <template #button-content>
-                  <b-spinner v-if="loading" class="mr-1" small/>
-                  <span>Import Selected</span>
-                </template>
-                <b-dropdown-item>
-                  Import All
-                </b-dropdown-item>
-              </b-dropdown>
-              <label class="mx-1">Status</label>
+              <template v-if="['added','changed'].indexOf(status)>=0 && getResult(currentEntity).length>0">
+                <b-button class="mr-1" variant="primary">Import All</b-button>
+                <b-button class="mr-1" v-if="getSelected(currentEntity).length>0" variant="primary">Import selected
+                  ({{ getSelected(currentEntity).length }})
+                </b-button>
+              </template>
+              <label class="mr-1">Status</label>
               <b-form-select v-model="status" :options="statusList" style="width: 100px"/>
             </div>
           </template>
@@ -187,15 +197,18 @@ export default {
       statusList: [
         { text: 'All', value: '' },
         { text: 'Added', value: 'added' },
-        { text: 'Updated', value: 'updated' },
+        { text: 'Changed', value: 'changed' },
         { text: 'Unchanged', value: 'unchanged' },
         { text: 'Failed', value: 'failed' }
       ],
       status: '',
-
     }
   },
-  computed: {},
+  computed: {
+    currentEntity() {
+      return this.entities.filter(e => !!this.result[e])[this.$refs.tabs?.currentTab]
+    }
+  },
   mounted() {
     this.reset()
   },
@@ -207,7 +220,10 @@ export default {
     },
     getResult(entity) {
       if (!this.status) return this.result[entity]
-      return this.result[entity].filter(row => row.status === status)
+      return this.result[entity].filter(row => row.status === this.status)
+    },
+    getSelected(entity) {
+      return this.getResult(entity).filter(row => row.__selected)
     },
     getEntity(e) {
       return {
@@ -243,6 +259,13 @@ export default {
             if (!data.data[entity]) return
             data.data[entity].forEach(row => {
               row.__selected = false
+              row.show_old = false
+              // set status
+              if (row.columns.find(c => c.action === 'failed')) row.status = 'failed'
+              else if (row.columns.find(c => c.action === 'changed')) row.status = 'changed'
+              else if (row.columns.find(c => c.action === 'added')) row.status = 'added'
+              else row.status = 'unchanged'
+              // set colors
               row.columns.forEach(column => {
                 row[column.name] = column
                 switch (column.action) {
