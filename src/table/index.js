@@ -3527,7 +3527,7 @@ export default {
         list: 'frontend_2_1_3_8',
         filter_key: 'company_id',
         relationEntity: 'ticket_pos_rel',
-        hideOnIndex:true,
+        hideOnIndex: true,
       },
       {
         key: 'contract_id',
@@ -3539,6 +3539,12 @@ export default {
         required: false,
         hideOnIndex: true,
       },
+      {
+        key: 'ticket_closed',
+        label: 'Status',
+        hideOnForm: true,
+        formatter: val => window.$vue.$t(val ? 'header~board~status~closed' : 'header~board~status~open'),
+      },
 
       // { key: 'column_name', hideOnForm: true },
       { key: 'board_name', hideOnForm: true },
@@ -3547,7 +3553,6 @@ export default {
       // { key: 'pos_id', hideOnForm: true },
       { key: 'pos_name', hideOnForm: true },
       // { key: 'sub_ticket_count', hideOnForm: true },
-
     ],
     default: {
       ticket_progress: 10,

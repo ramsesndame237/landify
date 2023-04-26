@@ -5,10 +5,10 @@
         <b-tr>
           <b-th/>
           <b-th>Email Id</b-th>
-          <b-th>Email received date</b-th>
-          <b-th>Email From</b-th>
-          <b-th>Email To</b-th>
-          <b-th>Email Subject</b-th>
+          <b-th>Received date</b-th>
+          <b-th>From</b-th>
+          <b-th>To</b-th>
+          <b-th>Subject</b-th>
           <b-th class="text-center">
             Ticket Id
           </b-th>
