@@ -237,6 +237,16 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/change-password/:user_id',
+      name: 'change-password',
+      component: () => import('@/views/ChangePassword.vue'),
+      meta: {
+        layout: 'full',
+        resource: 'Auth',
+        redirectIfLoggedIn: true,
+      },
+    },
+    {
       path: '/auth/verification/:token',
       name: 'verify-token',
       component: () => import('@/views/VerifyToken.vue'),
