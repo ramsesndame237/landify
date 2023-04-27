@@ -300,6 +300,7 @@ export default {
       data.address = addressField.subEntity
       const cityField = addressField.getSubFields().find(f => f.field.key === 'city_id')
       data.address.city = cityField.subEntity
+      data.address.address_city_id = 1
       console.log(data)
       return (vm.create ? vm.$http.post('/users', data) : vm.$http.put(`/users/${vm.entityId}`, data))
         .then(() => {
@@ -421,7 +422,7 @@ export default {
         primaryKey: 'user_id',
         entity: 'user_team_grp',
         entityForm: 'user_team_rel',
-        entityView: 'team',
+        view: false,
         fields: [
           {
             key: 'user_id',
@@ -430,6 +431,8 @@ export default {
             listLabel: 'user_email',
             disableOnUpdate: true,
           },
+          { key: 'user_firstname' },
+          { key: 'user_lastname' },
           { key: 'team_name', sortable: true, hideOnForm: true },
           {
             key: 'user_team_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,
