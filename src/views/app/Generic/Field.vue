@@ -44,7 +44,7 @@
                        :class="errors.length > 0 ? 'is-invalid':null">
           <b-form-input v-model="entity[field.key]" :disabled="disabled" :type="passwordFieldType"
                         class="form-control-merge" :state="errors.length > 0 ? false:null" :name="field.key"
-                        placeholder="Password"/>
+                        placeholder="Password" autocomplete="new-password"/>
 
           <b-input-group-append is-text>
             <feather-icon class="cursor-pointer" :icon="passwordToggleIcon" @click="togglePasswordVisibility"/>
@@ -198,7 +198,7 @@ export default {
     },
   },
   async created() {
-    if (this.field.type === 'list' && !this.field.filter_key) {
+    if (this.field.type === 'list' && !this.field.filter_key && !this.field.onlyForm) {
       await this.fetchList()
     } else if (this.field.type === 'boolean') {
       // set false as default value
@@ -285,7 +285,6 @@ export default {
         : fuse.list
     },
     getSubFields() {
-      console.log(this.$refs)
       if (this.subDefinition.fieldComponent) {
         return this.$refs.fieldComponent.$children.filter(c => c.$options.name === 'Field')
       }

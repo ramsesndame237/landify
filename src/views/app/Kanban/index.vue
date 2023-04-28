@@ -219,7 +219,8 @@ ul {
 
 .drag-list {
   display: flex;
-  align-items: flex-start;
+  //align-items: flex-start;
+  max-height: 80vh;
 
   @media (max-width: 690px) {
     display: block;
