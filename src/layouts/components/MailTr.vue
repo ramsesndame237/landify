@@ -15,7 +15,7 @@
     <b-td class="td-form">
       <field v-if="visible" :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/>
       <router-link v-if="is_done" target="_blank"
-                   :to="{name: 'table-view', params: {table: 'ticket',id: item.ticket_id}}">
+                   :to="{name: 'table-view', params: {table: 'ticket',id: item.ticket_id_created}}">
         {{ item.ticket_id_created + ' - ' + getTicketName() }}
       </router-link>
     </b-td>

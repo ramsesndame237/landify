@@ -33,202 +33,184 @@
           :placeholder="field.key"
         />
         <div v-else-if="field.type === 'html'" class="message-editor">
-          <template v-if="disabled">
-            <div class="p-1 border rounded" v-html="entity[field.key]" />
-          </template>
-          <ckeditor
-            v-else
-            :id="'ckcontent-' + field.key"
-            v-model="entity[field.key]"
-            :disabled="disabled"
-            :editor="editor"
-            :config="editorOption"
-          />
-        </div>
-        <div
-          v-else-if="field.type === 'list'"
-          :class="field.withNew || field.ids ? 'd-flex' : ''"
-        >
-          <v-select
-            :dropdown-should-open="true"
-            :disabled="selectDisabled"
-            :class="errors.length > 0 ? 'error' : ''"
-            :get-option-label="
-              typeof field.listLabel === 'function'
-                ? field.listLabel
-                : defaultLabelFunction[field.key] || ((option) => option[field.listLabel])
-            "
-            :placeholder="field.key"
-            :multiple="field.multiple"
-            :options="listItems"
-            transition=""
-            :label="typeof field.listLabel === 'string' ? field.listLabel : null"
-            class="w-100"
-            :loading="loading"
-            :reduce="(i) => i[field.tableKey || field.key]"
-            :filter="fuseSearch"
-            @input="onChange"
-          />
-          <b-button
-            v-if="field.withNew && !field.alwaysNew && !disabled"
-            class="ml-2 text-nowrap"
-            variant="info"
-            @click="showNewForm"
-            >New
-          </b-button>
-          <b-button
-            v-if="field.ids && !field.noShowButton"
-            class="ml-2 text-nowrap"
-            variant="info"
-            @click="showAll = !showAll"
+          <b-form-group v-if="visible" :label=" (field.noLabel|| noLabel) ? '' : $t(field.label||'attribute.'+field.key)"
+                        :label-for="'field-'+field.key" :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null"
           >
-            {{ showAll ? "Show Created" : "Show All" }}
-          </b-button>
-        </div>
-        <div v-else-if="field.type === 'yesno' || field.type === 'custom-select'">
-          <v-select
-            v-model="entity[field.key]"
-            :disabled="disabled"
-            :state="errors.length > 0 ? false : null"
-            :placeholder="field.key"
-            :options="field.type === 'yesno' ? yesNoOptions : field.items"
-            transition=""
-            label="label"
-            class="w-100"
-            :reduce="(i) => i.value"
-          />
-        </div>
-        <div v-else-if="field.type === 'file'">
-          <b-form-file
-            ref="file"
-            type="file"
-            placeholder="Choose a file or drop it here..."
-            drop-placeholder="Drop file here..."
-            required
-            :multiple="field.multiple"
-            @change="updateFilesData"
-          />
-          <div class="d-flex flex-column mt-2">
-            <div
-              v-for="(file, index) in files"
-              :key="index"
-              class="d-flex justify-content-between mb-1"
+            <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled
+                          :placeholder="$t('attribute.general_automaticid')"
+            />
+            <validation-provider v-else #default="{ errors, validate }" :rules="rules" :name="field.key"
+                                 :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message&& tableDefinition.attribute_regexp_failure_message[field.key]}"
             >
-              <div>
-                <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50" />
-                <span class="text-muted font-weight-bolder align-text-top">{{
-                  file.name
-                }}</span>
-                <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
-              </div>
-              <feather-icon
-                class="cursor-pointer"
-                icon="XIcon"
-                size="14"
-                @click="removeFile(index)"
+              <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
+                               :state="errors.length > 0 ? false:null" :placeholder="field.key"
               />
-            </div>
-          </div>
-        </div>
-        <b-input-group
-          v-else-if="field.type === 'password'"
-          v-model="entity[field.key]"
-          class="input-group-merge"
-          :class="errors.length > 0 ? 'is-invalid' : null"
-        >
-          <b-form-input
-            v-model="entity[field.key]"
-            :disabled="disabled"
-            :type="passwordFieldType"
-            class="form-control-merge"
-            :state="errors.length > 0 ? false : null"
-            :name="field.key"
-            placeholder="Password"
-          />
-
-          <b-input-group-append is-text>
-            <feather-icon
-              class="cursor-pointer"
-              :icon="passwordToggleIcon"
-              @click="togglePasswordVisibility"
-            />
-          </b-input-group-append>
-        </b-input-group>
-        <flat-pickr
-          v-else-if="field.type === 'date'"
-          v-model="entity[field.key]"
-          :disabled="disabled"
-          :config="dateConfig"
-          :state="errors.length > 0 ? false : null"
-          :placeholder="field.key"
-          class="form-control"
-        />
-        <b-form-checkbox
-          v-else-if="field.type === 'boolean'"
-          v-model="entity[field.key]"
-          :disabled="disabled"
-          :state="errors.length > 0 ? false : null"
-          :placeholder="field.key"
-          :value="1"
-          :unchecked-value="0"
-          style="margin-top: 5px"
-        />
-        <b-form-input
-          v-else
-          v-model="entity[field.key]"
-          :type="field.type === 'decimal' ? 'number' : field.type || 'text'"
-          :disabled="disabled"
-          :step="field.type === 'decimal' ? 0.01 : 1"
-          :state="errors.length > 0 ? false : null"
-          :placeholder="field.key"
-        />
-        <small v-for="(error, i) in errors" :key="i" class="text-danger">{{
-          error
-        }}</small>
-      </validation-provider>
-      <template
-        v-if="
-          field.type === 'list' &&
-          ((field.withNew && entity[field.key] === newValue) || field.alwaysNew)
-        "
-      >
-        <slot
-          :subEntity="subEntity"
-          :subTableDefinition="subTableDefinition"
-          :subFormFields="subFormFields"
-        >
-          <div :class="field.onlyForm ? '' : 'mt-2 ' + (inline ? '' : 'ml-3')">
-            <component
-              :is="subDefinition.fieldComponent"
-              v-if="subDefinition.fieldComponent"
-              ref="fieldComponent"
-              :entity="subEntity"
-              :table-definition="subTableDefinition"
-              :definition="subDefinition"
-              :form-fields="subFormFields"
-              :disabled="disabled"
-            />
-            <b-row v-else>
-              <b-col v-for="(field, index) in subFormFields" :key="index" cols="12">
-                <field
-                  ref="fields"
+              <div v-else-if="field.type==='html'" class="message-editor">
+                <template v-if="disabled">
+                  <div class="p-1 border rounded" v-html="entity[field.key]" />
+                </template>
+                <ckeditor
+                  v-else
+                  :id="'ckcontent-' + field.key"
+                  v-model="entity[field.key]"
                   :disabled="disabled"
-                  :inline="inline"
-                  :entity="subEntity"
-                  :table-definition="subTableDefinition"
-                  :field="field"
+                  :editor="editor"
+                  :config="editorOption"
                 />
-              </b-col>
-            </b-row>
-          </div>
-        </slot>
-      </template>
-    </b-form-group>
-  </div>
-</template>
+              </div>
+              <div
+                v-else-if="field.type === 'list'"
+                :class="field.withNew || field.ids ? 'd-flex' : ''"
+              >
+                <v-select
+                  :dropdown-should-open="true"
+                  :disabled="selectDisabled"
+                  :class="errors.length > 0 ? 'error' : ''"
+                  :get-option-label="
+                    typeof field.listLabel === 'function'
+                      ? field.listLabel
+                      : defaultLabelFunction[field.key] || ((option) => option[field.listLabel])
+                  "
+                  :placeholder="field.key"
+                  :multiple="field.multiple"
+                  :options="listItems"
+                  transition=""
+                  :label="typeof field.listLabel === 'string' ? field.listLabel : null"
+                  class="w-100"
+                  :loading="loading"
+                  :reduce="(i) => i[field.tableKey || field.key]"
+                  :filter="fuseSearch"
+                  @input="onChange"
+                />
+                <b-button
+                  v-if="field.withNew && !field.alwaysNew && !disabled"
+                  class="ml-2 text-nowrap"
+                  variant="info"
+                  @click="showNewForm"
+                >New
+                </b-button>
+                <b-button
+                  v-if="field.ids && !field.noShowButton"
+                  class="ml-2 text-nowrap"
+                  variant="info"
+                  @click="showAll = !showAll"
+                >
+                  {{ showAll ? "Show Created" : "Show All" }}
+                </b-button>
+              </div>
+              <div v-else-if="field.type === 'yesno' || field.type === 'custom-select'">
+                <v-select
+                  v-model="entity[field.key]"
+                  :disabled="disabled"
+                  :state="errors.length > 0 ? false : null"
+                  :placeholder="field.key"
+                  :options="field.type === 'yesno' ? yesNoOptions : field.items"
+                  transition=""
+                  label="label"
+                  class="w-100"
+                  :reduce="(i) => i.value"
+                />
+              </div>
+              <div v-else-if="field.type === 'file'">
+                <b-form-file
+                  ref="file"
+                  type="file"
+                  placeholder="Choose a file or drop it here..."
+                  drop-placeholder="Drop file here..."
+                  required
+                  :multiple="field.multiple"
+                  @change="updateFilesData"
+                />
+                <div class="d-flex flex-column mt-2">
+                  <div
+                    v-for="(file, index) in files"
+                    :key="index"
+                    class="d-flex justify-content-between mb-1"
+                  >
+                    <div>
+                      <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50" />
+                      <span class="text-muted font-weight-bolder align-text-top">{{
+                        file.name
+                      }}</span>
+                      <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
+                    </div>
+                    <feather-icon
+                      class="cursor-pointer"
+                      icon="XIcon"
+                      size="14"
+                      @click="removeFile(index)"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div v-else-if="field.type==='password'">
+                <b-input-group class="input-group-merge" :class="errors.length > 0 ? 'is-invalid':null">
+                  <b-form-input v-model="entity[field.key]" :disabled="disabled" :type="passwordFieldType"
+                                class="form-control-merge" :state="errors.length > 0 ? false:null" :name="field.key"
+                                placeholder="Password" autocomplete="new-password"
+                  />
+
+                  <b-input-group-append is-text>
+                    <feather-icon class="cursor-pointer" :icon="passwordToggleIcon" @click="togglePasswordVisibility" />
+                  </b-input-group-append>
+                </b-input-group>
+                <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
+                            :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
+                            class="form-control"
+                />
+                <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
+                                 :state="errors.length > 0 ? false:null" :placeholder="field.key" :value="1"
+                                 :unchecked-value="0" style="margin-top: 5px"
+                />
+                <b-form-input v-else v-model="entity[field.key]" :type="field.type==='decimal'?'number':(field.type||'text')"
+                              :disabled="disabled" :step="field.type==='decimal'?0.01:1" :state="errors.length > 0 ? false:null"
+                              :placeholder="field.key"
+                />
+                <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
+              </div></validation-provider>
+            <template
+              v-if="
+                field.type === 'list' &&
+                  ((field.withNew && entity[field.key] === newValue) || field.alwaysNew)
+              "
+            >
+              <slot
+                :subEntity="subEntity"
+                :subTableDefinition="subTableDefinition"
+                :subFormFields="subFormFields"
+              >
+                <div :class="field.onlyForm ? '' : 'mt-2 ' + (inline ? '' : 'ml-3')">
+                  <component
+                    :is="subDefinition.fieldComponent"
+                    v-if="subDefinition.fieldComponent"
+                    ref="fieldComponent"
+                    :entity="subEntity"
+                    :table-definition="subTableDefinition"
+                    :definition="subDefinition"
+                    :form-fields="subFormFields"
+                    :disabled="disabled"
+                  />
+                  <b-row v-else>
+                    <b-col v-for="(field, index) in subFormFields" :key="index" cols="12">
+                      <field
+                        ref="fields"
+                        :disabled="disabled"
+                        :inline="inline"
+                        :entity="subEntity"
+                        :table-definition="subTableDefinition"
+                        :field="field"
+                      />
+                    </b-col>
+                  </b-row>
+                </div>
+              </slot>
+            </template>
+          </b-form-group>
+        </div>
+      </validation-provider></b-form-group></div></template>
 
 <script>
-import Fuse from "fuse.js";
+import Fuse from 'fuse.js'
 import {
   BButton,
   BFormFile,
@@ -239,21 +221,21 @@ import {
   BFormTextarea,
   BRow,
   BImg,
-} from "bootstrap-vue";
-import flatPickr from "vue-flatpickr-component";
-import vSelect from "vue-select";
-import { snakeToTitle } from "@/libs/utils";
-import Table from "@/table/index";
-import CKEditor from "@ckeditor/ckeditor5-vue2";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { togglePasswordVisibility } from "@core/mixins/ui/forms";
+} from 'bootstrap-vue'
+import flatPickr from 'vue-flatpickr-component'
+import vSelect from 'vue-select'
+import { snakeToTitle } from '@/libs/utils'
+import Table from '@/table/index'
+import CKEditor from '@ckeditor/ckeditor5-vue2'
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 
 function isEmpty(val) {
-  return val === "" || val == null;
+  return val === '' || val == null
 }
 
 export default {
-  name: "Field",
+  name: 'Field',
   components: {
     ckeditor: CKEditor.component,
     BFormInput,
@@ -270,50 +252,47 @@ export default {
   },
   mixins: [togglePasswordVisibility],
   props: [
-    "entity",
-    "field",
-    "tableDefinition",
-    "inline",
-    "disabled",
-    "filterValue",
-    "table",
-    "definition",
-    "noLabel",
+    'entity',
+    'field',
+    'tableDefinition',
+    'inline',
+    'disabled',
+    'filterValue',
+    'table',
+    'definition',
+    'noLabel',
   ],
   data() {
     return {
       list: this.$store.state.table.listCache[this.field.list] || [],
       subEntity: { [this.field.key]: this.entity[this.field.key] },
       subOriginalEntity: {},
-      newValue: "Create New Element",
+      newValue: 'Create New Element',
       loading: false,
       promise: null,
       showAll: false,
       defaultLabelFunction: {
-        address_id: (option) =>
-          `${option.city_zip || ""} - ${option.city_name || ""} - ${
-            option.address_street || ""
-          }`,
-        invoice_id: (option) =>
-          `${option.invoice_id || ""} - ${option.invoice_number || ""} - ${
-            option.invoice_date || ""
-          }`,
-        contactperson_id: (option) =>
-          `${option.contactperson_firstname} ${option.contactperson_lastname}`,
+        address_id: option => `${option.city_zip || ''} - ${option.city_name || ''} - ${
+          option.address_street || ''
+        }`,
+        invoice_id: option => `${option.invoice_id || ''} - ${option.invoice_number || ''} - ${
+          option.invoice_date || ''
+        }`,
+        contactperson_id: option => `${option.contactperson_firstname} ${option.contactperson_lastname}`,
       },
       dateConfig: {
         allowInput: true,
         altInput: true,
-        altFormat: this.field.time ? "d.m.Y H:i:S" : "d.m.Y",
-        dateFormat: this.field.time ? "Y-m-d H:i:S" : "Y-m-d",
+        altFormat: this.field.time ? 'd.m.Y H:i:S' : 'd.m.Y',
+        dateFormat: this.field.time ? 'Y-m-d H:i:S' : 'Y-m-d',
         enableTime: this.field.time === true,
         locale: {
           firstDayOfWeek: 1,
         },
       },
       yesNoOptions: [
-        { value: 1, label: "Yes" },
-        { value: 0, label: "No" },
+        { value: 1, label: 'Yes' },
+        { value: 0, label: 'No' },
       ],
       files: [],
       editor: ClassicEditor,
@@ -323,204 +302,202 @@ export default {
         // },
         // placeholder: 'Type Text Here...',
       },
-    };
+    }
   },
   computed: {
     passwordToggleIcon() {
-      return this.passwordFieldType === "password" ? "EyeIcon" : "EyeOffIcon";
+      return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
     selectDisabled() {
       return (
         this.disabled || (this.field.filter_key && !this.entity[this.field.filter_key])
-      );
+      )
     },
     rules() {
-      return this.getValidationRules(this.field);
+      return this.getValidationRules(this.field)
     },
     visible() {
-      return this.field.visible ? this.field.visible(this.entity, this) : true;
+      return this.field.visible ? this.field.visible(this.entity, this) : true
     },
     listItems() {
       if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
-        const val = this.filterValue || this.entity[this.field.filter_key];
+        const val = this.filterValue || this.entity[this.field.filter_key]
         if (this.field.filter_key && val) {
-          console.log("filter with value", val);
-          return this.list.filter((e) => e[this.field.filter_key] === val);
+          console.log('filter with value', val)
+          return this.list.filter(e => e[this.field.filter_key] === val)
         }
-        return this.list;
+        return this.list
       }
       return this.list.filter(
-        (item) => this.field.ids.indexOf(item[this.field.key]) >= 0
-      );
+        item => this.field.ids.indexOf(item[this.field.key]) >= 0,
+      )
     },
     subDefinition() {
-      const definition = { ...Table[this.field.list] };
+      const definition = { ...Table[this.field.list] }
       if (this.field.withFields) {
-        definition.fields = [...definition.fields, ...this.field.withFields];
+        definition.fields = [...definition.fields, ...this.field.withFields]
       }
-      return definition;
+      return definition
     },
     subFormFields() {
-      const excluded =
-        typeof this.field.without === "string"
-          ? [this.field.without]
-          : Array.isArray(this.field.without)
+      const excluded = typeof this.field.without === 'string'
+        ? [this.field.without]
+        : Array.isArray(this.field.without)
           ? this.field.without
-          : [];
+          : []
       return this.subDefinition.fields.filter(
-        (f) => !f.hideOnForm && !f.auto && excluded.indexOf(f.key) === -1
-      );
+        f => !f.hideOnForm && !f.auto && excluded.indexOf(f.key) === -1,
+      )
     },
     subTableDefinition() {
-      return this.$store.getters["table/tableDefinition"](this.field.list);
+      return this.$store.getters['table/tableDefinition'](this.field.list)
     },
     subPrimaryKey() {
       return (
-        this.subDefinition.primaryKey ?? this.subDefinition.fields.find((f) => f.auto).key
-      );
+        this.subDefinition.primaryKey ?? this.subDefinition.fields.find(f => f.auto).key
+      )
     },
     hasNew() {
-      return this.newValue === this.entity[this.field.key];
+      return this.newValue === this.entity[this.field.key]
     },
     selectedValue() {
-      return this.field.type === "list"
-        ? this.list.find((e) => e[this.field.key] === this.entity[this.field.key])
-        : this.entity[this.field.key];
+      return this.field.type === 'list'
+        ? this.list.find(e => e[this.field.key] === this.entity[this.field.key])
+        : this.entity[this.field.key]
     },
     selectedValues() {
-      return this.field.type === "list"
+      return this.field.type === 'list'
         ? this.list.filter(
-            (e) => this.entity[this.field.key].indexOf(e[this.field.key]) >= 0
-          )
-        : [];
+          e => this.entity[this.field.key].indexOf(e[this.field.key]) >= 0,
+        )
+        : []
     },
   },
   watch: {
     list() {
-      this.onChange();
+      this.onChange()
     },
   },
   async created() {
-    if (this.field.type === "list" && !this.field.filter_key) {
-      await this.fetchList();
-    } else if (this.field.type === "boolean") {
+    if (this.field.type === 'list' && !this.field.filter_key && !this.field.onlyForm) {
+      await this.fetchList()
+    } else if (this.field.type === 'boolean') {
       // set false as default value
-      if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, 0);
+      if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, 0)
     } else if (this.field.default) {
       if (this.entity[this.field.key] == null) {
-        this.$set(this.entity, this.field.key, this.field.default);
+        this.$set(this.entity, this.field.key, this.field.default)
       }
     }
   },
   beforeDestroy() {
     if (this.promise) {
-      Promise.resolve();
+      Promise.resolve()
     }
   },
   mounted() {
     this.$watch(`entity.${this.field.key}`, () => {
-      this.onChange();
-    });
+      this.onChange()
+    })
     if (this.field.filter_key) {
       this.$watch(`entity.${this.field.filter_key}`, () => {
-        this.fetchList(true);
-      });
+        this.fetchList(true)
+      })
     }
   },
   methods: {
     getFileThumbnail(fileType) {
-      if (fileType === "application/pdf") {
-        return require("@/assets/images/icons/file-icons/pdf2.png");
+      if (fileType === 'application/pdf') {
+        return require('@/assets/images/icons/file-icons/pdf2.png')
       }
       if (
-        fileType ===
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
-        fileType === "application/vnd.ms-excel" ||
-        fileType === "application/vnd.oasis.opendocument.spreadsheet"
+        fileType
+          === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        || fileType === 'application/vnd.ms-excel'
+        || fileType === 'application/vnd.oasis.opendocument.spreadsheet'
       ) {
-        return require("@/assets/images/icons/file-icons/xls.png");
+        return require('@/assets/images/icons/file-icons/xls.png')
       }
-      return require("@/assets/images/icons/file-icons/doc.png");
+      return require('@/assets/images/icons/file-icons/doc.png')
     },
     updateFilesData(event) {
-      const selectedFiles = event.target.files;
+      const selectedFiles = event.target.files
 
       // ensure that the selected file doesn't exit in the files data
-      let index = -1;
+      let index = -1
       for (const file in selectedFiles) {
         if (Object.hasOwnProperty.call(selectedFiles, file)) {
           index = this.files.findIndex(
-            (elt) =>
-              elt.name === selectedFiles[file].name &&
-              elt.size === selectedFiles[file].size
-          );
-          console.log("index: ", index);
+            elt => elt.name === selectedFiles[file].name
+              && elt.size === selectedFiles[file].size,
+          )
+          console.log('index: ', index)
           if (index === -1) {
-            this.files.push(selectedFiles[file]);
-            console.log("this.files: ", this.files);
+            this.files.push(selectedFiles[file])
+            console.log('this.files: ', this.files)
           }
         }
       }
     },
     removeFile(index) {
-      if (index !== -1) this.files.splice(index, 1);
+      if (index !== -1) this.files.splice(index, 1)
     },
     getFiles() {
-      if (this.field.multiple) return this.files;
-      return this.$refs.file.files;
+      if (this.field.multiple) return this.files
+      return this.$refs.file.files
     },
     reset() {
-      if (this.field.type === "boolean") {
+      if (this.field.type === 'boolean') {
         // set false as default value
-        this.$set(this.entity, this.field.key, 0);
+        this.$set(this.entity, this.field.key, 0)
       } else if (this.field.default) {
-        this.$set(this.entity, this.field.key, this.field.default);
+        this.$set(this.entity, this.field.key, this.field.default)
       } else {
-        this.$set(this.entity, this.field.key, null);
+        this.$set(this.entity, this.field.key, null)
       }
-      (this.getSubFields() || []).forEach((sub) => sub.reset());
+      (this.getSubFields() || []).forEach(sub => sub.reset())
     },
     getPrimaryKey(definition) {
-      return definition.primaryKey ?? definition.fields.find((f) => f.auto).key;
+      return definition.primaryKey ?? definition.fields.find(f => f.auto).key
     },
     async getRelationValue() {
-      console.log("get relation value");
-      if (this.field.type === "list") {
+      console.log('get relation value')
+      if (this.field.type === 'list') {
         if (this.entity[this.field.key] == null) {
-          const primaryKey = this.getPrimaryKey(this.definition);
+          const primaryKey = this.getPrimaryKey(this.definition)
           await this.$api({
             entity: this.field.relationEntity ?? `${this.table}_${this.field.list}_rel`,
-            action: "read-rich",
+            action: 'read-rich',
             data: [
               {
                 [primaryKey]: `${this.entity[primaryKey]}`,
               },
             ],
           }).then(({ data }) => {
-            const result = data.data.data[0];
-            if (!result) return null;
-            this.$set(this.entity, this.field.key, result[this.field.key]);
+            const result = data.data.data[0]
+            if (!result) return null
+            this.$set(this.entity, this.field.key, result[this.field.key])
             // this.$set(originalEntity, field.key, result[field.key])
             if (this.field.with) {
-              (typeof this.field.with === "string"
+              (typeof this.field.with === 'string'
                 ? [this.field.with]
                 : this.field.with
-              ).forEach((val) => {
-                this.$set(this.entity, val, result[val]);
-              });
+              ).forEach(val => {
+                this.$set(this.entity, val, result[val])
+              })
             }
-            return result[this.field.key];
-          });
+            return result[this.field.key]
+          })
         }
         if (this.field.alwaysNew) {
-          this.getFormFields(this.subDefinition).forEach((field) => {
+          this.getFormFields(this.subDefinition).forEach(field => {
             if (this.entity[field.key]) {
-              this.subEntity[field.key] = this.entity[field.key];
+              this.subEntity[field.key] = this.entity[field.key]
             }
-          });
-          this.getSubFields().forEach((field) => {
-            field.getRelationValue();
-          });
+          })
+          this.getSubFields().forEach(field => {
+            field.getRelationValue()
+          })
         }
       }
     },
@@ -528,120 +505,119 @@ export default {
       const fuse = new Fuse(options, {
         keys: this.list[0] ? Object.keys(this.list[0]) : [],
         shouldSort: true,
-      });
-      return search.length ? fuse.search(search).map(({ item }) => item) : fuse.list;
+      })
+      return search.length ? fuse.search(search).map(({ item }) => item) : fuse.list
     },
     getSubFields() {
-      console.log(this.$refs);
       if (this.subDefinition.fieldComponent) {
         return this.$refs.fieldComponent.$children.filter(
-          (c) => c.$options.name === "Field"
-        );
+          c => c.$options.name === 'Field',
+        )
       }
       return (
-        this.$refs.fields ||
-        this.$children[0].$children.filter((c) => c.$options.name === "Field")
-      );
+        this.$refs.fields
+        || this.$children[0].$children.filter(c => c.$options.name === 'Field')
+      )
     },
     async fetchList(force) {
-      if (this.field.noFetch) return;
-      if (this.list.length === 0 || force) this.loading = true;
+      if (this.field.noFetch) return
+      if (this.list.length === 0 || force) this.loading = true
       try {
-        let { list } = this.field;
-        if (list === "address") {
-          list = this.subDefinition.entity;
-          await this.$store.dispatch("table/fetchTableDefinition", "address");
-          await this.$store.dispatch("table/fetchTableDefinition", "city");
+        let { list } = this.field
+        if (list === 'address') {
+          list = this.subDefinition.entity
+          await this.$store.dispatch('table/fetchTableDefinition', 'address')
+          await this.$store.dispatch('table/fetchTableDefinition', 'city')
         }
-        const payload = { entity: this.field.entityList || list };
+        const payload = { entity: this.field.entityList || list }
         if (this.field.onlyForm && this.entity[this.field.key]) {
-          payload.data = [{ [this.field.key]: this.entity[this.field.key] }];
+          payload.data = [{ [this.field.key]: this.entity[this.field.key] }]
         }
         if (this.field.filter_key) {
           payload.data = [
             { [this.field.filter_key]: this.entity[this.field.filter_key] },
-          ];
+          ]
         }
-        this.list = await this.$store.dispatch("table/fetchList", payload);
+        this.list = await this.$store.dispatch('table/fetchList', payload)
         if (this.field.entityList) {
-          await this.$store.dispatch("table/fetchTableDefinition", list);
+          await this.$store.dispatch('table/fetchTableDefinition', list)
         }
       } catch (e) {
-        console.error(e);
-        this.$errorToast(e.response ? e.response.data?.detail : "Unknow Error");
+        console.error(e)
+        this.$errorToast(e.response ? e.response.data?.detail : 'Unknow Error')
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
     getValidationRules(field) {
-      let definition = this.tableDefinition;
+      let definition = this.tableDefinition
       if (field.fromTable) {
-        definition = this.$store.getters["table/tableDefinition"](field.fromTable);
+        definition = this.$store.getters['table/tableDefinition'](field.fromTable)
       }
       return {
         required: this.field.alwaysNew
           ? false
           : this.field.mandatoryIfListEmpty && this.listItems.length === 0
-          ? false
-          : this.field.required_if_null
-          ? isEmpty(this.entity[this.field.required_if_null])
-          : this.field.required !== false,
-        email: this.field.type === "email",
+            ? false
+            : this.field.required_if_null
+              ? isEmpty(this.entity[this.field.required_if_null])
+              : this.field.required !== false,
+        email: this.field.type === 'email',
         ...(definition
           ? {
-              max:
-                (definition.attribute_datatype_len &&
-                  definition.attribute_datatype_len[field.key]) ||
-                false,
-              regex:
-                (definition.attribute_regexp && definition.attribute_regexp[field.key]) ||
-                false,
-            }
+            max:
+                (definition.attribute_datatype_len
+                  && definition.attribute_datatype_len[field.key])
+                || false,
+            regex:
+                (definition.attribute_regexp && definition.attribute_regexp[field.key])
+                || false,
+          }
           : {}),
         ...(this.field.rules || {}),
-      };
+      }
     },
     snakeToTitle,
     showNewForm() {
-      console.log("click on new");
-      this.$set(this.entity, this.field.key, this.newValue);
+      console.log('click on new')
+      this.$set(this.entity, this.field.key, this.newValue)
     },
     onChange() {
-      console.log("change");
+      console.log('change')
       if (this.field.alwaysNew) {
         if (this.selectedValue) {
-          const originalInitialized = this.subOriginalEntity.__initialized;
+          const originalInitialized = this.subOriginalEntity.__initialized
           // selected value is unique
           if (this.field.onlyForm && this.$parent.$parent.isRelation) {
-            this.subFormFields.forEach((field) => {
+            this.subFormFields.forEach(field => {
               // make sur that field that are not in the table are not cleared
               if (!this.subEntity[field.key]) {
-                this.$set(this.subEntity, field.key, this.selectedValue[field.key]);
+                this.$set(this.subEntity, field.key, this.selectedValue[field.key])
               }
               if (!this.subOriginalEntity[field.key]) {
                 this.$set(
                   this.subOriginalEntity,
                   field.key,
-                  this.selectedValue[field.key]
-                );
+                  this.selectedValue[field.key],
+                )
               }
-            });
-            return;
+            })
+            return
           }
           // selected value can change
-          this.subFormFields.forEach((field) => {
-            this.$set(this.subEntity, field.key, this.selectedValue[field.key]);
+          this.subFormFields.forEach(field => {
+            this.$set(this.subEntity, field.key, this.selectedValue[field.key])
             // set original value
             if (!originalInitialized) {
-              this.$set(this.subOriginalEntity, field.key, this.selectedValue[field.key]);
+              this.$set(this.subOriginalEntity, field.key, this.selectedValue[field.key])
             }
-          });
-          this.subOriginalEntity.__initialized = true;
+          })
+          this.subOriginalEntity.__initialized = true
         }
       }
     },
   },
-};
+}
 </script>
 
 <style lang="scss">

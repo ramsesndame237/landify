@@ -23,7 +23,7 @@
     </form>
     <div v-else>
       <b-card>
-        <b-tabs ref="tabs" pills>
+        <b-tabs :disabled="loading" ref="tabs" pills>
           <b-tab v-for="(entity, index) in entities.filter(e => !!result[e])" :key="index" :title="titles[entity]" lazy>
             <!--            <table v-if="result[entity]" class="my-2 table w-100">-->
             <!--              <thead>-->
@@ -41,7 +41,7 @@
             <!--              </tr>-->
             <!--              </thead>-->
             <!--            </table>-->
-            <b-table-simple class="table-responsive">
+            <b-table-simple class="table-responsive" style="max-height: 70vh">
               <b-thead>
                 <b-tr>
                   <b-th>
@@ -69,8 +69,7 @@
                       <span class="ml-1">{{ row.line }}</span>
                     </b-td>
                     <template v-for="(column,i) in fields[entity]">
-                      <b-td v-if="row[column]" :key="i"
-                            :title="row[column].reason"
+                      <b-td v-if="row[column]" :key="i" :title="row[column].reason"
                             :style="{background: row[column].color}">
                         {{ row[column].new_value }}
                       </b-td>
@@ -93,9 +92,14 @@
           <template #tabs-end>
             <div class=" d-flex align-items-center ml-auto">
               <template v-if="['added','changed'].indexOf(status)>=0 && getResult(currentEntity).length>0">
-                <b-button class="mr-1" variant="primary">Import All</b-button>
-                <b-button class="mr-1" v-if="getSelected(currentEntity).length>0" variant="primary">Import selected
-                  ({{ getSelected(currentEntity).length }})
+                <b-button :disabled="loading" class="mr-1" variant="primary" @click="importData(true)">
+                  Import All
+                  <b-spinner v-if="loading && importAll" small/>
+                </b-button>
+                <b-button :disabled="loading" class="mr-1" v-if="getSelected(currentEntity).length>0" variant="primary"
+                          @click="importData()">
+                  Import selected ({{ getSelected(currentEntity).length }})
+                  <b-spinner v-if="loading && !importAll" small/>
                 </b-button>
               </template>
               <label class="mr-1">Status</label>
@@ -202,6 +206,7 @@ export default {
         { text: 'Failed', value: 'failed' }
       ],
       status: '',
+      importAll: false,
     }
   },
   computed: {
@@ -244,6 +249,28 @@ export default {
       this.currentStatus = 0
       this.uploadedFiles = []
       this.uploadError = null
+    },
+    importData(all) {
+      if (this.loading) return
+      this.importAll = all
+      this.loading = true
+      const formData = new FormData
+      formData.append('file', this.file)
+      formData.append('leaves', JSON.stringify({
+        data: [{
+          leave: this.titles[this.currentEntity],
+          lines: (all ? this.getResult(this.currentEntity) : this.getSelected(this.currentEntity)).map(el => el.line)
+        }]
+      }))
+      this.$http.post('/provisionings/partnercompany/save', formData, { headers: { 'content-type': 'form-data' } })
+        .then(({ data }) => {
+          this.$successToast("Import Done.")
+          // add __imported attribute to lines
+        })
+        .catch(e=>{
+          this.$errorToast("Something went wrong !!!")
+        })
+        .finally(() => this.loading = false)
     },
     async upload() {
       if (!this.file) return this.$errorToast('Please insert a file')

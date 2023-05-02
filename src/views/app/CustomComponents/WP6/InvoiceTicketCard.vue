@@ -20,11 +20,11 @@
       </b-dropdown>
     </div>
     <p>{{ ticket.ticket_description }}</p>
-    <div class="d-flex">
+    <div v-if="advanced" class="d-flex">
       <strong class="mr-1">{{$t('attribute.ticket_id')}}:</strong>
       <span>{{ ticket.ticket_id }}</span>
     </div>
-    <div class="d-flex">
+    <div v-if="advanced" class="d-flex">
       <strong class="mr-1">{{$t('attribute.ticket_creation_time')}}:</strong>
       <span>{{ ticket.ticket_creation_time | format }}</span>
       <b-icon-clock-fill class="ml-auto"/>
@@ -48,12 +48,12 @@
       <span>{{ ticket.ticket_planned_treatment_week }}</span>
     </div>
 
-    <div class="mt-1">
-      <b-progress max="100" :value="ticket.ticket_progress" style="margin-bottom: 2px;"></b-progress>
-    </div>
+<!--    <div class="mt-1">-->
+<!--      <b-progress max="100" :value="ticket.ticket_progress" style="margin-bottom: 2px;"></b-progress>-->
+<!--    </div>-->
     <div class="values d-flex justify-content-between align-items-center font-weight-light">
       <div class="hours">{{ ticket.columns[0].user_email_assigned }}</div>
-      <div class="percents">{{ ticket.ticket_progress + '%' }}</div>
+<!--      <div class="percents">{{ ticket.ticket_progress + '%' }}</div>-->
     </div>
   </div>
 </template>

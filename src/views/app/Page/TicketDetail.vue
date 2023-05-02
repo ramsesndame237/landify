@@ -165,8 +165,9 @@
               </b-table-simple>
             </b-overlay>
             <div class="text-right p-1">
-              <b-button variant="primary" @click="$refs.emailModal.show(false)">New Email</b-button>
+              <b-button v-if="!entity.ticket_closed" variant="primary" @click="$refs.emailModal.show(false)">New Email</b-button>
             </div>
+          </b-card-actions>
           </b-card-actions>
           <email-modal ref="emailModal" @reload="fetchEmail"/>
         </b-col>
