@@ -165,8 +165,9 @@
               </b-table-simple>
             </b-overlay>
             <div class="text-right p-1">
-              <b-button variant="primary" @click="$refs.emailModal.show(false)">New Email</b-button>
+              <b-button v-if="!entity.ticket_closed" variant="primary" @click="$refs.emailModal.show(false)">New Email</b-button>
             </div>
+          </b-card-actions>
           </b-card-actions>
           <email-modal ref="emailModal" @reload="fetchEmail"/>
         </b-col>
@@ -187,7 +188,7 @@
                   <h5 class="font-weight-bolder" style="color: black">{{ document.document_mime_type }}</h5>
                   <div class="d-flex justify-content-between">
                     <h6>{{ document.document_entry_time }}</h6>
-                    <b-link v-if="!document.document_already_stamp && canStamp(document)"
+                    <b-link v-if="canStamp(document)"
                             :to="{name:'sign-document', params: {id: document.document_id,ticket_id: entity.ticket_id, entity: document}}"
                             class="ml-2">Stamp
                     </b-link>

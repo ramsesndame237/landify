@@ -64,7 +64,7 @@ export default {
       table: this.$route.params.table,
       ids: this.$route.params.ids,
       filterOptions: [
-        { text: this.$t('all'), value: '' },
+        { text: this.$t('header~board~status~all'), value: '' },
         {
           text: this.$t('header~board~status~open'), value: 1,
         },
@@ -78,17 +78,17 @@ export default {
       user: getUserData(),
     }
   },
-  watch: {
-    filterValue() {
-      this.allFilter()
-    },
-  },
   computed: {
     definition() {
       return Tables[this.table]
     },
     useModalToCreate() {
       return this.definition.createModal !== false
+    },
+  },
+  watch: {
+    filterValue() {
+      this.allFilter()
     },
   },
   beforeDestroy() {

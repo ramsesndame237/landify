@@ -21,14 +21,24 @@ export default {
         required: false,
       },
       { key: 'user_password_reset_required', hideOnIndex: true, type: 'boolean' },
+      { key: 'user_locked', hideOnIndex: true, hideOnCreate: true, type: 'boolean' },
+      {
+        key: 'usertype_id',
+        hideOnIndex: true,
+        type: 'list',
+        list: 'usertype',
+        listLabel: 'usertype_name',
+      },
       { key: 'user_firstname', sortable: true },
       { key: 'user_lastname', sortable: true },
-      { key: 'user_name_abbreviation', sortable: true, hideOnIndex: true },
+      { key: 'user_abbreviation', sortable: true, hideOnIndex: true },
       { key: 'user_function', sortable: true, hideOnIndex: true },
+
       {
         key: 'firmengroup_type',
         type: 'custom-select',
         hideOnIndex: true,
+        required: false,
         items: [
           { value: 1, label: 'Company' },
           { value: 0, label: 'Partner Company' },
@@ -73,18 +83,12 @@ export default {
         visible: entity => entity.firmengroup_type === 1,
       },
       {
-        key: 'user_last_login_time', sortable: true, hideOnForm: true,
+        key: 'user_last_login_time', sortable: true, hideOnForm: true,type: 'date', time: true,
       },
       {
-        key: 'user_last_activity_time', sortable: true, hideOnForm: true,
+        key: 'user_last_activity_time', sortable: true, hideOnForm: true,type: 'date', time: true,
       },
-      {
-        key: 'usertype_id',
-        hideOnIndex: true,
-        type: 'list',
-        list: 'usertype',
-        listLabel: 'usertype_name',
-      },
+
       {
         key: 'address_id',
         hideOnIndex: true,
@@ -95,10 +99,11 @@ export default {
         alwaysNew: true,
         onlyForm: true,
       },
-      { key: 'user_fix_phonenumber', hideOnIndex: true },
+      { key: 'user_fix_phonenumber', hideOnIndex: true, required: false },
       { key: 'user_mobile' },
       {
         key: 'contactperson_id',
+        label: 'hollyday_representative',
         hideOnIndex: true,
         type: 'list',
         list: 'contactperson',
@@ -108,7 +113,7 @@ export default {
         required: false,
       },
     ],
-    updateComponent: () => import('@/views/app/FormComponent/UserForm'),
+    // updateComponent: () => import('@/views/app/FormComponent/UserForm'),
     relations: [
       {
         title: 'Roles',
@@ -291,7 +296,7 @@ export default {
       user_wrong_password_counter: 0,
       user_password_reset_required: 0,
       // user_password: 'Fsa!0dsadad',
-      user_mobile: '+491511234456',
+      user_mobile: '0711 252535838',
     },
     note: 'frontend_0_8_13',
     submit(vm) {
@@ -300,6 +305,7 @@ export default {
       data.address = addressField.subEntity
       const cityField = addressField.getSubFields().find(f => f.field.key === 'city_id')
       data.address.city = cityField.subEntity
+      data.address.address_city_id = 1
       console.log(data)
       return (vm.create ? vm.$http.post('/users', data) : vm.$http.put(`/users/${vm.entityId}`, data))
         .then(() => {
@@ -308,7 +314,45 @@ export default {
     },
     fetch(vm) {
       return vm.$http.get(`/users/${vm.entityId}`, vm.entity)
-        .then(resp => resp.data)
+        .then(resp => {
+          const data = resp.data
+          if (data.contactperson) {
+            data.contactperson_id = data.contactperson.contactperson_id
+          }
+          if (data.usertype) {
+            data.usertype_id = data.usertype.usertype_id
+          }
+          if (data.company) {
+            data.company_id = data.company.company_id
+            if (data.company.customergroup) {
+              data.customergroup_id = data.company.customergroup.customergroup_id
+            }
+            data.firmengroup_type = 1
+          } else if (data.partnercompany) {
+            data.partnercompany_id = data.partnercompany.partnercompany_id
+            if (data.partnercompany.partnergroup) {
+              data.partnergroup_id = data.partnercompany.partnergroup.partnergroup_id
+            }
+            data.firmengroup_type = 0
+          }
+          if (data.address) {
+            data.address_id = data.address.address_id
+            const addressField = vm.$refs.fields.find(f => f.field.key === 'address_id')
+            addressField.getSubFields().forEach(field => {
+              addressField.subEntity[field.field.key] = data.address[field.field.key]
+              if (field.field.key === 'city_id' && data.address.city) {
+                field.getSubFields().forEach(f => {
+                  field.subEntity[f.field.key] = data.address.city[f.field.key]
+                  if (f.field.key === 'country_id' && data.address.city.country) {
+                    field.subEntity[f.field.key] = data.address.city.country[f.field.key]
+                  }
+                  console.log(f.field.key, data.address.city[f.field.key], field.subEntity)
+                })
+              }
+            })
+          }
+          return data
+        })
     },
   },
   access: {
@@ -421,7 +465,7 @@ export default {
         primaryKey: 'user_id',
         entity: 'user_team_grp',
         entityForm: 'user_team_rel',
-        entityView: 'team',
+        view: false,
         fields: [
           {
             key: 'user_id',
@@ -430,6 +474,8 @@ export default {
             listLabel: 'user_email',
             disableOnUpdate: true,
           },
+          { key: 'user_firstname' },
+          { key: 'user_lastname' },
           { key: 'team_name', sortable: true, hideOnForm: true },
           {
             key: 'user_team_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,
@@ -3527,7 +3573,7 @@ export default {
         list: 'frontend_2_1_3_8',
         filter_key: 'company_id',
         relationEntity: 'ticket_pos_rel',
-        hideOnIndex:true,
+        hideOnIndex: true,
       },
       {
         key: 'contract_id',
@@ -3539,15 +3585,21 @@ export default {
         required: false,
         hideOnIndex: true,
       },
+      {
+        key: 'ticket_closed',
+        label: 'Status',
+        hideOnForm: true,
+        formatter: val => window.$vue.$t(val ? 'header~board~status~closed' : 'header~board~status~open'),
+      },
 
       // { key: 'column_name', hideOnForm: true },
+      { key: 'ticket_creation_time', type: 'date', time: true, hideOnForm: true },
       { key: 'board_name', hideOnForm: true },
       // { key: 'contract_id', hideOnForm: true },
       // { key: 'contract_name', hideOnForm: true },
       // { key: 'pos_id', hideOnForm: true },
       { key: 'pos_name', hideOnForm: true },
       // { key: 'sub_ticket_count', hideOnForm: true },
-
     ],
     default: {
       ticket_progress: 10,

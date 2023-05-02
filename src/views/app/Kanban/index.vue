@@ -211,15 +211,16 @@ ul {
 }
 
 .drag-container {
-  //max-width: 1000px;
   margin: 20px auto;
   overflow-x: auto;
   min-height: 50vh;
+  padding-bottom: 20px;
 }
 
 .drag-list {
   display: flex;
   align-items: flex-start;
+  //max-height: 80vh;
 
   @media (max-width: 690px) {
     display: block;
@@ -234,6 +235,7 @@ ul {
   overflow: hidden;
   //flex-basis: 250px;
   min-width: 300px;
+  border-radius: 15px;
 
   @media (max-width: 690px) {
     margin-bottom: 30px;
@@ -288,6 +290,9 @@ ul {
 
 .drag-inner-list {
   min-height: 50px;
+  max-height: calc(80vh - 30px);
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .drag-item {

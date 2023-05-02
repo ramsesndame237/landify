@@ -430,7 +430,7 @@ export default {
   },
   async mounted() {
     if (!this.tableDefinition) {
-      await this.loadDefinition()
+      this.loadDefinition()
     }
     if (this.create) return
     if (!this.isRelation && this.fetchData) {
@@ -449,6 +449,6 @@ export default {
     this.entityLoaded = true
     this.originalEntity = { ...this.entity }
     console.log('mounted', this.entity)
-    await this.fillRelations(this.entity, this.originalEntity, this.formFields, this.table, this.primaryKey)
+    if (!this.definition.fetch) await this.fillRelations(this.entity, this.originalEntity, this.formFields, this.table, this.primaryKey)
   },
 }

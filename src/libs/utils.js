@@ -23,12 +23,12 @@ export const clone = obj => JSON.parse(JSON.stringify(obj))
 export const getDateFormat = (time = false) => {
   const lang = window.$vue.$store.state.app.lang
   if (lang === 'de') {
-    return time ? 'DD.MM.YYYY HH:mm:ss' : 'd.m.Y'
+    return time ? 'DD.MM.YYYY HH:mm' : 'DD.MM.YYYY'
   }
   if (lang === 'en') {
-    return time ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD'
+    return time ? 'YYYY-MM-DD HH:mm' : 'YYYY-MM-DD'
   }
-  return time ? 'DD-MM-YYYY HH:mm:ss' : 'DD-MM-YYYY'
+  return time ? 'DD-MM-YYYY HH:mm' : 'DD-MM-YYYY'
 }
 
 export const formatDate = (date, time = false) => {

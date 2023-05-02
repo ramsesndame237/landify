@@ -29,7 +29,7 @@
           <b-button size="sm" variant="primary" class="mr-1" @click="savePositions">
             Apply Stamp
           </b-button>
-          <b-link v-if="entity.document_has_stamp" target="_blank" size="sm" variant="primary" class="mr-1"
+          <b-link v-if="entity.document_already_stamp" target="_blank" size="sm" variant="primary" class="mr-1"
                   :href="getStampedDocumentLink(entity)">
             Document Stamped
           </b-link>

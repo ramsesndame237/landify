@@ -5,10 +5,10 @@
         <b-tr>
           <b-th/>
           <b-th>Email Id</b-th>
-          <b-th>Email received date</b-th>
-          <b-th>Email From</b-th>
-          <b-th>Email To</b-th>
-          <b-th>Email Subject</b-th>
+          <b-th>Received date</b-th>
+          <b-th>From</b-th>
+          <b-th>To</b-th>
+          <b-th>Subject</b-th>
           <b-th class="text-center">
             Ticket Id
           </b-th>
@@ -314,17 +314,17 @@ export default {
               document_id: item.document_id,
             }],
           })
-        } else {
-          // see later if we can remove this from else
-          await this.$api({
-            action: 'create',
-            entity: 'email_ticket_rel',
-            data: [{
-              ticket_id: master_ticket_id,
-              email_id: item.email_id,
-            }],
-          })
         }
+        // see later if we can remove this from else
+        await this.$api({
+          action: 'create',
+          entity: 'email_ticket_rel',
+          data: [{
+            ticket_id: master_ticket_id,
+            email_id: item.email_id,
+          }],
+        })
+
         if (success) {
           if (item.document_id) this.$set(item, 'ticket_created', true)
           this.$set(item, 'ticket_id_created', master_ticket_id)
