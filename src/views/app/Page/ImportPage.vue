@@ -94,12 +94,12 @@
               <template v-if="['added','changed'].indexOf(status)>=0 && getResult(currentEntity).length>0">
                 <b-button :disabled="loading" class="mr-1" variant="primary" @click="importData(true)">
                   Import All
-                  <b-spinner v-if="loading" small/>
+                  <b-spinner v-if="loading && importAll" small/>
                 </b-button>
                 <b-button :disabled="loading" class="mr-1" v-if="getSelected(currentEntity).length>0" variant="primary"
                           @click="importData()">
                   Import selected ({{ getSelected(currentEntity).length }})
-                  <b-spinner v-if="loading" small/>
+                  <b-spinner v-if="loading && !importAll" small/>
                 </b-button>
               </template>
               <label class="mr-1">Status</label>
