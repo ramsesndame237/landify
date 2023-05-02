@@ -50,8 +50,8 @@
               <feather-icon class="cursor-pointer" :icon="passwordToggleIcon" @click="togglePasswordVisibility"/>
             </b-input-group-append>
           </b-input-group>
-          <div>
-            <b-button>
+          <div class="mt-1" v-if="field.generate">
+            <b-button size="sm" class="mr-2">
               Generate Password
             </b-button>
             <span>Password generated</span>
