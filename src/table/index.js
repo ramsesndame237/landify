@@ -22,10 +22,18 @@ export default {
       },
       { key: 'user_password_reset_required', hideOnIndex: true, type: 'boolean' },
       { key: 'user_locked', hideOnIndex: true, hideOnCreate: true, type: 'boolean' },
+      {
+        key: 'usertype_id',
+        hideOnIndex: true,
+        type: 'list',
+        list: 'usertype',
+        listLabel: 'usertype_name',
+      },
       { key: 'user_firstname', sortable: true },
       { key: 'user_lastname', sortable: true },
-      { key: 'user_name_abbreviation', sortable: true, hideOnIndex: true },
+      { key: 'user_abbreviation', sortable: true, hideOnIndex: true },
       { key: 'user_function', sortable: true, hideOnIndex: true },
+
       {
         key: 'firmengroup_type',
         type: 'custom-select',
@@ -75,18 +83,12 @@ export default {
         visible: entity => entity.firmengroup_type === 1,
       },
       {
-        key: 'user_last_login_time', sortable: true, hideOnForm: true,
+        key: 'user_last_login_time', sortable: true, hideOnForm: true,type: 'date', time: true,
       },
       {
-        key: 'user_last_activity_time', sortable: true, hideOnForm: true,
+        key: 'user_last_activity_time', sortable: true, hideOnForm: true,type: 'date', time: true,
       },
-      {
-        key: 'usertype_id',
-        hideOnIndex: true,
-        type: 'list',
-        list: 'usertype',
-        listLabel: 'usertype_name',
-      },
+
       {
         key: 'address_id',
         hideOnIndex: true,
@@ -101,6 +103,7 @@ export default {
       { key: 'user_mobile' },
       {
         key: 'contactperson_id',
+        label: 'hollyday_representative',
         hideOnIndex: true,
         type: 'list',
         list: 'contactperson',

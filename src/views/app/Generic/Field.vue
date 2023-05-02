@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-form-group v-if="visible" :label=" (field.noLabel|| noLabel) ? '' : (field.label || $t('attribute.'+field.key))"
+    <b-form-group v-if="visible" :label=" (field.noLabel|| noLabel) ? '' : $t(field.label||'attribute.'+field.key)"
                   :label-for="'field-'+field.key" :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null">
       <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled
                     :placeholder="$t('attribute.general_automaticid')"/>
