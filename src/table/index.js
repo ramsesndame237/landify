@@ -19,6 +19,7 @@ export default {
         type: 'password',
         hideOnIndex: true,
         required: false,
+        generate: true,
       },
       { key: 'user_password_reset_required', hideOnIndex: true, type: 'boolean' },
       { key: 'user_locked', hideOnIndex: true, hideOnCreate: true, type: 'boolean' },

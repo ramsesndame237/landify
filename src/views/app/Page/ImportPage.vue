@@ -41,7 +41,7 @@
             <!--              </tr>-->
             <!--              </thead>-->
             <!--            </table>-->
-            <b-table-simple class="table-responsive">
+            <b-table-simple class="table-responsive" style="max-height: 70vh">
               <b-thead>
                 <b-tr>
                   <b-th>
@@ -256,16 +256,19 @@ export default {
       this.loading = true
       const formData = new FormData
       formData.append('file', this.file)
-      formData.append('leaves', {
+      formData.append('leaves', JSON.stringify({
         data: [{
-          leave: this.currentEntity,
+          leave: this.titles[this.currentEntity],
           lines: (all ? this.getResult(this.currentEntity) : this.getSelected(this.currentEntity)).map(el => el.line)
         }]
-      })
-      this.$http.post('/provisionings/partnercompany/checking', formData, { headers: { 'content-type': 'form-data' } })
+      }))
+      this.$http.post('/provisionings/partnercompany/save', formData, { headers: { 'content-type': 'form-data' } })
         .then(({ data }) => {
-          this.$successToast("Import Done !!!")
+          this.$successToast("Import Done.")
           // add __imported attribute to lines
+        })
+        .catch(e=>{
+          this.$errorToast("Something went wrong !!!")
         })
         .finally(() => this.loading = false)
     },

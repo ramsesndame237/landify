@@ -40,16 +40,23 @@
           <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
                        drop-placeholder="Drop file here..." :multiple="field.multiple" required @change="validate"/>
         </div>
-        <b-input-group v-else-if="field.type==='password'" class="input-group-merge"
-                       :class="errors.length > 0 ? 'is-invalid':null">
-          <b-form-input v-model="entity[field.key]" :disabled="disabled" :type="passwordFieldType"
-                        class="form-control-merge" :state="errors.length > 0 ? false:null" :name="field.key"
-                        placeholder="Password" autocomplete="new-password"/>
+        <div v-else-if="field.type==='password'">
+          <b-input-group class="input-group-merge" :class="errors.length > 0 ? 'is-invalid':null">
+            <b-form-input v-model="entity[field.key]" :disabled="disabled" :type="passwordFieldType"
+                          class="form-control-merge" :state="errors.length > 0 ? false:null" :name="field.key"
+                          placeholder="Password" autocomplete="new-password"/>
 
-          <b-input-group-append is-text>
-            <feather-icon class="cursor-pointer" :icon="passwordToggleIcon" @click="togglePasswordVisibility"/>
-          </b-input-group-append>
-        </b-input-group>
+            <b-input-group-append is-text>
+              <feather-icon class="cursor-pointer" :icon="passwordToggleIcon" @click="togglePasswordVisibility"/>
+            </b-input-group-append>
+          </b-input-group>
+          <div>
+            <b-button>
+              Generate Password
+            </b-button>
+            <span>Password generated</span>
+          </div>
+        </div>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
                     class="form-control"/>
