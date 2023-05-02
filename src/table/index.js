@@ -3590,7 +3590,7 @@ export default {
       },
 
       // { key: 'column_name', hideOnForm: true },
-      { key: 'ticket_creation_time', hideOnForm: true },
+      { key: 'ticket_creation_time', type: 'date', time: true, hideOnForm: true },
       { key: 'board_name', hideOnForm: true },
       // { key: 'contract_id', hideOnForm: true },
       // { key: 'contract_name', hideOnForm: true },
