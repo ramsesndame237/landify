@@ -434,6 +434,7 @@ export default {
     }
     if (this.create) return
     if (!this.isRelation && this.fetchData) {
+      this.loading = true
       const entity = await (this.definition.fetch ? this.definition.fetch(this) :
         this.$store.dispatch('table/fetchSingleItem', {
           entity: this.table,
@@ -445,6 +446,7 @@ export default {
       } else {
         this.setData(entity)
       }
+      this.loading = false
     }
     this.entityLoaded = true
     this.originalEntity = { ...this.entity }
