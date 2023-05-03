@@ -1,234 +1,128 @@
 <template>
   <div>
-    <b-form-group
-      v-if="visible"
-      :label="field.noLabel || noLabel ? '' : field.label || $t('attribute.' + field.key)"
-      :label-for="'field-' + field.key"
-      :class="field.onlyForm ? 'hide-main' : ''"
-      :label-cols-md="inline ? 4 : null"
-    >
-      <b-form-input
-        v-if="field.auto"
-        v-model="entity[field.key]"
-        disabled
-        :placeholder="$t('attribute.general_automaticid')"
-      />
-      <validation-provider
-        v-else
-        #default="{ errors, validate }"
-        :rules="rules"
-        :name="field.key"
-        :custom-messages="{
-          regex:
-            tableDefinition &&
-            tableDefinition.attribute_regexp_failure_message &&
-            tableDefinition.attribute_regexp_failure_message[field.key],
-        }"
-      >
-        <b-form-textarea
-          v-if="field.type === 'textarea'"
-          v-model="entity[field.key]"
-          :disabled="disabled"
-          :state="errors.length > 0 ? false : null"
-          :placeholder="field.key"
-        />
-        <div v-else-if="field.type === 'html'" class="message-editor">
-          <b-form-group v-if="visible" :label=" (field.noLabel|| noLabel) ? '' : $t(field.label||'attribute.'+field.key)"
-                        :label-for="'field-'+field.key" :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null"
-          >
-            <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled
-                          :placeholder="$t('attribute.general_automaticid')"
-            />
-            <validation-provider v-else #default="{ errors, validate }" :rules="rules" :name="field.key"
-                                 :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message&& tableDefinition.attribute_regexp_failure_message[field.key]}"
-            >
-              <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
-                               :state="errors.length > 0 ? false:null" :placeholder="field.key"
-              />
-              <div v-else-if="field.type==='html'" class="message-editor">
-                <template v-if="disabled">
-                  <div class="p-1 border rounded" v-html="entity[field.key]" />
-                </template>
-                <ckeditor
-                  v-else
-                  :id="'ckcontent-' + field.key"
-                  v-model="entity[field.key]"
-                  :disabled="disabled"
-                  :editor="editor"
-                  :config="editorOption"
-                />
-              </div>
-              <div
-                v-else-if="field.type === 'list'"
-                :class="field.withNew || field.ids ? 'd-flex' : ''"
-              >
-                <v-select
-                  :dropdown-should-open="true"
-                  :disabled="selectDisabled"
-                  :class="errors.length > 0 ? 'error' : ''"
-                  :get-option-label="
-                    typeof field.listLabel === 'function'
-                      ? field.listLabel
-                      : defaultLabelFunction[field.key] || ((option) => option[field.listLabel])
-                  "
-                  :placeholder="field.key"
-                  :multiple="field.multiple"
-                  :options="listItems"
-                  transition=""
-                  :label="typeof field.listLabel === 'string' ? field.listLabel : null"
-                  class="w-100"
-                  :loading="loading"
-                  :reduce="(i) => i[field.tableKey || field.key]"
-                  :filter="fuseSearch"
-                  @input="onChange"
-                />
-                <b-button
-                  v-if="field.withNew && !field.alwaysNew && !disabled"
-                  class="ml-2 text-nowrap"
-                  variant="info"
-                  @click="showNewForm"
-                >New
-                </b-button>
-                <b-button
-                  v-if="field.ids && !field.noShowButton"
-                  class="ml-2 text-nowrap"
-                  variant="info"
-                  @click="showAll = !showAll"
-                >
-                  {{ showAll ? "Show Created" : "Show All" }}
-                </b-button>
-              </div>
-              <div v-else-if="field.type === 'yesno' || field.type === 'custom-select'">
-                <v-select
-                  v-model="entity[field.key]"
-                  :disabled="disabled"
-                  :state="errors.length > 0 ? false : null"
-                  :placeholder="field.key"
-                  :options="field.type === 'yesno' ? yesNoOptions : field.items"
-                  transition=""
-                  label="label"
-                  class="w-100"
-                  :reduce="(i) => i.value"
-                />
-              </div>
-              <div v-else-if="field.type === 'file'">
-                <b-form-file
-                  ref="file"
-                  type="file"
-                  placeholder="Choose a file or drop it here..."
-                  drop-placeholder="Drop file here..."
-                  required
-                  :multiple="field.multiple"
-                  @change="updateFilesData"
-                />
-                <div class="d-flex flex-column mt-2">
-                  <div
-                    v-for="(file, index) in files"
-                    :key="index"
-                    class="d-flex justify-content-between mb-1"
-                  >
-                    <div>
-                      <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50" />
-                      <span class="text-muted font-weight-bolder align-text-top">{{
-                        file.name
-                      }}</span>
-                      <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
-                    </div>
-                    <feather-icon
-                      class="cursor-pointer"
-                      icon="XIcon"
-                      size="14"
-                      @click="removeFile(index)"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div v-else-if="field.type==='password'">
-                <b-input-group class="input-group-merge" :class="errors.length > 0 ? 'is-invalid':null">
-                  <b-form-input v-model="entity[field.key]" :disabled="disabled" :type="passwordFieldType"
-                                class="form-control-merge" :state="errors.length > 0 ? false:null" :name="field.key"
-                                placeholder="Password" autocomplete="new-password"
-                  />
-
-                  <b-input-group-append is-text>
-                    <feather-icon class="cursor-pointer" :icon="passwordToggleIcon" @click="togglePasswordVisibility" />
-                  </b-input-group-append>
-                </b-input-group>
-                <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
-                            :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
-                            class="form-control"
-                />
-                <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
-                                 :state="errors.length > 0 ? false:null" :placeholder="field.key" :value="1"
-                                 :unchecked-value="0" style="margin-top: 5px"
-                />
-                <b-form-input v-else v-model="entity[field.key]" :type="field.type==='decimal'?'number':(field.type||'text')"
-                              :disabled="disabled" :step="field.type==='decimal'?0.01:1" :state="errors.length > 0 ? false:null"
-                              :placeholder="field.key"
-                />
-                <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
-              </div></validation-provider>
-            <template
-              v-if="
-                field.type === 'list' &&
-                  ((field.withNew && entity[field.key] === newValue) || field.alwaysNew)
-              "
-            >
-              <slot
-                :subEntity="subEntity"
-                :subTableDefinition="subTableDefinition"
-                :subFormFields="subFormFields"
-              >
-                <div :class="field.onlyForm ? '' : 'mt-2 ' + (inline ? '' : 'ml-3')">
-                  <component
-                    :is="subDefinition.fieldComponent"
-                    v-if="subDefinition.fieldComponent"
-                    ref="fieldComponent"
-                    :entity="subEntity"
-                    :table-definition="subTableDefinition"
-                    :definition="subDefinition"
-                    :form-fields="subFormFields"
-                    :disabled="disabled"
-                  />
-                  <b-row v-else>
-                    <b-col v-for="(field, index) in subFormFields" :key="index" cols="12">
-                      <field
-                        ref="fields"
-                        :disabled="disabled"
-                        :inline="inline"
-                        :entity="subEntity"
-                        :table-definition="subTableDefinition"
-                        :field="field"
-                      />
-                    </b-col>
-                  </b-row>
-                </div>
-              </slot>
-            </template>
-          </b-form-group>
+    <b-form-group v-if="visible" :label=" (field.noLabel|| noLabel) ? '' : $t(field.label||'attribute.'+field.key)"
+                  :label-for="'field-'+field.key" :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null">
+      <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled
+                    :placeholder="$t('attribute.general_automaticid')"/>
+      <validation-provider v-else #default="{ errors, validate }" :rules="rules" :name="field.key"
+                           :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message&& tableDefinition.attribute_regexp_failure_message[field.key]}">
+        <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
+                         :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
+        <div v-else-if="field.type==='html'" class="message-editor">
+          <template v-if="disabled">
+            <div v-html="entity[field.key]" class="p-1 border rounded"></div>
+          </template>
+          <ckeditor v-else :id="'ckcontent-'+field.key" v-model="entity[field.key]" :disabled="disabled"
+                    :editor="editor" :config="editorOption"/>
         </div>
-      </validation-provider></b-form-group></div></template>
+        <div v-else-if="field.type==='list'" :class="(field.withNew || field.ids) ? 'd-flex': ''">
+          <v-select v-model="entity[field.key]" :dropdown-should-open="true" :disabled="selectDisabled"
+                    :class="errors.length > 0 ? 'error':''"
+                    :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
+                    :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
+                    :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
+                    :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
+                    @input="onChange"/>
+          <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
+                    @click="showNewForm">New
+          </b-button>
+          <b-button v-if="field.ids && !field.noShowButton" class="ml-2 text-nowrap" variant="info"
+                    @click="showAll=!showAll">
+            {{ showAll ? 'Show Created' : 'Show All' }}
+          </b-button>
+        </div>
+        <div v-else-if="field.type==='yesno' || field.type==='custom-select'">
+          <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
+                    :placeholder="field.key" :options="field.type==='yesno'?yesNoOptions: field.items" transition=""
+                    label="label" class="w-100" :reduce="i => i.value"/>
+        </div>
+        <div v-else-if="field.type==='file'">
+          <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
+                       drop-placeholder="Drop file here..." :multiple="field.multiple" required @change="validate($event);updateFilesData($event)"/>
+          <div class="d-flex flex-column mt-2">
+            <div
+              v-for="(file, index) in files"
+              :key="index"
+              class="d-flex justify-content-between mb-1"
+            >
+              <div>
+                <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50" />
+                <span class="text-muted font-weight-bolder align-text-top">{{
+                  file.name
+                }}</span>
+                <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
+              </div>
+              <feather-icon
+                class="cursor-pointer"
+                icon="XIcon"
+                size="14"
+                @click="removeFile(index)"
+              />
+            </div>
+          </div>
+        </div>
+        <div v-else-if="field.type==='password'">
+          <b-input-group class="input-group-merge" :class="errors.length > 0 ? 'is-invalid':null">
+            <b-form-input v-model="entity[field.key]" :disabled="disabled" :type="passwordFieldType"
+                          class="form-control-merge" :state="errors.length > 0 ? false:null" :name="field.key"
+                          placeholder="Password" autocomplete="new-password"/>
+
+            <b-input-group-append is-text>
+              <feather-icon class="cursor-pointer" :icon="passwordToggleIcon" @click="togglePasswordVisibility"/>
+            </b-input-group-append>
+          </b-input-group>
+          <div class="mt-1" v-if="field.generate">
+            <b-button size="sm" class="mr-2" @click="getRandomPassword(field.key)">
+              Generate Password
+            </b-button>
+            <span v-if="entity[field.key]" class="mr-1" >{{ entity[field.key] }}</span>
+            <feather-icon v-if="entity[field.key]" class="cursor-pointer" icon="CopyIcon" size="16" @click="doCopy(field.key)"/>
+          </div>
+        </div>
+        <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
+                    :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
+                    class="form-control"/>
+        <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
+                         :state="errors.length > 0 ? false:null" :placeholder="field.key" :value="1"
+                         :unchecked-value="0" style="margin-top: 5px"/>
+        <b-form-input v-else v-model="entity[field.key]" :type="field.type==='decimal'?'number':(field.type||'text')"
+                      :disabled="disabled" :step="field.type==='decimal'?0.01:1" :state="errors.length > 0 ? false:null"
+                      :placeholder="field.key"/>
+        <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
+      </validation-provider>
+      <template v-if="field.type==='list' && ((field.withNew && entity[field.key] === newValue) || field.alwaysNew)">
+        <slot :subEntity="subEntity" :subTableDefinition="subTableDefinition" :subFormFields="subFormFields">
+          <div :class="field.onlyForm?'':('mt-2 '+(inline ? '': 'ml-3'))">
+            <component :is="subDefinition.fieldComponent" v-if="subDefinition.fieldComponent" ref="fieldComponent"
+                       :entity="subEntity" :table-definition="subTableDefinition" :definition="subDefinition"
+                       :form-fields="subFormFields" :disabled="disabled"/>
+            <b-row v-else>
+              <b-col v-for="(field,index) in subFormFields" :key="index" cols="12">
+                <field ref="fields" :disabled="disabled" :inline="inline" :entity="subEntity"
+                       :table-definition="subTableDefinition" :field="field"/>
+              </b-col>
+            </b-row>
+          </div>
+        </slot>
+      </template>
+    </b-form-group>
+  </div>
+</template>
 
 <script>
 import Fuse from 'fuse.js'
 import {
-  BButton,
-  BFormFile,
-  BCol,
-  BFormCheckbox,
-  BFormGroup,
-  BFormInput,
-  BFormTextarea,
-  BRow,
-  BImg,
+  BButton, BImg, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow,
 } from 'bootstrap-vue'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
+import {generate} from "generate-password"
 import { snakeToTitle } from '@/libs/utils'
 import Table from '@/table/index'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import { togglePasswordVisibility } from '@core/mixins/ui/forms'
+import { togglePasswordVisibility } from "@core/mixins/ui/forms";
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -238,30 +132,10 @@ export default {
   name: 'Field',
   components: {
     ckeditor: CKEditor.component,
-    BFormInput,
-    BFormFile,
-    BFormGroup,
-    BFormTextarea,
-    vSelect,
-    flatPickr,
-    BButton,
-    BRow,
-    BCol,
-    BFormCheckbox,
-    BImg,
+    BFormInput, BFormFile, BFormGroup, BImg, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol, BFormCheckbox,
   },
   mixins: [togglePasswordVisibility],
-  props: [
-    'entity',
-    'field',
-    'tableDefinition',
-    'inline',
-    'disabled',
-    'filterValue',
-    'table',
-    'definition',
-    'noLabel',
-  ],
+  props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition', 'noLabel'],
   data() {
     return {
       list: this.$store.state.table.listCache[this.field.list] || [],
@@ -272,12 +146,8 @@ export default {
       promise: null,
       showAll: false,
       defaultLabelFunction: {
-        address_id: option => `${option.city_zip || ''} - ${option.city_name || ''} - ${
-          option.address_street || ''
-        }`,
-        invoice_id: option => `${option.invoice_id || ''} - ${option.invoice_number || ''} - ${
-          option.invoice_date || ''
-        }`,
+        address_id: option => `${option.city_zip || ''} - ${option.city_name || ''} - ${option.address_street || ''}`,
+        invoice_id: option => `${option.invoice_id || ''} - ${option.invoice_number || ''} - ${option.invoice_date || ''}`,
         contactperson_id: option => `${option.contactperson_firstname} ${option.contactperson_lastname}`,
       },
       dateConfig: {
@@ -309,9 +179,7 @@ export default {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
     selectDisabled() {
-      return (
-        this.disabled || (this.field.filter_key && !this.entity[this.field.filter_key])
-      )
+      return this.disabled || (this.field.filter_key && !this.entity[this.field.filter_key])
     },
     rules() {
       return this.getValidationRules(this.field)
@@ -321,57 +189,40 @@ export default {
     },
     listItems() {
       if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
-        const val = this.filterValue || this.entity[this.field.filter_key]
+        const val = (this.filterValue || this.entity[this.field.filter_key])
         if (this.field.filter_key && val) {
           console.log('filter with value', val)
           return this.list.filter(e => e[this.field.filter_key] === val)
         }
         return this.list
       }
-      return this.list.filter(
-        item => this.field.ids.indexOf(item[this.field.key]) >= 0,
-      )
+      return this.list.filter(item => this.field.ids.indexOf(item[this.field.key]) >= 0)
     },
     subDefinition() {
       const definition = { ...Table[this.field.list] }
-      if (this.field.withFields) {
-        definition.fields = [...definition.fields, ...this.field.withFields]
-      }
+      if (this.field.withFields) definition.fields = [...definition.fields, ...this.field.withFields]
       return definition
     },
     subFormFields() {
-      const excluded = typeof this.field.without === 'string'
-        ? [this.field.without]
-        : Array.isArray(this.field.without)
-          ? this.field.without
-          : []
-      return this.subDefinition.fields.filter(
-        f => !f.hideOnForm && !f.auto && excluded.indexOf(f.key) === -1,
-      )
+      const excluded = (typeof this.field.without === 'string') ? [this.field.without] : (Array.isArray(this.field.without) ? this.field.without : [])
+      return this.subDefinition.fields.filter(f => !f.hideOnForm && !f.auto && excluded.indexOf(f.key) === -1)
     },
     subTableDefinition() {
       return this.$store.getters['table/tableDefinition'](this.field.list)
     },
     subPrimaryKey() {
-      return (
-        this.subDefinition.primaryKey ?? this.subDefinition.fields.find(f => f.auto).key
-      )
+      return this.subDefinition.primaryKey ?? this.subDefinition.fields.find(f => f.auto).key
     },
     hasNew() {
       return this.newValue === this.entity[this.field.key]
     },
     selectedValue() {
-      return this.field.type === 'list'
-        ? this.list.find(e => e[this.field.key] === this.entity[this.field.key])
-        : this.entity[this.field.key]
+      return this.field.type === 'list' ? this.list.find(e => e[this.field.key] === this.entity[this.field.key]) : this.entity[this.field.key]
     },
     selectedValues() {
-      return this.field.type === 'list'
-        ? this.list.filter(
-          e => this.entity[this.field.key].indexOf(e[this.field.key]) >= 0,
-        )
-        : []
+      return this.field.type === 'list' ? this.list.filter(e => this.entity[this.field.key].indexOf(e[this.field.key]) >= 0) : []
     },
+
   },
   watch: {
     list() {
@@ -385,9 +236,7 @@ export default {
       // set false as default value
       if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, 0)
     } else if (this.field.default) {
-      if (this.entity[this.field.key] == null) {
-        this.$set(this.entity, this.field.key, this.field.default)
-      }
+      if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, this.field.default)
     }
   },
   beforeDestroy() {
@@ -431,10 +280,9 @@ export default {
             elt => elt.name === selectedFiles[file].name
               && elt.size === selectedFiles[file].size,
           )
-          console.log('index: ', index)
           if (index === -1) {
             this.files.push(selectedFiles[file])
-            console.log('this.files: ', this.files)
+            // console.log('this.files: ', this.files)
           }
         }
       }
@@ -457,6 +305,31 @@ export default {
       }
       (this.getSubFields() || []).forEach(sub => sub.reset())
     },
+    getRandomPassword(fieldKey){
+      const pass = generate({length: 12, numbers: true, uppercase: true, lowercase: true, symbols: true})
+      this.entity[fieldKey] = pass;
+      console.log('pass: ', pass);
+
+    },
+    doCopy(fieldKey){
+      this.$copyText(this.entity[fieldKey]).then(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Text copied',
+            icon: 'BellIcon',
+          },
+        })
+      }, e => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Can not copy!',
+            icon: 'BellIcon',
+          },
+        })
+      })
+    },
     getPrimaryKey(definition) {
       return definition.primaryKey ?? definition.fields.find(f => f.auto).key
     },
@@ -466,34 +339,28 @@ export default {
         if (this.entity[this.field.key] == null) {
           const primaryKey = this.getPrimaryKey(this.definition)
           await this.$api({
-            entity: this.field.relationEntity ?? `${this.table}_${this.field.list}_rel`,
+            entity: this.field.relationEntity ?? (`${this.table}_${this.field.list}_rel`),
             action: 'read-rich',
-            data: [
-              {
-                [primaryKey]: `${this.entity[primaryKey]}`,
-              },
-            ],
-          }).then(({ data }) => {
-            const result = data.data.data[0]
-            if (!result) return null
-            this.$set(this.entity, this.field.key, result[this.field.key])
-            // this.$set(originalEntity, field.key, result[field.key])
-            if (this.field.with) {
-              (typeof this.field.with === 'string'
-                ? [this.field.with]
-                : this.field.with
-              ).forEach(val => {
-                this.$set(this.entity, val, result[val])
-              })
-            }
-            return result[this.field.key]
+            data: [{
+              [primaryKey]: `${this.entity[primaryKey]}`,
+            }],
           })
+            .then(({ data }) => {
+              const result = data.data.data[0]
+              if (!result) return null
+              this.$set(this.entity, this.field.key, result[this.field.key])
+              // this.$set(originalEntity, field.key, result[field.key])
+              if (this.field.with) {
+                (typeof this.field.with === 'string' ? [this.field.with] : this.field.with).forEach(val => {
+                  this.$set(this.entity, val, result[val])
+                })
+              }
+              return result[this.field.key]
+            })
         }
         if (this.field.alwaysNew) {
           this.getFormFields(this.subDefinition).forEach(field => {
-            if (this.entity[field.key]) {
-              this.subEntity[field.key] = this.entity[field.key]
-            }
+            if (this.entity[field.key]) this.subEntity[field.key] = this.entity[field.key]
           })
           this.getSubFields().forEach(field => {
             field.getRelationValue()
@@ -506,18 +373,15 @@ export default {
         keys: this.list[0] ? Object.keys(this.list[0]) : [],
         shouldSort: true,
       })
-      return search.length ? fuse.search(search).map(({ item }) => item) : fuse.list
+      return search.length
+        ? fuse.search(search).map(({ item }) => item)
+        : fuse.list
     },
     getSubFields() {
       if (this.subDefinition.fieldComponent) {
-        return this.$refs.fieldComponent.$children.filter(
-          c => c.$options.name === 'Field',
-        )
+        return this.$refs.fieldComponent.$children.filter(c => c.$options.name === 'Field')
       }
-      return (
-        this.$refs.fields
-        || this.$children[0].$children.filter(c => c.$options.name === 'Field')
-      )
+      return this.$refs.fields || this.$children[0].$children.filter(c => c.$options.name === 'Field')
     },
     async fetchList(force) {
       if (this.field.noFetch) return
@@ -534,9 +398,7 @@ export default {
           payload.data = [{ [this.field.key]: this.entity[this.field.key] }]
         }
         if (this.field.filter_key) {
-          payload.data = [
-            { [this.field.filter_key]: this.entity[this.field.filter_key] },
-          ]
+          payload.data = [{ [this.field.filter_key]: this.entity[this.field.filter_key] }]
         }
         this.list = await this.$store.dispatch('table/fetchList', payload)
         if (this.field.entityList) {
@@ -555,25 +417,12 @@ export default {
         definition = this.$store.getters['table/tableDefinition'](field.fromTable)
       }
       return {
-        required: this.field.alwaysNew
-          ? false
-          : this.field.mandatoryIfListEmpty && this.listItems.length === 0
-            ? false
-            : this.field.required_if_null
-              ? isEmpty(this.entity[this.field.required_if_null])
-              : this.field.required !== false,
+        required: this.field.alwaysNew ? false : ((this.field.mandatoryIfListEmpty && this.listItems.length === 0) ? false : (this.field.required_if_null ? isEmpty(this.entity[this.field.required_if_null]) : this.field.required !== false)),
         email: this.field.type === 'email',
-        ...(definition
-          ? {
-            max:
-                (definition.attribute_datatype_len
-                  && definition.attribute_datatype_len[field.key])
-                || false,
-            regex:
-                (definition.attribute_regexp && definition.attribute_regexp[field.key])
-                || false,
-          }
-          : {}),
+        ...(definition ? {
+          max: (definition.attribute_datatype_len && definition.attribute_datatype_len[field.key]) || false,
+          regex: (definition.attribute_regexp && definition.attribute_regexp[field.key]) || false,
+        } : {}),
         ...(this.field.rules || {}),
       }
     },
@@ -591,16 +440,8 @@ export default {
           if (this.field.onlyForm && this.$parent.$parent.isRelation) {
             this.subFormFields.forEach(field => {
               // make sur that field that are not in the table are not cleared
-              if (!this.subEntity[field.key]) {
-                this.$set(this.subEntity, field.key, this.selectedValue[field.key])
-              }
-              if (!this.subOriginalEntity[field.key]) {
-                this.$set(
-                  this.subOriginalEntity,
-                  field.key,
-                  this.selectedValue[field.key],
-                )
-              }
+              if (!this.subEntity[field.key]) this.$set(this.subEntity, field.key, this.selectedValue[field.key])
+              if (!this.subOriginalEntity[field.key]) this.$set(this.subOriginalEntity, field.key, this.selectedValue[field.key])
             })
             return
           }
@@ -608,9 +449,7 @@ export default {
           this.subFormFields.forEach(field => {
             this.$set(this.subEntity, field.key, this.selectedValue[field.key])
             // set original value
-            if (!originalInitialized) {
-              this.$set(this.subOriginalEntity, field.key, this.selectedValue[field.key])
-            }
+            if (!originalInitialized) this.$set(this.subOriginalEntity, field.key, this.selectedValue[field.key])
           })
           this.subOriginalEntity.__initialized = true
         }
@@ -621,6 +460,7 @@ export default {
 </script>
 
 <style lang="scss">
+
 .hide-main {
   > label {
     display: none !important;
@@ -632,8 +472,7 @@ export default {
 }
 
 .message-editor table {
-  td,
-  th {
+  td, th {
     border: 1px solid #ccc;
     padding: 2px;
   }

@@ -146,7 +146,7 @@ export default {
           for (let i = 0; i < attachments.length; i++) {
             formData.append("files", attachments[i]);
           }
-          const { data } = await this.$http.post("document/uploadfiles", formData, {
+          const { data } = await this.$http.post("/document/uploadfiles", formData, {
             headers: { "content-type": "form-data" },
           });
           console.log(data);
