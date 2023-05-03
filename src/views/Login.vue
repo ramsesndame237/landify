@@ -210,17 +210,20 @@ export default {
 
               // alway redirect to change password page
               // if (resp.data.user.user_password_reset_required) {
-              if (resp.data.user) {
                 useJwt.setToken(resp.data.user_token);
                 useJwt.setRefreshToken(resp.data.user_refresh_token);
                 localStorage.setItem("userEmail", resp.data.user.user_email);
-                console.log("yessssss");
+              if (resp.data.user.user_password_reset_required) {
+                console.log("change password required");
                 this.$router.push({
                   name: "change-password",
                   params: {
                     user_id: resp.data.user.user_id,
                   },
                 });
+              }else{
+                console.log("change password not required");
+                return useJwt.redirectAfterLogin(this);
               }
             })
             .catch((e) => {
