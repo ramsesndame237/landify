@@ -1,45 +1,82 @@
 <template>
-  <b-modal ref="mailContent" title="Mail Content" size="lg" :ok-title="view?$t('button~close'):$t('button~email~send')"
-           :ok-only="view" @ok="submit" :busy="loading">
+  <b-modal
+    ref="mailContent"
+    title="Mail Content"
+    size="lg"
+    :ok-title="view ? $t('button~close') : $t('button~email~send')"
+    :ok-only="view"
+    :busy="loading"
+    @ok="submit"
+  >
     <b-overlay :show="loading">
       <b-row>
         <b-col v-if="view" cols="6">
-          <field :field="{key: 'email_id', auto: true}" :entity="item" disabled/>
+          <field :field="{ key: 'email_id', auto: true }" :entity="item" disabled />
         </b-col>
         <b-col v-if="view" cols="6">
-          <field :field="{key: 'email_received_datetime'}" :entity="item" disabled/>
+          <field :field="{ key: 'email_received_datetime' }" :entity="item" disabled />
         </b-col>
         <b-col cols="12">
-          <field :field="{key: 'email_from'}" :entity="item" disabled/>
+          <field :field="{ key: 'email_from' }" :entity="item" disabled />
         </b-col>
         <b-col cols="12">
-          <field v-if="view" :field="{key: 'email_to'}" :entity="item" disabled/>
+          <field v-if="view" :field="{ key: 'email_to' }" :entity="item" disabled />
           <b-form-group v-else :label="$t('attribute.email_to')">
-            <vue-tags-input v-model="tag" :tags="tags" :validation="validation" :autocomplete-items="filteredItems(tag)"
-                            :placeholder="$t('attribute.email_to')" @tags-changed="newTags => tags = newTags"/>
+            <vue-tags-input
+              v-model="tag"
+              :tags="tags"
+              :validation="validation"
+              :autocomplete-items="filteredItems(tag)"
+              :placeholder="$t('attribute.email_to')"
+              @tags-changed="(newTags) => (tags = newTags)"
+            />
           </b-form-group>
         </b-col>
         <b-col cols="12">
-          <field v-if="view" :field="{key: 'email_cc'}" :entity="item" disabled/>
+          <field v-if="view" :field="{ key: 'email_cc' }" :entity="item" disabled />
           <b-form-group v-else :label="$t('attribute.email_cc')">
-            <vue-tags-input v-model="tag_cc" :tags="tags_cc" :validation="validation"
-                            :autocomplete-items="filteredItems(tag_cc)" :placeholder="$t('attribute.email_cc')"
-                            @tags-changed="newTags => tags_cc = newTags"/>
+            <vue-tags-input
+              v-model="tag_cc"
+              :tags="tags_cc"
+              :validation="validation"
+              :autocomplete-items="filteredItems(tag_cc)"
+              :placeholder="$t('attribute.email_cc')"
+              @tags-changed="(newTags) => (tags_cc = newTags)"
+            />
           </b-form-group>
         </b-col>
         <b-col cols="12">
-          <field :field="{key: 'email_subject'}" :entity="item" :disabled="view"/>
+          <field :field="{ key: 'email_subject' }" :entity="item" :disabled="view" />
         </b-col>
         <b-col cols="12">
-          <field :field="{key: 'email_body', type: 'html'}" :entity="item" :disabled="view"/>
+          <field
+            :field="{ key: 'email_body', type: 'html' }"
+            :entity="item"
+            :disabled="view"
+          />
         </b-col>
         <b-col cols="12">
-          <field v-if="!view" ref="file" :field="{key: 'attachment', type: 'file', multiple: true}" :entity="item"
-                 :disabled="view"/>
-          <div v-else>
-            <b-link v-for="(document, i) in item.documents" :key="i" class="mr-2" variant="danger" target="_blank"
-                    :href="getDocumentLink(document)">
-              {{ document.document_name }}
+          <field
+            v-if="!view"
+            ref="file"
+            :field="{ key: 'attachment', type: 'file', multiple: true }"
+            :entity="item"
+            :disabled="view"
+          />
+          <div class="d-flex flex-column" v-else>
+            <b-link
+              v-for="(document, i) in item.documents"
+              :key="i"
+              class="mb-1"
+              variant="danger"
+              target="_blank"
+              :href="getDocumentLink(document)"
+              @click="clickOnFile(document)"
+            >
+              <b-img :src="getFileThumbnail(document.document_mime_type)" width="16px" class="mr-50" />
+              <span class="font-weight-bolder align-text-top">
+                {{ document.document_name }}
+              </span>
             </b-link>
           </div>
         </b-col>
@@ -49,89 +86,115 @@
 </template>
 
 <script>
-import Field from '@/views/app/Generic/Field'
-import { getDocumentLink } from "@/libs/utils";
-import VueTagsInput from '@johmun/vue-tags-input'
-import {
-  email,
-} from 'vee-validate/dist/rules'
+import { BImg } from 'bootstrap-vue'
+import Field from "@/views/app/Generic/Field";
+import { getDocumentLink, getFileThumbnail } from "@/libs/utils";
+import VueTagsInput from "@johmun/vue-tags-input";
+import { email } from "vee-validate/dist/rules";
 
 export default {
-  name: 'EmailModal',
-  components: { Field, VueTagsInput },
+  name: "EmailModal",
+  components: { Field, VueTagsInput, BImg },
   data() {
     return {
       item: {},
       view: true,
       loading: false,
-      tag: '',
-      tag_cc: '',
+      tag: "",
+      tag_cc: "",
       tags: [],
       tags_cc: [],
       contactpersons: [],
-      validation: [{
-        classes: 'invalid',
-        rule: tag => !email.validate(tag.text),
-        disableAdd: true,
-      }],
-    }
+      validation: [
+        {
+          classes: "invalid",
+          rule: (tag) => !email.validate(tag.text),
+          disableAdd: true,
+        },
+      ],
+    };
   },
   computed: {},
   async mounted() {
-    this.contactpersons = await this.$store.dispatch('table/fetchList', { entity: 'frontend_2_3_1' })
+    this.contactpersons = await this.$store.dispatch("table/fetchList", {
+      entity: "frontend_2_3_1",
+    });
   },
   methods: {
+    getFileThumbnail(fileType) {
+      if (fileType === 'application/pdf') {
+        return require('@/assets/images/icons/file-icons/pdf2.png')
+      }
+      if (
+        fileType
+          === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        || fileType === 'application/vnd.ms-excel'
+        || fileType === 'application/vnd.oasis.opendocument.spreadsheet'
+      ) {
+        return require('@/assets/images/icons/file-icons/xls.png')
+      }
+      return require('@/assets/images/icons/file-icons/doc.png')
+    },
+    clickOnFile(doc){
+      console.log('doc: ', doc);
+
+    },
     filteredItems(tag) {
-      return this.contactpersons.filter(i => {
-        return i.user_email && i.user_email.toLowerCase().indexOf(tag.toLowerCase()) !== -1
-      }).map(i => i.user_email)
+      return this.contactpersons
+        .filter(
+          (i) =>
+            i.user_email && i.user_email.toLowerCase().indexOf(tag.toLowerCase()) !== -1
+        )
+        .map((i) => i.user_email);
     },
     getDocumentLink,
     show(view, item) {
       if (view) {
-        this.item = item
+        this.item = item;
       } else {
-        this.item = { email_from: 'zelos@seybold-fm.com' }
+        this.item = { email_from: "zelos@seybold-fm.com" };
       }
-      this.view = view
-      this.$refs.mailContent.show()
+      this.view = view;
+      this.$refs.mailContent.show();
     },
     async submit(event) {
-      if (this.view) return
-      event.preventDefault()
-      this.loading = true
+      if (this.view) return;
+      event.preventDefault();
+      this.loading = true;
       try {
-        console.log(this.$refs.file.getFiles(), 'files')
-        const attachments = this.$refs.file.getFiles()
+        console.log(this.$refs.file.getFiles(), "files");
+        const attachments = this.$refs.file.getFiles();
         if (attachments.length) {
-          const formData = new FormData()
+          const formData = new FormData();
           for (let i = 0; i < attachments.length; i++) {
-            formData.append('files', attachments[i])
+            formData.append("files", attachments[i]);
           }
-          const { data } = await this.$http.post('document/uploadfiles', formData, { headers: { 'content-type': 'form-data' } })
-          console.log(data)
-          this.item.attachments = data.data.map(d => d.document_id)
+          const { data } = await this.$http.post("/document/uploadfiles", formData, {
+            headers: { "content-type": "form-data" },
+          });
+          console.log(data);
+          this.item.attachments = data.data.map((d) => d.document_id);
         }
 
-        await this.$http.post('/emails/send', {
-          email_to: this.tags.map(t => t.text),
-          email_cc: this.tags_cc.map(t => t.text),
+        await this.$http.post("/emails/send", {
+          email_to: this.tags.map((t) => t.text),
+          email_cc: this.tags_cc.map((t) => t.text),
           email_subject: this.item.email_subject,
           email_body: this.item.email_body,
           email_attachements: this.item.attachments || [],
           ticket_id: this.$route.params.id,
-        })
-        this.$refs.mailContent.hide()
-        this.$emit('reload')
+        });
+        this.$refs.mailContent.hide();
+        this.$emit("reload");
       } catch (e) {
-        console.error(e)
-        this.$errorToast(e.response.data.detail)
+        console.error(e);
+        this.$errorToast(e.response.data.detail);
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
   },
-}
+};
 </script>
 
 <style scoped>

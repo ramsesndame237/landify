@@ -15,45 +15,21 @@
           <vuexy-logo />
         </b-link>
 
-        <b-card-title class="mb-1 font-weight-bolder"> Login </b-card-title>
+        <b-card-title class="mb-1 font-weight-bolder"> Change password </b-card-title>
         <b-card-text class="mb-2">
-          Welcome, enter your login credentials to proceed (Hello World!)
+          Welcome, please change your password to proceed.
         </b-card-text>
 
         <!-- form -->
-        <validation-observer ref="loginForm" #default="{ invalid }">
+        <validation-observer ref="loginForm" #default="">
           <b-form class="auth-login-form mt-2" @submit.prevent>
-            <!-- email -->
-            <b-form-group>
+            <!-- old password -->
+            <b-form-group label="Enter your old password">
               <validation-provider
                 #default="{ errors }"
-                name="Email"
-                rules="required|email"
+                name="OldPassword"
+                rules="required"
               >
-                <b-input-group
-                  class="input-group-merge"
-                  :class="errors.length > 0 ? 'is-invalid' : null"
-                >
-                  <b-input-group-prepend is-text>
-                    <feather-icon class="cursor-pointer" icon="UserIcon" />
-                  </b-input-group-prepend>
-                  <b-form-input
-                    id="email"
-                    v-model="userEmail"
-                    name="login-email"
-                    :state="errors.length > 0 ? false : null"
-                    placeholder="john@example.com"
-                    autofocus
-                  />
-                </b-input-group>
-
-                <small class="text-danger">{{ errors[0] }}</small>
-              </validation-provider>
-            </b-form-group>
-
-            <!-- password -->
-            <b-form-group>
-              <validation-provider #default="{ errors }" name="Password" rules="required">
                 <b-input-group
                   class="input-group-merge"
                   :class="errors.length > 0 ? 'is-invalid' : null"
@@ -62,13 +38,13 @@
                     <feather-icon class="cursor-pointer" icon="LockIcon" />
                   </b-input-group-prepend>
                   <b-form-input
-                    id="password"
-                    v-model="password"
+                    id="oldPassword"
+                    v-model="oldPassword"
                     :type="passwordFieldType"
-                    class="form-control-merge"
+                    name="login-email"
                     :state="errors.length > 0 ? false : null"
-                    name="login-password"
-                    placeholder="Password"
+                    placeholder="Old Password"
+                    autofocus
                   />
 
                   <b-input-group-append is-text>
@@ -79,20 +55,78 @@
                     />
                   </b-input-group-append>
                 </b-input-group>
+
                 <small class="text-danger">{{ errors[0] }}</small>
               </validation-provider>
             </b-form-group>
 
-            <!-- checkbox -->
+            <!-- new password -->
+            <b-form-group label="Enter your new password">
+              <validation-provider
+                #default="{ errors }"
+                name="Password"
+                vid="confirm"
+                rules="required"
+              >
+                <b-input-group
+                  class="input-group-merge"
+                  :class="errors.length > 0 ? 'is-invalid' : null"
+                >
+                  <b-input-group-prepend is-text>
+                    <feather-icon class="cursor-pointer" icon="LockIcon" />
+                  </b-input-group-prepend>
+                  <b-form-input
+                    id="password"
+                    v-model="password"
+                    class="form-control-merge"
+                    :type="newPasswordFieldType"
+                    :state="errors.length > 0 ? false : null"
+                    name="password"
+                    placeholder="New Password"
+                  />
+
+                  <b-input-group-append is-text>
+                    <feather-icon
+                      class="cursor-pointer"
+                      :icon="newPasswordToggleIcon"
+                      @click="toggleNewPasswordVisibility"
+                    />
+                  </b-input-group-append>
+                </b-input-group>
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+            </b-form-group>
+
+            <!-- new password confirmation-->
             <b-form-group>
-              <div class="d-flex justify-content-between">
-                <b-form-checkbox id="remember-me" v-model="status" name="checkbox-1">
-                  Remember Me
-                </b-form-checkbox>
-                <b-link :to="{ name: 'forgot-password' }">
-                  <small>Forgot Password?</small>
-                </b-link>
-              </div>
+              <validation-provider
+                #default="{ errors }"
+                name="PasswordConfirm"
+                rules="required|confirmed:confirm"
+              >
+                <b-input-group
+                  class="input-group-merge"
+                  :class="errors.length > 0 ? 'is-invalid' : null"
+                >
+                  <b-input-group-prepend is-text>
+                    <feather-icon class="cursor-pointer" icon="LockIcon" />
+                  </b-input-group-prepend>
+                  <b-form-input
+                    id="passwordConfirm"
+                    v-model="passwordConfirm"
+                    type="password"
+                    class="form-control-merge"
+                    :state="errors.length > 0 ? false : null"
+                    name="confirm-password"
+                    placeholder="Confirm Password"
+                  />
+
+                  <!-- <b-input-group-append is-text>
+                    <feather-icon class="cursor-pointer" icon="EyeIcon" />
+                  </b-input-group-append> -->
+                </b-input-group>
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
             </b-form-group>
 
             <!-- submit button -->
@@ -104,13 +138,20 @@
                 pill
                 @click="validationForm"
               >
-                <span style="line-height: 24px" class="mr-1">Login</span>
+                <span style="line-height: 24px" class="mr-1">Send</span>
                 <b-spinner v-if="loading" style="width: 24px; height: 24px" />
                 <feather-icon v-else size="24" icon="ArrowRightIcon" />
               </b-button>
             </div>
           </b-form>
         </validation-observer>
+
+        <b-card-text class="text-center mt-2">
+          <!--          <span>Already have an account? </span>-->
+          <b-link :to="{ name: 'login' }">
+            <span>Sign In</span>
+          </b-link>
+        </b-card-text>
 
         <!--        <b-card-text class="text-center mt-2">-->
         <!--          <span>Dont have an account? </span>-->
@@ -138,7 +179,6 @@ import {
   BInputGroup,
   BInputGroupAppend,
   BInputGroupPrepend,
-  BFormCheckbox,
   BSpinner,
 } from "bootstrap-vue";
 import VuexyLogo from "@core/layouts/components/Logo.vue";
@@ -148,7 +188,7 @@ import ToastificationContent from "@core/components/toastification/Toastificatio
 import useJwt from "@/auth/jwt/useJwt";
 import { getHomeRouteForLoggedInUser } from "@/auth/utils";
 import { defineRules } from "@/libs/acl/ability";
-import BrowserId from "browser-id";
+import { EyeIcon } from "vue-feather-icons";
 
 export default {
   components: {
@@ -165,7 +205,6 @@ export default {
     BInputGroup,
     BInputGroupAppend,
     BInputGroupPrepend,
-    BFormCheckbox,
     BSpinner,
     ValidationProvider,
     ValidationObserver,
@@ -173,13 +212,13 @@ export default {
   mixins: [togglePasswordVisibility],
   data() {
     return {
-      userEmail: "",
+      oldPassword: "",
       password: "",
+      passwordConfirm: "",
       status: "",
       loading: false,
       // validation rules
       required,
-      email,
       show: true,
       message: "",
     };
@@ -188,39 +227,26 @@ export default {
     passwordToggleIcon() {
       return this.passwordFieldType === "password" ? "EyeIcon" : "EyeOffIcon";
     },
+    newPasswordToggleIcon() {
+      return this.newPasswordFieldType === "password" ? "EyeIcon" : "EyeOffIcon";
+    },
   },
   methods: {
     validationForm() {
       this.$refs.loginForm.validate().then((success) => {
         if (success) {
           const data = {
-            user_email: this.userEmail,
-            user_password: this.password,
-            user_browser_hash: BrowserId(),
+            old_password: this.oldPassword,
+            new_password: this.password,
           };
+          const userId = localStorage.getItem("userId")
           this.loading = true;
           this.$http
-            .post("/auth/login", data)
+            .put(`/users/${userId}/password`, data)
             .then(async (resp) => {
               if (!resp.data.user_token) {
                 this.message = this.$t(resp.data.message);
                 this.show = false;
-                return;
-              }
-
-
-              // if (resp.data.user.user_password_reset_required) {
-                useJwt.setToken(resp.data.user_token);
-                useJwt.setRefreshToken(resp.data.user_refresh_token);
-                localStorage.setItem("userEmail", resp.data.user.user_email);
-              if (resp.data.user.user_password_reset_required) {
-                console.log("change password required");
-                localStorage.setItem('userId', resp.data.user.user_id)
-                this.$router.push({
-                  name: "change-password",
-                });
-              }else{
-                console.log("change password not required");
                 return useJwt.redirectAfterLogin(this);
               }
             })

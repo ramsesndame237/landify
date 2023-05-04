@@ -245,7 +245,7 @@ export default {
             for (let i = 0; i < files.length; i++) {
               formData.append('files', files[i])
             }
-            return this.$http.post('document/uploadfiles', formData, { headers: { 'content-type': 'form-data' } })
+            return this.$http.post('/document/uploadfiles', formData, { headers: { 'content-type': 'form-data' } })
               .then(({ data }) => {
                 console.log(data)
                 return data
