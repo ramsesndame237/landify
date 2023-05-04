@@ -245,6 +245,12 @@ export default {
     }
   },
   mounted() {
+    if (this.field.value) {
+      this.$watch('entity', () => {
+        console.log('deep watch')
+        this.$set(this.entity, this.field.key, this.field.value(this.entity))
+      }, { deep: true })
+    }
     this.$watch(`entity.${this.field.key}`, () => {
       this.onChange()
     })
