@@ -63,16 +63,20 @@
             :entity="item"
             :disabled="view"
           />
-          <div v-else>
+          <div class="d-flex flex-column" v-else>
             <b-link
               v-for="(document, i) in item.documents"
               :key="i"
-              class="mr-2"
+              class="mb-1"
               variant="danger"
               target="_blank"
               :href="getDocumentLink(document)"
+              @click="clickOnFile(document)"
             >
-              {{ document.document_name }}
+              <b-img :src="getFileThumbnail(document.document_mime_type)" width="16px" class="mr-50" />
+              <span class="font-weight-bolder align-text-top">
+                {{ document.document_name }}
+              </span>
             </b-link>
           </div>
         </b-col>
@@ -82,14 +86,15 @@
 </template>
 
 <script>
+import { BImg } from 'bootstrap-vue'
 import Field from "@/views/app/Generic/Field";
-import { getDocumentLink } from "@/libs/utils";
+import { getDocumentLink, getFileThumbnail } from "@/libs/utils";
 import VueTagsInput from "@johmun/vue-tags-input";
 import { email } from "vee-validate/dist/rules";
 
 export default {
   name: "EmailModal",
-  components: { Field, VueTagsInput },
+  components: { Field, VueTagsInput, BImg },
   data() {
     return {
       item: {},
@@ -116,6 +121,24 @@ export default {
     });
   },
   methods: {
+    getFileThumbnail(fileType) {
+      if (fileType === 'application/pdf') {
+        return require('@/assets/images/icons/file-icons/pdf2.png')
+      }
+      if (
+        fileType
+          === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        || fileType === 'application/vnd.ms-excel'
+        || fileType === 'application/vnd.oasis.opendocument.spreadsheet'
+      ) {
+        return require('@/assets/images/icons/file-icons/xls.png')
+      }
+      return require('@/assets/images/icons/file-icons/doc.png')
+    },
+    clickOnFile(doc){
+      console.log('doc: ', doc);
+
+    },
     filteredItems(tag) {
       return this.contactpersons
         .filter(
