@@ -239,9 +239,10 @@ export default {
             old_password: this.oldPassword,
             new_password: this.password,
           };
+          const userId = localStorage.getItem("userId")
           this.loading = true;
           this.$http
-            .put(`/users/${this.$route.params.user_id}/password`, data)
+            .put(`/users/${userId}/password`, data)
             .then(async (resp) => {
               if (!resp.data.user_token) {
                 this.message = this.$t(resp.data.message);

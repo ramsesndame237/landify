@@ -237,7 +237,7 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/change-password/:user_id',
+      path: '/change-password',
       name: 'change-password',
       component: () => import('@/views/ChangePassword.vue'),
       meta: {
