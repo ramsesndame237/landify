@@ -32,7 +32,15 @@ export default {
       },
       { key: 'user_firstname', sortable: true },
       { key: 'user_lastname', sortable: true },
-      { key: 'user_abbreviation', sortable: true, hideOnIndex: true },
+      {
+        key: 'user_abbreviation',
+        sortable: true,
+        hideOnIndex: true,
+        disabled: true,
+        hideOnUpdate: true,
+        value: entity => (entity.user_firstname?.charAt(0) || '') + (entity.user_lastname?.charAt(0) || ''),
+      },
+      { key: 'user_abbreviation', sortable: true, hideOnIndex: true, hideOnCreate: true },
       { key: 'user_function', sortable: true, hideOnIndex: true },
 
       {
@@ -84,10 +92,10 @@ export default {
         visible: entity => entity.firmengroup_type === 1,
       },
       {
-        key: 'user_last_login_time', sortable: true, hideOnForm: true,type: 'date', time: true,
+        key: 'user_last_login_time', sortable: true, hideOnForm: true, type: 'date', time: true,
       },
       {
-        key: 'user_last_activity_time', sortable: true, hideOnForm: true,type: 'date', time: true,
+        key: 'user_last_activity_time', sortable: true, hideOnForm: true, type: 'date', time: true,
       },
 
       {
@@ -149,66 +157,66 @@ export default {
           },
         ],
       },
-      {
-        title: 'Customer Groups',
-        primaryKey: 'customergroup_id',
-        entity: 'user_customergroup_grp',
-        entityForm: 'user_customergroup_rel',
-        entityView: 'customergroup',
-        fields: [
-          {
-            key: 'customergroup_id',
-            label: 'ID',
-            type: 'list',
-            list: 'customergroup',
-            listLabel: 'customergroup_name',
-            sortable: true,
-            disableOnUpdate: true,
-          },
-          { key: 'customergroup_name', sortable: true, hideOnForm: true },
-          {
-            key: 'user_customergroup_valid_from',
-            sortable: true,
-            type: 'date',
-            composite: true,
-            disableOnUpdate: true,
-          },
-          {
-            key: 'user_customergroup_valid_to',
-            type: 'date',
-            rules: { date_after: ['@user_customergroup_valid_from'] },
-            required: false,
-          },
-        ],
-      },
-      {
-        title: 'Companies',
-        primaryKey: 'company_id',
-        entity: 'user_company_grp',
-        entityForm: 'user_company_rel',
-        entityView: 'company',
-        fields: [
-          {
-            key: 'company_id',
-            label: 'ID',
-            sortable: true,
-            type: 'list',
-            list: 'company',
-            listLabel: 'company_name',
-            disableOnUpdate: true,
-          },
-          { key: 'company_name', sortable: true, hideOnForm: true },
-          {
-            key: 'user_company_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,
-          },
-          {
-            key: 'user_company_valid_to',
-            required: false,
-            type: 'date',
-            rules: { date_after: ['@user_company_valid_from'] },
-          },
-        ],
-      },
+      // {
+      //   title: 'Customer Groups',
+      //   primaryKey: 'customergroup_id',
+      //   entity: 'user_customergroup_grp',
+      //   entityForm: 'user_customergroup_rel',
+      //   entityView: 'customergroup',
+      //   fields: [
+      //     {
+      //       key: 'customergroup_id',
+      //       label: 'ID',
+      //       type: 'list',
+      //       list: 'customergroup',
+      //       listLabel: 'customergroup_name',
+      //       sortable: true,
+      //       disableOnUpdate: true,
+      //     },
+      //     { key: 'customergroup_name', sortable: true, hideOnForm: true },
+      //     {
+      //       key: 'user_customergroup_valid_from',
+      //       sortable: true,
+      //       type: 'date',
+      //       composite: true,
+      //       disableOnUpdate: true,
+      //     },
+      //     {
+      //       key: 'user_customergroup_valid_to',
+      //       type: 'date',
+      //       rules: { date_after: ['@user_customergroup_valid_from'] },
+      //       required: false,
+      //     },
+      //   ],
+      // },
+      // {
+      //   title: 'Companies',
+      //   primaryKey: 'company_id',
+      //   entity: 'user_company_grp',
+      //   entityForm: 'user_company_rel',
+      //   entityView: 'company',
+      //   fields: [
+      //     {
+      //       key: 'company_id',
+      //       label: 'ID',
+      //       sortable: true,
+      //       type: 'list',
+      //       list: 'company',
+      //       listLabel: 'company_name',
+      //       disableOnUpdate: true,
+      //     },
+      //     { key: 'company_name', sortable: true, hideOnForm: true },
+      //     {
+      //       key: 'user_company_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,
+      //     },
+      //     {
+      //       key: 'user_company_valid_to',
+      //       required: false,
+      //       type: 'date',
+      //       rules: { date_after: ['@user_company_valid_from'] },
+      //     },
+      //   ],
+      // },
       {
         title: 'Point of sales',
         primaryKey: 'pos_id',
@@ -259,38 +267,38 @@ export default {
           },
         ],
       },
-      {
-        title: 'Partner Companies',
-        primaryKey: 'partnercompany_id',
-        entity: 'user_partnercompany_grp',
-        entityForm: 'user_partnercompany_rel',
-        entityView: 'partnercompany',
-        fields: [
-          {
-            key: 'partnercompany_id',
-            label: 'ID',
-            sortable: true,
-            type: 'list',
-            list: 'partnercompany',
-            listLabel: 'partnercompany_name',
-            disableOnUpdate: true,
-          },
-          { key: 'partnercompany_name', sortable: true, hideOnForm: true },
-          {
-            key: 'user_partnercompany_valid_from',
-            sortable: true,
-            type: 'date',
-            composite: true,
-            disableOnUpdate: true,
-          },
-          {
-            key: 'user_partnercompany_valid_to',
-            required: false,
-            type: 'date',
-            rules: { date_after: ['@user_partnercompany_valid_from'] },
-          },
-        ],
-      },
+      // {
+      //   title: 'Partner Companies',
+      //   primaryKey: 'partnercompany_id',
+      //   entity: 'user_partnercompany_grp',
+      //   entityForm: 'user_partnercompany_rel',
+      //   entityView: 'partnercompany',
+      //   fields: [
+      //     {
+      //       key: 'partnercompany_id',
+      //       label: 'ID',
+      //       sortable: true,
+      //       type: 'list',
+      //       list: 'partnercompany',
+      //       listLabel: 'partnercompany_name',
+      //       disableOnUpdate: true,
+      //     },
+      //     { key: 'partnercompany_name', sortable: true, hideOnForm: true },
+      //     {
+      //       key: 'user_partnercompany_valid_from',
+      //       sortable: true,
+      //       type: 'date',
+      //       composite: true,
+      //       disableOnUpdate: true,
+      //     },
+      //     {
+      //       key: 'user_partnercompany_valid_to',
+      //       required: false,
+      //       type: 'date',
+      //       rules: { date_after: ['@user_partnercompany_valid_from'] },
+      //     },
+      //   ],
+      // },
     ],
     default: {
       user_locked: 0,
@@ -306,7 +314,6 @@ export default {
       data.address = addressField.subEntity
       const cityField = addressField.getSubFields().find(f => f.field.key === 'city_id')
       data.address.city = cityField.subEntity
-      data.address.address_city_id = 1
       console.log(data)
       return (vm.create ? vm.$http.post('/users', data) : vm.$http.put(`/users/${vm.entityId}`, data))
         .then(() => {
@@ -1419,6 +1426,7 @@ export default {
       { key: 'city_id', sortable: true, auto: true },
       { key: 'city_name', sortable: true },
       { key: 'city_zip', sortable: true },
+      { key: 'state', sortable: true, required: false },
       { key: 'country_short', sortable: true, hideOnForm: true },
       {
         key: 'country_id', hideOnIndex: true, type: 'list', list: 'country', listLabel: 'country_name',
