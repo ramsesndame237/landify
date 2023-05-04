@@ -9,6 +9,13 @@ export default {
     entity: 'frontend_1_1_2_1',
     fields: [
       {
+        key: 'usertype_id',
+        hideOnIndex: true,
+        type: 'list',
+        list: 'usertype',
+        listLabel: 'usertype_name',
+      },
+      {
         key: 'user_id', label: 'Id', auto: true, hideOnForm: true,
       },
       {
@@ -23,13 +30,7 @@ export default {
       },
       { key: 'user_password_reset_required', hideOnIndex: true, type: 'boolean' },
       { key: 'user_locked', hideOnIndex: true, hideOnCreate: true, type: 'boolean' },
-      {
-        key: 'usertype_id',
-        hideOnIndex: true,
-        type: 'list',
-        list: 'usertype',
-        listLabel: 'usertype_name',
-      },
+
       { key: 'user_firstname', sortable: true },
       { key: 'user_lastname', sortable: true },
       {
@@ -97,7 +98,9 @@ export default {
       {
         key: 'user_last_activity_time', sortable: true, hideOnForm: true, type: 'date', time: true,
       },
-
+      { key: 'user_fix_phonenumber', hideOnIndex: true, required: false },
+      { key: 'user_fax_phonenumber', hideOnIndex: true, required: false },
+      { key: 'user_mobile' },
       {
         key: 'address_id',
         hideOnIndex: true,
@@ -108,8 +111,6 @@ export default {
         alwaysNew: true,
         onlyForm: true,
       },
-      { key: 'user_fix_phonenumber', hideOnIndex: true, required: false },
-      { key: 'user_mobile' },
       {
         key: 'contactperson_id',
         label: 'hollyday_representative',
@@ -121,6 +122,22 @@ export default {
         // hideOnCreate: true,
         required: false,
       },
+      {
+        key: 'user_as_contactperson',
+        type: 'boolean',
+        hideOnUpdate: true,
+        hideOnIndex: true,
+        visible: entity => entity.firmengroup_type != null,
+      },
+      {
+        key: 'contactperson_roles',
+        type: 'custom-select',
+        list: [],
+        hideOnUpdate: true,
+        hideOnIndex: true,
+        visible: entity => entity.firmengroup_type != null,
+      },
+
     ],
     // updateComponent: () => import('@/views/app/FormComponent/UserForm'),
     relations: [
