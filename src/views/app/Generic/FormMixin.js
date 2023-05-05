@@ -251,12 +251,16 @@ export default {
                 return data
               })
           }
+
+          let data = [entity]
+          // if create and primary key is multiple
+          if (create && formFields.find(f => f.key === primaryKey).multiple) {
+            data = entity[primaryKey].map(val => ({ ...entity, [primaryKey]: val }))
+          }
           return this.$api({
             entity: table,
             action,
-            data: [
-              entity,
-            ],
+            data,
           })
             .then(async ({ data }) => {
               if (data.data.errors[0]) {
@@ -435,12 +439,17 @@ export default {
     if (this.create) return
     if (!this.isRelation && this.fetchData) {
       this.loading = true
-      const entity = await (this.definition.fetch ? this.definition.fetch(this) :
-        this.$store.dispatch('table/fetchSingleItem', {
-          entity: this.table,
-          primaryKey: this.primaryKey,
-          id: this.entityId || this.initialData[this.primaryKey],
-        }))
+      let entity = null
+      try {
+        entity = await (this.definition.fetch ? this.definition.fetch(this) :
+          entity = this.$store.dispatch('table/fetchSingleItem', {
+            entity: this.table,
+            primaryKey: this.primaryKey,
+            id: this.entityId || this.initialData[this.primaryKey],
+          }))
+      } catch (e) {
+        console.error(e)
+      }
       if (!entity) {
         this.$errorToast(`The entity with the id "${this.entityId}" doesnt exists`)
       } else {
@@ -448,8 +457,9 @@ export default {
       }
       this.loading = false
     }
-    this.entityLoaded = true
     this.originalEntity = { ...this.entity }
+    this.entityLoaded = true
+    this.$emit('loaded')
     console.log('mounted', this.entity)
     if (!this.definition.fetch) await this.fillRelations(this.entity, this.originalEntity, this.formFields, this.table, this.primaryKey)
   },

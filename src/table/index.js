@@ -55,6 +55,12 @@ export default {
         ],
       },
       {
+        key: 'partnergroup_is_internal',
+        visible: entity => entity.firmengroup_type === 0,
+        hideOnIndex: true,
+        type: 'boolean',
+      },
+      {
         key: 'partnergroup_id',
         type: 'list',
         send: false,
@@ -62,6 +68,8 @@ export default {
         listLabel: 'partnergroup_name',
         hideOnIndex: true,
         visible: entity => entity.firmengroup_type === 0,
+        filter_key: 'partnergroup_is_internal',
+        noFetchOnChange: true,
       },
       {
         key: 'partnercompany_id',
@@ -132,10 +140,15 @@ export default {
       {
         key: 'contactperson_roles',
         type: 'custom-select',
-        list: [],
+        multiple: true,
+        items: [
+          { value: 1, label: 'Owner' },
+          { value: 2, label: 'Lawyer' },
+          { value: 3, label: 'Manager' },
+        ],
         hideOnUpdate: true,
         hideOnIndex: true,
-        visible: entity => entity.firmengroup_type != null,
+        visible: entity => entity.user_as_contactperson,
       },
 
     ],
@@ -149,6 +162,12 @@ export default {
         entityView: 'role',
         fields: [
           {
+            key: 'role_is_internal',
+            hideOnIndex: true,
+            visible: () => false,
+            value: (entity, vm) => vm.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$refs.form.entity.usertype_id === 1 ? 1 : 0,
+          },
+          {
             key: 'role_id',
             label: 'Role ID',
             sortable: true,
@@ -156,6 +175,9 @@ export default {
             list: 'role',
             listLabel: 'role_name',
             disableOnUpdate: true,
+            filter_key: 'role_is_internal',
+            noFetchOnChange: true,
+            hideOnIndex: true,
           },
           {
             key: 'role_name', label: 'Role name', sortable: true, hideOnForm: true,
@@ -174,81 +196,101 @@ export default {
           },
         ],
       },
-      // {
-      //   title: 'Customer Groups',
-      //   primaryKey: 'customergroup_id',
-      //   entity: 'user_customergroup_grp',
-      //   entityForm: 'user_customergroup_rel',
-      //   entityView: 'customergroup',
-      //   fields: [
-      //     {
-      //       key: 'customergroup_id',
-      //       label: 'ID',
-      //       type: 'list',
-      //       list: 'customergroup',
-      //       listLabel: 'customergroup_name',
-      //       sortable: true,
-      //       disableOnUpdate: true,
-      //     },
-      //     { key: 'customergroup_name', sortable: true, hideOnForm: true },
-      //     {
-      //       key: 'user_customergroup_valid_from',
-      //       sortable: true,
-      //       type: 'date',
-      //       composite: true,
-      //       disableOnUpdate: true,
-      //     },
-      //     {
-      //       key: 'user_customergroup_valid_to',
-      //       type: 'date',
-      //       rules: { date_after: ['@user_customergroup_valid_from'] },
-      //       required: false,
-      //     },
-      //   ],
-      // },
-      // {
-      //   title: 'Companies',
-      //   primaryKey: 'company_id',
-      //   entity: 'user_company_grp',
-      //   entityForm: 'user_company_rel',
-      //   entityView: 'company',
-      //   fields: [
-      //     {
-      //       key: 'company_id',
-      //       label: 'ID',
-      //       sortable: true,
-      //       type: 'list',
-      //       list: 'company',
-      //       listLabel: 'company_name',
-      //       disableOnUpdate: true,
-      //     },
-      //     { key: 'company_name', sortable: true, hideOnForm: true },
-      //     {
-      //       key: 'user_company_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,
-      //     },
-      //     {
-      //       key: 'user_company_valid_to',
-      //       required: false,
-      //       type: 'date',
-      //       rules: { date_after: ['@user_company_valid_from'] },
-      //     },
-      //   ],
-      // },
+      {
+        title: 'Customer Groups',
+        primaryKey: 'customergroup_id',
+        entity: 'user_customergroup_grp',
+        entityForm: 'user_customergroup_rel',
+        entityView: 'customergroup',
+        visible: vm => !!vm.$refs.form.originalEntity.partnergroup_is_internal,
+        fields: [
+          {
+            key: 'customergroup_id',
+            label: 'ID',
+            type: 'list',
+            list: 'customergroup',
+            listLabel: 'customergroup_name',
+            sortable: true,
+            disableOnUpdate: true,
+          },
+          { key: 'customergroup_name', sortable: true, hideOnForm: true },
+          {
+            key: 'user_customergroup_valid_from',
+            sortable: true,
+            type: 'date',
+            composite: true,
+            disableOnUpdate: true,
+          },
+          {
+            key: 'user_customergroup_valid_to',
+            type: 'date',
+            rules: { date_after: ['@user_customergroup_valid_from'] },
+            required: false,
+          },
+        ],
+      },
+      {
+        title: 'Companies',
+        primaryKey: 'company_id',
+        entity: 'user_company_grp',
+        entityForm: 'user_company_rel',
+        entityView: 'company',
+        visible: vm => !!vm.$refs.form.originalEntity.partnergroup_is_internal,
+        fields: [
+          {
+            key: 'company_id',
+            label: 'ID',
+            sortable: true,
+            type: 'list',
+            list: 'company',
+            listLabel: 'company_name',
+            disableOnUpdate: true,
+          },
+          { key: 'company_name', sortable: true, hideOnForm: true },
+          {
+            key: 'user_company_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,
+          },
+          {
+            key: 'user_company_valid_to',
+            required: false,
+            type: 'date',
+            rules: { date_after: ['@user_company_valid_from'] },
+          },
+        ],
+      },
       {
         title: 'Point of sales',
         primaryKey: 'pos_id',
         entity: 'user_pos_grp',
         entityForm: 'user_pos_rel',
         entityView: 'pos',
+        visible: vm => !!vm.$refs.form.originalEntity.partnergroup_is_internal,
         fields: [
           {
-            key: 'pos_id',
-            label: 'ID',
-            sortable: true,
+            key: 'customergroup_id',
+            required: false,
             type: 'list',
-            list: 'pos',
+            list: 'customergroup',
+            listLabel: 'customergroup_name',
+            send: false,
+          },
+          {
+            key: 'company_id',
+            required: false,
+            type: 'list',
+            list: 'frontend_2_2_3_1',
+            listLabel: 'company_name',
+            filter_key: 'customergroup_id',
+          },
+          {
+            label: 'POS',
+            key: 'pos_id',
+            required: false,
+            type: 'list',
+            list: 'frontend_2_1_3_8',
             listLabel: 'pos_name',
-            disableOnUpdate: true,
+            filter_key: 'company_id',
+            multiple: true,
           },
           { key: 'pos_name', sortable: true, hideOnForm: true },
           {
@@ -268,14 +310,16 @@ export default {
         fields: [
           {
             key: 'team_id',
-            label: 'ID',
+            label: 'Team Name',
             sortable: true,
             type: 'list',
             list: 'team',
             listLabel: 'team_name',
             disableOnUpdate: true,
+            hideOnIndex: true,
           },
           { key: 'team_name', sortable: true, hideOnForm: true },
+          { key: 'Roles', type: 'checkbox', items: [{ label: 'Role A', value: 0 }, { label: 'Role B', value: 1 }] },
           {
             key: 'user_team_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,
           },
@@ -388,9 +432,10 @@ export default {
   },
   role: {
     fields: [
-      { key: 'role_id', label: 'Role ID', auto: true },
-      { key: 'role_name', label: 'Role name' },
-      { key: 'role_permission', label: 'Permission' },
+      { key: 'role_id', auto: true },
+      { key: 'role_name' },
+      { key: 'role_is_internal', type: 'boolean' },
+      { key: 'role_permission' },
     ],
     relations: [
       {
@@ -508,6 +553,25 @@ export default {
           {
             key: 'user_team_valid_to', required: false, type: 'date', rules: { date_after: ['@user_team_valid_from'] },
           },
+        ],
+      },
+      {
+        title: 'Roles',
+        primaryKey: 'role_id',
+        entity: 'team_role_grp',
+        entityForm: 'team_role_rel',
+        view: false,
+        update: false,
+        fields: [
+          {
+            key: 'role_id',
+            type: 'list',
+            list: 'role',
+            listLabel: 'role_name',
+            multiple: true,
+            hideOnIndex: true,
+          },
+          { key: 'role_name', hideOnForm: true },
         ],
       },
     ],
@@ -1244,7 +1308,6 @@ export default {
             key: 'partnercompany_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name',
           },
           { key: 'partnercompany_name', hideOnForm: true },
-          { key: 'partnertype_name', hideOnForm: true },
           { key: 'city_name', hideOnForm: true },
           { key: 'country_name', hideOnForm: true },
           { key: 'location_count', hideOnForm: true },
@@ -1487,6 +1550,7 @@ export default {
     ],
   },
   partnertype: {
+    inlineEdit: true,
     primaryKey: 'partnertype_id',
     fields: [
       { key: 'partnertype_id', sortable: true, auto: true },

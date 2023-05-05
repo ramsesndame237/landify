@@ -33,31 +33,29 @@
         </div>
         <div v-else-if="field.type==='yesno' || field.type==='custom-select'">
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
-                    :placeholder="field.key" :options="field.type==='yesno'?yesNoOptions: field.items" transition=""
-                    label="label" class="w-100" :reduce="i => i.value"/>
+                    :multiple="field.multiple" :placeholder="field.key"
+                    :options="field.type==='yesno'?yesNoOptions: field.items" transition="" label="label" class="w-100"
+                    :reduce="i => i.value"/>
+        </div>
+        <div v-else-if="field.type==='checkbox'">
+          <b-form-checkbox-group v-model="entity[field.key]" :disabled="disabled"
+                                 :state="errors.length > 0 ? false:null" :placeholder="field.key" text-field="label"
+                                 :options="field.items"/>
         </div>
         <div v-else-if="field.type==='file'">
           <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
-                       drop-placeholder="Drop file here..." :multiple="field.multiple" required @change="validate($event);updateFilesData($event)"/>
+                       drop-placeholder="Drop file here..." :multiple="field.multiple" required
+                       @change="validate($event);updateFilesData($event)"/>
           <div class="d-flex flex-column mt-2">
-            <div
-              v-for="(file, index) in files"
-              :key="index"
-              class="d-flex justify-content-between mb-1"
-            >
+            <div v-for="(file, index) in files" :key="index" class="d-flex justify-content-between mb-1">
               <div>
-                <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50" />
+                <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50"/>
                 <span class="text-muted font-weight-bolder align-text-top">{{
-                  file.name
-                }}</span>
+                    file.name
+                  }}</span>
                 <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
               </div>
-              <feather-icon
-                class="cursor-pointer"
-                icon="XIcon"
-                size="14"
-                @click="removeFile(index)"
-              />
+              <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index)"/>
             </div>
           </div>
         </div>
@@ -75,8 +73,9 @@
             <b-button size="sm" class="mr-2" @click="getRandomPassword(field.key)">
               Generate Password
             </b-button>
-            <span v-if="entity[field.key]" class="mr-1" >{{ entity[field.key] }}</span>
-            <feather-icon v-if="entity[field.key]" class="cursor-pointer" icon="CopyIcon" size="16" @click="doCopy(field.key)"/>
+            <span v-if="entity[field.key]" class="mr-1">{{ entity[field.key] }}</span>
+            <feather-icon v-if="entity[field.key]" class="cursor-pointer" icon="CopyIcon" size="16"
+                          @click="doCopy(field.key)"/>
           </div>
         </div>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
@@ -116,7 +115,7 @@ import {
 } from 'bootstrap-vue'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
-import {generate} from "generate-password"
+import { generate } from "generate-password"
 import { snakeToTitle } from '@/libs/utils'
 import Table from '@/table/index'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
@@ -179,7 +178,7 @@ export default {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
     selectDisabled() {
-      return this.disabled || (this.field.filter_key && !this.entity[this.field.filter_key])
+      return this.disabled || (this.field.filter_key && this.entity[this.field.filter_key] == null)
     },
     rules() {
       return this.getValidationRules(this.field)
@@ -190,7 +189,7 @@ export default {
     listItems() {
       if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
         const val = (this.filterValue || this.entity[this.field.filter_key])
-        if (this.field.filter_key && val) {
+        if (this.field.filter_key && val != null) {
           console.log('filter with value', val)
           return this.list.filter(e => e[this.field.filter_key] === val)
         }
@@ -230,7 +229,7 @@ export default {
     },
   },
   async created() {
-    if (this.field.type === 'list' && !this.field.filter_key && !this.field.onlyForm) {
+    if (this.field.type === 'list' && (!this.field.filter_key || this.field.noFetchOnChange) && !this.field.onlyForm) {
       await this.fetchList()
     } else if (this.field.type === 'boolean') {
       // set false as default value
@@ -245,16 +244,18 @@ export default {
     }
   },
   mounted() {
-    if (this.field.value) {
+    if (typeof this.field.value === 'function') {
+      this.$set(this.entity, this.field.key, this.field.value(this.entity, this))
       this.$watch('entity', () => {
-        console.log('deep watch')
-        this.$set(this.entity, this.field.key, this.field.value(this.entity))
+        this.$set(this.entity, this.field.key, this.field.value(this.entity, this))
       }, { deep: true })
+    } else if (this.field.value != null) {
+      this.$set(this.entity, this.field.key, this.field.value)
     }
     this.$watch(`entity.${this.field.key}`, () => {
       this.onChange()
     })
-    if (this.field.filter_key) {
+    if (this.field.filter_key && !this.field.noFetchOnChange) {
       this.$watch(`entity.${this.field.filter_key}`, () => {
         this.fetchList(true)
       })
@@ -267,7 +268,7 @@ export default {
       }
       if (
         fileType
-          === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         || fileType === 'application/vnd.ms-excel'
         || fileType === 'application/vnd.oasis.opendocument.spreadsheet'
       ) {
@@ -311,13 +312,13 @@ export default {
       }
       (this.getSubFields() || []).forEach(sub => sub.reset())
     },
-    getRandomPassword(fieldKey){
-      const pass = generate({length: 12, numbers: true, uppercase: true, lowercase: true, symbols: true})
+    getRandomPassword(fieldKey) {
+      const pass = generate({ length: 12, numbers: true, uppercase: true, lowercase: true, symbols: true })
       this.entity[fieldKey] = pass;
       console.log('pass: ', pass);
 
     },
-    doCopy(fieldKey){
+    doCopy(fieldKey) {
       this.$copyText(this.entity[fieldKey]).then(() => {
         this.$toast({
           component: ToastificationContent,
@@ -403,7 +404,7 @@ export default {
         if (this.field.onlyForm && this.entity[this.field.key]) {
           payload.data = [{ [this.field.key]: this.entity[this.field.key] }]
         }
-        if (this.field.filter_key) {
+        if (this.field.filter_key && this.entity[this.field.filter_key]) {
           payload.data = [{ [this.field.filter_key]: this.entity[this.field.filter_key] }]
         }
         this.list = await this.$store.dispatch('table/fetchList', payload)

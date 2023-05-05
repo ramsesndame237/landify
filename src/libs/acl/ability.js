@@ -25,7 +25,7 @@ export const defineRules = () => {
 
   if (!userData) return rules
   rules.push({ action: 'read', subject: 'dashboard' })
-  if (['raoul.dzoukou@gohze.org1'].indexOf(userEmail) >= 0) {
+  if (userData.roles.find(r => r.role_name === 'Administrator')) {
     rules.push({ action: 'manage', subject: 'all' })
   }
   //
