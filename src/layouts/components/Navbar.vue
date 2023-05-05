@@ -50,7 +50,7 @@
         </template>
 
         <b-dropdown-item link-class="d-flex align-items-center"
-                         :to="{name: 'table-view', params: {table: 'user', id: userData.user_id}}">
+                         :to="{name: 'user-profile', params: {table: 'user'}}">
           <feather-icon size="16" icon="UserIcon" class="mr-50"/>
           <span> {{ $t('header~profile') }} </span>
         </b-dropdown-item>

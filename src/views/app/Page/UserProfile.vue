@@ -28,81 +28,243 @@
     </b-card>
 
     <!-- user infos -->
-    <b-overlay :show="loading">
-      <b-card>
-        <validation-observer ref="form" v-slot="{passes}">
-          <b-form @submit.prevent="passes(emitSubmit)" autocomplete="off">
+    <validation-observer ref="form" v-slot="{passes}">
+      <b-form @submit.prevent="passes(emitSubmit)" autocomplete="off">
+        <!-- main infos -->
+        <b-overlay :show="loading">
+          <b-card>
+                <b-row>
+                  <b-col
+                    v-for="(field, index) in formFields"
+                    :key="index" cols="12"
+                    md="6"
+                  >
+                    <field
+                      ref="fields"
+                      :disabled="view || field.disabled || field.disableOnUpdate"
+                      :field="field"
+                      :entity="entity"
+                      :inline="false"
+                      table="user"
+                      :table-definition="tableDefinition"
+                    />
+                  </b-col>
+                </b-row>
+          </b-card>
+        </b-overlay>
+      </b-form>
+    </validation-observer>
+
+    <validation-observer ref="passwordForm">
+
+      <b-form @submit.prevent autocomplete="off">
+        <!-- change password -->
+        <!-- <b-overlay :show="loading"> -->
+          <b-card>
             <b-row>
-              <b-col
-                v-for="(field, index) in formFields"
-                :key="index" cols="12"
-                md="6"
-              >
-                <field
-                  ref="fields"
-                  :disabled="view || field.disabled || field.disableOnUpdate"
-                  :field="field"
-                  :entity="entity"
-                  :inline="false"
-                  table="user"
-                  :table-definition="tableDefinition"
-                />
+
+              <!-- old password-->
+              <b-col cols="12">
+                <b-form-group label="Enter your old password">
+                  <validation-provider
+                    #default="{ errors }"
+                    name="OldPassword"
+                    rules="required"
+                  >
+                    <b-input-group
+                      class="input-group-merge"
+                      :class="errors.length > 0 ? 'is-invalid' : null"
+                    >
+                      <b-input-group-prepend is-text>
+                        <feather-icon class="cursor-pointer" icon="LockIcon" />
+                      </b-input-group-prepend>
+                      <b-form-input
+                        id="oldPassword"
+                        v-model="oldPassword"
+                        :type="passwordFieldType"
+                        name="old-password"
+                        :state="errors.length > 0 ? false : null"
+                        placeholder="Old Password"
+                      />
+
+                      <b-input-group-append is-text>
+                        <feather-icon
+                          class="cursor-pointer"
+                          :icon="passwordToggleIcon"
+                          @click="togglePasswordVisibility"
+                        />
+                      </b-input-group-append>
+                    </b-input-group>
+
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </validation-provider>
+                </b-form-group>
               </b-col>
+
+              <!-- end old passsword -->
+
+                <!-- new password -->
+                <b-col md="6" cols="12">
+                  <b-form-group label="Enter your new password">
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Password"
+                      vid="confirmPass"
+                      rules="required"
+                    >
+                      <b-input-group
+                        class="input-group-merge"
+                        :class="errors.length > 0 ? 'is-invalid' : null"
+                      >
+                        <b-input-group-prepend is-text>
+                          <feather-icon class="cursor-pointer" icon="LockIcon" />
+                        </b-input-group-prepend>
+                        <b-form-input
+                          id="password"
+                          v-model="password"
+                          class="form-control-merge"
+                          :type="newPasswordFieldType"
+                          :state="errors.length > 0 ? false : null"
+                          name="password"
+                          placeholder="New Password"
+                        />
+
+                        <b-input-group-append is-text>
+                          <feather-icon
+                            class="cursor-pointer"
+                            :icon="newPasswordToggleIcon"
+                            @click="toggleNewPasswordVisibility"
+                          />
+                        </b-input-group-append>
+                      </b-input-group>
+                      <small class="text-danger">{{ errors[0] }}</small>
+                    </validation-provider>
+                  </b-form-group>
+                </b-col>
+                <!-- end new password -->
+
+                <!-- confirm new password -->
+                <b-col md="6" cols="12">
+                  <b-form-group label="Confirm your new password">
+                    <validation-provider
+                      #default="{ errors }"
+                      name="PasswordConfirm"
+                      rules="required|confirmed:confirmPass"
+                    >
+                      <b-input-group
+                        class="input-group-merge"
+                        :class="errors.length > 0 ? 'is-invalid' : null"
+                      >
+                        <b-input-group-prepend is-text>
+                          <feather-icon class="cursor-pointer" icon="LockIcon" />
+                        </b-input-group-prepend>
+                        <b-form-input
+                          id="passwordConfirm"
+                          v-model="passwordConfirm"
+                          type="password"
+                          class="form-control-merge"
+                          :state="errors.length > 0 ? false : null"
+                          name="confirm-password"
+                          placeholder="Confirm Password"
+                        />
+
+
+                      </b-input-group>
+                      <small class="text-danger">{{ errors[0] }}</small>
+                    </validation-provider>
+                  </b-form-group>
+                </b-col>
+                <!-- end confirm new password -->
+
             </b-row>
-          </b-form>
-        </validation-observer>
-      </b-card>
-    </b-overlay>
+            <b-button size="sm" variant="primary" type="submit" class="mr-1" @click="updatePassword" :disabled="changePassLoading">
+              <b-spinner v-if="changePassLoading" small class="mr-50"/>
+              <feather-icon v-else icon="SaveIcon" class="mr-50"/>
+              {{ $t('button~save_password') }}
+            </b-button>
+          </b-card>
+        <!-- </b-overlay> -->
+
+      </b-form>
+
+    </validation-observer>
+
+
   </div>
 </template>
 
 <script>
+import { ValidationProvider, ValidationObserver } from "vee-validate";
+
 import {
-  BForm, BButton, BSpinner,BRow
+  BForm, BFormGroup, BFormInput,BButton, BSpinner,BRow,BInputGroup,
+    BInputGroupAppend,
+    BInputGroupPrepend,
 } from "bootstrap-vue"
-import Field from '@/views/app/Generic/Field.vue'
 import Tables from '@/table'
+import { required } from "@validations";
+
+import { togglePasswordVisibility } from "@core/mixins/ui/forms"
+import Field from '@/views/app/Generic/Field.vue'
+import ToastificationContent from "@core/components/toastification/ToastificationContent";
 
 
 export default {
   components: {
     BForm,
+    BFormGroup,
+    BFormInput,
+    BInputGroup,
+    BInputGroupAppend,
+    BInputGroupPrepend,
     BButton,
     BSpinner,
     BRow,
-    Field
+    Field,
+    ValidationProvider,
+    ValidationObserver,
   },
+  mixins: [togglePasswordVisibility],
   data(){
     return {
       view: this.$route.query.edit !== 'true',
       loading: false,
+      changePassLoading: false,
       entityLoaded: false,
       originalEntity: {},
-      entity: { ...this.initialData, ...Tables.user.default },
       definition: Tables.user,
+      entity: { },
       entityId: this.getEntityId(),
       create: false,
       table: "user",
+      oldPassword: "",
+      password: "",
+      passwordConfirm: "",
+      //validation rules
+      required,
     }
   },
 
   computed: {
     formFields(){
-      return Tables.user.fields
+      return  this.definition.fields
         .filter(f => !f.hideOnForm && !f.hideOnUpdate && !f.hideOnCreate && f.key.includes("address") || f.key.includes('email') || f.key.includes("name"))
         .map(field => {
           if (typeof field === 'string') return { key: field }
           return field
         })
     },
-    initialData(){
-      return {}
-    },
 
     tableDefinition() {
       return this.$store.getters['table/tableDefinition']("user")
     },
 
+    passwordToggleIcon() {
+      return this.passwordFieldType === "password" ? "EyeIcon" : "EyeOffIcon";
+    },
+    newPasswordToggleIcon() {
+      return this.newPasswordFieldType === "password" ? "EyeIcon" : "EyeOffIcon";
+    },
 
   },
 
@@ -112,12 +274,7 @@ export default {
     }
     // fetch data
     this.loading = true
-    const entity = await (this.definition.fetch ? this.definition.fetch(this) :
-      this.$store.dispatch('table/fetchSingleItem', {
-        entity: "user",
-        primaryKey: this.getPrimaryKey(this.definition),
-        id: this.entityId || this.initialData[this.primaryKey],
-      }))
+    const entity = await this.definition.fetch(this)
     if (!entity) {
       this.$errorToast(`The entity with the id "${this.entityId}" doesnt exists`)
     } else {
@@ -153,6 +310,45 @@ export default {
         // .finally(() => {
         //   this.loading = false
         // })
+    },
+    updatePassword(){
+      this.$refs.passwordForm.validate().then((success) => {
+        if (success) {
+          const data = {
+            old_password: this.oldPassword,
+            new_password: this.password,
+          };
+          const userId = localStorage.getItem("userId")
+          this.changePassLoading = true;
+          this.$http
+            .put(`/users/${userId}/password`, data)
+            .then(async (resp) => {
+              if (!resp.data.user_token) {
+                this.message = this.$t(resp.data.message);
+                this.show = false;
+                this.$toast({
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Password changed',
+                    icon: 'successIcon',
+                    variant: 'success',
+                  },
+                })
+              }
+            })
+            .catch((e) => {
+              let title;
+              if (e.response) {
+                title = e.response.data.detail;
+              }
+              this.$errorToast(this.$t(title));
+            })
+            .finally(() => (this.changePassLoading = false));
+        }
+      });
+    },
+    emitSubmit() {
+      this.$emit('submit')
     },
     getEntityId(){
       return JSON.parse(localStorage.getItem('userData')).user_id
