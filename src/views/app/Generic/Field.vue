@@ -70,12 +70,11 @@
             </b-input-group-append>
           </b-input-group>
           <div class="mt-1" v-if="field.generate">
-            <b-button size="sm" class="mr-2" @click="getRandomPassword(field.key)">
+            <b-button :disabled="disabled" size="sm" class="mr-2" @click="getRandomPassword(field.key)">
               Generate Password
             </b-button>
-            <span v-if="entity[field.key]" class="mr-1">{{ entity[field.key] }}</span>
-            <feather-icon v-if="entity[field.key]" class="cursor-pointer" icon="CopyIcon" size="16"
-                          @click="doCopy(field.key)"/>
+            <span v-if="randomPassword && !disabled" class="mr-1" >{{ randomPassword }}</span>
+            <feather-icon v-if="randomPassword && !disabled" class="cursor-pointer" icon="CopyIcon" size="16" @click="doCopy"/>
           </div>
         </div>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
@@ -164,6 +163,7 @@ export default {
         { value: 0, label: 'No' },
       ],
       files: [],
+      randomPassword: "",
       editor: ClassicEditor,
       editorOption: {
         // modules: {
@@ -224,6 +224,9 @@ export default {
 
   },
   watch: {
+    randomPassword(newValue){
+      this.entity[this.field.key] = newValue
+    },
     list() {
       this.onChange()
     },
@@ -312,18 +315,17 @@ export default {
       }
       (this.getSubFields() || []).forEach(sub => sub.reset())
     },
-    getRandomPassword(fieldKey) {
-      const pass = generate({ length: 12, numbers: true, uppercase: true, lowercase: true, symbols: true })
-      this.entity[fieldKey] = pass;
-      console.log('pass: ', pass);
+    getRandomPassword(fieldKey){
+      const pass = generate({length: 12, numbers: true, uppercase: true, lowercase: true, symbols: true})
+      this.randomPassword = pass
 
     },
-    doCopy(fieldKey) {
-      this.$copyText(this.entity[fieldKey]).then(() => {
+    doCopy(){
+      this.$copyText(this.randomPassword).then(() => {
         this.$toast({
           component: ToastificationContent,
           props: {
-            title: 'Text copied',
+            title: 'Password copied',
             icon: 'BellIcon',
           },
         })

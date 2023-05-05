@@ -375,6 +375,7 @@ export default {
       data.address = addressField.subEntity
       const cityField = addressField.getSubFields().find(f => f.field.key === 'city_id')
       data.address.city = cityField.subEntity
+      data.address.address_city_id = 1
       console.log(data)
       return (vm.create ? vm.$http.post('/users', data) : vm.$http.put(`/users/${vm.entityId}`, data))
         .then(() => {
@@ -382,7 +383,7 @@ export default {
         })
     },
     fetch(vm) {
-      return vm.$http.get(`/users/${vm.entityId}`, vm.entity)
+      return vm.$http.get(`/users/${vm.entityId}`)
         .then(resp => {
           const data = resp.data
           if (data.contactperson) {

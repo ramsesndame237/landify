@@ -158,6 +158,14 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/app/:table/userprofile',
+      name: 'user-profile',
+      component: () => import("@/views/app/Page/UserProfile.vue"),
+      meta: {
+        pageTitle: 'User profile',
+      },
+    },
+    {
       path: '/app/import-contract',
       name: 'import-contract',
       component: () => import('@/views/app/Page/ImportContract.vue'),
