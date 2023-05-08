@@ -318,7 +318,7 @@ export default {
             old_password: this.oldPassword,
             new_password: this.password,
           };
-          const userId = localStorage.getItem("userId")
+          const userId = JSON.parse(localStorage.getItem("userData")).user_id
           this.changePassLoading = true;
           this.$http
             .put(`/users/${userId}/password`, data)
