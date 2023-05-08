@@ -265,9 +265,9 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/register',
-      name: 'register',
-      component: () => import('@/views/Register.vue'),
+      path: '/auth/reset-password/:token',
+      name: 'reset-password',
+      component: () => import('@/views/ResetPassword.vue'),
       meta: {
         layout: 'full',
         resource: 'Auth',
