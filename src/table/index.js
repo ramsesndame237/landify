@@ -137,19 +137,19 @@ export default {
         hideOnIndex: true,
         visible: entity => entity.firmengroup_type != null,
       },
-      {
-        key: 'contactperson_roles',
-        type: 'custom-select',
-        multiple: true,
-        items: [
-          { value: 1, label: 'Owner' },
-          { value: 2, label: 'Lawyer' },
-          { value: 3, label: 'Manager' },
-        ],
-        hideOnUpdate: true,
-        hideOnIndex: true,
-        visible: entity => entity.user_as_contactperson,
-      },
+      // {
+      //   key: 'contactperson_roles',
+      //   type: 'custom-select',
+      //   multiple: true,
+      //   items: [
+      //     { value: 1, label: 'Owner' },
+      //     { value: 2, label: 'Lawyer' },
+      //     { value: 3, label: 'Manager' },
+      //   ],
+      //   hideOnUpdate: true,
+      //   hideOnIndex: true,
+      //   visible: entity => entity.user_as_contactperson,
+      // },
 
     ],
     // updateComponent: () => import('@/views/app/FormComponent/UserForm'),
@@ -366,7 +366,7 @@ export default {
       user_wrong_password_counter: 0,
       user_password_reset_required: 0,
       // user_password: 'Fsa!0dsadad',
-      user_mobile: '0711 252535838',
+      // user_mobile: '0711 252535838',
     },
     note: 'frontend_0_8_13',
     submit(vm) {
@@ -2100,7 +2100,7 @@ export default {
   contract: {
     entity: 'frontend_3_4_1_1',
     createModal: false,
-    formComponent: () => import('@/views/app/FormComponent/ContractForm/Index.vue'),
+    createComponent: () => import('@/views/app/CreateComponent/ContractForm/Index.vue'),
     fields: [
       { key: 'contract_id', auto: true },
       {
