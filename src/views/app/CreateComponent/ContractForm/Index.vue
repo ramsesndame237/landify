@@ -101,7 +101,7 @@ export default {
     return {
       table: "contract",
       current_step: 1,
-      max_steps: 10,
+      max_steps: 4,
       completed_step: 0,
       steps_progress: 0,
       steps_tabs: [
@@ -171,13 +171,10 @@ export default {
     },
     goToStep(step) {
       this.current_step = step
-      if (step <= 10) this.steps_tabs[this.current_step - 1].completed = false
+      if (step <= this.max_steps) this.steps_tabs[this.current_step - 1].completed = false
       this.evaluate_completed_steps()
     },
     prev_step() {
-      if (this.current_step === 5) {
-        this.context.pos = this.$refs.step5.pos
-      }
       this.goToStep(this.current_step - 1)
     },
     skip_step() {
@@ -212,6 +209,7 @@ export default {
       })
     },
     submit(){
+      console.log(this.context);
       return Promise.reject(new Error("bar"))
     }
   },

@@ -49,7 +49,7 @@ import DataTables from '@/layouts/components/DataTables'
 import NewContractStepMixin from "./NewContractStepMixin"
 
 export default {
-  name: 'Step1',
+  name: 'Step3',
   components: {
     BForm, BRow, BCol, BButton,
     ValidationObserver, EntityForm, Field,
@@ -57,8 +57,7 @@ export default {
   },
   props: ['disabled', 'context'],
   data() {
-    const contractTable = {...Table.contract}
-    const definition = contractTable.relations.find(f => f.primaryKey === "recurringpayment_id").fields
+    const definition = {...Table.recurringpayment}.fields
     const fields = []
     definition.forEach(elt => {
       if(!elt.hideOnIndex) fields.push({key: elt.key})

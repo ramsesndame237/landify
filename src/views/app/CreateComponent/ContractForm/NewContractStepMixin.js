@@ -12,9 +12,8 @@ export default {
         }
       })
       this[this.entityName].push(data)
-      console.log('this[this.entityName]: ', this[this.entityName]);
       this.$refs.datatable.reload()
-      this.$refs.form.reset()
+      this.$refs.fields.forEach(f => f.reset())
       this.loading = false
     },
 

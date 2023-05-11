@@ -273,7 +273,10 @@ export default {
       }).then(async result => {
         if (!result.value) return
         if (!this.canMakeDeleteCall) {
-          entities.forEach(index => this.items.splice(index, 1));
+          entities.forEach(f => {
+            const index = this.items.findIndex(i => f === i)
+            this.items.splice(index, 1)
+          });
           this.$emit('delete-items', this.items);
           this.$refs.table.refresh()
           return
