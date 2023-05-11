@@ -7,6 +7,7 @@ export default {
   // region Work Package 1
   user: {
     entity: 'frontend_1_1_2_1',
+    formComponent: () => import('@/views/app/CreateComponent/UserForm.vue'),
     fields: [
       {
         key: 'usertype_id',
