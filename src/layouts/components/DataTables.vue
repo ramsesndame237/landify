@@ -67,6 +67,7 @@ export default {
     withView: { type: Boolean, default: true },
     withEdit: { type: Boolean, default: true },
     withDelete: { type: Boolean, default: true },
+    canMakeDeleteCall: {type: Boolean, default: true},
     withActions: { type: Boolean, default: true },
     multiSelect: { type: Boolean, default: true },
     defaultSortColumn: { type: String, default: '' },
@@ -271,6 +272,15 @@ export default {
         buttonsStyling: false,
       }).then(async result => {
         if (!result.value) return
+        if (!this.canMakeDeleteCall) {
+          entities.forEach(f => {
+            const index = this.items.findIndex(i => f === i)
+            this.items.splice(index, 1)
+          });
+          this.$emit('delete-items', this.items);
+          this.$refs.table.refresh()
+          return
+        }
         const entityToDelete = this.fields.find(f => f.alwaysNew)
         const data = {
           action: 'delete',
@@ -304,10 +314,10 @@ export default {
           }
           this.$refs.table.refresh()
         })
-          .catch(e => {
-            console.error(e)
-            this.$errorToast()
-          })
+        .catch(e => {
+          console.error(e)
+          this.$errorToast()
+        })
       })
     },
     selectAll() {

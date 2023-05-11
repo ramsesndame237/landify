@@ -7,6 +7,7 @@ export default {
   // region Work Package 1
   user: {
     entity: 'frontend_1_1_2_1',
+    formComponent: () => import('@/views/app/CreateComponent/UserForm.vue'),
     fields: [
       {
         key: 'usertype_id',
@@ -93,12 +94,14 @@ export default {
       {
         key: 'company_id',
         type: 'list',
+        definition: 'company',
         list: 'frontend_2_2_3_1',
         listLabel: 'company_name',
         filter_key: 'customergroup_id',
         relationEntity: 'user_company_rel',
         hideOnIndex: true,
         visible: entity => entity.firmengroup_type === 1,
+        // withNew: true
       },
       {
         key: 'user_last_login_time', sortable: true, hideOnForm: true, type: 'date', time: true,
@@ -137,19 +140,19 @@ export default {
         hideOnIndex: true,
         visible: entity => entity.firmengroup_type != null,
       },
-      {
-        key: 'contactperson_roles',
-        type: 'custom-select',
-        multiple: true,
-        items: [
-          { value: 1, label: 'Owner' },
-          { value: 2, label: 'Lawyer' },
-          { value: 3, label: 'Manager' },
-        ],
-        hideOnUpdate: true,
-        hideOnIndex: true,
-        visible: entity => entity.user_as_contactperson,
-      },
+      // {
+      //   key: 'contactperson_roles',
+      //   type: 'custom-select',
+      //   multiple: true,
+      //   items: [
+      //     { value: 1, label: 'Owner' },
+      //     { value: 2, label: 'Lawyer' },
+      //     { value: 3, label: 'Manager' },
+      //   ],
+      //   hideOnUpdate: true,
+      //   hideOnIndex: true,
+      //   visible: entity => entity.user_as_contactperson,
+      // },
 
     ],
     // updateComponent: () => import('@/views/app/FormComponent/UserForm'),
@@ -366,7 +369,7 @@ export default {
       user_wrong_password_counter: 0,
       user_password_reset_required: 0,
       // user_password: 'Fsa!0dsadad',
-      user_mobile: '0711 252535838',
+      // user_mobile: '0711 252535838',
     },
     note: 'frontend_0_8_13',
     submit(vm) {
@@ -544,9 +547,10 @@ export default {
             list: 'user',
             listLabel: 'user_email',
             disableOnUpdate: true,
+            multiple: true
           },
-          { key: 'user_firstname' },
-          { key: 'user_lastname' },
+          { key: 'user_firstname', hideOnForm: true },
+          { key: 'user_lastname', hideOnForm: true },
           { key: 'team_name', sortable: true, hideOnForm: true },
           {
             key: 'user_team_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,
@@ -2099,6 +2103,8 @@ export default {
   },
   contract: {
     entity: 'frontend_3_4_1_1',
+    createModal: false,
+    createComponent: () => import('@/views/app/CreateComponent/ContractForm/Index.vue'),
     fields: [
       { key: 'contract_id', auto: true },
       {

@@ -54,6 +54,9 @@ export default {
           }
           this.$store.commit('table/deleteTableCacheKeyFromPrefix', this.table + '-')
         })
+        .catch(e => {
+          console.error("error", e);
+        })
         .finally(() => {
           this.loading = false
         })
