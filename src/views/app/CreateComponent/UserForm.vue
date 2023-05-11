@@ -9,7 +9,7 @@
 
             <template #default="{subFormFields, subTableDefinition, subEntity}">
               <b-row class="mt-2">
-                <b-col col="12">
+                <b-col cols="12">
                   <field :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
                     :field="subFormFields.find(f=> f.key==='city_id')"
                   >
@@ -49,12 +49,6 @@ import Table from '@/table'
 export default {
   name: "CustomerGroupContactPerson",
   mixins: [FormMixin],
-  data(){
-    const userTable = {...Table.user}
-    return{
-    }
-  },
-
   methods: {
     emitSubmit(){
       console.log("submit");
