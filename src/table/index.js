@@ -93,12 +93,14 @@ export default {
       {
         key: 'company_id',
         type: 'list',
+        definition: 'company',
         list: 'frontend_2_2_3_1',
         listLabel: 'company_name',
         filter_key: 'customergroup_id',
         relationEntity: 'user_company_rel',
         hideOnIndex: true,
         visible: entity => entity.firmengroup_type === 1,
+        // withNew: true
       },
       {
         key: 'user_last_login_time', sortable: true, hideOnForm: true, type: 'date', time: true,
@@ -544,9 +546,10 @@ export default {
             list: 'user',
             listLabel: 'user_email',
             disableOnUpdate: true,
+            multiple: true
           },
-          { key: 'user_firstname' },
-          { key: 'user_lastname' },
+          { key: 'user_firstname', hideOnForm: true },
+          { key: 'user_lastname', hideOnForm: true },
           { key: 'team_name', sortable: true, hideOnForm: true },
           {
             key: 'user_team_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,

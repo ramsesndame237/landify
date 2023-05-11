@@ -19,7 +19,7 @@
           <v-select v-model="entity[field.key]" :dropdown-should-open="true" :disabled="selectDisabled"
                     :class="errors.length > 0 ? 'error':''"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
-                    :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
+                    :placeholder="field.key" :multiple="field.multiple && create" :options="listItems" transition=""
                     :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
                     :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
                     @input="onChange"/>
@@ -73,8 +73,9 @@
             <b-button :disabled="disabled" size="sm" class="mr-2" @click="getRandomPassword(field.key)">
               Generate Password
             </b-button>
-            <span v-if="randomPassword && !disabled" class="mr-1" >{{ randomPassword }}</span>
-            <feather-icon v-if="randomPassword && !disabled" class="cursor-pointer" icon="CopyIcon" size="16" @click="doCopy"/>
+            <span v-if="randomPassword && !disabled" class="mr-1">{{ randomPassword }}</span>
+            <feather-icon v-if="randomPassword && !disabled" class="cursor-pointer" icon="CopyIcon" size="16"
+                          @click="doCopy"/>
           </div>
         </div>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
@@ -133,7 +134,7 @@ export default {
     BFormInput, BFormFile, BFormGroup, BImg, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol, BFormCheckbox,
   },
   mixins: [togglePasswordVisibility],
-  props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition', 'noLabel'],
+  props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition', 'noLabel', 'create'],
   data() {
     return {
       list: this.$store.state.table.listCache[this.field.list] || [],
@@ -198,7 +199,7 @@ export default {
       return this.list.filter(item => this.field.ids.indexOf(item[this.field.key]) >= 0)
     },
     subDefinition() {
-      const definition = { ...Table[this.field.list] }
+      const definition = { ...Table[this.field.definition || this.field.list] }
       if (this.field.withFields) definition.fields = [...definition.fields, ...this.field.withFields]
       return definition
     },
@@ -224,7 +225,7 @@ export default {
 
   },
   watch: {
-    randomPassword(newValue){
+    randomPassword(newValue) {
       this.entity[this.field.key] = newValue
     },
     list() {
@@ -315,12 +316,12 @@ export default {
       }
       (this.getSubFields() || []).forEach(sub => sub.reset())
     },
-    getRandomPassword(fieldKey){
-      const pass = generate({length: 12, numbers: true, uppercase: true, lowercase: true, symbols: true})
+    getRandomPassword(fieldKey) {
+      const pass = generate({ length: 12, numbers: true, uppercase: true, lowercase: true, symbols: true })
       this.randomPassword = pass
 
     },
-    doCopy(){
+    doCopy() {
       this.$copyText(this.randomPassword).then(() => {
         this.$toast({
           component: ToastificationContent,
