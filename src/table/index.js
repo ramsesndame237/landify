@@ -1017,9 +1017,22 @@ export default {
   contactperson: {
     entity: 'frontend_2_3_1',
     create: false,
+    // formComponent: () => import('@/views/app/FormComponent/ContactPersonsModalForm.vue')
     fieldComponent: () => import('@/views/app/CreateComponent/ContactPersonForm.vue'),
     fields: [
       { key: 'contactperson_id', auto: true },
+      {
+        key: 'user_type',
+        label: 'User type',
+        type: 'custom-select',
+        hideOnIndex: true,
+        required: false,
+        items: [
+          { value: 1, label: 'Internal' },
+          { value: 0, label: 'External' },
+        ],
+        send: false,
+      },
       { key: 'contactperson_firstname' },
       { key: 'contactperson_lastname' },
       { key: 'city_name', hideOnForm: true },
@@ -1038,7 +1051,7 @@ export default {
         listLabel: 'contactdetails_email',
         hideOnIndex: true,
         alwaysNew: true,
-        // onlyForm: true,
+        onlyForm: true,
       },
       {
         key: 'contactsalutation_id',
@@ -1063,7 +1076,7 @@ export default {
         listLabel: 'address_street',
         hideOnIndex: true,
         alwaysNew: true,
-        // onlyForm: true,
+        onlyForm: true,
       },
     ],
     note: 'frontend_0_8_10',
@@ -1091,13 +1104,32 @@ export default {
   partnercompany: {
     entity: 'frontend_2_5_1',
     primaryKey: 'partnercompany_id',
+    formComponent: () => import('@/views/app/FormComponent/PartnerCompanyForm.vue'),
     fields: [
       { key: 'partnercompany_id', auto: true },
       {
-        key: 'partnergroup_id', type: 'list', list: 'partnergroup', listLabel: 'partnergroup_name', hideOnIndex: true,
+        key: 'partnergroup_is_internal',
+        label: 'partner group type',
+        type: 'custom-select',
+        hideOnIndex: true,
+        required: false,
+        items: [
+          { value: 1, label: 'Internal' },
+          { value: 0, label: 'External' },
+        ],
+        send: false,
+      },
+      {
+        key: 'partnergroup_id',
+        type: 'list',
+        list: 'partnergroup',
+        listLabel: 'partnergroup_name',
+        hideOnIndex: true,
+        filter_key: 'partnergroup_is_internal',
+        noFetchOnChange: true,
       },
       { key: 'partnercompany_name' },
-      { key: 'partnercompany_shortname' },
+      // { key: 'partnercompany_shortname' },
       { key: 'partnergroup_name', hideOnForm: true },
       { key: 'city_name', hideOnForm: true },
       { key: 'contactdetails_email', hideOnForm: true },
@@ -1111,6 +1143,7 @@ export default {
         listLabel: 'address_street',
         withNew: true,
         alwaysNew: true,
+        onlyForm: true,
       },
       {
         key: 'contactdetails_id',
@@ -1120,6 +1153,7 @@ export default {
         listLabel: 'contactdetails_email',
         withNew: true,
         alwaysNew: true,
+        onlyForm: true,
       },
       {
         key: 'companydetails_id',
@@ -1129,6 +1163,16 @@ export default {
         listLabel: 'companydetails_commercialregisterno',
         withNew: true,
         alwaysNew: true,
+        onlyForm: true,
+      },
+      {
+        key: 'partnercompany_type',
+        type: 'checkbox',
+        items: [
+          { label: 'Option A', value: 0 },
+          { label: 'Option B', value: 1 },
+          { label: 'Option C', value: 3 },
+        ],
       },
     ],
     relations: [

@@ -3,7 +3,7 @@
     <b-col v-for="(field,i) in formFields.filter(f => !['city_name', 'city_zip'].includes(f.key))" :key="getField(i)" cols="12">
       <field :inline="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="field"/>
     </b-col>
-    <b-col v-for="(field,i) in formFields.filter(f => ['city_name', 'city_zip'].includes(f.key))" :key="getField(i)" cols="12" md="6">
+    <b-col v-for="(field,i) in formFields.filter(f => ['city_zip', 'city_name'].includes(f.key))" :key="getField(i)" cols="12" md="6">
       <field :inline="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="field"/>
     </b-col>
 
@@ -17,7 +17,7 @@ import {
 import Field from '@/views/app/Generic/Field'
 
 export default {
-  name: 'InvoicePositionFields',
+  name: 'CityForm',
   components: {
     Field,
     BRow,
@@ -40,9 +40,5 @@ export default {
       return this.definition.fields.find(f => f.key === key)
     },
   },
-
-  mounted(){
-    console.log("sub-form fields",this.formFields);
-  }
 }
 </script>
