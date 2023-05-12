@@ -332,7 +332,6 @@ export default {
 
     },
     doCopy() {
-      console.log('this.randomPassword: ', this.randomPassword);
       this.$copyText(this.randomPassword).then(() => {
         this.$toast({
           component: ToastificationContent,
