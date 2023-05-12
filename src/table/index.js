@@ -1464,7 +1464,6 @@ export default {
       },
     ],
 
-    // formComponent: () => import('@/views/app/FormComponent/AddressForm.vue'),
   },
   contactdetails: {
     primaryKey: 'contactdetails_id',
@@ -1517,6 +1516,8 @@ export default {
         key: 'country_id', hideOnIndex: true, type: 'list', list: 'country', listLabel: 'country_name',
       },
     ],
+    fieldComponent: () => import('@/views/app/FormComponent/CityForm.vue'),
+
   },
   country: {
     primaryKey: 'country_id',
