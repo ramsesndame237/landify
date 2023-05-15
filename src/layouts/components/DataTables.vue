@@ -67,7 +67,7 @@ export default {
     withView: { type: Boolean, default: true },
     withEdit: { type: Boolean, default: true },
     withDelete: { type: Boolean, default: true },
-    canMakeDeleteCall: {type: Boolean, default: true},
+    canMakeDeleteCall: { type: Boolean, default: true },
     withActions: { type: Boolean, default: true },
     multiSelect: { type: Boolean, default: true },
     defaultSortColumn: { type: String, default: '' },
@@ -89,7 +89,7 @@ export default {
   data() {
     return {
       loading: false,
-      sortBy: this.defaultSortColumn || this.fields[0].key,
+      sortBy: this.defaultSortColumn || this.fields.filter(f => !f.hideOnIndex && !f.auto)[0].key,
       sortDesc: this.defaultSortDesc,
       selected: false,
       currentItems: this.items || [],
@@ -314,10 +314,10 @@ export default {
           }
           this.$refs.table.refresh()
         })
-        .catch(e => {
-          console.error(e)
-          this.$errorToast()
-        })
+          .catch(e => {
+            console.error(e)
+            this.$errorToast()
+          })
       })
     },
     selectAll() {
