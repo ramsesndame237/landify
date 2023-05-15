@@ -1,25 +1,25 @@
 <template>
   <b-row>
-    <b-col cols="12" >
-      <b-row>
-        <b-col cols="4">
-          <span>{{$t('attribute.address_street')}}/{{$t('attribute.address_house_number')}}</span>
-        </b-col>
-        <b-col cols="2">
-          <field :inline="false" :noLabel="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('address_street')"/>
-        </b-col>
-        <b-col cols="6">
-          <field :inline="false" :noLabel="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('address_house_number')"/>
-        </b-col>
-      </b-row>
+    <b-col cols="12">
+      <b-form-group :label="$t('attribute.address_street') + '/' + $t('attribute.address_house_number')"
+        label-cols-md="4">
+        <div class="d-flex" >
+          <field style="flex-grow: 1; margin-right: 20px;" :inline="false" :noLabel="true" ref="fields" :disabled="disabled" :entity="entity"
+            :table-definition="tableDefinition" :field="getField('address_street')" />
+          <field style="width: 100px;" :inline="false" :noLabel="true" ref="fields" :disabled="disabled" :entity="entity"
+            :table-definition="tableDefinition" :field="getField('address_house_number')" />
+        </div>
+      </b-form-group>
     </b-col>
     <b-col cols="12">
-      <field :inline="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('address_extra')"/>
+      <field :inline="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
+        :field="getField('address_extra')" />
     </b-col>
     <b-col cols="12">
-      <field :inline="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('city_id')"/>
+      <field :inline="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
+        :field="getField('city_id')" />
     </b-col>
-   
+
   </b-row>
 </template>
 
