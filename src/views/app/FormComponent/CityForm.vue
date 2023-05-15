@@ -1,8 +1,5 @@
 <template>
   <b-row>
-    <b-col cols="12">
-      <field :inline="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('city_id')"/>
-    </b-col>
     <b-col cols="12" >
       <b-row>
         <b-col cols="4">
@@ -19,9 +16,7 @@
     <b-col cols="12">
       <field :inline="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('state')"/>
     </b-col>
-    <b-col cols="12">
-      <field :inline="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('country_short')"/>
-    </b-col>
+  
     <b-col cols="12">
       <field :inline="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('country_id')"/>
     </b-col>

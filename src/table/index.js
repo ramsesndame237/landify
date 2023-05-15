@@ -62,7 +62,7 @@ export default {
         list: 'function',
         relationEntity: 'user_function_rel',
         hideOnIndex: true,
-        visible: (entity) => entity.usertype_id !== 1
+        visible: (entity) => entity.usertype_id === 1
       },
       {
         key: 'firmengroup_type',
@@ -81,7 +81,7 @@ export default {
       },
       {
         key: 'partnergroup_is_internal',
-        visible: entity => entity.firmengroup_type === 0,
+        visible: entity => entity.firmengroup_type === 0 && entity.usertype_id===1,
         hideOnIndex: true,
         type: 'boolean',
         change: (entity) => {
@@ -3958,6 +3958,12 @@ export default {
       attribute_nice_name_group: '',
     },
   },
+  'function': {
+    fields: [
+      {key: 'function_id', auto: true},
+      'function_name'
+    ]
+  }
 }
 
 function getContractCriteriaFields() {
