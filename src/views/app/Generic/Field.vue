@@ -70,8 +70,9 @@
             </b-input-group-append>
           </b-input-group>
           <div class="mt-1" v-if="field.generate">
-            <b-button :disabled="disabled" size="sm" class="mr-2" @click="getRandomPassword(field.key)">
+            <b-button :disabled="disabled || waitPassword" size="sm" class="mr-2" @click="getRandomPassword(field.key)">
               Generate Password
+              <b-spinner v-if="waitPassword" small/>
             </b-button>
             <span v-if="randomPassword && !disabled" class="mr-1">{{ randomPassword }}</span>
             <feather-icon v-if="randomPassword && !disabled" class="cursor-pointer" icon="CopyIcon" size="16"
@@ -111,7 +112,7 @@
 <script>
 import Fuse from 'fuse.js'
 import {
-  BButton, BImg, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow,
+  BButton, BImg, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow, BSpinner
 } from 'bootstrap-vue'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
@@ -131,7 +132,7 @@ export default {
   name: 'Field',
   components: {
     ckeditor: CKEditor.component,
-    BFormInput, BFormFile, BFormGroup, BImg, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol, BFormCheckbox,
+    BFormInput, BFormFile, BFormGroup, BImg, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol, BFormCheckbox, BSpinner,
   },
   mixins: [togglePasswordVisibility],
   props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition', 'noLabel', 'create'],
@@ -166,6 +167,7 @@ export default {
       files: [],
       randomPassword: "",
       editor: ClassicEditor,
+      waitPassword: false,
       editorOption: {
         // modules: {
         //   toolbar: '#quill-toolbar-' + this.field.key,
@@ -248,6 +250,14 @@ export default {
     }
   },
   mounted() {
+    if (typeof this.field.change === 'function') {
+      const change = this.field.change(this.entity, this)
+      if (change) this.$set(this.entity, this.field.key, change)
+      this.$watch('entity', () => {
+        const change2 = this.field.change(this.entity, this)
+        if (typeof(change2) !== 'undefined') this.$set(this.entity, this.field.key, change2)
+      }, { deep: true })
+    }
     if (typeof this.field.value === 'function') {
       this.$set(this.entity, this.field.key, this.field.value(this.entity, this))
       this.$watch('entity', () => {
@@ -316,9 +326,17 @@ export default {
       }
       (this.getSubFields() || []).forEach(sub => sub.reset())
     },
-    getRandomPassword(fieldKey) {
-      const pass = generate({ length: 12, numbers: true, uppercase: true, lowercase: true, symbols: true })
-      this.randomPassword = pass
+    async getRandomPassword(fieldKey) {
+      this.waitPassword = true
+      await this.$http.get('/users/generate/password')
+        .then((resp)=>{
+          this.randomPassword = resp.data.password
+          this.waitPassword = false
+        })
+        .catch(e=> {
+          this.$errorToast("Error")
+          this.waitPassword = false
+        })
 
     },
     doCopy() {

@@ -20,7 +20,7 @@ import Table from '@/table'
 
 
 export default {
-  name: "CustomerGroupContactPerson",
+  name: "UserForm",
   mixins: [FormMixin],
   data() {
     const userTable = { ...Table.user }

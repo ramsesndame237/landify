@@ -43,8 +43,27 @@ export default {
         value: entity => (entity.user_firstname?.charAt(0) || '') + (entity.user_lastname?.charAt(0) || ''),
       },
       { key: 'user_abbreviation', sortable: true, hideOnIndex: true, hideOnCreate: true },
-      { key: 'user_function', sortable: true, hideOnIndex: true },
+      // { key: 'user_function', sortable: true, hideOnIndex: true },
 
+      {
+        key: 'function_id',
+        type: 'list',
+        composite: true,
+        list: 'function',
+        relationEntity: 'user_function_rel',
+        hideOnIndex: true,
+      },
+      {
+        key: 'other_functions',
+        tableKey: 'function_id',
+        multiple: true,
+        type: 'list',
+        composite: true,
+        list: 'function',
+        relationEntity: 'user_function_rel',
+        hideOnIndex: true,
+        visible: (entity) => entity.usertype_id === 1
+      },
       {
         key: 'firmengroup_type',
         type: 'custom-select',
@@ -54,12 +73,21 @@ export default {
           { value: 1, label: 'Company' },
           { value: 0, label: 'Partner Company' },
         ],
+        change: (entity) => {
+          if (entity.usertype_id === 1) return 0
+          else return;
+        },
+        visible: (entity) => entity.usertype_id !== 1
       },
       {
         key: 'partnergroup_is_internal',
-        visible: entity => entity.firmengroup_type === 0,
+        visible: entity => entity.firmengroup_type === 0 && entity.usertype_id===1,
         hideOnIndex: true,
         type: 'boolean',
+        change: (entity) => {
+          if (entity.usertype_id === 1) return 1
+          else return 0;
+        },
       },
       {
         key: 'partnergroup_id',
@@ -1017,9 +1045,22 @@ export default {
   contactperson: {
     entity: 'frontend_2_3_1',
     create: false,
+    // formComponent: () => import('@/views/app/FormComponent/ContactPersonsModalForm.vue')
     fieldComponent: () => import('@/views/app/CreateComponent/ContactPersonForm.vue'),
     fields: [
       { key: 'contactperson_id', auto: true },
+      {
+        key: 'user_type',
+        label: 'User type',
+        type: 'custom-select',
+        hideOnIndex: true,
+        required: false,
+        items: [
+          { value: 1, label: 'Internal' },
+          { value: 0, label: 'External' },
+        ],
+        send: false,
+      },
       { key: 'contactperson_firstname' },
       { key: 'contactperson_lastname' },
       { key: 'city_name', hideOnForm: true },
@@ -1038,7 +1079,7 @@ export default {
         listLabel: 'contactdetails_email',
         hideOnIndex: true,
         alwaysNew: true,
-        // onlyForm: true,
+        onlyForm: true,
       },
       {
         key: 'contactsalutation_id',
@@ -1063,7 +1104,7 @@ export default {
         listLabel: 'address_street',
         hideOnIndex: true,
         alwaysNew: true,
-        // onlyForm: true,
+        onlyForm: true,
       },
     ],
     note: 'frontend_0_8_10',
@@ -1091,13 +1132,32 @@ export default {
   partnercompany: {
     entity: 'frontend_2_5_1',
     primaryKey: 'partnercompany_id',
+    formComponent: () => import('@/views/app/FormComponent/PartnerCompanyForm.vue'),
     fields: [
       { key: 'partnercompany_id', auto: true },
       {
-        key: 'partnergroup_id', type: 'list', list: 'partnergroup', listLabel: 'partnergroup_name', hideOnIndex: true,
+        key: 'partnergroup_is_internal',
+        label: 'partner group type',
+        type: 'custom-select',
+        hideOnIndex: true,
+        required: false,
+        items: [
+          { value: 1, label: 'Internal' },
+          { value: 0, label: 'External' },
+        ],
+        send: false,
+      },
+      {
+        key: 'partnergroup_id',
+        type: 'list',
+        list: 'partnergroup',
+        listLabel: 'partnergroup_name',
+        hideOnIndex: true,
+        filter_key: 'partnergroup_is_internal',
+        noFetchOnChange: true,
       },
       { key: 'partnercompany_name' },
-      { key: 'partnercompany_shortname' },
+      // { key: 'partnercompany_shortname' },
       { key: 'partnergroup_name', hideOnForm: true },
       { key: 'city_name', hideOnForm: true },
       { key: 'contactdetails_email', hideOnForm: true },
@@ -1111,6 +1171,7 @@ export default {
         listLabel: 'address_street',
         withNew: true,
         alwaysNew: true,
+        onlyForm: true,
       },
       {
         key: 'contactdetails_id',
@@ -1120,6 +1181,7 @@ export default {
         listLabel: 'contactdetails_email',
         withNew: true,
         alwaysNew: true,
+        onlyForm: true,
       },
       {
         key: 'companydetails_id',
@@ -1129,6 +1191,16 @@ export default {
         listLabel: 'companydetails_commercialregisterno',
         withNew: true,
         alwaysNew: true,
+        onlyForm: true,
+      },
+      {
+        key: 'partnercompany_type',
+        type: 'checkbox',
+        items: [
+          { label: 'Option A', value: 0 },
+          { label: 'Option B', value: 1 },
+          { label: 'Option C', value: 3 },
+        ],
       },
     ],
     relations: [
@@ -1378,6 +1450,7 @@ export default {
   address: {
     primaryKey: 'address_id',
     entity: 'frontend_2_7_1',
+    fieldComponent: () => import('@/views/app/FormComponent/AddressForm.vue'),
     fields: [
       { key: 'address_id', auto: true },
       { key: 'address_street' },
@@ -1464,7 +1537,6 @@ export default {
       },
     ],
 
-    // formComponent: () => import('@/views/app/FormComponent/AddressForm.vue'),
   },
   contactdetails: {
     primaryKey: 'contactdetails_id',
@@ -1517,6 +1589,8 @@ export default {
         key: 'country_id', hideOnIndex: true, type: 'list', list: 'country', listLabel: 'country_name',
       },
     ],
+    fieldComponent: () => import('@/views/app/FormComponent/CityForm.vue'),
+
   },
   country: {
     primaryKey: 'country_id',
@@ -3884,6 +3958,12 @@ export default {
       attribute_nice_name_group: '',
     },
   },
+  'function': {
+    fields: [
+      {key: 'function_id', auto: true},
+      'function_name'
+    ]
+  }
 }
 
 function getContractCriteriaFields() {

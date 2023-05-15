@@ -140,6 +140,7 @@ export default [
       item('partnertype'),
       item('product'),
       item('tag'),
+      item('function'),
     ],
   },
   {
