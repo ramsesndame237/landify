@@ -250,6 +250,14 @@ export default {
     }
   },
   mounted() {
+    if (typeof this.field.change === 'function') {
+      const change = this.field.change(this.entity, this)
+      if (change) this.$set(this.entity, this.field.key, change)
+      this.$watch('entity', () => {
+        const change2 = this.field.change(this.entity, this)
+        if (typeof(change2) !== 'undefined') this.$set(this.entity, this.field.key, change2)
+      }, { deep: true })
+    }
     if (typeof this.field.value === 'function') {
       this.$set(this.entity, this.field.key, this.field.value(this.entity, this))
       this.$watch('entity', () => {

@@ -43,8 +43,27 @@ export default {
         value: entity => (entity.user_firstname?.charAt(0) || '') + (entity.user_lastname?.charAt(0) || ''),
       },
       { key: 'user_abbreviation', sortable: true, hideOnIndex: true, hideOnCreate: true },
-      { key: 'user_function', sortable: true, hideOnIndex: true },
+      // { key: 'user_function', sortable: true, hideOnIndex: true },
 
+      {
+        key: 'function_id',
+        type: 'list',
+        composite: true,
+        list: 'function',
+        relationEntity: 'user_function_rel',
+        hideOnIndex: true,
+      },
+      {
+        key: 'other_functions',
+        tableKey: 'function_id',
+        multiple: true,
+        type: 'list',
+        composite: true,
+        list: 'function',
+        relationEntity: 'user_function_rel',
+        hideOnIndex: true,
+        visible: (entity) => entity.usertype_id !== 1
+      },
       {
         key: 'firmengroup_type',
         type: 'custom-select',
@@ -54,12 +73,21 @@ export default {
           { value: 1, label: 'Company' },
           { value: 0, label: 'Partner Company' },
         ],
+        change: (entity) => {
+          if (entity.usertype_id === 1) return 0
+          else return;
+        },
+        visible: (entity) => entity.usertype_id !== 1
       },
       {
         key: 'partnergroup_is_internal',
         visible: entity => entity.firmengroup_type === 0,
         hideOnIndex: true,
         type: 'boolean',
+        change: (entity) => {
+          if (entity.usertype_id === 1) return 1
+          else return 0;
+        },
       },
       {
         key: 'partnergroup_id',
@@ -1422,6 +1450,7 @@ export default {
   address: {
     primaryKey: 'address_id',
     entity: 'frontend_2_7_1',
+    fieldComponent: () => import('@/views/app/FormComponent/AddressForm.vue'),
     fields: [
       { key: 'address_id', auto: true },
       { key: 'address_street' },
