@@ -59,12 +59,13 @@ export default {
         key: 'user_functions',
         multiple: true,
         listLabel: 'function_name',
+        tableKey: 'function_id',
         type: 'list',
         composite: true,
         list: 'function',
         relationEntity: 'user_function_rel',
         hideOnIndex: true,
-        visible: (entity) => entity.usertype_id === 1
+        visible: (entity) => entity.usertype_id === 1,
       },
       {
         key: 'firmengroup_type',
@@ -157,9 +158,11 @@ export default {
         label: 'hollyday_representative',
         hideOnIndex: true,
         type: 'list',
-        list: 'contactperson',
-        listLabel: 'contactperson_lastname',
+        list: 'frontend_2_5_3_8',
+        filter_key: 'partnercompany_id',
+        listLabel: 'user_lastname',
         relationEntity: 'contactperson_user_rel',
+        visible: (entity) => entity.usertype_id === 1 && entity.partnercompany_id,
         // hideOnCreate: true,
         required: false,
       }
@@ -384,12 +387,12 @@ export default {
     submit(vm) {
       const data = { ...vm.entity }
       const addressField = vm.$refs.fields.find(f => f.field.key === 'address_id')
-      const userFunctions = vm.entity.user_functions.map(elt => ({ 'function_id': elt }))
+      const userFunctions = vm.entity.user_functions.map(elt => ({ function_id: elt }))
       data.user_functions = userFunctions
       data.address = addressField.subEntity
       const cityField = addressField.getSubFields().find(f => f.field.key === 'city_id')
       data.address.city = cityField.subEntity
-      data.address.address_city_id = 1
+      // data.address.address_city_id = 1
       console.log(data)
       return (vm.create ? vm.$http.post('/users', data) : vm.$http.put(`/users/${vm.entityId}`, data))
         .then(() => {
@@ -1065,6 +1068,8 @@ export default {
           { value: 0, label: 'External' },
         ],
         send: false,
+        visible: () => false,
+        value: () => 0
       },
       { key: 'contactperson_firstname' },
       { key: 'contactperson_lastname' },
@@ -1072,7 +1077,13 @@ export default {
       { key: 'contactdetails_phone', hideOnForm: true },
       { key: 'contactdetails_email', hideOnForm: true },
       { key: 'contactperson_department', hideOnIndex: true, rules: { required: false } },
-      { key: 'contactperson_shortname', hideOnIndex: true },
+      {
+        key: 'contactperson_shortname',
+        hideOnIndex: true,
+        hideOnUpdate: true,
+        disabled: true,
+        value: entity => (entity.contactperson_firstname?.charAt(0) || '') + (entity.contactperson_lastname?.charAt(0) || ''),
+      },
       { key: 'contactperson_function', rules: { required: false } },
       {
         key: 'user_id', type: 'list', list: 'user', listLabel: 'user_email', rules: { required: false },

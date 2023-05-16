@@ -407,9 +407,34 @@ export default {
     },
     getSubFields() {
       if (this.subDefinition.fieldComponent) {
-        return this.$refs.fieldComponent.$children.filter(c => c.$options.name === 'Field')
+        return this.getAllFields(this.$refs.fieldComponent.$children, [])
       }
       return this.$refs.fields || this.$children[0].$children.filter(c => c.$options.name === 'Field')
+    },
+    getAllFields(fieldComponent, accumulator){
+      // fieldComponent is an array
+      if (fieldComponent.length && fieldComponent.length > 1){
+        fieldComponent.forEach(elt=>{
+          if (elt.$options.name === 'Field' ) {
+            console.log("yes i did it", elt);
+            accumulator.push(elt)
+            console.log("new accumulator values", accumulator);
+          }
+          else {
+            console.log("noooo i can't ", elt.$options.name, elt);
+            return this.getAllFields(elt.$children, accumulator)
+          }
+        })
+        return accumulator;
+      } // fieldComponent is a VueComponent
+      else {
+        if (elt.$options.name === 'Field' ) {
+          accumulator.push(fieldComponent)
+          return accumulator;
+        }else{
+          return accumulator;
+        }
+      }
     },
     async fetchList(force) {
       if (this.field.noFetch) return

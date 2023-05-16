@@ -23,7 +23,7 @@
       />
     </b-col>
     <b-col cols="12" md="12">
-      <field :inline="true" ref="fields" :disabled="disabled"
+      <field :inline="true" ref="fields" :disabled="true"
         :entity="entity" :table-definition="definition" :field="getField('contactperson_shortname')"
       />
     </b-col>
