@@ -83,7 +83,7 @@ export default {
       },
       {
         key: 'partnergroup_is_internal',
-        visible: entity => entity.firmengroup_type === 0 && entity.usertype_id === 1,
+        visible: entity => entity.firmengroup_type === 0 && entity.usertype_id === 2,
         hideOnIndex: true,
         type: 'boolean',
         change: (entity) => {
@@ -162,28 +162,7 @@ export default {
         relationEntity: 'contactperson_user_rel',
         // hideOnCreate: true,
         required: false,
-      },
-      {
-        key: 'user_as_contactperson',
-        type: 'boolean',
-        hideOnUpdate: true,
-        hideOnIndex: true,
-        visible: entity => entity.firmengroup_type != null,
-      },
-      // {
-      //   key: 'contactperson_roles',
-      //   type: 'custom-select',
-      //   multiple: true,
-      //   items: [
-      //     { value: 1, label: 'Owner' },
-      //     { value: 2, label: 'Lawyer' },
-      //     { value: 3, label: 'Manager' },
-      //   ],
-      //   hideOnUpdate: true,
-      //   hideOnIndex: true,
-      //   visible: entity => entity.user_as_contactperson,
-      // },
-
+      }
     ],
     // updateComponent: () => import('@/views/app/FormComponent/UserForm'),
     relations: [
@@ -820,6 +799,7 @@ export default {
         listLabel: 'address_street',
         withNew: true,
         alwaysNew: true,
+        onlyForm: true,
         hideOnIndex: true,
       },
       {
@@ -830,6 +810,7 @@ export default {
         withNew: true,
         alwaysNew: true,
         hideOnIndex: true,
+        onlyForm: true,
       },
       {
         key: 'companydetails_id',
@@ -839,7 +820,26 @@ export default {
         withNew: true,
         alwaysNew: true,
         hideOnIndex: true,
+        onlyForm: true,
       },
+      {
+        key: 'create_contactperson',
+        type: 'boolean',
+        hideOnUpdate: true,
+        hideOnIndex: true,
+    
+      },
+      {
+        key: 'contactperson_id',
+        type: 'list',
+        list: 'contactperson',
+        listLabel: 'contactperson_name',
+        withNew: true,
+        alwaysNew: true,
+        hideOnIndex: true,
+        onlyForm: true,
+      },
+      
       { key: 'city_name', sortable: true, hideOnForm: true },
       { key: 'contactdetails_phone', sortable: true, hideOnForm: true },
       { key: 'contactdetails_email', sortable: true, hideOnForm: true },
