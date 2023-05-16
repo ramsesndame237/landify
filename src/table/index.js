@@ -2,6 +2,7 @@ import { getDocumentLink } from '@/libs/utils'
 import moment from 'moment'
 import { api } from '@/libs/axios'
 import { successToast, errorToast } from '@/libs/toastification'
+import _ from 'lodash'
 
 export default {
   // region Work Package 1
@@ -55,8 +56,7 @@ export default {
         hideOnIndex: true,
       },
       {
-        key: 'other_functions',
-        tableKey: 'function_id',
+        key: 'user_functions',
         multiple: true,
         listLabel: 'function_name',
         type: 'list',
@@ -83,7 +83,7 @@ export default {
       },
       {
         key: 'partnergroup_is_internal',
-        visible: entity => entity.firmengroup_type === 0 && entity.usertype_id === 2,
+        visible: () => { return false },
         hideOnIndex: true,
         type: 'boolean',
         change: (entity) => {
@@ -384,6 +384,8 @@ export default {
     submit(vm) {
       const data = { ...vm.entity }
       const addressField = vm.$refs.fields.find(f => f.field.key === 'address_id')
+      const userFunctions = vm.entity.user_functions.map(elt => ({ 'function_id': elt }))
+      data.user_functions = userFunctions
       data.address = addressField.subEntity
       const cityField = addressField.getSubFields().find(f => f.field.key === 'city_id')
       data.address.city = cityField.subEntity
@@ -827,7 +829,7 @@ export default {
         type: 'boolean',
         hideOnUpdate: true,
         hideOnIndex: true,
-    
+
       },
       {
         key: 'contactperson_id',
@@ -838,8 +840,9 @@ export default {
         alwaysNew: true,
         hideOnIndex: true,
         onlyForm: true,
+        visible: (entity) => entity.create_contactperson === 1
       },
-      
+
       { key: 'city_name', sortable: true, hideOnForm: true },
       { key: 'contactdetails_phone', sortable: true, hideOnForm: true },
       { key: 'contactdetails_email', sortable: true, hideOnForm: true },
@@ -1585,7 +1588,29 @@ export default {
       { key: 'city_id', sortable: true, auto: true },
       { key: 'city_name', sortable: true },
       { key: 'city_zip', sortable: true },
-      { key: 'state', sortable: true, required: false },
+      {
+        key: 'state',
+        sortable: true,
+        required: false,
+        change: (entity, vm) => {
+          let city_state
+          if (entity.city_zip) {
+            const debounced = _.debounce(
+              () => vm.$http
+                .get(`/users/state/${entity.city_zip}`)
+                .then(async (resp) => {
+                  if (resp.data?.state) city_state = resp.data.state
+                })
+              ,
+              1600
+            )
+
+            debounced();
+          }
+          return city_state
+
+        },
+      },
       { key: 'country_short', sortable: true, hideOnForm: true },
       {
         key: 'country_id', hideOnIndex: true, type: 'list', list: 'country', listLabel: 'country_name',

@@ -35,55 +35,7 @@
     <b-col cols="12" md="12">
       <field :inline="true" ref="fields" :disabled="disabled"
         :entity="entity" :table-definition="definition" :field="getField('address_id')"
-      >
-
-      <template #default="{subFormFields, subTableDefinition, subEntity}">
-        <b-row class="mt-2" md="12">
-          <b-col cols="4">
-            <span>{{$t('attribute.address_street')}}</span>
-          </b-col>
-
-          <b-col cols="4">
-            <field  :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                  :field="getAddressFields(subFormFields).find(f=> f.key==='address_street')"/>
-          </b-col>
-          <b-col cols="4">
-            <field  :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                  :field="getAddressFields(subFormFields).find(f=> f.key==='address_house_number')"/>
-          </b-col>
-
-        </b-row>
-
-        <b-col cols="12" md="12">
-          <field :inline="true"  :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-            :field="getAddressFields(subFormFields).find(f=> f.key==='city_id')"
-          >
-            <template #default="{subFormFields, subTableDefinition, subEntity}">
-              <b-row class="mt-2" md="12">
-                <b-col cols="4">
-                  <span>{{$t('attribute.city_name')}}</span>
-                </b-col>
-
-                <b-col cols="2">
-                  <field  :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                        :field="getCityFields(subFormFields).find(f=> f.key==='city_zip')"/>
-                </b-col>
-                <b-col cols="6">
-                  <field :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                        :field="getCityFields(subFormFields).find(f=> f.key==='city_name')"/>
-                </b-col>
-
-              </b-row>
-            </template>
-
-          </field>
-        </b-col>
-
-
-
-      </template>
-
-      </field>
+      />
     </b-col>
     <b-col cols="12" md="12">
       <field :inline="true" ref="fields" :disabled="disabled"
