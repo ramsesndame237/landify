@@ -49,6 +49,7 @@ export default {
         key: 'function_id',
         type: 'list',
         composite: true,
+        listLabel: 'function_name',
         list: 'function',
         relationEntity: 'user_function_rel',
         hideOnIndex: true,
@@ -57,6 +58,7 @@ export default {
         key: 'other_functions',
         tableKey: 'function_id',
         multiple: true,
+        listLabel: 'function_name',
         type: 'list',
         composite: true,
         list: 'function',
@@ -81,7 +83,7 @@ export default {
       },
       {
         key: 'partnergroup_is_internal',
-        visible: entity => entity.firmengroup_type === 0 && entity.usertype_id===1,
+        visible: entity => entity.firmengroup_type === 0 && entity.usertype_id === 1,
         hideOnIndex: true,
         type: 'boolean',
         change: (entity) => {
@@ -3960,8 +3962,9 @@ export default {
   },
   'function': {
     fields: [
-      {key: 'function_id', auto: true},
-      'function_name'
+      { key: 'function_id', auto: true },
+      'function_name',
+      'function_description'
     ]
   }
 }
