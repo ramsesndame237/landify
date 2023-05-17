@@ -407,6 +407,7 @@ export default {
     },
     getSubFields() {
       if (this.subDefinition.fieldComponent) {
+        console.log('search in field component',this.$refs.fieldComponent.$children )
         return this.$refs.fieldComponent.$children.filter(c => c.$options.name === 'Field')
       }
       return this.$refs.fields || this.$children[0].$children.filter(c => c.$options.name === 'Field')
