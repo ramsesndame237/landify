@@ -2,6 +2,7 @@ import { getDocumentLink } from '@/libs/utils'
 import moment from 'moment'
 import { api } from '@/libs/axios'
 import { successToast, errorToast } from '@/libs/toastification'
+import _ from 'lodash'
 
 export default {
   // region Work Package 1
@@ -55,16 +56,16 @@ export default {
         hideOnIndex: true,
       },
       {
-        key: 'other_functions',
-        tableKey: 'function_id',
+        key: 'user_functions',
         multiple: true,
         listLabel: 'function_name',
+        tableKey: 'function_id',
         type: 'list',
         composite: true,
         list: 'function',
         relationEntity: 'user_function_rel',
         hideOnIndex: true,
-        visible: (entity) => entity.usertype_id === 1
+        visible: (entity) => entity.usertype_id === 1,
       },
       {
         key: 'firmengroup_type',
@@ -83,7 +84,7 @@ export default {
       },
       {
         key: 'partnergroup_is_internal',
-        visible: entity => entity.firmengroup_type === 0 && entity.usertype_id === 2,
+        visible: () => { return false },
         hideOnIndex: true,
         type: 'boolean',
         change: (entity) => {
@@ -157,9 +158,11 @@ export default {
         label: 'hollyday_representative',
         hideOnIndex: true,
         type: 'list',
-        list: 'contactperson',
-        listLabel: 'contactperson_lastname',
+        list: 'frontend_2_5_3_8',
+        filter_key: 'partnercompany_id',
+        listLabel: 'user_lastname',
         relationEntity: 'contactperson_user_rel',
+        visible: (entity) => entity.usertype_id === 1 && entity.partnercompany_id,
         // hideOnCreate: true,
         required: false,
       }
@@ -384,10 +387,12 @@ export default {
     submit(vm) {
       const data = { ...vm.entity }
       const addressField = vm.$refs.fields.find(f => f.field.key === 'address_id')
+      const userFunctions = vm.entity.user_functions.map(elt => ({ function_id: elt }))
+      data.user_functions = userFunctions
       data.address = addressField.subEntity
       const cityField = addressField.getSubFields().find(f => f.field.key === 'city_id')
       data.address.city = cityField.subEntity
-      data.address.address_city_id = 1
+      // data.address.address_city_id = 1
       console.log(data)
       return (vm.create ? vm.$http.post('/users', data) : vm.$http.put(`/users/${vm.entityId}`, data))
         .then(() => {
@@ -828,7 +833,7 @@ export default {
         type: 'boolean',
         hideOnUpdate: true,
         hideOnIndex: true,
-    
+
       },
       {
         key: 'contactperson_id',
@@ -839,8 +844,9 @@ export default {
         alwaysNew: true,
         hideOnIndex: true,
         onlyForm: true,
+        visible: (entity) => entity.create_contactperson === 1
       },
-      
+
       { key: 'city_name', sortable: true, hideOnForm: true },
       { key: 'contactdetails_phone', sortable: true, hideOnForm: true },
       { key: 'contactdetails_email', sortable: true, hideOnForm: true },
@@ -1063,6 +1069,8 @@ export default {
           { value: 0, label: 'External' },
         ],
         send: false,
+        visible: () => false,
+        value: () => 0
       },
       { key: 'contactperson_firstname' },
       { key: 'contactperson_lastname' },
@@ -1070,7 +1078,13 @@ export default {
       { key: 'contactdetails_phone', hideOnForm: true },
       { key: 'contactdetails_email', hideOnForm: true },
       { key: 'contactperson_department', hideOnIndex: true, rules: { required: false } },
-      { key: 'contactperson_shortname', hideOnIndex: true },
+      {
+        key: 'contactperson_shortname',
+        hideOnIndex: true,
+        hideOnUpdate: true,
+        disabled: true,
+        value: entity => (entity.contactperson_firstname?.charAt(0) || '') + (entity.contactperson_lastname?.charAt(0) || ''),
+      },
       { key: 'contactperson_function', rules: { required: false } },
       {
         key: 'user_id', type: 'list', list: 'user', listLabel: 'user_email', rules: { required: false },
@@ -1586,7 +1600,29 @@ export default {
       { key: 'city_id', sortable: true, auto: true },
       { key: 'city_name', sortable: true },
       { key: 'city_zip', sortable: true },
-      { key: 'state', sortable: true, required: false },
+      {
+        key: 'state',
+        sortable: true,
+        required: false,
+        change: (entity, vm) => {
+          let city_state
+          if (entity.city_zip) {
+            const debounced = _.debounce(
+              () => vm.$http
+                .get(`/users/state/${entity.city_zip}`)
+                .then(async (resp) => {
+                  if (resp.data?.state) city_state = resp.data.state
+                })
+              ,
+              1600
+            )
+
+            debounced();
+          }
+          return city_state
+
+        },
+      },
       { key: 'country_short', sortable: true, hideOnForm: true },
       {
         key: 'country_id', hideOnIndex: true, type: 'list', list: 'country', listLabel: 'country_name',
@@ -2833,7 +2869,7 @@ export default {
         hideOnIndex: true,
         visible: entity => entity.maturitytype_id === 2,
       },
-      { key: 'recurringpayment_value_deposit', type: 'boolean' },
+      { key: 'recurringpayment_value_deposit', type: 'boolean', required: false },
       {
         key: 'indexclause_id',
         type: 'list',

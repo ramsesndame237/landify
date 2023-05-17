@@ -4,8 +4,8 @@
       <b-form-group :label="$t('attribute.city_zip') + '/' + $t('attribute.city_name')"
         label-cols-md="4">
         <div class="d-flex">
-          <field style="flex-grow: 1; margin-right: 20px;" :inline="false" :noLabel="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('city_zip')"/>
-          <field :inline="false" :noLabel="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('city_name')"/>
+          <field style="margin-right: 20px; width: 120px" :inline="false" :noLabel="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('city_zip')"/>
+          <field style="flex-grow: 1;" :inline="false" :noLabel="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('city_name')"/>
 
         </div>
       </b-form-group>

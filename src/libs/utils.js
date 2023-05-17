@@ -7,15 +7,15 @@ export const snakeToTitle = s =>
 export const getYearFormDateString = date => date?.split('-')[0]
 
 export const getDocumentLink = document => {
-  return `${axios.defaults.baseURL}/document/download/${document.document_id}`
+  return `${axios.defaults.baseURL || process.env.VUE_APP_DOCUMENT_URL}/document/download/${document.document_id}`
 }
 
 export const getSignImageLink = document => {
-  return `/documents-sign/image/${document.document_id}`
+  return `${axios.defaults.baseURL || process.env.VUE_APP_DOCUMENT_URL}/documents-sign/image/${document.document_id}`
 }
 
 export const getStampedDocumentLink = document => {
-  return `${axios.defaults.baseURL}/document/download/stamp/${document.document_id}`
+  return `${axios.defaults.baseURL || process.env.VUE_APP_DOCUMENT_URL}/document/download/stamp/${document.document_id}`
 }
 
 export const clone = obj => JSON.parse(JSON.stringify(obj))
