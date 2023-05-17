@@ -7,7 +7,15 @@ export default {
   // region Work Package 1
   user: {
     entity: 'frontend_1_1_2_1',
+    formComponent: () => import('@/views/app/CreateComponent/UserForm.vue'),
     fields: [
+      {
+        key: 'usertype_id',
+        hideOnIndex: true,
+        type: 'list',
+        list: 'usertype',
+        listLabel: 'usertype_name',
+      },
       {
         key: 'user_id', label: 'Id', auto: true, hideOnForm: true,
       },
@@ -19,21 +27,43 @@ export default {
         type: 'password',
         hideOnIndex: true,
         required: false,
+        generate: true,
       },
       { key: 'user_password_reset_required', hideOnIndex: true, type: 'boolean' },
       { key: 'user_locked', hideOnIndex: true, hideOnCreate: true, type: 'boolean' },
-      {
-        key: 'usertype_id',
-        hideOnIndex: true,
-        type: 'list',
-        list: 'usertype',
-        listLabel: 'usertype_name',
-      },
+
       { key: 'user_firstname', sortable: true },
       { key: 'user_lastname', sortable: true },
-      { key: 'user_abbreviation', sortable: true, hideOnIndex: true },
-      { key: 'user_function', sortable: true, hideOnIndex: true },
+      {
+        key: 'user_abbreviation',
+        sortable: true,
+        hideOnIndex: true,
+        disabled: true,
+        hideOnUpdate: true,
+        value: entity => (entity.user_firstname?.charAt(0) || '') + (entity.user_lastname?.charAt(0) || ''),
+      },
+      { key: 'user_abbreviation', sortable: true, hideOnIndex: true, hideOnCreate: true },
+      // { key: 'user_function', sortable: true, hideOnIndex: true },
 
+      {
+        key: 'function_id',
+        type: 'list',
+        composite: true,
+        list: 'function',
+        relationEntity: 'user_function_rel',
+        hideOnIndex: true,
+      },
+      {
+        key: 'other_functions',
+        tableKey: 'function_id',
+        multiple: true,
+        type: 'list',
+        composite: true,
+        list: 'function',
+        relationEntity: 'user_function_rel',
+        hideOnIndex: true,
+        visible: (entity) => entity.usertype_id === 1
+      },
       {
         key: 'firmengroup_type',
         type: 'custom-select',
@@ -43,6 +73,21 @@ export default {
           { value: 1, label: 'Company' },
           { value: 0, label: 'Partner Company' },
         ],
+        change: (entity) => {
+          if (entity.usertype_id === 1) return 0
+          else return;
+        },
+        visible: (entity) => entity.usertype_id !== 1
+      },
+      {
+        key: 'partnergroup_is_internal',
+        visible: entity => entity.firmengroup_type === 0 && entity.usertype_id===1,
+        hideOnIndex: true,
+        type: 'boolean',
+        change: (entity) => {
+          if (entity.usertype_id === 1) return 1
+          else return 0;
+        },
       },
       {
         key: 'partnergroup_id',
@@ -52,6 +97,8 @@ export default {
         listLabel: 'partnergroup_name',
         hideOnIndex: true,
         visible: entity => entity.firmengroup_type === 0,
+        filter_key: 'partnergroup_is_internal',
+        noFetchOnChange: true,
       },
       {
         key: 'partnercompany_id',
@@ -75,20 +122,24 @@ export default {
       {
         key: 'company_id',
         type: 'list',
+        definition: 'company',
         list: 'frontend_2_2_3_1',
         listLabel: 'company_name',
         filter_key: 'customergroup_id',
         relationEntity: 'user_company_rel',
         hideOnIndex: true,
         visible: entity => entity.firmengroup_type === 1,
+        // withNew: true
       },
       {
-        key: 'user_last_login_time', sortable: true, hideOnForm: true,type: 'date', time: true,
+        key: 'user_last_login_time', sortable: true, hideOnForm: true, type: 'date', time: true,
       },
       {
-        key: 'user_last_activity_time', sortable: true, hideOnForm: true,type: 'date', time: true,
+        key: 'user_last_activity_time', sortable: true, hideOnForm: true, type: 'date', time: true,
       },
-
+      { key: 'user_fix_phonenumber', hideOnIndex: true, required: false },
+      { key: 'user_fax_phonenumber', hideOnIndex: true, required: false },
+      { key: 'user_mobile' },
       {
         key: 'address_id',
         hideOnIndex: true,
@@ -99,8 +150,6 @@ export default {
         alwaysNew: true,
         onlyForm: true,
       },
-      { key: 'user_fix_phonenumber', hideOnIndex: true, required: false },
-      { key: 'user_mobile' },
       {
         key: 'contactperson_id',
         label: 'hollyday_representative',
@@ -112,6 +161,27 @@ export default {
         // hideOnCreate: true,
         required: false,
       },
+      {
+        key: 'user_as_contactperson',
+        type: 'boolean',
+        hideOnUpdate: true,
+        hideOnIndex: true,
+        visible: entity => entity.firmengroup_type != null,
+      },
+      // {
+      //   key: 'contactperson_roles',
+      //   type: 'custom-select',
+      //   multiple: true,
+      //   items: [
+      //     { value: 1, label: 'Owner' },
+      //     { value: 2, label: 'Lawyer' },
+      //     { value: 3, label: 'Manager' },
+      //   ],
+      //   hideOnUpdate: true,
+      //   hideOnIndex: true,
+      //   visible: entity => entity.user_as_contactperson,
+      // },
+
     ],
     // updateComponent: () => import('@/views/app/FormComponent/UserForm'),
     relations: [
@@ -123,6 +193,12 @@ export default {
         entityView: 'role',
         fields: [
           {
+            key: 'role_is_internal',
+            hideOnIndex: true,
+            visible: () => false,
+            value: (entity, vm) => vm.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$refs.form.entity.usertype_id === 1 ? 1 : 0,
+          },
+          {
             key: 'role_id',
             label: 'Role ID',
             sortable: true,
@@ -130,6 +206,9 @@ export default {
             list: 'role',
             listLabel: 'role_name',
             disableOnUpdate: true,
+            filter_key: 'role_is_internal',
+            noFetchOnChange: true,
+            hideOnIndex: true,
           },
           {
             key: 'role_name', label: 'Role name', sortable: true, hideOnForm: true,
@@ -154,6 +233,7 @@ export default {
         entity: 'user_customergroup_grp',
         entityForm: 'user_customergroup_rel',
         entityView: 'customergroup',
+        visible: vm => !!vm.$refs.form.originalEntity.partnergroup_is_internal,
         fields: [
           {
             key: 'customergroup_id',
@@ -186,6 +266,7 @@ export default {
         entity: 'user_company_grp',
         entityForm: 'user_company_rel',
         entityView: 'company',
+        visible: vm => !!vm.$refs.form.originalEntity.partnergroup_is_internal,
         fields: [
           {
             key: 'company_id',
@@ -214,15 +295,33 @@ export default {
         entity: 'user_pos_grp',
         entityForm: 'user_pos_rel',
         entityView: 'pos',
+        visible: vm => !!vm.$refs.form.originalEntity.partnergroup_is_internal,
         fields: [
           {
-            key: 'pos_id',
-            label: 'ID',
-            sortable: true,
+            key: 'customergroup_id',
+            required: false,
             type: 'list',
-            list: 'pos',
+            list: 'customergroup',
+            listLabel: 'customergroup_name',
+            send: false,
+          },
+          {
+            key: 'company_id',
+            required: false,
+            type: 'list',
+            list: 'frontend_2_2_3_1',
+            listLabel: 'company_name',
+            filter_key: 'customergroup_id',
+          },
+          {
+            label: 'POS',
+            key: 'pos_id',
+            required: false,
+            type: 'list',
+            list: 'frontend_2_1_3_8',
             listLabel: 'pos_name',
-            disableOnUpdate: true,
+            filter_key: 'company_id',
+            multiple: true,
           },
           { key: 'pos_name', sortable: true, hideOnForm: true },
           {
@@ -242,14 +341,16 @@ export default {
         fields: [
           {
             key: 'team_id',
-            label: 'ID',
+            label: 'Team Name',
             sortable: true,
             type: 'list',
             list: 'team',
             listLabel: 'team_name',
             disableOnUpdate: true,
+            hideOnIndex: true,
           },
           { key: 'team_name', sortable: true, hideOnForm: true },
+          { key: 'Roles', type: 'checkbox', items: [{ label: 'Role A', value: 0 }, { label: 'Role B', value: 1 }] },
           {
             key: 'user_team_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,
           },
@@ -258,45 +359,45 @@ export default {
           },
         ],
       },
-      {
-        title: 'Partner Companies',
-        primaryKey: 'partnercompany_id',
-        entity: 'user_partnercompany_grp',
-        entityForm: 'user_partnercompany_rel',
-        entityView: 'partnercompany',
-        fields: [
-          {
-            key: 'partnercompany_id',
-            label: 'ID',
-            sortable: true,
-            type: 'list',
-            list: 'partnercompany',
-            listLabel: 'partnercompany_name',
-            disableOnUpdate: true,
-          },
-          { key: 'partnercompany_name', sortable: true, hideOnForm: true },
-          {
-            key: 'user_partnercompany_valid_from',
-            sortable: true,
-            type: 'date',
-            composite: true,
-            disableOnUpdate: true,
-          },
-          {
-            key: 'user_partnercompany_valid_to',
-            required: false,
-            type: 'date',
-            rules: { date_after: ['@user_partnercompany_valid_from'] },
-          },
-        ],
-      },
+      // {
+      //   title: 'Partner Companies',
+      //   primaryKey: 'partnercompany_id',
+      //   entity: 'user_partnercompany_grp',
+      //   entityForm: 'user_partnercompany_rel',
+      //   entityView: 'partnercompany',
+      //   fields: [
+      //     {
+      //       key: 'partnercompany_id',
+      //       label: 'ID',
+      //       sortable: true,
+      //       type: 'list',
+      //       list: 'partnercompany',
+      //       listLabel: 'partnercompany_name',
+      //       disableOnUpdate: true,
+      //     },
+      //     { key: 'partnercompany_name', sortable: true, hideOnForm: true },
+      //     {
+      //       key: 'user_partnercompany_valid_from',
+      //       sortable: true,
+      //       type: 'date',
+      //       composite: true,
+      //       disableOnUpdate: true,
+      //     },
+      //     {
+      //       key: 'user_partnercompany_valid_to',
+      //       required: false,
+      //       type: 'date',
+      //       rules: { date_after: ['@user_partnercompany_valid_from'] },
+      //     },
+      //   ],
+      // },
     ],
     default: {
       user_locked: 0,
       user_wrong_password_counter: 0,
       user_password_reset_required: 0,
       // user_password: 'Fsa!0dsadad',
-      user_mobile: '0711 252535838',
+      // user_mobile: '0711 252535838',
     },
     note: 'frontend_0_8_13',
     submit(vm) {
@@ -313,7 +414,7 @@ export default {
         })
     },
     fetch(vm) {
-      return vm.$http.get(`/users/${vm.entityId}`, vm.entity)
+      return vm.$http.get(`/users/${vm.entityId}`)
         .then(resp => {
           const data = resp.data
           if (data.contactperson) {
@@ -363,9 +464,10 @@ export default {
   },
   role: {
     fields: [
-      { key: 'role_id', label: 'Role ID', auto: true },
-      { key: 'role_name', label: 'Role name' },
-      { key: 'role_permission', label: 'Permission' },
+      { key: 'role_id', auto: true },
+      { key: 'role_name' },
+      { key: 'role_is_internal', type: 'boolean' },
+      { key: 'role_permission' },
     ],
     relations: [
       {
@@ -473,9 +575,10 @@ export default {
             list: 'user',
             listLabel: 'user_email',
             disableOnUpdate: true,
+            multiple: true
           },
-          { key: 'user_firstname' },
-          { key: 'user_lastname' },
+          { key: 'user_firstname', hideOnForm: true },
+          { key: 'user_lastname', hideOnForm: true },
           { key: 'team_name', sortable: true, hideOnForm: true },
           {
             key: 'user_team_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,
@@ -483,6 +586,25 @@ export default {
           {
             key: 'user_team_valid_to', required: false, type: 'date', rules: { date_after: ['@user_team_valid_from'] },
           },
+        ],
+      },
+      {
+        title: 'Roles',
+        primaryKey: 'role_id',
+        entity: 'team_role_grp',
+        entityForm: 'team_role_rel',
+        view: false,
+        update: false,
+        fields: [
+          {
+            key: 'role_id',
+            type: 'list',
+            list: 'role',
+            listLabel: 'role_name',
+            multiple: true,
+            hideOnIndex: true,
+          },
+          { key: 'role_name', hideOnForm: true },
         ],
       },
     ],
@@ -923,9 +1045,22 @@ export default {
   contactperson: {
     entity: 'frontend_2_3_1',
     create: false,
+    // formComponent: () => import('@/views/app/FormComponent/ContactPersonsModalForm.vue')
     fieldComponent: () => import('@/views/app/CreateComponent/ContactPersonForm.vue'),
     fields: [
       { key: 'contactperson_id', auto: true },
+      {
+        key: 'user_type',
+        label: 'User type',
+        type: 'custom-select',
+        hideOnIndex: true,
+        required: false,
+        items: [
+          { value: 1, label: 'Internal' },
+          { value: 0, label: 'External' },
+        ],
+        send: false,
+      },
       { key: 'contactperson_firstname' },
       { key: 'contactperson_lastname' },
       { key: 'city_name', hideOnForm: true },
@@ -944,7 +1079,7 @@ export default {
         listLabel: 'contactdetails_email',
         hideOnIndex: true,
         alwaysNew: true,
-        // onlyForm: true,
+        onlyForm: true,
       },
       {
         key: 'contactsalutation_id',
@@ -969,7 +1104,7 @@ export default {
         listLabel: 'address_street',
         hideOnIndex: true,
         alwaysNew: true,
-        // onlyForm: true,
+        onlyForm: true,
       },
     ],
     note: 'frontend_0_8_10',
@@ -997,13 +1132,32 @@ export default {
   partnercompany: {
     entity: 'frontend_2_5_1',
     primaryKey: 'partnercompany_id',
+    formComponent: () => import('@/views/app/FormComponent/PartnerCompanyForm.vue'),
     fields: [
       { key: 'partnercompany_id', auto: true },
       {
-        key: 'partnergroup_id', type: 'list', list: 'partnergroup', listLabel: 'partnergroup_name', hideOnIndex: true,
+        key: 'partnergroup_is_internal',
+        label: 'partner group type',
+        type: 'custom-select',
+        hideOnIndex: true,
+        required: false,
+        items: [
+          { value: 1, label: 'Internal' },
+          { value: 0, label: 'External' },
+        ],
+        send: false,
+      },
+      {
+        key: 'partnergroup_id',
+        type: 'list',
+        list: 'partnergroup',
+        listLabel: 'partnergroup_name',
+        hideOnIndex: true,
+        filter_key: 'partnergroup_is_internal',
+        noFetchOnChange: true,
       },
       { key: 'partnercompany_name' },
-      { key: 'partnercompany_shortname' },
+      // { key: 'partnercompany_shortname' },
       { key: 'partnergroup_name', hideOnForm: true },
       { key: 'city_name', hideOnForm: true },
       { key: 'contactdetails_email', hideOnForm: true },
@@ -1017,6 +1171,7 @@ export default {
         listLabel: 'address_street',
         withNew: true,
         alwaysNew: true,
+        onlyForm: true,
       },
       {
         key: 'contactdetails_id',
@@ -1026,6 +1181,7 @@ export default {
         listLabel: 'contactdetails_email',
         withNew: true,
         alwaysNew: true,
+        onlyForm: true,
       },
       {
         key: 'companydetails_id',
@@ -1035,6 +1191,16 @@ export default {
         listLabel: 'companydetails_commercialregisterno',
         withNew: true,
         alwaysNew: true,
+        onlyForm: true,
+      },
+      {
+        key: 'partnercompany_type',
+        type: 'checkbox',
+        items: [
+          { label: 'Option A', value: 0 },
+          { label: 'Option B', value: 1 },
+          { label: 'Option C', value: 3 },
+        ],
       },
     ],
     relations: [
@@ -1219,7 +1385,6 @@ export default {
             key: 'partnercompany_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name',
           },
           { key: 'partnercompany_name', hideOnForm: true },
-          { key: 'partnertype_name', hideOnForm: true },
           { key: 'city_name', hideOnForm: true },
           { key: 'country_name', hideOnForm: true },
           { key: 'location_count', hideOnForm: true },
@@ -1285,6 +1450,7 @@ export default {
   address: {
     primaryKey: 'address_id',
     entity: 'frontend_2_7_1',
+    fieldComponent: () => import('@/views/app/FormComponent/AddressForm.vue'),
     fields: [
       { key: 'address_id', auto: true },
       { key: 'address_street' },
@@ -1371,7 +1537,6 @@ export default {
       },
     ],
 
-    // formComponent: () => import('@/views/app/FormComponent/AddressForm.vue'),
   },
   contactdetails: {
     primaryKey: 'contactdetails_id',
@@ -1418,11 +1583,14 @@ export default {
       { key: 'city_id', sortable: true, auto: true },
       { key: 'city_name', sortable: true },
       { key: 'city_zip', sortable: true },
+      { key: 'state', sortable: true, required: false },
       { key: 'country_short', sortable: true, hideOnForm: true },
       {
         key: 'country_id', hideOnIndex: true, type: 'list', list: 'country', listLabel: 'country_name',
       },
     ],
+    fieldComponent: () => import('@/views/app/FormComponent/CityForm.vue'),
+
   },
   country: {
     primaryKey: 'country_id',
@@ -1461,6 +1629,7 @@ export default {
     ],
   },
   partnertype: {
+    inlineEdit: true,
     primaryKey: 'partnertype_id',
     fields: [
       { key: 'partnertype_id', sortable: true, auto: true },
@@ -2008,6 +2177,8 @@ export default {
   },
   contract: {
     entity: 'frontend_3_4_1_1',
+    createModal: false,
+    createComponent: () => import('@/views/app/CreateComponent/ContractForm/Index.vue'),
     fields: [
       { key: 'contract_id', auto: true },
       {
@@ -3563,8 +3734,12 @@ export default {
       { key: 'ticket_name' },
       { key: 'ticket_description', type: 'textarea', required: false },
       // { key: 'ticket_deadline', type: 'date', time: true },
-      { key: 'ticket_deadline_yellow', type: 'date', time: true, hideOnIndex: true },
-      { key: 'ticket_deadline_red', type: 'date', time: true, hideOnIndex: true },
+      {
+        key: 'ticket_deadline_yellow', type: 'date', time: true, hideOnIndex: true,
+      },
+      {
+        key: 'ticket_deadline_red', type: 'date', time: true, hideOnIndex: true,
+      },
       { key: 'ticket_planned_treatment_week' },
       {
         key: 'pos_id',
@@ -3783,6 +3958,12 @@ export default {
       attribute_nice_name_group: '',
     },
   },
+  'function': {
+    fields: [
+      {key: 'function_id', auto: true},
+      'function_name'
+    ]
+  }
 }
 
 function getContractCriteriaFields() {

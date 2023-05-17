@@ -5,7 +5,7 @@
 <script>
 import table from '@/table/index'
 import Edit from '../Edit.vue'
-import Table from "@/table";
+import Table from '@/table';
 
 export default {
   name: 'EditPage',
@@ -31,9 +31,9 @@ export default {
           },
           buttonsStyling: false,
         })
-        if (result.value) return next()
+        if (result.value) next()
       } else {
-        return next()
+        next()
       }
     },
   },

@@ -34,6 +34,7 @@
     "echarts": "5.2.1",
     "font-awesome": "^4.7.0",
     "fuse.js": "^6.6.2",
+    "generate-password": "^1.7.0",
     "jsonwebtoken": "8.5.1",
     "leaflet": "1.6.0",
     "moment": "^2.29.4",

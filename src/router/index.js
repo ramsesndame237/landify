@@ -158,6 +158,14 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/app/:table/profile',
+      name: 'user-profile',
+      component: () => import("@/views/app/Page/UserProfile.vue"),
+      meta: {
+        pageTitle: 'User profile',
+      },
+    },
+    {
       path: '/app/import-contract',
       name: 'import-contract',
       component: () => import('@/views/app/Page/ImportContract.vue'),
@@ -237,6 +245,16 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/change-password',
+      name: 'change-password',
+      component: () => import('@/views/ChangePassword.vue'),
+      meta: {
+        layout: 'full',
+        resource: 'Auth',
+        redirectIfLoggedIn: true,
+      },
+    },
+    {
       path: '/auth/verification/:token',
       name: 'verify-token',
       component: () => import('@/views/VerifyToken.vue'),
@@ -247,9 +265,9 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/register',
-      name: 'register',
-      component: () => import('@/views/Register.vue'),
+      path: '/auth/reset-password/:token',
+      name: 'reset-password',
+      component: () => import('@/views/ResetPassword.vue'),
       meta: {
         layout: 'full',
         resource: 'Auth',
