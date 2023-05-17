@@ -2868,7 +2868,7 @@ export default {
         hideOnIndex: true,
         visible: entity => entity.maturitytype_id === 2,
       },
-      { key: 'recurringpayment_value_deposit', type: 'boolean' },
+      { key: 'recurringpayment_value_deposit', type: 'boolean', required: false },
       {
         key: 'indexclause_id',
         type: 'list',
