@@ -15,17 +15,53 @@
           <vuexy-logo />
         </b-link>
 
-        <b-card-title class="mb-1 font-weight-bolder"> Reset password </b-card-title>
+        <b-card-title class="mb-1 font-weight-bolder"> Change password </b-card-title>
         <b-card-text class="mb-2">
-          Welcome, please enter your new password to proceed.
+          Welcome, please change your password to proceed.
         </b-card-text>
 
         <!-- form -->
-        <validation-observer ref="loginForm">
+        <validation-observer ref="loginForm" #default="">
           <b-form class="auth-login-form mt-2" @submit.prevent>
+            <!-- old password -->
+            <b-form-group label="Enter your old password">
+              <validation-provider
+                #default="{ errors }"
+                name="OldPassword"
+                rules="required"
+              >
+                <b-input-group
+                  class="input-group-merge"
+                  :class="errors.length > 0 ? 'is-invalid' : null"
+                >
+                  <b-input-group-prepend is-text>
+                    <feather-icon class="cursor-pointer" icon="LockIcon" />
+                  </b-input-group-prepend>
+                  <b-form-input
+                    id="oldPassword"
+                    v-model="oldPassword"
+                    :type="passwordFieldType"
+                    name="login-email"
+                    :state="errors.length > 0 ? false : null"
+                    placeholder="Old Password"
+                    autofocus
+                  />
+
+                  <b-input-group-append is-text>
+                    <feather-icon
+                      class="cursor-pointer"
+                      :icon="passwordToggleIcon"
+                      @click="togglePasswordVisibility"
+                    />
+                  </b-input-group-append>
+                </b-input-group>
+
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+            </b-form-group>
 
             <!-- new password -->
-            <b-form-group>
+            <b-form-group label="Enter your new password">
               <validation-provider
                 #default="{ errors }"
                 name="Password"
@@ -43,7 +79,7 @@
                     id="password"
                     v-model="password"
                     class="form-control-merge"
-                    :type="passwordFieldType"
+                    :type="newPasswordFieldType"
                     :state="errors.length > 0 ? false : null"
                     name="password"
                     placeholder="New Password"
@@ -52,8 +88,8 @@
                   <b-input-group-append is-text>
                     <feather-icon
                       class="cursor-pointer"
-                      :icon="passwordToggleIcon"
-                      @click="togglePasswordVisibility"
+                      :icon="newPasswordToggleIcon"
+                      @click="toggleNewPasswordVisibility"
                     />
                   </b-input-group-append>
                 </b-input-group>
@@ -176,6 +212,7 @@ export default {
   mixins: [togglePasswordVisibility],
   data() {
     return {
+      oldPassword: "",
       password: "",
       passwordConfirm: "",
       status: "",
@@ -190,32 +227,27 @@ export default {
     passwordToggleIcon() {
       return this.passwordFieldType === "password" ? "EyeIcon" : "EyeOffIcon";
     },
+    newPasswordToggleIcon() {
+      return this.newPasswordFieldType === "password" ? "EyeIcon" : "EyeOffIcon";
+    },
   },
   methods: {
     validationForm() {
       this.$refs.loginForm.validate().then((success) => {
         if (success) {
           const data = {
+            old_password: this.oldPassword,
             new_password: this.password,
-            reset_password_oauth_token: this.$route.params.token
           };
           const userId = localStorage.getItem("userId")
           this.loading = true;
           this.$http
-            .put('/auth/reset-password/confirmation', data)
+            .put(`/users/${userId}/password`, data)
             .then(async (resp) => {
-              if (resp.data.message) {
-                this.$toast({
-                  component: ToastificationContent,
-                  props: {
-                    title: resp.data.message,
-                    icon: 'BellIcon',
-                  },
-                })
+              if (!resp.data.user_token) {
+                this.message = this.$t(resp.data.message);
                 this.show = false;
-                this.$router.push({
-                  name: "login",
-                });
+                return useJwt.redirectAfterLogin(this);
               }
             })
             .catch((e) => {

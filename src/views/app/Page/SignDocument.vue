@@ -130,7 +130,7 @@ export default {
         data: [{ document_id: this.entity.document_id }],
       })).data.data.data[0]
 
-      pdfjsLib.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js'
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@3.6.172/build/pdf.worker.min.js'
       const pdf = await pdfjsLib.getDocument(this.getDocumentLink(this.entity)).promise
       this.pdf = pdf
       this.pages = pdf.numPages

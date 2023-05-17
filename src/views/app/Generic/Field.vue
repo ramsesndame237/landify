@@ -19,7 +19,7 @@
           <v-select v-model="entity[field.key]" :dropdown-should-open="true" :disabled="selectDisabled"
                     :class="errors.length > 0 ? 'error':''"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
-                    :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
+                    :placeholder="field.key" :multiple="field.multiple && create" :options="listItems" transition=""
                     :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
                     :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
                     @input="onChange"/>
@@ -33,23 +33,52 @@
         </div>
         <div v-else-if="field.type==='yesno' || field.type==='custom-select'">
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
-                    :placeholder="field.key" :options="field.type==='yesno'?yesNoOptions: field.items" transition=""
-                    label="label" class="w-100" :reduce="i => i.value"/>
+                    :multiple="field.multiple" :placeholder="field.key"
+                    :options="field.type==='yesno'?yesNoOptions: field.items" transition="" label="label" class="w-100"
+                    :reduce="i => i.value"/>
+        </div>
+        <div v-else-if="field.type==='checkbox'">
+          <b-form-checkbox-group v-model="entity[field.key]" :disabled="disabled"
+                                 :state="errors.length > 0 ? false:null" :placeholder="field.key" text-field="label"
+                                 :options="field.items"/>
         </div>
         <div v-else-if="field.type==='file'">
           <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
-                       drop-placeholder="Drop file here..." :multiple="field.multiple" required @change="validate"/>
+                       drop-placeholder="Drop file here..." :multiple="field.multiple" required
+                       @change="validate($event);updateFilesData($event)"/>
+          <div class="d-flex flex-column mt-2">
+            <div v-for="(file, index) in files" :key="index" class="d-flex justify-content-between mb-1">
+              <div>
+                <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50"/>
+                <span class="text-muted font-weight-bolder align-text-top">{{
+                    file.name
+                  }}</span>
+                <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
+              </div>
+              <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index)"/>
+            </div>
+          </div>
         </div>
-        <b-input-group v-else-if="field.type==='password'" class="input-group-merge"
-                       :class="errors.length > 0 ? 'is-invalid':null">
-          <b-form-input v-model="entity[field.key]" :disabled="disabled" :type="passwordFieldType"
-                        class="form-control-merge" :state="errors.length > 0 ? false:null" :name="field.key"
-                        placeholder="Password" autocomplete="new-password"/>
+        <div v-else-if="field.type==='password'">
+          <b-input-group class="input-group-merge" :class="errors.length > 0 ? 'is-invalid':null">
+            <b-form-input v-model="entity[field.key]" :disabled="disabled" :type="passwordFieldType"
+                          class="form-control-merge" :state="errors.length > 0 ? false:null" :name="field.key"
+                          placeholder="Password" autocomplete="new-password"/>
 
-          <b-input-group-append is-text>
-            <feather-icon class="cursor-pointer" :icon="passwordToggleIcon" @click="togglePasswordVisibility"/>
-          </b-input-group-append>
-        </b-input-group>
+            <b-input-group-append is-text>
+              <feather-icon class="cursor-pointer" :icon="passwordToggleIcon" @click="togglePasswordVisibility"/>
+            </b-input-group-append>
+          </b-input-group>
+          <div class="mt-1" v-if="field.generate">
+            <b-button :disabled="disabled || waitPassword" size="sm" class="mr-2" @click="getRandomPassword(field.key)">
+              Generate Password
+              <b-spinner v-if="waitPassword" small/>
+            </b-button>
+            <span v-if="randomPassword && !disabled" class="mr-1">{{ randomPassword }}</span>
+            <feather-icon v-if="randomPassword && !disabled" class="cursor-pointer" icon="CopyIcon" size="16"
+                          @click="doCopy"/>
+          </div>
+        </div>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
                     class="form-control"/>
@@ -83,15 +112,17 @@
 <script>
 import Fuse from 'fuse.js'
 import {
-  BButton, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow,
+  BButton, BImg, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow, BSpinner
 } from 'bootstrap-vue'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
+import { generate } from "generate-password"
 import { snakeToTitle } from '@/libs/utils'
 import Table from '@/table/index'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import { togglePasswordVisibility } from "@core/mixins/ui/forms";
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -101,10 +132,10 @@ export default {
   name: 'Field',
   components: {
     ckeditor: CKEditor.component,
-    BFormInput, BFormFile, BFormGroup, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol, BFormCheckbox,
+    BFormInput, BFormFile, BFormGroup, BImg, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol, BFormCheckbox, BSpinner,
   },
   mixins: [togglePasswordVisibility],
-  props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition', 'noLabel'],
+  props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition', 'noLabel', 'create'],
   data() {
     return {
       list: this.$store.state.table.listCache[this.field.list] || [],
@@ -133,7 +164,10 @@ export default {
         { value: 1, label: 'Yes' },
         { value: 0, label: 'No' },
       ],
+      files: [],
+      randomPassword: "",
       editor: ClassicEditor,
+      waitPassword: false,
       editorOption: {
         // modules: {
         //   toolbar: '#quill-toolbar-' + this.field.key,
@@ -147,7 +181,7 @@ export default {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
     selectDisabled() {
-      return this.disabled || (this.field.filter_key && !this.entity[this.field.filter_key])
+      return this.disabled || (this.field.filter_key && this.entity[this.field.filter_key] == null)
     },
     rules() {
       return this.getValidationRules(this.field)
@@ -158,7 +192,7 @@ export default {
     listItems() {
       if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
         const val = (this.filterValue || this.entity[this.field.filter_key])
-        if (this.field.filter_key && val) {
+        if (this.field.filter_key && val != null) {
           console.log('filter with value', val)
           return this.list.filter(e => e[this.field.filter_key] === val)
         }
@@ -167,7 +201,7 @@ export default {
       return this.list.filter(item => this.field.ids.indexOf(item[this.field.key]) >= 0)
     },
     subDefinition() {
-      const definition = { ...Table[this.field.list] }
+      const definition = { ...Table[this.field.definition || this.field.list] }
       if (this.field.withFields) definition.fields = [...definition.fields, ...this.field.withFields]
       return definition
     },
@@ -193,12 +227,15 @@ export default {
 
   },
   watch: {
+    randomPassword(newValue) {
+      this.entity[this.field.key] = newValue
+    },
     list() {
       this.onChange()
     },
   },
   async created() {
-    if (this.field.type === 'list' && !this.field.filter_key && !this.field.onlyForm) {
+    if (this.field.type === 'list' && (!this.field.filter_key || this.field.noFetchOnChange) && !this.field.onlyForm) {
       await this.fetchList()
     } else if (this.field.type === 'boolean') {
       // set false as default value
@@ -213,17 +250,69 @@ export default {
     }
   },
   mounted() {
+    if (typeof this.field.change === 'function') {
+      const change = this.field.change(this.entity, this)
+      if (change) this.$set(this.entity, this.field.key, change)
+      this.$watch('entity', () => {
+        const change2 = this.field.change(this.entity, this)
+        if (typeof(change2) !== 'undefined') this.$set(this.entity, this.field.key, change2)
+      }, { deep: true })
+    }
+    if (typeof this.field.value === 'function') {
+      this.$set(this.entity, this.field.key, this.field.value(this.entity, this))
+      this.$watch('entity', () => {
+        this.$set(this.entity, this.field.key, this.field.value(this.entity, this))
+      }, { deep: true })
+    } else if (this.field.value != null) {
+      this.$set(this.entity, this.field.key, this.field.value)
+    }
     this.$watch(`entity.${this.field.key}`, () => {
       this.onChange()
     })
-    if (this.field.filter_key) {
+    if (this.field.filter_key && !this.field.noFetchOnChange) {
       this.$watch(`entity.${this.field.filter_key}`, () => {
         this.fetchList(true)
       })
     }
   },
   methods: {
+    getFileThumbnail(fileType) {
+      if (fileType === 'application/pdf') {
+        return require('@/assets/images/icons/file-icons/pdf2.png')
+      }
+      if (
+        fileType
+        === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        || fileType === 'application/vnd.ms-excel'
+        || fileType === 'application/vnd.oasis.opendocument.spreadsheet'
+      ) {
+        return require('@/assets/images/icons/file-icons/xls.png')
+      }
+      return require('@/assets/images/icons/file-icons/doc.png')
+    },
+    updateFilesData(event) {
+      const selectedFiles = event.target.files
+
+      // ensure that the selected file doesn't exit in the files data
+      let index = -1
+      for (const file in selectedFiles) {
+        if (Object.hasOwnProperty.call(selectedFiles, file)) {
+          index = this.files.findIndex(
+            elt => elt.name === selectedFiles[file].name
+              && elt.size === selectedFiles[file].size,
+          )
+          if (index === -1) {
+            this.files.push(selectedFiles[file])
+            // console.log('this.files: ', this.files)
+          }
+        }
+      }
+    },
+    removeFile(index) {
+      if (index !== -1) this.files.splice(index, 1)
+    },
     getFiles() {
+      if (this.field.multiple) return this.files
       return this.$refs.file.files
     },
     reset() {
@@ -236,6 +325,38 @@ export default {
         this.$set(this.entity, this.field.key, null)
       }
       (this.getSubFields() || []).forEach(sub => sub.reset())
+    },
+    async getRandomPassword(fieldKey) {
+      this.waitPassword = true
+      await this.$http.get('/users/generate/password')
+        .then((resp)=>{
+          this.randomPassword = resp.data.password
+          this.waitPassword = false
+        })
+        .catch(e=> {
+          this.$errorToast("Error")
+          this.waitPassword = false
+        })
+
+    },
+    doCopy() {
+      this.$copyText(this.randomPassword).then(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Password copied',
+            icon: 'BellIcon',
+          },
+        })
+      }, e => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Can not copy!',
+            icon: 'BellIcon',
+          },
+        })
+      })
     },
     getPrimaryKey(definition) {
       return definition.primaryKey ?? definition.fields.find(f => f.auto).key
@@ -304,7 +425,7 @@ export default {
         if (this.field.onlyForm && this.entity[this.field.key]) {
           payload.data = [{ [this.field.key]: this.entity[this.field.key] }]
         }
-        if (this.field.filter_key) {
+        if (this.field.filter_key && this.entity[this.field.filter_key]) {
           payload.data = [{ [this.field.filter_key]: this.entity[this.field.filter_key] }]
         }
         this.list = await this.$store.dispatch('table/fetchList', payload)

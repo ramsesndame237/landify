@@ -25,11 +25,11 @@ export const defineRules = () => {
 
   if (!userData) return rules
   rules.push({ action: 'read', subject: 'dashboard' })
-  if (['raoul.dzoukou@gohze.org1'].indexOf(userEmail) >= 0) {
-    rules.push({ action: 'manage', subject: 'all' })
-  }
   //
   try {
+    if (userData.roles.find(r => r.role_name === 'Administrator')) {
+      rules.push({ action: 'manage', subject: 'all' })
+    }
     userData.roles.forEach(role => {
       rules.push(..._.flatten(role.tablegroups.map(tg => tg.tablename.map(tn => ({
         action: getAction(tg.crud),

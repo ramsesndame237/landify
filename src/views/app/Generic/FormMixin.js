@@ -86,7 +86,7 @@ export default {
             const { subDefinition } = component
             this.getFormFields(subDefinition)
               .forEach(f => {
-                if (this.initialData[f.key]) {
+                if (this.initialData[f.key]!==null) {
                   this.$set(component.subEntity, f.key, this.initialData[f.key])
                   this.$set(component.subOriginalEntity, f.key, this.initialData[f.key])
                 }
@@ -245,18 +245,22 @@ export default {
             for (let i = 0; i < files.length; i++) {
               formData.append('files', files[i])
             }
-            return this.$http.post('document/uploadfiles', formData, { headers: { 'content-type': 'form-data' } })
+            return this.$http.post('/document/uploadfiles', formData, { headers: { 'content-type': 'form-data' } })
               .then(({ data }) => {
                 console.log(data)
                 return data
               })
           }
+
+          let data = [entity]
+          // if create and primary key is multiple
+          if (create && formFields.find(f => f.key === primaryKey).multiple) {
+            data = entity[primaryKey].map(val => ({ ...entity, [primaryKey]: val }))
+          }
           return this.$api({
             entity: table,
             action,
-            data: [
-              entity,
-            ],
+            data,
           })
             .then(async ({ data }) => {
               if (data.data.errors[0]) {
@@ -434,20 +438,28 @@ export default {
     }
     if (this.create) return
     if (!this.isRelation && this.fetchData) {
-      const entity = await (this.definition.fetch ? this.definition.fetch(this) :
-        this.$store.dispatch('table/fetchSingleItem', {
-          entity: this.table,
-          primaryKey: this.primaryKey,
-          id: this.entityId || this.initialData[this.primaryKey],
-        }))
+      this.loading = true
+      let entity = null
+      try {
+        entity = await (this.definition.fetch ? this.definition.fetch(this) :
+          entity = this.$store.dispatch('table/fetchSingleItem', {
+            entity: this.table,
+            primaryKey: this.primaryKey,
+            id: this.entityId || this.initialData[this.primaryKey],
+          }))
+      } catch (e) {
+        console.error(e)
+      }
       if (!entity) {
         this.$errorToast(`The entity with the id "${this.entityId}" doesnt exists`)
       } else {
         this.setData(entity)
       }
+      this.loading = false
     }
-    this.entityLoaded = true
     this.originalEntity = { ...this.entity }
+    this.entityLoaded = true
+    this.$emit('loaded')
     console.log('mounted', this.entity)
     if (!this.definition.fetch) await this.fillRelations(this.entity, this.originalEntity, this.formFields, this.table, this.primaryKey)
   },

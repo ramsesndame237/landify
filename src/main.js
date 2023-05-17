@@ -20,6 +20,7 @@ import '@/libs/portal-vue'
 import '@/libs/toastification'
 import '@/libs/sweet-alerts'
 import '@/auth/jwt/useJwt'
+import '@/libs/clipboard'
 
 import ability from '@/libs/acl'
 import { defineRules } from "@/libs/acl/ability";

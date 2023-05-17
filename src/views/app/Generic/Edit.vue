@@ -38,6 +38,7 @@
 
     <b-card class="">
       <component
+        @loaded="formLoaded=true"
         :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
         ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="create"
         :is-relation="false" :disabled="view" :inline="false" :cols="6" :initial-data="entity" :entity-id="entityId"/>
@@ -47,7 +48,7 @@
       <invoice-stats/>
     </template>
 
-    <b-card v-if="definition.relations && visibleRelations.length>0 && !create">
+    <b-card v-if="definition.relations && formLoaded && visibleRelations.length>0 && !create ">
       <b-tabs ref="tabs" pills>
         <b-tab v-for="(relation, index) in visibleRelations" :key="index"
                :title="$t(relation.title || ('headline~'+(relation.entityView||relation.entityForm)+'~tab'))"
@@ -139,6 +140,7 @@ export default {
       currentPage: 1,
       perPage: Number.MAX_SAFE_INTEGER,
       totalRows: 0,
+      formLoaded: false,
     }
   },
   computed: {
@@ -152,7 +154,13 @@ export default {
       return this.$can('create', this.visibleRelations[this.$refs.tabs?.currentTab]?.entityForm)
     },
     visibleRelations() {
-      return this.definition.relations.filter(r => this.$can('read', r.entityForm || r.entityView))
+      return this.definition.relations.filter(r => {
+        // console.log('call visible', this.$refs.form)
+        if (r.visible && this.formLoaded) {
+          if (!r.visible(this)) return false
+        }
+        return this.$can('read', r.entityForm || r.entityView)
+      })
     },
   },
   mounted() {
