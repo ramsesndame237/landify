@@ -86,7 +86,7 @@ export default {
             const { subDefinition } = component
             this.getFormFields(subDefinition)
               .forEach(f => {
-                if (this.initialData[f.key]) {
+                if (this.initialData[f.key]!==null) {
                   this.$set(component.subEntity, f.key, this.initialData[f.key])
                   this.$set(component.subOriginalEntity, f.key, this.initialData[f.key])
                 }
