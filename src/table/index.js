@@ -154,7 +154,7 @@ export default {
         onlyForm: true,
       },
       {
-        key: 'contactperson_id',
+        key: 'hollyday_representative',
         label: 'hollyday_representative',
         hideOnIndex: true,
         type: 'list',
@@ -784,6 +784,7 @@ export default {
   company: {
     entity: 'frontend_2_1_1',
     primaryKey: 'company_id',
+    formComponent: () => import('@/views/app/CreateComponent/CompanyForm.vue'),
     fields: [
       { key: 'company_id', auto: true },
       { key: 'company_name' },
@@ -1053,7 +1054,6 @@ export default {
   contactperson: {
     entity: 'frontend_2_3_1',
     create: false,
-    // formComponent: () => import('@/views/app/FormComponent/ContactPersonsModalForm.vue')
     fieldComponent: () => import('@/views/app/CreateComponent/ContactPersonForm.vue'),
     fields: [
       { key: 'contactperson_id', auto: true },
