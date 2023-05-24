@@ -124,7 +124,6 @@ async function init() {
     console.error(e)
   }
 
-
   window.$vue = new Vue({
     router,
     store,
