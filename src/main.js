@@ -11,6 +11,7 @@ import vueKanban from 'vue-kanban'
 import store from './store'
 import router from './router'
 import App from './App.vue'
+import * as Sentry from "@sentry/vue";
 
 // Global Components
 import './global-components'
@@ -95,6 +96,12 @@ require('@/assets/scss/style.scss')
 Vue.config.productionTip = false
 
 const userEmail = localStorage.getItem('userEmail')
+
+
+Sentry.init({
+  Vue,
+  dsn: process.env.VUE_APP_SENTRY_DNS,
+});
 
 async function init() {
   try {
