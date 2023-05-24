@@ -1,12 +1,10 @@
 import ability, { defineRules } from '@/libs/acl/ability'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 import ToastificationContent from '@core/components/toastification/ToastificationContent'
-import useJwt from '@/auth/jwt/useJwt'
 import { initialAbility } from '@/libs/acl/config'
-import jwtDefaultConfig from './jwtDefaultConfig'
 import store from '@/store'
 import BrowserId from 'browser-id'
-import router from '@/router'
+import jwtDefaultConfig from './jwtDefaultConfig'
 
 export default class JwtService {
   // Will be used by this service for making API calls
@@ -75,7 +73,7 @@ export default class JwtService {
               this.logout()
                 .then(() => {
                   this.onAccessTokenFetched('')
-                  router.push({ name: 'login' })
+                  return window.$vue.$router.push({ name: 'login' })
                 })
             }).finally(() => {
               this.isAlreadyFetchingAccessToken = false
@@ -143,8 +141,8 @@ export default class JwtService {
   async logout() {
     // await this.axiosIns.post('/auth/logout/', {}, { query: { access_token: this.getToken() } })
     // ? You just removed token from localStorage. If you like, you can also make API call to backend to blacklist used token
-    localStorage.removeItem(useJwt.jwtConfig.storageTokenKeyName)
-    localStorage.removeItem(useJwt.jwtConfig.storageRefreshTokenKeyName)
+    localStorage.removeItem(this.jwtConfig.storageTokenKeyName)
+    localStorage.removeItem(this.jwtConfig.storageRefreshTokenKeyName)
 
     // Remove userData from localStorage
     localStorage.removeItem('userData')
