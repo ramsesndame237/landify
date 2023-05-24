@@ -73,7 +73,7 @@ export default class JwtService {
               this.logout()
                 .then(() => {
                   this.onAccessTokenFetched('')
-                  return $vue.$router.push({ name: 'login' })
+                  return window.$vue.$router.push({ name: 'login' })
                 })
             }).finally(() => {
               this.isAlreadyFetchingAccessToken = false
