@@ -86,7 +86,7 @@ export default {
             const { subDefinition } = component
             this.getFormFields(subDefinition)
               .forEach(f => {
-                if (this.initialData[f.key]!==null) {
+                if (this.initialData[f.key] !== null) {
                   this.$set(component.subEntity, f.key, this.initialData[f.key])
                   this.$set(component.subOriginalEntity, f.key, this.initialData[f.key])
                 }
@@ -443,7 +443,7 @@ export default {
       try {
         entity = await (this.definition.fetch ? this.definition.fetch(this) :
           entity = this.$store.dispatch('table/fetchSingleItem', {
-            entity: this.table,
+            entity: this.definition.fetchWithEntity ? this.definition.entity : this.table,
             primaryKey: this.primaryKey,
             id: this.entityId || this.initialData[this.primaryKey],
           }))
