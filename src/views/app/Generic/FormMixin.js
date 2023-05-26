@@ -247,7 +247,16 @@ export default {
             }
             return this.$http.post('/document/uploadfiles', formData, { headers: { 'content-type': 'form-data' } })
               .then(({ data }) => {
-                console.log(data)
+                if (data.data.length > 0) {
+                  this.$api({
+                    action: 'create',
+                    entity: 'document_documenttype_rel',
+                    data: data.data.map(row => ({
+                      documenttype_id: entity.documenttype_id,
+                      document_id: row.document_id,
+                    })),
+                  })
+                }
                 return data
               })
           }

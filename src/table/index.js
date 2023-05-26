@@ -84,7 +84,9 @@ export default {
       },
       {
         key: 'partnergroup_is_internal',
-        visible: () => { return false },
+        visible: () => {
+          return false
+        },
         hideOnIndex: true,
         type: 'boolean',
         change: (entity) => {
@@ -2448,10 +2450,12 @@ export default {
             list: 'document',
             onlyForm: true,
             alwaysNew: true,
+            defaultEntity: { documenttype_id: 1 },
+            disabled: ['documenttype_id'],
           },
           { key: 'document_name', hideOnForm: true },
-          { key: 'documenttype_name', hideOnForm: true },
-          { key: 'document_mime_type', hideOnForm: true },
+          // { key: 'documenttype_name', hideOnForm: true },
+          // { key: 'document_mime_type', hideOnForm: true },
           { key: 'documentcontracttype_name', hideOnForm: true },
           {
             key: 'documentcontracttype_id',
