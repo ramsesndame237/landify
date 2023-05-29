@@ -41,78 +41,79 @@
                     {{ entity.board_name }}
                   </router-link>
                 </td>
-              <tr>
-              <tr>
-                <th class="pb-50 font-weight-bold">{{ $t('attribute.ticket_id') }}</th>
-                <td class="pb-50">{{ entity.ticket_id }}</td>
-              </tr>
-              <tr>
-                <th class="pb-50 font-weight-bold">{{ $t('attribute.customergroup_name') }}</th>
-                <td class="pb-50">
-                  <router-link v-if="entity.customergroup_id"
-                               :to="{name:'table-view',params: {table: 'customergroup', id: entity.customergroup_id}}">
-                    {{ entity.customergroup_name }}
-                  </router-link>
-                </td>
-              <tr>
-                <th class="pb-50 font-weight-bold">{{ $t('attribute.company_name') }}</th>
-                <td class="pb-50">
-                  <router-link v-if="entity.company_id"
-                               :to="{name:'table-view',params: {table: 'company', id: entity.company_id}}">
-                    {{ entity.company_name }}
-                  </router-link>
-                </td>
-              </tr>
-              <tr>
-                <th class="pb-50 font-weight-bold">{{ $t('attribute.pos_name') }}</th>
-                <td class="pb-50">
-                  <router-link v-if="entity.pos_id" :to="{name:'table-view',params: {table: 'pos', id: entity.pos_id}}">
-                    {{ entity.pos_name }}
-                  </router-link>
-                </td>
-              </tr>
-              <tr>
-                <th class="pb-50 font-weight-bold">{{ $t('attribute.contract_name') }}</th>
-                <td class="pb-50">
-                  <router-link v-if="entity.contract_id"
-                               :to="{name:'table-view',params: {table: 'contract', id: entity.contract_id}}">
-                    {{ entity.contract_name }}
-                  </router-link>
-                </td>
-              </tr>
-              <tr>
-                <th class="pb-50 font-weight-bold">{{ $t('attribute.invoice_number') }}</th>
-                <td class="pb-50">
-                  <router-link v-if="entity.invoice_id"
-                               :to="{name:'table-view',params: {table: 'invoice', id: entity.invoice_id}}">
-                    {{ entity.invoice_number }}
-                  </router-link>
-                </td>
-              </tr>
-              <tr>
-                <th class="pb-50 font-weight-bold">{{ $t('attribute.ticket_name') }}</th>
-                <td class="pb-50">{{ entity.ticket_name }}</td>
-              </tr>
-              <tr>
-                <th class="pb-50 font-weight-bold">{{ $t('attribute.ticket_description') }}</th>
-                <td class="pb-50">{{ entity.ticket_description }}</td>
-              </tr>
-              <tr>
-                <th class="pb-50 font-weight-bold">{{ $t('attribute.column_name') }}</th>
-                <td class="pb-50">{{ entity.columns[0].column_name }}</td>
-              </tr>
-              <tr>
-                <th class="pb-50 font-weight-bold">{{ $t('attribute.user_email') }}</th>
-                <td class="pb-50">{{ entity.columns[0].user_email }}</td>
-              </tr>
-              <tr>
-                <th class="pb-50 font-weight-bold">{{ $t('attribute.ticket_deadline_yellow') }}</th>
-                <td class="pb-50">{{ entity.ticket_deadline_yellow }}</td>
-              </tr>
-              <tr>
-                <th class="pb-50 font-weight-bold">{{ $t('attribute.ticket_deadline_red') }}</th>
-                <td class="pb-50">{{ entity.ticket_deadline_red }}</td>
-              </tr>
+                <tr>
+                  <tr>
+                    <th class="pb-50 font-weight-bold">{{ $t('attribute.ticket_id') }}</th>
+                    <td class="pb-50">{{ entity.ticket_id }}</td>
+                  </tr>
+                  <tr>
+                    <th class="pb-50 font-weight-bold">{{ $t('attribute.customergroup_name') }}</th>
+                    <td class="pb-50">
+                      <router-link v-if="entity.customergroup_id"
+                                   :to="{name:'table-view',params: {table: 'customergroup', id: entity.customergroup_id}}">
+                        {{ entity.customergroup_name }}
+                      </router-link>
+                    </td>
+                    <tr>
+                      <th class="pb-50 font-weight-bold">{{ $t('attribute.company_name') }}</th>
+                      <td class="pb-50">
+                        <router-link v-if="entity.company_id"
+                                     :to="{name:'table-view',params: {table: 'company', id: entity.company_id}}">
+                          {{ entity.company_name }}
+                        </router-link>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th class="pb-50 font-weight-bold">{{ $t('attribute.pos_name') }}</th>
+                      <td class="pb-50">
+                        <router-link v-if="entity.pos_id"
+                                     :to="{name:'table-view',params: {table: 'pos', id: entity.pos_id}}">
+                          {{ entity.pos_name }}
+                        </router-link>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th class="pb-50 font-weight-bold">{{ $t('attribute.contract_name') }}</th>
+                      <td class="pb-50">
+                        <router-link v-if="entity.contract_id"
+                                     :to="{name:'table-view',params: {table: 'contract', id: entity.contract_id}}">
+                          {{ entity.contract_name }}
+                        </router-link>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th class="pb-50 font-weight-bold">{{ $t('attribute.invoice_number') }}</th>
+                      <td class="pb-50">
+                        <router-link v-if="entity.invoice_id"
+                                     :to="{name:'table-view',params: {table: 'invoice', id: entity.invoice_id}}">
+                          {{ entity.invoice_number }}
+                        </router-link>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th class="pb-50 font-weight-bold">{{ $t('attribute.ticket_name') }}</th>
+                      <td class="pb-50">{{ entity.ticket_name }}</td>
+                    </tr>
+                    <tr>
+                      <th class="pb-50 font-weight-bold">{{ $t('attribute.ticket_description') }}</th>
+                      <td class="pb-50">{{ entity.ticket_description }}</td>
+                    </tr>
+                    <tr>
+                      <th class="pb-50 font-weight-bold">{{ $t('attribute.column_name') }}</th>
+                      <td class="pb-50">{{ entity.columns[0].column_name }}</td>
+                    </tr>
+                    <tr>
+                      <th class="pb-50 font-weight-bold">{{ $t('attribute.user_email') }}</th>
+                      <td class="pb-50">{{ entity.columns[0].user_email }}</td>
+                    </tr>
+                    <tr>
+                      <th class="pb-50 font-weight-bold">{{ $t('attribute.ticket_deadline_yellow') }}</th>
+                      <td class="pb-50">{{ entity.ticket_deadline_yellow }}</td>
+                    </tr>
+                    <tr>
+                      <th class="pb-50 font-weight-bold">{{ $t('attribute.ticket_deadline_red') }}</th>
+                      <td class="pb-50">{{ entity.ticket_deadline_red }}</td>
+                    </tr>
             </table>
           </b-card-actions>
           <div class="d-flex justify-content-between align-items-center mb-2">
@@ -165,7 +166,8 @@
               </b-table-simple>
             </b-overlay>
             <div class="text-right p-1">
-              <b-button v-if="!entity.ticket_closed" variant="primary" @click="$refs.emailModal.show(false)">New Email</b-button>
+              <b-button v-if="!entity.ticket_closed" variant="primary" @click="$refs.emailModal.show(false)">New Email
+              </b-button>
             </div>
           </b-card-actions>
           </b-card-actions>
@@ -175,17 +177,38 @@
           <h4 class="font-weight-bolder">{{ $t('headline~ticket~documents') }}</h4>
           <b-row>
             <b-col v-for="(document,i) in documents" :key="i">
-              <b-card>
-                <div class="">
+              <b-overlay :show="document.loading">
+                <b-card>
                   <div class="d-flex justify-content-between">
                     <h5>{{
                         document.document_name + (document.document_already_stamp ? '(Stamped)' : '') + ' - ' + (document.document_type_name || '')
                       }}</h5>
-                    <b-link variant="danger" target="_blank" :href="getLink(document)">
-                      <feather-icon icon="EyeIcon"/>
-                    </b-link>
+                    <!--                    <b-link variant="danger" target="_blank" :href="getLink(document)">-->
+                    <!--                      <feather-icon icon="EyeIcon"/>-->
+                    <!--                    </b-link>-->
+                    <b-dropdown variant="link-" toggle-class="p-0" right no-caret class="ml-auto">
+                      <template v-slot:button-content>
+                        <feather-icon icon="MoreHorizontalIcon"/>
+                      </template>
+                      <b-dropdown-item target="_blank" :href="getLink(document)">
+                        {{ $t('button~view') }}
+                      </b-dropdown-item>
+                      <b-dropdown-item @click="$refs.documentModal.openModal(false, document)">
+                        {{ $t('button~edit') }}
+                      </b-dropdown-item>
+                      <b-dropdown-item v-if="!document.pos_id && !document.contract_id" @click="addToPos(document)">
+                        {{ $t('button~document~addtopos') }}
+                      </b-dropdown-item>
+                      <b-dropdown-item v-if="!document.pos_id && !document.contract_id"
+                                       @click="addToContract(document)">
+                        {{ $t('button~document~addtocontract') }}
+                      </b-dropdown-item>
+                    </b-dropdown>
                   </div>
-                  <h5 class="font-weight-bolder" style="color: black">{{ document.document_mime_type }}</h5>
+                  <h5 class="font-weight-bolder" style="color: black">
+                    {{
+                      document.document_mime_type + (document.pos_id ? ' (POS)' : (document.contract_id ? ' (Contract)' : ''))
+                    }} </h5>
                   <div class="d-flex justify-content-between">
                     <h6>{{ document.document_entry_time }}</h6>
                     <b-link v-if="canStamp(document)"
@@ -193,8 +216,8 @@
                             class="ml-2">Stamp
                     </b-link>
                   </div>
-                </div>
-              </b-card>
+                </b-card>
+              </b-overlay>
             </b-col>
           </b-row>
           <div>
@@ -205,6 +228,9 @@
                          :title="$t('headline~document~new')" @reload-table="onNewDocuments"/>
           <generic-modal ref="ticketModal" :fetch-data="false" table="ticket" :definition="ticketDef"
                          table-definition-key="ticket" title="Update the ticket" @reload-table="onTicketUpdate"/>
+          <generic-modal ref="documentModal" :fetch-data="false" table="document" :definition="documentDef"
+                         table-definition-key="document" title="Update the document" @reload-table="onDocumentUpdate"/>
+          <add-document-to-contract ref="documentContractModal"/>
         </b-col>
       </b-row>
     </div>
@@ -221,22 +247,24 @@ import {
 } from 'bootstrap-vue'
 import EditPageMixin from "@/views/app/Generic/EditPageMixin";
 import Table from '@/table'
-import GenericModal from "@/views/app/Generic/modal";
-import SubTicketCard from "@/views/app/CustomComponents/WP6/SubTicketCard";
-import AppTimeline from "@core/components/app-timeline/AppTimeline";
-import AppTimelineItem from "@core/components/app-timeline/AppTimelineItem";
-import BCardActions from "@core/components/b-card-actions/BCardActions";
+import GenericModal from "@/views/app/Generic/modal.vue";
+import SubTicketCard from "@/views/app/CustomComponents/WP6/SubTicketCard.vue";
+import AppTimeline from "@core/components/app-timeline/AppTimeline.vue";
+import AppTimelineItem from "@core/components/app-timeline/AppTimelineItem.vue";
+import BCardActions from "@core/components/b-card-actions/BCardActions.vue";
 import TicketMixin from "@/views/app/Kanban/TicketMixin";
 import { getDocumentLink, getStampedDocumentLink } from "@/libs/utils";
 import moment from 'moment'
-import AssignUserModal from "@/views/app/Kanban/AssignUserModal";
-import Notes from "@/views/app/Generic/Notes";
+import AssignUserModal from "@/views/app/Kanban/AssignUserModal.vue";
+import Notes from "@/views/app/Generic/Notes.vue";
 import _ from 'lodash'
-import EmailModal from "@/views/app/Page/EmailModal";
+import EmailModal from "@/views/app/Ticket/EmailModal.vue";
+import AddDocumentToContract from "@/views/app/Ticket/AddDocumentToContract.vue";
 
 export default {
   name: 'TicketDetail',
   components: {
+    AddDocumentToContract,
     EmailModal,
     Notes,
     AssignUserModal,
@@ -278,6 +306,7 @@ export default {
       loading: false,
       emails: [],
       loadingEmail: false,
+      contractDocument: {}
     }
   },
   computed: {
@@ -304,6 +333,24 @@ export default {
     }
   },
   methods: {
+    async addToPos(document) {
+      if (document.loading) return
+      document.loading = true
+      try {
+        await this.$api({
+          action: 'create',
+          entity: 'document_pos_rel',
+          data: [{ document_id: document.document_id, pos_id: this.entity.pos_id }],
+        })
+        document.pos_id = this.entity.pos_id
+      } finally {
+        document.loading = false
+      }
+    },
+    addToContract(document) {
+      this.contractDocument.document_id = document.document_id
+      this.$refs.documentContractModal.openModal(document, this.entity.contract_id)
+    },
     canStamp(document) {
       if (!this.entity || !this.entity.columns) return false
       if (document.document_mime_type !== 'application/pdf') return false
@@ -379,8 +426,11 @@ export default {
       })
       await this.fetchDocuments()
     },
-    async onTicketUpdate(ticket) {
+    async onTicketUpdate() {
       await this.loadSingleTicket()
+    },
+    onDocumentUpdate() {
+      this.fetchDocuments()
     },
     async fetchSubTickets() {
       // load subtickets
@@ -392,25 +442,16 @@ export default {
       })).data.data.data
     },
     async fetchDocuments() {
-      const results = (await this.$api({
-        entity: 'document_ticket_rel',
+      const documents = (await this.$api({
+        entity: 'frontend_document_list',
         action: 'read-rich',
         per_page: 100000,
         data: [{ ticket_id: this.entity.ticket_id }],
       })).data.data.data
-      if (!results.length) return
-      this.documents = (await this.$api({
-        entity: 'frontend_document_list',
-        action: 'read-rich',
-        per_page: 1000,
-        data: results.map(r => ({ document_id: r.document_id })),
-      })).data.data.data
-      // this.documents = (await this.$api({
-      //   entity: 'ticket_document_grp',
-      //   action: 'read-rich',
-      //   per_page: 100000,
-      //   data: [{ ticket_id: this.entity.ticket_id }],
-      // })).data.data.data
+      documents.forEach(document => {
+        document.loading = false
+      })
+      this.documents = documents
     },
     async fetchEmail() {
       this.loadingEmail = true

@@ -218,7 +218,7 @@ export default {
     },
     subFormFields() {
       const excluded = (typeof this.field.without === 'string') ? [this.field.without] : (Array.isArray(this.field.without) ? this.field.without : [])
-      return this.subDefinition.fields.filter(f => !f.hideOnForm && !f.auto && excluded.indexOf(f.key) === -1)
+      return this.subDefinition.fields.filter(f => !f.hideOnForm && (this.create || !f.hideOnUpdate) && (!this.create || !f.hideOnCreate) && !f.auto && excluded.indexOf(f.key) === -1)
     },
     subTableDefinition() {
       return this.$store.getters['table/tableDefinition'](this.field.list)
@@ -246,7 +246,7 @@ export default {
     },
   },
   async created() {
-    if (this.field.type === 'list' && (!this.field.filter_key || this.field.noFetchOnChange) && !this.field.onlyForm) {
+    if (this.field.type === 'list' && ((!this.field.filter_key || !!this.entity[this.field.filter_key]) || this.field.noFetchOnChange) && !this.field.onlyForm) {
       await this.fetchList()
     } else if (this.field.type === 'boolean') {
       // set false as default value

@@ -2445,7 +2445,6 @@ export default {
           {
             key: 'document_id',
             composite: true,
-            disableOnUpdate: true,
             type: 'list',
             list: 'document',
             onlyForm: true,
@@ -3767,8 +3766,8 @@ export default {
   // endregion
   // region Work Package 6
   ticket: {
-    customIndex: () => import('@/views/app/Page/TicketList'),
-    customPage: () => import('@/views/app/Page/TicketDetail.vue'),
+    customIndex: () => import('@/views/app/Ticket/TicketList.vue'),
+    customPage: () => import('@/views/app/Ticket/TicketDetail.vue'),
     fieldComponent: () => import('@/views/app/CreateComponent/TicketForm.vue'),
     create: false,
     entity: 'frontend_6_1_6_overview',
@@ -3958,7 +3957,7 @@ export default {
   document: {
     entity: 'frontend_document_list',
     fields: [
-      { key: 'document_id', hideOnForm: true },
+      { key: 'document_id', hideOnForm: true, auto: true },
       { key: 'document_name', hideOnForm: true },
       { key: 'document_mime_type', hideOnForm: true },
       { key: 'documenttype_name', hideOnForm: true },
@@ -3966,7 +3965,7 @@ export default {
         key: 'documenttype_id', type: 'list', list: 'documenttype', listLabel: 'documenttype_name', hideOnIndex: true,
       },
       {
-        key: 'files', hideOnIndex: true, type: 'file', rules: { size: 10000 },
+        key: 'files', hideOnIndex: true, type: 'file', rules: { size: 10000 }, hideOnUpdate: true,
       },
       {
         key: 'download',

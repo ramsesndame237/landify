@@ -470,6 +470,6 @@ export default {
     this.entityLoaded = true
     this.$emit('loaded')
     console.log('mounted', this.entity)
-    if (!this.definition.fetch) await this.fillRelations(this.entity, this.originalEntity, this.formFields, this.table, this.primaryKey)
+    if (!this.definition.fetch && this.fetchData) await this.fillRelations(this.entity, this.originalEntity, this.formFields, this.table, this.primaryKey)
   },
 }
