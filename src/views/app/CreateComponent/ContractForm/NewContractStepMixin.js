@@ -3,17 +3,16 @@ export default {
 
   methods: {
 
-    async emitSubmit() {
+    async add() {
       this.loading = true
-      const data = {}
-      this.fields.forEach(elt => {
-        if (Object.hasOwnProperty.call(this.entity, elt.key)) {
-          data[elt.key] = this.entity[elt.key]
-        }
-      })
-      this[this.entityName].push(data)
-      this.$refs.datatable.reload()
-      this.$refs.fields.forEach(f => f.reset())
+      this.$refs.form.submit()
+      .then(entity=>{
+          this[this.idsName].push(entity.area_id)
+          this.$refs.datatable.reload()
+          this.$refs.form.reset()
+        })
+        .catch(error => console.error('error when save contract area', error))
+        .finaly(()=> this.loading = false)
       this.loading = false
     },
 

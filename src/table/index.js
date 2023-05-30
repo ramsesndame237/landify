@@ -2238,23 +2238,23 @@ export default {
         hideOnIndex: true,
         hideOnUpdate: true,
       },
-      {
-        key: 'pos_id',
-        type: 'list',
-        list: 'frontend_2_1_3_8',
-        listLabel: 'pos_name',
-        filter_key: 'company_id',
-        send: false,
-        hideOnIndex: true,
-        hideOnUpdate: true,
-      },
+      // {
+      //   key: 'pos_id',
+      //   type: 'list',
+      //   list: 'frontend_2_1_3_8',
+      //   listLabel: 'pos_name',
+      //   filter_key: 'company_id',
+      //   send: false,
+      //   hideOnIndex: true,
+      //   hideOnUpdate: true,
+      // },
       {
         key: 'location_id',
         type: 'list',
         list: 'frontend_3_1_3_7',
         listLabel: 'location_name',
         relationEntity: 'contract_location_rel',
-        filter_key: 'pos_id',
+        // filter_key: 'pos_id',
         hideOnIndex: true,
         hideOnUpdate: true,
       },
@@ -2278,6 +2278,8 @@ export default {
       { key: 'pos_name', hideOnForm: true },
       { key: 'contract_begin_date', type: 'date' },
       { key: 'contract_end_date', type: 'date', hideOnIndex: true },
+      { key: 'contract_first_possible_end_date', type: 'date', hideOnIndex: true },
+      { key: 'contract_last_change_time', type: 'date', hideOnIndex: true},
       { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
       { key: 'contract_sum_allarea_allocationspace', hideOnForm: true },
       { key: 'currency_name', hideOnCreate: true, disabled: true },
@@ -2298,8 +2300,18 @@ export default {
         hideOnIndex: true,
         hideOnUpdate: true,
       },
+      {
+        key: "contract_migration_checked",
+        type: "boolean",
+        hideOnIndex: true,
+        hideOnUpdate: true,
+        hideOnForm: true,
+      }
 
     ],
+    default: {
+      contract_migration_checked: 0
+    },
     relations: [
 
       // {

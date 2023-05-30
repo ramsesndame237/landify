@@ -1,16 +1,16 @@
 <template>
   <b-row>
     <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
-      {{ $t('headline~new_contract~title~serviceobject')}}
+      {{ $t('headline~new_contract~title~cost_types') }}
     </b-col>
 
     <!-- form -->
     <b-col cols="12" md="6" class="p-0">
       <entity-form
         ref="form"
-        table="frontend_3_4_3_7"
+        table="frontend_3_4_3_5"
         :definition="definition"
-        table-definition-key="serviceobject_contract_rel"
+        table-definition-key="contract_costtype_rel"
         is-relation
         :disabled="disabled"
         create
@@ -31,8 +31,8 @@
       <data-tables
         ref="datatable"
         :current-page="1" :per-page="100" :with-edit="false" :with-view="false"
-        entity="serviceobject_contract_rel" :entity-list="definition.entity" :fields="fields" :selectable="false"
-        :ids="serviceObjectIds"
+        entity="contract_costtype_rel" :entity-list="definition.entity" :fields="fields" :selectable="false"
+        :ids="costTypesIds"
       />
     </b-col>
   </b-row>
@@ -51,7 +51,7 @@ import DataTables from '@/layouts/components/DataTables'
 import NewContractStepMixin from "./NewContractStepMixin"
 
 export default {
-  name: 'Step4',
+  name: 'Step5',
   components: {
     BForm, BRow, BCol, BButton,
     ValidationObserver, EntityForm, Field,
@@ -59,7 +59,7 @@ export default {
   },
   props: ['disabled', 'context'],
   data() {
-    const definition = {...Table.contract}.relations.find(rel => rel.entity === 'frontend_3_4_3_7')
+    const definition = {...Table.contract}.relations.find(rel => rel.entity === 'frontend_3_4_3_5')
     definition.submit = (vm) => {
       const data = {
         //contract_id: this.context.contract_main_infos.id,
@@ -68,7 +68,7 @@ export default {
           {...vm.entity}
         ]
       }
-      return vm.$http.post('/contracts/step/3', data)
+      return vm.$http.post('/contracts/step/4', data)
     }
     const fields = []
     definition.fields.forEach(elt => {
@@ -77,9 +77,9 @@ export default {
     return {
       definition,
       fields,
-      serviceObjectIds: this.context.serviceObjectIds || [],
+      costTypesIds: this.context.costTypesIds || [],
       loading: false,
-      idsName: 'serviceObjectIds'
+      idsName: 'costTypesIds'
     }
   },
 

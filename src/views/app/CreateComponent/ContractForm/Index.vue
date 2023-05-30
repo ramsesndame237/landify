@@ -43,6 +43,7 @@
           <step2 v-if="current_step===2" ref="step2" :context="context" :disabled="loading"/>
           <step3 v-if="current_step===3" ref="step3" :context="context" :disabled="loading"/>
           <step4 v-if="current_step===4" ref="step4" :context="context" :disabled="loading"/>
+          <step5 v-if="current_step===5" ref="step5" :context="context" :disabled="loading"/>
 
           <div class="d-flex align-items-center justify-content-between">
             <div>
@@ -82,13 +83,16 @@ import Step1 from '@/views/app/CreateComponent/ContractForm/Step1.vue'
 import Step2 from '@/views/app/CreateComponent/ContractForm/Step2.vue'
 import Step3 from '@/views/app/CreateComponent/ContractForm/Step3.vue'
 import Step4 from '@/views/app/CreateComponent/ContractForm/Step4.vue'
+import Step5 from '@/views/app/CreateComponent/ContractForm/Step5.vue'
 
 export default {
+  name: "contractForm",
   components: {
     Step1,
     Step2,
     Step3,
     Step4,
+    Step5,
     Field,
     BCard,
     BSpinner,
@@ -101,7 +105,7 @@ export default {
     return {
       table: "contract",
       current_step: 1,
-      max_steps: 4,
+      max_steps: 7,
       completed_step: 0,
       steps_progress: 0,
       steps_tabs: [
@@ -111,7 +115,7 @@ export default {
           step: 1,
         },
         {
-          text: this.$t('headline~new_contract~progress~deadline'),
+          text: this.$t('headline~new_contract~progress~areaunitusage'),
           completed: false,
           step: 2,
         },
@@ -125,6 +129,21 @@ export default {
           completed: false,
           step: 4,
         },
+        {
+          text: this.$t('headline~new_contract~progress~costtypes'),
+          completed: false,
+          step: 5,
+        },
+        // {
+        //   text: this.$t('headline~new_contract~progress~costtypes'),
+        //   completed: false,
+        //   step: 6,
+        // },
+        // {
+        //   text: this.$t('headline~new_contract~progress~costtypes'),
+        //   completed: false,
+        //   step: 7,
+        // },
       ],
       context: {},
       loading: false,
@@ -149,12 +168,19 @@ export default {
       try {
         if (this.current_step === 1) {
           this.context.contract_main_infos = await this.$refs.step1.validate()
+          console.log('step 1 passed ', this.context);
         } else if (this.current_step === 2) {
-          this.context.specialrights = this.$refs.step2.specialrights
+          this.context.areaUnitUsageIds = this.$refs.step2.areaUnitUsageIds
+          console.log('step 2 passed ', this.context);
         } else if (this.current_step === 3) {
-          this.context.recurringPayment = this.$refs.step3.recurringPayment
+          this.context.recurringPaymentIds = this.$refs.step3.recurringPaymentIds
+          console.log('step 3 passed ', this.context);
         } else if (this.current_step === 4) {
-          this.context.serviceObject = this.$refs.step4.serviceObject
+          this.context.serviceObjectIds = this.$refs.step4.serviceObjectIds
+          console.log('step 4 passed ', this.context);
+        } else if (this.current_step === 5) {
+          this.context.costTypesIds = this.$refs.step2.costTypesIds
+          console.log('step 5 passed ', this.context);
         }
       } catch (e) {
         hasError = true
