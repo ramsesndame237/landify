@@ -33,7 +33,7 @@ export const defineRules = () => {
     userData.roles.forEach(role => {
       rules.push(..._.flatten(role.tablegroups.map(tg => tg.tablename.map(tn => ({
         action: getAction(tg.crud),
-        subject: tn,
+        subject: tn.table_name,
       })))))
       rules.push(...role.tablenames.map(table => ({ action: getAction(table.crud), subject: table.table_name })))
       rules.push(...role.access.map(access => ({ action: access.access_name, subject: 'menu' })))
