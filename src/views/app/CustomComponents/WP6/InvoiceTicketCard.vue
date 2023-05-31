@@ -44,6 +44,10 @@
       <b-icon-calendar-date :class="'ml-auto '+ (columnDeadlineColor?('text-'+columnDeadlineColor):'')"/>
     </div>
     <div class="d-flex" v-if="advanced">
+      <strong class="mr-1">{{$t('attribute.priority_name')}}:</strong>
+      <span>{{ ticket.priority_name }}</span>
+    </div>
+<div class="d-flex" v-if="advanced">
       <strong class="mr-1">{{$t('attribute.ticket_planned_treatment_week')}}:</strong>
       <span>{{ ticket.ticket_planned_treatment_week }}</span>
     </div>
