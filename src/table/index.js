@@ -1,7 +1,6 @@
 import { getDocumentLink } from '@/libs/utils'
-import moment from 'moment'
 import { api } from '@/libs/axios'
-import { successToast, errorToast } from '@/libs/toastification'
+import { successToast } from '@/libs/toastification'
 import _ from 'lodash'
 
 export default {
@@ -389,8 +388,7 @@ export default {
     submit(vm) {
       const data = { ...vm.entity }
       const addressField = vm.$refs.fields.find(f => f.field.key === 'address_id')
-      const userFunctions = vm.entity.user_functions.map(elt => ({ function_id: elt }))
-      data.user_functions = userFunctions
+      data.user_functions = (vm.entity.user_functions || []).map(elt => ({ function_id: elt }))
       data.address = addressField.subEntity
       const cityField = addressField.getSubFields().find(f => f.field.key === 'city_id')
       data.address.city = cityField.subEntity
@@ -427,7 +425,7 @@ export default {
           if (data.address) {
             data.address_id = data.address.address_id
             const addressField = vm.$refs.fields.find(f => f.field.key === 'address_id')
-           console.log(addressField.getSubFields())
+            console.log(addressField.getSubFields())
             addressField.getSubFields().forEach(field => {
               addressField.subEntity[field.field.key] = data.address[field.field.key]
               if (field.field.key === 'city_id' && data.address.city) {
