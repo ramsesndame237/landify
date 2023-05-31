@@ -88,9 +88,10 @@ export default {
         },
         hideOnIndex: true,
         type: 'boolean',
+        default: 1,
         change: (entity) => {
           if (entity.usertype_id === 1) return 1
-          else return 0;
+          else return 0
         },
       },
       {
