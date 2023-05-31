@@ -99,6 +99,10 @@
                       <td class="pb-50">{{ entity.ticket_description }}</td>
                     </tr>
                     <tr>
+                      <th class="pb-50 font-weight-bold">{{ $t('attribute.priority_name') }}</th>
+                      <td class="pb-50">{{ entity.priority_name }}</td>
+                    </tr>
+                    <tr>
                       <th class="pb-50 font-weight-bold">{{ $t('attribute.column_name') }}</th>
                       <td class="pb-50">{{ entity.columns[0].column_name }}</td>
                     </tr>
