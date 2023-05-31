@@ -191,6 +191,7 @@ export default [
     title: key('ticket'),
     children: [
       item('board', 'ticketboard'),
+      item('priority'),
       {
         title: key('tickettype'),
         route: 'comming-soon',

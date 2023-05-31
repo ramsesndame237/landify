@@ -512,7 +512,13 @@ export default {
         entity: 'role_tablegroup_crud_grp',
         entityForm: 'role_tablegroup_crud_rel',
         entityView: 'tablegroup',
+        lazy: false,
         update: false,
+        create: false,
+        delete: false,
+        search: false,
+        component: () => import('@/views/app/Role/Relation/TableGroupMatrix.vue'),
+        tool: () => import('@/views/app/Role/Relation/MatrixTool.vue'),
         fields: [
           {
             key: 'tablegroup_id', type: 'list', list: 'tablegroup', listLabel: 'tablegroup_name',
@@ -532,6 +538,12 @@ export default {
         entityForm: 'role_tablename_crud_rel',
         entityView: 'tablename',
         update: false,
+        create: false,
+        delete: false,
+        search: false,
+        // lazy: false,
+        component: () => import('@/views/app/Role/Relation/TableGroupMatrix.vue'),
+        tool: () => import('@/views/app/Role/Relation/MatrixTool.vue'),
         fields: [
           {
             key: 'table_name', sortable: true, type: 'list', list: 'tablename', listLabel: 'table_name',
@@ -3150,6 +3162,7 @@ export default {
       // },
       {
         tool: () => import('@/views/app/InvoicePositionTools.vue'),
+        lazy: false,
         // title: 'Invoice Positions',
         entity: 'frontend_4_2_5',
         entityForm: 'invoice_invoiceposition_rel',
@@ -3203,8 +3216,8 @@ export default {
         },
       },
       {
-        // title: 'invoice_invoicevaluetype_rel',
         entity: 'frontend_4_2_2',
+        lazy: false,
         entityForm: 'invoice_invoicevaluetype_rel',
         primaryKey: 'invoicevaluetype_id',
         view: false,
@@ -3765,6 +3778,16 @@ export default {
   },
   // endregion
   // region Work Package 6
+  priority: {
+    defaultSortField: 'priority_order',
+    fields: [
+      { key: 'priority_id', auto: true },
+      { key: 'priority_name' },
+      { key: 'priority_order' },
+      { key: 'priority_smiley' },
+      { key: 'priority_color' },
+    ],
+  },
   ticket: {
     customIndex: () => import('@/views/app/Ticket/TicketList.vue'),
     customPage: () => import('@/views/app/Ticket/TicketDetail.vue'),
@@ -3808,6 +3831,8 @@ export default {
         hideOnForm: true,
         formatter: val => window.$vue.$t(val ? 'header~board~status~closed' : 'header~board~status~open'),
       },
+      { key: 'priority_name', hideOnForm: true },
+      { key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', hideOnIndex: true },
 
       // { key: 'column_name', hideOnForm: true },
       { key: 'ticket_creation_time', type: 'date', time: true, hideOnForm: true },
@@ -3854,6 +3879,7 @@ export default {
         filter_key: 'pos_id',
         required: false,
       },
+      { key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', required: false },
     ],
     note: 'frontend_0_8_2',
   },

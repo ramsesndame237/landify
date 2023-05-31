@@ -37,11 +37,11 @@
     </b-card>
 
     <b-card class="">
-      <component
-        @loaded="formLoaded=true"
-        :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
-        ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="create"
-        :is-relation="false" :disabled="view" :inline="false" :cols="6" :initial-data="entity" :entity-id="entityId"/>
+      <component @loaded="formLoaded=true"
+                 :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
+                 ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="create"
+                 :is-relation="false" :disabled="view" :inline="false" :cols="6" :initial-data="entity"
+                 :entity-id="entityId"/>
     </b-card>
 
     <template v-if="table==='invoice' && $refs.tabs">
@@ -52,18 +52,22 @@
       <b-tabs ref="tabs" pills>
         <b-tab v-for="(relation, index) in visibleRelations" :key="index"
                :title="$t(relation.title || ('headline~'+(relation.entityView||relation.entityForm)+'~tab'))"
-               :active="index===tabIndex"
-               :lazy="(!(table==='invoice'&&(['invoicevaluetype_id','invoiceposition_id'].indexOf(relation.primaryKey)>=0)))">
-          <data-tables :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
-                       :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
-                       :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
-                       :entity-view="relation.entityView" :with-view="relation.view!==false" :fields="relation.fields"
-                       :on-edit-element="editElement" :with-edit="relation.update!==false"
-                       :with-delete="relation.delete!==false"/>
-          <generic-modal :cache-key="relation.entity+'-'" title="Test" :table="relation.entityForm || relation.entity"
-                         :definition="relation" is-relation
-                         :table-definition-key="relation.entityForm || relation.entity" with-continue
-                         @reload-table="reloadRelatedTable"/>
+               :active="index===tabIndex" :lazy="relation.lazy!==false">
+          <template v-if="relation.component">
+            <component :is="relation.component" :relation="relation" :entity-id="entityId"/>
+          </template>
+          <template v-else>
+            <data-tables :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
+                         :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
+                         :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
+                         :entity-view="relation.entityView" :with-view="relation.view!==false" :fields="relation.fields"
+                         :on-edit-element="editElement" :with-edit="relation.update!==false"
+                         :with-delete="relation.delete!==false"/>
+            <generic-modal :cache-key="relation.entity+'-'" title="Test" :table="relation.entityForm || relation.entity"
+                           :definition="relation" is-relation
+                           :table-definition-key="relation.entityForm || relation.entity" with-continue
+                           @reload-table="reloadRelatedTable"/>
+          </template>
         </b-tab>
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
@@ -81,7 +85,8 @@
               <feather-icon icon="FilterIcon"/>
             </b-button>
 
-            <b-form-input id="filterInput" v-model="search" debounce="500" type="search" placeholder="Search..."/>
+            <b-form-input v-if="currentHasSearch()" id="filterInput" v-model="search" debounce="500" type="search"
+                          placeholder="Search..."/>
           </div>
         </template>
       </b-tabs>
@@ -190,6 +195,10 @@ export default {
     currentHasDelete() {
       if (!this.$refs.tabs) return false
       return this.visibleRelations[this.$refs.tabs.currentTab]?.delete !== false
+    },
+    currentHasSearch() {
+      if (!this.$refs.tabs) return false
+      return this.visibleRelations[this.$refs.tabs.currentTab]?.search !== false
     },
     deleteSelected() {
       const { tabs } = this.$refs
