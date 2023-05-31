@@ -86,7 +86,7 @@ export default {
             const { subDefinition } = component
             this.getFormFields(subDefinition)
               .forEach(f => {
-                if (this.initialData[f.key]!==null) {
+                if (this.initialData[f.key] !== null) {
                   this.$set(component.subEntity, f.key, this.initialData[f.key])
                   this.$set(component.subOriginalEntity, f.key, this.initialData[f.key])
                 }
@@ -247,7 +247,16 @@ export default {
             }
             return this.$http.post('/document/uploadfiles', formData, { headers: { 'content-type': 'form-data' } })
               .then(({ data }) => {
-                console.log(data)
+                if (data.data.length > 0) {
+                  this.$api({
+                    action: 'create',
+                    entity: 'document_documenttype_rel',
+                    data: data.data.map(row => ({
+                      documenttype_id: entity.documenttype_id,
+                      document_id: row.document_id,
+                    })),
+                  })
+                }
                 return data
               })
           }
@@ -443,7 +452,7 @@ export default {
       try {
         entity = await (this.definition.fetch ? this.definition.fetch(this) :
           entity = this.$store.dispatch('table/fetchSingleItem', {
-            entity: this.table,
+            entity: this.definition.fetchWithEntity ? this.definition.entity : this.table,
             primaryKey: this.primaryKey,
             id: this.entityId || this.initialData[this.primaryKey],
           }))
@@ -461,6 +470,6 @@ export default {
     this.entityLoaded = true
     this.$emit('loaded')
     console.log('mounted', this.entity)
-    if (!this.definition.fetch) await this.fillRelations(this.entity, this.originalEntity, this.formFields, this.table, this.primaryKey)
+    if (!this.definition.fetch && this.fetchData) await this.fillRelations(this.entity, this.originalEntity, this.formFields, this.table, this.primaryKey)
   },
 }

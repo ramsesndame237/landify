@@ -1,7 +1,6 @@
 import { getDocumentLink } from '@/libs/utils'
-import moment from 'moment'
 import { api } from '@/libs/axios'
-import { successToast, errorToast } from '@/libs/toastification'
+import { successToast } from '@/libs/toastification'
 import _ from 'lodash'
 
 export default {
@@ -84,7 +83,9 @@ export default {
       },
       {
         key: 'partnergroup_is_internal',
-        visible: () => { return false },
+        visible: () => {
+          return false
+        },
         hideOnIndex: true,
         type: 'boolean',
         change: (entity) => {
@@ -387,8 +388,7 @@ export default {
     submit(vm) {
       const data = { ...vm.entity }
       const addressField = vm.$refs.fields.find(f => f.field.key === 'address_id')
-      const userFunctions = vm.entity.user_functions.map(elt => ({ function_id: elt }))
-      data.user_functions = userFunctions
+      data.user_functions = (vm.entity.user_functions || []).map(elt => ({ function_id: elt }))
       data.address = addressField.subEntity
       const cityField = addressField.getSubFields().find(f => f.field.key === 'city_id')
       data.address.city = cityField.subEntity
@@ -425,6 +425,7 @@ export default {
           if (data.address) {
             data.address_id = data.address.address_id
             const addressField = vm.$refs.fields.find(f => f.field.key === 'address_id')
+            console.log(addressField.getSubFields())
             addressField.getSubFields().forEach(field => {
               addressField.subEntity[field.field.key] = data.address[field.field.key]
               if (field.field.key === 'city_id' && data.address.city) {
@@ -510,7 +511,13 @@ export default {
         entity: 'role_tablegroup_crud_grp',
         entityForm: 'role_tablegroup_crud_rel',
         entityView: 'tablegroup',
+        lazy: false,
         update: false,
+        create: false,
+        delete: false,
+        search: false,
+        component: () => import('@/views/app/Role/Relation/TableGroupMatrix.vue'),
+        tool: () => import('@/views/app/Role/Relation/MatrixTool.vue'),
         fields: [
           {
             key: 'tablegroup_id', type: 'list', list: 'tablegroup', listLabel: 'tablegroup_name',
@@ -530,6 +537,12 @@ export default {
         entityForm: 'role_tablename_crud_rel',
         entityView: 'tablename',
         update: false,
+        create: false,
+        delete: false,
+        search: false,
+        // lazy: false,
+        component: () => import('@/views/app/Role/Relation/TableGroupMatrix.vue'),
+        tool: () => import('@/views/app/Role/Relation/MatrixTool.vue'),
         fields: [
           {
             key: 'table_name', sortable: true, type: 'list', list: 'tablename', listLabel: 'table_name',
@@ -2215,6 +2228,7 @@ export default {
   },
   contract: {
     entity: 'frontend_3_4_1_1',
+    fetchWithEntity: true,
     createModal: false,
     createComponent: () => import('@/views/app/CreateComponent/ContractForm/Index.vue'),
     fields: [
@@ -2442,15 +2456,16 @@ export default {
           {
             key: 'document_id',
             composite: true,
-            disableOnUpdate: true,
             type: 'list',
             list: 'document',
             onlyForm: true,
             alwaysNew: true,
+            defaultEntity: { documenttype_id: 1 },
+            disabled: ['documenttype_id'],
           },
           { key: 'document_name', hideOnForm: true },
-          { key: 'documenttype_name', hideOnForm: true },
-          { key: 'document_mime_type', hideOnForm: true },
+          // { key: 'documenttype_name', hideOnForm: true },
+          // { key: 'document_mime_type', hideOnForm: true },
           { key: 'documentcontracttype_name', hideOnForm: true },
           {
             key: 'documentcontracttype_id',
@@ -3146,6 +3161,7 @@ export default {
       // },
       {
         tool: () => import('@/views/app/InvoicePositionTools.vue'),
+        lazy: false,
         // title: 'Invoice Positions',
         entity: 'frontend_4_2_5',
         entityForm: 'invoice_invoiceposition_rel',
@@ -3199,8 +3215,8 @@ export default {
         },
       },
       {
-        // title: 'invoice_invoicevaluetype_rel',
         entity: 'frontend_4_2_2',
+        lazy: false,
         entityForm: 'invoice_invoicevaluetype_rel',
         primaryKey: 'invoicevaluetype_id',
         view: false,
@@ -3761,9 +3777,19 @@ export default {
   },
   // endregion
   // region Work Package 6
+  priority: {
+    defaultSortField: 'priority_order',
+    fields: [
+      { key: 'priority_id', auto: true },
+      { key: 'priority_name' },
+      { key: 'priority_order' },
+      { key: 'priority_smiley' },
+      { key: 'priority_color' },
+    ],
+  },
   ticket: {
-    customIndex: () => import('@/views/app/Page/TicketList'),
-    customPage: () => import('@/views/app/Page/TicketDetail.vue'),
+    customIndex: () => import('@/views/app/Ticket/TicketList.vue'),
+    customPage: () => import('@/views/app/Ticket/TicketDetail.vue'),
     fieldComponent: () => import('@/views/app/CreateComponent/TicketForm.vue'),
     create: false,
     entity: 'frontend_6_1_6_overview',
@@ -3804,6 +3830,8 @@ export default {
         hideOnForm: true,
         formatter: val => window.$vue.$t(val ? 'header~board~status~closed' : 'header~board~status~open'),
       },
+      { key: 'priority_name', hideOnForm: true },
+      { key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', hideOnIndex: true },
 
       // { key: 'column_name', hideOnForm: true },
       { key: 'ticket_creation_time', type: 'date', time: true, hideOnForm: true },
@@ -3850,6 +3878,7 @@ export default {
         filter_key: 'pos_id',
         required: false,
       },
+      { key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', required: false },
     ],
     note: 'frontend_0_8_2',
   },
@@ -3953,7 +3982,7 @@ export default {
   document: {
     entity: 'frontend_document_list',
     fields: [
-      { key: 'document_id', hideOnForm: true },
+      { key: 'document_id', hideOnForm: true, auto: true },
       { key: 'document_name', hideOnForm: true },
       { key: 'document_mime_type', hideOnForm: true },
       { key: 'documenttype_name', hideOnForm: true },
@@ -3961,7 +3990,7 @@ export default {
         key: 'documenttype_id', type: 'list', list: 'documenttype', listLabel: 'documenttype_name', hideOnIndex: true,
       },
       {
-        key: 'files', hideOnIndex: true, type: 'file', rules: { size: 10000 },
+        key: 'files', hideOnIndex: true, type: 'file', rules: { size: 10000 }, hideOnUpdate: true,
       },
       {
         key: 'download',

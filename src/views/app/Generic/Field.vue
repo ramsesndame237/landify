@@ -98,7 +98,7 @@
                        :form-fields="subFormFields" :disabled="disabled"/>
             <b-row v-else>
               <b-col v-for="(field,index) in subFormFields" :key="index" cols="12">
-                <field ref="fields" :disabled="disabled" :inline="inline" :entity="subEntity"
+                <field ref="fields" :disabled="subFieldDisabled(field)" :inline="inline" :entity="subEntity"
                        :table-definition="subTableDefinition" :field="field"/>
               </b-col>
             </b-row>
@@ -132,14 +132,25 @@ export default {
   name: 'Field',
   components: {
     ckeditor: CKEditor.component,
-    BFormInput, BFormFile, BFormGroup, BImg, BFormTextarea, vSelect, flatPickr, BButton, BRow, BCol, BFormCheckbox, BSpinner,
+    BFormInput,
+    BFormFile,
+    BFormGroup,
+    BImg,
+    BFormTextarea,
+    vSelect,
+    flatPickr,
+    BButton,
+    BRow,
+    BCol,
+    BFormCheckbox,
+    BSpinner,
   },
   mixins: [togglePasswordVisibility],
   props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition', 'noLabel', 'create'],
   data() {
     return {
       list: this.$store.state.table.listCache[this.field.list] || [],
-      subEntity: { [this.field.key]: this.entity[this.field.key] },
+      subEntity: { [this.field.key]: this.entity[this.field.key], ...this.field.defaultEntity },
       subOriginalEntity: {},
       newValue: 'Create New Element',
       loading: false,
@@ -207,7 +218,7 @@ export default {
     },
     subFormFields() {
       const excluded = (typeof this.field.without === 'string') ? [this.field.without] : (Array.isArray(this.field.without) ? this.field.without : [])
-      return this.subDefinition.fields.filter(f => !f.hideOnForm && !f.auto && excluded.indexOf(f.key) === -1)
+      return this.subDefinition.fields.filter(f => !f.hideOnForm && (this.create || !f.hideOnUpdate) && (!this.create || !f.hideOnCreate) && !f.auto && excluded.indexOf(f.key) === -1)
     },
     subTableDefinition() {
       return this.$store.getters['table/tableDefinition'](this.field.list)
@@ -235,7 +246,7 @@ export default {
     },
   },
   async created() {
-    if (this.field.type === 'list' && (!this.field.filter_key || this.field.noFetchOnChange) && !this.field.onlyForm) {
+    if (this.field.type === 'list' && ((!this.field.filter_key || !!this.entity[this.field.filter_key]) || this.field.noFetchOnChange) && !this.field.onlyForm) {
       await this.fetchList()
     } else if (this.field.type === 'boolean') {
       // set false as default value
@@ -255,7 +266,7 @@ export default {
       if (change) this.$set(this.entity, this.field.key, change)
       this.$watch('entity', () => {
         const change2 = this.field.change(this.entity, this)
-        if (typeof(change2) !== 'undefined') this.$set(this.entity, this.field.key, change2)
+        if (typeof (change2) !== 'undefined') this.$set(this.entity, this.field.key, change2)
       }, { deep: true })
     }
     if (typeof this.field.value === 'function') {
@@ -276,6 +287,12 @@ export default {
     }
   },
   methods: {
+    subFieldDisabled(field) {
+      if (this.field.disabled && this.field.disabled.includes(field.name)) {
+        return true
+      }
+      return this.disabled
+    },
     getFileThumbnail(fileType) {
       if (fileType === 'application/pdf') {
         return require('@/assets/images/icons/file-icons/pdf2.png')
@@ -329,11 +346,11 @@ export default {
     async getRandomPassword(fieldKey) {
       this.waitPassword = true
       await this.$http.get('/users/generate/password')
-        .then((resp)=>{
+        .then((resp) => {
           this.randomPassword = resp.data.password
           this.waitPassword = false
         })
-        .catch(e=> {
+        .catch(e => {
           this.$errorToast("Error")
           this.waitPassword = false
         })
@@ -411,16 +428,15 @@ export default {
       }
       return this.$refs.fields || this.$children[0].$children.filter(c => c.$options.name === 'Field')
     },
-    getAllFields(fieldComponent, accumulator){
+    getAllFields(fieldComponent, accumulator) {
       // fieldComponent is an array
-      if (fieldComponent.length && fieldComponent.length > 1){
-        fieldComponent.forEach(elt=>{
-          if (elt.$options.name === 'Field' ) {
+      if (fieldComponent.length && fieldComponent.length > 1) {
+        fieldComponent.forEach(elt => {
+          if (elt.$options.name === 'Field') {
             console.log("yes i did it", elt);
             accumulator.push(elt)
             console.log("new accumulator values", accumulator);
-          }
-          else {
+          } else {
             console.log("noooo i can't ", elt.$options.name, elt);
             return this.getAllFields(elt.$children, accumulator)
           }
@@ -428,10 +444,10 @@ export default {
         return accumulator;
       } // fieldComponent is a VueComponent
       else {
-        if (elt.$options.name === 'Field' ) {
+        if (elt.$options.name === 'Field') {
           accumulator.push(fieldComponent)
           return accumulator;
-        }else{
+        } else {
           return accumulator;
         }
       }
