@@ -833,7 +833,29 @@ export default {
         type: 'boolean',
         hideOnUpdate: true,
         hideOnIndex: true,
+        change: (entity, vm) => {
+          let create_contactperson;
+          console.log("entity", entity);
+          if (entity.create_contactperson === 1){
+            const companyAddressField = vm.$parent.$children[3]
+            const companyCityField = companyAddressField.getSubFields()[3]
 
+
+            const contactPersonAddressField = vm.$parent.$children[7].$children[0].$children[7]
+            const contactPersonCityField = contactPersonAddressField.getSubFields()[3]
+
+
+            for (const key in companyAddressField.subEntity) {
+              contactPersonAddressField.$set(contactPersonAddressField.subEntity, key, companyAddressField.subEntity[key])
+            }
+
+            for (const key in companyCityField.subEntity) {
+              contactPersonCityField.$set(contactPersonCityField.subEntity, key, companyCityField.subEntity[key])
+            }
+
+
+          }
+        },
       },
       {
         key: 'contactperson_id',
@@ -844,7 +866,7 @@ export default {
         alwaysNew: true,
         hideOnIndex: true,
         onlyForm: true,
-        visible: (entity) => entity.create_contactperson === 1
+        visible: (entity) => entity.create_contactperson === 1,
       },
 
       { key: 'city_name', sortable: true, hideOnForm: true },

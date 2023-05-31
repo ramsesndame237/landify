@@ -416,12 +416,9 @@ export default {
       if (fieldComponent.length && fieldComponent.length > 1){
         fieldComponent.forEach(elt=>{
           if (elt.$options.name === 'Field' ) {
-            console.log("yes i did it", elt);
             accumulator.push(elt)
-            console.log("new accumulator values", accumulator);
           }
           else {
-            console.log("noooo i can't ", elt.$options.name, elt);
             return this.getAllFields(elt.$children, accumulator)
           }
         })
