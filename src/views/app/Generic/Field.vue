@@ -79,6 +79,13 @@
                           @click="doCopy"/>
           </div>
         </div>
+        <div v-else-if="field.type === 'color'">
+          <b-form-input v-model="entity[field.key]" :disabled="disabled" type="color"
+            class="form-control-merge" :state="errors.length > 0 ? false:null" :name="field.key"
+          />
+        </div>
+        <!-- <template v-else-if="field.type === 'smiley'" >
+        </template> -->
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
                     class="form-control"/>
