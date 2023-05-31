@@ -123,6 +123,7 @@ export default {
               'ticket_planned_treatment_week',
               'ticket_closed',
               'ticket_progress',
+              'priority_id', 'priority_name', 'priority_color', 'priority_smiley',
               'invoice_id', 'invoice_number',
               'contract_name', 'contract_id', 'company_name', 'company_id', 'pos_id', 'pos_name', 'customergroup_id', 'customergroup_name',
             ])

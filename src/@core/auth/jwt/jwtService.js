@@ -29,10 +29,10 @@ export default class JwtService {
         // Get token from localStorage
         const accessToken = this.getToken()
 
-        // If token is present add it to request's Authorization Header
+        // If token is present add it to request's Role Header
         if (accessToken) {
           // eslint-disable-next-line no-param-reassign
-          // config.headers.Authorization = `${this.jwtConfig.tokenType} ${accessToken}`
+          // config.headers.Role = `${this.jwtConfig.tokenType} ${accessToken}`
           config.headers.Authorization = `${accessToken}`
         }
         config.headers['Accept-Language'] = store.state.app.lang
@@ -87,7 +87,7 @@ export default class JwtService {
               }
               // Make sure to assign accessToken according to your response.
               // Check: https://pixinvent.ticksy.com/ticket/2413870
-              // Change Authorization header
+              // Change Role header
               originalRequest.headers.Authorization = `${accessToken}`
               resolve(this.axiosIns(originalRequest))
             })
