@@ -176,22 +176,28 @@ export default {
           this.context.contract_main_infos = await this.$refs.step1.validate()
           console.log('step 1 passed ', this.context);
         } else if (this.current_step === 2) {
-          this.context.areaUnitUsageIds = this.$refs.step2.areaUnitUsageIds
+          await this.$refs.step2.submit()
+          this.context.areaUnitUsage = this.$refs.step2.areaUnitUsage
           console.log('step 2 passed ', this.context);
         } else if (this.current_step === 3) {
-          this.context.recurringPaymentIds = this.$refs.step3.recurringPaymentIds
+          await this.$refs.step3.submit()
+          this.context.recurringPayment = this.$refs.step3.recurringPayment
           console.log('step 3 passed ', this.context);
         } else if (this.current_step === 4) {
-          this.context.serviceObjectIds = this.$refs.step4.serviceObjectIds
+          await this.$refs.step4.submit()
+          this.context.serviceObject = this.$refs.step4.serviceObject
           console.log('step 4 passed ', this.context);
         } else if (this.current_step === 5) {
-          this.context.costTypesIds = this.$refs.step5.costTypesIds
+          await this.$refs.step5.submit()
+          this.context.costTypes = this.$refs.step5.costTypes
           console.log('step 5 passed ', this.context);
         } else if (this.current_step === 6) {
-          this.context.costTypesIds = this.$refs.step6.specialRigthsIds
+          await this.$refs.step6.submit()
+          this.context.specialRigths = this.$refs.step6.specialRigths
           console.log('step 6 passed ', this.context);
         } else if (this.current_step === 7) {
-          this.context.costTypesIds = this.$refs.step6.criteriaIds
+          await this.$refs.step7.submit()
+          this.context.criteria = this.$refs.step6.criteria
           console.log('step 7 passed ', this.context);
         }
       } catch (e) {

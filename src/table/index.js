@@ -4088,6 +4088,7 @@ function getContractCriteriaFields() {
     },
     { key: 'contract_criteria_valid_to_date', type: 'date' },
     { key: 'contract_criteria_exists', type: 'boolean' },
+    { key: 'contract_criteria_is_obsolete', type: 'boolean' },
     { key: 'criteriatype_name', hideOnForm: true },
     { key: 'contract_criteria_comment', type: 'textarea', required: false },
     { key: 'contract_criteria_value', type: 'number' },
