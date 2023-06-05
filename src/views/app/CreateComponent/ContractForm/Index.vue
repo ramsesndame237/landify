@@ -44,6 +44,8 @@
           <step3 v-if="current_step===3" ref="step3" :context="context" :disabled="loading"/>
           <step4 v-if="current_step===4" ref="step4" :context="context" :disabled="loading"/>
           <step5 v-if="current_step===5" ref="step5" :context="context" :disabled="loading"/>
+          <step6 v-if="current_step===6" ref="step5" :context="context" :disabled="loading"/>
+          <step7 v-if="current_step===7" ref="step5" :context="context" :disabled="loading"/>
 
           <div class="d-flex align-items-center justify-content-between">
             <div>
@@ -84,6 +86,8 @@ import Step2 from '@/views/app/CreateComponent/ContractForm/Step2.vue'
 import Step3 from '@/views/app/CreateComponent/ContractForm/Step3.vue'
 import Step4 from '@/views/app/CreateComponent/ContractForm/Step4.vue'
 import Step5 from '@/views/app/CreateComponent/ContractForm/Step5.vue'
+import Step6 from '@/views/app/CreateComponent/ContractForm/Step6.vue'
+import Step7 from '@/views/app/CreateComponent/ContractForm/Step7.vue'
 
 export default {
   name: "contractForm",
@@ -93,6 +97,8 @@ export default {
     Step3,
     Step4,
     Step5,
+    Step6,
+    Step7,
     Field,
     BCard,
     BSpinner,
@@ -134,16 +140,16 @@ export default {
           completed: false,
           step: 5,
         },
-        // {
-        //   text: this.$t('headline~new_contract~progress~costtypes'),
-        //   completed: false,
-        //   step: 6,
-        // },
-        // {
-        //   text: this.$t('headline~new_contract~progress~costtypes'),
-        //   completed: false,
-        //   step: 7,
-        // },
+        {
+          text: this.$t('headline~new_contract~progress~specialrights'),
+          completed: false,
+          step: 6,
+        },
+        {
+          text: this.$t('headline~new_contract~progress~criteria'),
+          completed: false,
+          step: 7,
+        },
       ],
       context: {},
       loading: false,
@@ -179,8 +185,14 @@ export default {
           this.context.serviceObjectIds = this.$refs.step4.serviceObjectIds
           console.log('step 4 passed ', this.context);
         } else if (this.current_step === 5) {
-          this.context.costTypesIds = this.$refs.step2.costTypesIds
+          this.context.costTypesIds = this.$refs.step5.costTypesIds
           console.log('step 5 passed ', this.context);
+        } else if (this.current_step === 6) {
+          this.context.costTypesIds = this.$refs.step6.specialRigthsIds
+          console.log('step 6 passed ', this.context);
+        } else if (this.current_step === 7) {
+          this.context.costTypesIds = this.$refs.step6.criteriaIds
+          console.log('step 7 passed ', this.context);
         }
       } catch (e) {
         hasError = true
