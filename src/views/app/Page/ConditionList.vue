@@ -131,7 +131,9 @@ export default {
           { key: 'total_rental_space' },
           'owner_name',
           'manager_name',
-          ...(this.table === 'conditions' ? [{ key: 'currency_name' },
+          ...(this.table === 'conditions' ? [
+            'retail_space',
+            { key: 'currency_name' },
             { key: 'rent_per_month' },
             { key: 'base_rent_per_area_amount' },
             { key: 'advertising_per_month' },
@@ -156,7 +158,11 @@ export default {
             'comment_negotiation',
           ] : []),
           'comment',
-          { key: 'missing_documents', type: 'html', export_key: 'missing_documents_export' },
+          {
+            key: 'missing_documents',
+            // type: 'html',
+            // export_key: 'missing_documents_export'
+          },
           // 'state',
           'negotiator',
         ],
@@ -300,7 +306,7 @@ export default {
               'choice_name']))
           }
 
-          const cc = contract.choices.find(c => c.criteria_name === 'aktueller Vertragstyp')
+          let cc = contract.choices.find(c => c.criteria_name === 'aktueller Vertragstyp')
           if (cc) {
             contract.contract_status = cc.choice_name
           } else {
@@ -311,6 +317,10 @@ export default {
             contract.notice_of_termination = (cc && cc.choice_name === 'gekündigt') ? 'Yes' : 'No'
             // contract.action_date = cc?.contract_criteria_value
           }
+          cc = contract.choices.find(c => c.criteria_name === 'Verkaufsfläche')
+          if (cc) contract.retail_space = cc.contract_criteria_value
+
+          cc = contract.choices.find(c => c.criteria_name === 'Verkaufsfläche')
         })
 
         const specialRightsData = (await this.$api({
@@ -457,12 +467,12 @@ export default {
 
         contracts.forEach(contract => {
           const ticket_ids = _(tickets[contract.contract_id]).uniqBy('ticket_id').map('ticket_id')
-          contract.missing_documents = ticket_ids.map(id => {
-            const route = this.$router.resolve({ name: 'table-view', params: { table: 'ticket', id } })
-            return `<a target="_blank" href="${route.href}">${id}</a>`
-          })
-            .join('<br>')
-          contract.missing_documents_export = ticket_ids.join(', ')
+          // contract.missing_documents = ticket_ids.map(id => {
+          //   const route = this.$router.resolve({ name: 'table-view', params: { table: 'ticket', id } })
+          //   return `<a target="_blank" href="${route.href}">${id}</a>`
+          // })
+          //   .join('<br>')
+          // contract.missing_documents_export = ticket_ids.join(', ')
 
           if (this.table === 'deadlines') {
             const ticket = _(tickets[contract.contract_id]).filter(t => t.board_name === 'contradictionpackage-Kanban-Board')
