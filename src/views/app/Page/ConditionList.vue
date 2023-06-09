@@ -423,13 +423,10 @@ export default {
 
 
 
-          console.log('obj: ', index, obj);
           return obj
 
         })
 
-        console.log("contracts", contracts);
-        console.log("ids", ids);
 
 
         let tickets = (await this.$api({
@@ -439,7 +436,6 @@ export default {
           data: ids.map(id => ({ contract_id: id, ticket_closed: 0 })),
         })).data.data.data
         tickets = _.groupBy(tickets, 'contract_id')
-        console.log('tickets: ', tickets);
 
         contracts.forEach(contract => {
           const ticket_ids = _(tickets[contract.contract_id]).uniqBy('ticket_id').map('ticket_id')
