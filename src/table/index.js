@@ -12,6 +12,7 @@ export default {
       {
         key: 'usertype_id',
         hideOnIndex: true,
+        noFetch: true,
         type: 'list',
         list: 'usertype',
         listLabel: 'usertype_name',
@@ -51,6 +52,7 @@ export default {
         composite: true,
         listLabel: 'function_name',
         list: 'function',
+        noFetch: true,
         relationEntity: 'user_function_rel',
         hideOnIndex: true,
       },
@@ -58,6 +60,7 @@ export default {
         key: 'user_functions',
         multiple: true,
         listLabel: 'function_name',
+        noFetch: true,
         tableKey: 'function_id',
         type: 'list',
         composite: true,
@@ -149,6 +152,7 @@ export default {
         key: 'address_id',
         hideOnIndex: true,
         type: 'list',
+        noFetch: true,
         list: 'address',
         listLabel: 'address_street',
         withNew: true,
@@ -847,7 +851,29 @@ export default {
         type: 'boolean',
         hideOnUpdate: true,
         hideOnIndex: true,
+        change: (entity, vm) => {
+          let create_contactperson;
+          console.log("entity", entity);
+          if (entity.create_contactperson === 1){
+            const companyAddressField = vm.$parent.$children[3]
+            const companyCityField = companyAddressField.getSubFields()[3]
 
+
+            const contactPersonAddressField = vm.$parent.$children[7].$children[0].$children[7]
+            const contactPersonCityField = contactPersonAddressField.getSubFields()[3]
+
+
+            for (const key in companyAddressField.subEntity) {
+              contactPersonAddressField.$set(contactPersonAddressField.subEntity, key, companyAddressField.subEntity[key])
+            }
+
+            for (const key in companyCityField.subEntity) {
+              contactPersonCityField.$set(contactPersonCityField.subEntity, key, companyCityField.subEntity[key])
+            }
+
+
+          }
+        },
       },
       {
         key: 'contactperson_id',
@@ -858,7 +884,7 @@ export default {
         alwaysNew: true,
         hideOnIndex: true,
         onlyForm: true,
-        visible: (entity) => entity.create_contactperson === 1
+        visible: (entity) => entity.create_contactperson === 1,
       },
 
       { key: 'city_name', sortable: true, hideOnForm: true },
@@ -2253,23 +2279,23 @@ export default {
         hideOnIndex: true,
         hideOnUpdate: true,
       },
-      {
-        key: 'pos_id',
-        type: 'list',
-        list: 'frontend_2_1_3_8',
-        listLabel: 'pos_name',
-        filter_key: 'company_id',
-        send: false,
-        hideOnIndex: true,
-        hideOnUpdate: true,
-      },
+      // {
+      //   key: 'pos_id',
+      //   type: 'list',
+      //   list: 'frontend_2_1_3_8',
+      //   listLabel: 'pos_name',
+      //   filter_key: 'company_id',
+      //   send: false,
+      //   hideOnIndex: true,
+      //   hideOnUpdate: true,
+      // },
       {
         key: 'location_id',
         type: 'list',
         list: 'frontend_3_1_3_7',
         listLabel: 'location_name',
         relationEntity: 'contract_location_rel',
-        filter_key: 'pos_id',
+        // filter_key: 'pos_id',
         hideOnIndex: true,
         hideOnUpdate: true,
       },
@@ -2293,6 +2319,8 @@ export default {
       { key: 'pos_name', hideOnForm: true },
       { key: 'contract_begin_date', type: 'date' },
       { key: 'contract_end_date', type: 'date', hideOnIndex: true },
+      { key: 'contract_first_possible_end_date', type: 'date', hideOnIndex: true },
+      { key: 'contract_last_change_time', type: 'date', hideOnIndex: true},
       { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
       { key: 'contract_sum_allarea_allocationspace', hideOnForm: true },
       { key: 'currency_name', hideOnCreate: true, disabled: true },
@@ -2313,8 +2341,18 @@ export default {
         hideOnIndex: true,
         hideOnUpdate: true,
       },
+      {
+        key: "contract_migration_checked",
+        type: "boolean",
+        hideOnIndex: true,
+        hideOnUpdate: true,
+        hideOnForm: true,
+      }
 
     ],
+    default: {
+      contract_migration_checked: 0
+    },
     relations: [
 
       // {
@@ -2737,13 +2775,23 @@ export default {
       { key: 'criteria_has_value', type: 'boolean' },
       { key: 'contract_count', type: 'number', hideOnForm: true },
       {
-        key: 'criteriatype_id', type: 'list', list: 'criteriatype', hideOnIndex: true, listLabel: 'criteriatype_name',
+        key: 'criteriatype_id',
+        type: 'list',
+        list: 'criteriatype',
+        hideOnIndex: true,
+        listLabel: 'criteriatype_name',
+        required: false,
       },
       {
-        key: 'unit_id', type: 'list', list: 'unit', hideOnIndex: true, listLabel: 'unit_name',
+        key: 'unit_id', type: 'list', list: 'unit', hideOnIndex: true, listLabel: 'unit_name', required: false,
       },
       {
-        key: 'contracttype_id', type: 'list', list: 'contracttype', hideOnIndex: true, listLabel: 'contracttype_name',
+        key: 'contracttype_id',
+        type: 'list',
+        list: 'contracttype',
+        hideOnIndex: true,
+        listLabel: 'contracttype_name',
+        required: false,
       },
     ],
     relations: [
@@ -2789,9 +2837,17 @@ export default {
       { key: 'indexclause_baseyear', type: 'number' },
       { key: 'indexclause_begin_date', type: 'date' },
       { key: 'indexclause_indextransmission_percent' },
-      { key: 'indexclause_minimal_percent_change_agreed', type: 'decimal', required: false },
+      { key: 'indexclause_change_in_percent', type: 'boolean', send: false },
+      {
+        key: 'indexclause_minimal_percent_change_agreed',
+        type: 'decimal',
+        required: false,
+        visible: entity => entity.indexclause_change_in_percent,
+      },
       {
         key: 'indexclause_minimal_point_change_agreed',
+        type: 'decimal',
+        visible: entity => !entity.indexclause_change_in_percent,
         required_if_null: 'indexclause_minimal_percent_change_agreed',
       },
     ],
@@ -4054,6 +4110,7 @@ function getContractCriteriaFields() {
     },
     { key: 'contract_criteria_valid_to_date', type: 'date' },
     { key: 'contract_criteria_exists', type: 'boolean' },
+    { key: 'contract_criteria_is_obsolete', type: 'boolean' },
     { key: 'criteriatype_name', hideOnForm: true },
     { key: 'contract_criteria_comment', type: 'textarea', required: false },
     { key: 'contract_criteria_value', type: 'number' },

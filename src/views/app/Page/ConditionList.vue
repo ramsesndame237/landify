@@ -66,27 +66,27 @@
 <script>
 
 import {
-  BCard, BButton, BFormInput, BForm, BRow, BCol,
+  BCard, BButton, BForm, BRow, BCol,
 } from 'bootstrap-vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions'
 import Field from '@/views/app/Generic/Field'
 import _ from 'lodash'
 import moment from 'moment'
-import GenericFilter from '../Generic/Filter.vue'
-import Tables from '../../../table'
 import rates from './rates.json'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
-
+const CONTRACT_STATUS_CRITERIA_CODE = 'aktueller Vertragstyp'
+const CONTRACT_MISSING_DOCUMENT_CRITERIA_CODE = 'Fehlende Unterlagen FriKo-Liste'
+const CONTRACT_RETAIL_SPACE_CRITERIA_CODE = 'Verkaufsfläche'
+const CONTRACT_COMMENT_CRITERIA_CODE = 'Bemerkung FriKo-Liste'
+const CONTRACT_SECURITIES_CRITERIA_CODE = 'Mietsicherheit - Anzeige'
 export default {
   components: {
     Field,
     BCardActions,
-    GenericFilter,
     Datatable,
     BCard,
     BButton,
-    BFormInput,
     BForm,
     BRow,
     BCol,
@@ -127,13 +127,14 @@ export default {
           { key: 'pos_name' },
           { key: 'pos_branchnumber' },
           { key: 'country_name' },
-          { key: 'total_allocation_space' },
           { key: 'total_rental_space' },
           'owner_name',
           'manager_name',
-          ...(this.table === 'conditions' ? [{ key: 'currency_name' },
-            { key: 'rent_per_month' },
+          ...(this.table === 'conditions' ? [
+            'retail_space',
+            { key: 'currency_name' },
             { key: 'base_rent_per_area_amount' },
+            { key: 'rent_per_month' },
             { key: 'advertising_per_month' },
             { key: 'ancillary_cost_per_month' },
             { key: 'heating_ancillary_cost_per_month' },
@@ -156,7 +157,11 @@ export default {
             'comment_negotiation',
           ] : []),
           'comment',
-          { key: 'missing_documents', type: 'html', export_key: 'missing_documents_export' },
+          {
+            key: 'missing_documents',
+            // type: 'html',
+            // export_key: 'missing_documents_export'
+          },
           // 'state',
           'negotiator',
         ],
@@ -300,7 +305,7 @@ export default {
               'choice_name']))
           }
 
-          const cc = contract.choices.find(c => c.criteria_name === 'aktueller Vertragstyp')
+          let cc = contract.choices.find(c => c.criteria_name === CONTRACT_STATUS_CRITERIA_CODE)
           if (cc) {
             contract.contract_status = cc.choice_name
           } else {
@@ -311,6 +316,17 @@ export default {
             contract.notice_of_termination = (cc && cc.choice_name === 'gekündigt') ? 'Yes' : 'No'
             // contract.action_date = cc?.contract_criteria_value
           }
+          cc = contract.choices.find(c => c.criteria_name === CONTRACT_RETAIL_SPACE_CRITERIA_CODE)
+          if (cc) contract.retail_space = cc.contract_criteria_value
+
+          cc = contract.choices.find(c => c.criteria_name === CONTRACT_MISSING_DOCUMENT_CRITERIA_CODE)
+          if (cc) contract.missing_document = cc.contract_criteria_value
+
+          cc = contract.choices.find(c => c.criteria_name === CONTRACT_COMMENT_CRITERIA_CODE)
+          if (cc) contract.comment = cc.contract_criteria_value
+          cc = contract.choices.find(c => c.criteria_name === CONTRACT_SECURITIES_CRITERIA_CODE)
+          contract.securities_related_to_contract = 'Keine Mietsicherheitsoption ausgewählt'
+          if (cc) contract.securities_related_to_contract = cc.contract_criteria_value
         })
 
         const specialRightsData = (await this.$api({
@@ -417,13 +433,12 @@ export default {
 
           if (this.table !== 'conditions') return
 
-          const rcBasismiete = contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '1-Basismiete' && date.isBetween(r.recurringpayment_begin_date, r.recurringpayment_end_date, "day", "[]"))
-
+          const rcBasismiete = contract.reccuringPayments.find(r => ['1', '3'].includes((r.recurringpaymenttype_name || '').split('-')[0]) && date.isBetween(r.recurringpayment_begin_date, r.recurringpayment_end_date, "day", "[]"))
           contract.rent_per_month = this.getRecurringPaymentMonthValue(rcBasismiete).toFixed(2)
           contract.base_rent_per_area_amount = contract.total_allocation_space > 0 ? (contract.rent_per_month / contract.total_allocation_space).toFixed(2) : 0
-          contract.advertising_per_month = this.getRecurringPaymentMonthValue(contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '6-Werbekosten')).toFixed(2)
-          contract.ancillary_cost_per_month = this.getRecurringPaymentMonthValue(contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '5-Nebenkostenpauschale')).toFixed(2)
-          contract.heating_ancillary_cost_per_month = _.sum(contract.reccuringPayments.filter(r => (['4-Nebenkostenvorauszahlung', '7-Heizkostenvorauszahlung'].indexOf(r.recurringpaymenttype_name) >= 0)).map(rc => this.getRecurringPaymentMonthValue(rc))).toFixed(2)
+          contract.advertising_per_month = this.getRecurringPaymentMonthValue(contract.reccuringPayments.find(r => (r.recurringpaymenttype_name || '').split('-')[0] === '6')).toFixed(2)
+          contract.ancillary_cost_per_month = this.getRecurringPaymentMonthValue(contract.reccuringPayments.find(r => (r.recurringpaymenttype_name || '').split('-')[0] === '5')).toFixed(2)
+          contract.heating_ancillary_cost_per_month = _.sum(contract.reccuringPayments.filter(r => (['4', '7'].includes((r.recurringpaymenttype_name || '').split('-')[0]))).map(rc => this.getRecurringPaymentMonthValue(rc))).toFixed(2)
 
           contract.local_rent_per_month = contract.rent_per_month
           contract.local_base_rent_per_area_amount = contract.base_rent_per_area_amount
@@ -431,19 +446,23 @@ export default {
           contract.local_ancillary_cost_per_month = contract.ancillary_cost_per_month
           contract.local_heating_ancillary_cost_per_month = contract.heating_ancillary_cost_per_month
 
-          contract.index_adjustment_lease = rcBasismiete ? `${rcBasismiete.indexclause_adjustment_description} - ${rcBasismiete.indexclause_minimal_percent_change_aggreed || rcBasismiete.indexclause_minimal_point_change_agreed}` : ''
-          contract.index_adjustment_rate_in_percent = rcBasismiete?.indexclause_indextransmission_percent
+          const rcIndex = contract.reccuringPayments.find(r => ['1', '3'].includes((r.recurringpaymenttype_name || '').split('-')[0]) && date.isBetween(r.recurringpayment_begin_date, r.recurringpayment_end_date, "day", "[]"))
 
-          const rcStaffe = _(contract.reccuringPayments).filter(r => r.recurringpaymenttype_name === '3-Staffelmiete' && date.isSameOrBefore(r.recurringpayment_begin_date)).orderBy('recurringpayment_begin_date').value()[0]
+          if (rcIndex) {
+            contract.index_adjustment_lease = rcIndex.indexclause_indextransmission_percent ?? `${rcIndex.indexclause_indextransmission_percent} %`
+            contract.index_adjustment_rate_in_percent = rcIndex.indexclause_minimal_percent_change_aggreed ? `${rcIndex.indexclause_minimal_percent_change_aggreed} %` : rcIndex.indexclause_minimal_point_change_agreed
+          }
+
+          const rcStaffe = _(contract.reccuringPayments).filter(r => (r.recurringpaymenttype_name || '').split('-')[0] === '3' && date.isSameOrBefore(r.recurringpayment_begin_date)).orderBy('recurringpayment_begin_date').value()[0]
           if (rcStaffe) {
             contract.staggered_minimum_rent = 'Yes, ' + rcStaffe.recurringpayment_begin_date
           }
 
-          const rcUmsat = contract.reccuringPayments.find(r => r.recurringpaymenttype_name === '2-Umsatzmiete')
+          const rcUmsat = contract.reccuringPayments.find(r => (r.recurringpaymenttype_name || '').split('-')[0] === '2')
           contract.turnover_rent = rcUmsat?.recurringpayment_condition_percentage
-          const val = rcUmsat?.recurringpayment_value_deposit
-          contract.securities_related_to_contract = val != null ? (val ? 'yes' : 'no') : ''
-          contract.type_of_rental_security = ''
+          // const val = rcUmsat?.recurringpayment_value_deposit
+          // contract.securities_related_to_contract = val != null ? (val ? 'yes' : 'no') : ''
+          // contract.type_of_rental_security = ''
 
         })
 
@@ -457,12 +476,12 @@ export default {
 
         contracts.forEach(contract => {
           const ticket_ids = _(tickets[contract.contract_id]).uniqBy('ticket_id').map('ticket_id')
-          contract.missing_documents = ticket_ids.map(id => {
-            const route = this.$router.resolve({ name: 'table-view', params: { table: 'ticket', id } })
-            return `<a target="_blank" href="${route.href}">${id}</a>`
-          })
-            .join('<br>')
-          contract.missing_documents_export = ticket_ids.join(', ')
+          // contract.missing_documents = ticket_ids.map(id => {
+          //   const route = this.$router.resolve({ name: 'table-view', params: { table: 'ticket', id } })
+          //   return `<a target="_blank" href="${route.href}">${id}</a>`
+          // })
+          //   .join('<br>')
+          // contract.missing_documents_export = ticket_ids.join(', ')
 
           if (this.table === 'deadlines') {
             const ticket = _(tickets[contract.contract_id]).filter(t => t.board_name === 'contradictionpackage-Kanban-Board')

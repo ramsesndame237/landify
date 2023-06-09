@@ -28,46 +28,44 @@
           >
 
           <template #default="{subFormFields, subTableDefinition, subEntity}">
-            <b-row class="mt-2" :md="cols">
-              <b-col cols="4">
-                <span>{{$t('attribute.address_street')}}</span>
+            <b-row>
+              <b-col cols="12">
+                <b-form-group :label="$t('attribute.address_street') + '/' + $t('attribute.address_house_number')"
+                  label-cols-md="4">
+                    <div class="d-flex">
+                      <field style="flex-grow: 1; margin-right: 20px;"  :inline="false" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
+                            :field="getAddressFields(subFormFields).find(f=> f.key==='address_street')"/>
+                      <field style="width: 100px;"  :inline="false" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
+                            :field="getAddressFields(subFormFields).find(f=> f.key==='address_house_number')"/>
+                    </div>
+                </b-form-group>
               </b-col>
-
-              <b-col cols="4">
-                <field :inline="false" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                      :field="getAddressFields(subFormFields).find(f=> f.key==='address_street')"/>
-              </b-col>
-              <b-col cols="4">
-                <field :inline="false" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                      :field="getAddressFields(subFormFields).find(f=> f.key==='address_house_number')"/>
-              </b-col>
-
             </b-row>
 
-            <b-col cols="12" :md="cols">
-              <field :inline="false" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                :field="getAddressFields(subFormFields).find(f=> f.key==='city_id')"
-              >
-                <template #default="{subFormFields, subTableDefinition, subEntity}">
-                  <b-row class="mt-2" :md="cols">
-                    <b-col cols="4">
-                      <span>{{$t('attribute.city_name')}}</span>
-                    </b-col>
-
-                    <b-col cols="2">
-                      <field :inline="false" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
+            <b-row>
+              <b-col col="12" :md="cols">
+                <field :inline="false" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
+                  :field="getAddressFields(subFormFields).find(f=> f.key==='city_id')"
+                >
+                  <template #default="{subFormFields, subTableDefinition, subEntity}">
+                    <b-row>
+                      <b-col cols="12">
+                        <b-form-group :label="$t('attribute.city_zip') + '/' + $t('attribute.city_name')"
+                          label-cols-md="4">
+                          <div class="d-flex">
+                            <field style="margin-right: 20px; width: 120px"  :inline="false" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
                             :field="getCityFields(subFormFields).find(f=> f.key==='city_zip')"/>
-                    </b-col>
-                    <b-col cols="6">
-                      <field :inline="false" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
+                            <field style="flex-grow: 1;"  :inline="false" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
                             :field="getCityFields(subFormFields).find(f=> f.key==='city_name')"/>
-                    </b-col>
+                          </div>
+                        </b-form-group>
+                      </b-col>
+                    </b-row>
+                  </template>
 
-                  </b-row>
-                </template>
-
-              </field>
-            </b-col>
+                </field>
+              </b-col>
+            </b-row>
 
 
 
