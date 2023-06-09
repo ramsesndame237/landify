@@ -79,7 +79,7 @@
                 </b-col>
                 <b-col cols="12" md="12">
                   <field :inline="true" ref="fields" :disabled="disabled"
-                    :entity="getSubFormField(subEntity)" :table-definition="subTableDefinition" :field="getSubFormField(subFormFields,'address_id')"
+                    :entity="subEntity" :table-definition="subTableDefinition" :field="getSubFormField(subFormFields,'address_id')"
                   />
                 </b-col>
                 <b-col cols="12" md="12">
@@ -134,7 +134,6 @@ export default {
     getSubFormField(subFormFields, key){
       return subFormFields.find(f=> f.key === key)
     },
-    
   },
 }
 

@@ -7,8 +7,8 @@
     <!-- form -->
     <b-col cols="12" md="6" class="p-0">
       <validation-observer ref="form" v-slot="{ passes }">
-        <b-form @submit.prevent="passes(emitSubmit)" autocomplete="off">
-          <b-col v-for="(field,index) in definition.filter(f=> f.hide!==true && !f.auto && f.hideOnCreate !==true && f.hideOnForm !==true)" :key="index" cols="12">
+        <b-form @submit.prevent="passes(save)" autocomplete="off">
+          <b-col v-for="(field,index) in definition" :key="index" cols="12">
             <field ref="fields" :disabled="disabled || field.disabled || field.disableOnUpdate"
                    :inline="false" :entity="entity" :table-definition="tableDefinition" :field="field"/>
           </b-col>
@@ -57,19 +57,29 @@ export default {
   },
   props: ['disabled', 'context'],
   data() {
-    const definition = {...Table.serviceobject}.fields
+    const definition = {...Table.serviceobject}.fields.filter(f=> f.hide!==true && !f.auto && f.hideOnCreate !==true && f.hideOnForm !==true)
     const fields = []
     definition.forEach(elt => {
-      if(!elt.hideOnIndex) fields.push({key: elt.key})
+      fields.push({key: elt.key})
     });
     return {
       definition,
       entity: {},
       fields,
       serviceObject: this.context.serviceObject || [],
-      initialData: {},
       loading: false,
       entityName: 'serviceObject'
+    }
+  },
+
+  methods: {
+    async submit(){
+      const data = {
+        //contract_id: this.context.contract_main_infos.id,
+        contract_id: 180124,
+        serviceobjects: [...this.serviceObject]
+      }
+      await this.$http.post('/contracts/step/3', data)
     }
   },
 

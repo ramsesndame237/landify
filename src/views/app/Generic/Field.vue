@@ -79,6 +79,21 @@
                           @click="doCopy"/>
           </div>
         </div>
+        <div v-else-if="field.type === 'color'">
+          <b-form-input v-model="entity[field.key]" :disabled="disabled" type="color"
+            class="form-control-merge" :state="errors.length > 0 ? false:null" :name="field.key"
+          />
+        </div>
+        <template v-else-if="field.type === 'smiley'" >
+          <div class="mt-1 emoji_container">
+            <b-button @click="handleEmojiClick" variant="outline-secondary" :disabled="disabled" size="sm" class="mr-2"
+              :class="{'emoji-button_empty': !entity[field.key]}"
+            >
+                <span v-if="entity[field.key]">&#{{ entity[field.key] }};</span>
+            </b-button>
+            <div :class="{'d-none': !isEmojiInputVisible}" id="pickerContainer"></div>
+          </div>
+        </template>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
                     class="form-control"/>
@@ -111,12 +126,12 @@
 
 <script>
 import Fuse from 'fuse.js'
+import { createPicker } from 'picmo';
 import {
   BButton, BImg, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow, BSpinner
 } from 'bootstrap-vue'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
-import { generate } from "generate-password"
 import { snakeToTitle } from '@/libs/utils'
 import Table from '@/table/index'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
@@ -179,6 +194,7 @@ export default {
       randomPassword: "",
       editor: ClassicEditor,
       waitPassword: false,
+      isEmojiInputVisible: false,
       editorOption: {
         // modules: {
         //   toolbar: '#quill-toolbar-' + this.field.key,
@@ -285,6 +301,20 @@ export default {
         this.fetchList(true)
       })
     }
+    if(this.field.type === 'smiley') {
+
+      // The picker must have a root element to insert itself into
+      const rootElement = document.querySelector('#pickerContainer');
+
+      // Create the picker
+      const picker = createPicker({ rootElement });
+
+      // The picker emits an event when an emoji is selected. Do with it as you will!
+      picker.addEventListener('emoji:select', event => {
+        console.log('Emoji selected:', event);
+        this.$set(this.entity, this.field.key, event.hexcode)
+      });
+    }
   },
   methods: {
     subFieldDisabled(field) {
@@ -378,6 +408,9 @@ export default {
     getPrimaryKey(definition) {
       return definition.primaryKey ?? definition.fields.find(f => f.auto).key
     },
+    handleEmojiClick(){
+      this.isEmojiInputVisible = !this.isEmojiInputVisible
+    },
     async getRelationValue() {
       console.log('get relation value')
       if (this.field.type === 'list') {
@@ -430,14 +463,12 @@ export default {
     },
     getAllFields(fieldComponent, accumulator) {
       // fieldComponent is an array
-      if (fieldComponent.length && fieldComponent.length > 1) {
-        fieldComponent.forEach(elt => {
-          if (elt.$options.name === 'Field') {
-            console.log("yes i did it", elt);
+      if (fieldComponent.length && fieldComponent.length > 1){
+        fieldComponent.forEach(elt=>{
+          if (elt.$options.name === 'Field' ) {
             accumulator.push(elt)
-            console.log("new accumulator values", accumulator);
-          } else {
-            console.log("noooo i can't ", elt.$options.name, elt);
+          }
+          else {
             return this.getAllFields(elt.$children, accumulator)
           }
         })
@@ -453,7 +484,12 @@ export default {
       }
     },
     async fetchList(force) {
-      if (this.field.noFetch) return
+      if (this.field.noFetch) {
+        if (this.field.options){
+          this.$store.dispatch('table/setListData', {entity: this.field.entity, data:this.field.options})
+        }
+        return
+      }
       if (this.list.length === 0 || force) this.loading = true
       try {
         let { list } = this.field
@@ -529,6 +565,20 @@ export default {
 </script>
 
 <style lang="scss">
+
+.emoji_container{
+  position: relative;
+
+  #pickerContainer{
+    position: absolute;
+    z-index: 100;
+  }
+}
+
+.emoji-button_empty{
+  height: 25px;
+  width: 20px;
+}
 
 .hide-main {
   > label {

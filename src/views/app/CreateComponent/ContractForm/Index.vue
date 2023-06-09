@@ -43,6 +43,9 @@
           <step2 v-if="current_step===2" ref="step2" :context="context" :disabled="loading"/>
           <step3 v-if="current_step===3" ref="step3" :context="context" :disabled="loading"/>
           <step4 v-if="current_step===4" ref="step4" :context="context" :disabled="loading"/>
+          <step5 v-if="current_step===5" ref="step5" :context="context" :disabled="loading"/>
+          <step6 v-if="current_step===6" ref="step5" :context="context" :disabled="loading"/>
+          <step7 v-if="current_step===7" ref="step5" :context="context" :disabled="loading"/>
 
           <div class="d-flex align-items-center justify-content-between">
             <div>
@@ -82,13 +85,20 @@ import Step1 from '@/views/app/CreateComponent/ContractForm/Step1.vue'
 import Step2 from '@/views/app/CreateComponent/ContractForm/Step2.vue'
 import Step3 from '@/views/app/CreateComponent/ContractForm/Step3.vue'
 import Step4 from '@/views/app/CreateComponent/ContractForm/Step4.vue'
+import Step5 from '@/views/app/CreateComponent/ContractForm/Step5.vue'
+import Step6 from '@/views/app/CreateComponent/ContractForm/Step6.vue'
+import Step7 from '@/views/app/CreateComponent/ContractForm/Step7.vue'
 
 export default {
+  name: "contractForm",
   components: {
     Step1,
     Step2,
     Step3,
     Step4,
+    Step5,
+    Step6,
+    Step7,
     Field,
     BCard,
     BSpinner,
@@ -101,7 +111,7 @@ export default {
     return {
       table: "contract",
       current_step: 1,
-      max_steps: 4,
+      max_steps: 7,
       completed_step: 0,
       steps_progress: 0,
       steps_tabs: [
@@ -111,7 +121,7 @@ export default {
           step: 1,
         },
         {
-          text: this.$t('headline~new_contract~progress~deadline'),
+          text: this.$t('headline~new_contract~progress~areaunitusage'),
           completed: false,
           step: 2,
         },
@@ -124,6 +134,21 @@ export default {
           text: this.$t('headline~new_contract~progress~serviceobject'),
           completed: false,
           step: 4,
+        },
+        {
+          text: this.$t('headline~new_contract~progress~costtypes'),
+          completed: false,
+          step: 5,
+        },
+        {
+          text: this.$t('headline~new_contract~progress~specialrights'),
+          completed: false,
+          step: 6,
+        },
+        {
+          text: this.$t('headline~new_contract~progress~criteria'),
+          completed: false,
+          step: 7,
         },
       ],
       context: {},
@@ -149,12 +174,31 @@ export default {
       try {
         if (this.current_step === 1) {
           this.context.contract_main_infos = await this.$refs.step1.validate()
+          console.log('step 1 passed ', this.context);
         } else if (this.current_step === 2) {
-          this.context.specialrights = this.$refs.step2.specialrights
+          await this.$refs.step2.submit()
+          this.context.areaUnitUsage = this.$refs.step2.areaUnitUsage
+          console.log('step 2 passed ', this.context);
         } else if (this.current_step === 3) {
+          await this.$refs.step3.submit()
           this.context.recurringPayment = this.$refs.step3.recurringPayment
+          console.log('step 3 passed ', this.context);
         } else if (this.current_step === 4) {
+          await this.$refs.step4.submit()
           this.context.serviceObject = this.$refs.step4.serviceObject
+          console.log('step 4 passed ', this.context);
+        } else if (this.current_step === 5) {
+          await this.$refs.step5.submit()
+          this.context.costTypes = this.$refs.step5.costTypes
+          console.log('step 5 passed ', this.context);
+        } else if (this.current_step === 6) {
+          await this.$refs.step6.submit()
+          this.context.specialRigths = this.$refs.step6.specialRigths
+          console.log('step 6 passed ', this.context);
+        } else if (this.current_step === 7) {
+          await this.$refs.step7.submit()
+          this.context.criteria = this.$refs.step6.criteria
+          console.log('step 7 passed ', this.context);
         }
       } catch (e) {
         hasError = true
