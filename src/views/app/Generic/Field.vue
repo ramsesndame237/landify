@@ -488,12 +488,7 @@ export default {
       }
     },
     async fetchList(force) {
-      if (this.field.noFetch) {
-        if (this.field.options){
-          this.$store.dispatch('table/setListData', {entity: this.field.list, data:this.field.options})
-        }
-        return
-      }
+      if (this.field.noFetch) return
       if (this.list.length === 0 || force) this.loading = true
       try {
         let { list } = this.field
