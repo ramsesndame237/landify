@@ -143,6 +143,10 @@ function isEmpty(val) {
   return val === '' || val == null
 }
 
+function isTrue(val) {
+  return !!val
+}
+
 export default {
   name: 'Field',
   components: {
@@ -522,7 +526,7 @@ export default {
         definition = this.$store.getters['table/tableDefinition'](field.fromTable)
       }
       return {
-        required: this.field.alwaysNew ? false : ((this.field.mandatoryIfListEmpty && this.listItems.length === 0) ? false : (this.field.required_if_null ? isEmpty(this.entity[this.field.required_if_null]) : this.field.required !== false)),
+        required: this.getFieldRequiredValue(),
         email: this.field.type === 'email',
         ...(definition ? {
           max: (definition.attribute_datatype_len && definition.attribute_datatype_len[field.key]) || false,
@@ -530,6 +534,13 @@ export default {
         } : {}),
         ...(this.field.rules || {}),
       }
+    },
+    getFieldRequiredValue() {
+      if (this.field.alwaysNew) return false
+      if (this.field.mandatoryIfListEmpty && this.listItems.length === 0) return false
+      if (this.field.required_if_null) return isEmpty(this.entity[this.field.required_if_null])
+      if (this.field.required_if_true) return isTrue(this.entity[this.field.required_if_true])
+      return this.field.required !== false
     },
     snakeToTitle,
     showNewForm() {
