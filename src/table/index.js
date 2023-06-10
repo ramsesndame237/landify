@@ -854,7 +854,7 @@ export default {
         change: (entity, vm) => {
           let create_contactperson;
           console.log("entity", entity);
-          if (entity.create_contactperson === 1){
+          if (entity.create_contactperson === 1) {
             const companyAddressField = vm.$parent.$children[3]
             const companyCityField = companyAddressField.getSubFields()[3]
 
@@ -2320,7 +2320,7 @@ export default {
       { key: 'contract_begin_date', type: 'date' },
       { key: 'contract_end_date', type: 'date', hideOnIndex: true },
       { key: 'contract_first_possible_end_date', type: 'date', hideOnIndex: true },
-      { key: 'contract_last_change_time', type: 'date', hideOnIndex: true},
+      { key: 'contract_last_change_time', type: 'date', hideOnIndex: true },
       { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
       { key: 'contract_sum_allarea_allocationspace', hideOnForm: true },
       { key: 'currency_name', hideOnCreate: true, disabled: true },
@@ -3822,8 +3822,8 @@ export default {
       { key: 'priority_id', auto: true },
       { key: 'priority_name' },
       { key: 'priority_order' },
-      { key: 'priority_smiley' },
-      { key: 'priority_color' },
+      { key: 'priority_smiley', type: 'smiley' },
+      { key: 'priority_color', type: 'color' },
     ],
   },
   ticket: {
