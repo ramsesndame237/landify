@@ -490,7 +490,7 @@ export default {
     async fetchList(force) {
       if (this.field.noFetch) {
         if (this.field.options){
-          this.$store.dispatch('table/setListData', {entity: this.field.entity, data:this.field.options})
+          this.$store.dispatch('table/setListData', {entity: this.field.list, data:this.field.options})
         }
         return
       }
