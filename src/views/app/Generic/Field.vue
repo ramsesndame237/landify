@@ -100,9 +100,11 @@
         <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key" :value="1"
                          :unchecked-value="0" style="margin-top: 5px"/>
-        <b-form-input v-else v-model="entity[field.key]" :type="field.type==='decimal'?'number':(field.type||'text')"
-                      :disabled="disabled" :step="field.type==='decimal'?0.01:1" :state="errors.length > 0 ? false:null"
-                      :placeholder="field.key"/>
+        <b-input-group v-else  :prepend="field.isUnitOnLeft ? getFieldUnit() : null" :append="field.isUnitOnLeft ? null : getFieldUnit()">
+          <b-form-input v-model="entity[field.key]" :type="field.type==='decimal'?'number':(field.type||'text')"
+                        :disabled="disabled" :step="field.type==='decimal'?0.01:1" :state="errors.length > 0 ? false:null"
+                        :placeholder="field.key"/>
+        </b-input-group>
         <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
       </validation-provider>
       <template v-if="field.type==='list' && ((field.withNew && entity[field.key] === newValue) || field.alwaysNew)">
@@ -321,6 +323,10 @@ export default {
     }
   },
   methods: {
+    getFieldUnit() {
+      if (this.field.unit) return this.field.unit(this)
+      return ''
+    },
     subFieldDisabled(field) {
       if (this.field.disabled && this.field.disabled.includes(field.name)) {
         return true

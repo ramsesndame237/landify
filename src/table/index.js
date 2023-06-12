@@ -2447,6 +2447,11 @@ export default {
           },
           {
             key: 'contract_area_unit_usagetype_rentalspace_value', type: 'number', hideOnIndex: true,
+            unit: (vm) => {
+              const units = vm.$store.state.table.listCache['unit']
+              if (!units) return null
+              return units.find(u => u.unit_id === vm.entity.unit_id).unit_name
+            }
           },
           {
             key: 'contract_area_unit_usagetype_valid_from_date', type: 'date', disableOnUpdate: true, hideOnIndex: true,
