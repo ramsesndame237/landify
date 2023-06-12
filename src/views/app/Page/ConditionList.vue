@@ -66,27 +66,27 @@
 <script>
 
 import {
-  BCard, BButton, BFormInput, BForm, BRow, BCol,
+  BCard, BButton, BForm, BRow, BCol,
 } from 'bootstrap-vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions'
 import Field from '@/views/app/Generic/Field'
 import _ from 'lodash'
 import moment from 'moment'
-import GenericFilter from '../Generic/Filter.vue'
-import Tables from '../../../table'
 import rates from './rates.json'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
-
+const CONTRACT_STATUS_CRITERIA_CODE = 'aktueller Vertragstyp'
+const CONTRACT_MISSING_DOCUMENT_CRITERIA_CODE = 'Fehlende Unterlagen FriKo-Liste'
+const CONTRACT_RETAIL_SPACE_CRITERIA_CODE = 'Verkaufsfläche'
+const CONTRACT_COMMENT_CRITERIA_CODE = 'Bemerkung FriKo-Liste'
+const CONTRACT_SECURITIES_CRITERIA_CODE = 'Mietsicherheit - Anzeige'
 export default {
   components: {
     Field,
     BCardActions,
-    GenericFilter,
     Datatable,
     BCard,
     BButton,
-    BFormInput,
     BForm,
     BRow,
     BCol,
@@ -127,13 +127,14 @@ export default {
           { key: 'pos_name' },
           { key: 'pos_branchnumber' },
           { key: 'country_name' },
-          { key: 'total_allocation_space' },
           { key: 'total_rental_space' },
           'owner_name',
           'manager_name',
-          ...(this.table === 'conditions' ? [{ key: 'currency_name' },
-            { key: 'rent_per_month' },
+          ...(this.table === 'conditions' ? [
+            'retail_space',
+            { key: 'currency_name' },
             { key: 'base_rent_per_area_amount' },
+            { key: 'rent_per_month' },
             { key: 'advertising_per_month' },
             { key: 'ancillary_cost_per_month' },
             { key: 'heating_ancillary_cost_per_month' },
@@ -156,7 +157,11 @@ export default {
             'comment_negotiation',
           ] : []),
           'comment',
-          { key: 'missing_documents', type: 'html', export_key: 'missing_documents_export' },
+          {
+            key: 'missing_documents',
+            // type: 'html',
+            // export_key: 'missing_documents_export'
+          },
           // 'state',
           'negotiator',
         ],
@@ -407,19 +412,23 @@ export default {
           obj.local_ancillary_cost_per_month = obj.ancillary_cost_per_month
           obj.local_heating_ancillary_cost_per_month = obj.heating_ancillary_cost_per_month
 
-          obj.index_adjustment_lease = rcBasismiete ? `${rcBasismiete.indexclause_adjustment_description} - ${rcBasismiete.indexclause_minimal_percent_change_aggreed || rcBasismiete.indexclause_minimal_point_change_agreed}` : ''
-          obj.index_adjustment_rate_in_percent = rcBasismiete?.indexclause_indextransmission_percent
+          const rcIndex = obj.reccuringPayments.find(r => ['1', '3'].includes((r.recurringpaymenttype_name || '').split('-')[0]) && date.isBetween(r.recurringpayment_begin_date, r.recurringpayment_end_date, "day", "[]"))
+
+          if (rcIndex) {
+            obj.index_adjustment_lease = rcIndex.indexclause_indextransmission_percent ?? `${rcIndex.indexclause_indextransmission_percent} %`
+            obj.index_adjustment_rate_in_percent = rcIndex.indexclause_minimal_percent_change_aggreed ? `${rcIndex.indexclause_minimal_percent_change_aggreed} %` : rcIndex.indexclause_minimal_point_change_agreed
+          }
 
           const rcStaffe = _(obj.reccuringPayments).filter(r => r.recurringpaymenttype_name === '3-Staffelmiete' && date.isSameOrBefore(r.recurringpayment_begin_date)).orderBy('recurringpayment_begin_date').value()[0]
           if (rcStaffe) {
             obj.staggered_minimum_rent = 'Yes, ' + rcStaffe.recurringpayment_begin_date
           }
 
-          const rcUmsat = obj.reccuringPayments.find(r => r.recurringpaymenttype_name === '2-Umsatzmiete')
+          const rcUmsat = obj.reccuringPayments.find(r => (r.recurringpaymenttype_name || '').split('-')[0] === '2')
           obj.turnover_rent = rcUmsat?.recurringpayment_condition_percentage
-          const val = rcUmsat?.recurringpayment_value_deposit
-          obj.securities_related_to_contract = val != null ? (val ? 'yes' : 'no') : ''
-          obj.type_of_rental_security = ''
+          // const val = rcUmsat?.recurringpayment_value_deposit
+          // contract.securities_related_to_contract = val != null ? (val ? 'yes' : 'no') : ''
+          // contract.type_of_rental_security = ''
 
 
 
@@ -439,12 +448,12 @@ export default {
 
         contracts.forEach(contract => {
           const ticket_ids = _(tickets[contract.contract_id]).uniqBy('ticket_id').map('ticket_id')
-          contract.missing_documents = ticket_ids.map(id => {
-            const route = this.$router.resolve({ name: 'table-view', params: { table: 'ticket', id } })
-            return `<a target="_blank" href="${route.href}">${id}</a>`
-          })
-            .join('<br>')
-          contract.missing_documents_export = ticket_ids.join(', ')
+          // contract.missing_documents = ticket_ids.map(id => {
+          //   const route = this.$router.resolve({ name: 'table-view', params: { table: 'ticket', id } })
+          //   return `<a target="_blank" href="${route.href}">${id}</a>`
+          // })
+          //   .join('<br>')
+          // contract.missing_documents_export = ticket_ids.join(', ')
 
           if (this.table === 'deadlines') {
             const ticket = _(tickets[contract.contract_id]).filter(t => t.board_name === 'contradictionpackage-Kanban-Board')
