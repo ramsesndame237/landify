@@ -1748,6 +1748,17 @@ export default {
         filter_key: 'company_id',
       },
     ],
+    filters: [
+      {
+        key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name',
+      },
+      {
+        key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name',
+      },
+      {
+        key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name'
+      }
+    ],
     relations: [
       {
         primaryKey: 'location_id',
