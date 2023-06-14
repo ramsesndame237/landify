@@ -1754,12 +1754,13 @@ export default {
         key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name',
       },
       {
-        key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name',
+        key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name',filter_key: 'customergroup_id',
       },
       {
         key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', required: false
       }
     ],
+    filter_vertical: true,
     relations: [
       {
         primaryKey: 'location_id',
