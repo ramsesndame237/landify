@@ -212,6 +212,7 @@ export default {
         let requestQuery = ''
         if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
         if (Object.keys(filterData).length > 0) {
+          // create request query string
           requestQuery = Object.keys(filterData).map(key => `${key}=${filterData[key]}`).join('&')
         }
         return this.$http.get(`${this.entityEndpoint}?${requestQuery}`)
