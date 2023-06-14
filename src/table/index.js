@@ -1720,6 +1720,7 @@ export default {
   pos: {
     entity: 'frontend_3_1_1',
     primaryKey: 'pos_id',
+    entityEndpoint: '/pos',
     fields: [
       { key: 'pos_id', auto: true },
       {
@@ -1756,7 +1757,7 @@ export default {
         key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name',
       },
       {
-        key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name'
+        key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', required: false
       }
     ],
     relations: [
