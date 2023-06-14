@@ -80,16 +80,14 @@
           </div>
         </div>
         <div v-else-if="field.type === 'color'">
-          <b-form-input v-model="entity[field.key]" :disabled="disabled" type="color"
-            class="form-control-merge" :state="errors.length > 0 ? false:null" :name="field.key"
-          />
+          <b-form-input v-model="entity[field.key]" :disabled="disabled" type="color" style="width: 100px"
+                        class="form-control-merge" :state="errors.length > 0 ? false:null" :name="field.key"/>
         </div>
-        <template v-else-if="field.type === 'smiley'" >
+        <template v-else-if="field.type === 'smiley'">
           <div class="mt-1 emoji_container">
+            <input v-model="entity[field.key]" type="text" :disabled="disabled" class="mr-1">
             <b-button @click="handleEmojiClick" variant="outline-secondary" :disabled="disabled" size="sm" class="mr-2"
-              :class="{'emoji-button_empty': !entity[field.key]}"
-            >
-                <span v-if="entity[field.key]">&#{{ entity[field.key] }};</span>
+                      :class="{'emoji-button_empty': !entity[field.key]}">+
             </b-button>
             <div :class="{'d-none': !isEmojiInputVisible}" id="pickerContainer"></div>
           </div>
@@ -308,19 +306,19 @@ export default {
         this.fetchList(true)
       })
     }
-    if(this.field.type === 'smiley') {
+    if (this.field.type === 'smiley') {
 
       // The picker must have a root element to insert itself into
-      const rootElement = document.querySelector('#pickerContainer');
+      const rootElement = document.querySelector('#pickerContainer')
 
       // Create the picker
-      const picker = createPicker({ rootElement });
+      const picker = createPicker({ rootElement })
 
       // The picker emits an event when an emoji is selected. Do with it as you will!
       picker.addEventListener('emoji:select', event => {
-        console.log('Emoji selected:', event);
-        this.$set(this.entity, this.field.key, event.hexcode)
-      });
+        console.log('Emoji selected:', event)
+        this.$set(this.entity, this.field.key, event.emoji)
+      })
     }
   },
   methods: {
@@ -415,7 +413,7 @@ export default {
     getPrimaryKey(definition) {
       return definition.primaryKey ?? definition.fields.find(f => f.auto).key
     },
-    handleEmojiClick(){
+    handleEmojiClick() {
       this.isEmojiInputVisible = !this.isEmojiInputVisible
     },
     async getRelationValue() {
@@ -470,12 +468,11 @@ export default {
     },
     getAllFields(fieldComponent, accumulator) {
       // fieldComponent is an array
-      if (fieldComponent.length && fieldComponent.length > 1){
-        fieldComponent.forEach(elt=>{
-          if (elt.$options.name === 'Field' ) {
+      if (fieldComponent.length && fieldComponent.length > 1) {
+        fieldComponent.forEach(elt => {
+          if (elt.$options.name === 'Field') {
             accumulator.push(elt)
-          }
-          else {
+          } else {
             return this.getAllFields(elt.$children, accumulator)
           }
         })
@@ -575,16 +572,16 @@ export default {
 
 <style lang="scss">
 
-.emoji_container{
+.emoji_container {
   position: relative;
 
-  #pickerContainer{
+  #pickerContainer {
     position: absolute;
     z-index: 100;
   }
 }
 
-.emoji-button_empty{
+.emoji-button_empty {
   height: 25px;
   width: 20px;
 }
