@@ -1,9 +1,15 @@
 <template>
   <div>
+    <template v-if="definition.filters && definition.filters.length > 0">
+      <b-card v-if="definition.inline_filter" title="Filter">
+        <InlineFilter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData" @filter="filter" />
+      </b-card>
+    </template>
     <b-card body-class="p-0">
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"
                         :on-new-element="definition.create ===false ? null : onNewElement" :total-rows="totalRows"
                         :with-filter="definition.filters && definition.filters.length > 0"
+                        :inline-filter="!definition.inline_filter"
                         :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
                         :actions="definition.actions" @action="(a)=>$refs.table.onAction(a)"
                         @filter="$refs.filter.openModal()"/>
@@ -33,6 +39,7 @@ import TablePagination from '@/layouts/components/TablePagination.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
 import Tables from '../../../table'
 import GenericFilter from './Filter.vue'
+import InlineFilter from './InlineFilter.vue'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
 
@@ -43,6 +50,7 @@ export default {
     TablePagination,
     Datatable,
     BCard,
+    InlineFilter,
   },
   data() {
     const payload = this.$store.getters['table/tableData'](this.$route.params.table)
