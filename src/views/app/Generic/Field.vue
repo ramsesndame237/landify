@@ -221,6 +221,9 @@ export default {
       return this.field.visible ? this.field.visible(this.entity, this) : true
     },
     listItems() {
+      if (this.field.filter && typeof this.field.filter === 'function') {
+        return this.list.filter(this.field.filter)
+      }
       if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
         const val = (this.filterValue || this.entity[this.field.filter_key])
         if (this.field.filter_key && val != null) {

@@ -48,17 +48,15 @@ export default {
     },
   },
   async mounted() {
+    const endpoint = this.table === 'tablegroup' ? `/permissions/tablegroups/${this.entityId}` : `/permissions/tablenames/${this.entityId}`
     this.loading = true
-    const data = await this.$store.dispatch('table/fetchList', { entity: this.table })
-    data.forEach(tg => {
-      tg.c = true
-      tg.r = false
-      tg.u = false
-      tg.d = false
+    await this.$http.get(endpoint)
+    .then((resp)=>{
+      const data = resp.data
+      this.rows = data
+      this.loading = false
+      this.$root.$on('update-matrix', this.submit)
     })
-    this.rows = data
-    this.loading = false
-    this.$root.$on('update-matrix', this.submit)
   },
   beforeDestroy() {
     this.$root.$off('update-matrix', this.submit)
@@ -69,11 +67,15 @@ export default {
         role_id: this.entityId,
         data: this.rows,
       }
-      console.log(payload)
+      const endpoint = this.table === 'tablegroup' ? '/permissions/tablegroups' : '/permissions/tablenames'
       this.loading = true
       try {
-        await this.$http.post('/custom-endpoint', payload)
-      } finally {
+        await this.$http.put(endpoint, payload)
+      }
+      catch(err){
+        console.error('err: ', err);
+      }
+      finally {
         this.loading = false
       }
     },
