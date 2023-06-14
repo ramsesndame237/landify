@@ -1,6 +1,6 @@
 <template>
   <validation-observer  ref="form" v-slot="{ passes }">
-    <b-form @submit.prevent="passes(submit)" autocomplete="off">
+    <b-form v-if="dataLoaded"  @submit.prevent="passes(submit)" autocomplete="off">
       <b-row>
         <b-col v-for="(field,index) in formFields" :key="index" cols="12" :md="cols">
           <field v-if="field && field.key !== 'address_id'" ref="fields" :disabled="loading || field.disabled || (!create && field.disableOnUpdate)"
@@ -60,6 +60,11 @@
         </b-col>
       </b-row>
     </b-form>
+    <b-row v-if="!dataLoaded">
+      <b-col cols="12" class="d-flex flex-row justify-content-center">
+        <b-spinner style="width: 24px;height: 24px"/>
+      </b-col>
+    </b-row>
   </validation-observer>
 </template>
 
@@ -71,33 +76,42 @@ import Table from '@/table'
 export default {
     name: "UserForm",
     mixins: [FormMixin],
+    data(){
+      return {
+        dataLoaded: false
+      }
+    },
     async mounted() {
+        this.dataLoaded = false
         await this.$http.get("/users/select")
-            .then((resp) => {
-            const data = resp.data;
-            let definition = { ...Table.user };
-            // add data for select fields in store
-            let index = definition.fields.findIndex(f => f.key === "usertype_id"); // usertype_id field
-            this.$store.dispatch("table/setListData", { entity: definition.fields[index].list, data: data?.usertype });
+        .then((resp) => {
+          const data = resp.data;
+          let definition = { ...Table.user };
+          // add data for select fields in store
+          let index = definition.fields.findIndex(f => f.key === "usertype_id"); // usertype_id field
+          this.$store.dispatch("table/setListData", { entity: definition.fields[index].list, data: data?.usertype });
 
-            index = definition.fields.findIndex(f => f.key === "function_id"); // function_id field
-            this.$store.dispatch("table/setListData", { entity: definition.fields[index].list, data: data?.function });
+          index = definition.fields.findIndex(f => f.key === "function_id"); // function_id field
+          this.$store.dispatch("table/setListData", { entity: definition.fields[index].list, data: data?.function });
 
-            index = definition.fields.findIndex(f => f.key === "user_functions"); // user_functions field
-            this.$store.dispatch("table/setListData", { entity: definition.fields[index].list, data: data?.function });
+          index = definition.fields.findIndex(f => f.key === "user_functions"); // user_functions field
+          this.$store.dispatch("table/setListData", { entity: definition.fields[index].list, data: data?.function });
 
-            index = definition.fields.findIndex(f => f.key === "customergroup_id"); // customer_group field
-            this.$store.dispatch("table/setListData", { entity: definition.fields[index].list, data: data?.customergroup });
+          index = definition.fields.findIndex(f => f.key === "customergroup_id"); // customer_group field
+          this.$store.dispatch("table/setListData", { entity: definition.fields[index].list, data: data?.customergroup });
 
-            index = definition.fields.findIndex(f => f.key === "partnergroup_id"); // partner group field
-            this.$store.dispatch("table/setListData", { entity: definition.fields[index].list, data: data?.partnergroup });
+          index = definition.fields.findIndex(f => f.key === "partnergroup_id"); // partner group field
+          this.$store.dispatch("table/setListData", { entity: definition.fields[index].list, data: data?.partnergroup });
 
-            this.$store.dispatch("table/setListData", { entity: "country", data: data?.country }); // country_id field
+          this.$store.dispatch("table/setListData", { entity: "country", data: data?.country }); // country_id field
         })
-            .catch(e => {
-            console.error(e);
-            this.$errorToast(e.response ? e.response.data?.detail : "Unknow Error");
-        });
+        .catch(e => {
+          console.error(e);
+          this.$errorToast(e.response ? e.response.data?.detail : "Unknow Error");
+        })
+        .finally(() => {
+          this.dataLoaded = true
+        })
     },
 
     methods: {
