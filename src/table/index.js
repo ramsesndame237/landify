@@ -516,7 +516,7 @@ export default {
         entity: 'role_tablegroup_crud_grp',
         entityForm: 'role_tablegroup_crud_rel',
         entityView: 'tablegroup',
-        lazy: false,
+        // lazy: false,
         update: false,
         create: false,
         delete: false,

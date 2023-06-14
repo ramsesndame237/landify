@@ -51,12 +51,15 @@ export default {
     const endpoint = this.table === 'tablegroup' ? `/permissions/tablegroups/${this.entityId}` : `/permissions/tablenames/${this.entityId}`
     this.loading = true
     await this.$http.get(endpoint)
-    .then((resp)=>{
-      const data = resp.data
-      this.rows = data
-      this.loading = false
-      this.$root.$on('update-matrix', this.submit)
-    })
+      .then(resp => {
+        const { data } = resp
+        this.rows = data
+        this.loading = false
+        this.$root.$on('update-matrix', this.submit)
+      })
+      .finally(() => {
+        this.loading = false
+      })
   },
   beforeDestroy() {
     this.$root.$off('update-matrix', this.submit)
@@ -71,11 +74,9 @@ export default {
       this.loading = true
       try {
         await this.$http.put(endpoint, payload)
-      }
-      catch(err){
-        console.error('err: ', err);
-      }
-      finally {
+      } catch (err) {
+        console.error('err: ', err)
+      } finally {
         this.loading = false
       }
     },
