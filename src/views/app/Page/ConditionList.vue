@@ -229,13 +229,8 @@ export default {
       if (!valid) return
       this.loading = true
       const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
-      const requestQuery = Object.keys(filter).reduce((r, e, i)=>{
-          if (i === 0) {
-              return r.concat(`${e}=${filter[e]}`)
-          } else {
-              return r.concat(`&${e}=${filter[e]}`)
-          }
-      }, '')
+      // generate the request query string
+      const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
 
         const date = moment(this.data.date)
