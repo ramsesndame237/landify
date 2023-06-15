@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import Vue from 'vue'
 import moment from 'moment'
-import { api } from '@/libs/axios'
+import { api, http } from '@/libs/axios'
 
 export default {
   namespaced: true,
@@ -87,7 +87,22 @@ export default {
     setListData(context, payload) {
       context.commit('setListCache', payload)
     },
-    fetchList(context, { entity, data }) {
+    fetchList(context, { entity, data, customEnpoint = null }) {
+      if(customEnpoint) {
+        data = [
+          ...(data ? data : [{}]),
+          {page: 1},
+          {per_page: 100000},
+          {order: 'desc'}
+        ]
+        const requestQuery = data.map(i=> Object.keys(i).map(e=> `${e}=${i[e]}`).join('&')).join('&')
+        return http.get(`${customEnpoint}?${requestQuery}`)
+        .then(({ data }) => {
+          Vue.set(context.state.listCache, entity, data.data)
+          context.commit('setDefinition', { data, table: entity })
+          return data.data
+        })
+      }
       if (entity === 'document') {
         console.warn('Fetch of documents is disabled')
         return []
