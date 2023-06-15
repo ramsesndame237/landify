@@ -208,16 +208,21 @@ export default {
 
       // retrieve form specific endpoint
       if (this.entityEndpoint){
-        const filterData = { ...this.filterData }
-        let requestQuery = ''
-        if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
-        if (Object.keys(filterData).length > 0) {
-          // create request query string
-          requestQuery = Object.keys(filterData).map(key => `${key}=${filterData[key]}`).join('&')
+        const filterData = {
+          ...this.filterData,
+          keyword: filter,
+          page: currentPage,
+          per_page: payload.per_page,
+          order_filed: sortBy,
+          order: sortDesc ? 'desc' : 'asc',
         }
+
+        if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
+          // create request query string
+        const requestQuery = Object.keys(filterData).map(key => `${key}=${filterData[key]}`).join('&')
+        console.log('requestQuery: ', requestQuery);
         return this.$http.get(`${this.entityEndpoint}?${requestQuery}`)
           .then(({ data }) => {
-            console.log(data)
             const items = this.processData(data)
             // set in cache
             this.$store.commit('table/setTableCache', { key: cacheKey, data })
