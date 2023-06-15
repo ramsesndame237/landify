@@ -1,10 +1,9 @@
 <template>
   <div>
-    <template v-if="definition.filters && definition.filters.length > 0">
-      <b-card v-if="definition.inline_filter" title="Filter">
-        <InlineFilter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData" @filter="filter" />
-      </b-card>
-    </template>
+    <b-card v-if="definition.inline_filter && definition.filters && definition.filters.length > 0" title="Filter">
+      <InlineFilter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
+                    @filter="filter"/>
+    </b-card>
     <b-card body-class="p-0">
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"
                         :on-new-element="definition.create ===false ? null : onNewElement" :total-rows="totalRows"
@@ -25,8 +24,9 @@
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
                  :primary-key-column="definition.primaryKey" :ids="ids"/>
     </b-card>
-    <generic-modal :fetch-data="false" :cache-key="table+'-'" @reload-table="$refs.table.reload()" :table="table" :definition="definition"
-                   with-continue :table-definition-key="table" :title="`headline~${table}~new`" ref="modal"/>
+    <generic-modal :fetch-data="false" :cache-key="table+'-'" @reload-table="$refs.table.reload()" :table="table"
+                   :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
+                   ref="modal"/>
   </div>
 </template>
 
