@@ -23,7 +23,6 @@
 <script>
 import Field from '@/views/app/Generic/Field.vue'
 import { BForm } from 'bootstrap-vue'
-import { computed, ref } from '@vue/composition-api'
 
 export default {
   components: {
@@ -37,43 +36,42 @@ export default {
     initialData: Object,
     vertical: Boolean,
   },
-  setup(props, { emit }) {
-    // Variables
-    const data = ref({ ...props.initialData })
-    const loading = ref(false)
-    const form = ref('')
-    const isVertical = computed(() => props.vertical || props.definition.filter_vertical)
-
+  data() {
+    return { data: { ...this.initialData }, loading: false }
+  },
+  computed: {
+    isVertical() {
+      return this.vertical || this.definition.filter_vertical
+    },
+  },
+  methods: {
     // Fonctions
-    const reset = () => {
-      data.value = { ...props.initialData }
-      form.value.reset()
+    reset() {
+      this.data = { ...this.initialData }
+      this.$refs.form.reset()
       // this.$refs.modal.hide()
-    }
-
-    const handleOk = bvModalEvt => {
+    },
+    handleOk(bvModalEvt) {
       // Prevent modal from closing
       bvModalEvt.preventDefault()
       // Trigger submit handler
-      loading.value = true
-      form.value.validate()
+      this.loading = true
+      this.$refs.form.validate()
         .then(success => {
           if (!success) {
             return Promise.reject(new Error('Invalid Form'))
           }
-          emit('filter', getFinalData())
+          this.$emit('filter', this.getFinalData())
         })
-    }
-    const getFinalData = () => Object.keys(data.value)
-      .filter(key => props.definition.filters.find(f => f.key === key && f.send !== false))
-      .reduce((obj, key) => {
-        if (data.value[key] != null) obj[key] = data.value[key]
-        return obj
-      }, {})
-
-    return {
-      data, reset, form, handleOk, getFinalData, isVertical,
-    }
+    },
+    getFinalData() {
+      return Object.keys(this.data)
+        .filter(key => this.definition.filters.find(f => f.key === key && f.send !== false))
+        .reduce((obj, key) => {
+          if (this.data[key] != null) obj[key] = this.data[key]
+          return obj
+        }, {})
+    },
   },
 }
 </script>
