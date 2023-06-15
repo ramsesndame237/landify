@@ -11,6 +11,7 @@ export default {
     currentPage: 1,
     totalRows: 0,
     tableDefinition: {},
+    // caching result for select list
     listCache: {},
     // table paramters
     tableData: {},
@@ -20,6 +21,7 @@ export default {
   getters: {
     tableDefinition: state => entity => state.tableDefinition[entity],
     tableData: state => table => state.tableData[table],
+    listCache: state => key => state.listCache[key] || [],
     tableCache: state => (key => {
       const val = state.tableCache[key]
       if (val) {
@@ -40,6 +42,9 @@ export default {
     },
     setTableCache(state, data) {
       Vue.set(state.tableCache, data.key, { data: data.data, time: moment() })
+    },
+    setListCache(state, { entity, data }) {
+      Vue.set(state.listCache, entity, data)
     },
     deleteTableCacheKeyFromPrefix(state, prefix) {
       Object.keys(state.tableCache).forEach(key => {
@@ -79,9 +84,8 @@ export default {
           return data.data.data
         })
     },
-    setListData(context, { entity, data }) {
-      Vue.set(context.state.listCache, entity, data)
-      // context.commit('setDefinition', { data, table: entity })
+    setListData(context, payload) {
+      context.commit('setListCache', payload)
     },
     fetchList(context, { entity, data }) {
       if (entity === 'document') {

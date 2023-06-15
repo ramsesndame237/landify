@@ -1,9 +1,14 @@
 <template>
   <div>
+    <b-card v-if="definition.inline_filter && definition.filters && definition.filters.length > 0" title="Filter">
+      <InlineFilter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
+                    @filter="filter"/>
+    </b-card>
     <b-card body-class="p-0">
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"
                         :on-new-element="definition.create ===false ? null : onNewElement" :total-rows="totalRows"
                         :with-filter="definition.filters && definition.filters.length > 0"
+                        :inline-filter="!definition.inline_filter"
                         :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
                         :actions="definition.actions" @action="(a)=>$refs.table.onAction(a)"
                         @filter="$refs.filter.openModal()"/>
@@ -17,10 +22,11 @@
                  :default-sort-column="initialSortBy||definition.defaultSortField" :default-sort-desc="initialSortDesc"
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
-                 :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"/>
+                 :primary-key-column="definition.primaryKey" :ids="ids"/>
     </b-card>
-    <generic-modal :fetch-data="false" :cache-key="table+'-'" @reload-table="$refs.table.reload()" :table="table" :definition="definition"
-                   with-continue :table-definition-key="table" :title="`headline~${table}~new`" ref="modal"/>
+    <generic-modal :fetch-data="false" :cache-key="table+'-'" @reload-table="$refs.table.reload()" :table="table"
+                   :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
+                   ref="modal"/>
   </div>
 </template>
 
@@ -33,6 +39,7 @@ import TablePagination from '@/layouts/components/TablePagination.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
 import Tables from '../../../table'
 import GenericFilter from './Filter.vue'
+import InlineFilter from './InlineFilter.vue'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
 
@@ -43,6 +50,7 @@ export default {
     TablePagination,
     Datatable,
     BCard,
+    InlineFilter,
   },
   data() {
     const payload = this.$store.getters['table/tableData'](this.$route.params.table)
