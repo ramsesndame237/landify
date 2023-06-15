@@ -232,21 +232,15 @@ export default {
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
-
         const date = moment(this.data.date)
-
         const masterData = (await this.$http.get(`/contracts/conditionList?${requestQuery}`)).data.data
-        let ids = []
-
-
-        const contracts = masterData.map((r, index) => {
-          ids.push(r.contract.contract_id)
+        const contracts = masterData.map(r => {
           const obj = _.pick(r.contract, ['contract_id', 'contract_name', 'contract_begin_date',
             'contract_end_date', 'contract_first_possible_end_date', 'contract_creation_time', 'pos_branchnumber',
             'contract_last_change_time', 'contract_migration_checked', 'contracttype_name', 'currency_name', 'currency_id', 'currency_short', 'currency_iso', 'currency_iso4217',
             'contracttype_description', 'company_name', 'location_name', 'pos_name', 'contactperson_firstname', 'contactperson_lastname', 'country_name', 'owner_name', 'manager_name'])
 
-          if (date.isBetween(r.contract.contract_area_unit_usagetype_valid_from_date, r.contract.contract_area_unit_usagetype_valid_to_date, "day", "[]")){
+          if (date.isBetween(r.contract.contract_area_unit_usagetype_valid_from_date, r.contract.contract_area_unit_usagetype_valid_to_date, "day", "[]")) {
             obj.areas = [
               _.pick(r.contract, [
                 'area_id',
@@ -259,15 +253,13 @@ export default {
                 'contract_area_unit_usagetype_rentalspace_value',
                 'contract_area_unit_usagetype_allocationspace_value',
                 'unit_id',
-                'unit_name'
-              ])
+                'unit_name',
+              ]),
             ]
             obj.total_allocation_space = _.sumBy(obj.areas.filter(ar => (['Parkfläche', 'Werbefläche'].indexOf(ar.areatype_name) === -1)), 'contract_area_unit_usagetype_allocationspace_value')
             obj.total_rental_space = _.sumBy(obj.areas.filter(ar => (['Hauptfläche'].indexOf(ar.areatype_name) >= 0)), 'contract_area_unit_usagetype_rentalspace_value')
           }
-          obj.negotiator = obj.contactperson_firstname + ' ' + obj.contactperson_lastname
-
-
+          obj.negotiator = `${obj.contactperson_firstname} ${obj.contactperson_lastname}`
           /*
           *!SECTION criteria
           */
@@ -355,9 +347,9 @@ export default {
             obj.special_termination_landlord = sr?.contract_specialright_description
           }
 
-           /*
-          *!SECTION recurringpayment
-          */
+          /*
+         *!SECTION recurringpayment
+         */
 
           if (!r.recurringpayments || !r.recurringpayments.length) obj.reccuringPayments = []
           else {
@@ -387,8 +379,7 @@ export default {
               'indexclause_minimal_percent_change_agreed',
               'indexclause_minimal_point_change_agreed',
               'maturitytype_name',
-              'maturitytype_description'])
-            )
+              'maturitytype_description']))
           }
 
           if (this.table !== 'conditions') return obj
@@ -424,32 +415,18 @@ export default {
           // const val = rcUmsat?.recurringpayment_value_deposit
           // contract.securities_related_to_contract = val != null ? (val ? 'yes' : 'no') : ''
           // contract.type_of_rental_security = ''
-
-
-
           return obj
-
         })
-
-
 
         let tickets = (await this.$api({
           action: 'read-rich',
           entity: 'frontend_6_1_6_listall',
           per_page: 10000000,
-          data: ids.map(id => ({ contract_id: id, ticket_closed: 0 })),
+          data: contracts.map(c => ({ contract_id: c.contract_id, ticket_closed: 0 })),
         })).data.data.data
         tickets = _.groupBy(tickets, 'contract_id')
 
         contracts.forEach(contract => {
-          const ticket_ids = _(tickets[contract.contract_id]).uniqBy('ticket_id').map('ticket_id')
-          // contract.missing_documents = ticket_ids.map(id => {
-          //   const route = this.$router.resolve({ name: 'table-view', params: { table: 'ticket', id } })
-          //   return `<a target="_blank" href="${route.href}">${id}</a>`
-          // })
-          //   .join('<br>')
-          // contract.missing_documents_export = ticket_ids.join(', ')
-
           if (this.table === 'deadlines') {
             const ticket = _(tickets[contract.contract_id]).filter(t => t.board_name === 'contradictionpackage-Kanban-Board')
               .orderBy('ticket_move_time_in', 'desc').value()[0]
@@ -464,8 +441,6 @@ export default {
               contract.date_of_status_determination = ticket.ticket_move_time_in
             }
           }
-
-
         })
 
         this.items = contracts
