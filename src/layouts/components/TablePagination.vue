@@ -19,7 +19,7 @@
 
     <div class="d-flex align-items-center">
       <slot/>
-      <b-button v-if="withFilter" @click="$emit('filter')" size="sm" variant="primary" class="mr-1 btn-icon">
+      <b-button v-if="withFilter && inlineFilter" @click="$emit('filter')" size="sm" variant="primary" class="mr-1 btn-icon">
         <feather-icon icon="FilterIcon"/>
       </b-button>
       <b-button v-if="onNewElement!=null && canCreate" @click="onNewElement" size="sm" variant="info" class="mr-1">
@@ -77,6 +77,7 @@ export default {
     totalRows: Number,
     entity: String,
     actions: Array,
+    inlineFilter: Boolean, // Indique s'il s'agit d'un filtre en ligne, afin de masquer l'icône de filtre
   },
   data() {
     return { internalSearch: this.search }
