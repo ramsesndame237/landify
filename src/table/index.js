@@ -393,7 +393,14 @@ export default {
     submit(vm) {
       const data = { ...vm.entity }
       const addressField = vm.$refs.fields.find(f => f.field.key === 'address_id')
-      data.user_functions = (vm.entity.user_functions || []).map(elt => ({ function_id: elt }))
+      console.log('vm.entity.user_functions: ', vm.entity.user_functions);
+      data.user_functions = (vm.entity.user_functions || []).map(elt => {
+        if (typeof elt === 'object' && elt.hasOwnProperty('function_id')) {
+          return {function_id: elt.function_id}
+        }else{
+          return { function_id: elt }
+        }
+      })
       data.address = addressField.subEntity
       const cityField = addressField.getSubFields().find(f => f.field.key === 'city_id')
       data.address.city = cityField.subEntity
