@@ -10,7 +10,7 @@
         <b-form @submit.prevent="passes(filter)">
           <b-row>
             <b-col v-for="(field,index) in definition.filters" :key="index" cols="12" :md="6">
-              <field ref="fields" :entity="data" :disabled="loading" :field="field"/>
+              <field ref="fields" :entity="data" :disabled="loading || field.disabled" :field="field"/>
             </b-col>
           </b-row>
         </b-form>
@@ -189,7 +189,14 @@ export default {
             type: 'list',
             list: 'frontend_2_1_3_8',
             listLabel: 'pos_name',
+            entityCustomEndPoint: '/pos',
             filter_key: 'company_id',
+            change: (entity, vm) => {
+              const pos = vm.list.find(c=> c.pos_id === vm.entity.pos_id)
+              if (pos && pos.hasOwnProperty('pos_id')) {
+                vm.$set(vm.entity, 'country_id', pos.country_id)
+              }
+            }
           },
           {
             key: 'country_id',
@@ -197,6 +204,7 @@ export default {
             type: 'list',
             list: 'country',
             listLabel: 'country_name',
+            disabled: true,
           },
           { key: 'date', type: 'date', default: moment().format('YYYY-MM-DD') },
         ],
@@ -229,6 +237,7 @@ export default {
       if (!valid) return
       this.loading = true
       const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
+      filter.per_page = 100000
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
