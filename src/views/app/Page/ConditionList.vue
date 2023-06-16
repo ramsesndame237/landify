@@ -192,10 +192,13 @@ export default {
             entityCustomEndPoint: '/pos',
             filter_key: 'company_id',
             change: (entity, vm) => {
+              console.log('vm.entity.pos_id: ', vm.entity.pos_id);
               const pos = vm.list.find(c=> c.pos_id === vm.entity.pos_id)
               if (pos && pos.hasOwnProperty('pos_id')) {
                 vm.$set(vm.entity, 'country_id', pos.country_id)
               }
+              if(vm.entity.pos_id === null || vm.entity.pos_id === undefined)  vm.$set(vm.entity, 'country_id', null)
+
             }
           },
           {
@@ -249,22 +252,25 @@ export default {
             'contract_last_change_time', 'contract_migration_checked', 'contracttype_name', 'currency_name', 'currency_id', 'currency_short', 'currency_iso', 'currency_iso4217',
             'contracttype_description', 'company_name', 'location_name', 'pos_name', 'contactperson_firstname', 'contactperson_lastname', 'country_name', 'owner_name', 'manager_name'])
 
-          if (date.isBetween(r.contract.contract_area_unit_usagetype_valid_from_date, r.contract.contract_area_unit_usagetype_valid_to_date, "day", "[]")) {
-            obj.areas = [
-              _.pick(r.contract, [
-                'area_id',
-                'area_name',
-                'areatype_id',
-                'areatype_name',
-                'contract_area_unit_usagetype_detail_description',
-                'contract_area_unit_usagetype_valid_from_date',
-                'contract_area_unit_usagetype_valid_to_date',
-                'contract_area_unit_usagetype_rentalspace_value',
-                'contract_area_unit_usagetype_allocationspace_value',
-                'unit_id',
-                'unit_name',
-              ]),
-            ]
+          if (!r.areas || !r.areas.length) obj.areas = []
+          else{
+            obj.areas = r.areas.map(i => {
+              if (date.isBetween(i.contract_area_unit_usagetype_valid_from_date, i.contract_area_unit_usagetype_valid_to_date, "day", "[]")){
+                return _.pick(i, [
+                  'area_id',
+                  'area_name',
+                  'areatype_id',
+                  'areatype_name',
+                  'contract_area_unit_usagetype_detail_description',
+                  'contract_area_unit_usagetype_valid_from_date',
+                  'contract_area_unit_usagetype_valid_to_date',
+                  'contract_area_unit_usagetype_rentalspace_value',
+                  'contract_area_unit_usagetype_allocationspace_value',
+                  'unit_id',
+                  'unit_name',
+                ])
+              }
+            })
             obj.total_allocation_space = _.sumBy(obj.areas.filter(ar => (['Parkfläche', 'Werbefläche'].indexOf(ar.areatype_name) === -1)), 'contract_area_unit_usagetype_allocationspace_value')
             obj.total_rental_space = _.sumBy(obj.areas.filter(ar => (['Hauptfläche'].indexOf(ar.areatype_name) >= 0)), 'contract_area_unit_usagetype_rentalspace_value')
           }
