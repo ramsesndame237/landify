@@ -2565,6 +2565,7 @@ export default {
           },
           {
             key: 'recurringpayment_sum_per_month',
+            isDecimal: true,
             hideOnForm: true,
           },
           { key: 'recurringpayment_begin_date', type: 'date', hideOnForm: true },
@@ -2869,7 +2870,7 @@ export default {
           { key: 'maturitytype_name', hideOnForm: true },
           { key: 'recurringpayment_begin_date', hideOnForm: true },
           { key: 'recurringpayment_percentage', hideOnForm: true },
-          { key: 'recurringpayment_sum_per_month', hideOnForm: true },
+          { key: 'recurringpayment_sum_per_month', hideOnForm: true, isDecimal: true },
         ],
       },
     ],
@@ -2899,6 +2900,7 @@ export default {
       { key: 'recurringpaymenttype_name', hideOnForm: true },
       {
         key: 'recurringpayment_sum_per_month',
+        isDecimal: true,
         hideOnIndex: true,
         visible: visibleByRecurringPaymentType([1, 3, 4, 5, 6, 7]),
       },
