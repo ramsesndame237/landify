@@ -2256,8 +2256,8 @@ export default {
   contract: {
     entity: 'frontend_3_4_1_1',
     fetchWithEntity: true,
-    createModal: false,
-    createComponent: () => import('@/views/app/CreateComponent/ContractForm/Index.vue'),
+    //createModal: false,
+    //createComponent: () => import('@/views/app/CreateComponent/ContractForm/Index.vue'),
     fields: [
       { key: 'contract_id', auto: true },
       {
