@@ -195,6 +195,8 @@ export default {
               const pos = vm.list.find(c=> c.pos_id === vm.entity.pos_id)
               if (pos && pos.hasOwnProperty('pos_id')) {
                 vm.$set(vm.entity, 'country_id', pos.country_id)
+              }else{
+                vm.$set(vm.entity, 'country_id', null)
               }
             }
           },
