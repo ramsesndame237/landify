@@ -1727,6 +1727,7 @@ export default {
   pos: {
     entity: 'frontend_3_1_1',
     primaryKey: 'pos_id',
+    entityEndpoint: '/pos',
     fields: [
       { key: 'pos_id', auto: true },
       {
@@ -1755,6 +1756,18 @@ export default {
         filter_key: 'company_id',
       },
     ],
+    filters: [
+      {
+        key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name',
+      },
+      {
+        key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name',filter_key: 'customergroup_id',
+      },
+      {
+        key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', required: false
+      }
+    ],
+    filter_vertical: true,
     relations: [
       {
         primaryKey: 'location_id',
