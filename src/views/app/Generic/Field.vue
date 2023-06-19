@@ -516,6 +516,7 @@ export default {
           await this.$store.dispatch('table/fetchTableDefinition', 'city')
         }
         const payload = { entity: this.field.entityList || list }
+        if (this.field.entityCustomEndPoint) payload.customEnpoint = this.field.entityCustomEndPoint
         if (this.field.onlyForm && this.entity[this.field.key]) {
           payload.data = [{ [this.field.key]: this.entity[this.field.key] }]
         }

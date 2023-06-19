@@ -393,7 +393,14 @@ export default {
     submit(vm) {
       const data = { ...vm.entity }
       const addressField = vm.$refs.fields.find(f => f.field.key === 'address_id')
-      data.user_functions = (vm.entity.user_functions || []).map(elt => ({ function_id: elt }))
+      console.log('vm.entity.user_functions: ', vm.entity.user_functions);
+      data.user_functions = (vm.entity.user_functions || []).map(elt => {
+        if (typeof elt === 'object' && elt.hasOwnProperty('function_id')) {
+          return {function_id: elt.function_id}
+        }else{
+          return { function_id: elt }
+        }
+      })
       data.address = addressField.subEntity
       const cityField = addressField.getSubFields().find(f => f.field.key === 'city_id')
       data.address.city = cityField.subEntity
@@ -2578,6 +2585,7 @@ export default {
           },
           {
             key: 'recurringpayment_sum_per_month',
+            isDecimal: true,
             hideOnForm: true,
           },
           { key: 'recurringpayment_begin_date', type: 'date', hideOnForm: true },
@@ -2882,7 +2890,7 @@ export default {
           { key: 'maturitytype_name', hideOnForm: true },
           { key: 'recurringpayment_begin_date', hideOnForm: true },
           { key: 'recurringpayment_percentage', hideOnForm: true },
-          { key: 'recurringpayment_sum_per_month', hideOnForm: true },
+          { key: 'recurringpayment_sum_per_month', hideOnForm: true, isDecimal: true },
         ],
       },
     ],
@@ -2912,6 +2920,7 @@ export default {
       { key: 'recurringpaymenttype_name', hideOnForm: true },
       {
         key: 'recurringpayment_sum_per_month',
+        isDecimal: true,
         hideOnIndex: true,
         visible: visibleByRecurringPaymentType([1, 3, 4, 5, 6, 7]),
       },

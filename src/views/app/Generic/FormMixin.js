@@ -260,8 +260,10 @@ export default {
                 return data
               })
           }
+          // format entity
+          const formatedEntity = this.formatEntity(entity, formFields)
 
-          let data = [entity]
+          let data = [formatedEntity]
           // if create and primary key is multiple
           if (create && formFields.find(f => f.key === primaryKey).multiple) {
             data = entity[primaryKey].map(val => ({ ...entity, [primaryKey]: val }))
@@ -288,6 +290,20 @@ export default {
               return data
             })
         })
+    },
+    /**
+     * Formats an entity based on the form fields: replace ',' with '.' for decimal field
+     *
+     */
+    formatEntity(entity, formfields){
+      const formatedEntity = {...entity}
+      formfields.forEach(field => {
+        if (field.isDecimal){
+          formatedEntity[field.key] = parseFloat(entity[field.key].replace(',', '.'))
+        }
+      })
+
+      return formatedEntity
     },
     async afterSaveHook(data) {
     },
