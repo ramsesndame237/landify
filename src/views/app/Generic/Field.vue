@@ -100,10 +100,34 @@
         <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key" :value="1"
                          :unchecked-value="0" style="margin-top: 5px"/>
-        <b-input-group v-else  :prepend="field.isUnitOnLeft ? getFieldUnit() : null" :append="field.isUnitOnLeft ? null : getFieldUnit()">
+        <b-input-group v-else class="w-100">
+          <b-input-group-prepend v-if="field.unit && field.unit_key && field.isUnitOnLeft" class="w-20">
+            <validation-provider :vid="field.unit_key" #default="{ errors }" rules="required" :name="field.unit_key">
+
+              <v-select :dropdown-should-open="true"
+                      :placeholder="field.unit_key" :disabled="disabled"  :options="unitOptions"
+                      :loading="loading" :class="errors.length > 0 ? 'error':''"
+                      v-model="entity[field.unit_key]" class="w-100"
+              />
+              <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
+            </validation-provider>
+          </b-input-group-prepend>
           <b-form-input v-model="entity[field.key]" :type="field.type==='decimal'?'number':(field.type||'text')"
-                        :disabled="disabled" :step="field.type==='decimal'?0.01:1" :state="errors.length > 0 ? false:null"
-                        :placeholder="field.key"/>
+            :disabled="disabled" :step="field.type==='decimal'?0.01:1" :state="errors.length > 0 ? false:null"
+            :placeholder="field.key" class="w-80"
+          />
+          <b-input-group-append  v-if="field.unit && field.unit_key && !field.isUnitOnLeft" class="w-20">
+            <validation-provider :vid="field.unit_key" #default="{ errors }" rules="required" :name="field.unit_key">
+              <v-select :dropdown-should-open="true"
+                      :placeholder="field.unit_key" :disabled="disabled"  :options="unitOptions"
+                      :loading="loading" :class="errors.length > 0 ? 'error':''"
+                      v-model="entity[field.unit_key]" class="w-100"
+              />
+              <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
+            </validation-provider>
+
+          </b-input-group-append>
+
         </b-input-group>
         <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
       </validation-provider>
@@ -130,7 +154,7 @@
 import Fuse from 'fuse.js'
 import { createPicker } from 'picmo';
 import {
-  BButton, BImg, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow, BSpinner
+  BButton, BImg, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow, BSpinner, BInputGroupPrepend, BInputGroupAppend
 } from 'bootstrap-vue'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
@@ -165,6 +189,8 @@ export default {
     BCol,
     BFormCheckbox,
     BSpinner,
+    BInputGroupPrepend,
+    BInputGroupAppend
   },
   mixins: [togglePasswordVisibility],
   props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition', 'noLabel', 'create'],
@@ -197,7 +223,8 @@ export default {
         { value: 0, label: 'No' },
       ],
       files: [],
-      randomPassword: "",
+      unitOptions: [],
+      randomPassword: '',
       editor: ClassicEditor,
       waitPassword: false,
       isEmojiInputVisible: false,
@@ -319,14 +346,16 @@ export default {
       picker.addEventListener('emoji:select', event => {
         console.log('Emoji selected:', event);
         this.$set(this.entity, this.field.key, event.hexcode)
-      });
+      })
     }
+
+    if (this.field.unit) {
+      this.unitOptions = this.field.unit(this)
+      this.entity[this.field.unit_key] = this.unitOptions[0]
+    }
+
   },
   methods: {
-    getFieldUnit() {
-      if (this.field.unit) return this.field.unit(this)
-      return ''
-    },
     subFieldDisabled(field) {
       if (this.field.disabled && this.field.disabled.includes(field.name)) {
         return true
