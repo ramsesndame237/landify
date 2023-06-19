@@ -393,7 +393,14 @@ export default {
     submit(vm) {
       const data = { ...vm.entity }
       const addressField = vm.$refs.fields.find(f => f.field.key === 'address_id')
-      data.user_functions = (vm.entity.user_functions || []).map(elt => ({ function_id: elt }))
+      console.log('vm.entity.user_functions: ', vm.entity.user_functions);
+      data.user_functions = (vm.entity.user_functions || []).map(elt => {
+        if (typeof elt === 'object' && elt.hasOwnProperty('function_id')) {
+          return {function_id: elt.function_id}
+        }else{
+          return { function_id: elt }
+        }
+      })
       data.address = addressField.subEntity
       const cityField = addressField.getSubFields().find(f => f.field.key === 'city_id')
       data.address.city = cityField.subEntity
@@ -516,7 +523,7 @@ export default {
         entity: 'role_tablegroup_crud_grp',
         entityForm: 'role_tablegroup_crud_rel',
         entityView: 'tablegroup',
-        lazy: false,
+        // lazy: false,
         update: false,
         create: false,
         delete: false,
@@ -854,7 +861,7 @@ export default {
         change: (entity, vm) => {
           let create_contactperson;
           console.log("entity", entity);
-          if (entity.create_contactperson === 1){
+          if (entity.create_contactperson === 1) {
             const companyAddressField = vm.$parent.$children[3]
             const companyCityField = companyAddressField.getSubFields()[3]
 
@@ -1720,6 +1727,7 @@ export default {
   pos: {
     entity: 'frontend_3_1_1',
     primaryKey: 'pos_id',
+    entityEndpoint: '/pos',
     fields: [
       { key: 'pos_id', auto: true },
       {
@@ -1748,6 +1756,18 @@ export default {
         filter_key: 'company_id',
       },
     ],
+    filters: [
+      {
+        key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name',
+      },
+      {
+        key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name',filter_key: 'customergroup_id',
+      },
+      {
+        key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', required: false
+      }
+    ],
+    filter_vertical: true,
     relations: [
       {
         primaryKey: 'location_id',
@@ -2320,7 +2340,7 @@ export default {
       { key: 'contract_begin_date', type: 'date' },
       { key: 'contract_end_date', type: 'date', hideOnIndex: true },
       { key: 'contract_first_possible_end_date', type: 'date', hideOnIndex: true },
-      { key: 'contract_last_change_time', type: 'date', hideOnIndex: true},
+      { key: 'contract_last_change_time', type: 'date', hideOnIndex: true },
       { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
       { key: 'contract_sum_allarea_allocationspace', hideOnForm: true },
       { key: 'currency_name', hideOnCreate: true, disabled: true },
@@ -2570,6 +2590,7 @@ export default {
           },
           {
             key: 'recurringpayment_sum_per_month',
+            isDecimal: true,
             hideOnForm: true,
           },
           { key: 'recurringpayment_begin_date', type: 'date', hideOnForm: true },
@@ -2874,7 +2895,7 @@ export default {
           { key: 'maturitytype_name', hideOnForm: true },
           { key: 'recurringpayment_begin_date', hideOnForm: true },
           { key: 'recurringpayment_percentage', hideOnForm: true },
-          { key: 'recurringpayment_sum_per_month', hideOnForm: true },
+          { key: 'recurringpayment_sum_per_month', hideOnForm: true, isDecimal: true },
         ],
       },
     ],
@@ -2904,6 +2925,7 @@ export default {
       { key: 'recurringpaymenttype_name', hideOnForm: true },
       {
         key: 'recurringpayment_sum_per_month',
+        isDecimal: true,
         hideOnIndex: true,
         visible: visibleByRecurringPaymentType([1, 3, 4, 5, 6, 7]),
       },
@@ -3845,8 +3867,8 @@ export default {
       { key: 'priority_id', auto: true },
       { key: 'priority_name' },
       { key: 'priority_order' },
-      { key: 'priority_smiley' },
-      { key: 'priority_color' },
+      { key: 'priority_smiley', type: 'smiley' },
+      { key: 'priority_color', type: 'color' },
     ],
   },
   ticket: {
