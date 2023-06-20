@@ -205,10 +205,11 @@ export default [
       item('country'),
       item('currency'),
       item('unit'),
-      {
-        title: key('documenttype'),
-        route: 'comming-soon',
-      },
+      item('documenttype'),
+      // {
+      //   title: key('documenttype'),
+      //   route: 'comming-soon',
+      // },
     ],
   },
   headerItem('administration'),

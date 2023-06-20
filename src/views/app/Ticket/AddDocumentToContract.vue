@@ -4,6 +4,9 @@
            @ok="addDocumentToContract">
     <validation-observer ref="form">
       <field
+        :field="{key: 'documenttype_id', type:'list',listLabel: 'documenttype_name', list: 'documenttype'}"
+        :entity="entity" inline="true"/>
+      <field
         :field="{key: 'documentcontracttype_id', type:'list',listLabel: 'documentcontracttype_name', list: 'documentcontracttype'}"
         :entity="entity" inline="true"/>
     </validation-observer>

@@ -4082,6 +4082,34 @@ export default {
       },
       // { key: 'document_content_type' },
     ],
+
+  },
+  documenttype: {
+    entity: 'documenttype',
+    fields: [
+      { key: 'documenttype_id', auto: true },
+      { key: 'documenttype_name' },
+      { key: 'documenttype_description', type: 'textarea' },
+      { key: 'documenttype_short' },
+    ],
+    relations: [
+      {
+        title: 'headline~documentcontracttype~tab',
+        primaryKey: 'documenttype_id',
+        entityForm: 'documenttype_documentcontracttype_rel',
+        entity: 'documenttype_documentcontracttype_grp',
+        fields: [
+          {
+            key: 'documentcontracttype_id',
+            sortable: true,
+            type: 'list',
+            list: 'documentcontracttype',
+            listLabel: 'documentcontractype_name',
+            hideOnForm: true,
+          },
+        ],
+      },
+    ],
   },
   '1__translation': {
     inlineEdit: true,
