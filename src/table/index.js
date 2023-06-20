@@ -86,15 +86,13 @@ export default {
       },
       {
         key: 'partnergroup_is_internal',
-        visible: () => {
-          return false
-        },
+        visible: () => false,
         hideOnIndex: true,
         type: 'boolean',
         default: 1,
         change: (entity) => {
           if (entity.usertype_id === 1) return 1
-          else return 0
+          return 0
         },
       },
       {
@@ -168,10 +166,10 @@ export default {
         filter_key: 'partnercompany_id',
         listLabel: 'user_lastname',
         relationEntity: 'contactperson_user_rel',
-        visible: (entity) => entity.usertype_id === 1 && entity.partnercompany_id,
+        visible: entity => entity.usertype_id === 1 && entity.partnercompany_id,
         // hideOnCreate: true,
         required: false,
-      }
+      },
     ],
     // updateComponent: () => import('@/views/app/FormComponent/UserForm'),
     relations: [
@@ -186,7 +184,7 @@ export default {
             key: 'role_is_internal',
             hideOnIndex: true,
             visible: () => false,
-            value: (entity, vm) => vm.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$refs.form.entity.usertype_id === 1 ? 1 : 0,
+            value: (entity, vm) => (vm.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$refs.form.entity.usertype_id === 1 ? 1 : 0),
           },
           {
             key: 'role_id',
@@ -393,13 +391,12 @@ export default {
     submit(vm) {
       const data = { ...vm.entity }
       const addressField = vm.$refs.fields.find(f => f.field.key === 'address_id')
-      console.log('vm.entity.user_functions: ', vm.entity.user_functions);
+      console.log('vm.entity.user_functions: ', vm.entity.user_functions)
       data.user_functions = (vm.entity.user_functions || []).map(elt => {
         if (typeof elt === 'object' && elt.hasOwnProperty('function_id')) {
-          return {function_id: elt.function_id}
-        }else{
-          return { function_id: elt }
+          return { function_id: elt.function_id }
         }
+        return { function_id: elt }
       })
       data.address = addressField.subEntity
       const cityField = addressField.getSubFields().find(f => f.field.key === 'city_id')
@@ -414,7 +411,7 @@ export default {
     fetch(vm) {
       return vm.$http.get(`/users/${vm.entityId}`)
         .then(resp => {
-          const data = resp.data
+          const { data } = resp
           if (data.contactperson) {
             data.contactperson_id = data.contactperson.contactperson_id
           }
@@ -586,7 +583,7 @@ export default {
             list: 'user',
             listLabel: 'user_email',
             disableOnUpdate: true,
-            multiple: true
+            multiple: true,
           },
           { key: 'user_firstname', hideOnForm: true },
           { key: 'user_lastname', hideOnForm: true },
@@ -859,16 +856,14 @@ export default {
         hideOnUpdate: true,
         hideOnIndex: true,
         change: (entity, vm) => {
-          let create_contactperson;
-          console.log("entity", entity);
+          let create_contactperson
+          console.log('entity', entity)
           if (entity.create_contactperson === 1) {
             const companyAddressField = vm.$parent.$children[3]
             const companyCityField = companyAddressField.getSubFields()[3]
 
-
             const contactPersonAddressField = vm.$parent.$children[7].$children[0].$children[7]
             const contactPersonCityField = contactPersonAddressField.getSubFields()[3]
-
 
             for (const key in companyAddressField.subEntity) {
               contactPersonAddressField.$set(contactPersonAddressField.subEntity, key, companyAddressField.subEntity[key])
@@ -877,8 +872,6 @@ export default {
             for (const key in companyCityField.subEntity) {
               contactPersonCityField.$set(contactPersonCityField.subEntity, key, companyCityField.subEntity[key])
             }
-
-
           }
         },
       },
@@ -891,7 +884,7 @@ export default {
         alwaysNew: true,
         hideOnIndex: true,
         onlyForm: true,
-        visible: (entity) => entity.create_contactperson === 1,
+        visible: entity => entity.create_contactperson === 1,
       },
 
       { key: 'city_name', sortable: true, hideOnForm: true },
@@ -1116,7 +1109,7 @@ export default {
         ],
         send: false,
         visible: () => false,
-        value: () => 0
+        value: () => 0,
       },
       { key: 'contactperson_firstname' },
       { key: 'contactperson_lastname' },
@@ -1656,17 +1649,15 @@ export default {
             const debounced = _.debounce(
               () => vm.$http
                 .get(`/users/state/${entity.city_zip}`)
-                .then(async (resp) => {
+                .then(async resp => {
                   if (resp.data?.state) city_state = resp.data.state
-                })
-              ,
-              1600
+                }),
+              1600,
             )
 
-            debounced();
+            debounced()
           }
           return city_state
-
         },
       },
       { key: 'country_short', sortable: true, hideOnForm: true },
@@ -1761,11 +1752,11 @@ export default {
         key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name',
       },
       {
-        key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name',filter_key: 'customergroup_id',
+        key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name', filter_key: 'customergroup_id',
       },
       {
-        key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', required: false
-      }
+        key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', required: false,
+      },
     ],
     filter_vertical: true,
     relations: [
@@ -2362,16 +2353,16 @@ export default {
         hideOnUpdate: true,
       },
       {
-        key: "contract_migration_checked",
-        type: "boolean",
+        key: 'contract_migration_checked',
+        type: 'boolean',
         hideOnIndex: true,
         hideOnUpdate: true,
         hideOnForm: true,
-      }
+      },
 
     ],
     default: {
-      contract_migration_checked: 0
+      contract_migration_checked: 0,
     },
     relations: [
 
@@ -3910,10 +3901,14 @@ export default {
         formatter: val => window.$vue.$t(val ? 'header~board~status~closed' : 'header~board~status~open'),
       },
       { key: 'priority_name', hideOnForm: true },
-      { key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', hideOnIndex: true },
+      {
+        key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', hideOnIndex: true,
+      },
 
       // { key: 'column_name', hideOnForm: true },
-      { key: 'ticket_creation_time', type: 'date', time: true, hideOnForm: true },
+      {
+        key: 'ticket_creation_time', type: 'date', time: true, hideOnForm: true,
+      },
       { key: 'board_name', hideOnForm: true },
       // { key: 'contract_id', hideOnForm: true },
       // { key: 'contract_name', hideOnForm: true },
@@ -3957,7 +3952,9 @@ export default {
         filter_key: 'pos_id',
         required: false,
       },
-      { key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', required: false },
+      {
+        key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', required: false,
+      },
     ],
     note: 'frontend_0_8_2',
   },
@@ -4094,19 +4091,19 @@ export default {
     ],
     relations: [
       {
-        title: 'headline~documentcontracttype~tab',
-        primaryKey: 'documenttype_id',
+        primaryKey: 'documentcontracttype_id',
         entityForm: 'documenttype_documentcontracttype_rel',
-        entity: 'documenttype_documentcontracttype_grp',
+        entity: 'documenttype_documentcontracttype_grp', 
+        entityView: 'documentcontracttype',
         fields: [
           {
             key: 'documentcontracttype_id',
-            sortable: true,
             type: 'list',
             list: 'documentcontracttype',
-            listLabel: 'documentcontractype_name',
-            hideOnForm: true,
+            listLabel: 'documentcontracttype_name',
           },
+          { key: 'documentcontracttype_name', hideOnForm: true },
+          { key: 'documentcontracttype_description', type: 'textarea', hideOnForm: true },
         ],
       },
     ],
@@ -4132,13 +4129,13 @@ export default {
       attribute_nice_name_group: '',
     },
   },
-  'function': {
+  function: {
     fields: [
       { key: 'function_id', auto: true },
       'function_name',
-      'function_description'
-    ]
-  }
+      'function_description',
+    ],
+  },
 }
 
 function getContractCriteriaFields() {
