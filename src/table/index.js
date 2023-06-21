@@ -2,6 +2,7 @@ import { getDocumentLink } from '@/libs/utils'
 import { api } from '@/libs/axios'
 import { successToast } from '@/libs/toastification'
 import _ from 'lodash'
+import moment from "moment"
 
 export default {
   // region Work Package 1
@@ -2541,6 +2542,7 @@ export default {
         entity: 'frontend_3_4_3_2',
         entityForm: 'contract_specialright_rel',
         entityView: 'specialright',
+        formComponent: () => import('@/views/app/FormComponent/SpecialrightForm.vue'),
         fields: [
           {
             key: 'specialright_id', type: 'list', list: 'specialright', listLabel: 'specialright_name',
@@ -2551,7 +2553,18 @@ export default {
             key: 'contract_specialright_date', type: 'date', composite: true, hideOnForm: true, hideOnIndex: true,
           },
           { key: 'contract_specialright_prior_notice_date', type: 'date' },
-          { key: 'contract_specialright_termination_date', type: 'date', composite: true },
+          {
+            key: 'contract_specialright_termination_date',
+            type: 'date',
+            composite: true,
+            change: (entity, vm) => {
+              const date = entity['contract_specialright_termination_date']
+              if(date && moment().isSameOrAfter(date)) {
+                vm.$set(vm.entity, 'contract_specialright_is_passive', 1)
+                vm.$set(vm.entity, 'contract_specialright_is_availed', 1)
+              }
+            }
+          },
           { key: 'contract_specialright_automatic_renewal_in_months', type: 'number', required: false },
           { key: 'contract_specialright_is_passive', type: 'boolean' },
           { key: 'contract_specialright_is_availed', type: 'boolean' },
