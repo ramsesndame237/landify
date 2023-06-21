@@ -3881,7 +3881,7 @@ export default {
       },
       { key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', required: false },
     ],
-    // note: 'frontend_0_8_2',
+     note: 'frontend_0_8_2',
   },
   board: {
     entity: 'frontend_6_1_4',
