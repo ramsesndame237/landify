@@ -59,7 +59,6 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 }
 
 .vs__selected-options {
-  flex-wrap: nowrap;
   max-width: calc(100% - 25px); /* change this to `- 40px` if you're supporting a `clearable` field; I was not */
 }
 
@@ -67,6 +66,6 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
   display: block;
   white-space: nowrap;
   text-overflow: ellipsis;
-  max-width: 100%;
+  max-width: 35rem;
   overflow: hidden;
 }
