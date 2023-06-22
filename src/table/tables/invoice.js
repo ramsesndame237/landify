@@ -1,4 +1,4 @@
-import {updateInvoiceFlatRate} from "@/table/utils"
+import {updateInvoiceFlatRate, updateInvoiceApportionable} from "@/table/utils"
 export default {
   entity: 'frontend_4_1_1',
   createModal: false,
