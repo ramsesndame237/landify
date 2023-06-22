@@ -21,6 +21,7 @@ import invoice from "./tables/invoice"
 import invoiceposition from "./tables/invoiceposition"
 import ticket from "./tables/ticket"
 import contradiction from "./tables/contradiction"
+import inspectionresult from "./tables/inspectionresult"
 import contradictionpackage from "./tables/contradictionpackage"
 
 export default {
@@ -805,4 +806,3 @@ export default {
     ]
   }
 }
-/tables
