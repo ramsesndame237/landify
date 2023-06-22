@@ -1,3 +1,11 @@
+function visibleByRecurringPaymentType(indexes) {
+  return (entity, vm) => {
+    const list = vm.$store.state.table.listCache.recurringpaymenttype
+    if (!list) return false
+    const selected = list.find(i => i.recurringpaymenttype_id === entity.recurringpaymenttype_id)
+    return selected ? indexes.indexOf(parseInt(selected.recurringpaymenttype_name.split('-')[0])) >= 0 : false
+  }
+}
 export default {
   entity: 'frontend_3_9_1',
   fields: [

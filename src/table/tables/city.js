@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export default {
   primaryKey: 'city_id',
   entity: 'frontend_2_10_1',

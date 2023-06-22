@@ -1,3 +1,5 @@
+import {getContractCriteriaFields} from '@/table/utils'
+
 export default {
   entity: 'frontend_3_4_1_1',
   fetchWithEntity: true,

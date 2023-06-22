@@ -1,7 +1,8 @@
+import {updateInvoiceFlatRate} from "@/table/utils"
 export default {
   entity: 'frontend_4_1_1',
   createModal: false,
-  formComponent: () => import('../views/app/FormComponent/InvoiceForm.vue'),
+  formComponent: () => import('@/views/app/FormComponent/InvoiceForm.vue'),
   fields: [
     { key: 'invoice_id', auto: true },
     {
