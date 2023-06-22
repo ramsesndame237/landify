@@ -4093,7 +4093,7 @@ export default {
       {
         primaryKey: 'documentcontracttype_id',
         entityForm: 'documenttype_documentcontracttype_rel',
-        entity: 'documenttype_documentcontracttype_grp', 
+        entity: 'documenttype_documentcontracttype_grp',
         entityView: 'documentcontracttype',
         fields: [
           {
