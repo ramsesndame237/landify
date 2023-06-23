@@ -304,13 +304,18 @@ export default {
     return {
       subTicketDef,
       ticketDef: Table.ticket,
-      documentDef: Table.document,
+      documentDef: {
+        fields: [
+          ...Table.document.fields,
+          { key: 'ticket_id', type: 'list', noFetch: true, visible: () => false },
+        ],
+      },
       subTickets: [],
       documents: [],
       loading: false,
       emails: [],
       loadingEmail: false,
-      contractDocument: {}
+      contractDocument: {},
     }
   },
   computed: {
@@ -401,7 +406,7 @@ export default {
       })
     },
     createDocument() {
-      this.$refs.documentModal.openModal(true, {})
+      this.$refs.documentModal.openModal(true, { ticket_id: this.entity.ticket_id })
     },
     createInvoice() {
       this.$router.push({
