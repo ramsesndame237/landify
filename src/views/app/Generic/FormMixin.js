@@ -265,7 +265,7 @@ export default {
 
           let data = [formatedEntity]
           // if create and primary key is multiple
-          if (create && formFields.find(f => f.key === primaryKey).multiple) {
+          if (create && formFields.find(f => f.key === primaryKey)?.multiple) {
             data = entity[primaryKey].map(val => ({ ...entity, [primaryKey]: val }))
           }
           return this.$api({

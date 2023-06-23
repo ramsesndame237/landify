@@ -22,7 +22,7 @@
                  :default-sort-column="initialSortBy||definition.defaultSortField" :default-sort-desc="initialSortDesc"
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
-                 :primary-key-column="definition.primaryKey" :ids="ids"/>
+                 :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"/>
     </b-card>
     <generic-modal :fetch-data="false" :cache-key="table+'-'" @reload-table="$refs.table.reload()" :table="table"
                    :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
