@@ -180,7 +180,7 @@
         <b-col lg="4">
           <h4 class="font-weight-bolder">{{ $t('headline~ticket~documents') }}</h4>
           <b-row>
-            <b-col v-for="(document,i) in documents" :key="i">
+            <b-col v-for="(document,i) in documents" :key="i" cols="6">
               <b-overlay :show="document.loading">
                 <b-card>
                   <div class="d-flex justify-content-between">
@@ -310,7 +310,7 @@ export default {
       loading: false,
       emails: [],
       loadingEmail: false,
-      contractDocument: {}
+      contractDocument: {},
     }
   },
   computed: {
@@ -401,7 +401,7 @@ export default {
       })
     },
     createDocument() {
-      this.$refs.documentModal.openModal(true, {})
+      this.$refs.documentModal.openModal(true, { ticket_id: this.entity.ticket_id })
     },
     createInvoice() {
       this.$router.push({
@@ -433,8 +433,19 @@ export default {
     async onTicketUpdate() {
       await this.loadSingleTicket()
     },
-    onDocumentUpdate() {
-      this.fetchDocuments()
+    onDocumentUpdate(data) {
+      console.log(data)
+      this.$api({
+        action: 'create',
+        entity: 'document_ticket_rel',
+        data: data.map(doc => ({
+          document_id: doc.document_id,
+          ticket_id: this.entity.ticket_id,
+        })),
+      })
+        .finally(() => {
+          this.fetchDocuments()
+        })
     },
     async fetchSubTickets() {
       // load subtickets
