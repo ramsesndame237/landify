@@ -254,23 +254,22 @@ export default {
 
           if (!r.areas || !r.areas.length) obj.areas = []
           else{
-            obj.areas = r.areas.map(i => {
-              if (date.isBetween(i.contract_area_unit_usagetype_valid_from_date, i.contract_area_unit_usagetype_valid_to_date, "day", "[]")){
-                return _.pick(i, [
-                  'area_id',
-                  'area_name',
-                  'areatype_id',
-                  'areatype_name',
-                  'contract_area_unit_usagetype_detail_description',
-                  'contract_area_unit_usagetype_valid_from_date',
-                  'contract_area_unit_usagetype_valid_to_date',
-                  'contract_area_unit_usagetype_rentalspace_value',
-                  'contract_area_unit_usagetype_allocationspace_value',
-                  'unit_id',
-                  'unit_name',
-                ])
-              }
-            })
+            obj.areas = r.areas
+              .filter(i=> (date.isBetween(i.contract_area_unit_usagetype_valid_from_date, i.contract_area_unit_usagetype_valid_to_date, "day", "[]")))
+              .map(i =>  _.pick(i, [
+                'area_id',
+                'area_name',
+                'areatype_id',
+                'areatype_name',
+                'contract_area_unit_usagetype_detail_description',
+                'contract_area_unit_usagetype_valid_from_date',
+                'contract_area_unit_usagetype_valid_to_date',
+                'contract_area_unit_usagetype_rentalspace_value',
+                'contract_area_unit_usagetype_allocationspace_value',
+                'unit_id',
+                'unit_name',
+              ])
+            )
             obj.total_allocation_space = _.sumBy(obj.areas.filter(ar => (['Parkfläche', 'Werbefläche'].indexOf(ar.areatype_name) === -1)), 'contract_area_unit_usagetype_allocationspace_value')
             obj.total_rental_space = _.sumBy(obj.areas.filter(ar => (['Hauptfläche'].indexOf(ar.areatype_name) >= 0)), 'contract_area_unit_usagetype_rentalspace_value')
           }
