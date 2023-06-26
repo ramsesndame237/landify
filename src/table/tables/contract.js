@@ -1,4 +1,5 @@
 import {getContractCriteriaFields} from '@/table/utils'
+import moment from "moment"
 
 export default {
   entity: 'frontend_3_4_1_1',
@@ -268,18 +269,34 @@ export default {
       entity: 'frontend_3_4_3_2',
       entityForm: 'contract_specialright_rel',
       entityView: 'specialright',
+      formComponent: () => import('@/views/app/FormComponent/SpecialrightForm.vue'),
       fields: [
         {
           key: 'specialright_id', type: 'list', list: 'specialright', listLabel: 'specialright_name',
         },
         { key: 'specialright_name', hideOnForm: true },
         { key: 'contract_specialright_description', type: 'textarea', required: false },
-        {
-          key: 'contract_specialright_date', type: 'date', composite: true, hideOnForm: true, hideOnIndex: true,
-        },
-        { key: 'contract_specialright_prior_notice_date', type: 'date' },
-        { key: 'contract_specialright_termination_date', type: 'date', composite: true },
+        { key: 'contract_specialright_actual_options', type: 'number' },
+        { key: 'contract_specialright_total_number_options', type: 'number' },
+        { key: 'contract_specialright_available_options', type: 'number' },
         { key: 'contract_specialright_automatic_renewal_in_months', type: 'number', required: false },
+        { key: 'contract_specialright_prior_notice_period', type: 'date' },
+        { key: 'contract_specialright_prior_notice_date', type: 'date' },
+        { key: 'contract_specialright_extensions', type: 'number' },
+        { key: 'contract_specialright_date', type: 'date', composite: true, hideOnForm: true, hideOnIndex: true },
+        {
+          key: 'contract_specialright_termination_date',
+          type: 'date',
+          composite: true,
+          visible: entity => [1,2].includes(entity.specialright_id),
+          change: (entity, vm) => {
+            const date = entity['contract_specialright_termination_date']
+            if(date && moment().isSameOrAfter(date)) {
+              vm.$set(vm.entity, 'contract_specialright_is_passive', 1)
+              vm.$set(vm.entity, 'contract_specialright_is_availed', 1)
+            }
+          }
+        },
         { key: 'contract_specialright_is_passive', type: 'boolean' },
         { key: 'contract_specialright_is_availed', type: 'boolean' },
       ],
