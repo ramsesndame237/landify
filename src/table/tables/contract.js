@@ -288,6 +288,7 @@ export default {
           key: 'contract_specialright_termination_date',
           type: 'date',
           composite: true,
+          visible: entity => [1,2].includes(entity.specialright_id),
           change: (entity, vm) => {
             const date = entity['contract_specialright_termination_date']
             if(date && moment().isSameOrAfter(date)) {
