@@ -13,8 +13,6 @@
 
 <script>
 import FormMixin from '@/views/app/Generic/FormMixin'
-import moment from 'moment'
-
 
 export default {
   name: "SpecialrightForm",

@@ -269,6 +269,7 @@ export default {
       entity: 'frontend_3_4_3_2',
       entityForm: 'contract_specialright_rel',
       entityView: 'specialright',
+      withContinue: true,
       formComponent: () => import('@/views/app/FormComponent/SpecialrightForm.vue'),
       fields: [
         {
@@ -281,7 +282,7 @@ export default {
         { key: 'contract_specialright_available_options', type: 'number' },
         { key: 'contract_specialright_automatic_renewal_in_months', type: 'number', required: false },
         { key: 'contract_specialright_prior_notice_period', type: 'date' },
-        { key: 'contract_specialright_prior_notice_date', type: 'date' },
+        // { key: 'contract_specialright_prior_notice_date', type: 'date' },
         { key: 'contract_specialright_extensions', type: 'number' },
         { key: 'contract_specialright_date', type: 'date', composite: true, hideOnForm: true, hideOnIndex: true },
         {

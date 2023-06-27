@@ -65,7 +65,7 @@
                          :with-delete="relation.delete!==false"/>
             <generic-modal :cache-key="relation.entity+'-'" title="Test" :table="relation.entityForm || relation.entity"
                            :definition="relation" is-relation
-                           :table-definition-key="relation.entityForm || relation.entity" with-continue
+                           :table-definition-key="relation.entityForm || relation.entity" :with-continue="relation.withContinue"
                            @reload-table="reloadRelatedTable"/>
           </template>
         </b-tab>
