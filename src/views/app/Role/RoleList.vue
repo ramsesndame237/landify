@@ -39,7 +39,7 @@
           <b-card class="pt-2 pl-3" img-src="https://demos.pixinvent.com/vuexy-vuejs-admin-template/demo-1/assets/girl-using-mobile-26d497df.png" img-left>
             <div class="text-right">
               <b-card-text>
-                <b-button variant="primary" class="capitalize">
+                <b-button variant="primary" class="capitalize" @click="$refs.modal.openModal(true,{})">
                   Add new role
                 </b-button>
               </b-card-text>
@@ -73,6 +73,10 @@
         />
       </b-card>
     </b-overlay>
+    <generic-modal ref="modal" :fetch-data="false" :cache-key="table + '-'" :table="table"
+                   :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
+                   @reload-table="getRoles"
+    />
   </div>
 </template>
 
@@ -80,6 +84,7 @@
 import Tables from '@/table'
 import TablePagination from '@/layouts/components/TablePagination.vue'
 import GenericFilter from '@/views/app/Generic/Filter.vue'
+import GenericModal from '@/views/app/Generic/modal.vue'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
 
@@ -89,6 +94,7 @@ export default {
     Datatable,
     TablePagination,
     GenericFilter,
+    GenericModal,
   },
   data() {
     const payload = this.$store.getters['table/tableData'](this.$route.params.table)
