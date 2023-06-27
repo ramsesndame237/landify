@@ -26,5 +26,6 @@ Vue.prototype.$upload = data => axiosFileIns.post('/uploadxlsx/', data)
 
 export default axiosIns
 
+export const http = Vue.prototype.$http
 export const api = Vue.prototype.$api
 export const upload = Vue.prototype.$upload

@@ -78,7 +78,7 @@
         <b-col cols="6">
           <field :field="{key: 'email_to'}" :entity="item" disabled/>
         </b-col>
-        <b-col col="12">
+        <b-col cols="12">
           <field :field="{key: 'email_body', type: 'html'}" :entity="item" disabled/>
         </b-col>
       </b-row>
@@ -381,7 +381,7 @@ export default {
     async fetchList() {
       // this.loading = true
       try {
-        const { data } = await this.$http.get('/classifications/email/data')
+        const { data } = await this.$http.get('/emails/filters/data')
         await this.$store.dispatch('table/setListData', { entity: 'frontend_6_1_6_overview', data: data.ticket })
         await this.$store.dispatch('table/setListData', { entity: 'frontend_2_1_3_8', data: data.pos })
         await this.$store.dispatch('table/setListData', {
@@ -420,7 +420,7 @@ export default {
       if (this.loading) return
       this.loading = true
 
-      const promises = [this.$http.get('/classifications/email/', { params: payload })]
+      const promises = [this.$http.get('/emails', { params: payload })]
       if (!this.listLoaded) promises.push(this.fetchList())
       const [result0, result1] = await Promise.allSettled(promises)
       console.log(result0, result1)

@@ -142,7 +142,7 @@ export default {
           entity: 'note',
           action: 'update',
           data: [
-            { ...note, note_del: 1 },
+            { note_id: note.note_id, note_del: 1 },
           ],
         })
       } finally {
@@ -156,6 +156,7 @@ export default {
         this.notes = (await this.$api({
           entity: this.note,
           action: 'read-rich',
+          per_page: 999,
           data: [
             {
               [this.primaryKey === 'user_id' ? 'user_id_user' : this.primaryKey]: this.id,
