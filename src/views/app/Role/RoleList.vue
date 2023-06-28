@@ -6,7 +6,7 @@
         <div v-for="role in roles.slice(0,5)" :key="role.role_id" class="col-lg-4 col-sm-3 col-12">
           <b-card>
             <div class="d-flex justify-content-between align-items-center">
-              <span class="h5">Total {{ role.users_number }} users</span>
+              <span class="h5"> {{ $t('text~role~nbr_users').replace(':users_number', role.users_number) }}</span>
               <b-avatar-group size="30px">
                 <template v-for="user in role.users">
                   <b-avatar :key="user.user_id" :text="avatarPlaceholder(user)" />
@@ -14,8 +14,9 @@
                 <b-avatar v-if="role.users_number > 4">
                   <feather-icon
                     icon="PlusIcon"
-                    size="18"
+                    size="12"
                   />
+                  {{ role.users_number - 4 }}
                 </b-avatar>
               </b-avatar-group>
             </div>
@@ -23,15 +24,15 @@
               <h3>{{ role.role_name }}</h3>
             </b-card-text>
             <b-card-text class="d-flex justify-content-between">
-              <b-link href="#" class="card-link">
-                Edit role
-              </b-link>
-              <b-link href="#">
+              <b-button class="card-link p-0" variant="link" @click="roleDetail(true, role)">
+                {{ $t('button~edit_role') }}
+              </b-button>
+              <b-button class="p-0" variant="link" :title="$t('tooltip~btn-icon~detail-role')" @click="roleDetail(false, role)">
                 <feather-icon
-                  icon="CopyIcon"
+                  icon="EyeIcon"
                   size="18"
                 />
-              </b-link>
+              </b-button>
             </b-card-text>
           </b-card>
         </div>
@@ -40,11 +41,11 @@
             <div class="text-right">
               <b-card-text>
                 <b-button variant="primary" class="capitalize" @click="$refs.modal.openModal(true,{})">
-                  Add new role
+                  {{ $t('headline~role~new') }}
                 </b-button>
               </b-card-text>
               <b-card-text>
-                <span>Add Role, if it doesn't exist.</span>
+                <span>{{ $t('text~role~add_if_not_exist') }}</span>
               </b-card-text>
             </div>
 
@@ -61,7 +62,7 @@
           <feather-icon icon="FilterIcon" />
         </b-button>
         <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions" class="mr-2" />
-        <generic-filter ref="filter" vertical :table="table" :definition="definition" :initial-data="initialFilterData"/>
+        <generic-filter ref="filter" vertical :table="table" :definition="definition" :initial-data="initialFilterData" />
       </table-pagination>
     </b-card>
     <b-overlay :show="usersRoleLoading" rounded="sm">
@@ -148,6 +149,21 @@ export default {
     })
   },
   methods: {
+    roleDetail(isEdit, role) {
+      this.$router.push({
+        name: 'table-view',
+        params: {
+          table: this.table, entity: role, id: role.role_id,
+        },
+        query: { edit: `${isEdit}` },
+      })
+    },
+    /**
+     * Afin de s'accommoder au visuel demandé et du fait que notre système ne possède pas d'avatar,
+     * cette fonction renvoie les premières lettres du nom et prénom pour l'utiliser comme avatar
+     * @param user
+     * @returns string
+     */
     avatarPlaceholder(user) {
       return user?.user_firstname.charAt(0)
      + user?.user_lastname.charAt(0)
@@ -183,6 +199,6 @@ export default {
 
 <style scoped>
 .card-img-left{
-  width: 6.2rem
+  width: 5.9rem
 }
 </style>

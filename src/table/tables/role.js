@@ -1,5 +1,6 @@
 export default {
   customIndex: () => import('@/views/app/Role/RoleList.vue'),
+  primaryKey: 'role_id',
   fields: [
     { key: 'user_id', hideOnForm: true, hideOnIndex: true },
     { key: 'role_id', auto: true },
@@ -22,7 +23,6 @@ export default {
     {
       key: 'roles',
       type: 'html',
-      label: 'Roles',
       listLabel: 'role_name',
       hideOnForm: true,
       formatter: value => {
@@ -36,5 +36,102 @@ export default {
       },
     },
     { key: 'usertype', hideOnForm: true, formatter: value => value?.usertype_name.charAt(0).toUpperCase() + value?.usertype_name.slice(1) },
+  ],
+  relations: [
+    {
+      title: 'Access',
+      primaryKey: 'access_id',
+      entity: 'role_access_grp',
+      entityForm: 'role_access_rel',
+      entityView: 'access',
+      update: false,
+      view: false,
+      fields: [
+        {
+          key: 'access_id',
+          label: 'ID',
+          sortable: true,
+          type: 'list',
+          list: 'access',
+          listLabel: 'access_name',
+        },
+        { key: 'access_name', sortable: true, hideOnForm: true },
+      ],
+    },
+    {
+      title: 'Users',
+      primaryKey: 'user_id',
+      entity: 'user_role_grp',
+      entityForm: 'user_role_rel',
+      entityView: 'user',
+      fields: [
+        {
+          key: 'user_id',
+          sortable: true,
+          type: 'list',
+          list: 'user',
+          listLabel: 'user_firstname',
+          hideOnIndex: true,
+          disableOnUpdate: true,
+        },
+        { key: 'user_firstname', sortable: true, hideOnForm: true },
+        {
+          key: 'user_role_valid_from', type: 'date', disableOnUpdate: true, composite: true,
+        },
+        {
+          key: 'user_role_valid_to',
+          type: 'date',
+          rules: { date_after: ['@user_role_valid_from'] },
+          sortable: true,
+        },
+      ],
+    },
+    {
+      title: 'Table Groups',
+      primaryKey: 'tablegroup_id',
+      entity: 'role_tablegroup_crud_grp',
+      entityForm: 'role_tablegroup_crud_rel',
+      entityView: 'tablegroup',
+      lazy: false,
+      update: false,
+      create: false,
+      delete: false,
+      search: false,
+      component: () => import('@/views/app/Role/Relation/TableGroupMatrix.vue'),
+      tool: () => import('@/views/app/Role/Relation/MatrixTool.vue'),
+      fields: [
+        {
+          key: 'tablegroup_id', type: 'list', list: 'tablegroup', listLabel: 'tablegroup_name',
+        },
+        {
+          key: 'crud', type: 'list', list: 'crud', listLabel: 'crud', composite: true,
+        },
+        { key: 'tablegroup_name', hideOnForm: true },
+        { key: 'tablegroup_description', hideOnForm: true },
+      ],
+    },
+    {
+      title: 'Tables',
+      primaryKey: 'table_name',
+      composite: ['table_name', 'crud'],
+      entity: 'role_tablename_crud_grp',
+      entityForm: 'role_tablename_crud_rel',
+      entityView: 'tablename',
+      update: false,
+      create: false,
+      delete: false,
+      search: false,
+      // lazy: false,
+      component: () => import('@/views/app/Role/Relation/TableGroupMatrix.vue'),
+      tool: () => import('@/views/app/Role/Relation/MatrixTool.vue'),
+      fields: [
+        {
+          key: 'table_name', sortable: true, type: 'list', list: 'tablename', listLabel: 'table_name',
+        },
+        {
+          key: 'crud', type: 'list', list: 'crud', listLabel: 'crud', composite: true,
+        },
+      ],
+    },
   ],
 }
