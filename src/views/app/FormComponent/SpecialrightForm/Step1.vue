@@ -1,7 +1,7 @@
 <template>
   <b-row>
     <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
-      {{ $t('headline~new_contract~title~recurringpayment')}}
+      {{ $t('headline~new_deadline~title~action')}}
     </b-col>
 
     <b-col cols="12" class="p-0">
@@ -46,8 +46,13 @@ export default {
   },
   methods: {
     async save(){
-      this.$refs.form.validate();
-      console.log("step1 form submitted");
+      await this.$refs.form.validate().then(success => {
+        if (success) {
+          console.log("suuucccceeeeessss !");
+        }
+      }).catch(error => {
+        throw new Error(error)
+      })
     }
   },
 

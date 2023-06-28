@@ -34,12 +34,12 @@
           <step1 v-if="current_step===1" ref="step1" :context="context" :disabled="loading"/>
           <step2 v-if="current_step===2" ref="step2" :context="context" :disabled="loading"/>
 
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
+          <div class="d-flex align-items-center justify-content-end">
+            <!-- <div>
               <small>
                 {{ $t('headline~new_business~subframe~customergroup') }}
               </small>
-            </div>
+            </div> -->
             <div class="d-flex align-items-center justify-content-between">
               <b-button v-if="current_step > 1 && current_step < max_steps" :disabled="loading" size="md"
                         class="d-flex align-items-center" variant="warning" @click="skip_step()">
@@ -93,12 +93,12 @@ export default {
       steps_progress: 0,
       steps_tabs: [
         {
-          text: this.$t('headline~new_contract~progress~maininfos'),
+          text: this.$t('headline~new_deadline~progress~actions'),
           completed: false,
           step: 1,
         },
         {
-          text: this.$t('headline~new_contract~progress~areaunitusage'),
+          text: this.$t('headline~new_deadline~progress~maininfos'),
           completed: false,
           step: 2,
         },
@@ -144,7 +144,7 @@ export default {
         this.steps_tabs[this.current_step - 1].completed = true
       }
 
-      this.goToStep(this.current_step + 1)
+      // this.goToStep(this.current_step + 1)
     },
     goToStep(step) {
       this.current_step = step

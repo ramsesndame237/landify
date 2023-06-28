@@ -1,7 +1,7 @@
 <template>
   <b-row>
     <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
-      {{ $t('headline~new_contract~title~recurringpayment')}}
+      {{ $t('headline~new_deadline~title~maininfos')}}
     </b-col>
 
     <!-- form -->
@@ -48,7 +48,7 @@ import Table from '@/table'
 import DataTables from '@/layouts/components/DataTables'
 
 export default {
-  name: 'Step3',
+  name: 'Step2',
   components: {
     BForm, BRow, BCol, BButton,
     ValidationObserver, EntityForm, Field,
