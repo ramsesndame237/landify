@@ -270,7 +270,7 @@ export default {
       entityForm: 'contract_specialright_rel',
       entityView: 'specialright',
       withContinue: true,
-      formComponent: () => import('@/views/app/FormComponent/SpecialrightForm.vue'),
+      formComponent: () => import('@/views/app/FormComponent/SpecialrightForm/Index.vue'),
       fields: [
         {
           key: 'specialright_id', type: 'list', list: 'specialright', listLabel: 'specialright_name',
