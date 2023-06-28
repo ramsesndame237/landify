@@ -68,9 +68,9 @@
     <b-overlay :show="usersRoleLoading" rounded="sm">
       <b-card>
         <Datatable :key="table" ref="table" :selectable="false" :search="search" primary-key-column="user_id"
-                   entity="role" :fields="definition.fields" :items="usersRoles" :total-rows.sync="totalRows"
+                   entity="role" :fields="definition.fields" :total-rows.sync="totalRows"
                    :per-page="perPage" :current-page.sync="currentPage" entity-view="user" :with-delete="false"
-                   :with-edit="false"
+                   :with-edit="false" entity-endpoint="users/list-role"
         />
       </b-card>
     </b-overlay>
@@ -127,12 +127,15 @@ export default {
   },
   watch: {
     filterValue() {
-      this.getUsersRoles()
+      if (this.filterValue) {
+        this.filter({ role: this.filterValue })
+      } else {
+        this.filter()
+      }
     },
   },
   mounted() {
     this.getRoles()
-    this.getUsersRoles()
   },
   beforeDestroy() {
     this.$store.commit('table/setTableData', {
@@ -149,6 +152,10 @@ export default {
     })
   },
   methods: {
+    filter(obj) {
+      this.currentPage = 1
+      this.$refs.table.filter(obj)
+    },
     roleDetail(isEdit, role) {
       this.$router.push({
         name: 'table-view',
@@ -170,7 +177,7 @@ export default {
     },
     async getRoles() {
       this.roleLoading = true
-      const payload = { customEnpoint: '/users/roles', data: [{ per_page: this.perPage }] }
+      const payload = { customEnpoint: '/users/roles' }
       try {
         const response = await this.$store.dispatch('table/fetchList', payload)
         this.roles = response
@@ -178,19 +185,6 @@ export default {
         console.log({ error })
       } finally {
         this.roleLoading = false
-      }
-    },
-    async getUsersRoles() {
-      this.usersRoleLoading = true
-      const payload = { customEnpoint: '/users/list-role', data: [{ per_page: this.perPage }, this.filterValue ? { role: this.filterValue } : {}] }
-      try {
-        const usersListRole = await this.$store.dispatch('table/fetchList', payload)
-        this.usersRoles = usersListRole
-        this.totalRows = usersListRole.length
-      } catch (error) {
-        console.log({ error })
-      } finally {
-        this.usersRoleLoading = false
       }
     },
   },
