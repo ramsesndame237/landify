@@ -1,0 +1,91 @@
+export default {
+  primaryKey: 'partnergroup_id',
+  entity: 'frontend_2_6_1',
+  fields: [
+    { key: 'partnergroup_id', auto: true },
+    { key: 'partnergroup_name' },
+    { key: 'partnergroup_is_internal', type: 'boolean' },
+    // { key: 'partnertype_name', hideOnForm: true },
+    // {
+    //   key: 'partnertype_id', hideOnIndex: true, type: 'list', list: 'partnertype', listLabel: 'partnertype_name',
+    // },
+    {
+      key: 'partnergroup_description', hideOnIndex: true, type: 'textarea', required: false,
+    },
+    { key: 'partnercompany_count', hideOnForm: true },
+  ],
+  relations: [
+    {
+      title: 'Partner Company',
+      primaryKey: 'partnercompany_id',
+      entity: 'frontend_2_6_3_1',
+      entityForm: 'partnercompany_partnergroup_rel',
+      entityView: 'partnercompany',
+      update: false,
+      fields: [
+        {
+          key: 'partnercompany_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name',
+        },
+        { key: 'partnercompany_name', hideOnForm: true },
+        { key: 'city_name', hideOnForm: true },
+        { key: 'country_name', hideOnForm: true },
+        { key: 'location_count', hideOnForm: true },
+      ],
+    },
+    {
+      title: 'Users',
+      primaryKey: 'user_id',
+      entity: 'frontend_2_6_3_2',
+      entityForm: 'user_partnergroup_rel',
+      entityView: 'user',
+      fields: [
+        {
+          key: 'user_id', type: 'list', list: 'user', listLabel: 'user_email', disableOnUpdate: true,
+        },
+        { key: 'user_lastname', hideOnForm: true },
+        { key: 'user_firstname', hideOnForm: true },
+        { key: 'user_email', hideOnForm: true },
+        {
+          key: 'user_partnergroup_valid_from',
+          type: 'date',
+          composite: true,
+          disableOnUpdate: true,
+        },
+        {
+          key: 'user_partnergroup_valid_to',
+          type: 'date',
+          rules: { date_after: ['@user_partnergroup_valid_from'] },
+        },
+      ],
+    },
+    {
+      title: 'Contact Persons',
+      primaryKey: 'contactperson_id',
+      entity: 'frontend_2_6_3_3',
+      entityForm: 'partnergroup_contactperson_rel',
+      entityView: 'contactperson',
+      update: false,
+      formComponent: () => import('@/views/app/FormComponent/PartnerGroupContactPerson'),
+      fields: [
+        {
+          key: 'contactperson_id',
+          type: 'list',
+          list: 'contactperson',
+          listLabel: 'contactperson_name',
+          alwaysNew: true,
+          onlyForm: true,
+        },
+        { key: 'contactperson_lastname', hideOnForm: true },
+        { key: 'contactperson_firstname', hideOnForm: true },
+        { key: 'contacttitle_name', hideOnForm: true },
+        { key: 'contactsalutation_name', hideOnForm: true },
+        { key: 'contactperson_department', hideOnForm: true },
+        { key: 'contactperson_function', hideOnForm: true },
+        { key: 'contactdetails_email', hideOnForm: true },
+        { key: 'contactdetails_phone', hideOnForm: true },
+        { key: 'contactdetails_mobile', hideOnForm: true },
+        { key: 'city_name', hideOnForm: true },
+      ],
+    },
+  ],
+}
