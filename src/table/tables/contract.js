@@ -281,8 +281,9 @@ export default {
         { key: 'contract_specialright_total_number_options', type: 'number' },
         { key: 'contract_specialright_available_options', type: 'number' },
         { key: 'contract_specialright_automatic_renewal_in_months', type: 'number', required: false },
+        { key: 'contract_specialright_renewal_in_months', type: 'number', required: false },
         { key: 'contract_specialright_prior_notice_period', type: 'date' },
-        // { key: 'contract_specialright_prior_notice_date', type: 'date' },
+        { key: 'contract_specialright_prior_notice_date', type: 'date' },
         { key: 'contract_specialright_extensions', type: 'number' },
         { key: 'contract_specialright_date', type: 'date', composite: true, hideOnForm: true, hideOnIndex: true },
         {
