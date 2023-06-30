@@ -211,10 +211,8 @@ export default {
         const filterData = {
           ...this.filterData,
           keyword: filter,
-          key: filter,
           page: currentPage,
           size: payload.per_page,
-          per_page: payload.per_page,
           order_filed: sortBy,
           order: sortDesc ? 'desc' : 'asc',
         }
@@ -233,7 +231,7 @@ export default {
             }else if (typeof data.data === 'object' && data.data != null){
               items = this.processData(data)
               // set in cache
-              this.$store.commit('table/setTableCache', { key: cacheKey, data: data.data })
+              this.$store.commit('table/setTableCache', { key: cacheKey, data })
             }else{
               throw new Error('invalid data')
             }
