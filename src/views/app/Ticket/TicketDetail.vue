@@ -235,6 +235,7 @@
           <generic-modal ref="documentModal" :fetch-data="false" table="document" :definition="documentDef"
                          table-definition-key="document" title="Update the document" @reload-table="onDocumentUpdate"/>
           <add-document-to-contract ref="documentContractModal"/>
+          <add-document-to-pos ref="documentPosModal"/>
         </b-col>
       </b-row>
     </div>
@@ -264,11 +265,13 @@ import Notes from "@/views/app/Generic/Notes.vue";
 import _ from 'lodash'
 import EmailModal from "@/views/app/Ticket/EmailModal.vue";
 import AddDocumentToContract from "@/views/app/Ticket/AddDocumentToContract.vue";
+import AddDocumentToPos from "@/views/app/Ticket/AddDocumentToPos.vue";
 
 export default {
   name: 'TicketDetail',
   components: {
     AddDocumentToContract,
+    AddDocumentToPos,
     EmailModal,
     Notes,
     AssignUserModal,
@@ -339,17 +342,7 @@ export default {
   methods: {
     async addToPos(document) {
       if (document.loading) return
-      document.loading = true
-      try {
-        await this.$api({
-          action: 'create',
-          entity: 'document_pos_rel',
-          data: [{ document_id: document.document_id, pos_id: this.entity.pos_id }],
-        })
-        document.pos_id = this.entity.pos_id
-      } finally {
-        document.loading = false
-      }
+      this.$refs.documentPosModal.openModal(document, this.entity.pos_id)
     },
     addToContract(document) {
       this.contractDocument.document_id = document.document_id
