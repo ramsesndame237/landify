@@ -54,7 +54,7 @@ export default {
             list: 'user',
             listLabel: 'user_email',
             disableOnUpdate: true,
-            multiple: true
+            multiple: true,
           },
           { key: 'user_firstname', hideOnForm: true },
           { key: 'user_lastname', hideOnForm: true },
@@ -776,6 +776,34 @@ export default {
       },
       // { key: 'document_content_type' },
     ],
+
+  },
+  documenttype: {
+    entity: 'documenttype',
+    fields: [
+      { key: 'documenttype_id', auto: true },
+      { key: 'documenttype_name' },
+      { key: 'documenttype_description', type: 'textarea' },
+      { key: 'documenttype_short' },
+    ],
+    relations: [
+      {
+        primaryKey: 'documentcontracttype_id',
+        entityForm: 'documenttype_documentcontracttype_rel',
+        entity: 'documenttype_documentcontracttype_grp',
+        entityView: 'documentcontracttype',
+        fields: [
+          {
+            key: 'documentcontracttype_id',
+            type: 'list',
+            list: 'documentcontracttype',
+            listLabel: 'documentcontracttype_name',
+          },
+          { key: 'documentcontracttype_name', hideOnForm: true },
+          { key: 'documentcontracttype_description', type: 'textarea', hideOnForm: true },
+        ],
+      },
+    ],
   },
   '1__translation': {
     inlineEdit: true,
@@ -798,11 +826,11 @@ export default {
       attribute_nice_name_group: '',
     },
   },
-  'function': {
+  function: {
     fields: [
       { key: 'function_id', auto: true },
       'function_name',
-      'function_description'
-    ]
-  }
+      'function_description',
+    ],
+  },
 }
