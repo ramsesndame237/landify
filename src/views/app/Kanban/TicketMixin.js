@@ -96,7 +96,7 @@ export default {
       const updated = (await this.$api({
         action: 'update',
         entity: 'ticket',
-        data: [{ ticket_id: ticket.ticket_id, ticket_closed: !ticket.ticket_closed }],
+        data: [{ ticket_id: ticket.ticket_id, ticket_closed: ticket.ticket_closed ? 0 : 1 }],
       })).data.data.data[0][0]
       ticket.ticket_closed = updated.ticket_closed
       this.$successToast(ticket.ticket_closed ? 'The ticket is closed' : 'The ticket is open')
