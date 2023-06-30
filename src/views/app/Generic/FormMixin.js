@@ -247,11 +247,12 @@ export default {
             }
             return this.$http.post('/document/uploadfiles', formData, { headers: { 'content-type': 'form-data' } })
               .then(({ data }) => {
-                if (data.data.length > 0) {
+                const created = data.data.filter(d => d.created)
+                if (created.length > 0) {
                   this.$api({
                     action: 'create',
                     entity: 'document_documenttype_rel',
-                    data: data.data.map(row => ({
+                    data: created.map(row => ({
                       documenttype_id: entity.documenttype_id,
                       document_id: row.document_id,
                     })),
@@ -265,7 +266,7 @@ export default {
 
           let data = [formatedEntity]
           // if create and primary key is multiple
-          if (create && formFields.find(f => f.key === primaryKey).multiple) {
+          if (create && formFields.find(f => f.key === primaryKey)?.multiple) {
             data = entity[primaryKey].map(val => ({ ...entity, [primaryKey]: val }))
           }
           return this.$api({
