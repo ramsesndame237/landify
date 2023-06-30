@@ -20,7 +20,7 @@
                     :editor="editor" :config="editorOption"
           />
         </div>
-        <div v-else-if="field.type==='list'" :class="(field.withNew || field.ids) ? 'd-flex': ''">
+        <div v-else-if="field.type==='list'" :class="(field.withNew || field.withPopup || field.ids) ? 'd-flex': ''">
           <v-select v-model="entity[field.key]" :dropdown-should-open="true" :disabled="selectDisabled"
                     :class="errors.length > 0 ? 'error':''"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
@@ -32,7 +32,12 @@
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm"
           >New
-          </b-button>
+        </b-button>
+        <b-button v-if="field.withPopup && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
+                  @click="showNewPopupForm" :disabled="disableButton"
+        >New
+        </b-button>
+
           <b-button v-if="field.ids && !field.noShowButton" class="ml-2 text-nowrap" variant="info"
                     @click="showAll=!showAll"
           >
@@ -222,6 +227,7 @@ export default {
         // },
         // placeholder: 'Type Text Here...',
       },
+      disableButton: false, 
     }
   },
   computed: {
@@ -560,6 +566,23 @@ export default {
     showNewForm() {
       console.log('click on new')
       this.$set(this.entity, this.field.key, this.newValue)
+    },
+     showNewPopupForm(){
+      const self = this;
+      this.disableButton = true;
+      const popupWindow = window.open("/app/table/"+this.$route.params.table+"/popup/"+this.field.list,"Formpopup","popup")
+      popupWindow.addEventListener('beforeunload', function() {
+        // Réactivez le bouton ici
+        self.disableButton = false;
+      });
+      window.addEventListener('message', async function(event) {
+        // Vérifiez l'origine de l'événement pour des raisons de sécurité
+        if (event.origin === window.location.origin && event.data.message === "success")  {
+           // Réactivez le bouton ici
+          self.disableButton = false;
+          await self.fetchList(true)
+        }
+      });
     },
     onChange() {
       console.log('change')
