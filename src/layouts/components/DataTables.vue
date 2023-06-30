@@ -61,6 +61,7 @@ export default {
     entityList: { type: String },
     entityForm: { type: String, required: false },
     entityView: { type: String, required: false },
+    entityEndpoint: {type: String, required: false}, // if it exist a specific route for retrieving data
     fields: { type: Array, required: true },
     primaryKeyColumn: { type: String },
     blankLink: { type: Boolean, default: false },
@@ -204,6 +205,38 @@ export default {
       if (fromCache) {
         return this.processData(fromCache)
       }
+
+      // retrieve form specific endpoint
+      if (this.entityEndpoint){
+        const filterData = {
+          ...this.filterData,
+          keyword: filter,
+          page: currentPage,
+          per_page: payload.per_page,
+          order_filed: sortBy,
+          order: sortDesc ? 'desc' : 'asc',
+        }
+
+        if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
+          // create request query string
+        const requestQuery = Object.keys(filterData).map(key => `${key}=${filterData[key]}`).join('&')
+        console.log('requestQuery: ', requestQuery);
+        return this.$http.get(`${this.entityEndpoint}?${requestQuery}`)
+          .then(({ data }) => {
+            const items = this.processData(data)
+            // set in cache
+            this.$store.commit('table/setTableCache', { key: cacheKey, data })
+            return items
+          })
+          .catch(e => {
+            console.log(e)
+            const title = e.response?.data.detail
+            this.$errorToast(title)
+            return null
+          })
+      }
+
+
       return this.$api(payload)
         .then(({ data }) => {
           console.log(data)
@@ -223,6 +256,17 @@ export default {
       return `${this.entity}-${JSON.stringify(payload)}`
     },
     processData(data) {
+      if(this.entityEndpoint){
+        this.$emit('update:totalRows', data.total)
+        data.data.forEach(el => {
+          el.__selected = false
+        })
+        this.$store.commit('table/setDefinition', { data, table: this.table })
+        this.currentItems = data.data
+        this.$emit('items', this.currentItems)
+        return this.currentItems
+
+      }
       this.$emit('update:totalRows', data.data.links.pagination.total)
       data.data.data.forEach(el => {
         el.__selected = false

@@ -1,14 +1,14 @@
 <template>
   <b-row>
     <b-col cols="12" class="bg-light pt-1 pb-1 mb-2">
-      {{ $t('headline~new_contract~title~recurringpayment')}}
+      {{ $t('headline~new_contract~title~criteria') }}
     </b-col>
 
     <!-- form -->
     <b-col cols="12" md="6" class="p-0">
       <validation-observer ref="form" v-slot="{ passes }">
         <b-form @submit.prevent="passes(save)" autocomplete="off">
-          <b-col v-for="(field,index) in definition.filter(f=> f.hide!==true && !f.auto && f.hideOnCreate !==true && f.hideOnForm !==true)" :key="index" cols="12">
+          <b-col v-for="(field,index) in definition" :key="index" cols="12">
             <field ref="fields" :disabled="disabled || field.disabled || field.disableOnUpdate"
                    :inline="false" :entity="entity" :table-definition="tableDefinition" :field="field"/>
           </b-col>
@@ -28,8 +28,8 @@
       <data-tables
         ref="datatable"
         :current-page="1" :per-page="100" :with-edit="false" :with-view="false"
-        entity="contract_recurringpayment_rel" :entity-list="definition.entity" :fields="fields" :selectable="false"
-        :items="recurringPayment" :canMakeDeleteCall='false'
+        entity="contract_criteria_rel" :entity-list="definition.entity" :fields="fields" :selectable="false"
+        :items="criteria" :canMakeDeleteCall='false'
         @delete-items='DeleleItemsInDataTable'
       />
     </b-col>
@@ -49,7 +49,7 @@ import DataTables from '@/layouts/components/DataTables'
 import NewContractStepMixin from "./NewContractStepMixin"
 
 export default {
-  name: 'Step3',
+  name: 'Step5',
   components: {
     BForm, BRow, BCol, BButton,
     ValidationObserver, EntityForm, Field,
@@ -57,10 +57,15 @@ export default {
   },
   props: ['disabled', 'context'],
   data() {
-    const definition = {...Table.recurringpayment}.fields.filter(f=> f.hide!==true && !f.auto && f.hideOnCreate !==true && f.hideOnForm !==true)
-    // delete contract id field
-    const contractIdIndex = definition.findIndex(f => f.key === "contract_id")
-    definition.splice(contractIdIndex, 1)
+    const relation = {...Table.contract}.relations.find(rel => rel.entity === 'frontend_3_4_3_4')
+    const definition = relation.fields.filter(f=> f.hide!==true && !f.auto && f.hideOnCreate !==true && f.hideOnForm !==true)
+
+    // activate contract_criteria_valid_from_date and criteria id fields
+    let index = definition.findIndex(f => f.key === "contract_criteria_valid_from_date")
+    definition[index].disableOnUpdate = false
+    index = definition.findIndex(f => f.key === "criteria_id")
+    definition[index].disableOnUpdate = false
+
 
     const fields = []
     definition.forEach(elt => {
@@ -68,26 +73,26 @@ export default {
     });
     return {
       definition,
-      entity: {},
+      entity: {...relation.default} || {},
       fields,
-      recurringPayment: this.context.recurringPayment || [],
+      criteria: this.context.criteria || [],
       loading: false,
-      entityName: 'recurringPayment'
+      entityName: 'criteria'
     }
   },
+
   methods: {
     async submit(){
       const data = {
         //contract_id: this.context.contract_main_infos.id,
         contract_id: 180124,
-        recurringpayments: [...this.recurringPayment]
+        criterias: [...this.criteria]
       }
-      await this.$http.post('/contracts/step/2', data)
+      await this.$http.post('/contracts/step/6', data)
     }
   },
 
-  mixins: [NewContractStepMixin],
-
+  mixins: [NewContractStepMixin]
 }
 </script>
 

@@ -3,22 +3,19 @@ export default {
 
   methods: {
 
-    async emitSubmit() {
+    async save() {
       this.loading = true
-      const data = {}
-      this.fields.forEach(elt => {
-        if (Object.hasOwnProperty.call(this.entity, elt.key)) {
-          data[elt.key] = this.entity[elt.key]
-        }
-      })
-      this[this.entityName].push(data)
+      this[this.entityName].push({...this.entity})
       this.$refs.datatable.reload()
-      this.$refs.fields.forEach(f => f.reset())
+      this.$refs.fields.forEach(f => {
+        if (f.visible) f.reset()
+      })
+      this.$refs.form.reset()
       this.loading = false
     },
 
     DeleleItemsInDataTable(newItems) {
-      this.specialrights = newItems
+      this[this.entityName] = newItems
     },
 
   },

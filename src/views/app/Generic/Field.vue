@@ -1,19 +1,24 @@
 <template>
   <div>
     <b-form-group v-if="visible" :label=" (field.noLabel|| noLabel) ? '' : $t(field.label||'attribute.'+field.key)"
-                  :label-for="'field-'+field.key" :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null">
+                  :label-for="'field-'+field.key" :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null"
+    >
       <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled
-                    :placeholder="$t('attribute.general_automaticid')"/>
+                    :placeholder="$t('attribute.general_automaticid')"
+      />
       <validation-provider v-else #default="{ errors, validate }" :rules="rules" :name="field.key"
-                           :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message&& tableDefinition.attribute_regexp_failure_message[field.key]}">
+                           :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message&& tableDefinition.attribute_regexp_failure_message[field.key]}"
+      >
         <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
-                         :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
+                         :state="errors.length > 0 ? false:null" :placeholder="field.key"
+        />
         <div v-else-if="field.type==='html'" class="message-editor">
           <template v-if="disabled">
-            <div v-html="entity[field.key]" class="p-1 border rounded"></div>
+            <div class="p-1 border rounded" v-html="entity[field.key]" />
           </template>
           <ckeditor v-else :id="'ckcontent-'+field.key" v-model="entity[field.key]" :disabled="disabled"
-                    :editor="editor" :config="editorOption"/>
+                    :editor="editor" :config="editorOption"
+          />
         </div>
         <div v-else-if="field.type==='list'" :class="(field.withNew || field.ids) ? 'd-flex': ''">
           <v-select v-model="entity[field.key]" :dropdown-should-open="true" :disabled="selectDisabled"
@@ -22,12 +27,15 @@
                     :placeholder="field.key" :multiple="field.multiple && create" :options="listItems" transition=""
                     :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
                     :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
-                    @input="onChange"/>
+                    @input="onChange"
+          />
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
-                    @click="showNewForm">New
+                    @click="showNewForm"
+          >New
           </b-button>
           <b-button v-if="field.ids && !field.noShowButton" class="ml-2 text-nowrap" variant="info"
-                    @click="showAll=!showAll">
+                    @click="showAll=!showAll"
+          >
             {{ showAll ? 'Show Created' : 'Show All' }}
           </b-button>
         </div>
@@ -35,27 +43,30 @@
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
                     :multiple="field.multiple" :placeholder="field.key"
                     :options="field.type==='yesno'?yesNoOptions: field.items" transition="" label="label" class="w-100"
-                    :reduce="i => i.value"/>
+                    :reduce="i => i.value"
+          />
         </div>
         <div v-else-if="field.type==='checkbox'">
           <b-form-checkbox-group v-model="entity[field.key]" :disabled="disabled"
                                  :state="errors.length > 0 ? false:null" :placeholder="field.key" text-field="label"
-                                 :options="field.items"/>
+                                 :options="field.items"
+          />
         </div>
         <div v-else-if="field.type==='file'">
           <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
                        drop-placeholder="Drop file here..." :multiple="field.multiple" required
-                       @change="validate($event);updateFilesData($event)"/>
+                       @change="validate($event);updateFilesData($event)"
+          />
           <div class="d-flex flex-column mt-2">
             <div v-for="(file, index) in files" :key="index" class="d-flex justify-content-between mb-1">
               <div>
-                <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50"/>
+                <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50" />
                 <span class="text-muted font-weight-bolder align-text-top">{{
-                    file.name
-                  }}</span>
+                  file.name
+                }}</span>
                 <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
               </div>
-              <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index)"/>
+              <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index)" />
             </div>
           </div>
         </div>
@@ -63,31 +74,51 @@
           <b-input-group class="input-group-merge" :class="errors.length > 0 ? 'is-invalid':null">
             <b-form-input v-model="entity[field.key]" :disabled="disabled" :type="passwordFieldType"
                           class="form-control-merge" :state="errors.length > 0 ? false:null" :name="field.key"
-                          placeholder="Password" autocomplete="new-password"/>
+                          placeholder="Password" autocomplete="new-password"
+            />
 
             <b-input-group-append is-text>
-              <feather-icon class="cursor-pointer" :icon="passwordToggleIcon" @click="togglePasswordVisibility"/>
+              <feather-icon class="cursor-pointer" :icon="passwordToggleIcon" @click="togglePasswordVisibility" />
             </b-input-group-append>
           </b-input-group>
-          <div class="mt-1" v-if="field.generate">
+          <div v-if="field.generate" class="mt-1">
             <b-button :disabled="disabled || waitPassword" size="sm" class="mr-2" @click="getRandomPassword(field.key)">
               Generate Password
-              <b-spinner v-if="waitPassword" small/>
+              <b-spinner v-if="waitPassword" small />
             </b-button>
             <span v-if="randomPassword && !disabled" class="mr-1">{{ randomPassword }}</span>
             <feather-icon v-if="randomPassword && !disabled" class="cursor-pointer" icon="CopyIcon" size="16"
-                          @click="doCopy"/>
+                          @click="doCopy"
+            />
           </div>
         </div>
+        <div v-else-if="field.type === 'color'">
+          <b-form-input v-model="entity[field.key]" :disabled="disabled" type="color" style="width: 100px"
+                        class="form-control-merge" :state="errors.length > 0 ? false:null" :name="field.key"
+          />
+        </div>
+        <template v-else-if="field.type === 'smiley'">
+          <div class="mt-1 emoji_container">
+            <input v-model="entity[field.key]" type="text" :disabled="disabled" class="mr-1">
+            <b-button variant="outline-secondary" :disabled="disabled" size="sm" class="mr-2" :class="{'emoji-button_empty': !entity[field.key]}"
+                      @click="handleEmojiClick"
+            >+
+            </b-button>
+            <div id="pickerContainer" :class="{'d-none': !isEmojiInputVisible}" />
+          </div>
+        </template>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
-                    class="form-control"/>
+                    class="form-control"
+        />
         <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key" :value="1"
-                         :unchecked-value="0" style="margin-top: 5px"/>
+                         :unchecked-value="0" style="margin-top: 5px"
+        />
         <b-form-input v-else v-model="entity[field.key]" :type="field.type==='decimal'?'number':(field.type||'text')"
                       :disabled="disabled" :step="field.type==='decimal'?0.01:1" :state="errors.length > 0 ? false:null"
-                      :placeholder="field.key"/>
+                      :placeholder="field.key"
+        />
         <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
       </validation-provider>
       <template v-if="field.type==='list' && ((field.withNew && entity[field.key] === newValue) || field.alwaysNew)">
@@ -95,11 +126,13 @@
           <div :class="field.onlyForm?'':('mt-2 '+(inline ? '': 'ml-3'))">
             <component :is="subDefinition.fieldComponent" v-if="subDefinition.fieldComponent" ref="fieldComponent"
                        :entity="subEntity" :table-definition="subTableDefinition" :definition="subDefinition"
-                       :form-fields="subFormFields" :disabled="disabled"/>
+                       :form-fields="subFormFields" :disabled="disabled"
+            />
             <b-row v-else>
               <b-col v-for="(field,index) in subFormFields" :key="index" cols="12">
                 <field ref="fields" :disabled="subFieldDisabled(field)" :inline="inline" :entity="subEntity"
-                       :table-definition="subTableDefinition" :field="field"/>
+                       :table-definition="subTableDefinition" :field="field"
+                />
               </b-col>
             </b-row>
           </div>
@@ -111,21 +144,25 @@
 
 <script>
 import Fuse from 'fuse.js'
+import { createPicker } from 'picmo'
 import {
-  BButton, BImg, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow, BSpinner
+  BButton, BImg, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow, BSpinner,
 } from 'bootstrap-vue'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
-import { generate } from "generate-password"
 import { snakeToTitle } from '@/libs/utils'
 import Table from '@/table/index'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import { togglePasswordVisibility } from "@core/mixins/ui/forms";
+import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 function isEmpty(val) {
   return val === '' || val == null
+}
+
+function isTrue(val) {
+  return !!val
 }
 
 export default {
@@ -149,7 +186,6 @@ export default {
   props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition', 'noLabel', 'create'],
   data() {
     return {
-      list: this.$store.state.table.listCache[this.field.list] || [],
       subEntity: { [this.field.key]: this.entity[this.field.key], ...this.field.defaultEntity },
       subOriginalEntity: {},
       newValue: 'Create New Element',
@@ -176,9 +212,10 @@ export default {
         { value: 0, label: 'No' },
       ],
       files: [],
-      randomPassword: "",
+      randomPassword: '',
       editor: ClassicEditor,
       waitPassword: false,
+      isEmojiInputVisible: false,
       editorOption: {
         // modules: {
         //   toolbar: '#quill-toolbar-' + this.field.key,
@@ -188,6 +225,9 @@ export default {
     }
   },
   computed: {
+    list() {
+      return this.$store.getters['table/listCache'](this.field.entityList || this.field.list)
+    },
     passwordToggleIcon() {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
@@ -201,6 +241,9 @@ export default {
       return this.field.visible ? this.field.visible(this.entity, this) : true
     },
     listItems() {
+      if (this.field.filter && typeof this.field.filter === 'function') {
+        return this.list.filter(this.field.filter)
+      }
       if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
         const val = (this.filterValue || this.entity[this.field.filter_key])
         if (this.field.filter_key && val != null) {
@@ -285,6 +328,19 @@ export default {
         this.fetchList(true)
       })
     }
+    if (this.field.type === 'smiley') {
+      // The picker must have a root element to insert itself into
+      const rootElement = document.querySelector('#pickerContainer')
+
+      // Create the picker
+      const picker = createPicker({ rootElement })
+
+      // The picker emits an event when an emoji is selected. Do with it as you will!
+      picker.addEventListener('emoji:select', event => {
+        console.log('Emoji selected:', event)
+        this.$set(this.entity, this.field.key, event.emoji)
+      })
+    }
   },
   methods: {
     subFieldDisabled(field) {
@@ -346,15 +402,14 @@ export default {
     async getRandomPassword(fieldKey) {
       this.waitPassword = true
       await this.$http.get('/users/generate/password')
-        .then((resp) => {
+        .then(resp => {
           this.randomPassword = resp.data.password
           this.waitPassword = false
         })
         .catch(e => {
-          this.$errorToast("Error")
+          this.$errorToast('Error')
           this.waitPassword = false
         })
-
     },
     doCopy() {
       this.$copyText(this.randomPassword).then(() => {
@@ -377,6 +432,9 @@ export default {
     },
     getPrimaryKey(definition) {
       return definition.primaryKey ?? definition.fields.find(f => f.auto).key
+    },
+    handleEmojiClick() {
+      this.isEmojiInputVisible = !this.isEmojiInputVisible
     },
     async getRelationValue() {
       console.log('get relation value')
@@ -433,24 +491,19 @@ export default {
       if (fieldComponent.length && fieldComponent.length > 1) {
         fieldComponent.forEach(elt => {
           if (elt.$options.name === 'Field') {
-            console.log("yes i did it", elt);
             accumulator.push(elt)
-            console.log("new accumulator values", accumulator);
           } else {
-            console.log("noooo i can't ", elt.$options.name, elt);
             return this.getAllFields(elt.$children, accumulator)
           }
         })
-        return accumulator;
+        return accumulator
       } // fieldComponent is a VueComponent
-      else {
-        if (elt.$options.name === 'Field') {
-          accumulator.push(fieldComponent)
-          return accumulator;
-        } else {
-          return accumulator;
-        }
+
+      if (elt.$options.name === 'Field') {
+        accumulator.push(fieldComponent)
+        return accumulator
       }
+      return accumulator
     },
     async fetchList(force) {
       if (this.field.noFetch) return
@@ -463,13 +516,14 @@ export default {
           await this.$store.dispatch('table/fetchTableDefinition', 'city')
         }
         const payload = { entity: this.field.entityList || list }
+        if (this.field.entityCustomEndPoint) payload.customEnpoint = this.field.entityCustomEndPoint
         if (this.field.onlyForm && this.entity[this.field.key]) {
           payload.data = [{ [this.field.key]: this.entity[this.field.key] }]
         }
         if (this.field.filter_key && this.entity[this.field.filter_key]) {
           payload.data = [{ [this.field.filter_key]: this.entity[this.field.filter_key] }]
         }
-        this.list = await this.$store.dispatch('table/fetchList', payload)
+        await this.$store.dispatch('table/fetchList', payload)
         if (this.field.entityList) {
           await this.$store.dispatch('table/fetchTableDefinition', list)
         }
@@ -486,7 +540,7 @@ export default {
         definition = this.$store.getters['table/tableDefinition'](field.fromTable)
       }
       return {
-        required: this.field.alwaysNew ? false : ((this.field.mandatoryIfListEmpty && this.listItems.length === 0) ? false : (this.field.required_if_null ? isEmpty(this.entity[this.field.required_if_null]) : this.field.required !== false)),
+        required: this.getFieldRequiredValue(),
         email: this.field.type === 'email',
         ...(definition ? {
           max: (definition.attribute_datatype_len && definition.attribute_datatype_len[field.key]) || false,
@@ -494,6 +548,13 @@ export default {
         } : {}),
         ...(this.field.rules || {}),
       }
+    },
+    getFieldRequiredValue() {
+      if (this.field.alwaysNew) return false
+      if (this.field.mandatoryIfListEmpty && this.listItems.length === 0) return false
+      if (this.field.required_if_null) return isEmpty(this.entity[this.field.required_if_null])
+      if (this.field.required_if_true) return isTrue(this.entity[this.field.required_if_true])
+      return this.field.required !== false
     },
     snakeToTitle,
     showNewForm() {
@@ -529,6 +590,20 @@ export default {
 </script>
 
 <style lang="scss">
+
+.emoji_container {
+  position: relative;
+
+  #pickerContainer {
+    position: absolute;
+    z-index: 100;
+  }
+}
+
+.emoji-button_empty {
+  height: 25px;
+  width: 20px;
+}
 
 .hide-main {
   > label {

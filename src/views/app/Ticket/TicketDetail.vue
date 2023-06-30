@@ -180,7 +180,7 @@
         <b-col lg="4">
           <h4 class="font-weight-bolder">{{ $t('headline~ticket~documents') }}</h4>
           <b-row>
-            <b-col v-for="(document,i) in documents" :key="i">
+            <b-col v-for="(document,i) in documents" :key="i" cols="6">
               <b-overlay :show="document.loading">
                 <b-card>
                   <div class="d-flex justify-content-between">
@@ -235,6 +235,7 @@
           <generic-modal ref="documentModal" :fetch-data="false" table="document" :definition="documentDef"
                          table-definition-key="document" title="Update the document" @reload-table="onDocumentUpdate"/>
           <add-document-to-contract ref="documentContractModal"/>
+          <add-document-to-pos ref="documentPosModal"/>
         </b-col>
       </b-row>
     </div>
@@ -264,11 +265,13 @@ import Notes from "@/views/app/Generic/Notes.vue";
 import _ from 'lodash'
 import EmailModal from "@/views/app/Ticket/EmailModal.vue";
 import AddDocumentToContract from "@/views/app/Ticket/AddDocumentToContract.vue";
+import AddDocumentToPos from "@/views/app/Ticket/AddDocumentToPos.vue";
 
 export default {
   name: 'TicketDetail',
   components: {
     AddDocumentToContract,
+    AddDocumentToPos,
     EmailModal,
     Notes,
     AssignUserModal,
@@ -310,7 +313,7 @@ export default {
       loading: false,
       emails: [],
       loadingEmail: false,
-      contractDocument: {}
+      contractDocument: {},
     }
   },
   computed: {
@@ -339,17 +342,7 @@ export default {
   methods: {
     async addToPos(document) {
       if (document.loading) return
-      document.loading = true
-      try {
-        await this.$api({
-          action: 'create',
-          entity: 'document_pos_rel',
-          data: [{ document_id: document.document_id, pos_id: this.entity.pos_id }],
-        })
-        document.pos_id = this.entity.pos_id
-      } finally {
-        document.loading = false
-      }
+      this.$refs.documentPosModal.openModal(document, this.entity.pos_id)
     },
     addToContract(document) {
       this.contractDocument.document_id = document.document_id
@@ -401,7 +394,7 @@ export default {
       })
     },
     createDocument() {
-      this.$refs.documentModal.openModal(true, {})
+      this.$refs.documentModal.openModal(true, { ticket_id: this.entity.ticket_id })
     },
     createInvoice() {
       this.$router.push({
@@ -433,8 +426,19 @@ export default {
     async onTicketUpdate() {
       await this.loadSingleTicket()
     },
-    onDocumentUpdate() {
-      this.fetchDocuments()
+    onDocumentUpdate(data) {
+      console.log(data)
+      this.$api({
+        action: 'create',
+        entity: 'document_ticket_rel',
+        data: data.map(doc => ({
+          document_id: doc.document_id,
+          ticket_id: this.entity.ticket_id,
+        })),
+      })
+        .finally(() => {
+          this.fetchDocuments()
+        })
     },
     async fetchSubTickets() {
       // load subtickets
