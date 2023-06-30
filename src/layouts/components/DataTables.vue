@@ -211,7 +211,9 @@ export default {
         const filterData = {
           ...this.filterData,
           keyword: filter,
+          key: filter,
           page: currentPage,
+          size: payload.per_page,
           per_page: payload.per_page,
           order_filed: sortBy,
           order: sortDesc ? 'desc' : 'asc',
@@ -223,9 +225,18 @@ export default {
         console.log('requestQuery: ', requestQuery);
         return this.$http.get(`${this.entityEndpoint}?${requestQuery}`)
           .then(({ data }) => {
-            const items = this.processData(data)
-            // set in cache
-            this.$store.commit('table/setTableCache', { key: cacheKey, data })
+            let items
+            if (Array.isArray(data.data)){
+              items = this.processData(data)
+              // set in cache
+              this.$store.commit('table/setTableCache', { key: cacheKey, data })
+            }else if (typeof data.data === 'object' && data.data != null){
+              items = this.processData(data)
+              // set in cache
+              this.$store.commit('table/setTableCache', { key: cacheKey, data: data.data })
+            }else{
+              throw new Error('invalid data')
+            }
             return items
           })
           .catch(e => {
@@ -256,7 +267,9 @@ export default {
       return `${this.entity}-${JSON.stringify(payload)}`
     },
     processData(data) {
-      if(this.entityEndpoint){
+
+      if(this.entityEndpoint && Array.isArray(data.data)){
+        console.log('mal formaté');
         this.$emit('update:totalRows', data.total)
         data.data.forEach(el => {
           el.__selected = false
@@ -267,6 +280,7 @@ export default {
         return this.currentItems
 
       }
+      console.log('bien formaté');
       this.$emit('update:totalRows', data.data.links.pagination.total)
       data.data.data.forEach(el => {
         el.__selected = false

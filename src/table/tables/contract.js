@@ -3,6 +3,7 @@ import moment from 'moment'
 
 export default {
   entity: 'frontend_3_4_1_1',
+  entityEndpoint: '/contracts',
   fetchWithEntity: true,
   // createModal: false,
   // createComponent: () => import('@/views/app/CreateComponent/ContractForm/Index.vue'),
