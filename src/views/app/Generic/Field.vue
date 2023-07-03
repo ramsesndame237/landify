@@ -20,7 +20,7 @@
                     :editor="editor" :config="editorOption"
           />
         </div>
-        <div v-else-if="field.type==='list'" :class="(field.withNew || field.ids) ? 'd-flex': ''">
+        <div v-else-if="field.type==='list'" :class="(field.withNew || field.withPopup || field.ids) ? 'd-flex': ''">
           <v-select v-model="entity[field.key]" :dropdown-should-open="true" :disabled="selectDisabled"
                     :class="errors.length > 0 ? 'error':''"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
@@ -32,7 +32,12 @@
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm"
           >New
-          </b-button>
+        </b-button>
+        <b-button v-if="field.withPopup && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
+                  @click="showNewPopupForm" :disabled="disablePopupButton"
+        >New
+        </b-button>
+
           <b-button v-if="field.ids && !field.noShowButton" class="ml-2 text-nowrap" variant="info"
                     @click="showAll=!showAll"
           >
@@ -113,12 +118,36 @@
         />
         <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key" :value="1"
-                         :unchecked-value="0" style="margin-top: 5px"
-        />
-        <b-form-input v-else v-model="entity[field.key]" :type="field.type==='decimal'?'number':(field.type||'text')"
-                      :disabled="disabled" :step="field.type==='decimal'?0.01:1" :state="errors.length > 0 ? false:null"
-                      :placeholder="field.key"
-        />
+                         :unchecked-value="0" style="margin-top: 5px"/>
+        <b-input-group v-else class="w-100">
+          <b-input-group-prepend v-if="field.unit && field.unit_key && field.isUnitOnLeft" class="w-20">
+            <validation-provider :vid="field.unit_key" #default="{ errors }" rules="required" :name="field.unit_key">
+
+              <v-select :dropdown-should-open="true"
+                      :placeholder="field.unit_key" :disabled="disabled"  :options="unitOptions"
+                      :loading="loading" :class="errors.length > 0 ? 'error':''"
+                      v-model="entity[field.unit_key]" class="w-100"
+              />
+              <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
+            </validation-provider>
+          </b-input-group-prepend>
+          <b-form-input v-model="entity[field.key]" :type="field.type==='decimal'?'number':(field.type||'text')"
+            :disabled="disabled" :step="field.type==='decimal'?0.01:1" :state="errors.length > 0 ? false:null"
+            :placeholder="field.key" class="w-80"
+          />
+          <b-input-group-append  v-if="field.unit && field.unit_key && !field.isUnitOnLeft" class="w-20">
+            <validation-provider :vid="field.unit_key" #default="{ errors }" rules="required" :name="field.unit_key">
+              <v-select :dropdown-should-open="true"
+                      :placeholder="field.unit_key" :disabled="disabled"  :options="unitOptions"
+                      :loading="loading" :class="errors.length > 0 ? 'error':''"
+                      v-model="entity[field.unit_key]" class="w-100"
+              />
+              <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
+            </validation-provider>
+
+          </b-input-group-append>
+
+        </b-input-group>
         <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
       </validation-provider>
       <template v-if="field.type==='list' && ((field.withNew && entity[field.key] === newValue) || field.alwaysNew)">
@@ -146,7 +175,7 @@
 import Fuse from 'fuse.js'
 import { createPicker } from 'picmo'
 import {
-  BButton, BImg, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow, BSpinner,
+  BButton, BImg, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow, BSpinner, BInputGroupPrepend, BInputGroupAppend
 } from 'bootstrap-vue'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
@@ -181,6 +210,8 @@ export default {
     BCol,
     BFormCheckbox,
     BSpinner,
+    BInputGroupPrepend,
+    BInputGroupAppend
   },
   mixins: [togglePasswordVisibility],
   props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition', 'noLabel', 'create'],
@@ -212,6 +243,7 @@ export default {
         { value: 0, label: 'No' },
       ],
       files: [],
+      unitOptions: [],
       randomPassword: '',
       editor: ClassicEditor,
       waitPassword: false,
@@ -222,6 +254,7 @@ export default {
         // },
         // placeholder: 'Type Text Here...',
       },
+      disablePopupButton: false, 
     }
   },
   computed: {
@@ -341,6 +374,12 @@ export default {
         this.$set(this.entity, this.field.key, event.emoji)
       })
     }
+
+    if (this.field.unit) {
+      this.unitOptions = this.field.unit(this)
+      this.entity[this.field.unit_key] = this.unitOptions[0]
+    }
+
   },
   methods: {
     subFieldDisabled(field) {
@@ -560,6 +599,23 @@ export default {
     showNewForm() {
       console.log('click on new')
       this.$set(this.entity, this.field.key, this.newValue)
+    },
+     showNewPopupForm(){
+      const self = this;
+      this.disablePopupButton = true;
+      const popupWindow = window.open("/app/table/"+this.$route.params.table+"/popup/"+this.field.list,"Formpopup","popup")
+      popupWindow.addEventListener('beforeunload', function() {
+        // Réactivez le bouton ici
+        self.disablePopupButton = false;
+      });
+      window.addEventListener('message', async function(event) {
+        // Vérifiez l'origine de l'événement pour des raisons de sécurité
+        if (event.origin === window.location.origin && event.data.message === "success")  {
+           // Réactivez le bouton ici
+          self.disablePopupButton = false;
+          await self.fetchList(true)
+        }
+      });
     },
     onChange() {
       console.log('change')
