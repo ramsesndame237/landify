@@ -18,6 +18,11 @@
       </div>
       <div class="row mt-4 justify-content-end">
         <div class="col-auto">
+          <b-button variant="warning" :disabled="loading" @click="handleCancel">
+            {{ $t('button~cancel') }}
+          </b-button>
+        </div>
+        <div class="col-auto">
           <b-button variant="primary" :disabled="loading" @click="handleOk">
             <b-spinner v-if="loading" class="mr-1" small />
             {{ $t('button~save') }}
@@ -61,6 +66,9 @@
           .finally(() => this.loading = false);
           
           window.opener.postMessage(entity, window.location.origin);
+        },
+      handleCancel() {
+          window.close(); // Ferme la page
         },
       },
       mounted(){

@@ -34,7 +34,7 @@
           >New
         </b-button>
         <b-button v-if="field.withPopup && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
-                  @click="showNewPopupForm" :disabled="disableButton"
+                  @click="showNewPopupForm" :disabled="disablePopupButton"
         >New
         </b-button>
 
@@ -227,7 +227,7 @@ export default {
         // },
         // placeholder: 'Type Text Here...',
       },
-      disableButton: false, 
+      disablePopupButton: false, 
     }
   },
   computed: {
@@ -569,17 +569,17 @@ export default {
     },
      showNewPopupForm(){
       const self = this;
-      this.disableButton = true;
+      this.disablePopupButton = true;
       const popupWindow = window.open("/app/table/"+this.$route.params.table+"/popup/"+this.field.list,"Formpopup","popup")
       popupWindow.addEventListener('beforeunload', function() {
         // Réactivez le bouton ici
-        self.disableButton = false;
+        self.disablePopupButton = false;
       });
       window.addEventListener('message', async function(event) {
         // Vérifiez l'origine de l'événement pour des raisons de sécurité
         if (event.origin === window.location.origin && event.data.message === "success")  {
            // Réactivez le bouton ici
-          self.disableButton = false;
+          self.disablePopupButton = false;
           await self.fetchList(true)
         }
       });
