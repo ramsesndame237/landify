@@ -220,7 +220,6 @@ export default {
         if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
           // create request query string
         const requestQuery = Object.keys(filterData).map(key => `${key}=${filterData[key]}`).join('&')
-        console.log('requestQuery: ', requestQuery);
         return this.$http.get(`${this.entityEndpoint}?${requestQuery}`)
           .then(({ data }) => {
             let items
@@ -267,7 +266,6 @@ export default {
     processData(data) {
 
       if(this.entityEndpoint && Array.isArray(data.data)){
-        console.log('mal formaté');
         this.$emit('update:totalRows', data.total)
         data.data.forEach(el => {
           el.__selected = false
@@ -278,7 +276,6 @@ export default {
         return this.currentItems
 
       }
-      console.log('bien formaté');
       this.$emit('update:totalRows', data.data.links.pagination.total)
       data.data.data.forEach(el => {
         el.__selected = false
