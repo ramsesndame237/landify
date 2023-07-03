@@ -1,5 +1,5 @@
-import {getContractCriteriaFields} from '@/table/utils'
-import moment from "moment"
+import { getContractCriteriaFields } from '@/table/utils'
+import moment from 'moment'
 
 export default {
   entity: 'frontend_3_4_1_1',
@@ -68,7 +68,7 @@ export default {
     { key: 'contract_begin_date', type: 'date' },
     { key: 'contract_end_date', type: 'date', hideOnIndex: true },
     { key: 'contract_first_possible_end_date', type: 'date', hideOnIndex: true },
-    { key: 'contract_last_change_time', type: 'date', hideOnIndex: true},
+    { key: 'contract_last_change_time', type: 'date', hideOnIndex: true },
     { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
     { key: 'contract_sum_allarea_allocationspace', hideOnForm: true },
     { key: 'currency_name', hideOnCreate: true, disabled: true },
@@ -90,16 +90,16 @@ export default {
       hideOnUpdate: true,
     },
     {
-      key: "contract_migration_checked",
-      type: "boolean",
+      key: 'contract_migration_checked',
+      type: 'boolean',
       hideOnIndex: true,
       hideOnUpdate: true,
       hideOnForm: true,
-    }
+    },
 
   ],
   default: {
-    contract_migration_checked: 0
+    contract_migration_checked: 0,
   },
   relations: [
 
@@ -285,19 +285,21 @@ export default {
         { key: 'contract_specialright_prior_notice_period', type: 'date' },
         { key: 'contract_specialright_prior_notice_date', type: 'date' },
         { key: 'contract_specialright_extensions', type: 'number' },
-        { key: 'contract_specialright_date', type: 'date', composite: true, hideOnForm: true, hideOnIndex: true },
+        {
+          key: 'contract_specialright_date', type: 'date', composite: true, hideOnForm: true, hideOnIndex: true,
+        },
         {
           key: 'contract_specialright_termination_date',
           type: 'date',
           composite: true,
-          visible: entity => [1,2].includes(entity.specialright_id),
+          visible: entity => [1, 2].includes(entity.specialright_id),
           change: (entity, vm) => {
-            const date = entity['contract_specialright_termination_date']
-            if(date && moment().isSameOrAfter(date)) {
+            const date = entity.contract_specialright_termination_date
+            if (date && moment().isSameOrAfter(date)) {
               vm.$set(vm.entity, 'contract_specialright_is_passive', 1)
               vm.$set(vm.entity, 'contract_specialright_is_availed', 1)
             }
-          }
+          },
         },
         { key: 'contract_specialright_is_passive', type: 'boolean' },
         { key: 'contract_specialright_is_availed', type: 'boolean' },

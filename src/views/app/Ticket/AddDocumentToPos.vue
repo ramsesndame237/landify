@@ -1,14 +1,11 @@
 <template>
   <b-modal ref="modal" :ok-title="$t('button~add')" :cancel-title="$t('button~cancel')" modal-class="modal-primary"
-           centered :busy="loading" :title="$t('headline~ticket~adddocumenttocontract')" size="md"
-           @ok="addDocumentToContract">
+           centered :busy="loading" :title="$t('headline~ticket~adddocumenttopos')" size="md"
+           @ok="addDocumentToPos">
     <validation-observer ref="form">
       <field
         :field="{key: 'documenttype_id', type:'list',listLabel: 'documenttype_name', list: 'documenttype'}"
-        :entity="entity" :inline="false"/>
-      <field
-        :field="{key: 'documentcontracttype_id', type:'list',listLabel: 'documentcontracttype_name', list: 'documenttype_documentcontracttype_grp', filter_key: 'documenttype_id'}"
-        :entity="entity" :inline="false"/>
+        :entity="entity" inline="true"/>
     </validation-observer>
   </b-modal>
 </template>
@@ -18,7 +15,7 @@ import Field from "@/views/app/Generic/Field";
 import moment from "moment-business-time";
 
 export default {
-  name: "AddDocumentToContract",
+  name: "AddDocumentToPos",
   components: { Field },
   data() {
     return {
@@ -28,28 +25,27 @@ export default {
     }
   },
   methods: {
-    openModal(document, contract_id) {
-      this.entity = { document_id: document.document_id, contract_id }
+    openModal(document, pos_id) {
+      this.entity = { document_id: document.document_id, pos_id }
       this.document = document
       this.$refs.modal.show()
     },
-    async addDocumentToContract(e) {
+    async addDocumentToPos(e) {
       e.preventDefault()
       const valid = await this.$refs.form.validate()
       if (!valid) return
       this.loading = true
       try {
-        (await this.$api({
-          entity: 'document_contract_documentcontracttype_rel',
+        await this.$api({
           action: 'create',
-          data: [this.entity],
-        }))
-        this.document.contract_id = this.entity.contract_id
-        this.$emit('reload')
+          entity: 'document_pos_rel',
+          data: [{ document_id: this.document.document_id, pos_id: this.entity.pos_id }],
+        })
+        document.pos_id = this.entity.pos_id
       } finally {
         this.loading = false
       }
-      this.$successToast('Document added to contract')
+      this.$successToast(this.$t('ticket~adddocumenttopos~message~success'))
       this.$refs.modal.hide()
     },
   },
