@@ -212,7 +212,7 @@ export default {
           ...this.filterData,
           keyword: filter,
           page: currentPage,
-          per_page: payload.per_page,
+          size: payload.per_page,
           order_filed: sortBy,
           order: sortDesc ? 'desc' : 'asc',
         }
@@ -220,12 +220,20 @@ export default {
         if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
           // create request query string
         const requestQuery = Object.keys(filterData).map(key => `${key}=${filterData[key]}`).join('&')
-        console.log('requestQuery: ', requestQuery);
         return this.$http.get(`${this.entityEndpoint}?${requestQuery}`)
           .then(({ data }) => {
-            const items = this.processData(data)
-            // set in cache
-            this.$store.commit('table/setTableCache', { key: cacheKey, data })
+            let items
+            if (Array.isArray(data.data)){
+              items = this.processData(data)
+              // set in cache
+              this.$store.commit('table/setTableCache', { key: cacheKey, data })
+            }else if (typeof data.data === 'object' && data.data != null){
+              items = this.processData(data)
+              // set in cache
+              this.$store.commit('table/setTableCache', { key: cacheKey, data })
+            }else{
+              throw new Error('invalid data')
+            }
             return items
           })
           .catch(e => {
@@ -256,7 +264,8 @@ export default {
       return `${this.entity}-${JSON.stringify(payload)}`
     },
     processData(data) {
-      if(this.entityEndpoint){
+
+      if(this.entityEndpoint && Array.isArray(data.data)){
         this.$emit('update:totalRows', data.total)
         data.data.forEach(el => {
           el.__selected = false
