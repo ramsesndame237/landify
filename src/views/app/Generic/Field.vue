@@ -254,7 +254,7 @@ export default {
         // },
         // placeholder: 'Type Text Here...',
       },
-      disablePopupButton: false, 
+      disablePopupButton: false,
     }
   },
   computed: {
@@ -438,7 +438,7 @@ export default {
       }
       (this.getSubFields() || []).forEach(sub => sub.reset())
     },
-    async getRandomPassword(fieldKey) {
+    async getRandomPassword() {
       this.waitPassword = true
       await this.$http.get('/users/generate/password')
         .then(resp => {
@@ -451,23 +451,28 @@ export default {
         })
     },
     doCopy() {
-      this.$copyText(this.randomPassword).then(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Password copied',
-            icon: 'BellIcon',
-          },
-        })
-      }, e => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Can not copy!',
-            icon: 'BellIcon',
-          },
-        })
-      })
+      if (this.entity[this.field.key]){
+        try {
+          navigator.clipboard.writeText(this.entity[this.field.key])
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Password copied',
+              icon: 'BellIcon',
+              variant: 'success'
+            },
+          })
+        } catch (error) {
+          console.log('error: ', error);
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Can not copy!',
+              icon: 'BellIcon',
+            },
+          })
+        }
+      }
     },
     getPrimaryKey(definition) {
       return definition.primaryKey ?? definition.fields.find(f => f.auto).key
