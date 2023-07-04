@@ -3,7 +3,7 @@
     <p>A role provided access to predefined menus and features so that depending on assigned role an administrator can have access to what he need.</p>
     <b-overlay :show="roleLoading" rounded="sm">
       <div class="row">
-        <div v-for="role in roles.slice(0,5)" :key="role.role_id" class="col-lg-4 col-sm-3 col-12">
+        <div v-for="role in roles" :key="role.role_id" class="col-lg-4 col-sm-3 col-12">
           <b-card>
             <div class="d-flex justify-content-between align-items-center">
               <span class="h5"> {{ $t('text~role~nbr_users').replace(':users_number', role.users_number) }}</span>
