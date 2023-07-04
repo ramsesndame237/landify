@@ -254,7 +254,7 @@ export default {
         // },
         // placeholder: 'Type Text Here...',
       },
-      disablePopupButton: false, 
+      disablePopupButton: false,
     }
   },
   computed: {
