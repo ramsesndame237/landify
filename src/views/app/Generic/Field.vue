@@ -538,7 +538,7 @@ export default {
         return accumulator
       } // fieldComponent is a VueComponent
 
-      if (elt.$options.name === 'Field') {
+      if (fieldComponent.$options.name === 'Field') {
         accumulator.push(fieldComponent)
         return accumulator
       }
