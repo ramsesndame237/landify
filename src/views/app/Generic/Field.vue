@@ -16,7 +16,7 @@
           <template v-if="disabled">
             <div class="p-1 border rounded" v-html="entity[field.key]" />
           </template>
-          <editor v-else :disabled="disabled" :init="editorOptions" v-model="entity[field.key]"/>
+          <textarea v-else id="myEditor" :disabled="disabled"  v-model="entity[field.key]"></textarea>
           <!-- <ckeditor v-else :id="'ckcontent-'+field.key" v-model="entity[field.key]" :disabled="disabled"
                     :editor="editor" :config="{}"
           /> -->
@@ -185,6 +185,18 @@ import Table from '@/table/index'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import Editor from "@tinymce/tinymce-vue"
+import tinymce from 'tinymce/tinymce';
+import 'tinymce/skins/ui/oxide/skin.min.css';
+import 'tinymce/skins/ui/oxide/content.min.css';
+import 'tinymce/themes/silver/theme';
+import 'tinymce/icons/default/icons';
+// import '@/plugins/myCustomPlugin'
+import 'tinymce/plugins/lists';
+import 'tinymce/plugins/advlist';
+import 'tinymce/plugins/link';
+import 'tinymce/plugins/media';
+import 'tinymce/models/dom';
+
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
@@ -254,31 +266,24 @@ export default {
       editorOptions: {
         apiKey: process.env.VUE_APP_TINYMCE_API_KEY,
         plugins: [
-          'advlist',
-          'autolink',
-          'lists',
-          'link',
-          'image',
-          'charmap',
-          'print',
-          'preview',
-          'anchor',
-          'searchreplace',
-          'visualblocks',
-          'code',
-          'fullscreen',
-          'insertdatetime',
+          'advlist list',
           'media',
-          'table',
-          'paste',
-          'code',
+          'myCustomPlugin'
         ],
         toolbar:
-          'undo redo | formatselect | ' +
+          'myCustomButton | undo redo | formatselect |' +
           'bold italic backcolor | alignleft aligncenter ' +
           'alignright alignjustify | bullist numlist outdent indent | ' +
           'removeformat | help',
         height: '400px',
+        menubar: false,
+        branding: false,
+        resize: false,
+        statusbar: false,
+        content_css: [
+          '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+          '//www.tiny.cloud/css/codepen.min.css',
+        ],
       },
       disablePopupButton: false,
     }
@@ -358,6 +363,43 @@ export default {
     }
   },
   mounted() {
+    // Initialisation de TinyMCE
+    tinymce.init({
+      apiKey: process.env.VUE_APP_TINYMCE_API_KEY,
+      selector: '#myEditor',
+        plugins: [
+          'advlist list',
+          'media',
+          'myCustomPlugin'
+        ],
+        toolbar:
+          'myCustomButton | undo redo | formatselect |' +
+          'bold italic backcolor | alignleft aligncenter ' +
+          'alignright alignjustify | bullist numlist outdent indent | ' +
+          'removeformat | help',
+        height: '400px',
+        menubar: false,
+        branding: false,
+        resize: false,
+        statusbar: false,
+        content_css: [
+          '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+          '//www.tiny.cloud/css/codepen.min.css',
+        ],
+      setup: (editor) => {
+        editor.ui.registry.addButton('myCustomButton', {
+          text: 'Mon bouton personnalisé',
+          onAction: () => {
+            editor.insertContent('Un nouveau mot ajouté !');
+          },
+        });
+      },
+    });
+
+
+    // Register plugin
+    tinymce.PluginManager.add('myCustomWord', tinymce.plugins.MyCustomWordPlugin);
+
     if (typeof this.field.change === 'function') {
       const change = this.field.change(this.entity, this)
       if (change) this.$set(this.entity, this.field.key, change)
