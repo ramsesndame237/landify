@@ -16,9 +16,10 @@
           <template v-if="disabled">
             <div class="p-1 border rounded" v-html="entity[field.key]" />
           </template>
-          <ckeditor v-else :id="'ckcontent-'+field.key" v-model="entity[field.key]" :disabled="disabled"
-                    :editor="editor" :config="editorOption"
-          />
+          <editor v-else :disabled="disabled" :init="editorOptions" v-model="entity[field.key]"/>
+          <!-- <ckeditor v-else :id="'ckcontent-'+field.key" v-model="entity[field.key]" :disabled="disabled"
+                    :editor="editor" :config="{}"
+          /> -->
         </div>
         <div v-else-if="field.type==='list'" :class="(field.withNew || field.withPopup || field.ids) ? 'd-flex': ''">
           <v-select v-model="entity[field.key]" :dropdown-should-open="true" :disabled="selectDisabled"
@@ -183,6 +184,7 @@ import { snakeToTitle } from '@/libs/utils'
 import Table from '@/table/index'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+import Editor from "@tinymce/tinymce-vue"
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
@@ -211,7 +213,8 @@ export default {
     BFormCheckbox,
     BSpinner,
     BInputGroupPrepend,
-    BInputGroupAppend
+    BInputGroupAppend,
+    'editor': Editor,
   },
   mixins: [togglePasswordVisibility],
   props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition', 'noLabel', 'create'],
@@ -248,13 +251,36 @@ export default {
       editor: ClassicEditor,
       waitPassword: false,
       isEmojiInputVisible: false,
-      editorOption: {
-        // modules: {
-        //   toolbar: '#quill-toolbar-' + this.field.key,
-        // },
-        // placeholder: 'Type Text Here...',
+      editorOptions: {
+        apiKey: process.env.VUE_APP_TINYMCE_API_KEY,
+        plugins: [
+          'advlist',
+          'autolink',
+          'lists',
+          'link',
+          'image',
+          'charmap',
+          'print',
+          'preview',
+          'anchor',
+          'searchreplace',
+          'visualblocks',
+          'code',
+          'fullscreen',
+          'insertdatetime',
+          'media',
+          'table',
+          'paste',
+          'code',
+        ],
+        toolbar:
+          'undo redo | formatselect | ' +
+          'bold italic backcolor | alignleft aligncenter ' +
+          'alignright alignjustify | bullist numlist outdent indent | ' +
+          'removeformat | help',
+        height: '400px',
       },
-      disablePopupButton: false, 
+      disablePopupButton: false,
     }
   },
   computed: {
@@ -329,11 +355,6 @@ export default {
       if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, 0)
     } else if (this.field.default) {
       if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, this.field.default)
-    }
-  },
-  beforeDestroy() {
-    if (this.promise) {
-      Promise.resolve()
     }
   },
   mounted() {
