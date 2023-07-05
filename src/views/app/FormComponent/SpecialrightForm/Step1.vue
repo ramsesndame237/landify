@@ -36,7 +36,7 @@ export default {
   data() {
     const definition = [
       { key: 'contract_specialright_total_number_options', type: 'number', required: true },
-      { key: 'contract_specialright_extensions', type: 'number', required: true },
+      { key: 'contract_specialright_automatic_renewal_in_months', type: 'number', required: true },
     ];
     return {
       definition,
