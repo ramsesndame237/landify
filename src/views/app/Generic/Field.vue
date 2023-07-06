@@ -418,8 +418,8 @@ export default {
           'media',
         ],
         toolbar:
-          'myCustomButton | undo redo | formatselect |' +
-          'bold italic backcolor | alignleft aligncenter ' +
+          'undo redo | formatselect |' +
+          'bold italic backcolor | myCustomButton | alignleft aligncenter ' +
           'alignright alignjustify | bullist numlist outdent indent | ' +
           'removeformat | help',
         height: '400px',
@@ -438,9 +438,9 @@ export default {
             this.entity[this.field.key] = content;
           })
           editor.ui.registry.addButton('myCustomButton', {
-            text: 'Mon bouton personnalisé',
+            text: 'Separator',
             onAction: () => {
-              const nonEditableContent = '<span contenteditable="false"><strong>text non éditable</strong></span>'
+              const nonEditableContent = '<span contenteditable="false"><strong>Separator</strong></span>'
               editor.insertContent(nonEditableContent)
             },
           });
