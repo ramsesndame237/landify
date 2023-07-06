@@ -13,10 +13,17 @@
                          :state="errors.length > 0 ? false:null" :placeholder="field.key"
         />
         <div v-else-if="field.type==='html'" class="message-editor">
+          <!-- <b-button @click="readOnlyMode">read mode</b-button>
+          <b-button @click="designMode" variant="success">design mode</b-button> -->
           <template v-if="disabled">
             <div class="p-1 border rounded" v-html="entity[field.key]" />
           </template>
-          <textarea v-else id="myEditor" :disabled="disabled"  v-model="entity[field.key]"></textarea>
+          <b-form-textarea
+            v-show="!disabled"
+            :class="{'d-none' : editorInstance && editorInstance.isHidden}"
+            :id="'tinyEditor-'+field.key"
+            v-model="entity[field.key]"
+          />
           <!-- <ckeditor v-else :id="'ckcontent-'+field.key" v-model="entity[field.key]" :disabled="disabled"
                     :editor="editor" :config="{}"
           /> -->
@@ -190,7 +197,6 @@ import 'tinymce/skins/ui/oxide/skin.min.css';
 import 'tinymce/skins/ui/oxide/content.min.css';
 import 'tinymce/themes/silver/theme';
 import 'tinymce/icons/default/icons';
-// import '@/plugins/myCustomPlugin'
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/link';
@@ -263,28 +269,7 @@ export default {
       editor: ClassicEditor,
       waitPassword: false,
       isEmojiInputVisible: false,
-      editorOptions: {
-        apiKey: process.env.VUE_APP_TINYMCE_API_KEY,
-        plugins: [
-          'advlist list',
-          'media',
-          'myCustomPlugin'
-        ],
-        toolbar:
-          'myCustomButton | undo redo | formatselect |' +
-          'bold italic backcolor | alignleft aligncenter ' +
-          'alignright alignjustify | bullist numlist outdent indent | ' +
-          'removeformat | help',
-        height: '400px',
-        menubar: false,
-        branding: false,
-        resize: false,
-        statusbar: false,
-        content_css: [
-          '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
-          '//www.tiny.cloud/css/codepen.min.css',
-        ],
-      },
+      editorInstance: null,
       disablePopupButton: false,
     }
   },
@@ -351,6 +336,13 @@ export default {
     list() {
       this.onChange()
     },
+    disabled(newValue){
+      if(this.editorInstance){
+        if(newValue){
+          this.editorInstance.hide()
+        }else this.editorInstance.show()
+      }
+    }
   },
   async created() {
     if (this.field.type === 'list' && ((!this.field.filter_key || !!this.entity[this.field.filter_key]) || this.field.noFetchOnChange) && !this.field.onlyForm) {
@@ -363,43 +355,9 @@ export default {
     }
   },
   mounted() {
-    // Initialisation de TinyMCE
-    tinymce.init({
-      apiKey: process.env.VUE_APP_TINYMCE_API_KEY,
-      selector: '#myEditor',
-        plugins: [
-          'advlist list',
-          'media',
-          'myCustomPlugin'
-        ],
-        toolbar:
-          'myCustomButton | undo redo | formatselect |' +
-          'bold italic backcolor | alignleft aligncenter ' +
-          'alignright alignjustify | bullist numlist outdent indent | ' +
-          'removeformat | help',
-        height: '400px',
-        menubar: false,
-        branding: false,
-        resize: false,
-        statusbar: false,
-        content_css: [
-          '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
-          '//www.tiny.cloud/css/codepen.min.css',
-        ],
-      setup: (editor) => {
-        editor.ui.registry.addButton('myCustomButton', {
-          text: 'Mon bouton personnalisé',
-          onAction: () => {
-            editor.insertContent('Un nouveau mot ajouté !');
-          },
-        });
-      },
-    });
-
-
-    // Register plugin
-    tinymce.PluginManager.add('myCustomWord', tinymce.plugins.MyCustomWordPlugin);
-
+    if (this.field.type === 'html'){
+      this.initEditor()
+    }
     if (typeof this.field.change === 'function') {
       const change = this.field.change(this.entity, this)
       if (change) this.$set(this.entity, this.field.key, change)
@@ -444,7 +402,56 @@ export default {
     }
 
   },
+
+  beforeDestroy() {
+    this.editorInstance.destroy()
+  },
   methods: {
+    initEditor() {
+      // Initialisation de TinyMCE
+      tinymce.init({
+        apiKey: process.env.VUE_APP_TINYMCE_API_KEY,
+        selector: `#tinyEditor-${this.field.key}`,
+        readonly: this.editorIsDisabled,
+        plugins: [
+          'advlist list',
+          'media',
+        ],
+        toolbar:
+          'myCustomButton | undo redo | formatselect |' +
+          'bold italic backcolor | alignleft aligncenter ' +
+          'alignright alignjustify | bullist numlist outdent indent | ' +
+          'removeformat | help',
+        height: '400px',
+        menubar: false,
+        branding: false,
+        resize: false,
+        statusbar: false,
+        content_css: [
+          '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+          '//www.tiny.cloud/css/codepen.min.css',
+        ],
+        setup: (editor) => {
+          this.editorInstance = editor
+          editor.on('input', (e) => {
+            const content = editor.getContent()
+            this.entity[this.field.key] = content;
+          })
+          editor.ui.registry.addButton('myCustomButton', {
+            text: 'Mon bouton personnalisé',
+            onAction: () => {
+              const nonEditableContent = '<span contenteditable="false"><strong>text non éditable</strong></span>'
+              editor.insertContent(nonEditableContent)
+            },
+          });
+        },
+      });
+    },
+    destroyEditor(){
+      if(this.editorInstance) {
+        this.editorInstance.hide()
+      }
+    },
     subFieldDisabled(field) {
       if (this.field.disabled && this.field.disabled.includes(field.name)) {
         return true
