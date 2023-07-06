@@ -135,7 +135,10 @@ export default {
     },
   },
   mounted() {
-    this.getRoles()
+    this.roles = this.$store.getters['table/listCache'](this.table)
+    if (this.roles || !this.roles.length) {
+      this.getRoles()
+    }
   },
   beforeDestroy() {
     this.$store.commit('table/setTableData', {
@@ -181,6 +184,7 @@ export default {
       try {
         const response = await this.$store.dispatch('table/fetchList', payload)
         this.roles = response
+        await this.$store.dispatch('table/setListData', { entity: this.table, data: response })
       } catch (error) {
         console.log({ error })
       } finally {
