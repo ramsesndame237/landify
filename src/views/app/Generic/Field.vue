@@ -13,8 +13,6 @@
                          :state="errors.length > 0 ? false:null" :placeholder="field.key"
         />
         <div v-else-if="field.type==='html'" class="message-editor">
-          <!-- <b-button @click="readOnlyMode">read mode</b-button>
-          <b-button @click="designMode" variant="success">design mode</b-button> -->
           <template v-if="disabled">
             <div class="p-1 border rounded" v-html="entity[field.key]" />
           </template>
