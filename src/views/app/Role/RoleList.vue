@@ -136,7 +136,7 @@ export default {
   },
   mounted() {
     this.roles = this.$store.getters['table/listCache'](this.table)
-    if (this.roles || !this.roles.length) {
+    if (!this.roles || !this.roles.length) {
       this.getRoles()
     }
   },
