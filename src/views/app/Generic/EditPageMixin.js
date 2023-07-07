@@ -37,7 +37,7 @@ export default {
       if (this.create) this.$router.push({ name: 'table', params: { table: this.table } })
       else {
         this.view = true
-        // this.$refs.form.reset()
+        this.$refs.form.reset()
       }
     },
     edit() {

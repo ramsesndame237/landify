@@ -355,7 +355,7 @@ export default {
     }
   },
   mounted() {
-    if (this.field.type === 'html'){
+    if (this.field.type && this.field.type === 'html'){
       this.initEditor()
     }
     if (typeof this.field.change === 'function') {
@@ -404,7 +404,9 @@ export default {
   },
 
   beforeDestroy() {
-    this.editorInstance.destroy()
+    if (this.editorInstance){
+      this.editorInstance.destroy()
+    }
   },
   methods: {
     initEditor() {
