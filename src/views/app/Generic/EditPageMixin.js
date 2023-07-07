@@ -61,5 +61,52 @@ export default {
           this.loading = false
         })
     },
+    deleteEntity() {
+      const entities = [this.entity]
+      this.$swal({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-outline-danger ml-1',
+        },
+        buttonsStyling: false,
+      }).then(async result => {
+        if (!result.value) return
+        const entityToDelete = this.definition.fields.find(f => f.alwaysNew)
+        const data = {
+          action: 'delete',
+          entity: this.table,
+          data: entities.map(entity => this.definition.fields.filter(field => field.composite).reduce(((acc, currentValue) => {
+            acc[currentValue.key] = entity[currentValue.key]
+            return acc
+          }), {
+            [this.primaryKey]: Number(this.entityId),
+          })),
+        }
+        this.$api(data).then(async resp => {
+          if (entityToDelete) {
+            try {
+              await this.$api({ ...data, entity: entityToDelete.list })
+            } catch (e) {
+              console.error(e)
+            }
+          }
+          const count = resp.data.data.rowcount
+          if (count > 0) this.$successToast(`${count} Element${count > 1 ? 's' : ''} were deleted`)
+          else this.$errorToast(`${count} Element${count > 1 ? 's' : ''} were deleted`)
+          await this.$router.push({ name: 'table' })
+          this.$store.commit('table/deleteListCacheKeyFromPrefix', this.table)
+          this.$store.commit('table/deleteTableCacheKeyFromPrefix', `${this.table}-`)
+        })
+          .catch(e => {
+            console.error(e)
+            this.$errorToast()
+          })
+      })
+    },
   },
 }
