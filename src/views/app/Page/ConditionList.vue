@@ -192,7 +192,7 @@ export default {
             entityCustomEndPoint: '/pos',
             filter_key: 'company_id',
             change: (entity, vm) => {
-              console.log('vm.entity.pos_id: ', vm.entity.pos_id);
+              console.log('vm.entity.pos_id: ', vm.entity.pos_id)
               const pos = vm.list.find(c=> c.pos_id === vm.entity.pos_id)
               if (pos && pos.hasOwnProperty('pos_id')) {
                 vm.$set(vm.entity, 'country_id', pos.country_id)
@@ -244,9 +244,15 @@ export default {
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
-        const date = moment(this.data.date)
+        const date = moment(this.data.date, 'YYYY-MM-DD')
         const masterData = (await this.$http.get(`/contracts/conditionList?${requestQuery}`)).data.data
-        const contracts = masterData.map(r => {
+        const contracts = masterData
+        .filter(r => {
+          const begin_date = moment(r.contract.contract_begin_date, 'YYYY-MM-DD')
+          const end_date = moment(r.contract.contract_end_date, 'YYYY-MM-DD')
+          return begin_date.isBefore(end_date, 'day') && date.isSameOrAfter(begin_date, 'day') && date.isSameOrBefore(end_date, 'day')
+        })
+        .map(r => {
           const obj = _.pick(r.contract, ['contract_id', 'contract_name', 'contract_begin_date',
             'contract_end_date', 'contract_first_possible_end_date', 'contract_creation_time', 'pos_branchnumber',
             'contract_last_change_time', 'contract_migration_checked', 'contracttype_name', 'currency_name', 'currency_id', 'currency_short', 'currency_iso', 'currency_iso4217',
@@ -255,7 +261,11 @@ export default {
           if (!r.areas || !r.areas.length) obj.areas = []
           else{
             obj.areas = r.areas
-              .filter(i=> (date.isBetween(i.contract_area_unit_usagetype_valid_from_date, i.contract_area_unit_usagetype_valid_to_date, "day", "[]")))
+              .filter(i=> {
+                const begin_date = moment(i.contract_area_unit_usagetype_valid_from_date, 'YYYY-MM-DD')
+                const end_date = moment(i.contract_area_unit_usagetype_valid_to_date, 'YYYY-MM-DD')
+                return begin_date.isBefore(end_date, 'day') && date.isSameOrAfter(begin_date, 'day') && date.isSameOrBefore(end_date, 'day')
+              })
               .map(i =>  _.pick(i, [
                 'area_id',
                 'area_name',
@@ -268,8 +278,7 @@ export default {
                 'contract_area_unit_usagetype_allocationspace_value',
                 'unit_id',
                 'unit_name',
-              ])
-            )
+              ]))
             obj.total_allocation_space = _.sumBy(obj.areas.filter(ar => (['Parkfläche', 'Werbefläche'].indexOf(ar.areatype_name) === -1)), 'contract_area_unit_usagetype_allocationspace_value')
             obj.total_rental_space = _.sumBy(obj.areas.filter(ar => (['Hauptfläche'].indexOf(ar.areatype_name) >= 0)), 'contract_area_unit_usagetype_rentalspace_value')
           }
@@ -512,6 +521,6 @@ export default {
 
 <style scoped>
 .first-bloc img {
-  margin-right: 4px;
+  margin-right: 4px
 }
 </style>
