@@ -439,7 +439,12 @@ export default {
           composite: true,
           disableOnUpdate: true,
         },
-        { key: 'criteria_name', hideOnForm: true },
+        {
+          key: 'contract_criteria_value',
+          unit_key: 'contract_criteria_unit_id',
+          unit_label: 'unit_name',
+          isUnitOnLeft: false,
+        },
         ...getContractCriteriaFields(),
       ],
       // update: false,

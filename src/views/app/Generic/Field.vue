@@ -16,9 +16,15 @@
           <template v-if="disabled">
             <div class="p-1 border rounded" v-html="entity[field.key]" />
           </template>
-          <ckeditor v-else :id="'ckcontent-'+field.key" v-model="entity[field.key]" :disabled="disabled"
-                    :editor="editor" :config="editorOption"
+          <b-form-textarea
+            v-show="!disabled"
+            :class="{'d-none' : editorInstance && editorInstance.isHidden}"
+            :id="'tinyEditor-'+field.key"
+            v-model="entity[field.key]"
           />
+          <!-- <ckeditor v-else :id="'ckcontent-'+field.key" v-model="entity[field.key]" :disabled="disabled"
+                    :editor="editor" :config="{}"
+          /> -->
         </div>
         <div v-else-if="field.type==='list'" :class="(field.withNew || field.withPopup || field.ids) ? 'd-flex': ''">
           <v-select v-model="entity[field.key]" :dropdown-should-open="true" :disabled="selectDisabled"
@@ -126,6 +132,7 @@
               <v-select :dropdown-should-open="true"
                       :placeholder="field.unit_key" :disabled="disabled"  :options="unitOptions"
                       :loading="loading" :class="errors.length > 0 ? 'error':''"
+                      :label="field.unit_label" :reduce="i => i.unit_id"
                       v-model="entity[field.unit_key]" class="w-100"
               />
               <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
@@ -140,6 +147,7 @@
               <v-select :dropdown-should-open="true"
                       :placeholder="field.unit_key" :disabled="disabled"  :options="unitOptions"
                       :loading="loading" :class="errors.length > 0 ? 'error':''"
+                      :label="field.unit_label" :reduce="i => i.unit_id"
                       v-model="entity[field.unit_key]" class="w-100"
               />
               <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
@@ -183,6 +191,18 @@ import { snakeToTitle } from '@/libs/utils'
 import Table from '@/table/index'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+import Editor from "@tinymce/tinymce-vue"
+import tinymce from 'tinymce/tinymce';
+import 'tinymce/skins/ui/oxide/skin.min.css';
+import 'tinymce/skins/ui/oxide/content.min.css';
+import 'tinymce/themes/silver/theme';
+import 'tinymce/icons/default/icons';
+import 'tinymce/plugins/lists';
+import 'tinymce/plugins/advlist';
+import 'tinymce/plugins/link';
+import 'tinymce/plugins/media';
+import 'tinymce/models/dom';
+
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
@@ -211,7 +231,8 @@ export default {
     BFormCheckbox,
     BSpinner,
     BInputGroupPrepend,
-    BInputGroupAppend
+    BInputGroupAppend,
+    'editor': Editor,
   },
   mixins: [togglePasswordVisibility],
   props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition', 'noLabel', 'create'],
@@ -248,12 +269,7 @@ export default {
       editor: ClassicEditor,
       waitPassword: false,
       isEmojiInputVisible: false,
-      editorOption: {
-        // modules: {
-        //   toolbar: '#quill-toolbar-' + this.field.key,
-        // },
-        // placeholder: 'Type Text Here...',
-      },
+      editorInstance: null,
       disablePopupButton: false,
     }
   },
@@ -320,6 +336,13 @@ export default {
     list() {
       this.onChange()
     },
+    disabled(newValue){
+      if(this.editorInstance){
+        if(newValue){
+          this.editorInstance.hide()
+        }else this.editorInstance.show()
+      }
+    }
   },
   async created() {
     if (this.field.type === 'list' && ((!this.field.filter_key || !!this.entity[this.field.filter_key]) || this.field.noFetchOnChange) && !this.field.onlyForm) {
@@ -331,12 +354,10 @@ export default {
       if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, this.field.default)
     }
   },
-  beforeDestroy() {
-    if (this.promise) {
-      Promise.resolve()
-    }
-  },
   mounted() {
+    if (this.field.type && this.field.type === 'html'){
+      this.initEditor()
+    }
     if (typeof this.field.change === 'function') {
       const change = this.field.change(this.entity, this)
       if (change) this.$set(this.entity, this.field.key, change)
@@ -381,7 +402,58 @@ export default {
     }
 
   },
+
+  beforeDestroy() {
+    if (this.editorInstance){
+      this.editorInstance.destroy()
+    }
+  },
   methods: {
+    initEditor() {
+      // Initialisation de TinyMCE
+      tinymce.init({
+        apiKey: process.env.VUE_APP_TINYMCE_API_KEY,
+        selector: `#tinyEditor-${this.field.key}`,
+        readonly: this.editorIsDisabled,
+        plugins: [
+          'advlist list',
+          'media',
+        ],
+        toolbar:
+          'undo redo | formatselect |' +
+          'bold italic backcolor | myCustomButton | alignleft aligncenter ' +
+          'alignright alignjustify | bullist numlist outdent indent | ' +
+          'removeformat | help',
+        height: '400px',
+        menubar: false,
+        branding: false,
+        resize: false,
+        statusbar: false,
+        content_css: [
+          '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+          '//www.tiny.cloud/css/codepen.min.css',
+        ],
+        setup: (editor) => {
+          this.editorInstance = editor
+          editor.on('input', (e) => {
+            const content = editor.getContent()
+            this.entity[this.field.key] = content;
+          })
+          editor.ui.registry.addButton('myCustomButton', {
+            text: 'Separator',
+            onAction: () => {
+              const nonEditableContent = '<span contenteditable="false"><strong>Separator</strong></span>'
+              editor.insertContent(nonEditableContent)
+            },
+          });
+        },
+      });
+    },
+    destroyEditor(){
+      if(this.editorInstance) {
+        this.editorInstance.hide()
+      }
+    },
     subFieldDisabled(field) {
       if (this.field.disabled && this.field.disabled.includes(field.name)) {
         return true

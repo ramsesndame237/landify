@@ -47,8 +47,13 @@ export default {
       Vue.set(state.listCache, entity, data)
     },
     deleteTableCacheKeyFromPrefix(state, prefix) {
-      Object.keys(state.tableCache).forEach(key => {
+     Object.keys(state.tableCache).forEach(key => {
         if (key.startsWith(prefix)) Vue.set(state.tableCache, key, null)
+      })
+    },
+    deleteListCacheKeyFromPrefix(state, prefix) {
+      Object.keys(state.listCache).forEach(key => {
+        if (key.startsWith(prefix)) Vue.set(state.listCache, key, null)
       })
     },
   },
