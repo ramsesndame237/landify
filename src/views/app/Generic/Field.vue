@@ -132,6 +132,7 @@
               <v-select :dropdown-should-open="true"
                       :placeholder="field.unit_key" :disabled="disabled"  :options="unitOptions"
                       :loading="loading" :class="errors.length > 0 ? 'error':''"
+                      :label="field.unit_label" :reduce="i => i.unit_id"
                       v-model="entity[field.unit_key]" class="w-100"
               />
               <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
@@ -146,6 +147,7 @@
               <v-select :dropdown-should-open="true"
                       :placeholder="field.unit_key" :disabled="disabled"  :options="unitOptions"
                       :loading="loading" :class="errors.length > 0 ? 'error':''"
+                      :label="field.unit_label" :reduce="i => i.unit_id"
                       v-model="entity[field.unit_key]" class="w-100"
               />
               <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
