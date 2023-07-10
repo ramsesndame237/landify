@@ -8,7 +8,7 @@
     <b-col cols="12" class="p-0">
       <validation-observer ref="form" v-slot="{ passes }">
         <b-form @submit.prevent="passes(save)" autocomplete="off">
-          <b-col v-for="(field,index) in definition.filter(f=> f.hide!==true && !f.auto && f.hideOnCreate !==true && f.hideOnForm !==true)" :key="index" cols="12">
+          <b-col v-for="(field,index) in definition" :key="index" cols="12">
             <field ref="fields" :disabled="disabled || field.disabled || field.disableOnUpdate"
                    :inline="true" :entity="entity" :table-definition="tableDefinition" :field="field"/>
           </b-col>
@@ -57,19 +57,19 @@ export default {
   props: ['disabled', 'context'],
   data() {
     const definition = {...Table.contract.relations.find(f=> f.primaryKey === "specialright_id")}.fields.filter(f=> f.hide!==true && !f.auto && f.hideOnCreate !==true && f.hideOnForm !==true)
-    // delete some fields
-    let index = definition.findIndex(f => f.key === "contract_specialright_total_number_options")
-    definition.splice(index, 1)
-
-    index = definition.findIndex(f => f.key === "contract_specialright_extensions")
-    definition.splice(index, 1)
-
-
-
     const fields = []
     definition.forEach(elt => {
       fields.push({key: elt.key})
     });
+    // delete some fields
+    let index = definition.findIndex(f => f.key === "contract_specialright_total_number_options")
+    definition.splice(index, 1)
+
+    index = definition.findIndex(f => f.key === "contract_specialright_automatic_renewal_in_months")
+    definition.splice(index, 1)
+
+
+
     return {
       definition,
       entity: {},
@@ -78,6 +78,10 @@ export default {
       specialRight: [],
       loading: false,
     }
+  },
+
+  mounted(){
+    console.log("context", this.context);
   },
   methods: {
     async submit(){

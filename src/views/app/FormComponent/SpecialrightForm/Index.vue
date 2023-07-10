@@ -125,8 +125,7 @@ export default {
       this.loading = true
       try {
         if (this.current_step === 1) {
-          await this.$refs.step1.save()
-          // this.context.contract_main_infos = await this.$refs.step1.validate()
+          this.context.deadlinesOptions = await this.$refs.step1.handleSubmit()
           console.log('step 1 passed ', this.context);
         } else if (this.current_step === 2) {
           // await this.$refs.step2.submit()
@@ -144,7 +143,7 @@ export default {
         this.steps_tabs[this.current_step - 1].completed = true
       }
 
-      // this.goToStep(this.current_step + 1)
+      this.goToStep(this.current_step + 1)
     },
     goToStep(step) {
       this.current_step = step

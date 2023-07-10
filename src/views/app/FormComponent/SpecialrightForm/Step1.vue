@@ -6,9 +6,9 @@
 
     <b-col cols="12" class="p-0">
       <validation-observer ref="form" v-slot="{ passes }">
-        <b-form @submit.prevent="passes(save)" autocomplete="off">
+        <b-form @submit.prevent="passes(handleSubmit)" autocomplete="off">
           <b-col v-for="(field,index) in definition" :key="index" cols="12">
-            <field ref="fields" :disabled="disabled || field.disabled || field.disableOnUpdate"
+            <field ref="fields" :disabled="disabled || field.disabled || field.disableOnUpdate || loading"
                    :inline="false" :entity="entity" :field="field" :table-definition="tableDefinition"/>
           </b-col>
         </b-form>
@@ -44,15 +44,55 @@ export default {
       loading: false,
     }
   },
-  methods: {
-    async save(){
-      await this.$refs.form.validate().then(success => {
-        if (success) {
-          console.log("suuucccceeeeessss !");
-        }
-      }).catch(error => {
-        throw new Error(error)
+
+  async mounted(){
+    this.loading = true
+    await this.$http.get(`/contracts/deadlines/${this.$route.params.id}`)
+      .then(response => {
+        if(response.data && response.data.ContractActivatedOption)
+        this.entity = structuredClone(response.data.ContractActivatedOption)
       })
+      .catch(error => {
+        console.error("error", error);
+      })
+      .finally(() => {
+        this.loading = false
+      })
+      console.log('this.entity: ', this.entity);
+  },
+  methods: {
+    async handleSubmit(){
+      this.loading = true
+      let data
+      await this.$refs.form.validate()
+        .then(async (success) => {
+          if (success) {
+            data = await this.save()
+          }
+        }).catch(error => {
+          throw new Error(error)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+      return data
+    },
+
+    async save(){
+      const payload = {
+        contract_id: this.$route.params.id,
+        ...this.entity
+      }
+      let result
+      await this.$http.post('/contracts/deadline/step1', payload)
+        .then(response => {
+          result = response.data
+        })
+        .catch(error => {
+          throw new Error(error)
+        })
+
+      return result
     }
   },
 
