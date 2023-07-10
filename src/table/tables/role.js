@@ -6,7 +6,9 @@ export default {
     { key: 'role_id', auto: true },
     { key: 'role_name', hideOnIndex: true },
     { key: 'role_is_internal', type: 'boolean', hideOnIndex: true },
-    { key: 'role_permission', hideOnIndex: true },
+    {
+      key: 'role_description', hideOnIndex: true, required: false, type: 'textarea',
+    },
     {
       key: 'user_firstname',
       type: 'html',
