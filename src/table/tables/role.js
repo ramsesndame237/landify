@@ -35,7 +35,7 @@ export default {
         return `<ul class="list-unstyled">${htmlString}</ul>`
       },
     },
-    { key: 'usertype', hideOnForm: true, formatter: value => value?.usertype_name.charAt(0).toUpperCase() + value?.usertype_name.slice(1) },
+    { key: 'usertype_name', hideOnForm: true, formatter: value => (value ? value?.charAt(0).toUpperCase() + value?.slice(1) : '') },
   ],
   relations: [
     {

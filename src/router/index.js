@@ -223,6 +223,14 @@ const router = new VueRouter({
         pageTitle: 'Sign a document',
       },
     },
+    {
+      path: '/app/table/:table/popup/:list',
+      name: 'new-entity-popup',
+      component: () => import('@/views/app/CreateComponent/NewEntityPopupForm.vue'),
+      meta:{
+        layout:'full',
+      }
+    },
     // authentication
     {
       path: '/login',

@@ -3,6 +3,7 @@ import moment from 'moment'
 
 export default {
   entity: 'frontend_3_4_1_1',
+  entityEndpoint: '/contracts',
   fetchWithEntity: true,
   // createModal: false,
   // createComponent: () => import('@/views/app/CreateComponent/ContractForm/Index.vue'),
@@ -62,9 +63,39 @@ export default {
     { key: 'contracttype_name', hideOnCreate: true, disabled: true },
     { key: 'contract_name' },
     { key: 'location_name', hideOnForm: true },
-    { key: 'owner_name', hideOnForm: true },
-    { key: 'manager_name', hideOnForm: true },
-    { key: 'pos_name', hideOnForm: true },
+    {
+      key: 'owner_name',
+      hideOnForm: true,
+      formatter: (value, key, item) => {
+        const array = item.owners
+        const ownersName = array.length > 0 ? array.map(obj => obj.pos_name) : [];
+        const result = ownersName.join(", ");
+
+        return result || '-';
+      }
+    },
+    {
+      key: 'manager_name',
+      hideOnForm: true,
+      formatter: (value, key, item) => {
+        const array = item.managers
+        const managerName = array.length > 0 ? array.map(obj => obj.pos_name) : [];
+        const result = managerName.join(", ");
+
+        return result || '-';
+      }
+    },
+    {
+      key: 'pos_name',
+      hideOnForm: true,
+      formatter: (value, key, item) => {
+        const array = item.pos
+        const posName = array.length > 0 ? array.map(obj => obj.pos_name) : [];
+        const result = posName.join(", ");
+
+        return result || '-';
+      }
+    },
     { key: 'contract_begin_date', type: 'date' },
     { key: 'contract_end_date', type: 'date', hideOnIndex: true },
     { key: 'contract_first_possible_end_date', type: 'date', hideOnIndex: true },
@@ -410,7 +441,12 @@ export default {
           composite: true,
           disableOnUpdate: true,
         },
-        { key: 'criteria_name', hideOnForm: true },
+        {
+          key: 'contract_criteria_value',
+          unit_key: 'contract_criteria_unit_id',
+          unit_label: 'unit_name',
+          isUnitOnLeft: false,
+        },
         ...getContractCriteriaFields(),
       ],
       // update: false,

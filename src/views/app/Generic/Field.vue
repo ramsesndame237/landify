@@ -16,11 +16,17 @@
           <template v-if="disabled">
             <div class="p-1 border rounded" v-html="entity[field.key]" />
           </template>
-          <ckeditor v-else :id="'ckcontent-'+field.key" v-model="entity[field.key]" :disabled="disabled"
-                    :editor="editor" :config="editorOption"
+          <b-form-textarea
+            v-show="!disabled"
+            :class="{'d-none' : editorInstance && editorInstance.isHidden}"
+            :id="'tinyEditor-'+field.key"
+            v-model="entity[field.key]"
           />
+          <!-- <ckeditor v-else :id="'ckcontent-'+field.key" v-model="entity[field.key]" :disabled="disabled"
+                    :editor="editor" :config="{}"
+          /> -->
         </div>
-        <div v-else-if="field.type==='list'" :class="(field.withNew || field.ids) ? 'd-flex': ''">
+        <div v-else-if="field.type==='list'" :class="(field.withNew || field.withPopup || field.ids) ? 'd-flex': ''">
           <v-select v-model="entity[field.key]" :dropdown-should-open="true" :disabled="selectDisabled"
                     :class="errors.length > 0 ? 'error':''"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
@@ -32,7 +38,12 @@
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm"
           >New
-          </b-button>
+        </b-button>
+        <b-button v-if="field.withPopup && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
+                  @click="showNewPopupForm" :disabled="disablePopupButton"
+        >New
+        </b-button>
+
           <b-button v-if="field.ids && !field.noShowButton" class="ml-2 text-nowrap" variant="info"
                     @click="showAll=!showAll"
           >
@@ -113,12 +124,38 @@
         />
         <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key" :value="1"
-                         :unchecked-value="0" style="margin-top: 5px"
-        />
-        <b-form-input v-else v-model="entity[field.key]" :type="field.type==='decimal'?'number':(field.type||'text')"
-                      :disabled="disabled" :step="field.type==='decimal'?0.01:1" :state="errors.length > 0 ? false:null"
-                      :placeholder="field.key"
-        />
+                         :unchecked-value="0" style="margin-top: 5px"/>
+        <b-input-group v-else class="w-100">
+          <b-input-group-prepend v-if="field.unit && field.unit_key && field.isUnitOnLeft" class="w-20">
+            <validation-provider :vid="field.unit_key" #default="{ errors }" rules="required" :name="field.unit_key">
+
+              <v-select :dropdown-should-open="true"
+                      :placeholder="field.unit_key" :disabled="disabled"  :options="unitOptions"
+                      :loading="loading" :class="errors.length > 0 ? 'error':''"
+                      :label="field.unit_label" :reduce="i => i.unit_id"
+                      v-model="entity[field.unit_key]" class="w-100"
+              />
+              <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
+            </validation-provider>
+          </b-input-group-prepend>
+          <b-form-input v-model="entity[field.key]" :type="field.type==='decimal'?'number':(field.type||'text')"
+            :disabled="disabled" :step="field.type==='decimal'?0.01:1" :state="errors.length > 0 ? false:null"
+            :placeholder="field.key" class="w-80"
+          />
+          <b-input-group-append  v-if="field.unit && field.unit_key && !field.isUnitOnLeft" class="w-20">
+            <validation-provider :vid="field.unit_key" #default="{ errors }" rules="required" :name="field.unit_key">
+              <v-select :dropdown-should-open="true"
+                      :placeholder="field.unit_key" :disabled="disabled"  :options="unitOptions"
+                      :loading="loading" :class="errors.length > 0 ? 'error':''"
+                      :label="field.unit_label" :reduce="i => i.unit_id"
+                      v-model="entity[field.unit_key]" class="w-100"
+              />
+              <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
+            </validation-provider>
+
+          </b-input-group-append>
+
+        </b-input-group>
         <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
       </validation-provider>
       <template v-if="field.type==='list' && ((field.withNew && entity[field.key] === newValue) || field.alwaysNew)">
@@ -146,7 +183,7 @@
 import Fuse from 'fuse.js'
 import { createPicker } from 'picmo'
 import {
-  BButton, BImg, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow, BSpinner,
+  BButton, BImg, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow, BSpinner, BInputGroupPrepend, BInputGroupAppend
 } from 'bootstrap-vue'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
@@ -154,6 +191,18 @@ import { snakeToTitle } from '@/libs/utils'
 import Table from '@/table/index'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+import Editor from "@tinymce/tinymce-vue"
+import tinymce from 'tinymce/tinymce';
+import 'tinymce/skins/ui/oxide/skin.min.css';
+import 'tinymce/skins/ui/oxide/content.min.css';
+import 'tinymce/themes/silver/theme';
+import 'tinymce/icons/default/icons';
+import 'tinymce/plugins/lists';
+import 'tinymce/plugins/advlist';
+import 'tinymce/plugins/link';
+import 'tinymce/plugins/media';
+import 'tinymce/models/dom';
+
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
@@ -181,6 +230,9 @@ export default {
     BCol,
     BFormCheckbox,
     BSpinner,
+    BInputGroupPrepend,
+    BInputGroupAppend,
+    'editor': Editor,
   },
   mixins: [togglePasswordVisibility],
   props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition', 'noLabel', 'create'],
@@ -212,16 +264,13 @@ export default {
         { value: 0, label: 'No' },
       ],
       files: [],
+      unitOptions: [],
       randomPassword: '',
       editor: ClassicEditor,
       waitPassword: false,
       isEmojiInputVisible: false,
-      editorOption: {
-        // modules: {
-        //   toolbar: '#quill-toolbar-' + this.field.key,
-        // },
-        // placeholder: 'Type Text Here...',
-      },
+      editorInstance: null,
+      disablePopupButton: false,
     }
   },
   computed: {
@@ -287,6 +336,13 @@ export default {
     list() {
       this.onChange()
     },
+    disabled(newValue){
+      if(this.editorInstance){
+        if(newValue){
+          this.editorInstance.hide()
+        }else this.editorInstance.show()
+      }
+    }
   },
   async created() {
     if (this.field.type === 'list' && ((!this.field.filter_key || !!this.entity[this.field.filter_key]) || this.field.noFetchOnChange) && !this.field.onlyForm) {
@@ -298,12 +354,10 @@ export default {
       if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, this.field.default)
     }
   },
-  beforeDestroy() {
-    if (this.promise) {
-      Promise.resolve()
-    }
-  },
   mounted() {
+    if (this.field.type && this.field.type === 'html'){
+      this.initEditor()
+    }
     if (typeof this.field.change === 'function') {
       const change = this.field.change(this.entity, this)
       if (change) this.$set(this.entity, this.field.key, change)
@@ -341,8 +395,65 @@ export default {
         this.$set(this.entity, this.field.key, event.emoji)
       })
     }
+
+    if (this.field.unit) {
+      this.unitOptions = this.field.unit(this)
+      this.entity[this.field.unit_key] = this.unitOptions[0]
+    }
+
+  },
+
+  beforeDestroy() {
+    if (this.editorInstance){
+      this.editorInstance.destroy()
+    }
   },
   methods: {
+    initEditor() {
+      // Initialisation de TinyMCE
+      tinymce.init({
+        apiKey: process.env.VUE_APP_TINYMCE_API_KEY,
+        selector: `#tinyEditor-${this.field.key}`,
+        readonly: this.editorIsDisabled,
+        plugins: [
+          'advlist list',
+          'media',
+        ],
+        toolbar:
+          'undo redo | formatselect |' +
+          'bold italic backcolor | myCustomButton | alignleft aligncenter ' +
+          'alignright alignjustify | bullist numlist outdent indent | ' +
+          'removeformat | help',
+        height: '400px',
+        menubar: false,
+        branding: false,
+        resize: false,
+        statusbar: false,
+        content_css: [
+          '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+          '//www.tiny.cloud/css/codepen.min.css',
+        ],
+        setup: (editor) => {
+          this.editorInstance = editor
+          editor.on('input', (e) => {
+            const content = editor.getContent()
+            this.entity[this.field.key] = content;
+          })
+          editor.ui.registry.addButton('myCustomButton', {
+            text: 'Separator',
+            onAction: () => {
+              const nonEditableContent = '<span contenteditable="false"><strong>Separator</strong></span>'
+              editor.insertContent(nonEditableContent)
+            },
+          });
+        },
+      });
+    },
+    destroyEditor(){
+      if(this.editorInstance) {
+        this.editorInstance.hide()
+      }
+    },
     subFieldDisabled(field) {
       if (this.field.disabled && this.field.disabled.includes(field.name)) {
         return true
@@ -560,6 +671,23 @@ export default {
     showNewForm() {
       console.log('click on new')
       this.$set(this.entity, this.field.key, this.newValue)
+    },
+     showNewPopupForm(){
+      const self = this;
+      this.disablePopupButton = true;
+      const popupWindow = window.open("/app/table/"+this.$route.params.table+"/popup/"+this.field.list,"Formpopup","popup")
+      popupWindow.addEventListener('beforeunload', function() {
+        // Réactivez le bouton ici
+        self.disablePopupButton = false;
+      });
+      window.addEventListener('message', async function(event) {
+        // Vérifiez l'origine de l'événement pour des raisons de sécurité
+        if (event.origin === window.location.origin && event.data.message === "success")  {
+           // Réactivez le bouton ici
+          self.disablePopupButton = false;
+          await self.fetchList(true)
+        }
+      });
     },
     onChange() {
       console.log('change')
