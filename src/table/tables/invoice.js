@@ -246,5 +246,11 @@ export default {
       ],
     },
   ],
+  fetch(vm) {
+    return vm.$http.get(`/invoices/${vm.entityId}`)
+      .then(response => {
+        return response.data
+      })
+  },
   note: 'frontend_0_8_6',
 }
