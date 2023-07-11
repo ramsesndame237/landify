@@ -67,6 +67,7 @@
           <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
                        drop-placeholder="Drop file here..." :multiple="field.multiple" required
                        @change="validate($event);updateFilesData($event)"
+                       :file-name-formatter="formatFileInputNames"
           />
           <div class="d-flex flex-column mt-2">
             <div v-for="(file, index) in files" :key="index" class="d-flex justify-content-between mb-1">
@@ -491,9 +492,18 @@ export default {
           }
         }
       }
+      this.formatFileInputNames()
     },
     removeFile(index) {
-      if (index !== -1) this.files.splice(index, 1)
+      if (index !== -1) {
+        this.files.splice(index, 1)
+        if(this.files && this.files.length === 0)
+          this.$refs.file.reset()
+      }
+      this.formatFileInputNames()
+    },
+    formatFileInputNames(){
+      return this.files.length === 1 ? this.files[0].name : `${this.files.length} files selected`
     },
     getFiles() {
       if (this.field.multiple) return this.files
