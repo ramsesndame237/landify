@@ -101,7 +101,7 @@ export default {
       hideOnIndex: true,
       visible: entity => entity.firmengroup_type === 0,
       filter_key: 'partnergroup_is_internal',
-      noFetchOnChange: true,
+      noFetch: true,
     },
     {
       key: 'partnercompany_id',
@@ -121,6 +121,7 @@ export default {
       listLabel: 'customergroup_name',
       hideOnIndex: true,
       visible: entity => entity.firmengroup_type === 1,
+      noFetch: true,
     },
     {
       key: 'company_id',
@@ -147,7 +148,6 @@ export default {
       key: 'address_id',
       hideOnIndex: true,
       type: 'list',
-      noFetch: true,
       list: 'address',
       listLabel: 'address_street',
       withNew: true,
