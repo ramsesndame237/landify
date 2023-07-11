@@ -445,6 +445,7 @@ export default {
             onAction: () => {
               const nonEditableContent = '<span contenteditable="false"><strong>Separator</strong></span>'
               editor.insertContent(nonEditableContent)
+              this.$set(this.entity, this.field.key, editor.getContent())
             },
           });
         },
