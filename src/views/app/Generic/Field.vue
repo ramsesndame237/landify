@@ -66,7 +66,8 @@
         <div v-else-if="field.type==='file'">
           <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
                        drop-placeholder="Drop file here..." :multiple="field.multiple" required
-                       @change="validate($event);updateFilesData($event)"
+                       @change="updateFilesData($event, validate)"
+                       :file-name-formatter="formatFileInputNames"
           />
           <div class="d-flex flex-column mt-2">
             <div v-for="(file, index) in files" :key="index" class="d-flex justify-content-between mb-1">
@@ -77,7 +78,7 @@
                 }}</span>
                 <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
               </div>
-              <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index)" />
+              <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index, validate)" />
             </div>
           </div>
         </div>
@@ -475,7 +476,7 @@ export default {
       }
       return require('@/assets/images/icons/file-icons/doc.png')
     },
-    updateFilesData(event) {
+    async updateFilesData(event, validate) {
       const selectedFiles = event.target.files
 
       // ensure that the selected file doesn't exit in the files data
@@ -484,17 +485,28 @@ export default {
         if (Object.hasOwnProperty.call(selectedFiles, file)) {
           index = this.files.findIndex(
             elt => elt.name === selectedFiles[file].name
-              && elt.size === selectedFiles[file].size,
-          )
-          if (index === -1) {
-            this.files.push(selectedFiles[file])
-            // console.log('this.files: ', this.files)
+            && elt.size === selectedFiles[file].size,
+            )
+            if (index === -1) {
+              this.files.push(selectedFiles[file])
+              // console.log('this.files: ', this.files)
+            }
           }
         }
-      }
+      await validate(this.files)
+      this.formatFileInputNames()
     },
-    removeFile(index) {
-      if (index !== -1) this.files.splice(index, 1)
+    async removeFile(index, validate) {
+      if (index !== -1) {
+        this.files.splice(index, 1)
+        if(this.files && this.files.length === 0)
+          this.$refs.file.reset()
+      }
+      this.formatFileInputNames()
+      await validate(this.files)
+    },
+    formatFileInputNames(){
+      return this.files.length === 1 ? this.files[0].name : `${this.files.length} files selected`
     },
     getFiles() {
       if (this.field.multiple) return this.files
