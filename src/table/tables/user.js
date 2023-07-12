@@ -199,7 +199,7 @@ export default {
           key: 'role_name', label: 'Role name', sortable: true, hideOnForm: true,
         },
         {
-          key: 'role_permission', label: 'Permission', sortable: true, hideOnForm: true,
+          key: 'role_description', sortable: true, hideOnForm: true,
         },
         {
           key: 'user_role_valid_from', type: 'date', sortable: true, disableOnUpdate: true, composite: true,
