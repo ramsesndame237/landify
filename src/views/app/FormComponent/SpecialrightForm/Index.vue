@@ -10,8 +10,7 @@
             </b-col>
             <b-col cols="12" class="p-1">
               <div v-for="tab in steps_tabs" :key="tab.step">
-                <b-row v-if="!tab.sub_step" class="d-flex align-items-stretch mb-1 step_tab"
-                       @click="jump_step_to(tab.step)">
+                <b-row v-if="!tab.sub_step" class="d-flex align-items-stretch mb-1 step_tab">
                   <b-col
                     :class="` h-100 p-1 rounded ${(current_step == tab.step || tab.completed) ? 'step_completed' : ' text-primary bg-pink'}`"
                     cols="8">
@@ -52,7 +51,7 @@
               <b-button v-if="current_step <= max_steps" size="md" :disabled="loading"
                         class="d-flex align-items-center ml-2" variant="info" @click="next_step()">
                 <b-spinner v-if="loading" small/>
-                {{ $t('app.btn.next') }}
+                {{ this.current_step === this.max_steps ? $t('app.btn.finish') : $t('app.btn.next') }}
               </b-button>
             </div>
           </div>
@@ -72,7 +71,7 @@ import Step1 from '@/views/app/FormComponent/SpecialrightForm/Step1.vue'
 import Step2 from '@/views/app/FormComponent/SpecialrightForm/Step2.vue'
 
 export default {
-  name: "contractForm",
+  name: "ContractDeadlineForm",
   components: {
     Step1,
     Step2,
@@ -125,11 +124,10 @@ export default {
       this.loading = true
       try {
         if (this.current_step === 1) {
-          this.context.deadlinesOptions = await this.$refs.step1.handleSubmit()
+          this.context = await this.$refs.step1.handleSubmit()
           console.log('step 1 passed ', this.context);
         } else if (this.current_step === 2) {
-          // await this.$refs.step2.submit()
-          // this.context.areaUnitUsage = this.$refs.step2.areaUnitUsage
+          await this.$refs.step2.submit().specialRights
           console.log('step 2 passed ', this.context);
         }
       } catch (e) {
@@ -206,6 +204,5 @@ export default {
 .step_completed, .step_tab:hover > div > div, .step_tab:hover > div:first-child {
   background: #D51130;
   color: #fff !important;
-  cursor: pointer;
 }
 </style>

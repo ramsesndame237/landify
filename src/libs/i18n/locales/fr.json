@@ -202,6 +202,7 @@
       "prev": "Precedent",
       "skip": "Passer",
       "next": "Suivant",
+      "finish": "Terminer",
       "save_add_location":"Sauvegarder et ajouter un autre Emplacement",
       "save_add_contact":"Sauvegarder et ajouter un autre Contact",
       "save_add_contact_cirteria":"Sauvegarder et ajouter d'autres critères de contact",

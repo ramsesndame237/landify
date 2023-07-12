@@ -29,8 +29,7 @@
         ref="datatable"
         :current-page="1" :per-page="100" :with-edit="false" :with-view="false"
         entity="contract_specialright_rel" :entity-list="definition.entity" :fields="fields" :selectable="false"
-        :items="specialRight" :canMakeDeleteCall='false'
-        @delete-items='deleleItemsInDataTable'
+        :items="specialRights"
       />
     </b-col>
   </b-row>
@@ -46,6 +45,7 @@ import EntityForm from '@/views/app/Generic/EntityForm'
 import Field from "@/views/app/Generic/Field";
 import Table from '@/table'
 import DataTables from '@/layouts/components/DataTables'
+import moment from "moment";
 
 export default {
   name: 'Step2',
@@ -61,54 +61,136 @@ export default {
     definition.forEach(elt => {
       fields.push({key: elt.key})
     });
-    // delete some fields
+    // hide some fields
     let index = definition.findIndex(f => f.key === "contract_specialright_total_number_options")
-    definition.splice(index, 1)
+    definition[index].visible = function() { return false }
+
 
     index = definition.findIndex(f => f.key === "contract_specialright_automatic_renewal_in_months")
-    definition.splice(index, 1)
+    definition[index].visible = function() { return false }
 
-
+    console.log('this.context: ', this.context);
 
     return {
       definition,
       entity: {},
       fields,
-      // recurringPayment: this.context.recurringPayment || [],
-      specialRight: [],
+      specialRights: [],
       loading: false,
+      totalNumberOptions: 0,
     }
   },
 
-  mounted(){
-    console.log("context", this.context);
+  async mounted(){
+    this.loading = true
+    await this.$http.get(`/contracts/deadlines/${this.$route.params.id}`)
+      .then(response => {
+        if(response.data && response.data.ContractActivatedOption)
+        this.totalNumberOptions = response.data.ContractActivatedOption.contract_specialright_total_number_options
+        this.entity = structuredClone(response.data.ContractActivatedOption)
+        delete this.entity.contract_id
+        this.entity.contract_specialright_is_passive = 0
+        this.entity.contract_specialright_is_availed = 0
+        this.entity.contract_specialright_date = moment().format("YYYY-MM-DD")
+
+        response.data.Contract?.specialrights.forEach(elt=>{
+          console.log('elt: ', elt);
+
+          this.specialRights.push(elt)
+        })
+        // this.entity.contract_specialright_actual_options = 2
+        // this.entity.contract_specialright_available_options = this.entity.contract_specialright_total_number_options - 1
+      })
+      .catch(error => {
+        console.error("error", error);
+      })
+      .finally(() => {
+        this.loading = false
+      })
   },
   methods: {
     async submit(){
-      console.log("step2 form submitted");
+      if (this.specialRights && this.specialRights.length > 0) {
+        console.log("start submitting", this.specialRights);
+        this.loading = true
+        const payload = {
+          contract_id: this.$route.params.id,
+          Specialrights: [...this.specialRights]
+        }
+        let result
+        await this.$http.post('/contracts/deadline/step2', payload)
+          .then(response => {
+            result = response.data
+          })
+          .catch(error => {
+            throw new Error(error)
+          })
+          .finally(()=>{
+            this.loading = false
+          })
+
+        console.log('result: ', result);
+        return result
+      }
     },
 
     async save() {
       this.loading = true
-      this.specialRight.push({...this.entity})
-      this.$refs.datatable.reload()
-      this.$refs.fields.forEach(f => {
-        if (f.visible) f.reset()
-      })
-      this.$refs.form.reset()
+      const userData = JSON.parse(localStorage.getItem('userData'))
+      this.entity.contract_specialright_actual_options = this.actualOptions
+      this.entity.contract_specialright_available_options = this.availableOptions
+      this.entity.contract_specialright_activated_options = this.activatedOptions
+
+      try {
+        this.specialRights.push({...this.entity, user_id: userData.user_id})
+        console.log('this.specialRights: ', this.specialRights);
+        this.$refs.datatable.reload()
+        this.$refs.fields.forEach(f => {
+          if (f.visible) f.reset()
+        })
+        this.$refs.form.reset()
+      } catch (error) {
+        if(typeof error === 'string'){
+          this.$errorToast(error)
+        }else{
+          console.error(error)
+        }
+
+      }
       this.loading = false
     },
 
     deleleItemsInDataTable(newItems) {
-      this.specialRight = newItems
+      this.specialRights = newItems
     },
   },
 
   computed: {
     tableDefinition() {
       return this.$store.getters['table/tableDefinition'](this.table)
+    },
+    actualOptions(){
+      if(this.specialRights && this.specialRights.length > 0){
+        return this.specialRights.length + 1
+      }
+      return 1
+    },
+    availableOptions(){
+      if(this.specialRights && this.specialRights.length > 0){
+        return this.totalNumberOptions - this.specialRights.length
+      }
+      return this.totalNumberOptions
+    },
+
+    activatedOptions(){
+      if(this.specialRights && this.specialRights.length > 0){
+        return this.specialRights.length
+      }
+      return 0
     }
-  }
+
+  },
+
 
 }
 </script>

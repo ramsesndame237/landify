@@ -68,7 +68,7 @@ export default {
       hideOnForm: true,
       formatter: (value, key, item) => {
         const array = item.owners
-        const ownersName = array.length > 0 ? array.map(obj => obj.pos_name) : [];
+        const ownersName = array.length > 0 ? array.map(obj => obj.owner_name) : [];
         const result = ownersName.join(", ");
 
         return result || '-';
@@ -79,7 +79,7 @@ export default {
       hideOnForm: true,
       formatter: (value, key, item) => {
         const array = item.managers
-        const managerName = array.length > 0 ? array.map(obj => obj.pos_name) : [];
+        const managerName = array.length > 0 ? array.map(obj => obj.manager_name) : [];
         const result = managerName.join(", ");
 
         return result || '-';
@@ -301,24 +301,24 @@ export default {
       entityForm: 'contract_specialright_rel',
       entityView: 'specialright',
       withContinue: true,
-      formComponent: () => import('@/views/app/FormComponent/SpecialrightForm/Index.vue'),
+      createComponent: () => import('@/views/app/FormComponent/SpecialrightForm/Index.vue'),
       fields: [
         {
           key: 'specialright_id', type: 'list', list: 'specialright', listLabel: 'specialright_name',
         },
         { key: 'specialright_name', hideOnForm: true },
         { key: 'contract_specialright_description', type: 'textarea', required: false },
-        { key: 'contract_specialright_actual_options', type: 'number' },
+        { key: 'contract_specialright_actual_options', type: 'number', disabled: true, hideOnForm: true},
         { key: 'contract_specialright_total_number_options', type: 'number' },
-        { key: 'contract_specialright_available_options', type: 'number' },
+        { key: 'contract_specialright_available_options', type: 'number', disabled: true, hideOnForm: true},
         { key: 'contract_specialright_automatic_renewal_in_months', type: 'number', required: false },
         { key: 'contract_specialright_renewal_in_months', type: 'number', required: false },
         { key: 'contract_specialright_prior_notice_period', type: 'date' },
         { key: 'contract_specialright_prior_notice_date', type: 'date' },
+        { key: 'contract_specialright_date_added', type: 'date' },
         { key: 'contract_specialright_extensions', type: 'number' },
-        {
-          key: 'contract_specialright_date', type: 'date', composite: true, hideOnForm: true, hideOnIndex: true,
-        },
+        { key: 'contract_specialright_measurement_unit', hideOnForm: true, hideOnIndex: true, },
+        { key: 'contract_specialright_is_obsolete', hideOnForm: true, hideOnIndex: true, },
         {
           key: 'contract_specialright_termination_date',
           type: 'date',
@@ -331,6 +331,9 @@ export default {
               vm.$set(vm.entity, 'contract_specialright_is_availed', 1)
             }
           },
+        },
+        {
+          key: 'contract_specialright_date', type: 'date', composite: true, hideOnForm: true, hideOnIndex: true,
         },
         { key: 'contract_specialright_is_passive', type: 'boolean' },
         { key: 'contract_specialright_is_availed', type: 'boolean' },
