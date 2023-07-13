@@ -61,15 +61,6 @@ export default {
     definition.forEach(elt => {
       fields.push({key: elt.key})
     });
-    // hide some fields
-    // let index = definition.findIndex(f => f.key === "contract_specialright_total_number_options")
-    // definition[index].visible = function() { return false }
-
-
-    // index = definition.findIndex(f => f.key === "contract_specialright_automatic_renewal_in_months")
-    // definition[index].visible = function() { return false }
-
-    console.log('this.context: ', this.context);
 
     return {
       definition,

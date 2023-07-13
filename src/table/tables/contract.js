@@ -302,7 +302,7 @@ export default {
       entityView: 'specialright',
       withContinue: true,
       createComponent: () => import('@/views/app/CreateComponent/SpecialrightForm/Index.vue'),
-      updateComponent: () => import('@/views/app/UpdateComponent/SpecialrightForm.vue'),
+      // updateComponent: () => import('@/views/app/UpdateComponent/SpecialrightForm.vue'),
       fields: [
         {
           key: 'specialright_id', type: 'list', list: 'specialright', listLabel: 'specialright_name',
