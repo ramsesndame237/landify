@@ -67,8 +67,8 @@ import {
 } from 'bootstrap-vue'
 
 import Field from '@/views/app/Generic/Field.vue'
-import Step1 from '@/views/app/FormComponent/SpecialrightForm/Step1.vue'
-import Step2 from '@/views/app/FormComponent/SpecialrightForm/Step2.vue'
+import Step1 from '@/views/app/CreateComponent/SpecialrightForm/Step1.vue'
+import Step2 from '@/views/app/CreateComponent/SpecialrightForm/Step2.vue'
 
 export default {
   name: "ContractDeadlineForm",
