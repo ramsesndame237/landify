@@ -2,6 +2,7 @@ import {updateInvoiceFlatRate, updateInvoiceApportionable} from "@/table/utils"
 export default {
   entity: 'frontend_4_1_1',
   createModal: false,
+  entityEndpoint: "/invoices",
   formComponent: () => import('@/views/app/FormComponent/InvoiceForm.vue'),
   fields: [
     { key: 'invoice_id', auto: true },
@@ -245,5 +246,11 @@ export default {
       ],
     },
   ],
+  fetch(vm) {
+    return vm.$http.get(`/invoices/${vm.entityId}`)
+      .then(response => {
+        return response.data
+      })
+  },
   note: 'frontend_0_8_6',
 }
