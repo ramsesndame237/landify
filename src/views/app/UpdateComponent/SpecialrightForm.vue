@@ -2,7 +2,7 @@
     <validation-observer ref="form" v-slot="{ passes }">
       <b-form @submit.prevent="passes(submit)" autocomplete="off">
         <b-col :cols="cols" v-for="(field,index) in formFields" :key="index" cols="12">
-          <field ref="fields" :disabled="disabled || field.disabled || field.disableOnUpdate"
+          <field ref="fields" :disabled="disabled || field.disabled || field.disableOnUpdate || field.key === 'specialright_id' || field.key === 'contract_specialright_termination_date'"
                   :inline="inline" :entity="entity" :table-definition="tableDefinition" :field="field"/>
         </b-col>
       </b-form>
@@ -17,7 +17,6 @@ import {
 } from 'bootstrap-vue'
 import Field from "@/views/app/Generic/Field";
 import FormMixin from "@/views/app/Generic/FormMixin";
-import moment from "moment";
 
 
 export default {
@@ -38,10 +37,7 @@ export default {
         if(response.data && response.data.ContractActivatedOption){
           const contractActivatedOption = response.data.ContractActivatedOption
           this.entity.contract_specialright_automatic_renewal_in_months = contractActivatedOption.contract_specialright_automatic_renewal_in_months
-          this.entity.contract_specialright_total_number_options = co.ntractActivatedOption.contract_specialright_total_number_options
-          this.entity.contract_specialright_is_passive = 0
-          this.entity.contract_specialright_is_availed = 0
-          this.entity.contract_specialright_date = moment().format("YYYY-MM-DD")
+          this.entity.contract_specialright_total_number_options = contractActivatedOption.contract_specialright_total_number_options
         }
       })
       .catch(error => {
@@ -50,6 +46,7 @@ export default {
       .finally(() => {
         this.loading = false
       })
+    console.log('this.entity: ', this.entity);
   },
 
   computed: {

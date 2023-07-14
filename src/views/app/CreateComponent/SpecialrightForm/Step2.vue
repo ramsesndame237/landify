@@ -45,7 +45,6 @@ import EntityForm from '@/views/app/Generic/EntityForm'
 import Field from "@/views/app/Generic/Field";
 import Table from '@/table'
 import DataTables from '@/layouts/components/DataTables'
-import moment from "moment";
 
 export default {
   name: 'Step2',
@@ -56,15 +55,17 @@ export default {
   },
   props: ['disabled', 'context'],
   data() {
-    const definition = {...Table.contract.relations.find(f=> f.primaryKey === "specialright_id")}.fields.filter(f=> f.hide!==true && !f.auto && f.hideOnCreate !==true && f.hideOnForm !==true)
+    const relation = {...Table.contract.relations.find(f=> f.primaryKey === "specialright_id")}
+    const definition = relation.fields.filter(f=> f.hide!==true && !f.auto && f.hideOnCreate !==true && f.hideOnForm !==true)
     const fields = []
     definition.forEach(elt => {
       fields.push({key: elt.key})
     });
+    console.log('relation.default: ', relation.default);
 
     return {
       definition,
-      entity: {},
+      entity: { ...relation.default },
       fields,
       specialRights: [],
       loading: false,
@@ -79,11 +80,12 @@ export default {
       .then(response => {
         if(response.data && response.data.ContractActivatedOption)
         this.totalNumberOptions = response.data.ContractActivatedOption.contract_specialright_total_number_options
-        this.entity = structuredClone(response.data.ContractActivatedOption)
-        delete this.entity.contract_id
+        const contractActivatedOption = response.data.ContractActivatedOption
+        this.entity.contract_specialright_automatic_renewal_in_months = contractActivatedOption.contract_specialright_automatic_renewal_in_months
+        this.entity.contract_specialright_total_number_options = contractActivatedOption.contract_specialright_total_number_options
+        this.entity.contract_activated_option_id = contractActivatedOption.contract_activated_option_id
         this.entity.contract_specialright_is_passive = 0
         this.entity.contract_specialright_is_availed = 0
-        this.entity.contract_specialright_date = moment().format("YYYY-MM-DD")
 
         response.data.Contract?.specialrights.forEach(elt=>{
           console.log('elt: ', elt);
@@ -99,6 +101,8 @@ export default {
       .finally(() => {
         this.loading = false
       })
+    console.log('this.entity: ', this.entity);
+
   },
   methods: {
     async submit(){
