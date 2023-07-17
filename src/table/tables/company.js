@@ -12,6 +12,7 @@ export default {
       type: 'list',
       list: 'customergroup',
       listLabel: 'customergroup_name',
+      withPopup: true,
       relationEntity: 'customergroup_company_rel',
     },
     { key: 'customergroup_name', sortable: true, hideOnForm: true },

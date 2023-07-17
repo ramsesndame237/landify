@@ -1,6 +1,7 @@
 export default {
   entity: 'frontend_3_1_1',
   primaryKey: 'pos_id',
+  entityEndpoint: '/pos',
   fields: [
     { key: 'pos_id', auto: true },
     {
