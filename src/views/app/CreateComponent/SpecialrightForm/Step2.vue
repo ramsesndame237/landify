@@ -29,7 +29,8 @@
         ref="datatable"
         :current-page="1" :per-page="100" :with-edit="false" :with-view="false"
         entity="contract_specialright_rel" :entity-list="definition.entity" :fields="fields" :selectable="false"
-        :items="specialRights"
+        :items="specialRights" :canMakeDeleteCall='false'
+        @delete-items='DeleleItemsInDataTable'
       />
     </b-col>
   </b-row>
@@ -87,13 +88,6 @@ export default {
         this.entity.contract_specialright_is_passive = 0
         this.entity.contract_specialright_is_availed = 0
 
-        response.data.Contract?.specialrights.forEach(elt=>{
-          console.log('elt: ', elt);
-
-          this.specialRights.push(elt)
-        })
-        // this.entity.contract_specialright_actual_options = 2
-        // this.entity.contract_specialright_available_options = this.entity.contract_specialright_total_number_options - 1
       })
       .catch(error => {
         console.error("error", error);
