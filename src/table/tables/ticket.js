@@ -15,7 +15,7 @@ export default {
     {
       key: 'ticket_deadline_red', type: 'date', time: true, hideOnIndex: true,
     },
-    { key: 'ticket_planned_treatment_week' },
+    { key: 'ticket_planned_treatment_week', required: false },
     {
       key: 'pos_id',
       listLabel: 'pos_name',
