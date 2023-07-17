@@ -27,7 +27,7 @@ export const defineRules = () => {
   rules.push({ action: 'read', subject: 'dashboard' })
   //
   try {
-    if (userData.roles.find(r => r.role_name === 'Administrator')) {
+    if (userData.roles.find(r => r.role_name === 'Administratoren')) {
       rules.push({ action: 'manage', subject: 'all' })
     }
     userData.roles.forEach(role => {
