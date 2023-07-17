@@ -30,6 +30,18 @@ export default {
       filter_key: 'company_id',
     },
   ],
+  filters: [
+    {
+      key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name',
+    },
+    {
+      key: 'company_id', type: 'list', list: 'frontend_2_2_3_1', listLabel: 'company_name',filter_key: 'customergroup_id',
+    },
+    {
+      key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', required: false
+    }
+  ],
+  filter_vertical: true,
   relations: [
     {
       primaryKey: 'location_id',
