@@ -231,6 +231,22 @@ const router = new VueRouter({
         layout:'full',
       }
     },
+    {
+      path: '/app/menu',
+      name: 'menu',
+      component: () => import('@/views/app/MenuProfile/IndexMenuProfile.vue'),
+      meta: {
+        action: 'menu~menu',
+        resource: 'menu',
+        pageTitle: 'Menu Profile',
+        breadcrumb: [
+          {
+            text: 'Menu Profile',
+            active: true,
+          },
+        ],
+      },
+    },
     // authentication
     {
       path: '/login',
