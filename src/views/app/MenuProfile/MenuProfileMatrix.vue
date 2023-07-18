@@ -3,6 +3,7 @@
 import { getUserData, setUserDataConfigsByKey } from '@/auth/utils'
 import TablePagination from '@/layouts/components/TablePagination.vue'
 import { http } from '@/libs/axios'
+import ToastificationContent from "@core/components/toastification/ToastificationContent.vue";
 
 export default {
   name: 'MenuProfileMatrix',
@@ -20,11 +21,9 @@ export default {
       configsData: [],
       userData: getUserData(),
       menuprofile: '',
-      nameState: null,
       submittedNames: [],
       perPage: 10,
       currentPage: 1,
-      totalRows: 5,
       search: '',
       rows: [],
       menuList: [],
@@ -37,29 +36,15 @@ export default {
     access() {
       return this.$store.getters['table/listCache']('access')
     },
+    totalRows() {
+      return this.rows.length
+    },
   },
   async mounted() {
     // Récupère les données de configuration
     this.configsData = await this.getConfigData()
   },
   methods: {
-    checkFormValidity() {
-      const valid = this.$refs.form.checkValidity()
-      this.nameState = valid
-      return valid
-    },
-    handleSubmit() {
-      // Exit when the form isn't valid
-      if (!this.checkFormValidity()) {
-        return
-      }
-      // Push the name to submitted names
-      this.submittedNames.push(this.name)
-      // Hide the modal manually
-      this.$nextTick(() => {
-        this.$bvModal.hide('modal-prevent-closing')
-      })
-    },
     getConfigByKey(key) {
       return this.userData.configs.find(config => config.config_key === key)
     },
@@ -110,6 +95,8 @@ export default {
       }
     },
     async saveMenuProfile() {
+      if (!this.menuprofile) return false
+
       this.loading = true
       await this.setMenu(this.menuprofile, 'add')
 
@@ -126,8 +113,16 @@ export default {
 
         this.setConfigVal(response.data.config_val)
 
-        this.$refs.form.reset()
+        this.menuprofile = ''
         this.$refs.modal.hide()
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Menu added successfully !',
+            icon: 'successIcon',
+            variant: 'success',
+          },
+        })
       } catch (error) {
         console.log({ error })
       } finally {
@@ -144,6 +139,15 @@ export default {
         const response = await http.put('/configs/', payload)
 
         this.setConfigVal(response.data.config_val)
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Changes Saved!!!',
+            icon: 'successIcon',
+            variant: 'success',
+          },
+        })
+
       } catch (error) {
         console.log({ error })
       } finally {
@@ -151,9 +155,10 @@ export default {
       }
     },
     async deleteMenuProfile() {
+      if (!this.menuprofile) return false
       const result = await this.$swal({
         title: 'Are you sure?',
-        text: 'This Menu profile will be delete and all association with access also !!!',
+        text: 'This Menu profile will be delete and all associations with access also !!!',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Yes',
@@ -166,6 +171,7 @@ export default {
       if (!result.value) return false
       await this.setMenu(this.menuprofile, 'delete')
       await this.saveTablesChanges()
+      this.menuprofile = ''
     },
   },
 }
@@ -173,56 +179,48 @@ export default {
 
 <template>
   <b-overlay :show="loading">
-    <b-card body-class="p-0">
-      <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage"
-                        :total-rows="totalRows"
-      >
-        <b-button variant="primary" class="capitalize mr-1" @click="$refs.modal.show()">
-          Add  menu
-        </b-button>
-        <b-button variant="primary" class="capitalize mr-1" @click="$refs.modalDelete.show()">
-          Remove  menu
-        </b-button>
-        <b-button variant="primary" class="capitalize mr-1 " @click="saveTablesChanges">
-          Save
-        </b-button>
-      </table-pagination>
+    <b-card body-class="p-1 text-right">
+      <b-button variant="primary" class="capitalize mr-1" @click="$refs.modal.show()">
+        {{ $t('button~add-menu') }}
+      </b-button>
+      <b-button variant="primary" class="capitalize mr-1" @click="$refs.modalDelete.show()">
+        {{ $t('button~remove-menu') }}
+      </b-button>
+      <b-button variant="primary" class="capitalize mr-1 " @click="saveTablesChanges">
+        {{ $t('button~save') }}
+      </b-button>
     </b-card>
-    <b-modal ref="modal" title="Add new menu profile" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary" centered
+    <b-modal ref="modal" :title="$t('headline~menu~new')" :ok-title="$t('button~save')" :cancel-title="$t('button~cancel')" modal-class="modal-primary" centered
              :no-close-on-backdrop="true" @ok="saveMenuProfile"
     >
       <form ref="form" @submit.stop.prevent="saveMenuProfile">
         <b-form-group
-          label="Menu Profile"
+          :label="$t('page~menu~title')"
           label-for="menu"
           invalid-feedback="Menu profile is required"
-          :state="nameState"
         >
           <b-form-input
             id="menu"
             v-model="menuprofile"
-            :state="nameState"
             placeholder="Enter a menu profile"
             required
           />
         </b-form-group>
       </form>
     </b-modal>
-    <b-modal ref="modalDelete" title="Remove menu profile" ok-title="Delete" cancel-title="Cancel" modal-class="modal-primary" centered
+    <b-modal ref="modalDelete" :title="$t('headline~menu~remove')" :ok-title="$t('button~contradictionpackage~remove')" :cancel-title="$t('button~cancel')" modal-class="modal-primary" centered
              :no-close-on-backdrop="true" @ok="deleteMenuProfile"
     >
       <form ref="form-delete" @submit.stop.prevent="deleteMenuProfile">
         <b-form-group
-          label="Menu Profile"
+          :label="$t('page~menu~title')"
           label-for="remove-menu"
           invalid-feedback="Menu profile is required"
-          :state="nameState"
         >
           <b-form-select
             id="remove-menu"
             v-model="menuprofile"
             :options="menuList"
-            :state="nameState"
             placeholder="Choose one menu"
             required
           />
@@ -230,7 +228,7 @@ export default {
       </form>
     </b-modal>
     <b-card>
-      <b-table-simple striped responsive :filter="search" :busy.sync="loading">
+      <b-table-simple striped responsive :filter="search" :busy.sync="loading" :current-page="currentPage" :per-page="perPage">
         <b-thead>
           <b-th>{{ $t('attribute.' + labelKey) }}</b-th>
           <b-th v-for="(menu, index) in menuList" :key="index">

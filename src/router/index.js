@@ -238,10 +238,10 @@ const router = new VueRouter({
       meta: {
         action: 'menu~menu',
         resource: 'menu',
-        pageTitle: 'Menu Profile',
+        pageTitle: 'page~menu~title',
         breadcrumb: [
           {
-            text: 'Menu Profile',
+            text: 'page~menu~title',
             active: true,
           },
         ],
