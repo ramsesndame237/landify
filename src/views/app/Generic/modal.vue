@@ -11,7 +11,7 @@
        class="text-danger text-center">No ticket will be created for this document</p>
     <template v-slot:modal-footer>
       <b-button variant="warning" :disabled="loading" @click="$refs.modal.hide()">{{ $t('button~cancel') }}</b-button>
-      <b-button v-if="!create || !withContinue" variant="primary" :disabled="loading" @click="handleOk">
+      <b-button v-if="!create || withContinue" variant="primary" :disabled="loading" @click="handleOk">
         <b-spinner v-if="loading" small/>
         {{ $t('button~save') }}
       </b-button>
