@@ -70,7 +70,7 @@
         <Datatable :key="table" ref="table" :selectable="false" :search="search" primary-key-column="user_id"
                    entity="role" :fields="definition.fields" :total-rows.sync="totalRows"
                    :per-page="perPage" :current-page.sync="currentPage" entity-view="user" :with-delete="false"
-                   :with-edit="false" entity-endpoint="users/list-role"
+                   :with-edit="false" entity-endpoint="/users/list-role"
         />
       </b-card>
     </b-overlay>

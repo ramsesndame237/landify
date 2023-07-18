@@ -53,7 +53,7 @@
         <div v-else-if="field.type==='yesno' || field.type==='custom-select'">
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
                     :multiple="field.multiple" :placeholder="field.key"
-                    :options="field.type==='yesno'?yesNoOptions: field.items" transition="" label="label" class="w-100"
+                    :options="field.type==='yesno'?yesNoOptions: customSelectOptions" transition="" label="label" class="w-100"
                     :reduce="i => i.value"
           />
         </div>
@@ -266,6 +266,7 @@ export default {
       ],
       files: [],
       unitOptions: [],
+      customSelectOptions: [],
       randomPassword: '',
       editor: ClassicEditor,
       waitPassword: false,
@@ -355,7 +356,7 @@ export default {
       if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, this.field.default)
     }
   },
-  mounted() {
+  async mounted() {
     if (this.field.type && this.field.type === 'html'){
       this.initEditor()
     }
@@ -402,6 +403,11 @@ export default {
       this.entity[this.field.unit_key] = this.unitOptions[0]
     }
 
+    if (this.field.type === 'custom-select' && typeof this.field.items === 'function') {
+      this.customSelectOptions = await this.field.items(this)
+    } else {
+      this.customSelectOptions = this.field.items
+    }
   },
 
   beforeDestroy() {

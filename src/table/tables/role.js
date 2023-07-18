@@ -1,3 +1,6 @@
+import { http } from '@/libs/axios'
+import ToastificationContent from "@core/components/toastification/ToastificationContent.vue";
+
 export default {
   customIndex: () => import('@/views/app/Role/RoleList.vue'),
   primaryKey: 'role_id',
@@ -5,10 +8,10 @@ export default {
     { key: 'user_id', hideOnForm: true, hideOnIndex: true },
     { key: 'role_id', auto: true },
     { key: 'role_name', hideOnIndex: true },
-    { key: 'role_is_internal', type: 'boolean', hideOnIndex: true },
     {
       key: 'role_description', hideOnIndex: true, required: false, type: 'textarea',
     },
+    { key: 'role_is_internal', type: 'boolean', hideOnIndex: true },
     {
       key: 'user_firstname',
       type: 'html',
@@ -21,6 +24,33 @@ export default {
         </div>
       </div>`,
       hideOnForm: true,
+    },
+    {
+      key: 'role_menu',
+      hideOnIndex: true,
+      type: 'custom-select',
+      items: async vm => {
+        let menus = vm.$store.getters['table/listCache']('menu')
+        if (!menus.length) {
+          try {
+            const response = await http.get('/configs/menu')
+            const configValue = JSON.parse(response.data?.config_val)
+            menus = configValue[0].menus
+            vm.$store.dispatch('table/setListData', { entity: 'menu', data: menus })
+          } catch (error) {
+            console.log({ error })
+            vm.$toast({
+              component: ToastificationContent,
+              props: {
+                title: error.response.data.detail,
+                icon: 'errorIcon',
+                variant: 'error',
+              },
+            })
+          }
+        }
+        return menus.map(menu => ({ label: menu.name, value: menu.name }))
+      },
     },
     {
       key: 'roles',
