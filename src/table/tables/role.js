@@ -1,5 +1,5 @@
 import { http } from '@/libs/axios'
-import ToastificationContent from "@core/components/toastification/ToastificationContent.vue";
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   customIndex: () => import('@/views/app/Role/RoleList.vue'),
@@ -106,7 +106,18 @@ export default {
           hideOnIndex: true,
           disableOnUpdate: true,
         },
-        { key: 'user_firstname', sortable: true, hideOnForm: true },
+        {
+          key: 'user_firstname',
+          sortable: true,
+          hideOnForm: true,
+          type: 'html',
+          formatter: (value, key, item) => `<div class="d-flex h5">
+        <div class="">
+          <p class="mb-0">${`${item.user_firstname} ${item.user_lastname}`}</p>
+          <p class="mb-0">${item.user_email}</p>
+        </div>
+      </div>`,
+        },
         {
           key: 'user_role_valid_from', type: 'date', disableOnUpdate: true, composite: true,
         },
