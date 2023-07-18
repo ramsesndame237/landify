@@ -425,7 +425,7 @@ export default {
         if (data.address) {
           data.address_id = data.address.address_id
           const addressField = vm.$refs.fields.find(f => f.field.key === 'address_id')
-          console.log(addressField.getSubFields())
+          console.log("addressField.getSubFields()",addressField.getSubFields())
           addressField.getSubFields().forEach(field => {
             addressField.subEntity[field.field.key] = data.address[field.field.key]
             if (field.field.key === 'city_id' && data.address.city) {
