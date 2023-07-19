@@ -678,6 +678,7 @@ export default {
   ticket,
   board: {
     entity: 'frontend_6_1_4',
+    entityEndpoint: '/tickets/kanban/user',
     defaultSortField: 'board_id',
     fields: [
       {
