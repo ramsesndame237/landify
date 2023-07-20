@@ -127,14 +127,14 @@
                          :state="errors.length > 0 ? false:null" :placeholder="field.key" :value="1"
                          :unchecked-value="0" style="margin-top: 5px"/>
         <b-input-group v-else class="w-100">
-          <b-input-group-prepend v-if="field.unit && field.unit_key && field.isUnitOnLeft" class="w-20 bg-input">
+          <b-input-group-prepend v-if="field.unit && field.unit_key && field.isUnitOnLeft" class="w-20">
             <validation-provider :vid="field.unit_key" #default="{ errors }" rules="required" :name="field.unit_key">
 
-              <b-form-select
+              <v-select :dropdown-should-open="true"
                       :placeholder="field.unit_key" :disabled="disabled"  :options="unitOptions"
                       :loading="loading" :class="errors.length > 0 ? 'error':''"
-                      :text-field="field.unit_label" :value-field="field.unit_id"
-                      v-model="entity[field.unit_key]" class="w-100 bg-input"
+                      :label="field.unit_label" :reduce="i => i.unit_id"
+                      v-model="entity[field.unit_key]" class="w-100"
               />
               <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
             </validation-provider>
@@ -143,13 +143,13 @@
             :disabled="disabled" :step="field.type==='decimal'?0.01:1" :state="errors.length > 0 ? false:null"
             :placeholder="field.key" class="w-80"
           />
-          <b-input-group-append  v-if="field.unit && field.unit_key && !field.isUnitOnLeft" class="w-20 bg-input">
+          <b-input-group-append  v-if="field.unit && field.unit_key && !field.isUnitOnLeft" class="w-20">
             <validation-provider :vid="field.unit_key" #default="{ errors }" rules="required" :name="field.unit_key">
-              <b-form-select
+              <v-select :dropdown-should-open="true"
                       :placeholder="field.unit_key" :disabled="disabled"  :options="unitOptions"
                       :loading="loading" :class="errors.length > 0 ? 'error':''"
-                      :text-field="field.unit_label" :value-field="field.unit_id"
-                      v-model="entity[field.unit_key]" class="w-100 bg-input"
+                      :label="field.unit_label" :reduce="i => i.unit_id"
+                      v-model="entity[field.unit_key]" class="w-100"
               />
               <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
             </validation-provider>
@@ -184,7 +184,7 @@
 import Fuse from 'fuse.js'
 import { createPicker } from 'picmo'
 import {
-  BButton, BImg, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormSelect , BFormTextarea, BRow, BSpinner, BInputGroupPrepend, BInputGroupAppend
+  BButton, BImg, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow, BSpinner, BInputGroupPrepend, BInputGroupAppend
 } from 'bootstrap-vue'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
@@ -220,7 +220,6 @@ export default {
   components: {
     ckeditor: CKEditor.component,
     BFormInput,
-    BFormSelect,
     BFormFile,
     BFormGroup,
     BImg,
@@ -401,7 +400,7 @@ export default {
 
     if (this.field.unit) {
       this.unitOptions = this.field.unit(this)
-      this.entity[this.field.unit_key] = this.unitOptions[0][this.field.unit_id]
+      this.entity[this.field.unit_key] = this.unitOptions[0]
     }
 
     if (this.field.type === 'custom-select' && typeof this.field.items === 'function') {
@@ -773,10 +772,5 @@ export default {
     border: 1px solid #ccc;
     padding: 2px;
   }
-}
-
-.bg-input{
-  background-color: #e9ecef;
-  color: #495057
 }
 </style>
