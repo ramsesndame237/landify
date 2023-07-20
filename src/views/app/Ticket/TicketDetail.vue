@@ -41,7 +41,7 @@
                     {{ entity.board_name }}
                   </router-link>
                 </td>
-                <tr>
+              </tr>
                   <tr>
                     <th class="pb-50 font-weight-bold">{{ $t('attribute.ticket_id') }}</th>
                     <td class="pb-50">{{ entity.ticket_id }}</td>
@@ -54,6 +54,7 @@
                         {{ entity.customergroup_name }}
                       </router-link>
                     </td>
+                  </tr>
                     <tr>
                       <th class="pb-50 font-weight-bold">{{ $t('attribute.company_name') }}</th>
                       <td class="pb-50">
@@ -174,7 +175,6 @@
               </b-button>
             </div>
           </b-card-actions>
-          </b-card-actions>
           <email-modal ref="emailModal" @reload="fetchEmail"/>
         </b-col>
         <b-col lg="4">
@@ -183,14 +183,14 @@
             <b-col v-for="(document,i) in documents" :key="i" cols="6">
               <b-overlay :show="document.loading">
                 <b-card>
-                  <div class="d-flex justify-content-between">
+                  <div class="d-flex document-header justify-content-between">
                     <h5>{{
                         document.document_name + (document.document_already_stamp ? '(Stamped)' : '') + ' - ' + (document.document_type_name || '')
                       }}</h5>
                     <!--                    <b-link variant="danger" target="_blank" :href="getLink(document)">-->
                     <!--                      <feather-icon icon="EyeIcon"/>-->
                     <!--                    </b-link>-->
-                    <b-dropdown variant="link-" toggle-class="p-0" right no-caret class="ml-auto">
+                    <b-dropdown variant="link-" toggle-class="p-0" right no-caret class="ml-auto document-header-dropdown">
                       <template v-slot:button-content>
                         <feather-icon icon="MoreHorizontalIcon"/>
                       </template>
@@ -502,5 +502,9 @@ export default {
 <style scoped>
 .mail-table {
   word-break: break-word;
+}
+
+.document-header-dropdown{
+  align-self: flex-start;
 }
 </style>
