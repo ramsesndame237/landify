@@ -828,18 +828,25 @@ export default {
   '1__translation': {
     inlineEdit: true,
     primaryKey: 'translation_id',
-    formComponent: () => import('@/views/app/FormComponent/TranslationForm.vue'),
     fields: [
       { key: 'translation_id', disableOnUpdate: true },
       {
         key: 'translation_lang',
         composite: true,
         disableOnUpdate: true,
-        noFetch: true,
-        listLabel: 'lang_name',
-        tableKey: 'attribute_lang',
-        type: 'list',
-        list: 'attribute_lang',
+        type: 'custom-select',
+        items: () => {
+          return [
+            {
+              label: "EN",
+              value: 'EN'
+            },
+            {
+              label: "DE",
+              value: 'DE'
+            },
+          ]
+        }
       },
       { key: 'translation_text' },
     ]
@@ -847,17 +854,25 @@ export default {
   '1__attribute_nice': {
     inlineEdit: true,
     primaryKey: 'attribute_name',
-    formComponent: () => import('@/views/app/FormComponent/TranslationForm.vue'),
     fields: [
       { key: 'attribute_name', disableOnUpdate: true },
       {
         key: 'attribute_lang',
         composite: true,
         disableOnUpdate: true,
-        listLabel: 'lang_name',
-        noFetch: true,
-        type: 'list',
-        list: 'attribute_lang',
+        type: 'custom-select',
+        items: () => {
+          return [
+            {
+              label: "EN",
+              value: 'EN'
+            },
+            {
+              label: "DE",
+              value: 'DE'
+            },
+          ]
+        }
       },
       { key: 'attribute_nice_name' },
     ],
