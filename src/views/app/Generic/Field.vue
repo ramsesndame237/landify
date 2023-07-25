@@ -259,6 +259,9 @@ export default {
         locale: {
           firstDayOfWeek: 1,
         },
+        onReady(selectedDates, dateStr, instance) {
+          instance.isOpen = true
+        },
       },
       yesNoOptions: [
         { value: 1, label: 'Yes' },
