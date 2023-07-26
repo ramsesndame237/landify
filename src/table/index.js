@@ -781,16 +781,50 @@ export default {
     primaryKey: 'translation_id',
     fields: [
       { key: 'translation_id', disableOnUpdate: true },
-      { key: 'translation_lang', composite: true, disableOnUpdate: true },
+      {
+        key: 'translation_lang',
+        composite: true,
+        disableOnUpdate: true,
+        type: 'custom-select',
+        items: () => {
+          return [
+            {
+              label: "EN",
+              value: 'EN'
+            },
+            {
+              label: "DE",
+              value: 'DE'
+            },
+          ]
+        }
+      },
       { key: 'translation_text' },
-    ],
+    ]
   },
   '1__attribute_nice': {
     inlineEdit: true,
     primaryKey: 'attribute_name',
     fields: [
       { key: 'attribute_name', disableOnUpdate: true },
-      { key: 'attribute_lang', composite: true, disableOnUpdate: true },
+      {
+        key: 'attribute_lang',
+        composite: true,
+        disableOnUpdate: true,
+        type: 'custom-select',
+        items: () => {
+          return [
+            {
+              label: "EN",
+              value: 'EN'
+            },
+            {
+              label: "DE",
+              value: 'DE'
+            },
+          ]
+        }
+      },
       { key: 'attribute_nice_name' },
     ],
     default: {
