@@ -26,7 +26,9 @@ export default {
       generate: true,
     },
     { key: 'user_password_reset_required', hideOnIndex: true, type: 'boolean' },
-    { key: 'user_locked', hideOnIndex: true, hideOnCreate: true, type: 'boolean' },
+    {
+      key: 'user_locked', hideOnIndex: true, hideOnCreate: true, type: 'boolean',
+    },
 
     { key: 'user_firstname', sortable: true },
     { key: 'user_lastname', sortable: true },
@@ -38,7 +40,9 @@ export default {
       hideOnUpdate: true,
       value: entity => (entity.user_firstname?.charAt(0) || '') + (entity.user_lastname?.charAt(0) || ''),
     },
-    { key: 'user_abbreviation', sortable: true, hideOnIndex: true, hideOnCreate: true },
+    {
+      key: 'user_abbreviation', sortable: true, hideOnIndex: true, hideOnCreate: true,
+    },
     // { key: 'user_function', sortable: true, hideOnIndex: true },
 
     {
@@ -62,7 +66,7 @@ export default {
       list: 'function',
       relationEntity: 'user_function_rel',
       hideOnIndex: true,
-      visible: (entity) => entity.usertype_id === 1,
+      visible: entity => entity.usertype_id === 1,
     },
     {
       key: 'firmengroup_type',
@@ -73,23 +77,20 @@ export default {
         { value: 1, label: 'Company' },
         { value: 0, label: 'Partner Company' },
       ],
-      change: (entity) => {
+      change: entity => {
         if (entity.usertype_id === 1) return 0
-        else return;
       },
-      visible: (entity) => entity.usertype_id !== 1
+      visible: entity => entity.usertype_id !== 1,
     },
     {
       key: 'partnergroup_is_internal',
-      visible: () => {
-        return false
-      },
+      visible: () => false,
       hideOnIndex: true,
       type: 'boolean',
       default: 1,
-      change: (entity) => {
+      change: entity => {
         if (entity.usertype_id === 1) return 1
-        else return 0
+        return 0
       },
     },
     {
@@ -145,14 +146,10 @@ export default {
     { key: 'user_fax_phonenumber', hideOnIndex: true, required: false },
     { key: 'user_mobile' },
     {
-      key: 'address_id',
-      hideOnIndex: true,
-      type: 'list',
-      list: 'address',
-      listLabel: 'address_street',
-      withNew: true,
-      alwaysNew: true,
-      onlyForm: true,
+      key: 'role_id', type: 'list', list: 'role', listLabel: 'role_name',
+    },
+    {
+      key: 'team_id', type: 'list', list: 'team', listLabel: 'team_name', multiple: true,
     },
     {
       key: 'hollyday_representative',
@@ -163,55 +160,13 @@ export default {
       filter_key: 'partnercompany_id',
       listLabel: 'user_lastname',
       relationEntity: 'contactperson_user_rel',
-      visible: (entity) => entity.usertype_id === 1 && entity.partnercompany_id,
+      visible: entity => entity.usertype_id === 1 && entity.partnercompany_id,
       // hideOnCreate: true,
       required: false,
-    }
+    },
   ],
   // updateComponent: () => import('@/views/app/FormComponent/UserForm'),
   relations: [
-    {
-      title: 'Roles',
-      primaryKey: 'role_id',
-      entity: 'user_role_grp',
-      entityForm: 'user_role_rel',
-      entityView: 'role',
-      fields: [
-        {
-          key: 'role_is_internal',
-          hideOnIndex: true,
-          visible: () => false,
-          value: (entity, vm) => vm.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$refs.form.entity.usertype_id === 1 ? 1 : 0,
-        },
-        {
-          key: 'role_id',
-          label: 'Role ID',
-          sortable: true,
-          type: 'list',
-          list: 'role',
-          listLabel: 'role_name',
-          disableOnUpdate: true,
-          filter_key: 'role_is_internal',
-          noFetchOnChange: true,
-          hideOnIndex: true,
-        },
-        {
-          key: 'role_name', label: 'Role name', sortable: true, hideOnForm: true,
-        },
-        {
-          key: 'role_description', sortable: true, hideOnForm: true,
-        },
-        {
-          key: 'user_role_valid_from', type: 'date', sortable: true, disableOnUpdate: true, composite: true,
-        },
-        {
-          key: 'user_role_valid_to',
-          type: 'date',
-          rules: { date_after: ['@user_role_valid_from'] },
-          required: false,
-        },
-      ],
-    },
     {
       title: 'Customer Groups',
       primaryKey: 'customergroup_id',
@@ -317,33 +272,6 @@ export default {
         },
       ],
     },
-    {
-      title: 'Teams',
-      primaryKey: 'team_id',
-      entity: 'user_team_grp',
-      entityForm: 'user_team_rel',
-      entityView: 'team',
-      fields: [
-        {
-          key: 'team_id',
-          label: 'Team Name',
-          sortable: true,
-          type: 'list',
-          list: 'team',
-          listLabel: 'team_name',
-          disableOnUpdate: true,
-          hideOnIndex: true,
-        },
-        { key: 'team_name', sortable: true, hideOnForm: true },
-        { key: 'Roles', type: 'checkbox', items: [{ label: 'Role A', value: 0 }, { label: 'Role B', value: 1 }] },
-        {
-          key: 'user_team_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,
-        },
-        {
-          key: 'user_team_valid_to', required: false, type: 'date', rules: { date_after: ['@user_team_valid_from'] },
-        },
-      ],
-    },
     // {
     //   title: 'Partner Companies',
     //   primaryKey: 'partnercompany_id',
@@ -387,12 +315,7 @@ export default {
   note: 'frontend_0_8_13',
   submit(vm) {
     const data = { ...vm.entity }
-    const addressField = vm.$refs.fields.find(f => f.field.key === 'address_id')
     data.user_functions = (vm.entity.user_functions || []).map(elt => ({ function_id: elt }))
-    data.address = addressField.subEntity
-    const cityField = addressField.getSubFields().find(f => f.field.key === 'city_id')
-    data.address.city = cityField.subEntity
-    // data.address.address_city_id = 1
     console.log(data)
     return (vm.create ? vm.$http.post('/users', data) : vm.$http.put(`/users/${vm.entityId}`, data))
       .then(() => {
@@ -402,7 +325,7 @@ export default {
   fetch(vm) {
     return vm.$http.get(`/users/${vm.entityId}`)
       .then(resp => {
-        const data = resp.data
+        const { data } = resp
         if (data.contactperson) {
           data.contactperson_id = data.contactperson.contactperson_id
         }
@@ -421,23 +344,6 @@ export default {
             data.partnergroup_id = data.partnercompany.partnergroup.partnergroup_id
           }
           data.firmengroup_type = 0
-        }
-        if (data.address) {
-          data.address_id = data.address.address_id
-          const addressField = vm.$refs.fields.find(f => f.field.key === 'address_id')
-          console.log("addressField.getSubFields()",addressField.getSubFields())
-          addressField.getSubFields().forEach(field => {
-            addressField.subEntity[field.field.key] = data.address[field.field.key]
-            if (field.field.key === 'city_id' && data.address.city) {
-              field.getSubFields().forEach(f => {
-                field.subEntity[f.field.key] = data.address.city[f.field.key]
-                if (f.field.key === 'country_id' && data.address.city.country) {
-                  field.subEntity[f.field.key] = data.address.city.country[f.field.key]
-                }
-                console.log(f.field.key, data.address.city[f.field.key], field.subEntity)
-              })
-            }
-          })
         }
         return data
       })

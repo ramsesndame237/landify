@@ -28,9 +28,9 @@
         </div>
         <div v-else-if="field.type==='list'" :class="(field.withNew || field.withPopup || field.ids) ? 'd-flex': ''">
           <v-select v-model="entity[field.key]" :dropdown-should-open="true" :disabled="selectDisabled"
-                    :class="errors.length > 0 ? 'error':''"
+                    :class="{'error': errors.length > 0, 'multiple_select': field.multiple }"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
-                    :placeholder="field.key" :multiple="field.multiple && create" :options="listItems" transition=""
+                    :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
                     :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
                     :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
                     @input="onChange"
@@ -776,6 +776,10 @@ export default {
     border: 1px solid #ccc;
     padding: 2px;
   }
+}
+
+.multiple_select.vs--disabled span.vs__selected{
+  background-color: #D51130 !important;
 }
 
 .bg-input{
