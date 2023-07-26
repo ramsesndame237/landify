@@ -315,12 +315,7 @@ export default {
   note: 'frontend_0_8_13',
   submit(vm) {
     const data = { ...vm.entity }
-    // const addressField = vm.$refs.fields.find(f => f.field.key === 'address_id')
     data.user_functions = (vm.entity.user_functions || []).map(elt => ({ function_id: elt }))
-    // data.address = addressField.subEntity
-    // const cityField = addressField.getSubFields().find(f => f.field.key === 'city_id')
-    // data.address.city = cityField.subEntity
-    // data.address.address_city_id = 1
     console.log(data)
     return (vm.create ? vm.$http.post('/users', data) : vm.$http.put(`/users/${vm.entityId}`, data))
       .then(() => {
@@ -350,23 +345,6 @@ export default {
           }
           data.firmengroup_type = 0
         }
-        // if (data.address) {
-        //   data.address_id = data.address.address_id
-        //   const addressField = vm.$refs.fields.find(f => f.field.key === 'address_id')
-        //   console.log(addressField.getSubFields())
-        //   addressField.getSubFields().forEach(field => {
-        //     addressField.subEntity[field.field.key] = data.address[field.field.key]
-        //     if (field.field.key === 'city_id' && data.address.city) {
-        //       field.getSubFields().forEach(f => {
-        //         field.subEntity[f.field.key] = data.address.city[f.field.key]
-        //         if (f.field.key === 'country_id' && data.address.city.country) {
-        //           field.subEntity[f.field.key] = data.address.city.country[f.field.key]
-        //         }
-        //         console.log(f.field.key, data.address.city[f.field.key], field.subEntity)
-        //       })
-        //     }
-        //   })
-        // }
         return data
       })
   },
