@@ -247,7 +247,7 @@ export default {
             }
             return this.$http.post('/document/uploadfiles', formData, { headers: { 'content-type': 'form-data' } })
               .then(({ data }) => {
-                const created = data.data.filter(d => d.created)
+                const created = data.data.filter(d => d.status === 'created')
                 if (created.length > 0) {
                   this.$api({
                     action: 'create',

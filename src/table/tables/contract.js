@@ -282,7 +282,7 @@ export default {
           disabled: ['documenttype_id'],
         },
         { key: 'document_name', hideOnForm: true },
-        // { key: 'documenttype_name', hideOnForm: true },
+        { key: 'documenttype_name', hideOnForm: true },
         // { key: 'document_mime_type', hideOnForm: true },
         { key: 'documentcontracttype_name', hideOnForm: true },
         {
