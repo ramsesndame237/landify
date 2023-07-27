@@ -1,5 +1,5 @@
-import moment from "moment-business-time";
-import { getUserData } from "@/auth/utils";
+import moment from 'moment-business-time'
+import { getUserData } from '@/auth/utils'
 
 export default {
   data() {
@@ -102,14 +102,11 @@ export default {
       this.$successToast(ticket.ticket_closed ? 'The ticket is closed' : 'The ticket is open')
     },
     loadTickets(filterData) {
-      return this.$api({
-        entity: 'frontend_6_1_6_listall',
-        action: 'read-rich',
-        per_page: 1000000,
-        data: [filterData],
+      return this.$http.get('/tickets/list', {
+        params: filterData,
       })
         .then(({ data }) => {
-          const rawData = data.data.data
+          const rawData = data.data
           this.tickets = Object.values(_.groupBy(rawData, 'ticket_id')).map(r => {
             const obj = _.pick(r[0], [
               'board_id', 'board_name',
