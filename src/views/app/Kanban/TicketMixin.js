@@ -103,7 +103,7 @@ export default {
     },
     loadTickets(filterData) {
       return this.$http.get('/tickets/list', {
-        params: filterData,
+        params: { ...filterData, size: 1_000_000 },
       })
         .then(({ data }) => {
           const rawData = data.data
