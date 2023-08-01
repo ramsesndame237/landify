@@ -99,7 +99,7 @@ export default {
     { key: 'contract_begin_date', type: 'date' },
     { key: 'contract_end_date', type: 'date', hideOnIndex: true },
     { key: 'contract_first_possible_end_date', type: 'date', hideOnIndex: true },
-    { key: 'contract_last_change_time', type: 'date', hideOnIndex: true },
+    { key: 'contract_last_change_time', type: 'date', hideOnIndex: true, rules: {regex: false} },
     { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
     { key: 'contract_sum_allarea_allocationspace', hideOnForm: true },
     { key: 'currency_name', hideOnCreate: true, disabled: true },
