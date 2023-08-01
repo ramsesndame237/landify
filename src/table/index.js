@@ -705,6 +705,7 @@ export default {
     ],
   },
   trackrecord: {
+    customIndex: () => import('@/views/app/TrackRecord/Index.vue'),
     delete: false,
     update: false,
     create: false,
