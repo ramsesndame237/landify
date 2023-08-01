@@ -17,6 +17,9 @@ export const getSignImageLink = document => {
 export const getStampedDocumentLink = document => {
   return `${axios.defaults.baseURL || process.env.VUE_APP_DOCUMENT_URL}/document/download/stamp/${document.document_id}`
 }
+export const getStampedDocumentPreviewLink = document => {
+  return `${axios.defaults.baseURL || process.env.VUE_APP_DOCUMENT_URL}/documents/preview/stamp/${document.document_id}`
+}
 
 export const clone = obj => JSON.parse(JSON.stringify(obj))
 
