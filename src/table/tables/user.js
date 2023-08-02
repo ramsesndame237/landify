@@ -96,12 +96,11 @@ export default {
     {
       key: 'partnergroup_id',
       type: 'list',
-      send: false,
       list: 'partnergroup',
       listLabel: 'partnergroup_name',
       hideOnIndex: true,
       visible: entity => entity.firmengroup_type === 0,
-      filter_key: 'partnergroup_is_internal',
+      filter_key: "partnergroup_is_internal",
       noFetch: true,
     },
     {
@@ -112,6 +111,7 @@ export default {
       filter_key: 'partnergroup_id',
       relationEntity: 'user_partnercompany_rel',
       hideOnIndex: true,
+      multiple: true,
       visible: entity => entity.firmengroup_type === 0,
     },
     {
@@ -338,12 +338,6 @@ export default {
             data.customergroup_id = data.company.customergroup.customergroup_id
           }
           data.firmengroup_type = 1
-        } else if (data.partnercompany) {
-          data.partnercompany_id = data.partnercompany.partnercompany_id
-          if (data.partnercompany.partnergroup) {
-            data.partnergroup_id = data.partnercompany.partnergroup.partnergroup_id
-          }
-          data.firmengroup_type = 0
         }
         return data
       })
