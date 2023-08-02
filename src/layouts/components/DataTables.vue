@@ -23,10 +23,10 @@
       <b-form-checkbox v-if="multiSelect" v-model="selected" :disabled="disabled"/>
       <span v-else/>
     </template>
-    <template #empty="scope">
+    <template #empty>
       {{ this.$t('message~table~empty') }}
     </template>
-    <template #emptyfiltered="scope">
+    <template #emptyfiltered>
       {{ this.$t('message~table~emptyFiltered') }}
     </template>
     <template v-if="withActions" #cell(Actions)="data">
