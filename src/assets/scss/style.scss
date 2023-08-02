@@ -69,3 +69,13 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
   max-width: 35rem;
   overflow: hidden;
 }
+
+// tables
+
+table[aria-busy="true"] .b-table-empty-row {
+  display: none;
+}
+
+.b-table-empty-row  div {
+  text-align: center;
+}
