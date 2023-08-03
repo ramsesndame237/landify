@@ -8,7 +8,7 @@ export default {
     { key: 'indexclause_baseyear', type: 'number' },
     { key: 'indexclause_begin_date', type: 'date' },
     { key: 'indexclause_indextransmission_percent' },
-    { key: 'indexclause_change_in_percent', type: 'boolean', send: false },
+    { key: 'indexclause_change_in_percent', type: 'boolean' },
     {
       key: 'indexclause_minimal_percent_change_agreed',
       type: 'decimal',

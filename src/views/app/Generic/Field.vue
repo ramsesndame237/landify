@@ -16,15 +16,21 @@
           <template v-if="disabled">
             <div class="p-1 border rounded" v-html="entity[field.key]" />
           </template>
-          <ckeditor v-else :id="'ckcontent-'+field.key" v-model="entity[field.key]" :disabled="disabled"
-                    :editor="editor" :config="editorOption"
+          <b-form-textarea
+            v-show="!disabled"
+            :class="{'d-none' : editorInstance && editorInstance.isHidden}"
+            :id="'tinyEditor-'+field.key"
+            v-model="entity[field.key]"
           />
+          <!-- <ckeditor v-else :id="'ckcontent-'+field.key" v-model="entity[field.key]" :disabled="disabled"
+                    :editor="editor" :config="{}"
+          /> -->
         </div>
         <div v-else-if="field.type==='list'" :class="(field.withNew || field.withPopup || field.ids) ? 'd-flex': ''">
           <v-select v-model="entity[field.key]" :dropdown-should-open="true" :disabled="selectDisabled"
-                    :class="errors.length > 0 ? 'error':''"
+                    :class="{'error': errors.length > 0, 'multiple_select': field.multiple }"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
-                    :placeholder="field.key" :multiple="field.multiple && create" :options="listItems" transition=""
+                    :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
                     :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
                     :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
                     @input="onChange"
@@ -47,7 +53,7 @@
         <div v-else-if="field.type==='yesno' || field.type==='custom-select'">
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
                     :multiple="field.multiple" :placeholder="field.key"
-                    :options="field.type==='yesno'?yesNoOptions: field.items" transition="" label="label" class="w-100"
+                    :options="field.type==='yesno'?yesNoOptions: customSelectOptions" transition="" label="label" class="w-100"
                     :reduce="i => i.value"
           />
         </div>
@@ -60,7 +66,8 @@
         <div v-else-if="field.type==='file'">
           <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
                        drop-placeholder="Drop file here..." :multiple="field.multiple" required
-                       @change="validate($event);updateFilesData($event)"
+                       @change="updateFilesData($event, validate)"
+                       :file-name-formatter="formatFileInputNames"
           />
           <div class="d-flex flex-column mt-2">
             <div v-for="(file, index) in files" :key="index" class="d-flex justify-content-between mb-1">
@@ -71,7 +78,7 @@
                 }}</span>
                 <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
               </div>
-              <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index)" />
+              <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index, validate)" />
             </div>
           </div>
         </div>
@@ -120,13 +127,14 @@
                          :state="errors.length > 0 ? false:null" :placeholder="field.key" :value="1"
                          :unchecked-value="0" style="margin-top: 5px"/>
         <b-input-group v-else class="w-100">
-          <b-input-group-prepend v-if="field.unit && field.unit_key && field.isUnitOnLeft" class="w-20">
+          <b-input-group-prepend v-if="field.unit && field.unit_key && field.isUnitOnLeft" class="w-20 bg-input">
             <validation-provider :vid="field.unit_key" #default="{ errors }" rules="required" :name="field.unit_key">
 
-              <v-select :dropdown-should-open="true"
+              <b-form-select
                       :placeholder="field.unit_key" :disabled="disabled"  :options="unitOptions"
                       :loading="loading" :class="errors.length > 0 ? 'error':''"
-                      v-model="entity[field.unit_key]" class="w-100"
+                      :text-field="field.unit_label" :value-field="field.unit_id"
+                      v-model="entity[field.unit_key]" class="w-100 bg-input"
               />
               <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
             </validation-provider>
@@ -135,12 +143,13 @@
             :disabled="disabled" :step="field.type==='decimal'?0.01:1" :state="errors.length > 0 ? false:null"
             :placeholder="field.key" class="w-80"
           />
-          <b-input-group-append  v-if="field.unit && field.unit_key && !field.isUnitOnLeft" class="w-20">
+          <b-input-group-append  v-if="field.unit && field.unit_key && !field.isUnitOnLeft" class="w-20 bg-input">
             <validation-provider :vid="field.unit_key" #default="{ errors }" rules="required" :name="field.unit_key">
-              <v-select :dropdown-should-open="true"
+              <b-form-select
                       :placeholder="field.unit_key" :disabled="disabled"  :options="unitOptions"
                       :loading="loading" :class="errors.length > 0 ? 'error':''"
-                      v-model="entity[field.unit_key]" class="w-100"
+                      :text-field="field.unit_label" :value-field="field.unit_id"
+                      v-model="entity[field.unit_key]" class="w-100 bg-input"
               />
               <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
             </validation-provider>
@@ -175,7 +184,7 @@
 import Fuse from 'fuse.js'
 import { createPicker } from 'picmo'
 import {
-  BButton, BImg, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea, BRow, BSpinner, BInputGroupPrepend, BInputGroupAppend
+  BButton, BImg, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormSelect , BFormTextarea, BRow, BSpinner, BInputGroupPrepend, BInputGroupAppend
 } from 'bootstrap-vue'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
@@ -183,6 +192,18 @@ import { snakeToTitle } from '@/libs/utils'
 import Table from '@/table/index'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+import Editor from "@tinymce/tinymce-vue"
+import tinymce from 'tinymce/tinymce';
+import 'tinymce/skins/ui/oxide/skin.min.css';
+import 'tinymce/skins/ui/oxide/content.min.css';
+import 'tinymce/themes/silver/theme';
+import 'tinymce/icons/default/icons';
+import 'tinymce/plugins/lists';
+import 'tinymce/plugins/advlist';
+import 'tinymce/plugins/link';
+import 'tinymce/plugins/media';
+import 'tinymce/models/dom';
+
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
@@ -199,6 +220,7 @@ export default {
   components: {
     ckeditor: CKEditor.component,
     BFormInput,
+    BFormSelect,
     BFormFile,
     BFormGroup,
     BImg,
@@ -211,7 +233,8 @@ export default {
     BFormCheckbox,
     BSpinner,
     BInputGroupPrepend,
-    BInputGroupAppend
+    BInputGroupAppend,
+    'editor': Editor,
   },
   mixins: [togglePasswordVisibility],
   props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition', 'noLabel', 'create'],
@@ -237,6 +260,9 @@ export default {
         locale: {
           firstDayOfWeek: 1,
         },
+        onReady(selectedDates, dateStr, instance) {
+          instance.isOpen = true
+        },
       },
       yesNoOptions: [
         { value: 1, label: 'Yes' },
@@ -244,17 +270,13 @@ export default {
       ],
       files: [],
       unitOptions: [],
+      customSelectOptions: [],
       randomPassword: '',
       editor: ClassicEditor,
       waitPassword: false,
       isEmojiInputVisible: false,
-      editorOption: {
-        // modules: {
-        //   toolbar: '#quill-toolbar-' + this.field.key,
-        // },
-        // placeholder: 'Type Text Here...',
-      },
-      disablePopupButton: false, 
+      editorInstance: null,
+      disablePopupButton: false,
     }
   },
   computed: {
@@ -320,6 +342,13 @@ export default {
     list() {
       this.onChange()
     },
+    disabled(newValue){
+      if(this.editorInstance){
+        if(newValue){
+          this.editorInstance.hide()
+        }else this.editorInstance.show()
+      }
+    }
   },
   async created() {
     if (this.field.type === 'list' && ((!this.field.filter_key || !!this.entity[this.field.filter_key]) || this.field.noFetchOnChange) && !this.field.onlyForm) {
@@ -331,12 +360,10 @@ export default {
       if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, this.field.default)
     }
   },
-  beforeDestroy() {
-    if (this.promise) {
-      Promise.resolve()
+  async mounted() {
+    if (this.field.type && this.field.type === 'html'){
+      this.initEditor()
     }
-  },
-  mounted() {
     if (typeof this.field.change === 'function') {
       const change = this.field.change(this.entity, this)
       if (change) this.$set(this.entity, this.field.key, change)
@@ -377,11 +404,68 @@ export default {
 
     if (this.field.unit) {
       this.unitOptions = this.field.unit(this)
-      this.entity[this.field.unit_key] = this.unitOptions[0]
+      this.entity[this.field.unit_key] = this.unitOptions[0][this.field.unit_id]
     }
 
+    if (this.field.type === 'custom-select' && typeof this.field.items === 'function') {
+      this.customSelectOptions = await this.field.items(this)
+    } else {
+      this.customSelectOptions = this.field.items
+    }
+  },
+
+  beforeDestroy() {
+    if (this.editorInstance){
+      this.editorInstance.destroy()
+    }
   },
   methods: {
+    initEditor() {
+      // Initialisation de TinyMCE
+      tinymce.init({
+        apiKey: process.env.VUE_APP_TINYMCE_API_KEY,
+        selector: `#tinyEditor-${this.field.key}`,
+        readonly: this.editorIsDisabled,
+        plugins: [
+          'advlist list',
+          'media',
+        ],
+        toolbar:
+          'undo redo | formatselect |' +
+          'bold italic backcolor | myCustomButton | alignleft aligncenter ' +
+          'alignright alignjustify | bullist numlist outdent indent | ' +
+          'removeformat | help',
+        height: '400px',
+        menubar: false,
+        branding: false,
+        resize: false,
+        statusbar: false,
+        content_css: [
+          '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+          '//www.tiny.cloud/css/codepen.min.css',
+        ],
+        setup: (editor) => {
+          this.editorInstance = editor
+          editor.on('input', (e) => {
+            const content = editor.getContent()
+            this.entity[this.field.key] = content;
+          })
+          editor.ui.registry.addButton('myCustomButton', {
+            text: 'Separator',
+            onAction: () => {
+              const nonEditableContent = '<span contenteditable="false"><strong>Separator</strong></span>'
+              editor.insertContent(nonEditableContent)
+              this.$set(this.entity, this.field.key, editor.getContent())
+            },
+          });
+        },
+      });
+    },
+    destroyEditor(){
+      if(this.editorInstance) {
+        this.editorInstance.hide()
+      }
+    },
     subFieldDisabled(field) {
       if (this.field.disabled && this.field.disabled.includes(field.name)) {
         return true
@@ -402,7 +486,7 @@ export default {
       }
       return require('@/assets/images/icons/file-icons/doc.png')
     },
-    updateFilesData(event) {
+    async updateFilesData(event, validate) {
       const selectedFiles = event.target.files
 
       // ensure that the selected file doesn't exit in the files data
@@ -411,17 +495,28 @@ export default {
         if (Object.hasOwnProperty.call(selectedFiles, file)) {
           index = this.files.findIndex(
             elt => elt.name === selectedFiles[file].name
-              && elt.size === selectedFiles[file].size,
-          )
-          if (index === -1) {
-            this.files.push(selectedFiles[file])
-            // console.log('this.files: ', this.files)
+            && elt.size === selectedFiles[file].size,
+            )
+            if (index === -1) {
+              this.files.push(selectedFiles[file])
+              // console.log('this.files: ', this.files)
+            }
           }
         }
-      }
+      await validate(this.files)
+      this.formatFileInputNames()
     },
-    removeFile(index) {
-      if (index !== -1) this.files.splice(index, 1)
+    async removeFile(index, validate) {
+      if (index !== -1) {
+        this.files.splice(index, 1)
+        if(this.files && this.files.length === 0)
+          this.$refs.file.reset()
+      }
+      this.formatFileInputNames()
+      await validate(this.files)
+    },
+    formatFileInputNames(){
+      return this.files.length === 1 ? this.files[0].name : `${this.files.length} files selected`
     },
     getFiles() {
       if (this.field.multiple) return this.files
@@ -438,7 +533,7 @@ export default {
       }
       (this.getSubFields() || []).forEach(sub => sub.reset())
     },
-    async getRandomPassword(fieldKey) {
+    async getRandomPassword() {
       this.waitPassword = true
       await this.$http.get('/users/generate/password')
         .then(resp => {
@@ -451,23 +546,28 @@ export default {
         })
     },
     doCopy() {
-      this.$copyText(this.randomPassword).then(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Password copied',
-            icon: 'BellIcon',
-          },
-        })
-      }, e => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Can not copy!',
-            icon: 'BellIcon',
-          },
-        })
-      })
+      if (this.entity[this.field.key]){
+        try {
+          navigator.clipboard.writeText(this.entity[this.field.key])
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Password copied',
+              icon: 'BellIcon',
+              variant: 'success'
+            },
+          })
+        } catch (error) {
+          console.log('error: ', error);
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Can not copy!',
+              icon: 'BellIcon',
+            },
+          })
+        }
+      }
     },
     getPrimaryKey(definition) {
       return definition.primaryKey ?? definition.fields.find(f => f.auto).key
@@ -538,7 +638,7 @@ export default {
         return accumulator
       } // fieldComponent is a VueComponent
 
-      if (elt.$options.name === 'Field') {
+      if (fieldComponent.$options.name === 'Field') {
         accumulator.push(fieldComponent)
         return accumulator
       }
@@ -676,5 +776,14 @@ export default {
     border: 1px solid #ccc;
     padding: 2px;
   }
+}
+
+.multiple_select.vs--disabled span.vs__selected{
+  background-color: #D51130 !important;
+}
+
+.bg-input{
+  background-color: #e9ecef;
+  color: #495057
 }
 </style>

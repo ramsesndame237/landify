@@ -331,7 +331,7 @@
         "partner": "Partenaire",
         "role_id": "ID du Rôle",
         "role_name": "Nom du rôle",
-        "role_permission": "Autorisation de rôle",
+        "role_description": "Description du rôle",
         "gender": {
           "male": "Mr",
           "female": "Mme"

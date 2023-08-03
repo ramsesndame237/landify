@@ -160,7 +160,7 @@ const router = new VueRouter({
     {
       path: '/app/:table/profile',
       name: 'user-profile',
-      component: () => import("@/views/app/Page/UserProfile.vue"),
+      component: () => import("@/views/app/Page/UserProfile/Index.vue"),
       meta: {
         pageTitle: 'User profile',
       },
@@ -230,6 +230,22 @@ const router = new VueRouter({
       meta:{
         layout:'full',
       }
+    },
+    {
+      path: '/app/menu',
+      name: 'menu',
+      component: () => import('@/views/app/MenuProfile/IndexMenuProfile.vue'),
+      meta: {
+        action: 'menu~menu',
+        resource: 'menu',
+        pageTitle: 'page~menu~title',
+        breadcrumb: [
+          {
+            text: 'page~menu~title',
+            active: true,
+          },
+        ],
+      },
     },
     // authentication
     {

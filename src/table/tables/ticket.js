@@ -4,6 +4,7 @@ export default {
   fieldComponent: () => import('@/views/app/CreateComponent/TicketForm.vue'),
   create: false,
   entity: 'frontend_6_1_6_overview',
+  entityEndpoint: '/tickets/list',
   fields: [
     { key: 'ticket_id', auto: true },
     { key: 'ticket_name' },

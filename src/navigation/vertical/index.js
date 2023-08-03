@@ -225,6 +225,12 @@ export default [
     title: key('administrationrights'),
     children: [
       item('role', 'authorization'),
+      {
+        title: key('menu'),
+        action: 'menu~menu',
+        resource: 'menu',
+        route: 'menu',
+      },
       item('access'),
       item('tablename', 'table'),
       item('tablegroup'),

@@ -68,7 +68,7 @@ export default {
       hideOnForm: true,
       formatter: (value, key, item) => {
         const array = item.owners
-        const ownersName = array.length > 0 ? array.map(obj => obj.pos_name) : [];
+        const ownersName = array.length > 0 ? array.map(obj => obj.owner_name) : [];
         const result = ownersName.join(", ");
 
         return result || '-';
@@ -79,7 +79,7 @@ export default {
       hideOnForm: true,
       formatter: (value, key, item) => {
         const array = item.managers
-        const managerName = array.length > 0 ? array.map(obj => obj.pos_name) : [];
+        const managerName = array.length > 0 ? array.map(obj => obj.manager_name) : [];
         const result = managerName.join(", ");
 
         return result || '-';
@@ -99,7 +99,7 @@ export default {
     { key: 'contract_begin_date', type: 'date' },
     { key: 'contract_end_date', type: 'date', hideOnIndex: true },
     { key: 'contract_first_possible_end_date', type: 'date', hideOnIndex: true },
-    { key: 'contract_last_change_time', type: 'date', hideOnIndex: true },
+    { key: 'contract_last_change_time', type: 'date', hideOnIndex: true, rules: {regex: false} },
     { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
     { key: 'contract_sum_allarea_allocationspace', hideOnForm: true },
     { key: 'currency_name', hideOnCreate: true, disabled: true },
@@ -282,7 +282,7 @@ export default {
           disabled: ['documenttype_id'],
         },
         { key: 'document_name', hideOnForm: true },
-        // { key: 'documenttype_name', hideOnForm: true },
+        { key: 'documenttype_name', hideOnForm: true },
         // { key: 'document_mime_type', hideOnForm: true },
         { key: 'documentcontracttype_name', hideOnForm: true },
         {
@@ -300,23 +300,23 @@ export default {
       entity: 'frontend_3_4_3_2',
       entityForm: 'contract_specialright_rel',
       entityView: 'specialright',
-      formComponent: () => import('@/views/app/FormComponent/SpecialrightForm.vue'),
+      withContinue: true,
+      createComponent: () => import('@/views/app/CreateComponent/SpecialrightForm/Index.vue'),
+      updateComponent: () => import('@/views/app/UpdateComponent/SpecialrightForm.vue'),
       fields: [
         {
           key: 'specialright_id', type: 'list', list: 'specialright', listLabel: 'specialright_name',
         },
         { key: 'specialright_name', hideOnForm: true },
-        { key: 'contract_specialright_description', type: 'textarea', required: false },
-        { key: 'contract_specialright_actual_options', type: 'number' },
-        { key: 'contract_specialright_total_number_options', type: 'number' },
-        { key: 'contract_specialright_available_options', type: 'number' },
-        { key: 'contract_specialright_automatic_renewal_in_months', type: 'number', required: false },
+        { key: 'contract_specialright_description', type: 'textarea' },
+        { key: 'contract_specialright_actual_options', type: 'number', disabled: true, hideOnForm: true },
+        { key: 'contract_specialright_total_number_options', hideOnForm: true, type: 'number' },
+        { key: 'contract_specialright_available_options', type: 'number', disabled: true, hideOnForm: true},
+        { key: 'contract_specialright_automatic_renewal_in_months', type: 'number', hideOnForm: true },
+        { key: 'contract_specialright_renewal_in_months', type: 'number' },
         { key: 'contract_specialright_prior_notice_period', type: 'date' },
         { key: 'contract_specialright_prior_notice_date', type: 'date' },
-        { key: 'contract_specialright_extensions', type: 'number' },
-        {
-          key: 'contract_specialright_date', type: 'date', composite: true, hideOnForm: true, hideOnIndex: true,
-        },
+        { key: 'contract_specialright_date_added', type: 'date' },
         {
           key: 'contract_specialright_termination_date',
           type: 'date',
@@ -326,9 +326,15 @@ export default {
             const date = entity.contract_specialright_termination_date
             if (date && moment().isSameOrAfter(date)) {
               vm.$set(vm.entity, 'contract_specialright_is_passive', 1)
-              vm.$set(vm.entity, 'contract_specialright_is_availed', 1)
+              vm.$set(vm.entity, 'contract_specialright_is_availed', 0)
             }
           },
+        },
+        { key: 'contract_specialright_extensions', type: 'number' },
+        { key: 'contract_specialright_measurement_unit', hideOnForm: true, hideOnIndex: true, },
+        { key: 'contract_specialright_is_obsolete', hideOnForm: true, hideOnIndex: true, },
+        {
+          key: 'contract_specialright_date', type: 'date', composite: true, hideOnForm: true, hideOnIndex: true,
         },
         { key: 'contract_specialright_is_passive', type: 'boolean' },
         { key: 'contract_specialright_is_availed', type: 'boolean' },
@@ -439,7 +445,12 @@ export default {
           composite: true,
           disableOnUpdate: true,
         },
-        { key: 'criteria_name', hideOnForm: true },
+        {
+          key: 'contract_criteria_value',
+          unit_key: 'contract_criteria_unit_id',
+          unit_label: 'unit_name',
+          isUnitOnLeft: false,
+        },
         ...getContractCriteriaFields(),
       ],
       // update: false,

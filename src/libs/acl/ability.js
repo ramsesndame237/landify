@@ -27,7 +27,7 @@ export const defineRules = () => {
   rules.push({ action: 'read', subject: 'dashboard' })
   //
   try {
-    if (userData.roles.find(r => r.role_name === 'Administrator')) {
+    if (userData.roles.find(r => r.role_name === 'Administratoren')) {
       rules.push({ action: 'manage', subject: 'all' })
     }
     userData.roles.forEach(role => {
@@ -36,7 +36,27 @@ export const defineRules = () => {
         subject: tn.table_name,
       })))))
       rules.push(...role.tablenames.map(table => ({ action: getAction(table.crud), subject: table.table_name })))
-      rules.push(...role.access.map(access => ({ action: access.access_name, subject: 'menu' })))
+
+      // Récupération des configs de menu dans les data de l'utilisateur
+      const tempsRules = []
+      const { configs } = userData
+      if (configs.length > 0) {
+        const menuConfig = configs.find(config => config.config_key === 'menu')
+        if (menuConfig) {
+          const configValues = JSON.parse(menuConfig.config_val)
+
+          // Je boucle sur les données reçues pour faire le traitement
+          configValues.forEach(access => {
+            const isThereRoleMenu = access.menus.some(menu => (menu.name === role.role_menu && menu.value === true))
+            if (isThereRoleMenu) {
+              tempsRules.push({ action: access.access_name, subject: 'menu' })
+            }
+          })
+        }
+      }
+
+      rules.push(...tempsRules)
+      // rules.push(...role.access.map(access => ({ action: access.access_name, subject: 'menu' })))
     })
   } catch (e) {
     console.error(e)

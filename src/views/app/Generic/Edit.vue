@@ -17,6 +17,12 @@
                 <span>{{ action.text }}</span>
               </b-button>
             </template>
+            <template v-if="$can('delete', table)">
+              <b-button v-if="view" size="sm" variant="primary" class="mr-1" @click="deleteEntity">
+                <feather-icon icon="Trash2Icon" class="mr-50"/>
+                {{ $t('button~delete') }}
+              </b-button>
+            </template>
             <template v-if="definition.update !== false && $can('update', table)">
               <b-button v-if="view" size="sm" variant="info" class="mr-1" @click="edit">
                 <feather-icon icon="EditIcon" class="mr-50"/>
@@ -65,7 +71,7 @@
                          :with-delete="relation.delete!==false"/>
             <generic-modal :cache-key="relation.entity+'-'" title="Test" :table="relation.entityForm || relation.entity"
                            :definition="relation" is-relation
-                           :table-definition-key="relation.entityForm || relation.entity" with-continue
+                           :table-definition-key="relation.entityForm || relation.entity" :with-continue="relation.withContinue"
                            @reload-table="reloadRelatedTable"/>
           </template>
         </b-tab>
