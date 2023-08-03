@@ -1,7 +1,6 @@
-import { successToast } from '@/libs/toastification'
-
 export default {
   entity: 'frontend_1_1_2_1',
+  entityEndpoint: '/users',
   formComponent: () => import('@/views/app/CreateComponent/UserForm.vue'),
   fields: [
     {
