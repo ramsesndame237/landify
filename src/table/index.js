@@ -763,7 +763,7 @@ export default {
         key: 'documenttype_id', type: 'list', list: 'documenttype', listLabel: 'documenttype_name', hideOnIndex: true,
       },
       {
-        key: 'files', hideOnIndex: true, type: 'file', rules: { size: 10000 }, hideOnUpdate: true,
+        key: 'files', hideOnIndex: true, type: 'file', rules: { size: 100000 }, hideOnUpdate: true,
       },
       {
         key: 'download',
