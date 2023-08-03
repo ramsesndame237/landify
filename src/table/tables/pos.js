@@ -192,6 +192,7 @@ export default {
       primaryKey: 'ticket_id',
       entity: 'frontend_3_1_3_4',
       entityForm: 'ticket_pos_rel',
+      entityView: 'ticket',
       fields: [
         {
           key: 'ticket_id',
