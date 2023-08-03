@@ -24,10 +24,10 @@
       <span v-else/>
     </template>
     <template #empty>
-      {{ this.$t('message~table~empty') }}
+      {{ $t('message~table~empty') }}
     </template>
     <template #emptyfiltered>
-      {{ this.$t('message~table~emptyFiltered') }}
+      {{ $t('message~table~emptyFiltered') }}
     </template>
     <template v-if="withActions" #cell(Actions)="data">
       <div class="text-nowrap">
