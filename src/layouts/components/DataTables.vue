@@ -17,6 +17,9 @@
         {{ data.field.btnLabel }}
       </a>
       <div v-else-if="data.field.type==='html'" v-html="data.value"/>
+      <div v-else-if="data.field.type==='component'" >
+        <component :is="data.field.component" @reload="reload" :row-data="data" :data="data.field.props"/>
+      </div>
       <span v-else>{{ data.value }}</span>
     </template>
     <template #head(__selected)>
@@ -386,6 +389,7 @@ export default {
     },
     reload() {
       this.$refs.table.refresh()
+      this.$emit('table-refreshed')
     },
     filter(data) {
       this.filterData = { ...data }

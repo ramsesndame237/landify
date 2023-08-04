@@ -1,29 +1,29 @@
 import { getDocumentLink } from '@/libs/utils'
 
-import user from "./tables/user"
-import role from "./tables/role"
-import customergroup from "./tables/customergroup"
-import company from "./tables/company"
-import contactperson from "./tables/contactperson"
-import partnercompany from "./tables/partnercompany"
-import partnergroup from "./tables/partnergroup"
-import address from "./tables/address"
-import city from "./tables/city"
-import pos from "./tables/pos"
-import area from "./tables/area"
-import indexclause from "./tables/indexclause"
-import location from "./tables/location"
-import contract from "./tables/contract"
-import serviceobject from "./tables/serviceobject"
-import criteria from "./tables/criteria"
-import recurringpayment from "./tables/recurringpayment"
-import invoice from "./tables/invoice"
-import invoiceposition from "./tables/invoiceposition"
-import ticket from "./tables/ticket"
-import contradiction from "./tables/contradiction"
-import inspectionresult from "./tables/inspectionresult"
-import contradictionpackage from "./tables/contradictionpackage"
-import board from "./tables/board"
+import user from './tables/user'
+import role from './tables/role'
+import customergroup from './tables/customergroup'
+import company from './tables/company'
+import contactperson from './tables/contactperson'
+import partnercompany from './tables/partnercompany'
+import partnergroup from './tables/partnergroup'
+import address from './tables/address'
+import city from './tables/city'
+import pos from './tables/pos'
+import area from './tables/area'
+import indexclause from './tables/indexclause'
+import location from './tables/location'
+import contract from './tables/contract'
+import serviceobject from './tables/serviceobject'
+import criteria from './tables/criteria'
+import recurringpayment from './tables/recurringpayment'
+import invoice from './tables/invoice'
+import invoiceposition from './tables/invoiceposition'
+import ticket from './tables/ticket'
+import contradiction from './tables/contradiction'
+import inspectionresult from './tables/inspectionresult'
+import contradictionpackage from './tables/contradictionpackage'
+import board from './tables/board'
 
 export default {
   // region Work Package 1
@@ -55,7 +55,7 @@ export default {
             list: 'user',
             listLabel: 'user_email',
             disableOnUpdate: true,
-            multiple: true
+            multiple: true,
           },
           { key: 'user_firstname', hideOnForm: true },
           { key: 'user_lastname', hideOnForm: true },
@@ -787,21 +787,19 @@ export default {
         composite: true,
         disableOnUpdate: true,
         type: 'custom-select',
-        items: () => {
-          return [
-            {
-              label: "EN",
-              value: 'EN'
-            },
-            {
-              label: "DE",
-              value: 'DE'
-            },
-          ]
-        }
+        items: () => [
+          {
+            label: 'EN',
+            value: 'EN',
+          },
+          {
+            label: 'DE',
+            value: 'DE',
+          },
+        ],
       },
       { key: 'translation_text' },
-    ]
+    ],
   },
   '1__attribute_nice': {
     inlineEdit: true,
@@ -813,18 +811,16 @@ export default {
         composite: true,
         disableOnUpdate: true,
         type: 'custom-select',
-        items: () => {
-          return [
-            {
-              label: "EN",
-              value: 'EN'
-            },
-            {
-              label: "DE",
-              value: 'DE'
-            },
-          ]
-        }
+        items: () => [
+          {
+            label: 'EN',
+            value: 'EN',
+          },
+          {
+            label: 'DE',
+            value: 'DE',
+          },
+        ],
       },
       { key: 'attribute_nice_name' },
     ],
@@ -832,11 +828,11 @@ export default {
       attribute_nice_name_group: '',
     },
   },
-  'function': {
+  function: {
     fields: [
       { key: 'function_id', auto: true },
       'function_name',
-      'function_description'
-    ]
-  }
+      'function_description',
+    ],
+  },
 }

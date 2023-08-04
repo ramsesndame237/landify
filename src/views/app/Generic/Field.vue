@@ -1,27 +1,19 @@
 <template>
   <div>
     <b-form-group v-if="visible" :label=" (field.noLabel|| noLabel) ? '' : $t(field.label||'attribute.'+field.key)"
-                  :label-for="'field-'+field.key" :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null"
-    >
+                  :label-for="'field-'+field.key" :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null">
       <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled
-                    :placeholder="$t('attribute.general_automaticid')"
-      />
+                    :placeholder="$t('attribute.general_automaticid')"/>
       <validation-provider v-else #default="{ errors, validate }" :rules="rules" :name="field.key"
-                           :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message&& tableDefinition.attribute_regexp_failure_message[field.key]}"
-      >
+                           :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message&& tableDefinition.attribute_regexp_failure_message[field.key]}">
         <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
-                         :state="errors.length > 0 ? false:null" :placeholder="field.key"
-        />
+                         :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
         <div v-else-if="field.type==='html'" class="message-editor">
           <template v-if="disabled">
-            <div class="p-1 border rounded" v-html="entity[field.key]" />
+            <div class="p-1 border rounded" v-html="entity[field.key]"/>
           </template>
-          <b-form-textarea
-            v-show="!disabled"
-            :class="{'d-none' : editorInstance && editorInstance.isHidden}"
-            :id="'tinyEditor-'+field.key"
-            v-model="entity[field.key]"
-          />
+          <b-form-textarea v-show="!disabled" :class="{'d-none' : editorInstance && editorInstance.isHidden}"
+                           :id="'tinyEditor-'+field.key" v-model="entity[field.key]"/>
           <!-- <ckeditor v-else :id="'ckcontent-'+field.key" v-model="entity[field.key]" :disabled="disabled"
                     :editor="editor" :config="{}"
           /> -->
@@ -33,52 +25,44 @@
                     :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
                     :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
                     :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
-                    @input="onChange"
-          />
+                    @input="onChange"/>
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
-                    @click="showNewForm"
-          >New
-        </b-button>
-        <b-button v-if="field.withPopup && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
-                  @click="showNewPopupForm" :disabled="disablePopupButton"
-        >New
-        </b-button>
+                    @click="showNewForm">New
+          </b-button>
+          <b-button v-if="field.withPopup && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
+                    @click="showNewPopupForm" :disabled="disablePopupButton">New
+          </b-button>
 
           <b-button v-if="field.ids && !field.noShowButton" class="ml-2 text-nowrap" variant="info"
-                    @click="showAll=!showAll"
-          >
+                    @click="showAll=!showAll">
             {{ showAll ? 'Show Created' : 'Show All' }}
           </b-button>
         </div>
         <div v-else-if="field.type==='yesno' || field.type==='custom-select'">
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
                     :multiple="field.multiple" :placeholder="field.key"
-                    :options="field.type==='yesno'?yesNoOptions: customSelectOptions" transition="" label="label" class="w-100"
-                    :reduce="i => i.value"
-          />
+                    :options="field.type==='yesno'?yesNoOptions: customSelectOptions" transition="" label="label"
+                    class="w-100" :reduce="i => i.value"/>
         </div>
         <div v-else-if="field.type==='checkbox'">
           <b-form-checkbox-group v-model="entity[field.key]" :disabled="disabled"
                                  :state="errors.length > 0 ? false:null" :placeholder="field.key" text-field="label"
-                                 :options="field.items"
-          />
+                                 :options="field.items"/>
         </div>
         <div v-else-if="field.type==='file'">
           <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
                        drop-placeholder="Drop file here..." :multiple="field.multiple" required
-                       @change="updateFilesData($event, validate)"
-                       :file-name-formatter="formatFileInputNames"
-          />
+                       @change="updateFilesData($event, validate)" :file-name-formatter="formatFileInputNames"/>
           <div class="d-flex flex-column mt-2">
             <div v-for="(file, index) in files" :key="index" class="d-flex justify-content-between mb-1">
               <div>
-                <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50" />
+                <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50"/>
                 <span class="text-muted font-weight-bolder align-text-top">{{
-                  file.name
-                }}</span>
+                    file.name
+                  }}</span>
                 <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
               </div>
-              <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index, validate)" />
+              <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index, validate)"/>
             </div>
           </div>
         </div>
@@ -86,43 +70,38 @@
           <b-input-group class="input-group-merge" :class="errors.length > 0 ? 'is-invalid':null">
             <b-form-input v-model="entity[field.key]" :disabled="disabled" :type="passwordFieldType"
                           class="form-control-merge" :state="errors.length > 0 ? false:null" :name="field.key"
-                          placeholder="Password" autocomplete="new-password"
-            />
+                          placeholder="Password" autocomplete="new-password"/>
 
             <b-input-group-append is-text>
-              <feather-icon class="cursor-pointer" :icon="passwordToggleIcon" @click="togglePasswordVisibility" />
+              <feather-icon class="cursor-pointer" :icon="passwordToggleIcon" @click="togglePasswordVisibility"/>
             </b-input-group-append>
           </b-input-group>
           <div v-if="field.generate" class="mt-1">
             <b-button :disabled="disabled || waitPassword" size="sm" class="mr-2" @click="getRandomPassword(field.key)">
               Generate Password
-              <b-spinner v-if="waitPassword" small />
+              <b-spinner v-if="waitPassword" small/>
             </b-button>
             <span v-if="randomPassword && !disabled" class="mr-1">{{ randomPassword }}</span>
             <feather-icon v-if="randomPassword && !disabled" class="cursor-pointer" icon="CopyIcon" size="16"
-                          @click="doCopy"
-            />
+                          @click="doCopy"/>
           </div>
         </div>
         <div v-else-if="field.type === 'color'">
           <b-form-input v-model="entity[field.key]" :disabled="disabled" type="color" style="width: 100px"
-                        class="form-control-merge" :state="errors.length > 0 ? false:null" :name="field.key"
-          />
+                        class="form-control-merge" :state="errors.length > 0 ? false:null" :name="field.key"/>
         </div>
         <template v-else-if="field.type === 'smiley'">
           <div class="mt-1 emoji_container">
             <input v-model="entity[field.key]" type="text" :disabled="disabled" class="mr-1">
-            <b-button variant="outline-secondary" :disabled="disabled" size="sm" class="mr-2" :class="{'emoji-button_empty': !entity[field.key]}"
-                      @click="handleEmojiClick"
-            >+
+            <b-button variant="outline-secondary" :disabled="disabled" size="sm" class="mr-2"
+                      :class="{'emoji-button_empty': !entity[field.key]}" @click="handleEmojiClick">+
             </b-button>
-            <div id="pickerContainer" :class="{'d-none': !isEmojiInputVisible}" />
+            <div id="pickerContainer" :class="{'d-none': !isEmojiInputVisible}"/>
           </div>
         </template>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
-                    class="form-control"
-        />
+                    class="form-control"/>
         <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key" :value="1"
                          :unchecked-value="0" style="margin-top: 5px"/>
@@ -130,27 +109,20 @@
           <b-input-group-prepend v-if="field.unit && field.unit_key && field.isUnitOnLeft" class="w-20 bg-input">
             <validation-provider :vid="field.unit_key" #default="{ errors }" rules="required" :name="field.unit_key">
 
-              <b-form-select
-                      :placeholder="field.unit_key" :disabled="disabled"  :options="unitOptions"
-                      :loading="loading" :class="errors.length > 0 ? 'error':''"
-                      :text-field="field.unit_label" :value-field="field.unit_id"
-                      v-model="entity[field.unit_key]" class="w-100 bg-input"
-              />
+              <b-form-select :placeholder="field.unit_key" :disabled="disabled" :options="unitOptions"
+                             :loading="loading" :class="errors.length > 0 ? 'error':''" :text-field="field.unit_label"
+                             :value-field="field.unit_id" v-model="entity[field.unit_key]" class="w-100 bg-input"/>
               <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
             </validation-provider>
           </b-input-group-prepend>
           <b-form-input v-model="entity[field.key]" :type="field.type==='decimal'?'number':(field.type||'text')"
-            :disabled="disabled" :step="field.type==='decimal'?0.01:1" :state="errors.length > 0 ? false:null"
-            :placeholder="field.key" class="w-80"
-          />
-          <b-input-group-append  v-if="field.unit && field.unit_key && !field.isUnitOnLeft" class="w-20 bg-input">
+                        :disabled="disabled" :step="field.type==='decimal'?0.01:1"
+                        :state="errors.length > 0 ? false:null" :placeholder="field.key" class="w-80"/>
+          <b-input-group-append v-if="field.unit && field.unit_key && !field.isUnitOnLeft" class="w-20 bg-input">
             <validation-provider :vid="field.unit_key" #default="{ errors }" rules="required" :name="field.unit_key">
-              <b-form-select
-                      :placeholder="field.unit_key" :disabled="disabled"  :options="unitOptions"
-                      :loading="loading" :class="errors.length > 0 ? 'error':''"
-                      :text-field="field.unit_label" :value-field="field.unit_id"
-                      v-model="entity[field.unit_key]" class="w-100 bg-input"
-              />
+              <b-form-select :placeholder="field.unit_key" :disabled="disabled" :options="unitOptions"
+                             :loading="loading" :class="errors.length > 0 ? 'error':''" :text-field="field.unit_label"
+                             :value-field="field.unit_id" v-model="entity[field.unit_key]" class="w-100 bg-input"/>
               <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
             </validation-provider>
 
@@ -164,13 +136,11 @@
           <div :class="field.onlyForm?'':('mt-2 '+(inline ? '': 'ml-3'))">
             <component :is="subDefinition.fieldComponent" v-if="subDefinition.fieldComponent" ref="fieldComponent"
                        :entity="subEntity" :table-definition="subTableDefinition" :definition="subDefinition"
-                       :form-fields="subFormFields" :disabled="disabled"
-            />
+                       :form-fields="subFormFields" :disabled="disabled"/>
             <b-row v-else>
               <b-col v-for="(field,index) in subFormFields" :key="index" cols="12">
                 <field ref="fields" :disabled="subFieldDisabled(field)" :inline="inline" :entity="subEntity"
-                       :table-definition="subTableDefinition" :field="field"
-                />
+                       :table-definition="subTableDefinition" :field="field"/>
               </b-col>
             </b-row>
           </div>
@@ -184,7 +154,19 @@
 import Fuse from 'fuse.js'
 import { createPicker } from 'picmo'
 import {
-  BButton, BImg, BFormFile, BCol, BFormCheckbox, BFormGroup, BFormInput, BFormSelect , BFormTextarea, BRow, BSpinner, BInputGroupPrepend, BInputGroupAppend
+  BButton,
+  BImg,
+  BFormFile,
+  BCol,
+  BFormCheckbox,
+  BFormGroup,
+  BFormInput,
+  BFormSelect,
+  BFormTextarea,
+  BRow,
+  BSpinner,
+  BInputGroupPrepend,
+  BInputGroupAppend
 } from 'bootstrap-vue'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
@@ -192,17 +174,17 @@ import { snakeToTitle } from '@/libs/utils'
 import Table from '@/table/index'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import Editor from "@tinymce/tinymce-vue"
-import tinymce from 'tinymce/tinymce';
-import 'tinymce/skins/ui/oxide/skin.min.css';
-import 'tinymce/skins/ui/oxide/content.min.css';
-import 'tinymce/themes/silver/theme';
-import 'tinymce/icons/default/icons';
-import 'tinymce/plugins/lists';
-import 'tinymce/plugins/advlist';
-import 'tinymce/plugins/link';
-import 'tinymce/plugins/media';
-import 'tinymce/models/dom';
+import Editor from '@tinymce/tinymce-vue'
+import tinymce from 'tinymce/tinymce'
+import 'tinymce/skins/ui/oxide/skin.min.css'
+// import 'tinymce/skins/ui/oxide/content.min.css';
+import 'tinymce/themes/silver/theme'
+import 'tinymce/icons/default/icons'
+import 'tinymce/plugins/lists'
+import 'tinymce/plugins/advlist'
+import 'tinymce/plugins/link'
+import 'tinymce/plugins/media'
+import 'tinymce/models/dom'
 
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -342,11 +324,11 @@ export default {
     list() {
       this.onChange()
     },
-    disabled(newValue){
-      if(this.editorInstance){
-        if(newValue){
+    disabled(newValue) {
+      if (this.editorInstance) {
+        if (newValue) {
           this.editorInstance.hide()
-        }else this.editorInstance.show()
+        } else this.editorInstance.show()
       }
     }
   },
@@ -361,7 +343,7 @@ export default {
     }
   },
   async mounted() {
-    if (this.field.type && this.field.type === 'html'){
+    if (this.field.type && this.field.type === 'html') {
       this.initEditor()
     }
     if (typeof this.field.change === 'function') {
@@ -415,7 +397,7 @@ export default {
   },
 
   beforeDestroy() {
-    if (this.editorInstance){
+    if (this.editorInstance) {
       this.editorInstance.destroy()
     }
   },
@@ -461,8 +443,8 @@ export default {
         },
       });
     },
-    destroyEditor(){
-      if(this.editorInstance) {
+    destroyEditor() {
+      if (this.editorInstance) {
         this.editorInstance.hide()
       }
     },
@@ -495,27 +477,27 @@ export default {
         if (Object.hasOwnProperty.call(selectedFiles, file)) {
           index = this.files.findIndex(
             elt => elt.name === selectedFiles[file].name
-            && elt.size === selectedFiles[file].size,
-            )
-            if (index === -1) {
-              this.files.push(selectedFiles[file])
-              // console.log('this.files: ', this.files)
-            }
+              && elt.size === selectedFiles[file].size,
+          )
+          if (index === -1) {
+            this.files.push(selectedFiles[file])
+            // console.log('this.files: ', this.files)
           }
         }
+      }
       await validate(this.files)
       this.formatFileInputNames()
     },
     async removeFile(index, validate) {
       if (index !== -1) {
         this.files.splice(index, 1)
-        if(this.files && this.files.length === 0)
+        if (this.files && this.files.length === 0)
           this.$refs.file.reset()
       }
       this.formatFileInputNames()
       await validate(this.files)
     },
-    formatFileInputNames(){
+    formatFileInputNames() {
       return this.files.length === 1 ? this.files[0].name : `${this.files.length} files selected`
     },
     getFiles() {
@@ -546,7 +528,7 @@ export default {
         })
     },
     doCopy() {
-      if (this.entity[this.field.key]){
+      if (this.entity[this.field.key]) {
         try {
           navigator.clipboard.writeText(this.entity[this.field.key])
           this.$toast({
@@ -659,8 +641,17 @@ export default {
         if (this.field.onlyForm && this.entity[this.field.key]) {
           payload.data = [{ [this.field.key]: this.entity[this.field.key] }]
         }
-        if (this.field.filter_key && this.entity[this.field.filter_key]) {
-          payload.data = [{ [this.field.filter_key]: this.entity[this.field.filter_key] }]
+        if (this.field.filter_key) {
+          const value = this.entity[this.field.filter_key]
+          if (value) {
+            if (Array.isArray(value)) {
+              if (value.length > 0) {
+                payload.data = value.map(v => ({ [this.field.filter_key]: v }))
+              }
+            } else {
+              payload.data = [{ [this.field.filter_key]: this.entity[this.field.filter_key] }]
+            }
+          }
         }
         await this.$store.dispatch('table/fetchList', payload)
         if (this.field.entityList) {
@@ -697,28 +688,26 @@ export default {
     },
     snakeToTitle,
     showNewForm() {
-      console.log('click on new')
       this.$set(this.entity, this.field.key, this.newValue)
     },
-     showNewPopupForm(){
-      const self = this;
-      this.disablePopupButton = true;
-      const popupWindow = window.open("/app/table/"+this.$route.params.table+"/popup/"+this.field.list,"Formpopup","popup")
-      popupWindow.addEventListener('beforeunload', function() {
+    showNewPopupForm() {
+      const self = this
+      this.disablePopupButton = true
+      const popupWindow = window.open("/app/table/" + this.$route.params.table + "/popup/" + this.field.list, "Formpopup", "popup")
+      popupWindow.addEventListener('beforeunload', function () {
         // Réactivez le bouton ici
-        self.disablePopupButton = false;
-      });
-      window.addEventListener('message', async function(event) {
+        self.disablePopupButton = false
+      })
+      window.addEventListener('message', async function (event) {
         // Vérifiez l'origine de l'événement pour des raisons de sécurité
-        if (event.origin === window.location.origin && event.data.message === "success")  {
-           // Réactivez le bouton ici
-          self.disablePopupButton = false;
+        if (event.origin === window.location.origin && event.data.message === "success") {
+          // Réactivez le bouton ici
+          self.disablePopupButton = false
           await self.fetchList(true)
         }
-      });
+      })
     },
     onChange() {
-      console.log('change')
       if (this.field.alwaysNew) {
         if (this.selectedValue) {
           const originalInitialized = this.subOriginalEntity.__initialized
@@ -778,11 +767,11 @@ export default {
   }
 }
 
-.multiple_select.vs--disabled span.vs__selected{
+.multiple_select.vs--disabled span.vs__selected {
   background-color: #D51130 !important;
 }
 
-.bg-input{
+.bg-input {
   background-color: #e9ecef;
   color: #495057
 }

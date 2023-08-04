@@ -1,5 +1,4 @@
 export default {
-  entity: 'frontend_1_1_2_1',
   entityEndpoint: '/users',
   formComponent: () => import('@/views/app/CreateComponent/UserForm.vue'),
   fields: [
@@ -338,6 +337,7 @@ export default {
           }
           data.firmengroup_type = 1
         }
+        if (!data.partnergroup_id) data.partnercompany_id = []
         return data
       })
   },

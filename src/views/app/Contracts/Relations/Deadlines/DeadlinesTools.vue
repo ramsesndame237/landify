@@ -1,0 +1,108 @@
+<script>
+import { BForm, BModal } from 'bootstrap-vue'
+import Field from '@/views/app/Generic/Field.vue'
+import DataTables from '@/layouts/components/DataTables.vue'
+
+export default {
+  name: 'DeadlinesTools',
+  components: {
+    DataTables, Field, BModal, BForm,
+  },
+  data() {
+    return {
+      loading: false,
+      fields: [
+        {
+          key: 'contract_id',
+          hideOnForm: true,
+        },
+        {
+          key: 'contractaction_acting_by',
+          type: 'custom-select',
+          items: [
+            { label: 'Mieter', value: 'mieter' },
+            { label: 'Vermieter', value: 'vermieter' },
+          ],
+        },
+        { key: 'contractaction_options', type: 'number' },
+        { key: 'contractaction_extension', type: 'number' },
+        { key: 'contractaction_notice_period_value', type: 'number' },
+        {
+          key: 'contractaction_notice_period_unit',
+          type: 'custom-select',
+          items: [
+            { label: 'Day', value: 'day' },
+            { label: 'Week', value: 'week' },
+            { label: 'Month', value: 'month' },
+            { label: 'Year', value: 'year' },
+          ],
+        },
+      ],
+      entity: {
+        contract_id: this.$route.params.id,
+      },
+    }
+  },
+  methods: {
+    openModal() {
+      this.$refs.modal.show()
+    },
+    async submit() {
+      const isFormValid = this.$refs.toolform.validate()
+
+      if (!isFormValid) {
+        return
+      }
+      this.loading = true
+      try {
+        await this.$http.post('/contracts/deadline', this.entity)
+        const { currentTab, tabs } = this.$parent
+        const tab = tabs[currentTab]
+        await tab.$children[0].getDeadlines()
+        this.$refs.toolform.reset()
+        this.$refs.modal.hide()
+      } catch (error) {
+        console.log({ error })
+      }
+      finally {
+          this.loading = false
+      }
+    },
+  },
+}
+</script>
+
+<template>
+  <div class="d-flex align-items-center">
+    <b-button class="mr-1" size="sm" variant="info" @click="openModal">
+      <span>New</span>
+    </b-button>
+    <b-modal ref="modal" title="Action Data" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary"
+             size="lg" centered @ok="submit"
+    >
+      <!--      Form-->
+      <validation-observer ref="toolform" v-slot="{ passes }" tag="div" class="my-2">
+        <b-form>
+          <b-row>
+            <b-col v-for="(field,index) in fields.filter(field => !field.hideOnForm)" :key="index" cols="12">
+              <field :field="field" :entity="entity" :inline="true" />
+            </b-col>
+          </b-row>
+        </b-form>
+      </validation-observer>
+      <template v-slot:modal-footer>
+        <b-button variant="warning" :disabled="loading" @click="$refs.modal.hide()">
+          Cancel
+        </b-button>
+        <b-button variant="primary" :disabled="loading" @click="submit">
+          <b-spinner v-if="loading" small />
+          Save
+        </b-button>
+      </template>
+    </b-modal>
+  </div>
+</template>
+
+<style scoped>
+
+</style>
