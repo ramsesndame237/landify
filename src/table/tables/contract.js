@@ -5,6 +5,7 @@ export default {
   entity: 'frontend_3_4_1_1',
   entityEndpoint: '/contracts',
   fetchWithEntity: true,
+  updateComponent: () => import('@/views/app/FormComponent/ContractForm.vue'),
   // createModal: false,
   // createComponent: () => import('@/views/app/CreateComponent/ContractForm/Index.vue'),
   fields: [
@@ -68,38 +69,56 @@ export default {
       hideOnForm: true,
       formatter: (value, key, item) => {
         const array = item.owners
-        const ownersName = array.length > 0 ? array.map(obj => obj.owner_name) : [];
-        const result = ownersName.join(", ");
+        const ownersName = array.length > 0 ? array.map(obj => obj.owner_name) : []
+        const result = ownersName.join(', ')
 
-        return result || '-';
-      }
+        return result || '-'
+      },
     },
     {
       key: 'manager_name',
       hideOnForm: true,
       formatter: (value, key, item) => {
         const array = item.managers
-        const managerName = array.length > 0 ? array.map(obj => obj.manager_name) : [];
-        const result = managerName.join(", ");
+        const managerName = array.length > 0 ? array.map(obj => obj.manager_name) : []
+        const result = managerName.join(', ')
 
-        return result || '-';
-      }
+        return result || '-'
+      },
     },
     {
       key: 'pos_name',
       hideOnForm: true,
       formatter: (value, key, item) => {
         const array = item.pos
-        const posName = array.length > 0 ? array.map(obj => obj.pos_name) : [];
-        const result = posName.join(", ");
+        const posName = array.length > 0 ? array.map(obj => obj.pos_name) : []
+        const result = posName.join(', ')
 
-        return result || '-';
-      }
+        return result || '-'
+      },
     },
     { key: 'contract_begin_date', type: 'date' },
     { key: 'contract_end_date', type: 'date', hideOnIndex: true },
     { key: 'contract_first_possible_end_date', type: 'date', hideOnIndex: true },
-    { key: 'contract_last_change_time', type: 'date', hideOnIndex: true, rules: {regex: false} },
+    {
+      key: 'contract_last_possible_end_date', type: 'date', hideOnIndex: true, required: false,
+    },
+    { key: 'contract_last_change_time', type: 'date', hideOnIndex: true },
+    {
+      key: 'contractdeadline_action_begin', type: 'date', hideOnIndex: true, required: false,
+    },
+    {
+      key: 'contractdeadline_action_end_soll', type: 'date', hideOnIndex: true, required: false,
+    },
+    {
+      key: 'contractdeadline_action_ende_final', type: 'date', hideOnIndex: true, required: false,
+    },
+    {
+      key: 'contractdeadline_action_actual_notice_period', type: 'date', hideOnIndex: true, required: false,
+    },
+    {
+      key: 'contractdeadline_action_actual_notice_day', type: 'date', hideOnIndex: true, required: false,
+    },
     { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
     { key: 'contract_sum_allarea_allocationspace', hideOnForm: true },
     { key: 'currency_name', hideOnCreate: true, disabled: true },
@@ -296,52 +315,142 @@ export default {
       ],
     },
     {
+      title: 'Specialright',
       primaryKey: 'specialright_id',
       entity: 'frontend_3_4_3_2',
       entityForm: 'contract_specialright_rel',
       entityView: 'specialright',
       withContinue: true,
-      createComponent: () => import('@/views/app/CreateComponent/SpecialrightForm/Index.vue'),
+      // createComponent: () => import('@/views/app/CreateComponent/SpecialrightForm/Index.vue'),
       updateComponent: () => import('@/views/app/UpdateComponent/SpecialrightForm.vue'),
       fields: [
+        { key: 'action', hideOnForm: true },
         {
-          key: 'specialright_id', type: 'list', list: 'specialright', listLabel: 'specialright_name',
+          key: 'acting_by',
+          type: 'custom-select',
+          items: [
+            { label: 'Mieter', value: 'mieter' },
+            { label: 'Vermieter', value: 'vermieter' },
+          ],
         },
-        { key: 'specialright_name', hideOnForm: true },
-        { key: 'contract_specialright_description', type: 'textarea' },
-        { key: 'contract_specialright_actual_options', type: 'number', disabled: true, hideOnForm: true },
-        { key: 'contract_specialright_total_number_options', hideOnForm: true, type: 'number' },
-        { key: 'contract_specialright_available_options', type: 'number', disabled: true, hideOnForm: true},
-        { key: 'contract_specialright_automatic_renewal_in_months', type: 'number', hideOnForm: true },
-        { key: 'contract_specialright_renewal_in_months', type: 'number' },
-        { key: 'contract_specialright_prior_notice_period', type: 'date' },
-        { key: 'contract_specialright_prior_notice_date', type: 'date' },
-        { key: 'contract_specialright_date_added', type: 'date' },
-        {
-          key: 'contract_specialright_termination_date',
-          type: 'date',
-          composite: true,
-          visible: entity => [1, 2].includes(entity.specialright_id),
-          change: (entity, vm) => {
-            const date = entity.contract_specialright_termination_date
-            if (date && moment().isSameOrAfter(date)) {
-              vm.$set(vm.entity, 'contract_specialright_is_passive', 1)
-              vm.$set(vm.entity, 'contract_specialright_is_availed', 0)
-            }
-          },
-        },
+        { key: 'contract_specialright_total_number_options', type: 'number' },
+        { key: 'to_activate', hideOnForm: true },
+        { key: 'available_options', hideOnForm: true },
+        { key: 'resiliation', hideOnForm: true },
         { key: 'contract_specialright_extensions', type: 'number' },
-        { key: 'contract_specialright_measurement_unit', hideOnForm: true, hideOnIndex: true, },
-        { key: 'contract_specialright_is_obsolete', hideOnForm: true, hideOnIndex: true, },
+        { key: 'notice_day', type: 'number' },
         {
-          key: 'contract_specialright_date', type: 'date', composite: true, hideOnForm: true, hideOnIndex: true,
+          key: 'notice_period',
+          type: 'custom-select',
+          items: [
+            { label: 'Day', value: 'day' },
+            { label: 'Week', value: 'week' },
+            { label: 'Month', value: 'month' },
+            { label: 'Year', value: 'year' },
+          ],
         },
-        { key: 'contract_specialright_is_passive', type: 'boolean' },
-        { key: 'contract_specialright_is_availed', type: 'boolean' },
+        {
+          key: 'status',
+          hideOnForm: true,
+          type: 'custom-select',
+          items: [
+            { label: 'Pull Action', value: 'pull' },
+            { label: 'Extend Contract', value: 'extend' },
+            { label: 'Terminate Contract', value: 'END' },
+          ],
+        },
       ],
+      // fields: [
+      //   {
+      //     key: 'specialright_id', type: 'list', list: 'specialright', listLabel: 'specialright_name',
+      //   },
+      //   { key: 'specialright_name', hideOnForm: true },
+      //   { key: 'contract_specialright_description', type: 'textarea' },
+      //   { key: 'contract_specialright_actual_options', type: 'number', disabled: true, hideOnForm: true },
+      //   { key: 'contract_specialright_total_number_options', hideOnForm: true, type: 'number' },
+      //   { key: 'contract_specialright_available_options', type: 'number', disabled: true, hideOnForm: true},
+      //   { key: 'contract_specialright_automatic_renewal_in_months', type: 'number', hideOnForm: true },
+      //   { key: 'contract_specialright_renewal_in_months', type: 'number' },
+      //   { key: 'contract_specialright_prior_notice_period', type: 'date' },
+      //   { key: 'contract_specialright_prior_notice_date', type: 'date' },
+      //   { key: 'contract_specialright_date_added', type: 'date' },
+      //   {
+      //     key: 'contract_specialright_termination_date',
+      //     type: 'date',
+      //     composite: true,
+      //     visible: entity => [1, 2].includes(entity.specialright_id),
+      //     change: (entity, vm) => {
+      //       const date = entity.contract_specialright_termination_date
+      //       if (date && moment().isSameOrAfter(date)) {
+      //         vm.$set(vm.entity, 'contract_specialright_is_passive', 1)
+      //         vm.$set(vm.entity, 'contract_specialright_is_availed', 0)
+      //       }
+      //     },
+      //   },
+      //   { key: 'contract_specialright_extensions', type: 'number' },
+      //   { key: 'contract_specialright_measurement_unit', hideOnForm: true, hideOnIndex: true, },
+      //   { key: 'contract_specialright_is_obsolete', hideOnForm: true, hideOnIndex: true, },
+      //   {
+      //     key: 'contract_specialright_date', type: 'date', composite: true, hideOnForm: true, hideOnIndex: true,
+      //   },
+      //   { key: 'contract_specialright_is_passive', type: 'boolean' },
+      //   { key: 'contract_specialright_is_availed', type: 'boolean' },
+      // ],
       default: {
         contract_specialright_date: '1990-01-01',
       },
+    },
+    {
+      title: 'Deadline',
+      primaryKey: 'contractaction_id',
+      entity: 'contractaction',
+      entityEndpoint: '/contracts/deadlines',
+      component: () => import('@/views/app/Contracts/Relations/Deadlines/DeadlineTable.vue'),
+      tool: () => import('@/views/app/Contracts/Relations/Deadlines/DeadlinesTools.vue'),
+      search: false,
+      create: false,
+      delete: false,
+      defaultSortField: 'contractaction_id',
+      fields: [
+        {
+          key: 'contractaction_id',
+          hideOnIndex: true,
+          auto: true,
+        },
+        {
+          key: 'contractaction_acting_by',
+          label: 'Acting by',
+          type: 'custom-select',
+          items: [
+            { label: 'Mieter', value: 'mieter' },
+            { label: 'Vermieter', value: 'vermieter' },
+          ],
+        },
+        { key: 'contractaction_options', type: 'number', label: 'Expected number of options' },
+        { key: 'contractaction_extension', type: 'number', label: 'Extension (in year)' },
+        { key: 'contractaction_notice_period_value', type: 'number', hideOnIndex: true },
+        {
+          key: 'contractaction_notice_period_unit',
+          hideOnIndex: true,
+          type: 'custom-select',
+          items: [
+            { label: 'Day', value: 'day' },
+            { label: 'Week', value: 'week' },
+            { label: 'Month', value: 'month' },
+            { label: 'Year', value: 'year' },
+          ],
+        },
+        {
+          key: 'status',
+          hideOnForm: true,
+          label: 'Status',
+          formatter: (value, key, item) => {
+            const { contractdeadlines } = item
+            const isThereSomeActiveDeadline = contractdeadlines.some(deadline => deadline.contractdeadline_status === 'active')
+            return isThereSomeActiveDeadline ? 'Active action' : 'Unactive action'
+          },
+        },
+      ],
     },
     {
       primaryKey: 'recurringpayment_id',
