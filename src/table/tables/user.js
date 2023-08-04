@@ -337,6 +337,7 @@ export default {
           }
           data.firmengroup_type = 1
         }
+        if (!data.partnergroup_id) data.partnercompany_id = []
         return data
       })
   },
