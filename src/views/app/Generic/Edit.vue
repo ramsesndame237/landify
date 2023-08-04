@@ -73,6 +73,11 @@
                            :definition="relation" is-relation
                            :table-definition-key="relation.entityForm || relation.entity" :with-continue="relation.withContinue"
                            @reload-table="reloadRelatedTable"/>
+            <template v-if="relation.primaryKey === 'specialright_id'">
+              <b-card-text class="text-right">
+                <b-button variant="primary">viewed all Options</b-button>
+              </b-card-text>
+            </template>
           </template>
         </b-tab>
         <template #tabs-end>
@@ -216,6 +221,7 @@ export default {
       if (route) {
         this.$router.push({ name: route.name, params: { id: this.entityId, table: route.params.table } })
       } else {
+        console.log("Ici tabs", {tabs})
         const def = this.definition.relations[tabs.currentTab]
         tabs.tabs[tabs.currentTab].$children[1].openModal(true, { [this.primaryKey]: this.entityId }, `headline~${def.entityForm || def.title}~new`)
       }
