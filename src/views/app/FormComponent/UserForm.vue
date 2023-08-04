@@ -74,7 +74,7 @@
 
 <script>
 import {
-  BFormCheckbox, BRow, BCol, BFormGroup, BFormInput,
+  BFormCheckbox, BRow, BCol,
 } from 'bootstrap-vue'
 import FormMixin from '@/views/app/Generic/FormMixin'
 
@@ -82,16 +82,12 @@ export default {
   name: 'UserForm',
   components: {
     BRow,
-    BFormGroup,
     BCol,
-    BFormInput,
     BFormCheckbox,
   },
   mixins: [FormMixin],
   computed: {},
   watch: {},
   methods: {},
-  mounted() {
-  },
 }
 </script>
