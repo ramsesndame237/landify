@@ -49,6 +49,8 @@ export default {
       hideOnIndex: true,
       hideOnUpdate: true,
     },
+    { key: 'contract_name' },
+    { key: 'contracttype_name', hideOnCreate: true, disabled: true },
     {
       key: 'customergroup_name', hideOnIndex: true, hideOnCreate: true, disabled: true,
     },
@@ -61,8 +63,6 @@ export default {
     {
       key: 'pos_name', hideOnIndex: true, hideOnCreate: true, disabled: true,
     },
-    { key: 'contracttype_name', hideOnCreate: true, disabled: true },
-    { key: 'contract_name' },
     { key: 'location_name', hideOnForm: true },
     {
       key: 'owner_name',
@@ -415,7 +415,6 @@ export default {
         {
           key: 'contractaction_id',
           hideOnIndex: true,
-          auto: true,
         },
         {
           key: 'contractaction_acting_by',
@@ -425,6 +424,20 @@ export default {
             { label: 'Mieter', value: 'mieter' },
             { label: 'Vermieter', value: 'vermieter' },
           ],
+        },
+        {
+          key: 'contractaction_type',
+          label: 'Action Type',
+          type: 'custom-select',
+          items: [
+            { label: 'Active Option', value: 'active_option' },
+            { label: 'Automatic Option', value: 'automatic_option' },
+            { label: 'Automatic extension', value: 'automatic_extension' },
+          ],
+          formatter: (value, key, item) => {
+            const types = { active_option: 'Active Option', automatic_option: 'Automatic Option', automatic_extension: 'Automatic extension' }
+            return types[value]
+          },
         },
         { key: 'contractaction_options', type: 'number', label: 'Expected number of options' },
         { key: 'contractaction_extension', type: 'number', label: 'Extension (in year)' },
@@ -441,14 +454,9 @@ export default {
           ],
         },
         {
-          key: 'status',
+          key: 'contrataction_status',
           hideOnForm: true,
           label: 'Status',
-          formatter: (value, key, item) => {
-            const { contractdeadlines } = item
-            const isThereSomeActiveDeadline = contractdeadlines.some(deadline => deadline.contractdeadline_status === 'active')
-            return isThereSomeActiveDeadline ? 'Active action' : 'Unactive action'
-          },
         },
       ],
     },
