@@ -2,24 +2,38 @@
 
 import { BForm, BModal } from 'bootstrap-vue'
 import Field from '@/views/app/Generic/Field.vue'
+import {editorProps as resut} from "@tinymce/tinymce-vue/lib/es2015/main/ts/components/EditorPropTypes";
 
 export default {
   name: 'DeadlinesStatusSelect',
   components: { Field, BForm, BModal },
-  props: ['data', 'rowData'],
+  props: ['actions'],
   data() {
     return {
+      types: { active_option: 'Active Option', automatic_option: 'Automatic Option', automatic_extension: 'Automatic extension' },
       entity: {},
       loading: false,
-      pullActionFields: [
+      fields: [],
+      actionType: 'pull',
+    }
+  },
+  computed: {
+    actionsToShow() {
+      return this.actions.map(action => ({ label: this.types[action.contractaction_type], value: action.contractaction_id }))
+    },
+    getActionTexte() {
+      return this.actionType === 'pull' ? 'Pull actions' : 'Terminate contract'
+    },
+  },
+  methods: {
+    pullAction() {
+      this.actionType = 'pull'
+      this.fields = [
         {
-          key: 'contractaction_acting_by',
+          key: 'contractaction_id',
           type: 'custom-select',
-          label: 'Acting by',
-          items: [
-            { label: 'Mieter', value: 'mieter' },
-            { label: 'Vermieter', value: 'vermieter' },
-          ],
+          label: 'Actions',
+          items: this.actionsToShow,
         },
         {
           key: 'contractaction_notice_period_value', type: 'number', hideOnIndex: true, label: 'Notice period value',
@@ -36,45 +50,75 @@ export default {
             { label: 'Year', value: 'year' },
           ],
         },
-      ],
-    }
-  },
-  computed: {
-    isSelectVisible() {
-      const { contractdeadline_option_position, contractdeadline_status } = this.selectedDeadlineAction
-
-      if (contractdeadline_status === 'notdue' && contractdeadline_option_position === 1) {
-        return true
-      } return false
+      ]
+      this.$refs.modal.show()
     },
-    selectedDeadlineAction() {
-      return this.rowData.item
-    },
-      isDeadlineActive(){
-        return this.selectedDeadlineAction.contractdeadline_status === 'active'
-      }
-  },
-  methods: {
-    pullAction(item) {
+    terminateContract() {
+      this.actionType = 'terminate'
+      this.fields = [
+        {
+          key: 'contractaction_acting_by',
+          label: 'Acting by',
+          type: 'custom-select',
+          items: [
+            { label: 'Mieter', value: 'mieter' },
+            { label: 'Vermieter', value: 'vermieter' },
+          ],
+        },
+        {
+          key: 'contractaction_resiliation_date',
+          label: 'Resiliation Date',
+          type: 'date',
+        },
+      ]
       this.$refs.modal.show()
     },
     async submit() {
-      const isFormValid = await this.$refs.statusform.validate()
-      console.log('ici this, from submit', this)
+      const isFormValid = await this.$refs.form.validate()
 
       if (!isFormValid) return
 
       this.loading = true
-      try {
-        const { item } = this.rowData
-        await this.$http.get(`/contracts/deadlines/active/${item.contractdeadline_id}`)
-        this.$emit('reload')
-        this.$refs.statusform.reset()
-        this.$refs.modal.hide()
-      } catch (error) {
-        console.log({ error })
-      } finally {
-        this.loading = false
+      if (this.actionType === 'pull') {
+        try {
+          const response = await this.$http.get(`/contracts/deadlines/activeAction/${this.entity.contractaction_id}`)
+          console.log({ response })
+          console.log('vm from statusselecet', this)
+          this.$emit('reload')
+          this.$refs.form.reset()
+          this.$refs.modal.hide()
+        } catch (error) {
+          this.$errorToast(error.message)
+          console.log({ error })
+        } finally {
+          this.loading = false
+        }
+      } else {
+        const result = await this.$swal({
+          title: 'Are you sure?',
+          text: "This contract will be ended.You won't be able to revert this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, terminate it!',
+          customClass: {
+            confirmButton: 'btn btn-primary',
+            cancelButton: 'btn btn-outline-danger ml-1',
+          },
+          buttonsStyling: false,
+        })
+          if (!resut.value) return false
+        try {
+          const response = await this.$http.post('/contracts/deadlines/resiliated', this.entity)
+          console.log({ response })
+          this.$emit('reload')
+          this.$refs.form.reset()
+          this.$refs.modal.hide()
+        } catch (error) {
+          this.$errorToast(error.message)
+          console.log({ error })
+        } finally {
+          this.loading = false
+        }
       }
     },
   },
@@ -83,25 +127,20 @@ export default {
 
 <template>
   <div class="">
-    <template v-if="isSelectVisible">
-      <b-dropdown :field="data.field" :entity="entity" text="Pull Action" variant="primary" size="sm">
-        <b-dropdown-item v-for="(item, index) in data.items" :key="index" text="Pull Action" @click="pullAction(item)">
-          {{ item.label }}
-        </b-dropdown-item>
-      </b-dropdown>
-    </template>
-    <template v-else>
-      <p v-if="isDeadlineActive">Active</p>
-      <p v-else>Not due yet</p>
-    </template>
-    <b-modal ref="modal" title="Pull Action" ok-title="Pull" cancel-title="Cancel" modal-class="modal-primary"
+    <b-button variant="primary" size="sm" @click="pullAction">
+      Pull action
+    </b-button>
+    <b-button variant="primary" size="sm" class="ml-2" @click="terminateContract">
+      Terminate Contract
+    </b-button>
+    <b-modal ref="modal" :title="getActionTexte" modal-class="modal-primary"
              size="sm" centered @ok="submit"
     >
       <!--      Form-->
-      <validation-observer ref="statusform" v-slot="{ passes }" tag="div" class="my-2">
+      <validation-observer ref="form" v-slot="{ passes }" tag="div" class="my-2">
         <b-form>
           <b-row>
-            <b-col v-for="(field, index) in pullActionFields" :key="index" cols="12">
+            <b-col v-for="(field, index) in fields" :key="index" cols="12">
               <field :field="field" :entity="entity" :inline="true" />
             </b-col>
           </b-row>
@@ -113,7 +152,7 @@ export default {
         </b-button>
         <b-button variant="primary" :disabled="loading" @click="submit">
           <b-spinner v-if="loading" small />
-          Pull action
+          {{ getActionTexte }}
         </b-button>
       </template>
     </b-modal>

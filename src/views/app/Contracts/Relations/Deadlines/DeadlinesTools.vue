@@ -13,8 +13,10 @@ export default {
       loading: false,
       fields: [
         {
-          key: 'contract_id',
+          key: 'contractaction_id',
           hideOnForm: true,
+          hideOnIndex: true,
+          auto: true,
         },
         {
           key: 'contractaction_acting_by',
@@ -24,7 +26,30 @@ export default {
             { label: 'Vermieter', value: 'vermieter' },
           ],
         },
-        { key: 'contractaction_options', type: 'number' },
+        {
+          key: 'contractaction_type',
+          label: 'Action Type',
+          type: 'custom-select',
+          items: [
+            { label: 'Active Option', value: 'active_option' },
+            { label: 'Automatic Option', value: 'automatic_option' },
+            { label: 'Automatic extension', value: 'automatic_extension' },
+          ],
+        },
+        {
+          key: 'contractaction_options',
+          type: 'number',
+          change: (entity, vm) => {
+            console.log('from options field', { entity, vm })
+
+            if (entity.contractaction_type === 'automatic_extension') {
+              vm.field.disabled = true
+              entity.contractaction_options = 99
+            } else {
+              vm.field.disabled = false
+            }
+          },
+        },
         { key: 'contractaction_extension', type: 'number' },
         { key: 'contractaction_notice_period_value', type: 'number' },
         {
@@ -58,14 +83,13 @@ export default {
         await this.$http.post('/contracts/deadline', this.entity)
         const { currentTab, tabs } = this.$parent
         const tab = tabs[currentTab]
-        await tab.$children[0].getDeadlines()
+        await tab.$children[0].getActions()
         this.$refs.toolform.reset()
         this.$refs.modal.hide()
       } catch (error) {
         console.log({ error })
-      }
-      finally {
-          this.loading = false
+      } finally {
+        this.loading = false
       }
     },
   },
@@ -85,7 +109,7 @@ export default {
         <b-form>
           <b-row>
             <b-col v-for="(field,index) in fields.filter(field => !field.hideOnForm)" :key="index" cols="12">
-              <field :field="field" :entity="entity" :inline="true" />
+              <field :field="field" :disabled="field.disabled" :entity="entity" :inline="true" />
             </b-col>
           </b-row>
         </b-form>

@@ -70,7 +70,7 @@ export default {
     <b-overlay :show="loading">
       <validation-observer ref="form" v-slot="{ passes }" slim>
         <b-form autocomplete="off" @submit.prevent="passes(emitSubmit)">
-          <b-tabs ref="contract_tabs" v-model="tabIndex" fill vertical justified card nav-wrapper-class="w-25 col-3 text-left">
+          <b-tabs ref="contract_tabs" v-model="tabIndex" vertical card nav-wrapper-class="col text-left tabs_wrapper">
             <template v-for="(tab,idx) in tabsData">
               <b-tab :key="idx" title-item-class=" mb-3">
                 <template #title>
@@ -120,5 +120,7 @@ export default {
 </template>
 
 <style scoped>
-
+.tabs_wrapper > ul {
+  height: auto !important;
+}
 </style>

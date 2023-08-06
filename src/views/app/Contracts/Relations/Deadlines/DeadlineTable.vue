@@ -1,9 +1,10 @@
 <script>
 import DataTables from '@/layouts/components/DataTables.vue'
+import DeadlinesStatusSelect from '@/views/app/Contracts/Relations/Deadlines/DeadlinesStatusSelect.vue';
 
 export default {
   name: 'DeadlineTable',
-  components: { DataTables },
+  components: { DeadlinesStatusSelect, DataTables },
   props: { relation: Object, entityId: {} },
   data() {
     return {
@@ -14,11 +15,11 @@ export default {
           send: false,
           label: 'Action',
           formatter: (value, key, item) => {
-            const { contractdeadline_status } = item
+            const { contractdeadline_status,contractdeadline_option_position } = item
 
             switch (contractdeadline_status) {
               case 'notdue': {
-                return 'then active option'
+                return contractdeadline_option_position === 1 ? 'active option' : 'then active option'
               }
               case 'active': {
                 return 'active option'
@@ -55,7 +56,7 @@ export default {
             return contractdeadline_options - contractdeadline_option_position
           },
         },
-        { key: 'contractdeadline_resiliation_date', hideOnForm: true, label: 'Resiliation' },
+        { key: 'contractdeadline_resiliation_date', hideOnForm: true, label: 'Resiliation date' },
         { key: 'contractdeadline_extension', type: 'number', label: 'Extension(in year)' },
         { key: 'contractdeadline_notice_period_value', type: 'number', hideOnIndex: true },
         {
@@ -82,48 +83,52 @@ export default {
         {
           key: 'contractdeadline_status',
           hideOnForm: true,
-          type: 'component',
           label: 'Status',
-          component: () => import('@/views/app/Contracts/Relations/Deadlines/DeadlinesStatusSelect.vue'),
-          props: {
-            items: [
-              { label: 'Pull Action', value: 'pull' },
-              { label: 'Extend Contract', value: 'extend' },
-              { label: 'Terminate Contract', value: 'END' },
-            ],
-          },
         },
       ],
-      deadlines: [],
+      actions: [],
       totalRows: 0,
       perPage: 10,
-      isOptionsVisible: false,
       search: '',
       actionSelectedId: null,
+      deadlines: [],
+      loading: false,
+      isOptionsVisible: false,
     }
   },
   computed: {
     selectedValues() {
-      const action = this.deadlines.find(item => item.__selected === true)
+      const action = this.actions.find(item => item.__selected === true)
       if (action) {
         this.actionSelectedId = action.contractaction_id
         return action
       }
 
-      return this.deadlines.find(deadline => deadline.contractaction_id === this.actionSelectedId)
+      return this.actions.find(deadline => deadline.contractaction_id === this.actionSelectedId)
     },
     actionsFieldsToShow() {
       return this.actionsFields.filter(field => !field.hideOnIndex)
     },
-    actionsDeadlines() {
-      return this.selectedValues?.contractdeadlines
-    },
   },
   mounted() {
-    this.getDeadlines()
+    this.getActions()
   },
   methods: {
+    async getActions() {
+      try {
+        const response = await this.$http.get('/contracts/actions', {
+          params: {
+            contract_id: this.entityId,
+          },
+        })
+        this.actions = response.data.data
+        console.log({ response })
+      } catch (error) {
+        console.log({ error })
+      }
+    },
     async getDeadlines() {
+      this.loading = true
       try {
         const response = await this.$http.get('/contracts/deadlines', {
           params: {
@@ -132,16 +137,19 @@ export default {
         })
         this.deadlines = response.data.data
         console.log({ response })
+        this.isOptionsVisible = true
       } catch (error) {
         console.log({ error })
       }
-    },
-    showOptions() {
-      if (this.selectedValues.length <= 0 || this.selectedValues.length > 1) {
-        this.$errorToast('Please Select one action')
-        return
+      finally {
+        this.loading = false
       }
-      this.isOptionsVisible = true
+    },
+    async showOptions() {
+      await this.getDeadlines()
+      if (!this.isOptionsVisible) {
+        this.$errorToast('No options to show !!!')
+      }
     },
     itemSelected(data) {
       console.log('selected Function', { data })
@@ -153,36 +161,42 @@ export default {
 <template>
   <div class="">
     <template v-if="isOptionsVisible">
+      <div class="d-flex justify-content-between my-2">
+        <b-card-text class="mb-0">
+          <b-button variant="primary" size="sm" @click="isOptionsVisible = false">
+            <feather-icon icon="ArrowLeftIcon" class="mr-50" />
+            Back
+          </b-button>
+        </b-card-text>
+        <b-card-text class="d-flex align-items-center">
+          <DeadlinesStatusSelect :actions="actions" />
+        </b-card-text>
+      </div>
       <data-tables
         :fields="actionsFieldsToShow"
         :multi-select="false" :with-actions="false"
-        :items="actionsDeadlines"
+        :items="deadlines"
         :entity="relation.entity"
         default-sort-column="contractdeadline_id"
         @selected="itemSelected"
-        @table-refreshed="getDeadlines"
+        @table-refreshed="getActions"
       />
-      <b-card-text class="mt-3">
-        <b-button variant="primary" size="sm" @click="isOptionsVisible = false">
-          <feather-icon icon="ArrowLeftIcon" class="mr-50" />
-          Back
-        </b-button>
-      </b-card-text>
     </template>
     <template v-else>
       <data-tables
         :fields="relation.fields"
-        :with-actions="false"
-        :items="deadlines"
-        :multi-select="false"
+        :items="actions"
+        :selectable="false"
         :default-sort-column="relation.defaultSortField"
-        entity=""
+        :entity="relation.entity"
+        :with-view="false"
         @selected="itemSelected"
-        @table-refreshed="getDeadlines"
+        @table-refreshed="getActions"
       />
       <b-card-text class="text-right">
         <b-button variant="primary" @click="showOptions">
           viewed all Options
+          <b-spinner v-if="loading" small />
         </b-button>
       </b-card-text>
     </template>
