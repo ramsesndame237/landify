@@ -1,21 +1,22 @@
 <script>
 import DataTables from '@/layouts/components/DataTables.vue'
-import DeadlinesStatusSelect from '@/views/app/Contracts/Relations/Deadlines/DeadlinesStatusSelect.vue';
+import DeadlinesStatusSelect from '@/views/app/Contracts/Relations/Deadlines/DeadlinesStatusSelect.vue'
+import DeadlinesTools from '@/views/app/Contracts/Relations/Deadlines/DeadlinesTools.vue'
 
 export default {
   name: 'DeadlineTable',
-  components: { DeadlinesStatusSelect, DataTables },
+  components: { DeadlinesTools, DeadlinesStatusSelect, DataTables },
   props: { relation: Object, entityId: {} },
   data() {
     return {
-      actionsFields: [
+      deadlineFields: [
         {
           key: 'action',
           hideOnForm: true,
           send: false,
           label: 'Action',
           formatter: (value, key, item) => {
-            const { contractdeadline_status,contractdeadline_option_position } = item
+            const { contractdeadline_status, contractdeadline_option_position } = item
 
             switch (contractdeadline_status) {
               case 'notdue': {
@@ -52,7 +53,10 @@ export default {
           label: 'Available options',
           hideOnForm: true,
           formatter: (value, key, item) => {
-            const { contractdeadline_options, contractdeadline_option_position } = item
+            const { contractdeadline_options, contractdeadline_option_position, contractdeadline_status } = item
+            if (contractdeadline_status === 'resiliated') {
+              return 0
+            }
             return contractdeadline_options - contractdeadline_option_position
           },
         },
@@ -81,6 +85,12 @@ export default {
           },
         },
         {
+          key: 'contractdeadline_notice_date',
+          label: 'Notice date',
+          hideOnForm: true,
+          send: false,
+        },
+        {
           key: 'contractdeadline_status',
           hideOnForm: true,
           label: 'Status',
@@ -92,22 +102,14 @@ export default {
       search: '',
       actionSelectedId: null,
       deadlines: [],
-      loading: false,
+      loadingAction: false,
+      loadingDeadline: false,
       isOptionsVisible: false,
     }
   },
   computed: {
-    selectedValues() {
-      const action = this.actions.find(item => item.__selected === true)
-      if (action) {
-        this.actionSelectedId = action.contractaction_id
-        return action
-      }
-
-      return this.actions.find(deadline => deadline.contractaction_id === this.actionSelectedId)
-    },
-    actionsFieldsToShow() {
-      return this.actionsFields.filter(field => !field.hideOnIndex)
+    deadlinesFieldsToShow() {
+      return this.deadlineFields.filter(field => !field.hideOnIndex)
     },
   },
   mounted() {
@@ -115,6 +117,7 @@ export default {
   },
   methods: {
     async getActions() {
+      this.loadingAction = true
       try {
         const response = await this.$http.get('/contracts/actions', {
           params: {
@@ -125,10 +128,12 @@ export default {
         console.log({ response })
       } catch (error) {
         console.log({ error })
+      } finally {
+        this.loadingAction = false
       }
     },
     async getDeadlines() {
-      this.loading = true
+      this.loadingDeadline = true
       try {
         const response = await this.$http.get('/contracts/deadlines', {
           params: {
@@ -140,19 +145,34 @@ export default {
         this.isOptionsVisible = true
       } catch (error) {
         console.log({ error })
-      }
-      finally {
-        this.loading = false
+      } finally {
+        this.loadingDeadline = false
       }
     },
     async showOptions() {
+      this.loadingAction = true
       await this.getDeadlines()
       if (!this.isOptionsVisible) {
         this.$errorToast('No options to show !!!')
       }
+      this.loadingAction = false
     },
     itemSelected(data) {
       console.log('selected Function', { data })
+    },
+    editAction(entity) {
+      this.$refs.modal.openModal(false, entity, 'Edit Action Data')
+    },
+    async deleteAction(data) {
+      console.log('From delete call', { data })
+      try {
+        const response = await this.$http.delete(`/contracts/deadline/action/${data[0].contractaction_id}`)
+        this.$successToast('Action delete successfully !!!')
+        await this.getActions()
+      } catch (error) {
+        this.$errorToast(error.response.data.detail)
+        console.log({ error })
+      }
     },
   },
 }
@@ -161,44 +181,53 @@ export default {
 <template>
   <div class="">
     <template v-if="isOptionsVisible">
-      <div class="d-flex justify-content-between my-2">
-        <b-card-text class="mb-0">
-          <b-button variant="primary" size="sm" @click="isOptionsVisible = false">
-            <feather-icon icon="ArrowLeftIcon" class="mr-50" />
-            Back
+      <b-overlay :show="loadingDeadline">
+        <div class="d-flex justify-content-between my-2">
+          <b-card-text class="mb-0">
+            <b-button variant="primary" size="sm" @click="isOptionsVisible = false">
+              <feather-icon icon="ArrowLeftIcon" class="mr-50" />
+              Back
+            </b-button>
+          </b-card-text>
+          <b-card-text class="d-flex align-items-center">
+            <DeadlinesStatusSelect :actions="actions" />
+          </b-card-text>
+        </div>
+        <data-tables
+          :fields="deadlinesFieldsToShow"
+          :multi-select="false" :with-actions="false"
+          :items="deadlines"
+          :entity="relation.entity"
+          default-sort-column="contractdeadline_id"
+          :selectable="false"
+          @selected="itemSelected"
+          @table-refreshed="getActions"
+        />
+      </b-overlay>
+    </template>
+
+    <template v-else>
+      <b-overlay :show="loadingAction">
+        <data-tables
+          :fields="relation.fields"
+          :items="actions"
+          :selectable="false"
+          :default-sort-column="relation.defaultSortField"
+          :entity="relation.entity"
+          :with-view="false"
+          :can-make-delete-call="false"
+          :on-edit-element="editAction"
+          @selected="itemSelected"
+          @table-refreshed="getActions"
+          @delete-items="deleteAction"
+        />
+        <b-card-text class="text-right">
+          <b-button variant="primary" @click="showOptions">
+            viewed all Options
           </b-button>
         </b-card-text>
-        <b-card-text class="d-flex align-items-center">
-          <DeadlinesStatusSelect :actions="actions" />
-        </b-card-text>
-      </div>
-      <data-tables
-        :fields="actionsFieldsToShow"
-        :multi-select="false" :with-actions="false"
-        :items="deadlines"
-        :entity="relation.entity"
-        default-sort-column="contractdeadline_id"
-        @selected="itemSelected"
-        @table-refreshed="getActions"
-      />
-    </template>
-    <template v-else>
-      <data-tables
-        :fields="relation.fields"
-        :items="actions"
-        :selectable="false"
-        :default-sort-column="relation.defaultSortField"
-        :entity="relation.entity"
-        :with-view="false"
-        @selected="itemSelected"
-        @table-refreshed="getActions"
-      />
-      <b-card-text class="text-right">
-        <b-button variant="primary" @click="showOptions">
-          viewed all Options
-          <b-spinner v-if="loading" small />
-        </b-button>
-      </b-card-text>
+        <DeadlinesTools ref="modal" force-title="Edit Action" :is-button-showed="false" />
+      </b-overlay>
     </template>
   </div>
 </template>

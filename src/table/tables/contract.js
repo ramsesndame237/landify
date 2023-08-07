@@ -2,7 +2,7 @@ import { getContractCriteriaFields } from '@/table/utils'
 import moment from 'moment'
 
 export default {
-  entity: 'frontend_3_4_1_1',
+  // entity: 'frontend_3_4_1_1',
   entityEndpoint: '/contracts',
   fetchWithEntity: true,
   updateComponent: () => import('@/views/app/FormComponent/ContractForm.vue'),
@@ -101,23 +101,25 @@ export default {
     { key: 'contract_end_date', type: 'date', hideOnIndex: true },
     { key: 'contract_first_possible_end_date', type: 'date', hideOnIndex: true },
     {
-      key: 'contract_last_possible_end_date', type: 'date', hideOnIndex: true, required: false,
-    },
-    { key: 'contract_last_change_time', type: 'date', hideOnIndex: true },
-    {
-      key: 'contractdeadline_action_begin', type: 'date', hideOnIndex: true, required: false,
+      key: 'next_possible_end_of_contract', type: 'date', hideOnIndex: true, required: false, disabled: true,
     },
     {
-      key: 'contractdeadline_action_end_soll', type: 'date', hideOnIndex: true, required: false,
+      key: 'contract_last_change_time', type: 'date', hideOnIndex: true, rules: { regex: false },
     },
     {
-      key: 'contractdeadline_action_ende_final', type: 'date', hideOnIndex: true, required: false,
+      key: 'action_begin', type: 'date', hideOnIndex: true, required: false, disabled: true,
     },
     {
-      key: 'contractdeadline_action_actual_notice_period', type: 'date', hideOnIndex: true, required: false,
+      key: 'action_ende_soll', hideOnIndex: true, required: false, disabled: true,
     },
     {
-      key: 'contractdeadline_action_actual_notice_day', type: 'date', hideOnIndex: true, required: false,
+      key: 'action_ende_final', type: 'date', hideOnIndex: true, required: false, disabled: true,
+    },
+    {
+      key: 'actual_action_notice_period', hideOnIndex: true, required: false, disabled: true,
+    },
+    {
+      key: 'actual_action_notice_day', type: 'date', hideOnIndex: true, required: false, disabled: true,
     },
     { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
     { key: 'contract_sum_allarea_allocationspace', hideOnForm: true },
@@ -457,6 +459,11 @@ export default {
           key: 'contrataction_status',
           hideOnForm: true,
           label: 'Status',
+          formatter: (value, key, item) => {
+            const status = { active: 'Active', unactive: 'Unactive', cancelled: 'Cancelled' }
+
+            return status[value]
+          },
         },
       ],
     },
@@ -574,4 +581,62 @@ export default {
     },
   ],
   note: 'frontend_0_8_1',
+  fetch: async vm => {
+    try {
+      const response = await vm.$http.get(`/contracts/${vm.entityId}`)
+      console.log('Ici response fetch contract', { response })
+      const { data } = response
+
+      if (data.company) {
+        data.company_id = data.company.company_id
+        data.company_name = data.company.company_name
+        if (data.company.customergroup) {
+          data.customergroup_id = data.company.customergroup.customergroup_id
+          data.customergroup_name = data.company.customergroup.customergroup_name
+        }
+      }
+
+      if (data.areas) {
+        data.contract_count_area = data.areas.length
+      }
+
+      if (data.contracttype) {
+        data.contracttype_id = data.contracttype.contracttype_id
+        data.contracttype_name = data.contracttype.contracttype_name
+      }
+
+      if (data.currency) {
+        data.currency_id = data.currency.currency_id
+        data.currency_name = data.currency.currency_name
+      }
+
+      if (data.documentcontracttypes.length > 0) {
+        data.documentcontracttype_id = data.documentcontracttypes[0].documentcontracttype_id
+        data.documentcontracttype_name = data.documentcontracttypes[0].documentcontracttype_name
+      }
+
+      if (data.location) {
+        data.location_id = data.location.location_id
+        data.location_name = data.location.location_name
+      }
+
+      if (data.pos.length > 0) {
+        data.pos_id = data.pos[0].pos_id
+        data.pos_name = data.pos[0].pos_name
+      }
+
+      if (data.owners) {
+        data.owner_id = data.owners[0].owner_id
+        data.owner_name = data.owners[0].owner_name
+      }
+      if (data.managers.length  > 0) {
+        data.manager_id = data.managers[0].manager_id
+        data.manager_name = data.managers[0].manager_name
+      }
+
+      return data
+    } catch (error) {
+      console.log({ error })
+    }
+  },
 }

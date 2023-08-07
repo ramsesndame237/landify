@@ -334,11 +334,11 @@ export default {
       }).then(async result => {
         if (!result.value) return
         if (!this.canMakeDeleteCall) {
-          entities.forEach(f => {
-            const index = this.items.findIndex(i => f === i)
-            this.items.splice(index, 1)
-          });
-          this.$emit('delete-items', this.items);
+          this.$emit('delete-items', entities);
+          // entities.forEach(f => {
+          //   const index = this.items.findIndex(i => f === i)
+          //   this.items.splice(index, 1)
+          // });
           this.$refs.table.refresh()
           return
         }
