@@ -19,10 +19,11 @@ export default {
   },
   computed: {
     actionsToShow() {
-      return this.actions.map(action => ({ label: this.types[action.contractaction_type], value: action.contractaction_id }))
+      const _actions = this.actions.filter(action => action.contrataction_status !== 'active')
+      return _actions.map(action => ({ label: this.types[action.contractaction_type], value: action.contractaction_id }))
     },
     getActionTexte() {
-      return this.actionType === 'pull' ? 'Pull actions' : 'Terminate contract'
+      return this.actionType === 'pull' ? 'Pull action' : 'Terminate contract'
     },
   },
   methods: {
@@ -78,15 +79,16 @@ export default {
 
       if (!isFormValid) return
 
+      console.log('Submit vm', this)
       this.loading = true
       if (this.actionType === 'pull') {
         try {
           const response = await this.$http.get(`/contracts/deadlines/activeAction/${this.entity.contractaction_id}`)
-          console.log({ response })
-          console.log('vm from statusselecet', this)
           this.$emit('reload')
           this.$refs.form.reset()
           this.$refs.modal.hide()
+          await this.$parent.$parent.getDeadlines()
+          await this.$parent.$parent.getActions()
         } catch (error) {
           this.$errorToast(error.message)
           console.log({ error })
@@ -106,13 +108,14 @@ export default {
           },
           buttonsStyling: false,
         })
-          if (!resut.value) return false
+        if (!resut.value) return false
         try {
           const response = await this.$http.post('/contracts/deadlines/resiliated', this.entity)
-          console.log({ response })
           this.$emit('reload')
           this.$refs.form.reset()
           this.$refs.modal.hide()
+          await this.$parent.$parent.getDeadlines()
+          await this.$parent.$parent.getActions()
         } catch (error) {
           this.$errorToast(error.message)
           console.log({ error })
@@ -127,7 +130,7 @@ export default {
 
 <template>
   <div class="">
-    <b-button variant="primary" size="sm" @click="pullAction">
+    <b-button v-show="actionsToShow.length > 0" variant="primary" size="sm" @click="pullAction">
       Pull action
     </b-button>
     <b-button variant="primary" size="sm" class="ml-2" @click="terminateContract">

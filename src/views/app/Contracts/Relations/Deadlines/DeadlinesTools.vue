@@ -8,6 +8,12 @@ export default {
   components: {
     DataTables, Field, BModal, BForm,
   },
+  props: {
+    isButtonShowed: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     return {
       loading: false,
@@ -66,10 +72,15 @@ export default {
       entity: {
         contract_id: this.$route.params.id,
       },
+      create: true,
+      forceTitle: '',
     }
   },
   methods: {
-    openModal() {
+    openModal(create, data, title) {
+      this.entity = { ...data, contract_id: this.$route.params.id }
+      this.create = create
+      this.forceTitle = title
       this.$refs.modal.show()
     },
     async submit() {
@@ -80,13 +91,25 @@ export default {
       }
       this.loading = true
       try {
-        await this.$http.post('/contracts/deadline', this.entity)
-        const { currentTab, tabs } = this.$parent
-        const tab = tabs[currentTab]
-        await tab.$children[0].getActions()
+        await this.$http({
+          method: this.create ? 'post' : 'put',
+          url: `/contracts/deadline${!this.create ? '/action' : ''}`,
+          data: this.entity,
+        })
+
         this.$refs.toolform.reset()
         this.$refs.modal.hide()
+        this.$successToast(`Action ${this.create ? 'added' : 'updated'} successfully !!!`)
+        if (this.create) {
+          const { currentTab, tabs } = this.$parent
+          const tab = tabs[currentTab]
+          await tab.$children[0].getActions()
+        } else {
+          const { getActions } = this.$parent.$parent
+          await getActions()
+        }
       } catch (error) {
+        this.$errorToast(error.response.data.detail)
         console.log({ error })
       } finally {
         this.loading = false
@@ -98,10 +121,10 @@ export default {
 
 <template>
   <div class="d-flex align-items-center">
-    <b-button class="mr-1" size="sm" variant="info" @click="openModal">
+    <b-button v-if="isButtonShowed" class="mr-1" size="sm" variant="info" @click="openModal">
       <span>New</span>
     </b-button>
-    <b-modal ref="modal" title="Action Data" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary"
+    <b-modal ref="modal" :title="$t(forceTitle || 'Action Data')" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary"
              size="lg" centered @ok="submit"
     >
       <!--      Form-->

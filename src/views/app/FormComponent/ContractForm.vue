@@ -105,7 +105,7 @@ export default {
               </b-tab>
             </template>
           </b-tabs>
-          <div v-if="!disabled" class="col-9 text-center d-flex justify-content-between ml-auto">
+          <div v-if="!disabled" class="col-10 text-center d-flex justify-content-between ml-auto">
             <b-button href="#" :disabled="tabIndex === 0" variant="primary" @click="tabIndex--">
               Previous
             </b-button>
@@ -120,7 +120,7 @@ export default {
 </template>
 
 <style scoped>
-.tabs_wrapper > ul {
+.tabs_wrapper > ul.nav.nav-tabs {
   height: auto !important;
 }
 </style>
