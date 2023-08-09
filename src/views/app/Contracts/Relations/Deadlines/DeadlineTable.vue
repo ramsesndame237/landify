@@ -2,6 +2,7 @@
 import DataTables from '@/layouts/components/DataTables.vue'
 import DeadlinesStatusSelect from '@/views/app/Contracts/Relations/Deadlines/DeadlinesStatusSelect.vue'
 import DeadlinesTools from '@/views/app/Contracts/Relations/Deadlines/DeadlinesTools.vue'
+import moment from "moment";
 
 export default {
   name: 'DeadlineTable',
@@ -11,21 +12,18 @@ export default {
     return {
       deadlineFields: [
         {
-          key: 'action',
+          key: 'contractdeadline_type',
           hideOnForm: true,
           send: false,
           label: 'Action',
           formatter: (value, key, item) => {
-            const { contractdeadline_status, contractdeadline_option_position } = item
-
-            switch (contractdeadline_status) {
-              case 'notdue': {
-                return contractdeadline_option_position === 1 ? 'active option' : 'then active option'
-              }
-              case 'active': {
-                return 'active option'
-              }
+            const types = {
+              active_option: 'Active Option',
+              automatic_option: 'Automatic Option',
+              automatic_extension: 'Automatic extension',
+              resiliation: 'Resiliation',
             }
+            return types[value]
           },
         },
         {
@@ -62,6 +60,11 @@ export default {
         },
         { key: 'contractdeadline_resiliation_date', hideOnForm: true, label: 'Resiliation date' },
         { key: 'contractdeadline_extension', type: 'number', label: 'Extension(in year)' },
+        {
+          key: 'contractdeadline_creation_time',
+          hideOnForm: true,
+          label: 'Activation date',
+        },
         { key: 'contractdeadline_notice_period_value', type: 'number', hideOnIndex: true },
         {
           key: 'contractdeadline_notice_period_unit',
@@ -105,11 +108,43 @@ export default {
       loadingAction: false,
       loadingDeadline: false,
       isOptionsVisible: false,
+      types: { active_option: 'Active Option', automatic_option: 'Automatic Option', automatic_extension: 'Automatic extension', resiliation: 'Resiliation' },
     }
   },
   computed: {
     deadlinesFieldsToShow() {
       return this.deadlineFields.filter(field => !field.hideOnIndex)
+    },
+    isNoticeDateArrived() {
+      const activeDeadline = this.deadlines.find(deadline => deadline.contractdeadline_status === 'active')
+
+      if (activeDeadline) {
+        const { contractdeadline_notice_date } = activeDeadline
+
+        return moment(contractdeadline_notice_date).isSameOrBefore(moment())
+      }
+    },
+    actionsToShow() {
+      const finishedActions = []
+      const _actions = this.actions.filter(action => action.contrataction_status !== 'cancelled')
+
+      if (_actions.length <= 0) return []
+
+      const activeActions = _actions.map(action => action.contrataction_status === 'active')
+      if (activeActions.length > 0) {
+        const activeActionsIds = activeActions.map(action => action.contractaction_id)
+        if (this.deadlines.length > 0) {
+          const activeDeadlines = this.deadlines.map(deadline => deadline.contractdeadline_status === 'active')
+          activeDeadlines.forEach(deadline => {
+            const { contractdeadline_option_position, contractdeadline_options, contractaction_id } = deadline
+            if (activeActionsIds.includes(contractaction_id) && (contractdeadline_options - contractdeadline_option_position) <= 0) {
+              finishedActions.push(contractaction_id)
+            }
+          })
+        }
+      }
+
+      return _actions.filter(action => !finishedActions.includes(action.contractaction_id)).map(action => ({ label: this.types[action.contractaction_type], value: action.contractaction_id, type: action.contractaction_type, data: action }))
     },
   },
   mounted() {
@@ -141,7 +176,6 @@ export default {
           },
         })
         this.deadlines = response.data.data
-        console.log({ response })
         this.isOptionsVisible = true
       } catch (error) {
         console.log({ error })
@@ -190,7 +224,7 @@ export default {
             </b-button>
           </b-card-text>
           <b-card-text class="d-flex align-items-center">
-            <DeadlinesStatusSelect :actions="actions" />
+            <DeadlinesStatusSelect :actions="actionsToShow" :deadlines="deadlines" :is-notice-date-arrived="isNoticeDateArrived" />
           </b-card-text>
         </div>
         <data-tables
@@ -198,7 +232,7 @@ export default {
           :multi-select="false" :with-actions="false"
           :items="deadlines"
           :entity="relation.entity"
-          default-sort-column="contractdeadline_id"
+          default-sort-column="contractdeadline_status"
           :selectable="false"
           @selected="itemSelected"
           @table-refreshed="getActions"

@@ -97,33 +97,46 @@ export default {
         return result || '-'
       },
     },
-    { key: 'contract_begin_date', type: 'date' },
-    { key: 'contract_end_date', type: 'date', hideOnIndex: true },
-    { key: 'contract_first_possible_end_date', type: 'date', hideOnIndex: true },
     {
-      key: 'next_possible_end_of_contract', type: 'date', hideOnIndex: true, required: false, disabled: true,
+      key: 'contract_resiliation',
+      formatter: (value, key, item) => {
+        return value === 1 ? 'Resiliated' : 'Pending'
+      },
+      visible: entity => entity.contract_resiliation === 1,
+    },
+    { key: 'contract_begin_date', type: 'date', category: 'date' }, // La clé category  permet de classer les champs dans les tabs en function de sa categorie
+    {
+      key: 'contract_end_date', type: 'date', hideOnIndex: true, category: 'date',
     },
     {
-      key: 'contract_last_change_time', type: 'date', hideOnIndex: true, rules: { regex: false },
+      key: 'contract_first_possible_end_date', type: 'date', hideOnIndex: true, category: 'date',
     },
     {
-      key: 'action_begin', type: 'date', hideOnIndex: true, required: false, disabled: true,
+      key: 'next_possible_end_of_contract', type: 'date', hideOnIndex: true, required: false, disabled: true, category: 'date',
     },
     {
-      key: 'action_ende_soll', hideOnIndex: true, required: false, disabled: true,
+      key: 'contract_last_change_time', type: 'date', hideOnIndex: true, rules: { regex: false }, category: 'date',
     },
     {
-      key: 'action_ende_final', type: 'date', hideOnIndex: true, required: false, disabled: true,
+      key: 'action_begin', type: 'date', hideOnIndex: true, required: false, disabled: true, category: 'date',
     },
     {
-      key: 'actual_action_notice_period', hideOnIndex: true, required: false, disabled: true,
+      key: 'action_ende_soll', hideOnIndex: true, required: false, disabled: true, category: 'date',
     },
     {
-      key: 'actual_action_notice_day', type: 'date', hideOnIndex: true, required: false, disabled: true,
+      key: 'action_ende_final', type: 'date', hideOnIndex: true, required: false, disabled: true, category: 'date',
+    },
+    {
+      key: 'actual_action_notice_period', hideOnIndex: true, required: false, disabled: true, category: 'date',
+    },
+    {
+      key: 'actual_action_notice_day', type: 'date', hideOnIndex: true, required: false, disabled: true, category: 'date',
     },
     { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
     { key: 'contract_sum_allarea_allocationspace', hideOnForm: true },
-    { key: 'currency_name', hideOnCreate: true, disabled: true },
+    {
+      key: 'currency_name', hideOnCreate: true, disabled: true, category: 'price',
+    },
     { key: 'contract_count_area', hideOnForm: true },
     {
       key: 'currency_id',
@@ -435,14 +448,21 @@ export default {
             { label: 'Active Option', value: 'active_option' },
             { label: 'Automatic Option', value: 'automatic_option' },
             { label: 'Automatic extension', value: 'automatic_extension' },
+            { label: 'Resiliation', value: 'resiliation' },
           ],
           formatter: (value, key, item) => {
-            const types = { active_option: 'Active Option', automatic_option: 'Automatic Option', automatic_extension: 'Automatic extension' }
+            const types = {
+              active_option: 'Active Option',
+              automatic_option: 'Automatic Option',
+              automatic_extension: 'Automatic extension',
+              resiliation: 'Resiliation',
+            }
             return types[value]
           },
         },
-        { key: 'contractaction_options', type: 'number', label: 'Expected number of options' },
-        { key: 'contractaction_extension', type: 'number', label: 'Extension (in year)' },
+        { key: 'contractaction_options', type: 'number', label: 'Expected number of options', formatter: value => !value ? '--': value },
+        { key: 'contractaction_extension_value', type: 'number', label: 'Extension value', formatter: value => !value ? '--' : value  },
+        { key: 'contractaction_extension_unit', label: 'Extension unit', formatter: value => !value ? '--' : value },
         { key: 'contractaction_notice_period_value', type: 'number', hideOnIndex: true },
         {
           key: 'contractaction_notice_period_unit',
@@ -454,6 +474,28 @@ export default {
             { label: 'Month', value: 'month' },
             { label: 'Year', value: 'year' },
           ],
+        },
+        {
+          key: 'contractaction_notice_period',
+          label: 'Notice period',
+          hideOnForm: true,
+          send: false,
+          formatter: (value, key, item) => {
+            const { contractaction_notice_period_value, contractaction_notice_period_unit } = item
+            return `${contractaction_notice_period_value}  ${contractaction_notice_period_unit}`
+          },
+        },
+        {
+          key: 'contractaction_notice_date',
+          label: 'Notice date',
+          hideOnForm: true,
+          send: false,
+        },
+        {
+          key: 'contractaction_creation_time',
+          type: 'date',
+          label: 'Creation date',
+          hideOnForm: true,
         },
         {
           key: 'contrataction_status',
@@ -598,6 +640,12 @@ export default {
 
       if (data.areas) {
         data.contract_count_area = data.areas.length
+        data.contract_sum_allarea_allocationspace = data.areas.reduce(
+          (acc, currentValue) => acc += currentValue.contract_area_unit_usagetype_allocationspace_value, 0,
+        )
+        data.contract_sum_allarea_rentalspace = data.areas.reduce(
+          (acc, currentValue) => acc += currentValue.contract_area_unit_usagetype_rentalspace_value, 0,
+        )
       }
 
       if (data.contracttype) {
@@ -625,11 +673,11 @@ export default {
         data.pos_name = data.pos[0].pos_name
       }
 
-      if (data.owners) {
+      if (data.owners.length > 0) {
         data.owner_id = data.owners[0].owner_id
         data.owner_name = data.owners[0].owner_name
       }
-      if (data.managers.length  > 0) {
+      if (data.managers.length > 0) {
         data.manager_id = data.managers[0].manager_id
         data.manager_name = data.managers[0].manager_name
       }
