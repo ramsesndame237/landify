@@ -2,74 +2,41 @@
 
 import { BForm, BModal } from 'bootstrap-vue'
 import Field from '@/views/app/Generic/Field.vue'
-import {editorProps as resut} from "@tinymce/tinymce-vue/lib/es2015/main/ts/components/EditorPropTypes";
 
 export default {
   name: 'DeadlinesStatusSelect',
   components: { Field, BForm, BModal },
-  props: ['actions'],
+  props: ['actions', 'isNoticeDateArrived', 'deadlines'],
   data() {
     return {
-      types: { active_option: 'Active Option', automatic_option: 'Automatic Option', automatic_extension: 'Automatic extension' },
       entity: {},
       loading: false,
       fields: [],
-      actionType: 'pull',
     }
-  },
-  computed: {
-    actionsToShow() {
-      const _actions = this.actions.filter(action => action.contrataction_status !== 'active')
-      return _actions.map(action => ({ label: this.types[action.contractaction_type], value: action.contractaction_id }))
-    },
-    getActionTexte() {
-      return this.actionType === 'pull' ? 'Pull action' : 'Terminate contract'
-    },
   },
   methods: {
     pullAction() {
-      this.actionType = 'pull'
       this.fields = [
         {
           key: 'contractaction_id',
           type: 'custom-select',
           label: 'Actions',
-          items: this.actionsToShow,
+          items: this.actions,
         },
         {
-          key: 'contractaction_notice_period_value', type: 'number', hideOnIndex: true, label: 'Notice period value',
-        },
-        {
-          key: 'contractaction_notice_period_unit',
-          label: 'Notice period unit',
-          hideOnIndex: true,
-          type: 'custom-select',
-          items: [
-            { label: 'Day', value: 'day' },
-            { label: 'Week', value: 'week' },
-            { label: 'Month', value: 'month' },
-            { label: 'Year', value: 'year' },
-          ],
-        },
-      ]
-      this.$refs.modal.show()
-    },
-    terminateContract() {
-      this.actionType = 'terminate'
-      this.fields = [
-        {
-          key: 'contractaction_acting_by',
-          label: 'Acting by',
-          type: 'custom-select',
-          items: [
-            { label: 'Mieter', value: 'mieter' },
-            { label: 'Vermieter', value: 'vermieter' },
-          ],
-        },
-        {
-          key: 'contractaction_resiliation_date',
-          label: 'Resiliation Date',
+          key: 'resiliation_date',
           type: 'date',
+          label: 'Resiliation date',
+          change: (entity, vm) => {
+            const selectedAction = this.actions.find(option => option.value === entity?.contractaction_id)
+            if (selectedAction && selectedAction.type === 'resiliation') {
+              vm.field.disabled = false
+            } else {
+              vm.field.disabled = true
+            }
+          },
+          visible: (entity, vm) => vm.field.disabled === false,
+          disabled: true,
         },
       ]
       this.$refs.modal.show()
@@ -81,47 +48,18 @@ export default {
 
       console.log('Submit vm', this)
       this.loading = true
-      if (this.actionType === 'pull') {
-        try {
-          const response = await this.$http.get(`/contracts/deadlines/activeAction/${this.entity.contractaction_id}`)
-          this.$emit('reload')
-          this.$refs.form.reset()
-          this.$refs.modal.hide()
-          await this.$parent.$parent.getDeadlines()
-          await this.$parent.$parent.getActions()
-        } catch (error) {
-          this.$errorToast(error.message)
-          console.log({ error })
-        } finally {
-          this.loading = false
-        }
-      } else {
-        const result = await this.$swal({
-          title: 'Are you sure?',
-          text: "This contract will be ended.You won't be able to revert this!",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Yes, terminate it!',
-          customClass: {
-            confirmButton: 'btn btn-primary',
-            cancelButton: 'btn btn-outline-danger ml-1',
-          },
-          buttonsStyling: false,
-        })
-        if (!resut.value) return false
-        try {
-          const response = await this.$http.post('/contracts/deadlines/resiliated', this.entity)
-          this.$emit('reload')
-          this.$refs.form.reset()
-          this.$refs.modal.hide()
-          await this.$parent.$parent.getDeadlines()
-          await this.$parent.$parent.getActions()
-        } catch (error) {
-          this.$errorToast(error.message)
-          console.log({ error })
-        } finally {
-          this.loading = false
-        }
+      try {
+        const response = await this.$http.put(`/contracts/deadlines/activeAction/${this.entity.contractaction_id}`, this.entity)
+        this.$emit('reload')
+        this.$refs.form.reset()
+        this.$refs.modal.hide()
+        await this.$parent.$parent.getDeadlines()
+        await this.$parent.$parent.getActions()
+      } catch (error) {
+        this.$errorToast(error.message)
+        console.log({ error })
+      } finally {
+        this.loading = false
       }
     },
   },
@@ -130,13 +68,10 @@ export default {
 
 <template>
   <div class="">
-    <b-button v-show="actionsToShow.length > 0" variant="primary" size="sm" @click="pullAction">
+    <b-button v-if="isNoticeDateArrived || deadlines.length <= 0 || actions.length > 0" variant="primary" size="sm" @click="pullAction">
       Pull action
     </b-button>
-    <b-button variant="primary" size="sm" class="ml-2" @click="terminateContract">
-      Terminate Contract
-    </b-button>
-    <b-modal ref="modal" :title="getActionTexte" modal-class="modal-primary"
+    <b-modal ref="modal" title="Pull Action" modal-class="modal-primary"
              size="sm" centered @ok="submit"
     >
       <!--      Form-->
@@ -144,7 +79,7 @@ export default {
         <b-form>
           <b-row>
             <b-col v-for="(field, index) in fields" :key="index" cols="12">
-              <field :field="field" :entity="entity" :inline="true" />
+              <field :field="field" :entity="entity" :inline="true" :disabled="field.disabled" />
             </b-col>
           </b-row>
         </b-form>
@@ -155,7 +90,7 @@ export default {
         </b-button>
         <b-button variant="primary" :disabled="loading" @click="submit">
           <b-spinner v-if="loading" small />
-          {{ getActionTexte }}
+          Pull action
         </b-button>
       </template>
     </b-modal>

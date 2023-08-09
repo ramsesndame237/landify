@@ -40,10 +40,12 @@ export default {
             { label: 'Active Option', value: 'active_option' },
             { label: 'Automatic Option', value: 'automatic_option' },
             { label: 'Automatic extension', value: 'automatic_extension' },
+            { label: 'Resiliation', value: 'resiliation' },
           ],
         },
         {
           key: 'contractaction_options',
+          visible: entity => entity.contractaction_type !== 'resiliation',
           type: 'number',
           change: (entity, vm) => {
             console.log('from options field', { entity, vm })
@@ -56,16 +58,33 @@ export default {
             }
           },
         },
-        { key: 'contractaction_extension', type: 'number' },
+        {
+          key: 'contractaction_extension_value',
+          visible: entity => entity.contractaction_type !== 'resiliation',
+          type: 'number',
+          label: 'Extension Value',
+        },
+        {
+          key: 'contractaction_extension_unit',
+          visible: entity => entity.contractaction_type !== 'resiliation',
+          type: 'custom-select',
+          label: 'Extension Unit',
+          items: [
+            { label: 'Day', value: 'Day' },
+            { label: 'Week', value: 'Week' },
+            { label: 'Month', value: 'Month' },
+            { label: 'Year', value: 'Year' },
+          ],
+        },
         { key: 'contractaction_notice_period_value', type: 'number' },
         {
           key: 'contractaction_notice_period_unit',
           type: 'custom-select',
           items: [
-            { label: 'Day', value: 'day' },
-            { label: 'Week', value: 'week' },
-            { label: 'Month', value: 'month' },
-            { label: 'Year', value: 'year' },
+            { label: 'Day', value: 'Day' },
+            { label: 'Week', value: 'Week' },
+            { label: 'Month', value: 'Month' },
+            { label: 'Year', value: 'Year' },
           ],
         },
       ],
