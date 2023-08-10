@@ -41,11 +41,12 @@ export default {
             { label: 'Automatic Option', value: 'automatic_option' },
             { label: 'Automatic extension', value: 'automatic_extension' },
             { label: 'Resiliation', value: 'resiliation' },
+            { label: 'Special Resiliation', value: 'special_resiliation' },
           ],
         },
         {
           key: 'contractaction_options',
-          visible: entity => entity.contractaction_type !== 'resiliation',
+          visible: entity => !['resiliation', 'special_resiliation'].includes(entity.contractaction_type),
           type: 'number',
           change: (entity, vm) => {
             console.log('from options field', { entity, vm })
@@ -60,13 +61,14 @@ export default {
         },
         {
           key: 'contractaction_extension_value',
-          visible: entity => entity.contractaction_type !== 'resiliation',
+          visible: entity => !['resiliation', 'special_resiliation'].includes(entity.contractaction_type),
           type: 'number',
           label: 'Extension Value',
+          required: true,
         },
         {
           key: 'contractaction_extension_unit',
-          visible: entity => entity.contractaction_type !== 'resiliation',
+          visible: entity => !['resiliation', 'special_resiliation'].includes(entity.contractaction_type),
           type: 'custom-select',
           label: 'Extension Unit',
           items: [
@@ -75,6 +77,7 @@ export default {
             { label: 'Month', value: 'Month' },
             { label: 'Year', value: 'Year' },
           ],
+          required: true,
         },
         { key: 'contractaction_notice_period_value', type: 'number' },
         {
@@ -86,6 +89,15 @@ export default {
             { label: 'Month', value: 'Month' },
             { label: 'Year', value: 'Year' },
           ],
+        },
+        {
+          key: 'contractaction_comment',
+          type: 'textarea',
+          label: 'Action comment',
+          change: (entity, vm) => {
+            vm.field.required = entity.contractaction_type === 'special_resiliation'
+          },
+          required: false,
         },
       ],
       entity: {
@@ -103,7 +115,8 @@ export default {
       this.$refs.modal.show()
     },
     async submit() {
-      const isFormValid = this.$refs.toolform.validate()
+      const isFormValid = await this.$refs.toolform.validate()
+      console.log({isFormValid})
 
       if (!isFormValid) {
         return
@@ -122,10 +135,10 @@ export default {
         if (this.create) {
           const { currentTab, tabs } = this.$parent
           const tab = tabs[currentTab]
-          await tab.$children[0].getActions()
+          await tab.$children[0].getActions(true)
         } else {
           const { getActions } = this.$parent.$parent
-          await getActions()
+          await getActions(true)
         }
       } catch (error) {
         this.$errorToast(error.response.data.detail)

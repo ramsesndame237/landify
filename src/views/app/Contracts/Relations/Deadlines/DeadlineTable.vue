@@ -2,7 +2,8 @@
 import DataTables from '@/layouts/components/DataTables.vue'
 import DeadlinesStatusSelect from '@/views/app/Contracts/Relations/Deadlines/DeadlinesStatusSelect.vue'
 import DeadlinesTools from '@/views/app/Contracts/Relations/Deadlines/DeadlinesTools.vue'
-import moment from "moment";
+import moment from 'moment'
+import sortBy from 'lodash/sortBy'
 
 export default {
   name: 'DeadlineTable',
@@ -22,8 +23,10 @@ export default {
               automatic_option: 'Automatic Option',
               automatic_extension: 'Automatic extension',
               resiliation: 'Resiliation',
+              special_resiliation: 'Special Resiliation',
             }
-            return types[value]
+            const { contractdeadline_option_position } = item
+            return contractdeadline_option_position !== 1 ? `then ${types[value]}` : types[value]
           },
         },
         {
@@ -58,8 +61,23 @@ export default {
             return contractdeadline_options - contractdeadline_option_position
           },
         },
-        { key: 'contractdeadline_resiliation_date', hideOnForm: true, label: 'Resiliation date' },
-        { key: 'contractdeadline_extension', type: 'number', label: 'Extension(in year)' },
+        {
+          key: 'contractaction_extension_value', type: 'number', label: 'Extension value', hideOnIndex: true,
+        },
+        { key: 'contractaction_extension_unit', label: 'Extension unit', hideOnIndex: true },
+        {
+          key: 'contractdeadline_resiliation_date', hideOnForm: true, label: 'Resiliation date', formatter: value => (!value ? '--' : value),
+        },
+        {
+          key: 'contractaction_extension',
+          label: 'Extension',
+          hideOnForm: true,
+          send: false,
+          formatter: (value, key, item) => {
+            const { contractdeadline_extension_value, contractdeadline_extension_unit } = item
+            return `${contractdeadline_extension_value}  ${contractdeadline_extension_unit}`
+          },
+        },
         {
           key: 'contractdeadline_creation_time',
           hideOnForm: true,
@@ -99,27 +117,41 @@ export default {
           label: 'Status',
         },
       ],
-      actions: [],
       totalRows: 0,
       perPage: 10,
       search: '',
       actionSelectedId: null,
-      deadlines: [],
       loadingAction: false,
       loadingDeadline: false,
       isOptionsVisible: false,
-      types: { active_option: 'Active Option', automatic_option: 'Automatic Option', automatic_extension: 'Automatic extension', resiliation: 'Resiliation' },
+      types: {
+        active_option: 'Active Option',
+        automatic_option: 'Automatic Option',
+        automatic_extension: 'Automatic extension',
+        resiliation: 'Resiliation',
+        special_resiliation: 'Special Resiliation',
+      },
     }
   },
   computed: {
     deadlinesFieldsToShow() {
       return this.deadlineFields.filter(field => !field.hideOnIndex)
     },
+    actions() {
+      return this.$store.getters['table/listCache'](`contract-actions-${this.entityId}`)
+    },
+    deadlines() {
+      return this.$store.getters['table/listCache'](`contract-deadlines-${this.entityId}`)
+    },
     isNoticeDateArrived() {
       const activeDeadline = this.deadlines.find(deadline => deadline.contractdeadline_status === 'active')
 
       if (activeDeadline) {
         const { contractdeadline_notice_date } = activeDeadline
+
+        console.log({
+          activeDeadline, now: moment(), deadlineNoticeDate: moment(contractdeadline_notice_date), isSameOrBefore: moment(contractdeadline_notice_date).isSameOrBefore(moment()),
+        })
 
         return moment(contractdeadline_notice_date).isSameOrBefore(moment())
       }
@@ -144,43 +176,55 @@ export default {
         }
       }
 
-      return _actions.filter(action => !finishedActions.includes(action.contractaction_id)).map(action => ({ label: this.types[action.contractaction_type], value: action.contractaction_id, type: action.contractaction_type, data: action }))
+      return _actions.filter(action => !finishedActions.includes(action.contractaction_id)).map(action => ({
+        label: this.types[action.contractaction_type], value: action.contractaction_id, type: action.contractaction_type, data: action,
+      }))
     },
   },
   mounted() {
     this.getActions()
   },
   methods: {
-    async getActions() {
-      this.loadingAction = true
-      try {
-        const response = await this.$http.get('/contracts/actions', {
-          params: {
-            contract_id: this.entityId,
-          },
-        })
-        this.actions = response.data.data
-        console.log({ response })
-      } catch (error) {
-        console.log({ error })
-      } finally {
-        this.loadingAction = false
+    async getActions(refresh = false) {
+      if (this.actions.length <= 0 || refresh === true) {
+        this.loadingAction = true
+        try {
+          const response = await this.$http.get('/contracts/actions', {
+            params: {
+              contract_id: this.entityId,
+            },
+          })
+          const { data } = response.data
+          const sortedData = sortBy(data, ['contractaction_id'])
+          await this.$store.dispatch('table/setListData', { entity: `contract-actions-${this.entityId}`, data: sortedData })
+          console.log({ response })
+        } catch (error) {
+          console.log({ error })
+        } finally {
+          this.loadingAction = false
+        }
       }
     },
-    async getDeadlines() {
-      this.loadingDeadline = true
-      try {
-        const response = await this.$http.get('/contracts/deadlines', {
-          params: {
-            contract_id: this.entityId,
-          },
-        })
-        this.deadlines = response.data.data
+    async getDeadlines(refresh = false) {
+      if (this.deadlines.length <= 0 || refresh === true) {
+        this.loadingDeadline = true
+        try {
+          const response = await this.$http.get('/contracts/deadlines', {
+            params: {
+              contract_id: this.entityId,
+            },
+          })
+          const { data } = response.data
+          const sortedData = sortBy(data, ['contractdeadline_id'])
+          await this.$store.dispatch('table/setListData', { entity: `contract-deadlines-${this.entityId}`, data: sortedData })
+          this.isOptionsVisible = true
+        } catch (error) {
+          console.log({ error })
+        } finally {
+          this.loadingDeadline = false
+        }
+      } else {
         this.isOptionsVisible = true
-      } catch (error) {
-        console.log({ error })
-      } finally {
-        this.loadingDeadline = false
       }
     },
     async showOptions() {
@@ -191,9 +235,6 @@ export default {
       }
       this.loadingAction = false
     },
-    itemSelected(data) {
-      console.log('selected Function', { data })
-    },
     editAction(entity) {
       this.$refs.modal.openModal(false, entity, 'Edit Action Data')
     },
@@ -202,11 +243,19 @@ export default {
       try {
         const response = await this.$http.delete(`/contracts/deadline/action/${data[0].contractaction_id}`)
         this.$successToast('Action delete successfully !!!')
-        await this.getActions()
+        await this.getActions(true)
       } catch (error) {
         this.$errorToast(error.response.data.detail)
         console.log({ error })
       }
+    },
+    canUpdateItem(item) {
+      const { contractaction_status } = item
+      return ['active', 'cancelled'].includes(contractaction_status)
+    },
+    canDeleteItem(item) {
+      const { contractaction_status } = item
+      return ['active'].includes(contractaction_status)
     },
   },
 }
@@ -234,7 +283,6 @@ export default {
           :entity="relation.entity"
           default-sort-column="contractdeadline_status"
           :selectable="false"
-          @selected="itemSelected"
           @table-refreshed="getActions"
         />
       </b-overlay>
@@ -251,7 +299,8 @@ export default {
           :with-view="false"
           :can-make-delete-call="false"
           :on-edit-element="editAction"
-          @selected="itemSelected"
+          :can-update-item="canUpdateItem"
+          :can-delete-item="canDeleteItem"
           @table-refreshed="getActions"
           @delete-items="deleteAction"
         />

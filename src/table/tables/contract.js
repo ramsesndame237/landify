@@ -102,6 +102,7 @@ export default {
       formatter: (value, key, item) => {
         return value === 1 ? 'Resiliated' : 'Pending'
       },
+      disabled: true,
       visible: entity => entity.contract_resiliation === 1,
     },
     { key: 'contract_begin_date', type: 'date', category: 'date' }, // La clé category  permet de classer les champs dans les tabs en function de sa categorie
@@ -449,20 +450,35 @@ export default {
             { label: 'Automatic Option', value: 'automatic_option' },
             { label: 'Automatic extension', value: 'automatic_extension' },
             { label: 'Resiliation', value: 'resiliation' },
+            { label: 'Special Resiliation', value: '"special_resiliation"' },
           ],
-          formatter: (value, key, item) => {
+          formatter: (value) => {
             const types = {
               active_option: 'Active Option',
               automatic_option: 'Automatic Option',
               automatic_extension: 'Automatic extension',
               resiliation: 'Resiliation',
+              special_resiliation: 'Special Resiliation',
             }
             return types[value]
           },
         },
         { key: 'contractaction_options', type: 'number', label: 'Expected number of options', formatter: value => !value ? '--': value },
-        { key: 'contractaction_extension_value', type: 'number', label: 'Extension value', formatter: value => !value ? '--' : value  },
-        { key: 'contractaction_extension_unit', label: 'Extension unit', formatter: value => !value ? '--' : value },
+        { key: 'contractaction_extension_value', type: 'number', label: 'Extension value', hideOnIndex: true  },
+        { key: 'contractaction_extension_unit', label: 'Extension unit', hideOnIndex: true },
+        {
+          key: 'contractaction_extension',
+          label: 'Extension',
+          hideOnForm: true,
+          send: false,
+          formatter: (value, key, item) => {
+            const { contractaction_extension_value, contractaction_extension_unit } = item
+            if (!contractaction_extension_value && !contractaction_extension_unit) {
+              return '--'
+            }
+            return `${contractaction_extension_value}  ${contractaction_extension_unit}`
+          },
+        },
         { key: 'contractaction_notice_period_value', type: 'number', hideOnIndex: true },
         {
           key: 'contractaction_notice_period_unit',
@@ -498,10 +514,10 @@ export default {
           hideOnForm: true,
         },
         {
-          key: 'contrataction_status',
+          key: 'contractaction_status',
           hideOnForm: true,
           label: 'Status',
-          formatter: (value, key, item) => {
+          formatter: value => {
             const status = { active: 'Active', unactive: 'Unactive', cancelled: 'Cancelled' }
 
             return status[value]
