@@ -16,6 +16,7 @@ export default {
   },
   methods: {
     pullAction() {
+        console.log('Pulling actions', this.actions)
       this.fields = [
         {
           key: 'contractaction_id',
@@ -29,20 +30,26 @@ export default {
           label: 'Resiliation date',
           change: (entity, vm) => {
             const selectedAction = this.actions.find(option => option.value === entity?.contractaction_id)
-            if (selectedAction && selectedAction.type === 'resiliation') {
-              vm.field.disabled = false
-            } else {
-              vm.field.disabled = true
-            }
+            vm.field.disabled = !(selectedAction && selectedAction.type === 'special_resiliation')
           },
           visible: (entity, vm) => vm.field.disabled === false,
           disabled: true,
+        },
+        {
+          key: 'contractdeadline_comment',
+          type: 'textarea',
+          label: 'Deadline comment',
+          change: (entity, vm) => {
+            const selectedAction = this.actions.find(option => option.value === entity?.contractaction_id)
+            vm.field.required = selectedAction && selectedAction.type === 'special_resiliation'
+          },
+          required: false,
         },
       ]
       this.$refs.modal.show()
     },
     async submit() {
-      const isFormValid = await this.$refs.form.validate()
+      const isFormValid = await this.$refs.deadlineform.validate()
 
       if (!isFormValid) return
 
@@ -51,10 +58,10 @@ export default {
       try {
         const response = await this.$http.put(`/contracts/deadlines/activeAction/${this.entity.contractaction_id}`, this.entity)
         this.$emit('reload')
-        this.$refs.form.reset()
+        this.$refs.deadlineform.reset()
         this.$refs.modal.hide()
-        await this.$parent.$parent.getDeadlines()
-        await this.$parent.$parent.getActions()
+        await this.$parent.$parent.getDeadlines(true)
+        await this.$parent.$parent.getActions(true)
       } catch (error) {
         this.$errorToast(error.message)
         console.log({ error })
@@ -68,14 +75,14 @@ export default {
 
 <template>
   <div class="">
-    <b-button v-if="isNoticeDateArrived || deadlines.length <= 0 || actions.length > 0" variant="primary" size="sm" @click="pullAction">
+    <b-button v-if="isNoticeDateArrived || (deadlines.length <= 0 || actions.length > 0)" variant="primary" size="sm" @click="pullAction">
       Pull action
     </b-button>
     <b-modal ref="modal" title="Pull Action" modal-class="modal-primary"
              size="sm" centered @ok="submit"
     >
       <!--      Form-->
-      <validation-observer ref="form" v-slot="{ passes }" tag="div" class="my-2">
+      <validation-observer ref="deadlineform" v-slot="{ passes }" tag="div" class="my-2">
         <b-form>
           <b-row>
             <b-col v-for="(field, index) in fields" :key="index" cols="12">
