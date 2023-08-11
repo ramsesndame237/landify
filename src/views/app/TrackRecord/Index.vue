@@ -1,7 +1,6 @@
 <template>
   <div class="track_record_list">
       <b-card>
-
         <track-record-item class="border track_record-item"/>
         <track-record-item class="border track_record-item"/>
       </b-card>

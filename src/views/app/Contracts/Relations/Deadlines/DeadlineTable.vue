@@ -158,19 +158,26 @@ export default {
     },
     actionsToShow() {
       const finishedActions = []
-      const _actions = this.actions.filter(action => action.contrataction_status !== 'cancelled')
+      const _actions = this.actions.filter(action => !['cancelled'].includes(action.contractaction_status))
+      console.log('Actionns différent of cancelled', {_actions})
 
       if (_actions.length <= 0) return []
 
-      const activeActions = _actions.map(action => action.contrataction_status === 'active')
+      const activeActions = _actions.filter(action => action.contractaction_status === 'active')
+      console.log('Actives actions', {activeActions})
       if (activeActions.length > 0) {
         const activeActionsIds = activeActions.map(action => action.contractaction_id)
         if (this.deadlines.length > 0) {
-          const activeDeadlines = this.deadlines.map(deadline => deadline.contractdeadline_status === 'active')
+          console.log('There is deadlines', this.deadlines)
+
+          const activeDeadlines = this.deadlines.filter(deadline => deadline.contractdeadline_status === 'active')
+          console.log('There is active deadlines', {activeDeadlines})
+
           activeDeadlines.forEach(deadline => {
             const { contractdeadline_option_position, contractdeadline_options, contractaction_id } = deadline
             if (activeActionsIds.includes(contractaction_id) && (contractdeadline_options - contractdeadline_option_position) <= 0) {
               finishedActions.push(contractaction_id)
+              console.log('Ici if test available = 0', { finishedActions })
             }
           })
         }

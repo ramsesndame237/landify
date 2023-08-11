@@ -99,9 +99,9 @@ export default {
     },
     {
       key: 'contract_resiliation',
-      formatter: (value, key, item) => {
-        return value === 1 ? 'Resiliated' : 'Pending'
-      },
+      formatter: value => (value === 1 ? 'Resiliated' : 'Pending'),
+      type: 'custom-select',
+      items: [{ label: 'Resiliated', value: 1 }, { label: 'Pending', value: 0 }],
       disabled: true,
       visible: entity => entity.contract_resiliation === 1,
     },
@@ -452,7 +452,7 @@ export default {
             { label: 'Resiliation', value: 'resiliation' },
             { label: 'Special Resiliation', value: '"special_resiliation"' },
           ],
-          formatter: (value) => {
+          formatter: value => {
             const types = {
               active_option: 'Active Option',
               automatic_option: 'Automatic Option',
@@ -463,8 +463,12 @@ export default {
             return types[value]
           },
         },
-        { key: 'contractaction_options', type: 'number', label: 'Expected number of options', formatter: value => !value ? '--': value },
-        { key: 'contractaction_extension_value', type: 'number', label: 'Extension value', hideOnIndex: true  },
+        {
+          key: 'contractaction_options', type: 'number', label: 'Expected number of options', formatter: value => (!value ? '--' : value),
+        },
+        {
+          key: 'contractaction_extension_value', type: 'number', label: 'Extension value', hideOnIndex: true,
+        },
         { key: 'contractaction_extension_unit', label: 'Extension unit', hideOnIndex: true },
         {
           key: 'contractaction_extension',

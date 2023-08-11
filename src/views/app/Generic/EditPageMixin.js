@@ -10,6 +10,14 @@ export default {
       tabIndex: parseInt(this.$route.query.tab || 0),
     }
   },
+  watch: {
+    entity: {
+      handler(newValue, oldValue) {
+        console.log('Entity Changes , and new value is', { newValue, oldValue })
+      },
+      deep: true,
+    },
+  },
   computed: {
     title() {
       if (this.create) return `headline~${this.table}~new`
@@ -52,10 +60,10 @@ export default {
             console.log('data', data)
             this.$router.push({ name: 'table-view', params: { id: data[this.primaryKey] }, query: { edit: true } })
           }
-          this.$store.commit('table/deleteTableCacheKeyFromPrefix', this.table + '-')
+          this.$store.commit('table/deleteTableCacheKeyFromPrefix', `${this.table}-`)
         })
         .catch(e => {
-          console.error("error", e);
+          console.error('error', e)
         })
         .finally(() => {
           this.loading = false

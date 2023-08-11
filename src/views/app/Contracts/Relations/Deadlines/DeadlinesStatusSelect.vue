@@ -16,7 +16,6 @@ export default {
   },
   methods: {
     pullAction() {
-        console.log('Pulling actions', this.actions)
       this.fields = [
         {
           key: 'contractaction_id',
@@ -60,10 +59,14 @@ export default {
         this.$emit('reload')
         this.$refs.deadlineform.reset()
         this.$refs.modal.hide()
+        const _this = this.$parent.$parent.$parent.$parent.$parent
+        const { definition } = _this
+        console.log('Definition from 5 parent', { definition })
         await this.$parent.$parent.getDeadlines(true)
         await this.$parent.$parent.getActions(true)
+        await definition.fetch(_this)
       } catch (error) {
-        this.$errorToast(error.message)
+        this.$errorToast(error.response.data.detail)
         console.log({ error })
       } finally {
         this.loading = false
@@ -75,7 +78,7 @@ export default {
 
 <template>
   <div class="">
-    <b-button v-if="isNoticeDateArrived || (deadlines.length <= 0 || actions.length > 0)" variant="primary" size="sm" @click="pullAction">
+    <b-button v-if="!(isNoticeDateArrived && actions.length <= 0 ) || (deadlines.length <= 0 || actions.length > 0)" variant="primary" size="sm" @click="pullAction">
       Pull action
     </b-button>
     <b-modal ref="modal" title="Pull Action" modal-class="modal-primary"
@@ -83,7 +86,7 @@ export default {
     >
       <!--      Form-->
       <validation-observer ref="deadlineform" v-slot="{ passes }" tag="div" class="my-2">
-        <b-form>
+        <b-form @submit.prevent="passes(submit)">
           <b-row>
             <b-col v-for="(field, index) in fields" :key="index" cols="12">
               <field :field="field" :entity="entity" :inline="true" :disabled="field.disabled" />
