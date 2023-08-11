@@ -55,18 +55,23 @@ export default {
       console.log('Submit vm', this)
       this.loading = true
       try {
-        const response = await this.$http.put(`/contracts/deadlines/activeAction/${this.entity.contractaction_id}`, this.entity)
+        await this.$http.put(`/contracts/deadlines/activeAction/${this.entity.contractaction_id}`, this.entity)
         this.$emit('reload')
         this.$refs.deadlineform.reset()
         this.$refs.modal.hide()
-        const _this = this.$parent.$parent.$parent.$parent.$parent
-        const { definition } = _this
-        console.log('Definition from 5 parent', { definition })
-        await this.$parent.$parent.getDeadlines(true)
-        await this.$parent.$parent.getActions(true)
-        await definition.fetch(_this)
+        const efComponent = this.$parent.$parent.$parent.$parent.$parent.$refs.form
+        await efComponent.loadEntity()
+        // const { definition } = _this
+        // console.log('Definition from 5 parent', { definition })
+        // await this.$parent.$parent.getDeadlines(true)
+        // await this.$parent.$parent.getActions(true)
+        // await definition.fetch(_this)
       } catch (error) {
-        this.$errorToast(error.response.data.detail)
+        if (error.response) {
+          this.$errorToast(error.response.data.detail)
+        } else {
+          this.$errorToast(error.message)
+        }
         console.log({ error })
       } finally {
         this.loading = false
@@ -78,18 +83,17 @@ export default {
 
 <template>
   <div class="">
-    <b-button v-if="!(isNoticeDateArrived && actions.length <= 0 ) || (deadlines.length <= 0 || actions.length > 0)" variant="primary" size="sm" @click="pullAction">
+    <b-button v-if="!(isNoticeDateArrived && actions.length <= 0 ) || (deadlines.length <= 0 || actions.length > 0)"
+              variant="primary" size="sm" @click="pullAction">
       Pull action
     </b-button>
-    <b-modal ref="modal" title="Pull Action" modal-class="modal-primary"
-             size="sm" centered @ok="submit"
-    >
+    <b-modal ref="modal" title="Pull Action" modal-class="modal-primary" size="sm" centered @ok="submit">
       <!--      Form-->
       <validation-observer ref="deadlineform" v-slot="{ passes }" tag="div" class="my-2">
         <b-form @submit.prevent="passes(submit)">
           <b-row>
             <b-col v-for="(field, index) in fields" :key="index" cols="12">
-              <field :field="field" :entity="entity" :inline="true" :disabled="field.disabled" />
+              <field :field="field" :entity="entity" :inline="true" :disabled="field.disabled"/>
             </b-col>
           </b-row>
         </b-form>
@@ -99,7 +103,7 @@ export default {
           Cancel
         </b-button>
         <b-button variant="primary" :disabled="loading" @click="submit">
-          <b-spinner v-if="loading" small />
+          <b-spinner v-if="loading" small/>
           Pull action
         </b-button>
       </template>
