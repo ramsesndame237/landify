@@ -10,14 +10,6 @@ export default {
       tabIndex: parseInt(this.$route.query.tab || 0),
     }
   },
-  watch: {
-    entity: {
-      handler(newValue, oldValue) {
-        console.log('Entity Changes , and new value is', { newValue, oldValue })
-      },
-      deep: true,
-    },
-  },
   computed: {
     title() {
       if (this.create) return `headline~${this.table}~new`

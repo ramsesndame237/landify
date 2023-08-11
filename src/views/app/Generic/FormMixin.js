@@ -45,7 +45,7 @@ export default {
   watch: {
     entity: {
       handler(val) {
-        console.log('entity changes', val)
+        console.log('entity', val)
       },
       deep: true,
     },
