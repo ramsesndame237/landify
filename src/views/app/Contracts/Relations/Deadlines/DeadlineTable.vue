@@ -1,3 +1,56 @@
+<template>
+  <div class="">
+    <template v-if="isOptionsVisible">
+      <b-overlay :show="loadingDeadline">
+        <div class="d-flex justify-content-between my-2">
+          <b-card-text class="mb-0">
+            <b-button variant="primary" size="sm" @click="isOptionsVisible = false">
+              <feather-icon icon="ArrowLeftIcon" class="mr-50" />
+              Back
+            </b-button>
+          </b-card-text>
+          <b-card-text class="d-flex align-items-center">
+            <DeadlinesStatusSelect :actions="actionsToShow" :deadlines="deadlines" :is-notice-date-arrived="isNoticeDateArrived" />
+          </b-card-text>
+        </div>
+        <data-tables
+          :fields="deadlinesFieldsToShow"
+          :multi-select="false" :with-actions="false"
+          :items="deadlines"
+          :entity="relation.entity"
+          default-sort-column="contractdeadline_status"
+          :selectable="false"
+          @table-refreshed="getActions"
+        />
+      </b-overlay>
+    </template>
+
+    <template v-else>
+      <b-overlay :show="loadingAction">
+        <data-tables
+          :fields="relation.fields"
+          :items="actions"
+          :selectable="false"
+          :default-sort-column="relation.defaultSortField"
+          :entity="relation.entity"
+          :with-view="false"
+          :can-make-delete-call="false"
+          :on-edit-element="editAction"
+          :can-update-item="canUpdateItem"
+          :can-delete-item="canDeleteItem"
+          @table-refreshed="getActions"
+          @delete-items="deleteAction"
+        />
+        <b-card-text class="text-right">
+          <b-button variant="primary" @click="showOptions">
+            viewed all Options
+          </b-button>
+        </b-card-text>
+        <DeadlinesTools ref="modal" force-title="Edit Action" :is-button-showed="false" />
+      </b-overlay>
+    </template>
+  </div>
+</template>
 <script>
 import DataTables from '@/layouts/components/DataTables.vue'
 import DeadlinesStatusSelect from '@/views/app/Contracts/Relations/Deadlines/DeadlinesStatusSelect.vue'
@@ -158,19 +211,26 @@ export default {
     },
     actionsToShow() {
       const finishedActions = []
-      const _actions = this.actions.filter(action => action.contrataction_status !== 'cancelled')
+      const _actions = this.actions.filter(action => !['cancelled'].includes(action.contractaction_status))
+      console.log('Actionns différent of cancelled', {_actions})
 
       if (_actions.length <= 0) return []
 
-      const activeActions = _actions.map(action => action.contrataction_status === 'active')
+      const activeActions = _actions.filter(action => action.contractaction_status === 'active')
+      console.log('Actives actions', {activeActions})
       if (activeActions.length > 0) {
         const activeActionsIds = activeActions.map(action => action.contractaction_id)
         if (this.deadlines.length > 0) {
-          const activeDeadlines = this.deadlines.map(deadline => deadline.contractdeadline_status === 'active')
+          console.log('There is deadlines', this.deadlines)
+
+          const activeDeadlines = this.deadlines.filter(deadline => deadline.contractdeadline_status === 'active')
+          console.log('There is active deadlines', {activeDeadlines})
+
           activeDeadlines.forEach(deadline => {
             const { contractdeadline_option_position, contractdeadline_options, contractaction_id } = deadline
             if (activeActionsIds.includes(contractaction_id) && (contractdeadline_options - contractdeadline_option_position) <= 0) {
               finishedActions.push(contractaction_id)
+              console.log('Ici if test available = 0', { finishedActions })
             }
           })
         }
@@ -241,7 +301,7 @@ export default {
     async deleteAction(data) {
       console.log('From delete call', { data })
       try {
-        const response = await this.$http.delete(`/contracts/deadline/action/${data[0].contractaction_id}`)
+        await this.$http.delete(`/contracts/deadline/action/${data[0].contractaction_id}`)
         this.$successToast('Action delete successfully !!!')
         await this.getActions(true)
       } catch (error) {
@@ -255,62 +315,8 @@ export default {
     },
     canDeleteItem(item) {
       const { contractaction_status } = item
-      return ['active'].includes(contractaction_status)
+      return ['active', 'cancelled'].includes(contractaction_status)
     },
   },
 }
 </script>
-
-<template>
-  <div class="">
-    <template v-if="isOptionsVisible">
-      <b-overlay :show="loadingDeadline">
-        <div class="d-flex justify-content-between my-2">
-          <b-card-text class="mb-0">
-            <b-button variant="primary" size="sm" @click="isOptionsVisible = false">
-              <feather-icon icon="ArrowLeftIcon" class="mr-50" />
-              Back
-            </b-button>
-          </b-card-text>
-          <b-card-text class="d-flex align-items-center">
-            <DeadlinesStatusSelect :actions="actionsToShow" :deadlines="deadlines" :is-notice-date-arrived="isNoticeDateArrived" />
-          </b-card-text>
-        </div>
-        <data-tables
-          :fields="deadlinesFieldsToShow"
-          :multi-select="false" :with-actions="false"
-          :items="deadlines"
-          :entity="relation.entity"
-          default-sort-column="contractdeadline_status"
-          :selectable="false"
-          @table-refreshed="getActions"
-        />
-      </b-overlay>
-    </template>
-
-    <template v-else>
-      <b-overlay :show="loadingAction">
-        <data-tables
-          :fields="relation.fields"
-          :items="actions"
-          :selectable="false"
-          :default-sort-column="relation.defaultSortField"
-          :entity="relation.entity"
-          :with-view="false"
-          :can-make-delete-call="false"
-          :on-edit-element="editAction"
-          :can-update-item="canUpdateItem"
-          :can-delete-item="canDeleteItem"
-          @table-refreshed="getActions"
-          @delete-items="deleteAction"
-        />
-        <b-card-text class="text-right">
-          <b-button variant="primary" @click="showOptions">
-            viewed all Options
-          </b-button>
-        </b-card-text>
-        <DeadlinesTools ref="modal" force-title="Edit Action" :is-button-showed="false" />
-      </b-overlay>
-    </template>
-  </div>
-</template>
