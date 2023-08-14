@@ -183,43 +183,55 @@
             <b-col v-for="(document,i) in documents" :key="i" cols="6">
               <b-overlay :show="document.loading">
                 <b-card>
-                  <div class="d-flex document-header justify-content-between">
-                    <h5>{{
-                        document.document_name + (document.document_already_stamp ? '(Stamped)' : '') + ' - ' + (document.document_type_name || '')
-                      }}</h5>
-                    <!--                    <b-link variant="danger" target="_blank" :href="getLink(document)">-->
-                    <!--                      <feather-icon icon="EyeIcon"/>-->
-                    <!--                    </b-link>-->
-                    <b-dropdown variant="link-" toggle-class="p-0" right no-caret class="ml-auto document-header-dropdown">
-                      <template v-slot:button-content>
-                        <feather-icon icon="MoreHorizontalIcon"/>
-                      </template>
-                      <b-dropdown-item target="_blank" :href="getLink(document)">
-                        {{ $t('button~view') }}
-                      </b-dropdown-item>
-                      <b-dropdown-item @click="$refs.documentModal.openModal(false, document)">
-                        {{ $t('button~edit') }}
-                      </b-dropdown-item>
-                      <b-dropdown-item v-if="!document.pos_id && !document.contract_id" @click="addToPos(document)">
-                        {{ $t('button~document~addtopos') }}
-                      </b-dropdown-item>
-                      <b-dropdown-item v-if="!document.pos_id && !document.contract_id"
-                                       @click="addToContract(document)">
-                        {{ $t('button~document~addtocontract') }}
-                      </b-dropdown-item>
-                    </b-dropdown>
-                  </div>
-                  <h5 class="font-weight-bolder" style="color: black">
-                    {{
-                      document.document_mime_type + (document.pos_id ? ' (POS)' : (document.contract_id ? ' (Contract)' : ''))
-                    }} </h5>
-                  <div class="d-flex justify-content-between">
-                    <h6>{{ document.document_entry_time }}</h6>
-                    <b-link v-if="canStamp(document)"
-                            :to="{name:'sign-document', params: {id: document.document_id,ticket_id: entity.ticket_id, entity: document}}"
-                            class="ml-2">Stamp
-                    </b-link>
-                  </div>
+                  <template  #header>
+                    <div class=" w-100 d-flex justify-content-between">
+                      <h5
+                        class="document-header"
+                        :title="document.document_name + (document.document_already_stamp ? '(Stamped)' : '') + ' - ' + (document.document_type_name || '')"
+                      >
+                        {{
+                          document.document_name + (document.document_already_stamp ? '(Stamped)' : '') + ' - ' + (document.document_type_name || '')
+                        }}
+                      </h5>
+                      <!--                    <b-link variant="danger" target="_blank" :href="getLink(document)">-->
+                      <!--                      <feather-icon icon="EyeIcon"/>-->
+                      <!--                    </b-link>-->
+                      <b-dropdown variant="link-" toggle-class="p-0" right no-caret class="ml-auto document-header-dropdown">
+                        <template v-slot:button-content>
+                          <feather-icon icon="MoreHorizontalIcon"/>
+                        </template>
+                        <b-dropdown-item target="_blank" :href="getLink(document)">
+                          {{ $t('button~view') }}
+                        </b-dropdown-item>
+                        <b-dropdown-item @click="$refs.documentModal.openModal(false, document)">
+                          {{ $t('button~edit') }}
+                        </b-dropdown-item>
+                        <b-dropdown-item v-if="!document.pos_id && !document.contract_id" @click="addToPos(document)">
+                          {{ $t('button~document~addtopos') }}
+                        </b-dropdown-item>
+                        <b-dropdown-item v-if="!document.pos_id && !document.contract_id"
+                                         @click="addToContract(document)">
+                          {{ $t('button~document~addtocontract') }}
+                        </b-dropdown-item>
+                      </b-dropdown>
+                    </div>
+                  </template>
+                  <b-card-text>
+                    <h5 class="font-weight-bolder" style="color: black">
+                      {{
+                        document.document_mime_type + (document.pos_id ? ' (POS)' : (document.contract_id ? ' (Contract)' : ''))
+                      }}
+                    </h5>
+                  </b-card-text>
+                  <b-card-text>
+                    <div class="w-100 d-flex flex-column justify-content-between">
+                      <h6>{{ document.document_entry_time }}</h6>
+                      <b-link v-if="canStamp(document)"
+                              :to="{name:'sign-document', params: {id: document.document_id,ticket_id: entity.ticket_id, entity: document}}"
+                              class="ml-2">Stamp
+                      </b-link>
+                    </div>
+                  </b-card-text>
                 </b-card>
               </b-overlay>
             </b-col>
@@ -248,6 +260,7 @@ import {
   BCol,
   BRow,
   BCard,
+  BCardText,
   BLink,
 } from 'bootstrap-vue'
 import EditPageMixin from "@/views/app/Generic/EditPageMixin";
@@ -284,6 +297,7 @@ export default {
     BCol,
     BRow,
     BCard,
+    BCardText,
     BLink,
   },
   mixins: [EditPageMixin, TicketMixin],
@@ -489,7 +503,11 @@ export default {
 .mail-table {
   word-break: break-word;
 }
-
+.document-header{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .document-header-dropdown{
   align-self: flex-start;
 }
