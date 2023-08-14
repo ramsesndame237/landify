@@ -450,12 +450,9 @@ export default {
       })).data.data.data
     },
     async fetchDocuments() {
-      const documents = (await this.$api({
-        entity: 'frontend_document_list',
-        action: 'read-rich',
-        per_page: 100000,
-        data: [{ ticket_id: this.entity.ticket_id }],
-      })).data.data.data
+      const documents = (await this.$http.get('/tickets/documents', {
+        params: { ticket_id: this.entity.ticket_id, size: 100_000 },
+      })).data.data
       documents.forEach(document => {
         document.loading = false
       })
@@ -464,23 +461,12 @@ export default {
     async fetchEmail() {
       this.loadingEmail = true
       try {
-        const results = (await this.$api({
-          entity: 'email_ticket_grp',
-          action: 'read-rich',
-          per_page: 100000,
-          data: [{ ticket_id: this.entity.ticket_id }],
-        })).data.data.data
+        const results = (await this.$http.get('/tickets/emails', {
+          params: { ticket_id: this.entity.ticket_id, size: 100_000 },
+        })).data.data
         if (!results.length) return
-        const documents = (await this.$api({
-          entity: 'email_document_grp',
-          action: 'read-rich',
-          perPage: 100000,
-          data: results.map(r => ({ email_id: r.email_id })),
-        })).data.data.data
         this.emails = Object.values(_.groupBy(results, 'email_id')).map(r => {
-          const obj = _.pick(r[0], ['email_id', 'email_from', 'email_received_datetime', 'email_to', 'email_cc', 'email_subject', 'email_body'])
-          obj.documents = documents.filter(d => d.email_id === r[0].email_id)
-          return obj
+          return _.pick(r[0], ['email_id', 'email_from', 'email_received_datetime', 'email_to', 'email_cc', 'email_subject', 'email_body', 'documents'])
         })
       } finally {
         this.loadingEmail = false

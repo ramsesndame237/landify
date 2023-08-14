@@ -1,28 +1,29 @@
 import { getDocumentLink } from '@/libs/utils'
 
-import user from "./tables/user"
-import role from "./tables/role"
-import customergroup from "./tables/customergroup"
-import company from "./tables/company"
-import contactperson from "./tables/contactperson"
-import partnercompany from "./tables/partnercompany"
-import partnergroup from "./tables/partnergroup"
-import address from "./tables/address"
-import city from "./tables/city"
-import pos from "./tables/pos"
-import area from "./tables/area"
-import indexclause from "./tables/indexclause"
-import location from "./tables/location"
-import contract from "./tables/contract"
-import serviceobject from "./tables/serviceobject"
-import criteria from "./tables/criteria"
-import recurringpayment from "./tables/recurringpayment"
-import invoice from "./tables/invoice"
-import invoiceposition from "./tables/invoiceposition"
-import ticket from "./tables/ticket"
-import contradiction from "./tables/contradiction"
-import inspectionresult from "./tables/inspectionresult"
-import contradictionpackage from "./tables/contradictionpackage"
+import user from './tables/user'
+import role from './tables/role'
+import customergroup from './tables/customergroup'
+import company from './tables/company'
+import contactperson from './tables/contactperson'
+import partnercompany from './tables/partnercompany'
+import partnergroup from './tables/partnergroup'
+import address from './tables/address'
+import city from './tables/city'
+import pos from './tables/pos'
+import area from './tables/area'
+import indexclause from './tables/indexclause'
+import location from './tables/location'
+import contract from './tables/contract'
+import serviceobject from './tables/serviceobject'
+import criteria from './tables/criteria'
+import recurringpayment from './tables/recurringpayment'
+import invoice from './tables/invoice'
+import invoiceposition from './tables/invoiceposition'
+import ticket from './tables/ticket'
+import contradiction from './tables/contradiction'
+import inspectionresult from './tables/inspectionresult'
+import contradictionpackage from './tables/contradictionpackage'
+import board from './tables/board'
 
 export default {
   // region Work Package 1
@@ -54,7 +55,7 @@ export default {
             list: 'user',
             listLabel: 'user_email',
             disableOnUpdate: true,
-            multiple: true
+            multiple: true,
           },
           { key: 'user_firstname', hideOnForm: true },
           { key: 'user_lastname', hideOnForm: true },
@@ -676,57 +677,7 @@ export default {
     ],
   },
   ticket,
-  board: {
-    entity: 'frontend_6_1_4',
-    defaultSortField: 'board_id',
-    fields: [
-      {
-        key: 'board_button',
-        sortable: false,
-        type: 'button',
-        hideOnForm: true,
-        btnLabel: 'Kanban',
-        getRoute: board => ({ name: 'table-kanban', params: { id: board.board_id, table: 'board' } }),
-      },
-      { key: 'board_id', auto: true },
-      { key: 'board_name' },
-      { key: 'board_description', type: 'textarea' },
-      { key: 'board_amount_columnx', hideOnForm: true },
-
-    ],
-    relations: [
-      {
-        title: 'headline~columnx~tab',
-        entityForm: 'columnx_board_rel',
-        entity: 'frontend_column_list',
-        primaryKey: 'column_id',
-        view: false,
-        fields: [
-          {
-            key: 'column_id', type: 'list', list: 'columnx', alwaysNew: true, onlyForm: true,
-          },
-          { key: 'column_name', hideOnForm: true },
-          { key: 'column_description', type: 'textarea', hideOnForm: true },
-          { key: 'column_is_qualitygate', type: 'boolean', hideOnForm: true },
-          { key: 'column_has_stamp', type: 'boolean', hideOnForm: true },
-          { key: 'team_name', hideOnForm: true },
-          { key: 'rank_order', type: 'number' },
-        ],
-      },
-      {
-        title: 'headline~documenttype~tab',
-        entityForm: 'documenttype_board_rel',
-        entity: 'documenttype_board_grp',
-        primaryKey: 'documenttype_id',
-        fields: [
-          {
-            key: 'documenttype_id', type: 'list', list: 'documenttype', listLabel: 'documenttype_name',
-          },
-          { key: 'documenttype_name', hideOnForm: true },
-        ],
-      },
-    ],
-  },
+  board,
   columnx: {
     fields: [
       { key: 'column_id', auto: true },
@@ -754,6 +705,7 @@ export default {
     ],
   },
   trackrecord: {
+    customIndex: () => import('@/views/app/TrackRecord/Index.vue'),
     delete: false,
     update: false,
     create: false,
@@ -830,7 +782,22 @@ export default {
     primaryKey: 'translation_id',
     fields: [
       { key: 'translation_id', disableOnUpdate: true },
-      { key: 'translation_lang', composite: true, disableOnUpdate: true },
+      {
+        key: 'translation_lang',
+        composite: true,
+        disableOnUpdate: true,
+        type: 'custom-select',
+        items: () => [
+          {
+            label: 'EN',
+            value: 'EN',
+          },
+          {
+            label: 'DE',
+            value: 'DE',
+          },
+        ],
+      },
       { key: 'translation_text' },
     ],
   },
@@ -839,18 +806,33 @@ export default {
     primaryKey: 'attribute_name',
     fields: [
       { key: 'attribute_name', disableOnUpdate: true },
-      { key: 'attribute_lang', composite: true, disableOnUpdate: true },
+      {
+        key: 'attribute_lang',
+        composite: true,
+        disableOnUpdate: true,
+        type: 'custom-select',
+        items: () => [
+          {
+            label: 'EN',
+            value: 'EN',
+          },
+          {
+            label: 'DE',
+            value: 'DE',
+          },
+        ],
+      },
       { key: 'attribute_nice_name' },
     ],
     default: {
       attribute_nice_name_group: '',
     },
   },
-  'function': {
+  function: {
     fields: [
       { key: 'function_id', auto: true },
       'function_name',
-      'function_description'
-    ]
-  }
+      'function_description',
+    ],
+  },
 }

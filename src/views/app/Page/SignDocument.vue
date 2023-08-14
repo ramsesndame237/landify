@@ -4,19 +4,22 @@
       <div class="d-flex justify-content-between">
         <div class="d-flex align-items-center">
           <b-link class="btn btn-primary btn-sm mr-2"
-                  :to="{name: 'table-view',params: {table: 'ticket', id: $route.params.ticket_id}}">
-            <feather-icon icon="ArrowLeftIcon"/>
+                  :to="{name: 'table-view',params: {table: 'ticket', id: $route.params.ticket_id}}"
+          >
+            <feather-icon icon="ArrowLeftIcon" />
             Back to Ticket
           </b-link>
           <b-button size="sm" variant="primary" class="mx-1"
-                    @click="$refs.modal.openModal(!information,{document_id: entity.document_id, ...information})">
+                    @click="$refs.modal.openModal(!information,{document_id: entity.document_id, ...information})"
+          >
             Edit Stamp
           </b-button>
         </div>
         <div class="d-flex align-items-center">
           <label class="d-inline-block text-sm-left mr-50">Page</label>
           <b-pagination v-model="page" :total-rows="pages" :per-page="1" align="center" class="my-0" first-number
-                        last-number prev-class="prev-item" next-class="next-item"/>
+                        last-number prev-class="prev-item" next-class="next-item"
+          />
         </div>
         <div class="d-flex align-items-center">
 
@@ -26,13 +29,12 @@
           <b-button v-else size="sm" variant="primary" class="mr-1" @click="removeCropper()">
             remove
           </b-button>
+          <b-button size="sm" variant="primary" class="mr-1" @click="previewStamp">
+            Preview Stamp
+          </b-button>
           <b-button size="sm" variant="primary" class="mr-1" @click="savePositions">
             Apply Stamp
           </b-button>
-          <b-link v-if="entity.document_already_stamp" target="_blank" size="sm" variant="primary" class="mr-1"
-                  :href="getStampedDocumentLink(entity)">
-            Document Stamped
-          </b-link>
         </div>
       </div>
       <generic-modal ref="modal" table="document_stamp_information" :definition="document_stamp_information_def"
@@ -45,15 +47,15 @@
       <!--          loading content here...-->
       <!--        </template>-->
       <!--      </pdf>-->
-      <canvas id="canvas" width="500" height="500"/>
+      <canvas id="canvas" width="500" height="500" />
     </div>
   </b-overlay>
 </template>
 
 <script>
-import { getDocumentLink, getSignImageLink, getStampedDocumentLink } from '@/libs/utils'
-import GenericModal from "@/views/app/Generic/modal";
-import { BPagination } from "bootstrap-vue";
+import { getDocumentLink, getSignImageLink, getStampedDocumentLink, getStampedDocumentPreviewLink } from '@/libs/utils'
+import GenericModal from '@/views/app/Generic/modal'
+import { BPagination } from 'bootstrap-vue'
 // import pdf from 'pdfvuer'
 // import 'pdfjs-dist/build/pdf.worker.entry' // not needed since v1.9.1
 
@@ -143,6 +145,17 @@ export default {
     }
   },
   methods: {
+    async  previewStamp() {
+      try {
+        await this.savePositions()
+        const documentStampLink = this.getStampedDocumentPreviewLink(this.entity)
+
+        window.open(documentStampLink, 'document_stamped_preview', 'width=0,height=0,left=-1000,top=-1000')
+      } catch (error) {
+        console.log({ error })
+        this.$errorToast(error.message || 'Unknow Error')
+      }
+    },
     onInformationSaved(entity) {
       this.information = entity
       this.loadImage()
@@ -280,6 +293,7 @@ export default {
     getDocumentLink,
     getSignImageLink,
     getStampedDocumentLink,
+    getStampedDocumentPreviewLink,
     removeCropper() {
       this.jcropActive = false
       this.destroyJcrop()

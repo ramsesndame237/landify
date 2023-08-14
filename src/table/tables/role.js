@@ -71,26 +71,6 @@ export default {
   ],
   relations: [
     {
-      title: 'Access',
-      primaryKey: 'access_id',
-      entity: 'role_access_grp',
-      entityForm: 'role_access_rel',
-      entityView: 'access',
-      update: false,
-      view: false,
-      fields: [
-        {
-          key: 'access_id',
-          label: 'ID',
-          sortable: true,
-          type: 'list',
-          list: 'access',
-          listLabel: 'access_name',
-        },
-        { key: 'access_name', sortable: true, hideOnForm: true },
-      ],
-    },
-    {
       title: 'Users',
       primaryKey: 'user_id',
       entity: 'user_role_grp',
@@ -119,7 +99,7 @@ export default {
       ],
     },
     {
-      title: 'Table Groups',
+      title: 'headline~role~tablegroups',
       primaryKey: 'tablegroup_id',
       entity: 'role_tablegroup_crud_grp',
       entityForm: 'role_tablegroup_crud_rel',
@@ -142,28 +122,28 @@ export default {
         { key: 'tablegroup_description', hideOnForm: true },
       ],
     },
-    {
-      title: 'Tables',
-      primaryKey: 'table_name',
-      composite: ['table_name', 'crud'],
-      entity: 'role_tablename_crud_grp',
-      entityForm: 'role_tablename_crud_rel',
-      entityView: 'tablename',
-      update: false,
-      create: false,
-      delete: false,
-      search: false,
-      // lazy: false,
-      component: () => import('@/views/app/Role/Relation/TableGroupMatrix.vue'),
-      tool: () => import('@/views/app/Role/Relation/MatrixTool.vue'),
-      fields: [
-        {
-          key: 'table_name', sortable: true, type: 'list', list: 'tablename', listLabel: 'table_name',
-        },
-        {
-          key: 'crud', type: 'list', list: 'crud', listLabel: 'crud', composite: true,
-        },
-      ],
-    },
+    // {
+    //   title: 'Tables',
+    //   primaryKey: 'table_name',
+    //   composite: ['table_name', 'crud'],
+    //   entity: 'role_tablename_crud_grp',
+    //   entityForm: 'role_tablename_crud_rel',
+    //   entityView: 'tablename',
+    //   update: false,
+    //   create: false,
+    //   delete: false,
+    //   search: false,
+    //   // lazy: false,
+    //   component: () => import('@/views/app/Role/Relation/TableGroupMatrix.vue'),
+    //   tool: () => import('@/views/app/Role/Relation/MatrixTool.vue'),
+    //   fields: [
+    //     {
+    //       key: 'table_name', sortable: true, type: 'list', list: 'tablename', listLabel: 'table_name',
+    //     },
+    //     {
+    //       key: 'crud', type: 'list', list: 'crud', listLabel: 'crud', composite: true,
+    //     },
+    //   ],
+    // },
   ],
 }

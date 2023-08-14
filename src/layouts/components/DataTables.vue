@@ -1,7 +1,7 @@
 <template>
   <b-table ref="table" sticky-header striped hover responsive :busy.sync="loading" :per-page="perPage"
            :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
-           :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" @row-clicked="onRowClicked">
+           :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" show-empty @row-clicked="onRowClicked">
     <template #cell(__selected)="data">
       <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"
                        :disabled="disabled" @change="onSelect(data.index)"/>
@@ -17,13 +17,21 @@
         {{ data.field.btnLabel }}
       </a>
       <div v-else-if="data.field.type==='html'" v-html="data.value"/>
+      <div v-else-if="data.field.type==='component'" >
+        <component :is="data.field.component" @reload="reload" :row-data="data" :data="data.field.props"/>
+      </div>
       <span v-else>{{ data.value }}</span>
     </template>
     <template #head(__selected)>
       <b-form-checkbox v-if="multiSelect" v-model="selected" :disabled="disabled"/>
       <span v-else/>
     </template>
-
+    <template #empty>
+      {{ $t('message~table~empty') }}
+    </template>
+    <template #emptyfiltered>
+      {{ $t('message~table~emptyFiltered') }}
+    </template>
     <template v-if="withActions" #cell(Actions)="data">
       <div class="text-nowrap">
         <b-button v-if="withView" class=" btn-icon" style="margin-bottom: 3px" variant="flat-success" pill
@@ -31,12 +39,12 @@
           <feather-icon icon="EyeIcon"/>
           <!--        <span>{{ $t('button~view') }}</span>-->
         </b-button>
-        <b-button v-if="withEdit && canUpdate" class="btn-icon" variant="flat-info" style="margin-bottom: 3px" pill
+        <b-button v-if="withEdit && canUpdate && canUpdateItem" :disabled="canUpdateItem(currentItems[data.index])" class="btn-icon" variant="flat-info" style="margin-bottom: 3px" pill
                   @click="onEditElement ? onEditElement(currentItems[data.index]) : $router.push({name: 'table-view', params: {table: entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index], ids: currentItems.map(i => i[primaryKey])}, query: {edit: 'true'}})">
           <feather-icon icon="EditIcon"/>
           <!--        <span>{{ $t('button~edit') }}</span>-->
         </b-button>
-        <b-button v-if="withDelete && canDelete" class="btn-icon" variant="flat-primary" style="margin-bottom: 3px" pill
+        <b-button v-if="withDelete && canDelete && canDeleteItem" :disabled="canDeleteItem(currentItems[data.index])" class="btn-icon" variant="flat-primary" style="margin-bottom: 3px" pill
                   @click="deleteElement(data.index)">
           <feather-icon icon="Trash2Icon"/>
           <!--        <span>{{ $t('button~delete') }}</span>-->
@@ -61,7 +69,7 @@ export default {
     entityList: { type: String },
     entityForm: { type: String, required: false },
     entityView: { type: String, required: false },
-    entityEndpoint: {type: String, required: false}, // if it exist a specific route for retrieving data
+    entityEndpoint: { type: String, required: false }, // if it exist a specific route for retrieving data
     fields: { type: Array, required: true },
     primaryKeyColumn: { type: String },
     blankLink: { type: Boolean, default: false },
@@ -86,6 +94,8 @@ export default {
     items: Array,
     ids: Array,
     initialFilter: Object,
+    canUpdateItem: { type: Function, required: false }, // si un item du tableau est editable
+    canDeleteItem: { type: Function, required: false }, // si un item du tableau est supprimable
   },
   data() {
     return {
@@ -207,7 +217,7 @@ export default {
       }
 
       // retrieve form specific endpoint
-      if (this.entityEndpoint){
+      if (this.entityEndpoint) {
         const filterData = {
           ...this.filterData,
           keyword: filter,
@@ -218,20 +228,20 @@ export default {
         }
 
         if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
-          // create request query string
+        // create request query string
         const requestQuery = Object.keys(filterData).map(key => `${key}=${filterData[key]}`).join('&')
         return this.$http.get(`${this.entityEndpoint}?${requestQuery}`)
           .then(({ data }) => {
             let items
-            if (Array.isArray(data.data)){
+            if (Array.isArray(data.data)) {
               items = this.processData(data)
               // set in cache
               this.$store.commit('table/setTableCache', { key: cacheKey, data })
-            }else if (typeof data.data === 'object' && data.data != null){
+            } else if (typeof data.data === 'object' && data.data != null) {
               items = this.processData(data)
               // set in cache
               this.$store.commit('table/setTableCache', { key: cacheKey, data })
-            }else{
+            } else {
               throw new Error('invalid data')
             }
             return items
@@ -265,7 +275,7 @@ export default {
     },
     processData(data) {
 
-      if(this.entityEndpoint && Array.isArray(data.data)){
+      if (this.entityEndpoint && Array.isArray(data.data)) {
         this.$emit('update:totalRows', data.total)
         data.data.forEach(el => {
           el.__selected = false
@@ -326,11 +336,11 @@ export default {
       }).then(async result => {
         if (!result.value) return
         if (!this.canMakeDeleteCall) {
-          entities.forEach(f => {
-            const index = this.items.findIndex(i => f === i)
-            this.items.splice(index, 1)
-          });
-          this.$emit('delete-items', this.items);
+          this.$emit('delete-items', entities);
+          // entities.forEach(f => {
+          //   const index = this.items.findIndex(i => f === i)
+          //   this.items.splice(index, 1)
+          // });
           this.$refs.table.refresh()
           return
         }
@@ -381,6 +391,7 @@ export default {
     },
     reload() {
       this.$refs.table.refresh()
+      this.$emit('table-refreshed')
     },
     filter(data) {
       this.filterData = { ...data }

@@ -247,7 +247,7 @@ export default {
             }
             return this.$http.post('/document/uploadfiles', formData, { headers: { 'content-type': 'form-data' } })
               .then(({ data }) => {
-                const created = data.data.filter(d => d.created)
+                const created = data.data.filter(d => d.status === 'created')
                 if (created.length > 0) {
                   this.$api({
                     action: 'create',
@@ -296,10 +296,10 @@ export default {
      * Formats an entity based on the form fields: replace ',' with '.' for decimal field
      *
      */
-    formatEntity(entity, formfields){
-      const formatedEntity = {...entity}
+    formatEntity(entity, formfields) {
+      const formatedEntity = { ...entity }
       formfields.forEach(field => {
-        if (field.isDecimal){
+        if (field.isDecimal) {
           formatedEntity[field.key] = parseFloat(entity[field.key].replace(',', '.'))
         }
       })
@@ -446,6 +446,39 @@ export default {
         // .filter(f => f.type !== 'list')
         .findIndex(f => this.entity[f.key] !== this.originalEntity[f.key]) >= 0
     },
+    async loadEntity() {
+      if (!this.tableDefinition) {
+        await this.loadDefinition()
+      }
+      if (this.create) return
+      if (!this.isRelation && this.fetchData) {
+        this.loading = true
+        let entity = null
+        try {
+          if (this.definition.fetch) {
+            entity = await this.definition.fetch(this)
+          } else {
+            entity = await this.$store.dispatch('table/fetchSingleItem', {
+              entity: this.definition.fetchWithEntity ? this.definition.entity : this.table,
+              primaryKey: this.primaryKey,
+              id: this.entityId || this.initialData[this.primaryKey],
+            })
+          }
+        } catch (e) {
+          console.error(e)
+        }
+        if (!entity) {
+          this.$errorToast(`The entity with the id "${this.entityId}" doesnt exists`)
+        } else {
+          this.setData(entity)
+        }
+        this.loading = false
+      }
+      this.originalEntity = { ...this.entity }
+      this.entityLoaded = true
+      this.$emit('loaded')
+      if (!this.definition.fetch && this.fetchData) await this.fillRelations(this.entity, this.originalEntity, this.formFields, this.table, this.primaryKey)
+    },
   },
   computed: {
     formFields() {
@@ -459,34 +492,6 @@ export default {
     },
   },
   async mounted() {
-    if (!this.tableDefinition) {
-      this.loadDefinition()
-    }
-    if (this.create) return
-    if (!this.isRelation && this.fetchData) {
-      this.loading = true
-      let entity = null
-      try {
-        entity = await (this.definition.fetch ? this.definition.fetch(this) :
-          entity = this.$store.dispatch('table/fetchSingleItem', {
-            entity: this.definition.fetchWithEntity ? this.definition.entity : this.table,
-            primaryKey: this.primaryKey,
-            id: this.entityId || this.initialData[this.primaryKey],
-          }))
-      } catch (e) {
-        console.error(e)
-      }
-      if (!entity) {
-        this.$errorToast(`The entity with the id "${this.entityId}" doesnt exists`)
-      } else {
-        this.setData(entity)
-      }
-      this.loading = false
-    }
-    this.originalEntity = { ...this.entity }
-    this.entityLoaded = true
-    this.$emit('loaded')
-    console.log('mounted', this.entity)
-    if (!this.definition.fetch && this.fetchData) await this.fillRelations(this.entity, this.originalEntity, this.formFields, this.table, this.primaryKey)
+    await this.loadEntity()
   },
 }
