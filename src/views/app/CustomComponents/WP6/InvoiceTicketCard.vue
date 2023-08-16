@@ -47,10 +47,6 @@
       <strong class="mr-1">{{$t('attribute.priority_name')}}:</strong>
       <span>{{ ticket.priority_name }}</span>
     </div>
-<div class="d-flex" v-if="advanced">
-      <strong class="mr-1">{{$t('attribute.ticket_planned_treatment_week')}}:</strong>
-      <span>{{ ticket.ticket_planned_treatment_week }}</span>
-    </div>
 
 <!--    <div class="mt-1">-->
 <!--      <b-progress max="100" :value="ticket.ticket_progress" style="margin-bottom: 2px;"></b-progress>-->

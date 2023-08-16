@@ -13,7 +13,7 @@
              :entity="entity" :table-definition="tableDefinition" :field="getField('contract_id')"/>
     </b-col>
     <b-col
-      v-for="(field,i) in ['ticket_name','ticket_description','priority_id','ticket_deadline_yellow','ticket_deadline_red','ticket_planned_treatment_week']"
+      v-for="(field,i) in ['ticket_name','ticket_description','priority_id','ticket_deadline_yellow','ticket_deadline_red']"
       :key="i" cols="12">
       <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField(field)"/>
     </b-col>

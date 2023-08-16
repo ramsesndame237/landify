@@ -107,7 +107,6 @@ export default {
         { key: 'ticket_name', hideOnForm: true },
         { key: 'board_name', hideOnForm: true },
         { key: 'ticket_deadline', hideOnForm: true },
-        { key: 'ticket_planned_treatment_week', hideOnForm: true },
         { key: 'ticket_progress', hideOnForm: true },
       ],
     },

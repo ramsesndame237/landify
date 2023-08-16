@@ -74,7 +74,7 @@ export default {
           value: 4,
         },
       ],
-      filterValue: '',
+      filterValue: 1,
       user: getUserData(),
     }
   },

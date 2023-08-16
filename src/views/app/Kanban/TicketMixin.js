@@ -117,7 +117,6 @@ export default {
               'ticket_id',
               'ticket_last_change_time',
               'ticket_name',
-              'ticket_planned_treatment_week',
               'ticket_closed',
               'ticket_progress',
               'priority_id', 'priority_name', 'priority_color', 'priority_smiley',
