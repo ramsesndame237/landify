@@ -373,14 +373,14 @@ export default {
                 result = data.data
               }
               await this.afterSaveHook(result)
-              this.$successToast(data.noupdate ? 'OK' : data.data.message)
+              this.$successToast(data.noupdate ? 'OK' : this.$t(data.message || data.data.message))
               // navigate to view page or reload table
               return result
             })
             .catch(e => {
               console.log(e)
               const title = e.response?.data.detail || e.data?.errors[0].err
-              this.$errorToast(title)
+              this.$errorToast(this.$t(title))
               return Promise.reject(e)
             })
             .finally(() => this.loading = false)
