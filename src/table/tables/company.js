@@ -1,5 +1,5 @@
 export default {
-  entity: 'frontend_2_1_1',
+  entityEndpoint: 'companies',
   primaryKey: 'company_id',
   formComponent: () => import('@/views/app/CreateComponent/CompanyForm.vue'),
   fields: [
