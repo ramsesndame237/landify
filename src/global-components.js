@@ -24,7 +24,7 @@ import {
   BFormInput,
   BFormCheckboxGroup,
   BDropdown, BDropdownItem,
-  BAvatarGroup, BAvatar, BCardTitle, BCardGroup, BCardText, BTabs, BTab, BBadge,
+  BAvatarGroup, BAvatar, BCardTitle, BCardGroup, BCardText, BTabs, BTab, BBadge, VBToggle,
 } from 'bootstrap-vue'
 import { BCardActions } from '@core/components/b-card-actions';
 

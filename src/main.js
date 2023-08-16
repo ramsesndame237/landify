@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { ToastPlugin, ModalPlugin } from 'bootstrap-vue'
+import { ToastPlugin, ModalPlugin, VBTogglePlugin } from 'bootstrap-vue'
 import VueCompositionAPI from '@vue/composition-api'
 import i18n from '@/libs/i18n'
 
@@ -83,6 +83,7 @@ extend('lower', {
 // BSV Plugin Registration
 Vue.use(ToastPlugin)
 Vue.use(ModalPlugin)
+Vue.use(VBTogglePlugin)
 
 // Composition API
 Vue.use(VueCompositionAPI)
@@ -98,32 +99,35 @@ Vue.config.productionTip = false
 const userEmail = localStorage.getItem('userEmail')
 const env = process.env.VUE_APP_ENV
 
-Sentry.init({
-  Vue,
-  environment: env,
-  release: process.env.npm_package_version,
-  dsn: process.env.VUE_APP_SENTRY_DNS,
-  initialScope: scope => {
-    const userData = JSON.parse(localStorage.getItem('userData'))
-    if (userData) {
-      scope.setUser({ id: userData.user_id, email: userData.user_email })
-    }
-    return scope
-  },
-  integrations: [
-    new Sentry.BrowserTracing({
-      // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
-      tracePropagationTargets: ['localhost', process.env.VUE_APP_BASE_URL],
-      routingInstrumentation: Sentry.vueRouterInstrumentation(router),
-    }),
-    // new Sentry.Replay(),
-  ],
-  // Performance Monitoring
-  tracesSampleRate: env === 'production' ? 0.1 : 1, // Capture 100% of the transactions, reduce in production!
-  // Session Replay
-  // replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
-  // replaysOnErrorSampleRate: 1.0,
-})
+if (process.env.VUE_APP_SENTRY_DNS) {
+  Sentry.init({
+    Vue,
+    environment: env,
+    release: process.env.npm_package_version,
+    dsn: process.env.VUE_APP_SENTRY_DNS,
+    initialScope: scope => {
+      const userData = JSON.parse(localStorage.getItem('userData'))
+      if (userData) {
+        scope.setUser({ id: userData.user_id, email: userData.user_email })
+      }
+      return scope
+    },
+    integrations: [
+      new Sentry.BrowserTracing({
+        // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
+        tracePropagationTargets: ['localhost', process.env.VUE_APP_BASE_URL],
+        routingInstrumentation: Sentry.vueRouterInstrumentation(router),
+      }),
+      // new Sentry.Replay(),
+    ],
+    // Performance Monitoring
+    tracesSampleRate: env === 'production' ? 0.1 : 1, // Capture 100% of the transactions, reduce in production!
+    // Session Replay
+    // replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+    // replaysOnErrorSampleRate: 1.0,
+  })
+}
+
 
 async function init() {
   try {

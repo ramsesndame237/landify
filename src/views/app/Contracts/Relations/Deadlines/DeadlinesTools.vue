@@ -49,8 +49,6 @@ export default {
           visible: entity => !['resiliation', 'special_resiliation'].includes(entity.contractaction_type),
           type: 'number',
           change: (entity, vm) => {
-            console.log('from options field', { entity, vm })
-
             if (entity.contractaction_type === 'automatic_extension') {
               vm.field.disabled = true
               entity.contractaction_options = 99
@@ -116,7 +114,6 @@ export default {
     },
     async submit() {
       const isFormValid = await this.$refs.toolform.validate()
-      console.log({isFormValid})
 
       if (!isFormValid) {
         return
@@ -161,7 +158,7 @@ export default {
     >
       <!--      Form-->
       <validation-observer ref="toolform" v-slot="{ passes }" tag="div" class="my-2">
-        <b-form>
+        <b-form @submit.prevent="passes(submit)">
           <b-row>
             <b-col v-for="(field,index) in fields.filter(field => !field.hideOnForm)" :key="index" cols="12">
               <field :field="field" :disabled="field.disabled" :entity="entity" :inline="true" />
