@@ -13,15 +13,35 @@
             <DeadlinesStatusSelect :actions="actionsToShow" :deadlines="deadlines" :is-notice-date-arrived="isNoticeDateArrived" />
           </b-card-text>
         </div>
-        <data-tables
-          :fields="deadlinesFieldsToShow"
-          :multi-select="false" :with-actions="false"
-          :items="deadlines"
-          :entity="relation.entity"
-          default-sort-column="contractdeadline_status"
-          :selectable="false"
-          @table-refreshed="getActions"
-        />
+        <b-button v-b-toggle.available-options class="my-1" size="sm" variant="info">See Available Options</b-button>
+        <b-collapse id="available-options" >
+          <b-card no-body>
+            <b-card-text >
+              <h3>Available Options</h3>
+              <data-tables
+                :fields="deadlinesFieldsToShow"
+                :multi-select="false" :with-actions="false"
+                :items="unactivatedDeadlines"
+                :entity="relation.entity"
+                default-sort-column="contractdeadline_status"
+                :selectable="false"
+                @table-refreshed="getActions"
+              />
+            </b-card-text>
+          </b-card>
+        </b-collapse>
+        <b-card-text >
+          <h3>Active Options</h3>
+          <data-tables
+            :fields="deadlinesFieldsToShow"
+            :multi-select="false" :with-actions="false"
+            :items="activatedDeadlines"
+            :entity="relation.entity"
+            default-sort-column="contractdeadline_status"
+            :selectable="false"
+            @table-refreshed="getActions"
+          />
+        </b-card-text>
       </b-overlay>
     </template>
 
@@ -212,19 +232,15 @@ export default {
     actionsToShow() {
       const finishedActions = []
       const _actions = this.actions.filter(action => !['cancelled'].includes(action.contractaction_status))
-      console.log('Actionns différent of cancelled', {_actions})
 
       if (_actions.length <= 0) return []
 
       const activeActions = _actions.filter(action => action.contractaction_status === 'active')
-      console.log('Actives actions', {activeActions})
       if (activeActions.length > 0) {
         const activeActionsIds = activeActions.map(action => action.contractaction_id)
         if (this.deadlines.length > 0) {
-          console.log('There is deadlines', this.deadlines)
 
           const activeDeadlines = this.deadlines.filter(deadline => deadline.contractdeadline_status === 'active')
-          console.log('There is active deadlines', {activeDeadlines})
 
           activeDeadlines.forEach(deadline => {
             const { contractdeadline_option_position, contractdeadline_options, contractaction_id } = deadline
@@ -239,6 +255,22 @@ export default {
       return _actions.filter(action => !finishedActions.includes(action.contractaction_id)).map(action => ({
         label: this.types[action.contractaction_type], value: action.contractaction_id, type: action.contractaction_type, data: action,
       }))
+    },
+    activatedDeadlines() {
+      return this.deadlines.filter(deadline => deadline.contractdeadline_status !== 'notdue')
+    },
+    unactivatedDeadlines() {
+      const _deadlines = this.deadlines.filter(deadline => deadline.contractdeadline_status === 'notdue')
+      const cancelledActions = this.actions.filter(action => action.contractaction_status === 'cancelled').map(action => action.contractaction_id)
+      // Ici, lorsque une deadline est lièe à une action qui a étét cancelled, je la mets en rouge
+      const __deadlines = _deadlines.map(deadline => {
+        if (cancelledActions.includes(deadline.contractaction_id)) {
+          return { ...deadline, _rowVariant: 'danger' }
+        }
+        return deadline
+      })
+
+      return __deadlines
     },
   },
   mounted() {
