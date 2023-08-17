@@ -23,7 +23,7 @@
         </b-card-text>
 
         <!-- form -->
-        <validation-observer ref="loginForm" #default="{ invalid }">
+        <validation-observer ref="loginForm">
           <b-form class="auth-login-form mt-2" @submit.prevent>
             <!-- email -->
             <b-form-group>
@@ -169,7 +169,7 @@ export default {
             .post('/auth/login', data)
             .then(async resp => {
               if (resp.data.reset_password) {
-                return this.$router.push({
+                await this.$router.push({
                   name: 'change-password',
                   query: { token: resp.data.token, email: this.userEmail },
                 })
@@ -183,7 +183,7 @@ export default {
               useJwt.setToken(resp.data.user_token)
               useJwt.setRefreshToken(resp.data.user_refresh_token)
               localStorage.setItem('userEmail', resp.data.user.user_email)
-              return useJwt.redirectAfterLogin(this)
+              await useJwt.redirectAfterLogin(this)
             })
             .catch(e => {
               console.error(e)
@@ -193,7 +193,9 @@ export default {
               }
               this.$errorToast(this.$t(title))
             })
-            .finally(() => (this.loading = false))
+            .finally(() => {
+              this.loading = false
+            })
         }
       })
     },

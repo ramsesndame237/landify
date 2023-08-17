@@ -20,7 +20,7 @@
           </b-card-text>
 
           <!-- form -->
-          <validation-observer ref="form" #default="{invalid}">
+          <validation-observer ref="form">
             <b-form class="auth-login-form mt-2" @submit.prevent>
 
               <!-- email -->
@@ -83,7 +83,6 @@ import {
 import VuexyLogo from '@core/layouts/components/Logo.vue'
 import { required, email } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
-import ToastificationContent from "@core/components/toastification/ToastificationContent";
 
 export default {
   components: {
@@ -98,9 +97,7 @@ export default {
     VuexyLogo,
     BCardText,
     BInputGroup,
-    BInputGroupAppend,
     BInputGroupPrepend,
-    BFormCheckbox,
     ValidationProvider,
     ValidationObserver,
   },
@@ -122,7 +119,7 @@ export default {
       this.$refs.form.validate().then(success => {
         if (success) {
           this.loading = true
-          this.$http.post('/auth/reset-password/' + this.userEmail, {})
+          this.$http.post(`/auth/reset-password/${this.userEmail}`, {})
             .then(({ data: { message } }) => {
               this.isSent = true
               this.message = message
@@ -130,7 +127,9 @@ export default {
             .catch(e => {
               this.$errorToast(e.response.data.detail)
             })
-            .finally(() => this.loading = false)
+            .finally(() => {
+              this.loading = false
+            })
         }
       })
     },

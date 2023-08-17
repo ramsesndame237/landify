@@ -12,10 +12,10 @@ function item(tablename, title, route) {
   }
 }
 
-function headerItem(key) {
+function headerItem(itemKey) {
   return {
-    header: `menu~${key}`,
-    action: `menu~${key}`,
+    header: `menu~${itemKey}`,
+    action: `menu~${itemKey}`,
     resource: 'menu',
   }
 }

@@ -8,7 +8,7 @@
         </b-link>
 
         <div class="d-flex justify-content-center">
-          <b-spinner variant="primary" size="lg" v-if="loading"/>
+          <b-spinner v-if="loading" variant="primary" size="lg"/>
           <div v-else>
             {{ message }}
           </div>
@@ -21,50 +21,23 @@
 </template>
 
 <script>
-import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
-  BButton,
-  BForm,
-  BFormInput,
-  BFormGroup,
   BCard,
   BLink,
-  BCardTitle,
-  BCardText,
-  BInputGroup,
-  BInputGroupAppend,
-  BInputGroupPrepend,
-  BFormCheckbox,
   BSpinner,
 } from 'bootstrap-vue'
 import VuexyLogo from '@core/layouts/components/Logo.vue'
-import { required, email } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
-import ToastificationContent from '@core/components/toastification/ToastificationContent'
-import useJwt from "@/auth/jwt/useJwt";
-import { getHomeRouteForLoggedInUser } from "@/auth/utils";
-import { defineRules } from "@/libs/acl/ability";
+import useJwt from '@/auth/jwt/useJwt'
 import BrowserId from 'browser-id'
 
 export default {
   components: {
     // BSV
-    BButton,
-    BForm,
-    BFormInput,
-    BFormGroup,
     BCard,
-    BCardTitle,
     BLink,
     VuexyLogo,
-    BCardText,
-    BInputGroup,
-    BInputGroupAppend,
-    BInputGroupPrepend,
-    BFormCheckbox,
     BSpinner,
-    ValidationProvider,
-    ValidationObserver,
   },
   mixins: [togglePasswordVisibility],
   data() {
@@ -91,7 +64,7 @@ export default {
           localStorage.setItem('userEmail', data.user.user_email)
           useJwt.redirectAfterLogin(this)
         })
-        .catch((e) => {
+        .catch(e => {
           this.message = this.$t(e.response.data.detail)
           this.loading = false
         })
