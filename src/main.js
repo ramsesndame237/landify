@@ -5,7 +5,7 @@ import i18n from '@/libs/i18n'
 
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate'
 import {
-  required, email, max, regex, max_value, required_if, size,
+  required, email, max, regex, max_value as maxValue, required_if, size,
 } from 'vee-validate/dist/rules'
 import vueKanban from 'vue-kanban'
 import * as Sentry from '@sentry/vue'
@@ -54,7 +54,7 @@ extend('max', {
   }),
 })
 extend('max_value', {
-  ...max_value,
+  ...maxValue,
   message: (_, values) => i18n.t('validations.messages.max_value', values),
 })
 extend('date_after', {
@@ -127,7 +127,6 @@ if (process.env.VUE_APP_SENTRY_DNS) {
     // replaysOnErrorSampleRate: 1.0,
   })
 }
-
 
 async function init() {
   try {

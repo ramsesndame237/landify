@@ -42,10 +42,14 @@ export default {
       formatter: val => window.$vue.$t(val ? 'header~board~status~closed' : 'header~board~status~open'),
     },
     { key: 'priority_name', hideOnForm: true },
-    { key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', hideOnIndex: true },
+    {
+      key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', hideOnIndex: true,
+    },
 
     // { key: 'column_name', hideOnForm: true },
-    { key: 'ticket_creation_time', type: 'date', time: true, hideOnForm: true },
+    {
+      key: 'ticket_creation_time', type: 'date', time: true, hideOnForm: true,
+    },
     { key: 'board_name', hideOnForm: true },
     // { key: 'contract_id', hideOnForm: true },
     // { key: 'contract_name', hideOnForm: true },
@@ -89,7 +93,9 @@ export default {
       filter_key: 'pos_id',
       required: false,
     },
-    { key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', required: false },
+    {
+      key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', required: false,
+    },
   ],
   note: 'frontend_0_8_2',
 }

@@ -1,9 +1,7 @@
 import { $themeBreakpoints } from '@themeConfig'
-import { api } from '@/libs/axios'
 import axiosIns from '@/libs/axios'
+
 import moment from 'moment'
-import _ from 'lodash'
-import { defineRules } from "@/libs/acl/ability";
 
 function getUserLanguage() {
   let lang = localStorage.getItem('current-lang')
@@ -64,7 +62,7 @@ export default {
           action: 'read-rich',
           per_page: 1000000,
           lang: state.lang,
-        }
+        },
       })).data.data.data
 
       return {

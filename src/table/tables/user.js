@@ -77,6 +77,7 @@ export default {
       ],
       change: entity => {
         if (entity.usertype_id === 1) return 0
+        return undefined
       },
       visible: entity => entity.usertype_id !== 1,
     },
@@ -98,7 +99,7 @@ export default {
       listLabel: 'partnergroup_name',
       hideOnIndex: true,
       visible: entity => entity.firmengroup_type === 0,
-      filter_key: "partnergroup_is_internal",
+      filter_key: 'partnergroup_is_internal',
       noFetch: true,
     },
     {

@@ -5,7 +5,6 @@ import {
   BFormInput,
 } from 'bootstrap-vue'
 import Field from '@/views/app/Generic/Field.vue'
-import Table from '@/table'
 
 export default {
   components: {
@@ -54,7 +53,7 @@ export default {
     fillRelations(entity, originalEntity, formFields, table, primaryKey) {
       return Promise.all(formFields.filter(field => field.type === 'list' && field.relationEntity !== false)
         .map(async field => {
-          console.log("Fill relations", field, table, primaryKey, entity)
+          console.log('Fill relations', field, table, primaryKey, entity)
           if (entity[field.key] == null) {
             await this.$api({
               entity: field.relationEntity ?? (`${table}_${field.list}_rel`),
@@ -91,7 +90,7 @@ export default {
                   this.$set(component.subOriginalEntity, f.key, this.initialData[f.key])
                 }
               })
-            return this.fillRelations(component.subEntity, component.subOriginalEntity, this.getFormFields(subDefinition), field.list, this.getPrimaryKey(subDefinition))
+            await this.fillRelations(component.subEntity, component.subOriginalEntity, this.getFormFields(subDefinition), field.list, this.getPrimaryKey(subDefinition))
           }
         }))
     },
@@ -139,7 +138,6 @@ export default {
                     data,
                   })
                     .then(resp => {
-                      this.saveTrackRecord(entityName, resp.data.data.data[0][0], oldData, primaryKey, 'create')
                       this.handleRelationErrors(resp, field)
                     })
                 }
@@ -156,8 +154,6 @@ export default {
                       entity: entityName,
                       action: 'create',
                       data,
-                    }).then(resp => {
-                      this.saveTrackRecord(entityName, resp.data.data.data[0][0], oldData, primaryKey, 'update')
                     })
                   }
                   return null
@@ -170,7 +166,7 @@ export default {
     },
     handleRelationErrors(resp, field) {
       if (!resp || !resp.data) return
-      const errors = resp.data.data.errors
+      const { errors } = resp.data.data
       console.log('errors', errors)
       if (typeof errors === 'string') {
         this.$refs.form.setErrors({
@@ -188,7 +184,7 @@ export default {
     },
     createNewEntities(fieldComponents, formFields, entity, originalEntity) {
       if (!Array.isArray(fieldComponents)) return Promise.resolve()
-      console.log("new entities", fieldComponents, formFields)
+      console.log('new entities', fieldComponents, formFields)
       return Promise.all(formFields.filter(field => {
         const component = fieldComponents.find(f => f.field === field)
         return !field.hide && component && (field.type === 'list') && (component.hasNew || field.alwaysNew)
@@ -197,13 +193,13 @@ export default {
           const formField = fieldComponents.find(f => f.field === field)
           const create = formField.hasNew || (field.alwaysNew && originalEntity[field.key] == null)
           const { subDefinition } = formField
-          const data = create ? { ...subDefinition.default, ...formField.subEntity } : {
+          const entityData = create ? { ...subDefinition.default, ...formField.subEntity } : {
             ...formField.subEntity,
             [field.key]: originalEntity[field.key],
           }
           const original = formField.subOriginalEntity
-          console.log(create, data, original, originalEntity)
-          return this.saveEntity(data, original,
+          console.log(create, entityData, original, originalEntity)
+          return this.saveEntity(entityData, original,
             this.getFormFields(subDefinition), formField.getSubFields(), field.list, subDefinition, this.getPrimaryKey(subDefinition), create)
             .then(async data => {
               if (data.noupdate) return data.entity
@@ -226,7 +222,7 @@ export default {
     },
     saveEntity(entity, originalEntity, formFields, fieldComponents, table, definition, primaryKey, create) {
       const action = create ? 'create' : 'update'
-      console.log("Save Entity", table, entity, originalEntity, formFields)
+      console.log('Save Entity', table, entity, originalEntity, formFields)
       return this.createNewEntities(fieldComponents, formFields, entity, originalEntity)
         .then(async () => {
           /// if we updating and we have no changes
@@ -264,15 +260,15 @@ export default {
           // format entity
           const formatedEntity = this.formatEntity(entity, formFields)
 
-          let data = [formatedEntity]
+          let payloadData = [formatedEntity]
           // if create and primary key is multiple
           if (create && formFields.find(f => f.key === primaryKey)?.multiple) {
-            data = entity[primaryKey].map(val => ({ ...entity, [primaryKey]: val }))
+            payloadData = entity[primaryKey].map(val => ({ ...entity, [primaryKey]: val }))
           }
           return this.$api({
             entity: table,
             action,
-            data,
+            data: payloadData,
           })
             .then(async ({ data }) => {
               if (data.data.errors[0]) {
@@ -287,7 +283,6 @@ export default {
                 }
               }
               console.log('data', data)
-              this.saveTrackRecord(table, data.data.data[0][0], originalEntity, primaryKey, action)
               return data
             })
         })
@@ -306,42 +301,8 @@ export default {
 
       return formatedEntity
     },
-    async afterSaveHook(data) {
-    },
-    async saveTrackRecord(table, entity, originalEntity, primaryKey, usecase = 'create') {
-      const TRACKABLES = [
-        'company',
-        'user_partnercompany_rel',
-        'user_company_rel',
-        'customergroup_company_rel',
-        'contactperson_company_rel',
-      ]
-
-      // console.log('track record data', {
-      //   table,
-      //   entity,
-      //   originalEntity,
-      //   usecase,
-      //   primaryKey,
-      // })
-
-      if (TRACKABLES.indexOf(table) >= 0) {
-        this.$api({
-          action: 'create',
-          entity: 'trackrecord',
-          data: [{
-            trackrecord_type: 0,
-            trackrecord_comment: `${table} - ${entity[primaryKey]}`,
-            trackrecord_usecase: usecase,
-          }],
-        })
-          .then(result => {
-            console.log('tr', result)
-          })
-          .catch(error => {
-            throw error
-          })
-      }
+    async afterSaveHook() {
+      // empty function
     },
     getFieldComponents() {
       if (this.definition.fieldComponent) {
@@ -358,7 +319,9 @@ export default {
           this.loading = true
           if (this.definition.submit) {
             return this.definition.submit(this, this.entity, this.create)
-              .finally(() => this.loading = false)
+              .finally(() => {
+                this.loading = false
+              })
           }
           return this.saveEntity(this.entity, this.originalEntity, this.formFields, this.getFieldComponents(), this.table, this.definition, this.primaryKey, this.create)
             .then(async data => {
@@ -383,14 +346,15 @@ export default {
               this.$errorToast(this.$t(title))
               return Promise.reject(e)
             })
-            .finally(() => this.loading = false)
+            .finally(() => {
+              this.loading = false
+            })
         })
     },
     emitSubmit() {
       this.$emit('submit')
     },
     setData(entity) {
-
       this.entity = {
         ...this.entity,
         ...this.definition.default,
