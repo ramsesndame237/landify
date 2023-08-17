@@ -4,8 +4,8 @@ RUN apk add --no-cache git
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-RUN eslint .
 COPY . .
+RUN eslint .
 RUN npm run build
 
 # production stage
