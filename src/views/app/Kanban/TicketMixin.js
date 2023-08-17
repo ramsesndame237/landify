@@ -1,5 +1,6 @@
 import moment from 'moment-business-time'
 import { getUserData } from '@/auth/utils'
+import _ from 'lodash'
 
 export default {
   data() {
@@ -141,12 +142,12 @@ export default {
           this.columns = data.data.data.sort(c => c.rank_order)
           const ids = this.columns.map(c => c.team_id).filter(c => c != null)
           if (ids.length === 0) return
-          return this.$api({
+          this.$api({
             entity: 'user_team_grp',
             action: 'read-rich',
             data: ids.map(id => ({ team_id: id })),
-          }).then(({ data }) => {
-            this.teams = data.data.data
+          }).then(({ data: respData }) => {
+            this.teams = respData.data.data
           })
         })
     },
@@ -154,8 +155,8 @@ export default {
       const now = moment()
       const user = getUserData()
       const deadline = now.clone().addWorkingTime(column.default_deadline_period || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
-      const deadline_yellow = now.clone().addWorkingTime(column.default_deadline_yellow || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
-      const deadline_red = now.clone().addWorkingTime(column.default_deadline_red || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
+      const deadlineYellow = now.clone().addWorkingTime(column.default_deadline_yellow || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
+      const deadlineRed = now.clone().addWorkingTime(column.default_deadline_red || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
       const columnTicket = (await this.$api({
         action: 'create',
         entity: 'ticket_columnx_rel',
@@ -165,8 +166,8 @@ export default {
             column_id: column.column_id,
             ticket_move_time_in: now.format('YYYY-MM-DD HH:mm:ss'),
             ticket_deadline_offset: deadline,
-            ticket_deadline_offset_yellow: deadline_yellow,
-            ticket_deadline_offset_red: deadline_red,
+            ticket_deadline_offset_yellow: deadlineYellow,
+            ticket_deadline_offset_red: deadlineRed,
             user_id: user.user_id,
           },
         ],
