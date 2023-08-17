@@ -18,7 +18,7 @@
       </a>
       <div v-else-if="data.field.type==='html'" v-html="data.value"/>
       <div v-else-if="data.field.type==='component'" >
-        <component :is="data.field.component" @reload="reload" :row-data="data" :data="data.field.props"/>
+        <component :is="data.field.component" :items="items || provider" :row-data="data" :data="data.field.props" @reload="reload" />
       </div>
       <span v-else>{{ data.value }}</span>
     </template>
@@ -96,7 +96,7 @@ export default {
     initialFilter: Object,
     canUpdateItem: { type: Function, required: false }, // si un item du tableau est editable
     canDeleteItem: { type: Function, required: false }, // si un item du tableau est supprimable
-  },
+      },
   data() {
     return {
       loading: false,
