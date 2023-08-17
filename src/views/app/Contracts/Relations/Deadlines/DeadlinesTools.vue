@@ -133,12 +133,17 @@ export default {
           const { currentTab, tabs } = this.$parent
           const tab = tabs[currentTab]
           await tab.$children[0].getActions(true)
+          await tab.$children[0].getDeadlines(true)
         } else {
           const { getActions } = this.$parent.$parent
           await getActions(true)
         }
       } catch (error) {
-        this.$errorToast(error.response.data.detail)
+         if (error.response) {
+          this.$errorToast(error.response.data.detail)
+        } else {
+          this.$errorToast(error.message)
+        }
         console.log({ error })
       } finally {
         this.loading = false

@@ -13,24 +13,27 @@
             <DeadlinesStatusSelect :actions="actionsToShow" :deadlines="deadlines" :is-notice-date-arrived="isNoticeDateArrived" />
           </b-card-text>
         </div>
-        <b-button v-b-toggle.available-options class="my-1" size="sm" variant="info">See Available Options</b-button>
-        <b-collapse id="available-options" >
+        <b-button v-b-toggle.available-options class="my-1" size="sm" variant="info">
+          See Available Options
+        </b-button>
+        <b-collapse id="available-options">
           <b-card no-body>
-            <b-card-text >
+            <b-card-text>
               <h3>Available Options</h3>
               <data-tables
-                :fields="deadlinesFieldsToShow"
+                :fields="unactiveDeadlinesFieldsToShow"
                 :multi-select="false" :with-actions="false"
                 :items="unactivatedDeadlines"
                 :entity="relation.entity"
                 default-sort-column="contractdeadline_status"
                 :selectable="false"
+                :sortable="false"
                 @table-refreshed="getActions"
               />
             </b-card-text>
           </b-card>
         </b-collapse>
-        <b-card-text >
+        <b-card-text>
           <h3>Active Options</h3>
           <data-tables
             :fields="deadlinesFieldsToShow"
@@ -72,11 +75,11 @@
   </div>
 </template>
 <script>
+import moment from 'moment'
+import sortBy from 'lodash/sortBy'
 import DataTables from '@/layouts/components/DataTables.vue'
 import DeadlinesStatusSelect from '@/views/app/Contracts/Relations/Deadlines/DeadlinesStatusSelect.vue'
 import DeadlinesTools from '@/views/app/Contracts/Relations/Deadlines/DeadlinesTools.vue'
-import moment from 'moment'
-import sortBy from 'lodash/sortBy'
 
 export default {
   name: 'DeadlineTable',
@@ -152,9 +155,10 @@ export default {
           },
         },
         {
-          key: 'contractdeadline_creation_time',
+          key: 'contractdeadline_pulled_at',
           hideOnForm: true,
-          label: 'Activation date',
+          label: 'Pulled at',
+          type: 'date',
         },
         { key: 'contractdeadline_notice_period_value', type: 'number', hideOnIndex: true },
         {
@@ -190,6 +194,140 @@ export default {
           label: 'Status',
         },
       ],
+      unactiveDeadlineFields: [
+        {
+          key: 'contractdeadline_type',
+          hideOnForm: true,
+          send: false,
+          label: 'Action name',
+          formatter: value => {
+            const types = {
+              active_option: 'Active Option',
+              automatic_option: 'Automatic Option',
+              automatic_extension: 'Automatic extension',
+              resiliation: 'Resiliation',
+              special_resiliation: 'Special Resiliation',
+            }
+            return types[value]
+          },
+        },
+        {
+          key: 'contractdeadline_id',
+          hideOnForm: true,
+          hideOnIndex: true,
+          auto: true,
+        },
+        {
+          key: 'contractdeadline_acting_by',
+          label: 'Acting by',
+          hideOnIndex: true,
+          type: 'custom-select',
+          items: [
+            { label: 'Mieter', value: 'mieter' },
+            { label: 'Vermieter', value: 'vermieter' },
+          ],
+        },
+        {
+          key: 'contractdeadline_option_position', type: 'number', label: 'N° options', hideOnIndex: true,
+        },
+        {
+          key: 'contractdeadline_options', type: 'number', label: 'To Activate', hideOnIndex: true,
+        },
+        {
+          key: 'contractdeadline_available_options',
+          label: 'Available options',
+          hideOnForm: true,
+          formatter: (value, key, item) => {
+            const { contractdeadline_options, contractdeadline_option_position, contractdeadline_status } = item
+            if (contractdeadline_status === 'resiliated') {
+              return 0
+            }
+            return contractdeadline_options - contractdeadline_option_position
+          },
+        },
+        {
+          key: 'contractaction_extension_value', type: 'number', label: 'Extension value', hideOnIndex: true,
+        },
+        { key: 'contractaction_extension_unit', label: 'Extension unit', hideOnIndex: true },
+        {
+          key: 'contractdeadline_resiliation_date', hideOnForm: true, hideOnIndex: true, label: 'Resiliation date', formatter: value => (!value ? '--' : value),
+        },
+        {
+          key: 'contractaction_extension',
+          label: 'Extension',
+          hideOnForm: true,
+          hideOnIndex: true,
+          send: false,
+          formatter: (value, key, item) => {
+            const { contractdeadline_extension_value, contractdeadline_extension_unit } = item
+            return `${contractdeadline_extension_value}  ${contractdeadline_extension_unit}`
+          },
+        },
+        {
+          key: 'contractdeadline_creation_time',
+          hideOnForm: true,
+          label: 'Activation date',
+          hideOnIndex: true,
+        },
+        { key: 'contractdeadline_notice_period_value', type: 'number', hideOnIndex: true },
+        {
+          key: 'contractdeadline_notice_period_unit',
+          hideOnIndex: true,
+          type: 'custom-select',
+          items: [
+            { label: 'Day', value: 'day' },
+            { label: 'Week', value: 'week' },
+            { label: 'Month', value: 'month' },
+            { label: 'Year', value: 'year' },
+          ],
+        },
+        {
+          key: 'contractdeadline_notice_period',
+          label: 'Notice period',
+          hideOnForm: true,
+          hideOnIndex: true,
+          send: false,
+          formatter: (value, key, item) => {
+            const { contractdeadline_notice_period_value, contractdeadline_notice_period_unit } = item
+            return `${contractdeadline_notice_period_value}  ${contractdeadline_notice_period_unit}`
+          },
+        },
+        {
+          key: 'contractdeadline_expected_from',
+          label: 'Expected from',
+          type: 'date',
+          hideOnForm: true,
+          send: false,
+        },
+        {
+          key: 'contractdeadline_expected_to',
+          label: 'Expected to',
+          type: 'date',
+          hideOnForm: true,
+          send: false,
+        },
+        {
+          key: 'contractdeadline_notice_date',
+          label: 'Notice date',
+          hideOnForm: true,
+          send: false,
+        },
+        {
+          key: 'contractdeadline_status',
+          hideOnForm: true,
+          label: 'Status',
+        },
+        {
+          key: 'action',
+          hideOnForm: true,
+          label: 'Action',
+          type: 'component',
+          component: () => import('@/views/app/Contracts/Relations/Deadlines/UnactiveDeadlinesActions.vue'),
+          props: {
+            getDeadlines: () => this.deadlines,
+          },
+        },
+      ],
       totalRows: 0,
       perPage: 10,
       search: '',
@@ -209,6 +347,9 @@ export default {
   computed: {
     deadlinesFieldsToShow() {
       return this.deadlineFields.filter(field => !field.hideOnIndex)
+    },
+    unactiveDeadlinesFieldsToShow() {
+      return this.unactiveDeadlineFields.filter(field => !field.hideOnIndex)
     },
     actions() {
       return this.$store.getters['table/listCache'](`contract-actions-${this.entityId}`)
@@ -239,7 +380,6 @@ export default {
       if (activeActions.length > 0) {
         const activeActionsIds = activeActions.map(action => action.contractaction_id)
         if (this.deadlines.length > 0) {
-
           const activeDeadlines = this.deadlines.filter(deadline => deadline.contractdeadline_status === 'active')
 
           activeDeadlines.forEach(deadline => {
@@ -260,7 +400,7 @@ export default {
       return this.deadlines.filter(deadline => deadline.contractdeadline_status !== 'notdue')
     },
     unactivatedDeadlines() {
-      const _deadlines = this.deadlines.filter(deadline => deadline.contractdeadline_status === 'notdue')
+      const _deadlines = this.deadlines.filter(deadline => ['notdue', 'deactivate'].includes(deadline.contractdeadline_status))
       const cancelledActions = this.actions.filter(action => action.contractaction_status === 'cancelled').map(action => action.contractaction_id)
       // Ici, lorsque une deadline est lièe à une action qui a étét cancelled, je la mets en rouge
       const __deadlines = _deadlines.map(deadline => {
