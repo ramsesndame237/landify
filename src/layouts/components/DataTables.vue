@@ -55,8 +55,8 @@
 </template>
 
 <script>
-import { BButton, BFormCheckbox, BTable, } from 'bootstrap-vue'
-import { formatDate } from "@/libs/utils";
+import { BButton, BFormCheckbox, BTable } from 'bootstrap-vue'
+import { formatDate } from '@/libs/utils'
 
 export default {
   components: {
@@ -96,7 +96,7 @@ export default {
     initialFilter: Object,
     canUpdateItem: { type: Function, required: false }, // si un item du tableau est editable
     canDeleteItem: { type: Function, required: false }, // si un item du tableau est supprimable
-      },
+  },
   data() {
     return {
       loading: false,
@@ -254,7 +254,6 @@ export default {
           })
       }
 
-
       return this.$api(payload)
         .then(({ data }) => {
           console.log(data)
@@ -274,7 +273,6 @@ export default {
       return `${this.entity}-${JSON.stringify(payload)}`
     },
     processData(data) {
-
       if (this.entityEndpoint && Array.isArray(data.data)) {
         this.$emit('update:totalRows', data.total)
         data.data.forEach(el => {
@@ -284,7 +282,6 @@ export default {
         this.currentItems = data.data
         this.$emit('items', this.currentItems)
         return this.currentItems
-
       }
       this.$emit('update:totalRows', data.data.links.pagination.total)
       data.data.data.forEach(el => {
@@ -336,7 +333,7 @@ export default {
       }).then(async result => {
         if (!result.value) return
         if (!this.canMakeDeleteCall) {
-          this.$emit('delete-items', entities);
+          this.$emit('delete-items', entities)
           // entities.forEach(f => {
           //   const index = this.items.findIndex(i => f === i)
           //   this.items.splice(index, 1)

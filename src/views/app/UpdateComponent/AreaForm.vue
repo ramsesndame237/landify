@@ -22,8 +22,8 @@
 import {
   BRow, BCol,
 } from 'bootstrap-vue'
-import Field from '@/views/app/Generic/Field';
-import FormMixin from "@/views/app/Generic/FormMixin";
+import Field from '@/views/app/Generic/Field'
+import FormMixin from '@/views/app/Generic/FormMixin'
 
 export default {
   name: 'AreaForm',
@@ -40,7 +40,7 @@ export default {
   },
   watch: {
     'entity.location_id': function (val) {
-      console.log("fetch address of", val)
+      console.log('fetch address of', val)
       this.$api({
         entity: 'location_address_rel',
         action: 'read-rich',
@@ -54,8 +54,8 @@ export default {
               action: 'read-rich',
               data: [{ address_id }],
             })
-              .then(({ data }) => {
-                this.address = data.data.data[0] || {}
+              .then(({ data: respData }) => {
+                this.address = respData.data.data[0] || {}
               })
           }
         })

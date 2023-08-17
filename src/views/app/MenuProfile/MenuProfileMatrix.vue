@@ -3,7 +3,7 @@
 import { getUserData, setUserDataConfigsByKey } from '@/auth/utils'
 import TablePagination from '@/layouts/components/TablePagination.vue'
 import { http } from '@/libs/axios'
-import ToastificationContent from "@core/components/toastification/ToastificationContent.vue";
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   name: 'MenuProfileMatrix',
@@ -88,9 +88,7 @@ export default {
         this.rows.map(row => row.menus.push({ name: menu, value: false }))
         this.menuList.push(menu)
       } else {
-        this.rows = this.rows.map(row => {
-          return { ...row, menus: row.menus.filter(_menu => _menu.name !== menu) }
-        })
+        this.rows = this.rows.map(row => ({ ...row, menus: row.menus.filter(_menu => _menu.name !== menu) }))
         this.menuList = this.menuList.filter(_menu => _menu !== menu)
       }
     },
@@ -147,7 +145,6 @@ export default {
             variant: 'success',
           },
         })
-
       } catch (error) {
         console.log({ error })
       } finally {

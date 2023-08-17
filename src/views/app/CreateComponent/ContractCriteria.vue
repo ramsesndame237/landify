@@ -1,21 +1,21 @@
 <template>
   <b-row>
-    <b-col cols="12" v-if="getField('contract_id')">
+    <b-col v-if="getField('contract_id')" cols="12">
       <field :disabled="true" :entity="entity" :table-definition="tableDefinition" :field="getField('contract_id')"/>
     </b-col>
-    <b-col cols="12" v-if="getField('contract_name')">
+    <b-col v-if="getField('contract_name')" cols="12">
       <field :disabled="true" :entity="entity" :table-definition="tableDefinition" :field="getField('contract_name')"/>
     </b-col>
     <b-col cols="12">
       <field ref="criteriaField" :disabled="disabled || (!create)" :entity="entity" :table-definition="tableDefinition"
              :field="getField('criteria_id')"/>
     </b-col>
-    <b-col cols="12" v-if="showValueField">
+    <b-col v-if="showValueField" cols="12">
       <field ref="contractCriteriaValue" :disabled="disabled || (!create)" :entity="entity" :table-definition="tableDefinition"
              :field="getField('contract_criteria_value')"/>
     </b-col>
-    <b-col cols="12" v-show="entity.criteria_id && (!$refs.choice || $refs.choice.listItems.length > 0)">
-      <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('choice_id')" ref="choice"
+    <b-col v-show="entity.criteria_id && (!$refs.choice || $refs.choice.listItems.length > 0)" cols="12">
+      <field ref="choice" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('choice_id')"
              :filter-value="entity.criteria_id"/>
     </b-col>
     <b-col cols="12">
@@ -41,8 +41,8 @@
 import {
   BRow, BCol,
 } from 'bootstrap-vue'
-import Field from '@/views/app/Generic/Field';
-import ToastificationContent from '@core/components/toastification/ToastificationContent';
+import Field from '@/views/app/Generic/Field'
+import ToastificationContent from '@core/components/toastification/ToastificationContent'
 
 export default {
   name: 'ContractCriteriaForm',
@@ -51,7 +51,7 @@ export default {
     BRow,
     BCol,
   },
-  props: ['disabled', 'entity', 'tableDefinition', 'definition','create'],
+  props: ['disabled', 'entity', 'tableDefinition', 'definition', 'create'],
   data() {
     return {
       mounted: false,

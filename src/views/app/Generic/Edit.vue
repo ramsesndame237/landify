@@ -8,11 +8,11 @@
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex align-items-center">
-            <notes v-if="definition.note" class="mr-2" :primary-key="primaryKey" :id="entityId" :note="definition.note"
+            <notes v-if="definition.note" :id="entityId" class="mr-2" :primary-key="primaryKey" :note="definition.note"
                    :note-rel="'note_user_'+table+'_rel'"/>
             <template v-if="view">
               <b-button v-for="(action,i) in definition.actions" :key="i" :disabled="action.loading"
-                        @click="onAction(action)" size="sm" variant="primary" class="mr-1">
+                        size="sm" variant="primary" class="mr-1" @click="onAction(action)">
                 <!--        <feather-icon icon="Trash2Icon" class="mr-50"/>-->
                 <span>{{ action.text }}</span>
               </b-button>
@@ -28,7 +28,7 @@
                 <feather-icon icon="EditIcon" class="mr-50"/>
                 {{ $t('button~edit') }}
               </b-button>
-              <b-button v-else size="sm" variant="info" class="mr-1" @click="update" :disabled="loading">
+              <b-button v-else size="sm" variant="info" class="mr-1" :disabled="loading" @click="update">
                 <b-spinner v-if="loading" small class="mr-50"/>
                 <feather-icon v-else icon="SaveIcon" class="mr-50"/>
                 {{ $t('button~save') }}
@@ -43,10 +43,10 @@
     </b-card>
 
     <b-card class="">
-      <component @loaded="formLoaded=true"
-                 :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
-                 ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="create"
-                 :is-relation="false" :disabled="view" :inline="false" :cols="6" :initial-data="entity"
+      <component :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
+                 ref="form"
+                 :table="table" :definition="definition" :table-definition-key="table" :create="create" :is-relation="false"
+                 :disabled="view" :inline="false" :cols="6" @loaded="formLoaded=true" :initial-data="entity"
                  :entity-id="entityId"/>
     </b-card>
 
@@ -75,14 +75,16 @@
                            @reload-table="reloadRelatedTable"/>
             <template v-if="relation.primaryKey === 'specialright_id'">
               <b-card-text class="text-right">
-                <b-button variant="primary">viewed all Options</b-button>
+                <b-button variant="primary">
+                  viewed all Options
+                </b-button>
               </b-card-text>
             </template>
           </template>
         </b-tab>
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
-            <component v-if="currentTool()" :is="currentTool()"/>
+            <component :is="currentTool()" v-if="currentTool()"/>
             <b-button v-if="currentHasNew() && canCreateCurrent" class="mr-1" size="sm" variant="info"
                       @click="newElement">
               {{ $t('button~new') }}
@@ -91,8 +93,8 @@
                       @click="deleteSelected">
               {{ $t('button~delete') }}
             </b-button>
-            <b-button v-if="currentHasFilter" @click="$emit('filter')" size="sm" variant="primary"
-                      class="mr-1 btn-icon">
+            <b-button v-if="currentHasFilter" size="sm" variant="primary" class="mr-1 btn-icon"
+                      @click="$emit('filter')">
               <feather-icon icon="FilterIcon"/>
             </b-button>
 
@@ -123,10 +125,10 @@ import {
 } from 'bootstrap-vue'
 import DataTables from '@/layouts/components/DataTables'
 import GenericModal from '@/views/app/Generic/modal'
-import EntityForm from "@/views/app/Generic/EntityForm";
-import EditPageMixin from "@/views/app/Generic/EditPageMixin";
-import Notes from "@/views/app/Generic/Notes";
-import InvoiceStats from "@/views/app/CustomComponents/InvoiceStats";
+import EntityForm from '@/views/app/Generic/EntityForm'
+import EditPageMixin from '@/views/app/Generic/EditPageMixin'
+import Notes from '@/views/app/Generic/Notes'
+import InvoiceStats from '@/views/app/CustomComponents/InvoiceStats'
 
 export default {
   components: {
@@ -180,7 +182,7 @@ export default {
     },
   },
   mounted() {
-    this.$watch('$refs.tabs.currentTab', (val) => {
+    this.$watch('$refs.tabs.currentTab', val => {
       if (this.tabIndex !== val) {
         this.tabIndex = val
         this.$router.replace({
@@ -221,7 +223,7 @@ export default {
       if (route) {
         this.$router.push({ name: route.name, params: { id: this.entityId, table: route.params.table } })
       } else {
-        console.log("Ici tabs", {tabs})
+        console.log('Ici tabs', { tabs })
         const def = this.definition.relations[tabs.currentTab]
         tabs.tabs[tabs.currentTab].$children[1].openModal(true, { [this.primaryKey]: this.entityId }, `headline~${def.entityForm || def.title}~new`)
       }

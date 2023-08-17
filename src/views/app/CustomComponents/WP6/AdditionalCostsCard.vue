@@ -3,28 +3,30 @@
     <b-card>
       <div class="d-flex justify-content-between align-items-center mb-2">
         <b-col class="col-10 d-flex align-content-center">
-          <div class="bigdot"></div>
-          <h5 class="header-text">{{ title }}</h5>
+          <div class="bigdot"/>
+          <h5 class="header-text">
+            {{ title }}
+          </h5>
         </b-col>
         <b-col class="col-2 d-flex justify-content-center align-items-center">
           <div class="dropdown-btn" @click="showDropdown">
             <p class="h1">
-              <b-icon-three-dots></b-icon-three-dots>
+              <b-icon-three-dots/>
             </p>
           </div>
           <b-dropdown
-              no-caret
-              right
-              text=""
-              variant="transparent"
-              class="chart-dropdown"
-              toggle-class="p-50"
-              size="sm"
-              ref="dropdown"
+            ref="dropdown"
+            no-caret
+            right
+            text=""
+            variant="transparent"
+            class="chart-dropdown"
+            toggle-class="p-50"
+            size="sm"
           >
             <b-dropdown-item
-                v-for="option in options"
-                :key="option"
+              v-for="option in options"
+              :key="option"
             >
               {{ option }}
             </b-dropdown-item>
@@ -45,10 +47,10 @@
               </div>
             </div>
             <b-progress
-                :value="percent"
-                max="100"
-                height="6px"
-            ></b-progress>
+              :value="percent"
+              max="100"
+              height="6px"
+            />
             <div style="display: flex; justify-content: space-between; margin-top: 8px">
               <h6>{{ hours }} Stunden</h6>
               <h6>{{ percent }}%</h6>
@@ -71,11 +73,11 @@ import {
   BDropdownItem,
   BIconThreeDots,
   BIconCalendarWeek,
-  BIconClockFill
+  BIconClockFill,
 } from 'bootstrap-vue'
+
 export default {
   name: 'AdditionalCostsCard',
-  props: ['color', 'title', 'percent', 'cols', 'hours'],
   components: {
     BCard,
     BCardBody,
@@ -88,6 +90,7 @@ export default {
     BIconCalendarWeek,
     BIconClockFill,
   },
+  props: ['color', 'title', 'percent', 'cols', 'hours'],
   data() {
     return {
       options: ['opt 1', 'opt 2', 'opt 3', 'opt 4'],

@@ -90,7 +90,7 @@ import Step6 from '@/views/app/CreateComponent/ContractForm/Step6.vue'
 import Step7 from '@/views/app/CreateComponent/ContractForm/Step7.vue'
 
 export default {
-  name: "contractForm",
+  name: 'ContractForm',
   components: {
     Step1,
     Step2,
@@ -109,7 +109,7 @@ export default {
   },
   data() {
     return {
-      table: "contract",
+      table: 'contract',
       current_step: 1,
       max_steps: 7,
       completed_step: 0,
@@ -174,31 +174,31 @@ export default {
       try {
         if (this.current_step === 1) {
           this.context.contract_main_infos = await this.$refs.step1.validate()
-          console.log('step 1 passed ', this.context);
+          console.log('step 1 passed ', this.context)
         } else if (this.current_step === 2) {
           await this.$refs.step2.submit()
           this.context.areaUnitUsage = this.$refs.step2.areaUnitUsage
-          console.log('step 2 passed ', this.context);
+          console.log('step 2 passed ', this.context)
         } else if (this.current_step === 3) {
           await this.$refs.step3.submit()
           this.context.recurringPayment = this.$refs.step3.recurringPayment
-          console.log('step 3 passed ', this.context);
+          console.log('step 3 passed ', this.context)
         } else if (this.current_step === 4) {
           await this.$refs.step4.submit()
           this.context.serviceObject = this.$refs.step4.serviceObject
-          console.log('step 4 passed ', this.context);
+          console.log('step 4 passed ', this.context)
         } else if (this.current_step === 5) {
           await this.$refs.step5.submit()
           this.context.costTypes = this.$refs.step5.costTypes
-          console.log('step 5 passed ', this.context);
+          console.log('step 5 passed ', this.context)
         } else if (this.current_step === 6) {
           await this.$refs.step6.submit()
           this.context.specialRigths = this.$refs.step6.specialRigths
-          console.log('step 6 passed ', this.context);
+          console.log('step 6 passed ', this.context)
         } else if (this.current_step === 7) {
           await this.$refs.step7.submit()
           this.context.criteria = this.$refs.step6.criteria
-          console.log('step 7 passed ', this.context);
+          console.log('step 7 passed ', this.context)
         }
       } catch (e) {
         hasError = true
@@ -249,13 +249,13 @@ export default {
       })
       this.$store.commit('table/setDefinition', {
         data,
-        table: this.table
+        table: this.table,
       })
     },
-    submit(){
-      console.log(this.context);
-      return Promise.reject(new Error("bar"))
-    }
+    submit() {
+      console.log(this.context)
+      return Promise.reject(new Error('bar'))
+    },
   },
 
 }

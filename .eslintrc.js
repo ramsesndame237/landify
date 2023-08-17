@@ -27,4 +27,8 @@ module.exports = {
     'radix': 'off',
     'func-names': 'off'
   },
+  globals: {
+    'Jcrop':true,
+    'pdfJsLib':true,
+  }
 }

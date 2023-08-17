@@ -4,8 +4,8 @@
       {{ $t('headline~new_business~title~area') }}
     </b-col>
     <b-col cols="12" md="6">
-      <entity-form table="area" :definition="definition" table-definition-key="area" create :initial-data="{}" cols="12"
-                   :disabled="loading" ref="form"/>
+      <entity-form ref="form" table="area" :definition="definition" table-definition-key="area" create :initial-data="{}"
+                   cols="12" :disabled="loading"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
           <b-spinner v-if="loading" small/>
@@ -22,16 +22,19 @@
 </template>
 
 <script>
-import Field from "@/views/app/Generic/Field";
+import Field from '@/views/app/Generic/Field'
 import EntityForm from '@/views/app/Generic/EntityForm'
 import Table from '@/table'
 import {
-  BRow, BCol, BButton, BSpinner
+  BRow, BCol, BButton, BSpinner,
 } from 'bootstrap-vue'
 import DataTables from '@/layouts/components/DataTables'
 
 export default {
   name: 'Step4',
+  components: {
+    DataTables, Field, BRow, BCol, EntityForm, BButton, BSpinner,
+  },
   props: ['context', 'disabled'],
   data() {
     const definition = JSON.parse(JSON.stringify(Table.area))
@@ -50,7 +53,6 @@ export default {
       areas: this.context.areas || [],
     }
   },
-  components: { DataTables, Field, BRow, BCol, EntityForm, BButton, BSpinner },
   mounted() {
     this.$refs.form.loadDefinition()
   },

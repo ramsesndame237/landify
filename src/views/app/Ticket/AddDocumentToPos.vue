@@ -11,11 +11,10 @@
 </template>
 
 <script>
-import Field from "@/views/app/Generic/Field";
-import moment from "moment-business-time";
+import Field from '@/views/app/Generic/Field'
 
 export default {
-  name: "AddDocumentToPos",
+  name: 'AddDocumentToPos',
   components: { Field },
   data() {
     return {

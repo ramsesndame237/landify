@@ -76,13 +76,13 @@ export default ({
       try {
         const response = await this.$http.put(`/contracts/deadlines/active/${contractdeadline_id}`)
 
-        const deadlineTableComponent = this.$parent.$parent.$parent.$parent.$parent.$parent.$parent;
-        const contractFormComponent = this.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$refs.form;
+        const deadlineTableComponent = this.$parent.$parent.$parent.$parent.$parent.$parent.$parent
+        const contractFormComponent = this.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$refs.form
         await deadlineTableComponent.getDeadlines(true)
         await deadlineTableComponent.getActions(true)
         await contractFormComponent.loadEntity(true)
       } catch (error) {
-        console.log({ error });
+        console.log({ error })
       }
     },
     deactiveDeadline() {

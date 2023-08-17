@@ -9,7 +9,9 @@
         </b-link>
 
         <template v-if="isSent">
-          <b-card-text class="text-center">{{ message }}</b-card-text>
+          <b-card-text class="text-center">
+            {{ message }}
+          </b-card-text>
         </template>
         <template v-else>
           <b-card-title class="mb-1 font-weight-bolder">
@@ -76,9 +78,7 @@ import {
   BCardTitle,
   BCardText,
   BInputGroup,
-  BInputGroupAppend,
   BInputGroupPrepend,
-  BFormCheckbox,
 } from 'bootstrap-vue'
 import VuexyLogo from '@core/layouts/components/Logo.vue'
 import { required, email } from '@validations'

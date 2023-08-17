@@ -139,7 +139,7 @@ export default {
           await getActions(true)
         }
       } catch (error) {
-         if (error.response) {
+        if (error.response) {
           this.$errorToast(error.response.data.detail)
         } else {
           this.$errorToast(error.message)

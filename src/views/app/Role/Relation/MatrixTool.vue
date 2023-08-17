@@ -1,5 +1,7 @@
 <template>
-  <b-button variant="primary" @click="$root.$emit('update-matrix')">Save</b-button>
+  <b-button variant="primary" @click="$root.$emit('update-matrix')">
+    Save
+  </b-button>
 </template>
 
 <script>

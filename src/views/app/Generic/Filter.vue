@@ -29,12 +29,14 @@
 
 import {
   BButton, BCol, BForm, BRow,
-} from "bootstrap-vue";
-import Field from "@/views/app/Generic/Field";
+} from 'bootstrap-vue'
+import Field from '@/views/app/Generic/Field'
 
 export default {
   name: 'GenericFilter',
-  components: { Field, BButton, BCol, BForm, BRow },
+  components: {
+    Field, BButton, BCol, BForm, BRow,
+  },
   props: {
     table: String,
     definition: Object,
@@ -50,7 +52,7 @@ export default {
   computed: {
     isVertical() {
       return this.vertical || this.definition.filter_vertical
-    }
+    },
   },
   methods: {
     openModal() {

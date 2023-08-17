@@ -196,7 +196,7 @@ export default {
               useJwt.setToken(resp.data.user_token)
               useJwt.setRefreshToken(resp.data.user_refresh_token)
               localStorage.setItem('userEmail', resp.data.user.user_email)
-              return useJwt.redirectAfterLogin(this)
+              await useJwt.redirectAfterLogin(this)
             })
             .catch(e => {
               let title
@@ -205,7 +205,9 @@ export default {
               }
               this.$errorToast(this.$t(title))
             })
-            .finally(() => (this.loading = false))
+            .finally(() => {
+              this.loading = false
+            })
         }
       })
     },

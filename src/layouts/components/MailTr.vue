@@ -4,10 +4,18 @@
       <feather-icon v-if="item.documents && item.documents.length>0" v-b-toggle="'collapse-'+item.email_id"
                     :icon="item.open?'ChevronDownIcon':'ChevronRightIcon'" size="24"/>
     </b-td>
-    <b-td @click="toggle">{{ child ? '' : item.email_id }}</b-td>
-    <b-td @click="toggle">{{ child ? '' : formatDate(item.email_received_datetime,true) }}</b-td>
-    <b-td @click="toggle">{{ child ? '' : item.email_from }}</b-td>
-    <b-td @click="toggle">{{ child ? '' : item.email_to }}</b-td>
+    <b-td @click="toggle">
+      {{ child ? '' : item.email_id }}
+    </b-td>
+    <b-td @click="toggle">
+      {{ child ? '' : formatDate(item.email_received_datetime,true) }}
+    </b-td>
+    <b-td @click="toggle">
+      {{ child ? '' : item.email_from }}
+    </b-td>
+    <b-td @click="toggle">
+      {{ child ? '' : item.email_to }}
+    </b-td>
     <b-td>
       {{ child ? '' : item.email_subject }}
       <feather-icon v-if="!child" class="text-success" icon="EyeIcon" size="24" @click="$emit('show-content')"/>
@@ -76,19 +84,19 @@
 </template>
 
 <script>
-import Field from "@/views/app/Generic/Field";
-import { getDocumentLink, formatDate } from "@/libs/utils";
+import Field from '@/views/app/Generic/Field'
+import { getDocumentLink, formatDate } from '@/libs/utils'
 import { VBToggle } from 'bootstrap-vue'
 
 export default {
   name: 'MailTr',
   components: { Field },
+  directives: {
+    'b-toggle': VBToggle,
+  },
   props: {
     item: {},
     child: Boolean,
-  },
-  directives: {
-    'b-toggle': VBToggle,
   },
   data() {
     return {
@@ -146,9 +154,9 @@ export default {
       return this.item.document_id ? !!this.item.ticket_created : !!this.item.ticket_id_created
     },
     visible() {
-      return this.item.document_id ?
-        (!this.item.classification_dismissed && !this.item.ticket_created) :
-        (this.item.documents.every(d => d.classification_dismissed) && (!this.item.email_dismissed && !this.item.ticket_id_created))
+      return this.item.document_id
+        ? (!this.item.classification_dismissed && !this.item.ticket_created)
+        : (this.item.documents.every(d => d.classification_dismissed) && (!this.item.email_dismissed && !this.item.ticket_id_created))
     },
   },
   watch: {
@@ -171,7 +179,7 @@ export default {
     getDocumentLink,
     toggle() {
       if (!this.item.documents || !this.item.documents.length) return
-      const el = document.getElementById('collapse' + this.item.email_id)
+      const el = document.getElementById(`collapse${this.item.email_id}`)
       // if (this.open) el.style.height = 0
       // else el.style.height = 'auto'
       this.item.open = !this.item.open
@@ -180,7 +188,7 @@ export default {
     onTicketIdChange() {
       const val = this.item.ticket_id
       if (val) {
-        const list = this.$store.state.table.listCache['frontend_6_1_6_overview']
+        const list = this.$store.state.table.listCache.frontend_6_1_6_overview
         const el = list.find(e => e.ticket_id === val)
         console.log('el', el.pos_name)
         if (el) {
@@ -191,36 +199,36 @@ export default {
       }
     },
     getTicketName() {
-      const list = this.$store.state.table.listCache['frontend_6_1_6_overview']
+      const list = this.$store.state.table.listCache.frontend_6_1_6_overview
       const el = list.find(e => e.ticket_id === this.item.ticket_id_created)
       return el?.ticket_name
     },
     getPosName() {
-      const list = this.$store.state.table.listCache['frontend_2_1_3_8']
+      const list = this.$store.state.table.listCache.frontend_2_1_3_8
       const el = list.find(e => e.pos_id === this.item.pos_id)
       return el?.pos_name
     },
     getContractName() {
-      const list = this.$store.state.table.listCache['frontend_4_2_1_contract_selector']
+      const list = this.$store.state.table.listCache.frontend_4_2_1_contract_selector
       const el = list.find(e => e.contract_id === this.item.contract_id)
       return el?.contract_name
     },
     getBoardName() {
-      const list = this.$store.state.table.listCache['board']
+      const list = this.$store.state.table.listCache.board
       const el = list.find(e => e.board_id === this.item.board_id)
       return el?.board_name
     },
     getDocumentTypeName() {
-      const list = this.$store.state.table.listCache['documenttype']
+      const list = this.$store.state.table.listCache.documenttype
       const el = list.find(e => e.documenttype_id === this.item.documenttype_id)
       return el?.documenttype_name
     },
     onDocumentTypeChange() {
-      console.log("documenttype change")
+      console.log('documenttype change')
       if (this.item.ticket_id) return
       const val = this.item.documenttype_id
       if (val) {
-        const list = this.$store.state.table.listCache['board']
+        const list = this.$store.state.table.listCache.board
         if (!list) return
         const el = list.find(e => e.documenttype_id === val)
         if (el) {

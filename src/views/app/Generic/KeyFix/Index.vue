@@ -4,8 +4,8 @@
 
 <script>
 import Table from '@/table'
+import table from '@/table'
 import Index from '../index'
-import table from "@/table";
 
 export default {
   name: 'IndexPage',

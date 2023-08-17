@@ -9,7 +9,7 @@
           <span class="ml-2">Stock space</span>
         </div>
         <div class="" style="color: #D51130; background-color: rgba(213, 17, 48, .1); padding: 3px 7px; border-radius: 3px">
-          <b-icon-clock-fill></b-icon-clock-fill>
+          <b-icon-clock-fill/>
           <span class="ml-1">14 Tage übrig</span>
         </div>
       </div>
@@ -42,7 +42,9 @@
 
 <script>
 
-import { BAvatarGroup, BAvatar, BButton, BIconClockFill } from 'bootstrap-vue'
+import {
+  BAvatarGroup, BAvatar, BButton, BIconClockFill,
+} from 'bootstrap-vue'
 
 export default {
   name: 'SimpleBlock',
@@ -50,7 +52,7 @@ export default {
     BAvatar,
     BAvatarGroup,
     BButton,
-    BIconClockFill
+    BIconClockFill,
   },
   props: {
     title: String,

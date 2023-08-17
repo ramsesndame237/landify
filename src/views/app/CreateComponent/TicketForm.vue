@@ -24,7 +24,7 @@
 import {
   BRow, BCol,
 } from 'bootstrap-vue'
-import Field from '@/views/app/Generic/Field';
+import Field from '@/views/app/Generic/Field'
 
 export default {
   name: 'ContactPersonForm',

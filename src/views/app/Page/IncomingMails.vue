@@ -4,7 +4,9 @@
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"
                         :total-rows="totalRows">
         <!--        <div class="d-flex justify-content-end flex-wrap" style="padding: 10px">-->
-        <b-button variant="primary" @click="$refs.table.refresh()">Refresh</b-button>
+        <b-button variant="primary" @click="$refs.table.refresh()">
+          Refresh
+        </b-button>
         <div class="mx-1">
           <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
         </div>
@@ -40,15 +42,17 @@
 </template>
 
 <script>
-import TablePagination from "@/layouts/components/TablePagination";
-import GenericFilter from "@/views/app/Generic/Filter";
-import MailTable from "@/layouts/components/MailTable";
-import Field from "@/views/app/Generic/Field";
-import SummaryCard from "@/views/app/CustomComponents/SummaryCard";
+import TablePagination from '@/layouts/components/TablePagination'
+import GenericFilter from '@/views/app/Generic/Filter'
+import MailTable from '@/layouts/components/MailTable'
+import Field from '@/views/app/Generic/Field'
+import SummaryCard from '@/views/app/CustomComponents/SummaryCard'
 
 export default {
   name: 'IncomingMails',
-  components: { SummaryCard, Field, MailTable, GenericFilter, TablePagination },
+  components: {
+    SummaryCard, Field, MailTable, GenericFilter, TablePagination,
+  },
   data() {
     const payload = this.$store.getters['table/tableData'](this.$route.params.table)
     console.log('initial payload', payload)
@@ -63,7 +67,9 @@ export default {
       table: this.$route.params.table,
       ids: this.$route.params.ids,
       definition: {
-        filters: [{ key: 'ticket_id', type: 'list', list: 'ticket', listLabel: 'ticket_name' }],
+        filters: [{
+          key: 'ticket_id', type: 'list', list: 'ticket', listLabel: 'ticket_name',
+        }],
       },
       filterValue: 0,
       filterOptions: [

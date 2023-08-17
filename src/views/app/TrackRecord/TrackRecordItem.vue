@@ -5,9 +5,17 @@
         <b-avatar :text="avatarPlaceholder({user_firstname: 'ivan', user_lastname: 'franck'})" />
         <div class="track_record-details">
           <p class="text">
-            Admin in this product updated <b-badge variant="light" class="text-dark">Name</b-badge>  from <b-badge variant="light" class="text-dark">Apple IPhone X</b-badge> to <b-badge variant="light" class="text-dark">Apple Iphone XR</b-badge>
+            Admin in this product updated <b-badge variant="light" class="text-dark">
+              Name
+            </b-badge>  from <b-badge variant="light" class="text-dark">
+              Apple IPhone X
+            </b-badge> to <b-badge variant="light" class="text-dark">
+              Apple Iphone XR
+            </b-badge>
           </p>
-          <p class="time">11:34</p>
+          <p class="time">
+            11:34
+          </p>
         </div>
       </b-card-header>
 
@@ -16,18 +24,18 @@
 </template>
 
 <script>
-import {BCardHeader, BBadge} from "bootstrap-vue"
+import { BCardHeader, BBadge } from 'bootstrap-vue'
 
 export default {
   components: {
     BCardHeader,
-    BBadge
+    BBadge,
   },
   methods: {
-    avatarPlaceholder(user){
+    avatarPlaceholder(user) {
       return user?.user_firstname.charAt(0)
      + user?.user_lastname.charAt(0)
-    }
+    },
   },
 
 }

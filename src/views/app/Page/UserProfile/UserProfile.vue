@@ -13,7 +13,7 @@
                 <feather-icon icon="EditIcon" class="mr-50"/>
                 {{ $t('button~edit') }}
               </b-button>
-              <b-button v-else size="sm" variant="info" class="mr-1" @click="update" :disabled="loading">
+              <b-button v-else size="sm" variant="info" class="mr-1" :disabled="loading" @click="update">
                 <b-spinner v-if="loading" small class="mr-50"/>
                 <feather-icon v-else icon="SaveIcon" class="mr-50"/>
                 {{ $t('button~save') }}
@@ -27,32 +27,31 @@
       </div>
     </b-card>
     <validation-observer ref="form" v-slot="{passes}">
-      <b-form @submit.prevent="passes(save)" autocomplete="off">
+      <b-form autocomplete="off" @submit.prevent="passes(save)">
         <b-overlay :show="loading">
           <b-card>
-                <b-row>
-                  <b-col
-                    v-for="(field, index) in formFields.filter(f => f.key.includes('address') || f.key.includes('email') || f.key.includes('name'))"
-                    :key="index" cols="12"
-                    md="6"
-                  >
-                    <field
-                      ref="fields"
-                      :disabled="view || field.disabled || field.disableOnUpdate"
-                      :field="field"
-                      :entity="entity"
-                      :inline="false"
-                      table="user"
-                      :table-definition="tableDefinition"
-                    />
-                  </b-col>
-                </b-row>
+            <b-row>
+              <b-col
+                v-for="(field, index) in formFields.filter(f => f.key.includes('address') || f.key.includes('email') || f.key.includes('name'))"
+                :key="index" cols="12"
+                md="6"
+              >
+                <field
+                  ref="fields"
+                  :disabled="view || field.disabled || field.disableOnUpdate"
+                  :field="field"
+                  :entity="entity"
+                  :inline="false"
+                  table="user"
+                  :table-definition="tableDefinition"
+                />
+              </b-col>
+            </b-row>
           </b-card>
         </b-overlay>
       </b-form>
     </validation-observer>
   </div>
-
 
 </template>
 
@@ -61,16 +60,15 @@ import FormMixin from '@/views/app/Generic/FormMixin'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
-  name: "UserProfileForm",
+  name: 'UserProfileForm',
   mixins: [FormMixin],
 
   props: ['isView'],
-  data(){
+  data() {
     return {
-      view: this.isView
+      view: this.isView,
     }
   },
-
 
   methods: {
     cancel() {
@@ -81,12 +79,10 @@ export default {
       this.view = false
     },
 
-    async update(){
+    async update() {
       const validated = await this.$refs.form.validate()
-      if (validated)
-        this.save()
-      else
-        return
+      if (validated) this.save()
+      else return
     },
     async save() {
       this.loading = true
@@ -99,20 +95,20 @@ export default {
       data.address = structuredClone(addressField.subEntity)
       const cityField = addressField.getSubFields().find(f => f.field.key === 'city_id')
       data.address.city = structuredClone(cityField.subEntity)
-      console.log('data: ', data);
+      console.log('data: ', data)
 
-      await this.$http.put("/users/update/profile", data)
+      await this.$http.put('/users/update/profile', data)
         .then(() => {
           this.$toast({
             component: ToastificationContent,
             props: {
               title: 'Profile updated',
               icon: 'BellIcon',
-              variant: 'success'
+              variant: 'success',
             },
           })
         })
-        .catch(()=>{
+        .catch(() => {
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -121,11 +117,11 @@ export default {
             },
           })
         })
-        .finally(()=>{
+        .finally(() => {
           this.loading = false
         })
     },
-  }
+  },
 
 }
 </script>

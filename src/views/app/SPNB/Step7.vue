@@ -4,8 +4,8 @@
       {{ $t('headline~new_business~title~contract') }}
     </b-col>
     <b-col cols="12" md="6">
-      <entity-form table="contract_area_unit_usagetype_rel" :definition="definition"
-                   table-definition-key="contract_area_unit_usagetype_rel" create :initial-data="initialData" ref="form"
+      <entity-form ref="form" table="contract_area_unit_usagetype_rel"
+                   :definition="definition" table-definition-key="contract_area_unit_usagetype_rel" create :initial-data="initialData"
                    cols="12" :disabled="loading"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
@@ -32,14 +32,18 @@ import entityForm from '@/views/app/Generic/EntityForm'
 
 export default {
   name: 'Step7',
-  components: { BRow, BCol, DataTables, entityForm, BButton, BSpinner },
+  components: {
+    BRow, BCol, DataTables, entityForm, BButton, BSpinner,
+  },
   props: ['context', 'disabled'],
   data() {
     const definition = JSON.parse(JSON.stringify(Table.area.relations.find(x => x.primaryKey === 'contract_id')))
     definition.fields = [
       definition.fields[0],
       { key: 'contract_name', disabled: true },
-      { key: 'area_id', list: 'frontend_3_2_1', listLabel: 'area_name', type: 'list', ids: this.context.areas },
+      {
+        key: 'area_id', list: 'frontend_3_2_1', listLabel: 'area_name', type: 'list', ids: this.context.areas,
+      },
       {
         key: 'pos_name',
         disabled: true,
