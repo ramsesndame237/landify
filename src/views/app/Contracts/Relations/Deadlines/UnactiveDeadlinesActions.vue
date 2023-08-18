@@ -59,34 +59,54 @@ export default ({
         isItemDeactivate,
       } = this.getItemOnTop()
 
-      return !isItemDeactivate
+      return (!isItemDeactivate && isItemOnTopDeactivate) || (itemIndex <= 0 && !isItemDeactivate)
+    },
+    deadline() {
+      return this.rowData.item
+    },
+    deadlineTableComponent() {
+      return this.$parent.$parent.$parent.$parent.$parent.$parent.$parent
+    },
+    contractFormComponent() {
+      return this.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$refs.form
     },
   },
   mounted() {
-    // Je recupère les deadlines du composant parent
+    // Je récupère les deadlines du composant parent
     if (this.data.getDeadlines) {
       const deadlines = this.data.getDeadlines()
       this.deadlines = sortBy(deadlines, ['contractdeadline_id'])
-      console.log({ dedalines: this.deadlines })
     }
   },
   methods: {
     async activeDeadline() {
-      const { contractdeadline_id } = this.rowData.item
+      this.data.reload(true)
       try {
-        const response = await this.$http.put(`/contracts/deadlines/active/${contractdeadline_id}`)
-
-        const deadlineTableComponent = this.$parent.$parent.$parent.$parent.$parent.$parent.$parent
-        const contractFormComponent = this.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$refs.form
-        await deadlineTableComponent.getDeadlines(true)
-        await deadlineTableComponent.getActions(true)
-        await contractFormComponent.loadEntity(true)
+        await this.$http.put(`/contracts/deadlines/active/${this.deadline.contractdeadline_id}`)
+        this.$successToast('Deadline activated successfully !!!')
+        await this.deadlineTableComponent.getDeadlines()
+        this.data.reload(false)
+        await this.deadlineTableComponent.getActions(true)
+        await this.contractFormComponent.loadEntity(true)
       } catch (error) {
         console.log({ error })
+      } finally {
+        this.data.reload(false)
       }
     },
-    deactiveDeadline() {
-      console.log('Ici deactive')
+    async deactiveDeadline() {
+      this.data.reload(true)
+
+      try {
+        const response = await this.$http.put(`/contracts/deadlines/deactivate/${this.deadline.contractdeadline_id}`)
+        console.log({ response })
+        await this.deadlineTableComponent.getDeadlines()
+        this.data.reload(false)
+      } catch (error) {
+        console.log({ error })
+      } finally {
+        this.data.reload(false)
+      }
     },
     getItemOnTop() {
       const { contractdeadline_id, contractdeadline_status, _rowVariant } = this.rowData.item

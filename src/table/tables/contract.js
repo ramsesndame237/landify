@@ -473,6 +473,11 @@ export default {
           },
         },
         {
+          key: 'contractaction_resiliation_date',
+          type: 'date',
+          label: 'Resiliation date',
+        },
+        {
           key: 'contractaction_options',
           type: 'number',
           label: 'Expected number of options',
@@ -534,7 +539,9 @@ export default {
           hideOnForm: true,
           label: 'Status',
           formatter: value => {
-            const status = { active: 'Active', unactive: 'Unactive', cancelled: 'Cancelled' }
+            const status = {
+              active: 'Active', unactive: 'Unactive', cancelled: 'Cancelled', pulled: 'Pulled',
+            }
 
             return status[value]
           },
@@ -656,64 +663,68 @@ export default {
   ],
   note: 'frontend_0_8_1',
   fetch: async vm => {
-    const response = await vm.$http.get(`/contracts/${vm.entityId}`)
-    console.log('Ici response fetch contract', { response })
-    const { data } = response
+    try {
+      const response = await vm.$http.get(`/contracts/${vm.entityId}`)
+      console.log('Ici response fetch contract', { response })
+      const { data } = response
 
-    if (data.company) {
-      data.company_id = data.company.company_id
-      data.company_name = data.company.company_name
-      if (data.company.customergroup) {
-        data.customergroup_id = data.company.customergroup.customergroup_id
-        data.customergroup_name = data.company.customergroup.customergroup_name
+      if (data.company) {
+        data.company_id = data.company.company_id
+        data.company_name = data.company.company_name
+        if (data.company.customergroup) {
+          data.customergroup_id = data.company.customergroup.customergroup_id
+          data.customergroup_name = data.company.customergroup.customergroup_name
+        }
       }
-    }
 
-    if (data.areas) {
-      data.contract_count_area = data.areas.length
-      data.contract_sum_allarea_allocationspace = data.areas.reduce(
-        (acc, currentValue) => acc + currentValue.contract_area_unit_usagetype_allocationspace_value,
-        0,
-      )
-      data.contract_sum_allarea_rentalspace = data.areas.reduce(
-        (acc, currentValue) => acc + currentValue.contract_area_unit_usagetype_rentalspace_value,
-        0,
-      )
-    }
+      if (data.areas) {
+        data.contract_count_area = data.areas.length
+        data.contract_sum_allarea_allocationspace = data.areas.reduce(
+          (acc, currentValue) => acc + currentValue.contract_area_unit_usagetype_allocationspace_value,
+          0,
+        )
+        data.contract_sum_allarea_rentalspace = data.areas.reduce(
+          (acc, currentValue) => acc + currentValue.contract_area_unit_usagetype_rentalspace_value,
+          0,
+        )
+      }
 
-    if (data.contracttype) {
-      data.contracttype_id = data.contracttype.contracttype_id
-      data.contracttype_name = data.contracttype.contracttype_name
-    }
+      if (data.contracttype) {
+        data.contracttype_id = data.contracttype.contracttype_id
+        data.contracttype_name = data.contracttype.contracttype_name
+      }
 
-    if (data.currency) {
-      data.currency_id = data.currency.currency_id
-      data.currency_name = data.currency.currency_name
-    }
+      if (data.currency) {
+        data.currency_id = data.currency.currency_id
+        data.currency_name = data.currency.currency_name
+      }
 
-    if (data.documentcontracttypes.length > 0) {
-      data.documentcontracttype_id = data.documentcontracttypes[0].documentcontracttype_id
-      data.documentcontracttype_name = data.documentcontracttypes[0].documentcontracttype_name
-    }
+      if (data.documentcontracttypes.length > 0) {
+        data.documentcontracttype_id = data.documentcontracttypes[0].documentcontracttype_id
+        data.documentcontracttype_name = data.documentcontracttypes[0].documentcontracttype_name
+      }
 
-    if (data.location) {
-      data.location_id = data.location.location_id
-      data.location_name = data.location.location_name
-    }
+      if (data.location) {
+        data.location_id = data.location.location_id
+        data.location_name = data.location.location_name
+      }
 
-    if (data.pos.length > 0) {
-      data.pos_id = data.pos[0].pos_id
-      data.pos_name = data.pos[0].pos_name
-    }
+      if (data.pos.length > 0) {
+        data.pos_id = data.pos[0].pos_id
+        data.pos_name = data.pos[0].pos_name
+      }
 
-    if (data.owners.length > 0) {
-      data.owner_id = data.owners[0].owner_id
-      data.owner_name = data.owners[0].owner_name
+      if (data.owners.length > 0) {
+        data.owner_id = data.owners[0].owner_id
+        data.owner_name = data.owners[0].owner_name
+      }
+      if (data.managers.length > 0) {
+        data.manager_id = data.managers[0].manager_id
+        data.manager_name = data.managers[0].manager_name
+      }
+      return data
+    } catch (error) {
+      console.log({ error })
     }
-    if (data.managers.length > 0) {
-      data.manager_id = data.managers[0].manager_id
-      data.manager_name = data.managers[0].manager_name
-    }
-    return data
   },
 }
