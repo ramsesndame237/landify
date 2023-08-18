@@ -10,12 +10,13 @@
             </b-button>
           </b-card-text>
           <b-card-text class="d-flex align-items-center">
-            <DeadlinesStatusSelect :actions="actionsToShow" :deadlines="deadlines" :is-notice-date-arrived="isNoticeDateArrived" />
+            <b-button v-b-toggle.available-options class="my-1" size="sm" variant="info" @click="collapseVisible = !collapseVisible">
+              See Available Options
+              <feather-icon :icon="collapseVisible ? 'ChevronsUpIcon' : 'ChevronsDownIcon'" />
+            </b-button>
           </b-card-text>
         </div>
-        <b-button v-b-toggle.available-options class="my-1" size="sm" variant="info">
-          See Available Options
-        </b-button>
+
         <b-collapse id="available-options">
           <b-card no-body>
             <b-card-text>
@@ -27,8 +28,6 @@
                 :entity="relation.entity"
                 default-sort-column="contractdeadline_status"
                 :selectable="false"
-                :sortable="false"
-                @table-refreshed="getActions"
               />
             </b-card-text>
           </b-card>
@@ -78,12 +77,12 @@
 import moment from 'moment'
 import sortBy from 'lodash/sortBy'
 import DataTables from '@/layouts/components/DataTables.vue'
-import DeadlinesStatusSelect from '@/views/app/Contracts/Relations/Deadlines/DeadlinesStatusSelect.vue'
 import DeadlinesTools from '@/views/app/Contracts/Relations/Deadlines/DeadlinesTools.vue'
+import TablePagination from '@/layouts/components/TablePagination.vue'
 
 export default {
   name: 'DeadlineTable',
-  components: { DeadlinesTools, DeadlinesStatusSelect, DataTables },
+  components: { DeadlinesTools, DataTables, TablePagination },
   props: { relation: Object, entityId: {} },
   data() {
     return {
@@ -181,6 +180,20 @@ export default {
             const { contractdeadline_notice_period_value, contractdeadline_notice_period_unit } = item
             return `${contractdeadline_notice_period_value}  ${contractdeadline_notice_period_unit}`
           },
+        },
+        {
+          key: 'contractdeadline_expected_from',
+          label: 'Expected from',
+          type: 'date',
+          hideOnForm: true,
+          send: false,
+        },
+        {
+          key: 'contractdeadline_expected_to',
+          label: 'Expected to',
+          type: 'date',
+          hideOnForm: true,
+          send: false,
         },
         {
           key: 'contractdeadline_notice_date',
@@ -325,16 +338,19 @@ export default {
           component: () => import('@/views/app/Contracts/Relations/Deadlines/UnactiveDeadlinesActions.vue'),
           props: {
             getDeadlines: () => this.deadlines,
+            reload: loading => this.loadingDeadline = loading,
           },
         },
       ],
       totalRows: 0,
-      perPage: 10,
+      perPage: 100000,
+      currentPage: 1,
       search: '',
       actionSelectedId: null,
       loadingAction: false,
       loadingDeadline: false,
       isOptionsVisible: false,
+      collapseVisible: false,
       types: {
         active_option: 'Active Option',
         automatic_option: 'Automatic Option',
@@ -397,7 +413,7 @@ export default {
       }))
     },
     activatedDeadlines() {
-      return this.deadlines.filter(deadline => deadline.contractdeadline_status !== 'notdue')
+      return this.deadlines.filter(deadline => !['notdue', 'deactivate'].includes(deadline.contractdeadline_status))
     },
     unactivatedDeadlines() {
       const _deadlines = this.deadlines.filter(deadline => ['notdue', 'deactivate'].includes(deadline.contractdeadline_status))
@@ -424,6 +440,7 @@ export default {
           const response = await this.$http.get('/contracts/actions', {
             params: {
               contract_id: this.entityId,
+              size: this.perPage,
             },
           })
           const { data } = response.data
@@ -437,34 +454,30 @@ export default {
         }
       }
     },
-    async getDeadlines(refresh = false) {
-      if (this.deadlines.length <= 0 || refresh === true) {
-        this.loadingDeadline = true
-        try {
-          const response = await this.$http.get('/contracts/deadlines', {
-            params: {
-              contract_id: this.entityId,
-            },
-          })
-          const { data } = response.data
-          const sortedData = sortBy(data, ['contractdeadline_id'])
-          await this.$store.dispatch('table/setListData', { entity: `contract-deadlines-${this.entityId}`, data: sortedData })
-          this.isOptionsVisible = true
-        } catch (error) {
-          console.log({ error })
-        } finally {
-          this.loadingDeadline = false
-        }
-      } else {
-        this.isOptionsVisible = true
+    async getDeadlines() {
+      this.loadingDeadline = true
+      try {
+        const response = await this.$http.get('/contracts/deadlines', {
+          params: {
+            contract_id: this.entityId,
+            size: this.perPage,
+          },
+        })
+        const { data } = response.data
+        const sortedData = sortBy(data, ['contractdeadline_id'])
+        await this.$store.dispatch('table/setListData', { entity: `contract-deadlines-${this.entityId}`, data: sortedData })
+      } catch (error) {
+        console.log({ error })
+      } finally {
+        this.loadingDeadline = false
       }
     },
     async showOptions() {
       this.loadingAction = true
-      await this.getDeadlines()
-      if (!this.isOptionsVisible) {
-        this.$errorToast('No options to show !!!')
+      if (this.deadlines.length <= 0) {
+        await this.getDeadlines()
       }
+      this.isOptionsVisible = true
       this.loadingAction = false
     },
     editAction(entity) {

@@ -45,6 +45,12 @@ export default {
           ],
         },
         {
+          key: 'contractaction_resiliation_date',
+          type: 'date',
+          label: 'Resiliation date',
+          visible: (entity, vm) => entity.contractaction_type === 'special_resiliation',
+        },
+        {
           key: 'contractaction_options',
           visible: entity => !['resiliation', 'special_resiliation'].includes(entity.contractaction_type),
           type: 'number',
@@ -133,7 +139,7 @@ export default {
           const { currentTab, tabs } = this.$parent
           const tab = tabs[currentTab]
           await tab.$children[0].getActions(true)
-          await tab.$children[0].getDeadlines(true)
+          await tab.$children[0].getDeadlines()
         } else {
           const { getActions } = this.$parent.$parent
           await getActions(true)

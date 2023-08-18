@@ -86,7 +86,7 @@ export default {
         this.$emit('reload')
         this.$refs.deadlineform.reset()
         this.$refs.modal.hide()
-        await this.$parent.$parent.getDeadlines(true)
+        await this.$parent.$parent.getDeadlines()
         const efComponent = this.$parent.$parent.$parent.$parent.$parent.$refs.form
         await efComponent.loadEntity()
         await this.$parent.$parent.getActions(true)
