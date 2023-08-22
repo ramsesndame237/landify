@@ -49,7 +49,7 @@ export default {
       hideOnUpdate: true,
     },
     { key: 'contract_name' },
-    { key: 'contracttype_name', hideOnCreate: true, disabled: true },
+    { key: 'contracttype_name', hideOnCreate: true, disabled: true, required: false },
     {
       key: 'customergroup_name', hideOnIndex: true, hideOnCreate: true, disabled: true,
     },
@@ -109,7 +109,7 @@ export default {
       key: 'contract_end_date', type: 'date', hideOnIndex: true, category: 'date',
     },
     {
-      key: 'contract_first_possible_end_date', type: 'date', hideOnIndex: true, category: 'date',
+      key: 'contract_first_possible_end_date', type: 'date', hideOnIndex: true, category: 'date', hideOnForm: true,
     },
     {
       key: 'next_possible_end_of_contract',
@@ -118,21 +118,22 @@ export default {
       required: false,
       disabled: true,
       category: 'date',
+      hideOnForm: true,
     },
     {
-      key: 'contract_last_change_time', type: 'date', hideOnIndex: true, rules: { regex: false }, category: 'date',
+      key: 'contract_last_change_time', type: 'date', hideOnIndex: true, hideOnForm: true, rules: { regex: false }, category: 'date',
     },
     {
-      key: 'action_begin', type: 'date', hideOnIndex: true, required: false, disabled: true, category: 'date',
+      key: 'action_begin', type: 'date', hideOnIndex: true, hideOnForm: true, required: false, disabled: true, category: 'date',
     },
     {
-      key: 'action_ende_soll', hideOnIndex: true, required: false, disabled: true, category: 'date',
+      key: 'action_ende_soll', hideOnIndex: true, required: false,hideOnForm: true, disabled: true, category: 'date',
     },
     {
-      key: 'action_ende_final', type: 'date', hideOnIndex: true, required: false, disabled: true, category: 'date',
+      key: 'action_ende_final', type: 'date', hideOnIndex: true,hideOnForm: true, required: false, disabled: true, category: 'date',
     },
     {
-      key: 'actual_action_notice_period', hideOnIndex: true, required: false, disabled: true, category: 'date',
+      key: 'actual_action_notice_period', hideOnIndex: true,hideOnForm: true, required: false, disabled: true, category: 'date',
     },
     {
       key: 'actual_action_notice_day',
@@ -141,6 +142,7 @@ export default {
       required: false,
       disabled: true,
       category: 'date',
+      hideOnForm: true,
     },
     { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
     { key: 'contract_sum_allarea_allocationspace', hideOnForm: true },
@@ -328,7 +330,7 @@ export default {
         { key: 'document_name', hideOnForm: true },
         { key: 'documenttype_name', hideOnForm: true },
         // { key: 'document_mime_type', hideOnForm: true },
-        { key: 'documentcontracttype_name', hideOnForm: true },
+        { key: 'documentcontracttype_name', hideOnForm: true, },
         {
           key: 'documentcontracttype_id',
           type: 'list',

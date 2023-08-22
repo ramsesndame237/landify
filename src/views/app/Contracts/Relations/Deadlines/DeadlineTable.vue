@@ -206,6 +206,17 @@ export default {
           hideOnForm: true,
           label: 'Status',
         },
+        {
+          key: 'action',
+          hideOnForm: true,
+          label: 'Action',
+          type: 'component',
+          component: () => import('@/views/app/Contracts/Relations/Deadlines/ActiveDeadlineActions.vue'),
+          props: {
+            getDeadlines: () => this.deadlines,
+            reload: loading => { this.loadingDeadline = loading },
+          },
+        },
       ],
       unactiveDeadlineFields: [
         {
