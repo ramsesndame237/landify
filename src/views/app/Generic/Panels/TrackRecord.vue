@@ -1,11 +1,11 @@
 <template>
   <div class="track_record_list">
-    <b-card title="Track Records">
+    <b-card-actions ref="card" title="Track Records" action-collapse action-refresh @refresh="loadData">
       <track-record-item v-for="(item,idx) in items" :key="idx" :item="item" class=""/>
       <div v-if="items.length===0" class="text-center text-muted">
         No records available
       </div>
-    </b-card>
+    </b-card-actions>
   </div>
 </template>
 
@@ -28,8 +28,14 @@ export default ({
   },
   methods: {
     async loadData() {
-      const { data } = await this.$http.get(this.endpoint || '')
-      this.items.push(...data.data.data)
+      try {
+        const { data } = await this.$http.get(this.endpoint || '')
+        this.items.push(...data.data.data)
+      } catch (e) {
+        this.$errorToast(e.response ? e.response.data.message : e.message)
+      } finally {
+        this.$refs.card.showLoading = false
+      }
     },
   },
 })

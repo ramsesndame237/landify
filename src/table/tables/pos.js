@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export default {
   entity: 'frontend_3_1_1',
   primaryKey: 'pos_id',
@@ -282,6 +284,24 @@ export default {
     pos_internal_id: '56',
   },
   note: 'frontend_0_8_3',
+  submit: async (vm, entity, create) => {
+    const attributes = [
+      'company_id',
+      'pos_name',
+      'pos_first_year',
+      'pos_branchnumber',
+      'pos_name_external',
+      'pos_internal_id',
+      'pos_opening_date',
+      'contactperson_id',
+    ]
+    if (create) {
+      await vm.$http.post('/pos/', _.pick(entity, attributes))
+    } else {
+      attributes.push('pos_id')
+      await vm.$http.put('/pos', _.pick(entity, attributes))
+    }
+  },
   panels: [
     {
       component: () => import('@/views/app/Generic/Panels/TrackRecord.vue'),
