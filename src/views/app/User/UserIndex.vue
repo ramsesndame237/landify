@@ -62,9 +62,9 @@
       </b-card>
     </div>
   </div>
-  <b-card >
+  <b-card title="Search Filter">
     <InlineFilter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
-                  @filter="filter"/>
+                  @filter="filter" :with-actions="false" />
   </b-card>
   <b-card body-class="p-0">
     <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"

@@ -37,6 +37,9 @@ export default {
       hideOnForm: true,
     },
     {
+      key: 'usertype_name', hideOnForm: true, sortable: true, type: 'html', formatter: value => value.charAt(0).toUpperCase() + value.substring(1),
+    },
+    {
       key: 'user_email', sortable: true, type: 'email', hideOnIndex: true,
     },
     {
@@ -334,9 +337,13 @@ export default {
     // user_password: 'Fsa!0dsadad',
     // user_mobile: '0711 252535838',
   },
+  inline_filter: true,
   filters: [
     {
-      key: 'role_id', type: 'list', list: 'role', listLabel: 'role_name',
+      key: 'role_id', type: 'list', list: 'role', listLabel: 'role_name', required: false,
+    },
+    {
+      key: 'usertype_id', type: 'list', list: 'usertype', listLabel: 'usertype_name', required: false,
     },
   ],
   note: 'frontend_0_8_13',
