@@ -6,7 +6,7 @@ export default {
   fetchWithEntity: true,
   updateComponent: () => import('@/views/app/FormComponent/ContractForm.vue'),
   // createModal: false,
-  // createComponent: () => import('@/views/app/CreateComponent/ContractForm/UserIndex.vue'),
+  // createComponent: () => import('@/views/app/CreateComponent/ContractForm/Index.vue'),
   fields: [
     { key: 'contract_id', auto: true },
     {
@@ -346,7 +346,7 @@ export default {
       entityForm: 'contract_specialright_rel',
       entityView: 'specialright',
       withContinue: true,
-      // createComponent: () => import('@/views/app/CreateComponent/SpecialrightForm/UserIndex.vue'),
+      // createComponent: () => import('@/views/app/CreateComponent/SpecialrightForm/Index.vue'),
       updateComponent: () => import('@/views/app/UpdateComponent/SpecialrightForm.vue'),
       fields: [
         { key: 'action', hideOnForm: true },
