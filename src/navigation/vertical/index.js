@@ -33,7 +33,6 @@ export default [
     resource: 'menu',
     children: [
       item(null, 'dashboard', 'home'),
-      item(null, 'dashboard2', 'home'),
       item(null, 'ticketdashboard', 'ticketDashboard'),
     ],
   },
