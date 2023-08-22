@@ -17,7 +17,7 @@ export default ({
   computed: {
     isExpectedFromDateNotArrived() {
       const { contractdeadline_expected_from } = this.rowData.item
-      return moment(contractdeadline_expected_from).isBefore(moment())
+      return moment().isBefore(moment(contractdeadline_expected_from))
     },
   },
   methods: {
