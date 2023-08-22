@@ -356,7 +356,7 @@ export default {
           list: 'documentcontracttype',
           listLabel: 'documentcontracttype_name',
           hideOnIndex: true,
-          composite: true,
+          relationEntity: false,
         },
       ],
     },

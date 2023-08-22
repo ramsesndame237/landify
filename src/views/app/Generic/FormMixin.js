@@ -43,8 +43,8 @@ export default {
   },
   watch: {
     entity: {
-      handler(val) {
-        console.log('entity', val)
+      handler() {
+        // console.log('entity', val)
       },
       deep: true,
     },
@@ -226,8 +226,9 @@ export default {
       return this.createNewEntities(fieldComponents, formFields, entity, originalEntity)
         .then(async () => {
           /// if we updating and we have no changes
-          if (!create && formFields.filter(f => f.type !== 'list')
+          if (!create && formFields.filter(f => f.type !== 'list' && f.relationEntity !== false)
             .every(f => entity[f.key] === originalEntity[f.key])) {
+            console.log('update none')
             await this.saveRelations(table, definition, primaryKey, entity[primaryKey], entity, originalEntity)
             return {
               noupdate: true,
