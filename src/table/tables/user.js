@@ -1,6 +1,12 @@
+const avatarPlaceholder = (user) => {
+  return user?.user_firstname.charAt(0).toUpperCase()
+    + user?.user_lastname.charAt(0).toUpperCase()
+}
+
 export default {
   entityEndpoint: '/users',
   formComponent: () => import('@/views/app/CreateComponent/UserForm.vue'),
+  customIndex: () => import('@/views/app/User/UserIndex.vue'),
   fields: [
     {
       key: 'usertype_id',
@@ -14,7 +20,24 @@ export default {
       key: 'user_id', label: 'Id', auto: true, hideOnForm: true,
     },
     {
-      key: 'user_email', sortable: true, type: 'email',
+      key: 'user_firstname',
+      type: 'html',
+      label: 'User',
+      formatter: (value, key, item) => `<div class="d-flex h5">
+        <div>
+            <img src='https://placehold.co/36x36?text=${avatarPlaceholder(item)}' class="rounded-circle" style="width: 36px;"
+  alt="Avatar" />
+        </div>
+        <div class="ml-1">
+          <p class="mb-0">${`${item.user_firstname} ${item.user_lastname}`}</p>
+          <p class="mb-0">${item.user_email}</p>
+        </div>
+      </div>`
+      ,
+      hideOnForm: true,
+    },
+    {
+      key: 'user_email', sortable: true, type: 'email', hideOnIndex: true,
     },
     {
       key: 'user_password',
@@ -28,8 +51,8 @@ export default {
       key: 'user_locked', hideOnIndex: true, hideOnCreate: true, type: 'boolean',
     },
 
-    { key: 'user_firstname', sortable: true },
-    { key: 'user_lastname', sortable: true },
+    { key: 'user_firstname', sortable: true, hideOnIndex: true, },
+    { key: 'user_lastname', sortable: true, hideOnIndex: true, },
     {
       key: 'user_abbreviation',
       sortable: true,
@@ -311,6 +334,11 @@ export default {
     // user_password: 'Fsa!0dsadad',
     // user_mobile: '0711 252535838',
   },
+  filters: [
+    {
+      key: 'role_id', type: 'list', list: 'role', listLabel: 'role_name',
+    },
+  ],
   note: 'frontend_0_8_13',
   submit(vm) {
     const data = { ...vm.entity }
