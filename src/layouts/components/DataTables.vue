@@ -17,8 +17,9 @@
         {{ data.field.btnLabel }}
       </a>
       <div v-else-if="data.field.type==='html'" v-html="data.value"/>
-      <div v-else-if="data.field.type==='component'" >
-        <component :is="data.field.component" :items="items || provider" :row-data="data" :data="data.field.props" @reload="reload" />
+      <div v-else-if="data.field.type==='component'">
+        <component :is="data.field.component" :items="items || provider" :row-data="data" :data="data.field.props"
+                   @reload="reload"/>
       </div>
       <span v-else>{{ data.value }}</span>
     </template>
@@ -39,12 +40,14 @@
           <feather-icon icon="EyeIcon"/>
           <!--        <span>{{ $t('button~view') }}</span>-->
         </b-button>
-        <b-button v-if="withEdit && canUpdate && canUpdateItem" :disabled="canUpdateItem(currentItems[data.index])" class="btn-icon" variant="flat-info" style="margin-bottom: 3px" pill
+        <b-button v-if="withEdit && canUpdate " :disabled="canUpdateItem && canUpdateItem(currentItems[data.index])"
+                  class="btn-icon" variant="flat-info" style="margin-bottom: 3px" pill
                   @click="onEditElement ? onEditElement(currentItems[data.index]) : $router.push({name: 'table-view', params: {table: entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index], ids: currentItems.map(i => i[primaryKey])}, query: {edit: 'true'}})">
           <feather-icon icon="EditIcon"/>
           <!--        <span>{{ $t('button~edit') }}</span>-->
         </b-button>
-        <b-button v-if="withDelete && canDelete && canDeleteItem" :disabled="canDeleteItem(currentItems[data.index])" class="btn-icon" variant="flat-primary" style="margin-bottom: 3px" pill
+        <b-button v-if="withDelete && canDelete" :disabled="canDeleteItem && canDeleteItem(currentItems[data.index])"
+                  class="btn-icon" variant="flat-primary" style="margin-bottom: 3px" pill
                   @click="deleteElement(data.index)">
           <feather-icon icon="Trash2Icon"/>
           <!--        <span>{{ $t('button~delete') }}</span>-->
@@ -56,7 +59,7 @@
 
 <script>
 import { BButton, BFormCheckbox, BTable } from 'bootstrap-vue'
-import { formatDate } from '@/libs/utils'
+import { formatDate, getDocumentLink } from '@/libs/utils'
 
 export default {
   components: {
@@ -163,6 +166,10 @@ export default {
     onViewClick(data) {
       if (this.onViewElement) {
         this.onViewElement(this.currentItems[data.index])
+        return
+      }
+      if (this.primaryKey === 'document_id') {
+        window.open(getDocumentLink(this.currentItems[data.index]), '_blank')
         return
       }
       const routeData = {

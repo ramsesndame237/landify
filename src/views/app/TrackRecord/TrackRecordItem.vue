@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="border track_record-item">
     <b-card no-body class="track_record  mb-0">
       <b-card-header class="track_record-header" header-tag="header" role="tab">
         <b-avatar :text="avatarPlaceholder({user_firstname: 'ivan', user_lastname: 'franck'})" />
@@ -58,5 +58,4 @@ p{
   margin: 0;
   padding: 0;
 }
-
 </style>

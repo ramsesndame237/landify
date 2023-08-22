@@ -28,10 +28,14 @@ export default [
   headerItem('main'),
   {
     title: key('dashboard'),
-    route: 'home',
     icon: 'HomeIcon',
     action: 'menu~dashboard',
     resource: 'menu',
+    children: [
+      item(null, 'dashboard1', 'home'),
+      item(null, 'dashboard2', 'home'),
+      item(null, 'dashboard3', 'home'),
+    ],
   },
   {
     title: key('ticket'),

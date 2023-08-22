@@ -19,11 +19,3 @@ export default {
 
 </script>
 
-<style scoped>
-.track_record_list{
-}
-
-.track_record-item:not(:last-child){
-  border-bottom: none;
-}
-</style>

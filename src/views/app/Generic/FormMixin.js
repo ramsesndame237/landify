@@ -262,8 +262,11 @@ export default {
 
           let payloadData = [formatedEntity]
           // if create and primary key is multiple
+          console.log(formFields, primaryKey, entity)
           if (create && formFields.find(f => f.key === primaryKey)?.multiple) {
-            payloadData = entity[primaryKey].map(val => ({ ...entity, [primaryKey]: val }))
+            if (Array.isArray(entity[primaryKey])) {
+              payloadData = entity[primaryKey].map(val => ({ ...entity, [primaryKey]: val }))
+            }
           }
           return this.$api({
             entity: table,
@@ -296,6 +299,9 @@ export default {
       formfields.forEach(field => {
         if (field.isDecimal) {
           formatedEntity[field.key] = parseFloat(entity[field.key].replace(',', '.'))
+        }
+        if (field.send === false) {
+          delete formatedEntity[field.key]
         }
       })
 

@@ -11,8 +11,8 @@
             <notes v-if="definition.note" :id="entityId" class="mr-2" :primary-key="primaryKey" :note="definition.note"
                    :note-rel="'note_user_'+table+'_rel'"/>
             <template v-if="view">
-              <b-button v-for="(action,i) in definition.actions" :key="i" :disabled="action.loading"
-                        size="sm" variant="primary" class="mr-1" @click="onAction(action)">
+              <b-button v-for="(action,i) in definition.actions" :key="i" :disabled="action.loading" size="sm"
+                        variant="primary" class="mr-1" @click="onAction(action)">
                 <!--        <feather-icon icon="Trash2Icon" class="mr-50"/>-->
                 <span>{{ action.text }}</span>
               </b-button>
@@ -43,11 +43,11 @@
     </b-card>
 
     <b-card class="">
-      <component :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
-                 ref="form"
-                 :table="table" :definition="definition" :table-definition-key="table" :create="create" :is-relation="false"
-                 :disabled="view" :inline="false" :cols="6" @loaded="formLoaded=true" :initial-data="entity"
-                 :entity-id="entityId"/>
+      <component
+        :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
+        ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="create"
+        :is-relation="false" :disabled="view" :inline="false" :cols="6" @loaded="formLoaded=true" :initial-data="entity"
+        :entity-id="entityId"/>
     </b-card>
 
     <template v-if="table==='invoice' && $refs.tabs">
@@ -71,8 +71,8 @@
                          :with-delete="relation.delete!==false"/>
             <generic-modal :cache-key="relation.entity+'-'" title="Test" :table="relation.entityForm || relation.entity"
                            :definition="relation" is-relation
-                           :table-definition-key="relation.entityForm || relation.entity" :with-continue="relation.withContinue"
-                           @reload-table="reloadRelatedTable"/>
+                           :table-definition-key="relation.entityForm || relation.entity"
+                           :with-continue="relation.withContinue" @reload-table="reloadRelatedTable"/>
             <template v-if="relation.primaryKey === 'specialright_id'">
               <b-card-text class="text-right">
                 <b-button variant="primary">
@@ -104,6 +104,12 @@
         </template>
       </b-tabs>
     </b-card>
+
+    <template v-if="formLoaded && definition.panels && definition.panels.length > 0">
+      <template v-for="(panel,idx) in definition.panels">
+        <component :is="panel.component" :key="idx" :definition="definition" v-bind="panel.props"></component>
+      </template>
+    </template>
   </div>
 </template>
 
