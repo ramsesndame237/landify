@@ -184,7 +184,6 @@ export default {
     },
     createNewEntities(fieldComponents, formFields, entity, originalEntity) {
       if (!Array.isArray(fieldComponents)) return Promise.resolve()
-      console.log('new entities', fieldComponents, formFields)
       return Promise.all(formFields.filter(field => {
         const component = fieldComponents.find(f => f.field === field)
         return !field.hide && component && (field.type === 'list') && (component.hasNew || field.alwaysNew)
@@ -222,13 +221,12 @@ export default {
     },
     saveEntity(entity, originalEntity, formFields, fieldComponents, table, definition, primaryKey, create) {
       const action = create ? 'create' : 'update'
-      console.log('Save Entity', table, entity, originalEntity, formFields)
       return this.createNewEntities(fieldComponents, formFields, entity, originalEntity)
         .then(async () => {
           /// if we updating and we have no changes
-          if (!create && formFields.filter(f => f.type !== 'list' && f.relationEntity !== false)
+          if (!create && formFields.filter(f => f.type !== 'list' || f.relationEntity === false)
             .every(f => entity[f.key] === originalEntity[f.key])) {
-            console.log('update none')
+            console.log('no update', table)
             await this.saveRelations(table, definition, primaryKey, entity[primaryKey], entity, originalEntity)
             return {
               noupdate: true,
@@ -260,7 +258,7 @@ export default {
           }
           // format entity
           const formatedEntity = this.formatEntity(entity, formFields)
-
+          console.log('push entity', entity, formatedEntity)
           let payloadData = [formatedEntity]
           // if create and primary key is multiple
           console.log(formFields, primaryKey, entity)

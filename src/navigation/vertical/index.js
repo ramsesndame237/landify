@@ -32,9 +32,9 @@ export default [
     action: 'menu~dashboard',
     resource: 'menu',
     children: [
-      item(null, 'dashboard1', 'home'),
+      item(null, 'dashboard', 'home'),
       item(null, 'dashboard2', 'home'),
-      item(null, 'dashboard3', 'home'),
+      item(null, 'ticketdashboard', 'ticketDashboard'),
     ],
   },
   {
