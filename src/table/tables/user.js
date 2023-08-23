@@ -1,7 +1,5 @@
-const avatarPlaceholder = (user) => {
-  return user?.user_firstname.charAt(0).toUpperCase()
+const avatarPlaceholder = user => user?.user_firstname.charAt(0).toUpperCase()
     + user?.user_lastname.charAt(0).toUpperCase()
-}
 
 export default {
   entityEndpoint: '/users',
@@ -32,12 +30,15 @@ export default {
           <p class="mb-0">${`${item.user_firstname} ${item.user_lastname}`}</p>
           <p class="mb-0">${item.user_email}</p>
         </div>
-      </div>`
-      ,
+      </div>`,
       hideOnForm: true,
     },
     {
-      key: 'usertype_name', hideOnForm: true, sortable: true, type: 'html', formatter: value => value.charAt(0).toUpperCase() + value.substring(1),
+      key: 'usertype_name',
+      hideOnForm: true,
+      sortable: true,
+      type: 'html',
+      formatter: value => value.charAt(0).toUpperCase() + value.substring(1),
     },
     {
       key: 'user_email', sortable: true, type: 'email', hideOnIndex: true,
@@ -54,8 +55,8 @@ export default {
       key: 'user_locked', hideOnIndex: true, hideOnCreate: true, type: 'boolean',
     },
 
-    { key: 'user_firstname', sortable: true, hideOnIndex: true, },
-    { key: 'user_lastname', sortable: true, hideOnIndex: true, },
+    { key: 'user_firstname', sortable: true, hideOnIndex: true },
+    { key: 'user_lastname', sortable: true, hideOnIndex: true },
     {
       key: 'user_abbreviation',
       sortable: true,
@@ -67,8 +68,6 @@ export default {
     {
       key: 'user_abbreviation', sortable: true, hideOnIndex: true, hideOnCreate: true,
     },
-    // { key: 'user_function', sortable: true, hideOnIndex: true },
-
     {
       key: 'function_id',
       type: 'list',
@@ -171,10 +170,13 @@ export default {
     { key: 'user_fax_phonenumber', hideOnIndex: true, required: false },
     { key: 'user_mobile' },
     {
-      key: 'role_id', type: 'list', list: 'role', listLabel: 'role_name',
+      key: 'role_id', type: 'list', list: 'role', listLabel: 'role_name', hideOnIndex: true,
     },
     {
-      key: 'team_id', type: 'list', list: 'team', listLabel: 'team_name', multiple: true,
+      key: 'role_name', hideOnForm: true,
+    },
+    {
+      key: 'team_id', type: 'list', list: 'team', listLabel: 'team_name', multiple: true, hideOnIndex: true,
     },
     {
       key: 'hollyday_representative',
