@@ -29,3 +29,13 @@ export const formatDate = (date, time = false) => {
   if (!date) return ''
   return moment(date).format(getDateFormat(time))
 }
+
+export const formatDateForHistory = date => {
+  if (!date) return ''
+  const mDate = moment(date)
+  let format = getDateFormat(true)
+  if (mDate.isSame(moment(), 'day')) {
+    format = 'HH:mm'
+  }
+  return mDate.format(format)
+}

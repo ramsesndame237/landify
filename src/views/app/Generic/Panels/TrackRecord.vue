@@ -1,6 +1,6 @@
 <template>
   <div class="track_record_list">
-    <b-card-actions ref="card" title="Track Records" action-collapse action-refresh @refresh="loadData">
+    <b-card-actions ref="card" title="Track Records" action-collapse action-refresh @refresh="loadData(true)">
       <track-record-item v-for="(item,idx) in items" :key="idx" :item="item" class=""/>
       <div v-if="items.length===0" class="text-center text-muted">
         No records available
@@ -14,10 +14,10 @@ import TrackRecordItem from '@/views/app/TrackRecord/TrackRecordItem.vue'
 
 export default ({
   name: 'TrackRecord',
+  components: { TrackRecordItem },
   props: {
     endpoint: String,
   },
-  components: [TrackRecordItem],
   data() {
     return {
       items: [],
@@ -27,7 +27,10 @@ export default ({
     await this.loadData()
   },
   methods: {
-    async loadData() {
+    async loadData(reset = false) {
+      if (reset) {
+        this.items = []
+      }
       try {
         const { data } = await this.$http.get(this.endpoint || '')
         this.items.push(...data.data.data)
