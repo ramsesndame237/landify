@@ -82,7 +82,7 @@ export default ({
     async activeDeadline() {
       this.data.reload(true)
       try {
-        await this.$http.put(`/contracts/deadlines/active/${this.deadline.contractdeadline_id}`)
+        await this.$http.put(`/contracts/deadlines/activeAction/${this.deadline.contractaction_id}`)
         this.$successToast('Deadline activated successfully !!!')
         await this.deadlineTableComponent.getDeadlines()
         this.data.reload(false)

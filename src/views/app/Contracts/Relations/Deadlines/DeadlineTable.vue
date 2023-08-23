@@ -499,6 +499,7 @@ export default {
         await this.$http.delete(`/contracts/deadline/action/${data[0].contractaction_id}`)
         this.$successToast('Action delete successfully !!!')
         await this.getActions(true)
+        await this.getDeadlines()
       } catch (error) {
         this.$errorToast(error.response.data.detail)
         console.log({ error })
