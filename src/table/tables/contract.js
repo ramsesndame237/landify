@@ -1,4 +1,5 @@
 import { getContractCriteriaFields } from '@/table/utils'
+import _ from 'lodash'
 
 export default {
   // entity: 'frontend_3_4_1_1',
@@ -28,16 +29,6 @@ export default {
       hideOnIndex: true,
       hideOnUpdate: true,
     },
-    // {
-    //   key: 'pos_id',
-    //   type: 'list',
-    //   list: 'frontend_2_1_3_8',
-    //   listLabel: 'pos_name',
-    //   filter_key: 'company_id',
-    //   send: false,
-    //   hideOnIndex: true,
-    //   hideOnUpdate: true,
-    // },
     {
       key: 'location_id',
       type: 'list',
@@ -49,18 +40,20 @@ export default {
       hideOnUpdate: true,
     },
     { key: 'contract_name' },
-    { key: 'contracttype_name', hideOnCreate: true, disabled: true, required: false },
     {
-      key: 'customergroup_name', hideOnIndex: true, hideOnCreate: true, disabled: true,
+      key: 'contracttype_name', hideOnCreate: true, disabled: true, required: false,
     },
     {
-      key: 'company_name', hideOnIndex: true, hideOnCreate: true, disabled: true,
+      key: 'customergroup_name', hideOnIndex: true, hideOnCreate: true, disabled: true, required: false,
     },
     {
-      key: 'location_name', hideOnIndex: true, hideOnCreate: true, disabled: true,
+      key: 'company_name', hideOnIndex: true, hideOnCreate: true, disabled: true, required: false,
     },
     {
-      key: 'pos_name', hideOnIndex: true, hideOnCreate: true, disabled: true,
+      key: 'location_name', hideOnIndex: true, hideOnCreate: true, disabled: true, required: false,
+    },
+    {
+      key: 'pos_name', hideOnIndex: true, hideOnCreate: true, disabled: true, required: false,
     },
     { key: 'location_name', hideOnForm: true },
     {
@@ -115,25 +108,55 @@ export default {
       key: 'next_possible_end_of_contract',
       type: 'date',
       hideOnIndex: true,
+      hideOnCreate: true,
       required: false,
       disabled: true,
       category: 'date',
       hideOnForm: true,
     },
     {
-      key: 'contract_last_change_time', type: 'date', hideOnIndex: true, hideOnForm: true, rules: { regex: false }, category: 'date',
+      key: 'contract_last_change_time',
+      type: 'date',
+      hideOnIndex: true,
+      hideOnCreate: true,
+      rules: { regex: false },
+      category: 'date',
+      disabled: true,
+      send: false,
     },
     {
-      key: 'action_begin', type: 'date', hideOnIndex: true, hideOnForm: true, required: false, disabled: true, category: 'date',
+      key: 'contract_creation_time',
+      hide: true,
+      send: false,
     },
     {
-      key: 'action_ende_soll', hideOnIndex: true, required: false,hideOnForm: true, disabled: true, category: 'date',
+      key: 'action_begin',
+      type: 'date',
+      hideOnIndex: true,
+      required: false,
+      disabled: true,
+      category: 'date',
+      hideOnCreate: true,
     },
     {
-      key: 'action_ende_final', type: 'date', hideOnIndex: true,hideOnForm: true, required: false, disabled: true, category: 'date',
+      key: 'action_ende_soll', hideOnIndex: true, required: false, disabled: true, category: 'date', hideOnCreate: true,
     },
     {
-      key: 'actual_action_notice_period', hideOnIndex: true,hideOnForm: true, required: false, disabled: true, category: 'date',
+      key: 'action_ende_final',
+      type: 'date',
+      hideOnIndex: true,
+      required: false,
+      disabled: true,
+      category: 'date',
+      hideOnCreate: true,
+    },
+    {
+      key: 'actual_action_notice_period',
+      hideOnIndex: true,
+      required: false,
+      disabled: true,
+      category: 'date',
+      hideOnCreate: true,
     },
     {
       key: 'actual_action_notice_day',
@@ -142,7 +165,7 @@ export default {
       required: false,
       disabled: true,
       category: 'date',
-      hideOnForm: true,
+      hideOnCreate: true,
     },
     { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
     { key: 'contract_sum_allarea_allocationspace', hideOnForm: true },
@@ -315,7 +338,6 @@ export default {
       entity: 'frontend_3_4_3_1_bottom',
       entityForm: 'document_contract_documentcontracttype_rel',
       entityView: 'document',
-      view: false,
       fields: [
         {
           key: 'document_id',
@@ -329,15 +351,15 @@ export default {
         },
         { key: 'document_name', hideOnForm: true },
         { key: 'documenttype_name', hideOnForm: true },
-        // { key: 'document_mime_type', hideOnForm: true },
-        { key: 'documentcontracttype_name', hideOnForm: true, },
+        { key: 'document_entry_time', hideOnForm: true },
+        { key: 'documentcontracttype_name', hideOnForm: true },
         {
           key: 'documentcontracttype_id',
           type: 'list',
           list: 'documentcontracttype',
           listLabel: 'documentcontracttype_name',
           hideOnIndex: true,
-          composite: true,
+          relationEntity: false,
         },
       ],
     },
@@ -535,6 +557,7 @@ export default {
           type: 'date',
           label: 'Creation date',
           hideOnForm: true,
+
         },
         {
           key: 'contractaction_status',
@@ -728,5 +751,31 @@ export default {
     } catch (error) {
       console.log({ error })
     }
+    return null
   },
+  submit: async (vm, entity, create) => {
+    const attributes = ['contract_name',
+      'contract_begin_date',
+      'contract_end_date',
+      'contract_first_possible_end_date',
+      'contract_migration_checked',
+      'contracttype_id',
+      'company_id',
+      'location_id',
+      'currency_id',
+    ]
+    if (create) {
+      await vm.$http.post('/contracts/step/0', _.pick(entity, attributes))
+    } else {
+      await vm.$http.put(`/contracts/step/0/${entity.contract_id}`, _.pick(entity, attributes))
+    }
+  },
+  panels: [
+    {
+      component: () => import('@/views/app/Generic/Panels/TrackRecord.vue'),
+      props: {
+        endpoint: '/contracts/trackrecords',
+      },
+    },
+  ],
 }

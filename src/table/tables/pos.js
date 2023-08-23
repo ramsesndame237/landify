@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export default {
   entity: 'frontend_3_1_1',
   primaryKey: 'pos_id',
@@ -35,7 +37,11 @@ export default {
       key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name',
     },
     {
-      key: 'company_id', type: 'list', list: 'frontend_2_2_3_1', listLabel: 'company_name', filter_key: 'customergroup_id',
+      key: 'company_id',
+      type: 'list',
+      list: 'frontend_2_2_3_1',
+      listLabel: 'company_name',
+      filter_key: 'customergroup_id',
     },
     {
       key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', required: false,
@@ -258,9 +264,6 @@ export default {
       primaryKey: 'document_id',
       entityForm: 'document_pos_rel',
       entity: 'frontend_3_1_3_8',
-      update: false,
-      create: false,
-      delete: false,
       fields: [
         {
           key: 'document_id',
@@ -272,6 +275,8 @@ export default {
           multiple: true,
         },
         { key: 'document_name', hideOnForm: true },
+        { key: 'document_entry_time', hideOnForm: true },
+        { key: 'documenttype_name', hideOnForm: true },
       ],
     },
   ],
@@ -279,4 +284,30 @@ export default {
     pos_internal_id: '56',
   },
   note: 'frontend_0_8_3',
+  submit: async (vm, entity, create) => {
+    const attributes = [
+      'company_id',
+      'pos_name',
+      'pos_first_year',
+      'pos_branchnumber',
+      'pos_name_external',
+      'pos_internal_id',
+      'pos_opening_date',
+      'contactperson_id',
+    ]
+    if (create) {
+      await vm.$http.post('/pos/', _.pick(entity, attributes))
+    } else {
+      attributes.push('pos_id')
+      await vm.$http.put('/pos', _.pick(entity, attributes))
+    }
+  },
+  panels: [
+    {
+      component: () => import('@/views/app/Generic/Panels/TrackRecord.vue'),
+      props: {
+        endpoint: '/pos/trackrecords',
+      },
+    },
+  ],
 }

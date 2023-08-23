@@ -41,6 +41,21 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/app/dashboard/ticket',
+      name: 'ticketDashboard',
+      component: () => import('@/views/app/Dashboard/TicketDashboard.vue'),
+      meta: {
+        pageTitle: 'headline~dashboard~ticket',
+        breadcrumb: [
+          {
+            text: 'headline~dashboard~ticket',
+            active: true,
+          },
+        ],
+        resource: 'dashboard',
+      },
+    },
+    {
       path: '/app/table/:table',
       name: 'table',
       component: () => import('@/views/app/Generic/KeyFix/Index.vue'),
