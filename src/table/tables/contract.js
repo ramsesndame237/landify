@@ -40,7 +40,9 @@ export default {
       hideOnUpdate: true,
     },
     { key: 'contract_name' },
-    { key: 'contracttype_name', hideOnCreate: true, disabled: true },
+    {
+      key: 'contracttype_name', hideOnCreate: true, disabled: true, required: false,
+    },
     {
       key: 'customergroup_name', hideOnIndex: true, hideOnCreate: true, disabled: true, required: false,
     },
@@ -100,7 +102,7 @@ export default {
       key: 'contract_end_date', type: 'date', hideOnIndex: true, category: 'date',
     },
     {
-      key: 'contract_first_possible_end_date', type: 'date', hideOnIndex: true, category: 'date',
+      key: 'contract_first_possible_end_date', type: 'date', hideOnIndex: true, category: 'date', hideOnForm: true,
     },
     {
       key: 'next_possible_end_of_contract',
@@ -110,6 +112,7 @@ export default {
       required: false,
       disabled: true,
       category: 'date',
+      hideOnForm: true,
     },
     {
       key: 'contract_last_change_time',

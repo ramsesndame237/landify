@@ -12,7 +12,7 @@
           <b-card-text class="d-flex align-items-center">
             <b-button v-b-toggle.available-options class="my-1" size="sm" variant="info" @click="collapseVisible = !collapseVisible">
               See Available Options
-              <feather-icon :icon="collapseVisible ? 'ChevronsUpIcon' : 'ChevronsDownIcon'" />
+              <feather-icon :icon="collapseVisible ? 'ChevronsDownIcon' : 'ChevronsUpIcon'" />
             </b-button>
           </b-card-text>
         </div>
@@ -205,6 +205,17 @@ export default {
           key: 'contractdeadline_status',
           hideOnForm: true,
           label: 'Status',
+        },
+        {
+          key: 'action',
+          hideOnForm: true,
+          label: 'Action',
+          type: 'component',
+          component: () => import('@/views/app/Contracts/Relations/Deadlines/ActiveDeadlineActions.vue'),
+          props: {
+            getDeadlines: () => this.deadlines,
+            reload: loading => { this.loadingDeadline = loading },
+          },
         },
       ],
       unactiveDeadlineFields: [
@@ -419,14 +430,13 @@ export default {
       const _deadlines = this.deadlines.filter(deadline => ['notdue', 'deactivate'].includes(deadline.contractdeadline_status))
       const cancelledActions = this.actions.filter(action => action.contractaction_status === 'cancelled').map(action => action.contractaction_id)
       // Ici, lorsque une deadline est lièe à une action qui a étét cancelled, je la mets en rouge
-      const __deadlines = _deadlines.map(deadline => {
+
+      return _deadlines.map(deadline => {
         if (cancelledActions.includes(deadline.contractaction_id)) {
           return { ...deadline, _rowVariant: 'danger' }
         }
         return deadline
       })
-
-      return __deadlines
     },
   },
   mounted() {
