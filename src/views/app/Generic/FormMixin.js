@@ -307,7 +307,7 @@ export default {
       return formatedEntity
     },
     async afterSaveHook() {
-      // empty function
+      this.$emit('after-save')
     },
     getFieldComponents() {
       if (this.definition.fieldComponent) {
@@ -324,7 +324,8 @@ export default {
           this.loading = true
           if (this.definition.submit) {
             return this.definition.submit(this, this.entity, this.create)
-              .finally(() => {
+              .finally(async () => {
+                await this.afterSaveHook()
                 this.loading = false
               })
           }
