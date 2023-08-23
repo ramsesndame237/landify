@@ -17,6 +17,7 @@ export default ({
   components: { TrackRecordItem },
   props: {
     endpoint: String,
+    definition: Object,
   },
   data() {
     return {
@@ -31,8 +32,13 @@ export default ({
       if (reset) {
         this.items = []
       }
+      this.$refs.card.showLoading = true
       try {
-        const { data } = await this.$http.get(this.endpoint || '')
+        const { data } = await this.$http.get(this.endpoint || '', {
+          params: {
+            [this.definition.primaryKey ?? this.definition.fields.find(f => f.auto)?.key]: this.$route.params.id,
+          },
+        })
         this.items.push(...data.data.data)
       } catch (e) {
         this.$errorToast(e.response ? e.response.data.message : e.message)
