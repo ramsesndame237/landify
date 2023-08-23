@@ -1,5 +1,5 @@
 <template>
-  <component :is="definition.customIndex || 'index'" :key="$route.path"/>
+  <component :is="definition.customIndex || 'index'" :key="$route.path" :definition="definition"/>
 </template>
 
 <script>
