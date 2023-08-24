@@ -252,7 +252,7 @@ export default {
           ],
         },
         {
-          key: 'contractdeadline_option_position', type: 'number', label: 'N° options', hideOnIndex: true,
+          key: 'contractdeadline_option_position', type: 'number', label: 'N° options',
         },
         {
           key: 'contractdeadline_options', type: 'number', label: 'To Activate', hideOnIndex: true,
@@ -268,6 +268,7 @@ export default {
             }
             return contractdeadline_options - contractdeadline_option_position
           },
+          hideOnIndex: true,
         },
         {
           key: 'contractaction_extension_value', type: 'number', label: 'Extension value', hideOnIndex: true,
