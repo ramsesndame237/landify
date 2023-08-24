@@ -12,7 +12,6 @@
 <script>
 import sortBy from 'lodash/sortBy'
 import findIndex from 'lodash/findIndex'
-import minBy from 'lodash/minBy'
 
 export default ({
   name: 'UncativeDeadlinesActions',
@@ -24,7 +23,7 @@ export default ({
   },
   computed: {
     canActivate() {
-      // Les conditions pour tester l apossibilité de modification
+      // Les conditions pour tester la possibilité de modification
       const {
         isItemOnTopStatusNotDue,
         isItemActionCancelled,
@@ -82,7 +81,7 @@ export default ({
     async activeDeadline() {
       this.data.reload(true)
       try {
-        await this.$http.put(`/contracts/deadlines/active/${this.deadline.contractdeadline_id}`)
+        await this.$http.put(`/contracts/deadlines/activeAction/${this.deadline.contractaction_id}`)
         this.$successToast('Deadline activated successfully !!!')
         await this.deadlineTableComponent.getDeadlines()
         this.data.reload(false)

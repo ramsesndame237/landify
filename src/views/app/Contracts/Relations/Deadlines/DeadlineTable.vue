@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <template v-if="isOptionsVisible">
-      <b-overlay :show="loadingDeadline">
+      <b-overlay :show="loadingDeadline" spinner-variant="primary">
         <div class="d-flex justify-content-between my-2">
           <b-card-text class="mb-0">
             <b-button variant="primary" size="sm" @click="isOptionsVisible = false">
@@ -48,7 +48,7 @@
     </template>
 
     <template v-else>
-      <b-overlay :show="loadingAction">
+      <b-overlay :show="loadingAction" spinner-variant="primary">
         <data-tables
           :fields="relation.fields"
           :items="actions"
@@ -499,6 +499,7 @@ export default {
         await this.$http.delete(`/contracts/deadline/action/${data[0].contractaction_id}`)
         this.$successToast('Action delete successfully !!!')
         await this.getActions(true)
+        await this.getDeadlines()
       } catch (error) {
         this.$errorToast(error.response.data.detail)
         console.log({ error })
