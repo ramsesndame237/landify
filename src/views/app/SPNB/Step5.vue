@@ -4,8 +4,8 @@
       {{ $t('headline~new_business~title~pos') }}
     </b-col>
     <b-col cols="12" md="6">
-      <entity-form table="pos" :definition="definition" table-definition-key="pos" create :initial-data="initialData"
-                   cols="12" ref="form" :disabled="loading"/>
+      <entity-form ref="form" table="pos" :definition="definition" table-definition-key="pos" create
+                   :initial-data="initialData" cols="12" :disabled="loading"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
           <b-spinner v-if="loading" small/>
@@ -27,9 +27,9 @@
 </template>
 
 <script>
-import Field from "@/views/app/Generic/Field";
+import Field from '@/views/app/Generic/Field'
 import {
-  BRow, BCol, BButton, BSpinner
+  BRow, BCol, BButton, BSpinner,
 } from 'bootstrap-vue'
 import Table from '@/table'
 import DataTables from '@/layouts/components/DataTables'
@@ -37,6 +37,9 @@ import entityForm from '@/views/app/Generic/EntityForm'
 
 export default {
   name: 'Step5',
+  components: {
+    Field, BRow, BCol, DataTables, entityForm, BButton, BSpinner,
+  },
   props: ['context', 'disabled'],
   data() {
     const definition = JSON.parse(JSON.stringify(Table.pos))
@@ -83,7 +86,6 @@ export default {
       ],
     }
   },
-  components: { Field, BRow, BCol, DataTables, entityForm, BButton, BSpinner },
   mounted() {
     this.definition.fields.find(f => f.key === 'company_id').disabled = true
     this.$refs.form.loadDefinition()

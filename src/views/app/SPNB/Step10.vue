@@ -45,7 +45,7 @@ export default {
         type: 'list',
         list: 'contract',
         listLabel: 'contract_name',
-        relationEntity: 'contract_recurringpayment_rel'
+        relationEntity: 'contract_recurringpayment_rel',
       },
       { key: 'contract_name', disabled: true },
       ...definition.fields.filter(f => f.key !== 'contract_id'),

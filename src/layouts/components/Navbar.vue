@@ -86,9 +86,9 @@ import {
   BLink, BImg, BNavbarNav, BNavItemDropdown, BDropdownItem, BDropdownDivider, BAvatar,
 } from 'bootstrap-vue'
 import DarkToggler from '@core/layouts/components/app-navbar/components/DarkToggler.vue'
+import useJwt from '@/auth/jwt/useJwt'
+import { initialAbility } from '@/libs/acl/config'
 import Locale from './Locale.vue'
-import useJwt from '@/auth/jwt/useJwt';
-import { initialAbility } from '@/libs/acl/config';
 
 export default {
   components: {

@@ -1,5 +1,5 @@
 import { http } from '@/libs/axios'
-import ToastificationContent from "@core/components/toastification/ToastificationContent.vue";
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   customIndex: () => import('@/views/app/Role/RoleList.vue'),

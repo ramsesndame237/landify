@@ -17,8 +17,9 @@
         {{ data.field.btnLabel }}
       </a>
       <div v-else-if="data.field.type==='html'" v-html="data.value"/>
-      <div v-else-if="data.field.type==='component'" >
-        <component :is="data.field.component" @reload="reload" :row-data="data" :data="data.field.props"/>
+      <div v-else-if="data.field.type==='component'">
+        <component :is="data.field.component" :items="items || provider" :row-data="data" :data="data.field.props"
+                   @reload="reload"/>
       </div>
       <span v-else>{{ data.value }}</span>
     </template>
@@ -39,12 +40,14 @@
           <feather-icon icon="EyeIcon"/>
           <!--        <span>{{ $t('button~view') }}</span>-->
         </b-button>
-        <b-button v-if="withEdit && canUpdate" class="btn-icon" variant="flat-info" style="margin-bottom: 3px" pill
+        <b-button v-if="withEdit && canUpdate " :disabled="canUpdateItem && canUpdateItem(currentItems[data.index])"
+                  class="btn-icon" variant="flat-info" style="margin-bottom: 3px" pill
                   @click="onEditElement ? onEditElement(currentItems[data.index]) : $router.push({name: 'table-view', params: {table: entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index], ids: currentItems.map(i => i[primaryKey])}, query: {edit: 'true'}})">
           <feather-icon icon="EditIcon"/>
           <!--        <span>{{ $t('button~edit') }}</span>-->
         </b-button>
-        <b-button v-if="withDelete && canDelete" class="btn-icon" variant="flat-primary" style="margin-bottom: 3px" pill
+        <b-button v-if="withDelete && canDelete" :disabled="canDeleteItem && canDeleteItem(currentItems[data.index])"
+                  class="btn-icon" variant="flat-primary" style="margin-bottom: 3px" pill
                   @click="deleteElement(data.index)">
           <feather-icon icon="Trash2Icon"/>
           <!--        <span>{{ $t('button~delete') }}</span>-->
@@ -55,8 +58,8 @@
 </template>
 
 <script>
-import { BButton, BFormCheckbox, BTable, } from 'bootstrap-vue'
-import { formatDate } from "@/libs/utils";
+import { BButton, BFormCheckbox, BTable } from 'bootstrap-vue'
+import { formatDate, getDocumentLink } from '@/libs/utils'
 
 export default {
   components: {
@@ -94,6 +97,8 @@ export default {
     items: Array,
     ids: Array,
     initialFilter: Object,
+    canUpdateItem: { type: Function, required: false }, // si un item du tableau est editable
+    canDeleteItem: { type: Function, required: false }, // si un item du tableau est supprimable
   },
   data() {
     return {
@@ -161,6 +166,10 @@ export default {
     onViewClick(data) {
       if (this.onViewElement) {
         this.onViewElement(this.currentItems[data.index])
+        return
+      }
+      if (this.primaryKey === 'document_id') {
+        window.open(getDocumentLink(this.currentItems[data.index]), '_blank')
         return
       }
       const routeData = {
@@ -252,7 +261,6 @@ export default {
           })
       }
 
-
       return this.$api(payload)
         .then(({ data }) => {
           console.log(data)
@@ -272,7 +280,6 @@ export default {
       return `${this.entity}-${JSON.stringify(payload)}`
     },
     processData(data) {
-
       if (this.entityEndpoint && Array.isArray(data.data)) {
         this.$emit('update:totalRows', data.total)
         data.data.forEach(el => {
@@ -282,7 +289,6 @@ export default {
         this.currentItems = data.data
         this.$emit('items', this.currentItems)
         return this.currentItems
-
       }
       this.$emit('update:totalRows', data.data.links.pagination.total)
       data.data.data.forEach(el => {
@@ -334,11 +340,11 @@ export default {
       }).then(async result => {
         if (!result.value) return
         if (!this.canMakeDeleteCall) {
-          entities.forEach(f => {
-            const index = this.items.findIndex(i => f === i)
-            this.items.splice(index, 1)
-          });
-          this.$emit('delete-items', this.items);
+          this.$emit('delete-items', entities)
+          // entities.forEach(f => {
+          //   const index = this.items.findIndex(i => f === i)
+          //   this.items.splice(index, 1)
+          // });
           this.$refs.table.refresh()
           return
         }

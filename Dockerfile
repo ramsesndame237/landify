@@ -5,6 +5,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+#RUN eslint .
 RUN npm run build
 
 # production stage

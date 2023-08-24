@@ -4,7 +4,9 @@
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"
                         :total-rows="totalRows">
         <!--        <div class="d-flex justify-content-end flex-wrap" style="padding: 10px">-->
-        <b-button variant="primary" @click="$refs.table.refresh()">Refresh</b-button>
+        <b-button variant="primary" @click="$refs.table.refresh()">
+          Refresh
+        </b-button>
         <div class="mx-1">
           <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
         </div>
@@ -14,16 +16,6 @@
       </table-pagination>
       <!--      <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"/>-->
     </b-card>
-    <!--    <b-row class="mt-2">-->
-    <!--      <summary-card :title="$t('NKA Invoice Tickets created')" color="#343a40" :percent="(10*100/40).toFixed(0)"-->
-    <!--                    :number="10" variant="dark" cols="3"/>-->
-    <!--      <summary-card :title="$t('Contract Tickets created')" color="#FF7A00" :percent="(10*100/40).toFixed(0)"-->
-    <!--                    :number="10" variant="warning" cols="3"/>-->
-    <!--      <summary-card :title="$t('Facility Man. Tickets created')" color="#D51130" :percent="(10*100/40).toFixed(0)"-->
-    <!--                    :number="10" variant="danger" cols="3"/>-->
-    <!--      <summary-card :title="$t('incoming mails dismissed')" color="#D51130" :percent="(10*100/40).toFixed(0)"-->
-    <!--                    :number="10" variant="danger" cols="3"/>-->
-    <!--    </b-row>-->
     <b-card class="mt-2">
       <div class="d-flex justify-content-between">
         <h5>New Emails</h5>
@@ -40,15 +32,14 @@
 </template>
 
 <script>
-import TablePagination from "@/layouts/components/TablePagination";
-import GenericFilter from "@/views/app/Generic/Filter";
-import MailTable from "@/layouts/components/MailTable";
-import Field from "@/views/app/Generic/Field";
-import SummaryCard from "@/views/app/CustomComponents/SummaryCard";
+import TablePagination from '@/layouts/components/TablePagination'
+import MailTable from '@/layouts/components/MailTable'
 
 export default {
   name: 'IncomingMails',
-  components: { SummaryCard, Field, MailTable, GenericFilter, TablePagination },
+  components: {
+    MailTable, TablePagination,
+  },
   data() {
     const payload = this.$store.getters['table/tableData'](this.$route.params.table)
     console.log('initial payload', payload)
@@ -63,7 +54,9 @@ export default {
       table: this.$route.params.table,
       ids: this.$route.params.ids,
       definition: {
-        filters: [{ key: 'ticket_id', type: 'list', list: 'ticket', listLabel: 'ticket_name' }],
+        filters: [{
+          key: 'ticket_id', type: 'list', list: 'ticket', listLabel: 'ticket_name',
+        }],
       },
       filterValue: 0,
       filterOptions: [

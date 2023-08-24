@@ -9,10 +9,10 @@
           <feather-icon icon="MoreHorizontalIcon"/>
         </template>
         <b-dropdown-item @click="$emit('moredetails')">
-          {{$t('button~moredetails')}}
+          {{ $t('button~moredetails') }}
         </b-dropdown-item>
         <b-dropdown-item @click="$emit('assign')">
-          {{$t('button~assignto')}}
+          {{ $t('button~assignto') }}
         </b-dropdown-item>
         <b-dropdown-item @click="toggleTicket(ticket)">
           {{ $t(ticket.ticket_closed ? 'button~ticket~reopen' : 'button~ticket~close') }}
@@ -21,43 +21,41 @@
     </div>
     <p>{{ ticket.ticket_description }}</p>
     <div v-if="advanced" class="d-flex">
-      <strong class="mr-1">{{$t('attribute.ticket_id')}}:</strong>
+      <strong class="mr-1">{{ $t('attribute.ticket_id') }}:</strong>
       <span>{{ ticket.ticket_id }}</span>
     </div>
     <div v-if="advanced" class="d-flex">
-      <strong class="mr-1">{{$t('attribute.ticket_creation_time')}}:</strong>
+      <strong class="mr-1">{{ $t('attribute.ticket_creation_time') }}:</strong>
       <span>{{ ticket.ticket_creation_time | format }}</span>
       <b-icon-clock-fill class="ml-auto"/>
     </div>
     <div v-if="advanced" class="d-flex">
-      <strong class="mr-1">{{$t('attribute.ticket_last_change_time')}}:</strong>
+      <strong class="mr-1">{{ $t('attribute.ticket_last_change_time') }}:</strong>
       <span>{{ ticket.ticket_last_change_time | format }}</span>
     </div>
     <div class="d-flex">
-      <strong class="mr-1">{{$t('attribute.ticket_deadline')}}:</strong>
+      <strong class="mr-1">{{ $t('attribute.ticket_deadline') }}:</strong>
       <span :class="deadlineColor?('text-'+deadlineColor):''">{{ deadlineForHuman }}</span>
       <b-icon-calendar-date :class="'ml-auto '+ (deadlineColor?('text-'+deadlineColor):'')"/>
     </div>
     <div v-if="advanced" class="d-flex">
-      <strong class="mr-1">{{$t('attribute.ticket_deadline_offset')}}:</strong>
+      <strong class="mr-1">{{ $t('attribute.ticket_deadline_offset') }}:</strong>
       <span :class="columnDeadlineColor?('text-'+columnDeadlineColor):''">{{ columnDeadlineForHuman }}</span>
       <b-icon-calendar-date :class="'ml-auto '+ (columnDeadlineColor?('text-'+columnDeadlineColor):'')"/>
     </div>
-    <div class="d-flex" v-if="advanced">
-      <strong class="mr-1">{{$t('attribute.priority_name')}}:</strong>
+    <div v-if="advanced" class="d-flex">
+      <strong class="mr-1">{{ $t('attribute.priority_name') }}:</strong>
       <span>{{ ticket.priority_name }}</span>
     </div>
-<div class="d-flex" v-if="advanced">
-      <strong class="mr-1">{{$t('attribute.ticket_planned_treatment_week')}}:</strong>
-      <span>{{ ticket.ticket_planned_treatment_week }}</span>
-    </div>
 
-<!--    <div class="mt-1">-->
-<!--      <b-progress max="100" :value="ticket.ticket_progress" style="margin-bottom: 2px;"></b-progress>-->
-<!--    </div>-->
+    <!--    <div class="mt-1">-->
+    <!--      <b-progress max="100" :value="ticket.ticket_progress" style="margin-bottom: 2px;"></b-progress>-->
+    <!--    </div>-->
     <div class="values d-flex justify-content-between align-items-center font-weight-light">
-      <div class="hours">{{ ticket.columns[0].user_email_assigned }}</div>
-<!--      <div class="percents">{{ ticket.ticket_progress + '%' }}</div>-->
+      <div class="hours">
+        {{ ticket.columns[0].user_email_assigned }}
+      </div>
+      <!--      <div class="percents">{{ ticket.ticket_progress + '%' }}</div>-->
     </div>
   </div>
 </template>
@@ -75,9 +73,9 @@ import {
   BDropdown, BDropdownItem,
 } from 'bootstrap-vue'
 import CustomHorizontalProgress from '@/views/app/CustomComponents/CustomHorizontalProgress'
-import moment from "moment";
-import { mapGetters } from "vuex";
-import TicketMixin from "@/views/app/Kanban/TicketMixin";
+import moment from 'moment'
+import { mapGetters } from 'vuex'
+import TicketMixin from '@/views/app/Kanban/TicketMixin'
 
 export default {
   name: 'InvoiceTicketCard',

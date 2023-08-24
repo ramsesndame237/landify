@@ -53,7 +53,9 @@
 </template>
 
 <script>
-import { getDocumentLink, getSignImageLink, getStampedDocumentLink, getStampedDocumentPreviewLink } from '@/libs/utils'
+import {
+  getDocumentLink, getSignImageLink, getStampedDocumentLink, getStampedDocumentPreviewLink,
+} from '@/libs/utils'
 import GenericModal from '@/views/app/Generic/modal'
 import { BPagination } from 'bootstrap-vue'
 // import pdf from 'pdfvuer'

@@ -8,13 +8,21 @@ export default {
   components: {
     DataTables, Field, BModal, BForm,
   },
+  props: {
+    isButtonShowed: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     return {
       loading: false,
       fields: [
         {
-          key: 'contract_id',
+          key: 'contractaction_id',
           hideOnForm: true,
+          hideOnIndex: true,
+          auto: true,
         },
         {
           key: 'contractaction_acting_by',
@@ -24,48 +32,127 @@ export default {
             { label: 'Vermieter', value: 'vermieter' },
           ],
         },
-        { key: 'contractaction_options', type: 'number' },
-        { key: 'contractaction_extension', type: 'number' },
+        {
+          key: 'contractaction_type',
+          label: 'Action Type',
+          type: 'custom-select',
+          items: [
+            { label: 'Active Option', value: 'active_option' },
+            { label: 'Automatic Option', value: 'automatic_option' },
+            { label: 'Automatic extension', value: 'automatic_extension' },
+            { label: 'Resiliation', value: 'resiliation' },
+            { label: 'Special Resiliation', value: 'special_resiliation' },
+          ],
+        },
+        {
+          key: 'contractaction_resiliation_date',
+          type: 'date',
+          label: 'Resiliation date',
+          visible: (entity, vm) => entity.contractaction_type === 'special_resiliation',
+        },
+        {
+          key: 'contractaction_options',
+          visible: entity => !['resiliation', 'special_resiliation'].includes(entity.contractaction_type),
+          type: 'number',
+          change: (entity, vm) => {
+            if (entity.contractaction_type === 'automatic_extension') {
+              vm.field.disabled = true
+              entity.contractaction_options = 99
+            } else {
+              vm.field.disabled = false
+            }
+          },
+        },
+        {
+          key: 'contractaction_extension_value',
+          visible: entity => !['resiliation', 'special_resiliation'].includes(entity.contractaction_type),
+          type: 'number',
+          label: 'Extension Value',
+          required: true,
+        },
+        {
+          key: 'contractaction_extension_unit',
+          visible: entity => !['resiliation', 'special_resiliation'].includes(entity.contractaction_type),
+          type: 'custom-select',
+          label: 'Extension Unit',
+          items: [
+            { label: 'Day', value: 'Day' },
+            { label: 'Week', value: 'Week' },
+            { label: 'Month', value: 'Month' },
+            { label: 'Year', value: 'Year' },
+          ],
+          required: true,
+        },
         { key: 'contractaction_notice_period_value', type: 'number' },
         {
           key: 'contractaction_notice_period_unit',
           type: 'custom-select',
           items: [
-            { label: 'Day', value: 'day' },
-            { label: 'Week', value: 'week' },
-            { label: 'Month', value: 'month' },
-            { label: 'Year', value: 'year' },
+            { label: 'Day', value: 'Day' },
+            { label: 'Week', value: 'Week' },
+            { label: 'Month', value: 'Month' },
+            { label: 'Year', value: 'Year' },
           ],
+        },
+        {
+          key: 'contractaction_comment',
+          type: 'textarea',
+          label: 'Action comment',
+          change: (entity, vm) => {
+            vm.field.required = entity.contractaction_type === 'special_resiliation'
+          },
+          required: false,
         },
       ],
       entity: {
         contract_id: this.$route.params.id,
       },
+      create: true,
+      forceTitle: '',
     }
   },
   methods: {
-    openModal() {
+    openModal(create, data, title) {
+      this.entity = { ...data, contract_id: this.$route.params.id }
+      this.create = create
+      this.forceTitle = title
       this.$refs.modal.show()
     },
     async submit() {
-      const isFormValid = this.$refs.toolform.validate()
+      const isFormValid = await this.$refs.toolform.validate()
 
       if (!isFormValid) {
         return
       }
       this.loading = true
       try {
-        await this.$http.post('/contracts/deadline', this.entity)
-        const { currentTab, tabs } = this.$parent
-        const tab = tabs[currentTab]
-        await tab.$children[0].getDeadlines()
+        await this.$http({
+          method: this.create ? 'post' : 'put',
+          url: `/contracts/deadline${!this.create ? '/action' : ''}`,
+          data: this.entity,
+        })
+
         this.$refs.toolform.reset()
         this.$refs.modal.hide()
+        this.$successToast(`Action ${this.create ? 'added' : 'updated'} successfully !!!`)
+        if (this.create) {
+          const { currentTab, tabs } = this.$parent
+          const tab = tabs[currentTab]
+          await tab.$children[0].getActions(true)
+          await tab.$children[0].getDeadlines()
+        } else {
+          const { getActions } = this.$parent.$parent
+          await getActions(true)
+        }
       } catch (error) {
+        if (error.response) {
+          this.$errorToast(error.response.data.detail)
+        } else {
+          this.$errorToast(error.message)
+        }
         console.log({ error })
-      }
-      finally {
-          this.loading = false
+      } finally {
+        this.loading = false
       }
     },
   },
@@ -74,18 +161,18 @@ export default {
 
 <template>
   <div class="d-flex align-items-center">
-    <b-button class="mr-1" size="sm" variant="info" @click="openModal">
+    <b-button v-if="isButtonShowed" class="mr-1" size="sm" variant="info" @click="openModal">
       <span>New</span>
     </b-button>
-    <b-modal ref="modal" title="Action Data" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary"
+    <b-modal ref="modal" :title="$t(forceTitle || 'Action Data')" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary"
              size="lg" centered @ok="submit"
     >
       <!--      Form-->
       <validation-observer ref="toolform" v-slot="{ passes }" tag="div" class="my-2">
-        <b-form>
+        <b-form @submit.prevent="passes(submit)">
           <b-row>
             <b-col v-for="(field,index) in fields.filter(field => !field.hideOnForm)" :key="index" cols="12">
-              <field :field="field" :entity="entity" :inline="true" />
+              <field :field="field" :disabled="field.disabled" :entity="entity" :inline="true" />
             </b-col>
           </b-row>
         </b-form>

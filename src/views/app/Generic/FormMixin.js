@@ -5,7 +5,6 @@ import {
   BFormInput,
 } from 'bootstrap-vue'
 import Field from '@/views/app/Generic/Field.vue'
-import Table from '@/table'
 
 export default {
   components: {
@@ -44,8 +43,8 @@ export default {
   },
   watch: {
     entity: {
-      handler(val) {
-        console.log('entity', val)
+      handler() {
+        // console.log('entity', val)
       },
       deep: true,
     },
@@ -54,7 +53,7 @@ export default {
     fillRelations(entity, originalEntity, formFields, table, primaryKey) {
       return Promise.all(formFields.filter(field => field.type === 'list' && field.relationEntity !== false)
         .map(async field => {
-          console.log("Fill relations", field, table, primaryKey, entity)
+          console.log('Fill relations', field, table, primaryKey, entity)
           if (entity[field.key] == null) {
             await this.$api({
               entity: field.relationEntity ?? (`${table}_${field.list}_rel`),
@@ -91,7 +90,7 @@ export default {
                   this.$set(component.subOriginalEntity, f.key, this.initialData[f.key])
                 }
               })
-            return this.fillRelations(component.subEntity, component.subOriginalEntity, this.getFormFields(subDefinition), field.list, this.getPrimaryKey(subDefinition))
+            await this.fillRelations(component.subEntity, component.subOriginalEntity, this.getFormFields(subDefinition), field.list, this.getPrimaryKey(subDefinition))
           }
         }))
     },
@@ -139,7 +138,6 @@ export default {
                     data,
                   })
                     .then(resp => {
-                      this.saveTrackRecord(entityName, resp.data.data.data[0][0], oldData, primaryKey, 'create')
                       this.handleRelationErrors(resp, field)
                     })
                 }
@@ -156,8 +154,6 @@ export default {
                       entity: entityName,
                       action: 'create',
                       data,
-                    }).then(resp => {
-                      this.saveTrackRecord(entityName, resp.data.data.data[0][0], oldData, primaryKey, 'update')
                     })
                   }
                   return null
@@ -170,7 +166,7 @@ export default {
     },
     handleRelationErrors(resp, field) {
       if (!resp || !resp.data) return
-      const errors = resp.data.data.errors
+      const { errors } = resp.data.data
       console.log('errors', errors)
       if (typeof errors === 'string') {
         this.$refs.form.setErrors({
@@ -188,7 +184,6 @@ export default {
     },
     createNewEntities(fieldComponents, formFields, entity, originalEntity) {
       if (!Array.isArray(fieldComponents)) return Promise.resolve()
-      console.log("new entities", fieldComponents, formFields)
       return Promise.all(formFields.filter(field => {
         const component = fieldComponents.find(f => f.field === field)
         return !field.hide && component && (field.type === 'list') && (component.hasNew || field.alwaysNew)
@@ -197,13 +192,13 @@ export default {
           const formField = fieldComponents.find(f => f.field === field)
           const create = formField.hasNew || (field.alwaysNew && originalEntity[field.key] == null)
           const { subDefinition } = formField
-          const data = create ? { ...subDefinition.default, ...formField.subEntity } : {
+          const entityData = create ? { ...subDefinition.default, ...formField.subEntity } : {
             ...formField.subEntity,
             [field.key]: originalEntity[field.key],
           }
           const original = formField.subOriginalEntity
-          console.log(create, data, original, originalEntity)
-          return this.saveEntity(data, original,
+          console.log(create, entityData, original, originalEntity)
+          return this.saveEntity(entityData, original,
             this.getFormFields(subDefinition), formField.getSubFields(), field.list, subDefinition, this.getPrimaryKey(subDefinition), create)
             .then(async data => {
               if (data.noupdate) return data.entity
@@ -226,12 +221,12 @@ export default {
     },
     saveEntity(entity, originalEntity, formFields, fieldComponents, table, definition, primaryKey, create) {
       const action = create ? 'create' : 'update'
-      console.log("Save Entity", table, entity, originalEntity, formFields)
       return this.createNewEntities(fieldComponents, formFields, entity, originalEntity)
         .then(async () => {
           /// if we updating and we have no changes
-          if (!create && formFields.filter(f => f.type !== 'list')
+          if (!create && formFields.filter(f => f.type !== 'list' || f.relationEntity === false)
             .every(f => entity[f.key] === originalEntity[f.key])) {
+            console.log('no update', table)
             await this.saveRelations(table, definition, primaryKey, entity[primaryKey], entity, originalEntity)
             return {
               noupdate: true,
@@ -263,16 +258,19 @@ export default {
           }
           // format entity
           const formatedEntity = this.formatEntity(entity, formFields)
-
-          let data = [formatedEntity]
+          console.log('push entity', entity, formatedEntity)
+          let payloadData = [formatedEntity]
           // if create and primary key is multiple
+          console.log(formFields, primaryKey, entity)
           if (create && formFields.find(f => f.key === primaryKey)?.multiple) {
-            data = entity[primaryKey].map(val => ({ ...entity, [primaryKey]: val }))
+            if (Array.isArray(entity[primaryKey])) {
+              payloadData = entity[primaryKey].map(val => ({ ...entity, [primaryKey]: val }))
+            }
           }
           return this.$api({
             entity: table,
             action,
-            data,
+            data: payloadData,
           })
             .then(async ({ data }) => {
               if (data.data.errors[0]) {
@@ -287,7 +285,6 @@ export default {
                 }
               }
               console.log('data', data)
-              this.saveTrackRecord(table, data.data.data[0][0], originalEntity, primaryKey, action)
               return data
             })
         })
@@ -296,52 +293,21 @@ export default {
      * Formats an entity based on the form fields: replace ',' with '.' for decimal field
      *
      */
-    formatEntity(entity, formfields){
-      const formatedEntity = {...entity}
+    formatEntity(entity, formfields) {
+      const formatedEntity = { ...entity }
       formfields.forEach(field => {
-        if (field.isDecimal){
+        if (field.isDecimal) {
           formatedEntity[field.key] = parseFloat(entity[field.key].replace(',', '.'))
+        }
+        if (field.send === false) {
+          delete formatedEntity[field.key]
         }
       })
 
       return formatedEntity
     },
-    async afterSaveHook(data) {
-    },
-    async saveTrackRecord(table, entity, originalEntity, primaryKey, usecase = 'create') {
-      const TRACKABLES = [
-        'company',
-        'user_partnercompany_rel',
-        'user_company_rel',
-        'customergroup_company_rel',
-        'contactperson_company_rel',
-      ]
-
-      // console.log('track record data', {
-      //   table,
-      //   entity,
-      //   originalEntity,
-      //   usecase,
-      //   primaryKey,
-      // })
-
-      if (TRACKABLES.indexOf(table) >= 0) {
-        this.$api({
-          action: 'create',
-          entity: 'trackrecord',
-          data: [{
-            trackrecord_type: 0,
-            trackrecord_comment: `${table} - ${entity[primaryKey]}`,
-            trackrecord_usecase: usecase,
-          }],
-        })
-          .then(result => {
-            console.log('tr', result)
-          })
-          .catch(error => {
-            throw error
-          })
-      }
+    async afterSaveHook() {
+      this.$emit('after-save')
     },
     getFieldComponents() {
       if (this.definition.fieldComponent) {
@@ -358,7 +324,10 @@ export default {
           this.loading = true
           if (this.definition.submit) {
             return this.definition.submit(this, this.entity, this.create)
-              .finally(() => this.loading = false)
+              .finally(async () => {
+                await this.afterSaveHook()
+                this.loading = false
+              })
           }
           return this.saveEntity(this.entity, this.originalEntity, this.formFields, this.getFieldComponents(), this.table, this.definition, this.primaryKey, this.create)
             .then(async data => {
@@ -373,24 +342,25 @@ export default {
                 result = data.data
               }
               await this.afterSaveHook(result)
-              this.$successToast(data.noupdate ? 'OK' : data.data.message)
+              this.$successToast(data.noupdate ? 'OK' : this.$t(data.message || data.data.message))
               // navigate to view page or reload table
               return result
             })
             .catch(e => {
               console.log(e)
               const title = e.response?.data.detail || e.data?.errors[0].err
-              this.$errorToast(title)
+              this.$errorToast(this.$t(title))
               return Promise.reject(e)
             })
-            .finally(() => this.loading = false)
+            .finally(() => {
+              this.loading = false
+            })
         })
     },
     emitSubmit() {
       this.$emit('submit')
     },
     setData(entity) {
-
       this.entity = {
         ...this.entity,
         ...this.definition.default,
@@ -446,6 +416,39 @@ export default {
         // .filter(f => f.type !== 'list')
         .findIndex(f => this.entity[f.key] !== this.originalEntity[f.key]) >= 0
     },
+    async loadEntity() {
+      if (!this.tableDefinition) {
+        await this.loadDefinition()
+      }
+      if (this.create) return
+      if (!this.isRelation && this.fetchData) {
+        this.loading = true
+        let entity = null
+        try {
+          if (this.definition.fetch) {
+            entity = await this.definition.fetch(this)
+          } else {
+            entity = await this.$store.dispatch('table/fetchSingleItem', {
+              entity: this.definition.fetchWithEntity ? this.definition.entity : this.table,
+              primaryKey: this.primaryKey,
+              id: this.entityId || this.initialData[this.primaryKey],
+            })
+          }
+        } catch (e) {
+          console.error(e)
+        }
+        if (!entity) {
+          this.$errorToast(`The entity with the id "${this.entityId}" doesnt exists`)
+        } else {
+          this.setData(entity)
+        }
+        this.loading = false
+      }
+      this.originalEntity = { ...this.entity }
+      this.entityLoaded = true
+      this.$emit('loaded')
+      if (!this.definition.fetch && this.fetchData) await this.fillRelations(this.entity, this.originalEntity, this.formFields, this.table, this.primaryKey)
+    },
   },
   computed: {
     formFields() {
@@ -459,34 +462,6 @@ export default {
     },
   },
   async mounted() {
-    if (!this.tableDefinition) {
-      this.loadDefinition()
-    }
-    if (this.create) return
-    if (!this.isRelation && this.fetchData) {
-      this.loading = true
-      let entity = null
-      try {
-        entity = await (this.definition.fetch ? this.definition.fetch(this) :
-          entity = this.$store.dispatch('table/fetchSingleItem', {
-            entity: this.definition.fetchWithEntity ? this.definition.entity : this.table,
-            primaryKey: this.primaryKey,
-            id: this.entityId || this.initialData[this.primaryKey],
-          }))
-      } catch (e) {
-        console.error(e)
-      }
-      if (!entity) {
-        this.$errorToast(`The entity with the id "${this.entityId}" doesnt exists`)
-      } else {
-        this.setData(entity)
-      }
-      this.loading = false
-    }
-    this.originalEntity = { ...this.entity }
-    this.entityLoaded = true
-    this.$emit('loaded')
-    console.log('mounted', this.entity)
-    if (!this.definition.fetch && this.fetchData) await this.fillRelations(this.entity, this.originalEntity, this.formFields, this.table, this.primaryKey)
+    await this.loadEntity()
   },
 }

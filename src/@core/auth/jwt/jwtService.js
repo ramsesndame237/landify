@@ -156,7 +156,7 @@ export default class JwtService {
     console.log(userData)
     $vm.$ability.update(defineRules())
     // get full user data
-    await $vm.$router.replace(getHomeRouteForLoggedInUser(''))
+    await $vm.$router.replace(getHomeRouteForLoggedInUser())
     $vm.$toast({
       component: ToastificationContent,
       props: {
@@ -165,5 +165,10 @@ export default class JwtService {
         variant: 'success',
       },
     })
+  }
+
+
+  isUserLoggedIn() {
+    return localStorage.getItem('userData') && localStorage.getItem(this.jwtConfig.storageTokenKeyName)
   }
 }

@@ -2,15 +2,17 @@
   <b-row>
     <b-col :cols="create?6:4">
       <div class="bg-white d-flex justify-content-between align-items-center p-1">
-        <h4 class="mb-0">{{ $t(title) }}</h4>
+        <h4 class="mb-0">
+          {{ $t(title) }}
+        </h4>
         <div class="d-flex align-items-center">
-          <notes v-if="definition.note" :primary-key="primaryKey" :id="entityId" :note="definition.note"
+          <notes v-if="definition.note" :id="entityId" :primary-key="primaryKey" :note="definition.note"
                  :note-rel="'note_user_'+table+'_rel'"/>
           <b-button v-if="view" size="sm" variant="info" class="ml-1" @click="edit">
             <feather-icon icon="EditIcon" class="mr-50"/>
             {{ $t('Edit') }}
           </b-button>
-          <b-button v-else size="sm" variant="info" class="ml-1" @click="update" :disabled="loading">
+          <b-button v-else size="sm" variant="info" class="ml-1" :disabled="loading" @click="update">
             <b-spinner v-if="loading" small class="mr-50"/>
             <feather-icon v-else icon="SaveIcon" class="mr-50"/>
             {{ $t('Save') }}
@@ -26,18 +28,22 @@
                      :is-relation="false" :disabled="view" :inline="false" :cols="6" :initial-data="entity"
                      :entity-id="entityId"/>
       </b-card>
-<!--      <b-card class="mt-2" v-if="!create">-->
-<!--        <div class="d-flex justify-content-between align-items-center mb-1">-->
-<!--          <h4>Filter Contradictions</h4>-->
-<!--          <b-button variant="info" >Filter</b-button>-->
-<!--        </div>-->
-<!--        <field v-for="(field,idx) in filterFields" :key="idx" :field="field" :entity="filterData"/>-->
-<!--      </b-card>-->
+      <!--      <b-card class="mt-2" v-if="!create">-->
+      <!--        <div class="d-flex justify-content-between align-items-center mb-1">-->
+      <!--          <h4>Filter Contradictions</h4>-->
+      <!--          <b-button variant="info" >Filter</b-button>-->
+      <!--        </div>-->
+      <!--        <field v-for="(field,idx) in filterFields" :key="idx" :field="field" :entity="filterData"/>-->
+      <!--      </b-card>-->
     </b-col>
-    <b-col cols="4" v-if="!create">
+    <b-col v-if="!create" cols="4">
       <div class="bg-white d-flex justify-content-between align-items-center p-1">
-        <h4 class="mb-0">Allocated Contradictions</h4>
-        <b-button variant="primary" size="sm">Remove</b-button>
+        <h4 class="mb-0">
+          Allocated Contradictions
+        </h4>
+        <b-button variant="primary" size="sm">
+          Remove
+        </b-button>
       </div>
       <b-card class="mt-2">
         <data-tables ref="allocated" :current-page="1" :per-page="100" :with-actions="false"
@@ -49,14 +55,16 @@
       </b-button>
 
     </b-col>
-    <b-col cols="4" v-if="!create">
+    <b-col v-if="!create" cols="4">
       <div class="bg-white p-1 d-flex justify-content-between align-items-center">
-        <h4 class="mb-0">Available contradictions</h4>
+        <h4 class="mb-0">
+          Available contradictions
+        </h4>
         <b-button size="sm" variant="primary" class="mr-1 btn-icon" @click="$refs.filter.openModal()">
           <feather-icon icon="FilterIcon"/>
         </b-button>
         <generic-filter ref="filter" :table="table" :definition="contradictionDefinition"
-                        @filter="filter" vertical="true"/>
+                        vertical="true" @filter="filter"/>
       </div>
       <b-card class="mt-2">
         <data-tables ref="contradictions" :current-page="1" :per-page="100" :with-actions="false" entity="contradiction"
@@ -68,10 +76,12 @@
       </b-button>
 
     </b-col>
-    <b-col cols="12" v-if="!create && showDetail">
+    <b-col v-if="!create && showDetail" cols="12">
       <div class="bg-white d-flex justify-content-between align-items-center p-1">
-        <h4 class="mb-0">Package-Contradiction-Contradiction Points Details</h4>
-        <b-form-input v-model="search" debounce="500" id="filterInput" type="search" class="w-auto"
+        <h4 class="mb-0">
+          Package-Contradiction-Contradiction Points Details
+        </h4>
+        <b-form-input id="filterInput" v-model="search" debounce="500" type="search" class="w-auto"
                       placeholder="Search.."/>
       </div>
       <b-card class="mt-2">
@@ -85,19 +95,23 @@
 </template>
 
 <script>
-import EditPageMixin from "@/views/app/Generic/EditPageMixin";
-import { BRow, BCol, BCard, BButton, BFormInput, BSpinner } from "bootstrap-vue";
-import EntityForm from "@/views/app/Generic/EntityForm";
-import Field from "@/views/app/Generic/Field";
-import DataTables from "@/layouts/components/DataTables";
+import EditPageMixin from '@/views/app/Generic/EditPageMixin'
+import {
+  BRow, BCol, BCard, BButton, BFormInput, BSpinner,
+} from 'bootstrap-vue'
+import EntityForm from '@/views/app/Generic/EntityForm'
+import Field from '@/views/app/Generic/Field'
+import DataTables from '@/layouts/components/DataTables'
 import Table from '@/table'
-import GenericFilter from '../Generic/Filter.vue';
-import Notes from "@/views/app/Generic/Notes";
+import Notes from '@/views/app/Generic/Notes'
+import GenericFilter from '../Generic/Filter.vue'
 
 export default {
   name: 'ContradictionPackage',
+  components: {
+    Notes, DataTables, Field, EntityForm, BRow, BCol, BCard, BButton, BFormInput, BSpinner, GenericFilter,
+  },
   mixins: [EditPageMixin],
-  components: { Notes, DataTables, Field, EntityForm, BRow, BCol, BCard, BButton, BFormInput, BSpinner, GenericFilter },
   data() {
     return {
       contradictionFields: Table.contradiction.fields.slice(0, 2),
@@ -116,15 +130,26 @@ export default {
       filterData: {},
       showDetail: false,
       filterFields: [
-        { key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name' },
-        { key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name' },
-        { key: 'partnercompany_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name' },
+        {
+          key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name',
+        },
+        {
+          key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name',
+        },
+        {
+          key: 'partnercompany_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name',
+        },
         { key: 'invoice_contract_year_from', type: 'number' },
         { key: 'invoice_contract_year_to', type: 'number' },
       ],
       search: '',
       loadingContradictions: false,
     }
+  },
+  computed: {
+    table() {
+      return this.$route.params.table
+    },
   },
   watch: {
     filterData: {
@@ -142,9 +167,7 @@ export default {
         return
       }
       const contradictions = this.$refs.allocated.currentItems
-      const toPush = selected.filter(item => {
-        return contradictions.findIndex(c => c.contradiction_id === item.contradiction_id) === -1
-      })
+      const toPush = selected.filter(item => contradictions.findIndex(c => c.contradiction_id === item.contradiction_id) === -1)
       this.loadingContradictions = true
       await this.$api({
         entity: 'contradictionpackage_contradiction_rel',
@@ -168,11 +191,6 @@ export default {
       console.log('on filter', data)
       this.currentPage = 1
       this.$refs.contradictions.filter(data)
-    },
-  },
-  computed: {
-    table() {
-      return this.$route.params.table
     },
   },
 }

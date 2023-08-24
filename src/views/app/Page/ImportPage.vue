@@ -1,14 +1,18 @@
 <template>
   <div class="">
     <!--UPLOAD-->
-    <form enctype="multipart/form-data" novalidate v-if="!result">
+    <form v-if="!result" enctype="multipart/form-data" novalidate>
       <h1>Upload A File</h1>
       <div class="dropbox">
         <input type="file" :name="uploadFieldName" :disabled="loading"
                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                class="input-file" @change="fileCount = $event.target.files.length; file = $event.target.files[0]">
-        <p v-if="!file">Drag your file here to begin<br> or click to browse </p>
-        <p v-if="file">File charged </p>
+        <p v-if="!file">
+          Drag your file here to begin<br> or click to browse
+        </p>
+        <p v-if="file">
+          File charged
+        </p>
       </div>
       <b-form-group class="mt-2" label="Tables to import">
         <b-form-checkbox-group v-model="tables"
@@ -23,7 +27,7 @@
     </form>
     <div v-else>
       <b-card>
-        <b-tabs :disabled="loading" ref="tabs" pills>
+        <b-tabs ref="tabs" :disabled="loading" pills>
           <b-tab v-for="(entity, index) in entities.filter(e => !!result[e])" :key="index" :title="titles[entity]" lazy>
             <!--            <table v-if="result[entity]" class="my-2 table w-100">-->
             <!--              <thead>-->
@@ -48,7 +52,9 @@
                     <b-form-checkbox v-model="selected[entity]" :disabled="disabled" @change="onSelectChange(entity)"/>
                   </b-th>
                   <b-th>Line</b-th>
-                  <b-th v-for="(field,i) in fields[entity]" :key="i">{{ $t('attribute.' + field) }}</b-th>
+                  <b-th v-for="(field,i) in fields[entity]" :key="i">
+                    {{ $t('attribute.' + field) }}
+                  </b-th>
                   <!--                  <b-th class="text-center">-->
                   <!--                    Action-->
                   <!--                  </b-th>-->
@@ -56,7 +62,9 @@
               </b-thead>
               <b-tbody>
                 <b-tr v-if="getResult(entity).length===0">
-                  <b-td :colspan="3+fields[entity].length" class="text-center">No Data available</b-td>
+                  <b-td :colspan="3+fields[entity].length" class="text-center">
+                    No Data available
+                  </b-td>
                 </b-tr>
                 <template v-for="(row, i) in getResult(entity)">
                   <b-tr :key="i">
@@ -64,8 +72,8 @@
                       <b-form-checkbox v-model="row.__selected" :disabled="disabled"/>
                     </b-td>
                     <b-td class="d-flex align-items-center">
-                      <feather-icon @click="()=> row.show_old = !row.show_old"
-                                    :icon="row.show_old?'ChevronUpIcon':'ChevronDownIcon'" size="20"/>
+                      <feather-icon :icon="row.show_old?'ChevronUpIcon':'ChevronDownIcon'"
+                                    size="20" @click="()=> row.show_old = !row.show_old"/>
                       <span class="ml-1">{{ row.line }}</span>
                     </b-td>
                     <template v-for="(column,i) in fields[entity]">
@@ -78,8 +86,8 @@
                   </b-tr>
                   <!--                  Old Values-->
                   <b-tr v-if="row.show_old" :key="i+'n'" class="table-secondary">
-                    <b-td></b-td>
-                    <b-td></b-td>
+                    <b-td/>
+                    <b-td/>
                     <b-td v-for="(column,i) in fields[entity]" :key="i">
                       {{ row[column] ? row[column].old_value : '' }}
                     </b-td>
@@ -96,7 +104,7 @@
                   Import All
                   <b-spinner v-if="loading && importAll" small/>
                 </b-button>
-                <b-button :disabled="loading" class="mr-1" v-if="getSelected(currentEntity).length>0" variant="primary"
+                <b-button v-if="getSelected(currentEntity).length>0" :disabled="loading" class="mr-1" variant="primary"
                           @click="importData()">
                   Import selected ({{ getSelected(currentEntity).length }})
                   <b-spinner v-if="loading && !importAll" small/>

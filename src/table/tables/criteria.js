@@ -1,4 +1,5 @@
-import { getContractCriteriaFields } from "@/table/utils"
+import { getContractCriteriaFields } from '@/table/utils'
+
 export default {
   entity: 'frontend_3_6_1',
   fields: [

@@ -1,107 +1,107 @@
 <template>
   <validation-observer ref="form" v-slot="{ passes }">
-    <b-form @submit.prevent="passes(submit)" autocomplete="off">
+    <b-form autocomplete="off" @submit.prevent="passes(submit)">
       <b-row >
         <b-col cols="12" :md="cols">
-          <field :inline="inline" ref="fields" :disabled="disabled"
-            :entity="entity" :table-definition="definition" :field="getField('company_name')"
+          <field ref="fields" :inline="inline" :disabled="disabled"
+                 :entity="entity" :table-definition="definition" :field="getField('company_name')"
           />
         </b-col>
         <b-col cols="12" :md="cols">
-          <field :inline="inline" ref="fields" :disabled="disabled"
-            :entity="entity" :table-definition="definition" :field="getField('company_shortname')"
+          <field ref="fields" :inline="inline" :disabled="disabled"
+                 :entity="entity" :table-definition="definition" :field="getField('company_shortname')"
           />
         </b-col>
         <b-col cols="12" :md="cols">
-          <field :inline="inline" ref="fields" :disabled="disabled"
-            :entity="entity" :table-definition="definition" :field="getField('customergroup_id')"
+          <field ref="fields" :inline="inline" :disabled="disabled"
+                 :entity="entity" :table-definition="definition" :field="getField('customergroup_id')"
           />
         </b-col>
         <b-col cols="12" :md="cols">
-          <field :inline="inline" ref="fields" :disabled="disabled"
-            :entity="entity" :table-definition="definition" :field="getField('address_id')"
+          <field ref="fields" :inline="inline" :disabled="disabled"
+                 :entity="entity" :table-definition="definition" :field="getField('address_id')"
           />
         </b-col>
         <b-col cols="12" :md="cols">
-          <field :inline="inline" ref="fields" :disabled="disabled"
-            :entity="entity" :table-definition="definition" :field="getField('contactdetails_id')"
+          <field ref="fields" :inline="inline" :disabled="disabled"
+                 :entity="entity" :table-definition="definition" :field="getField('contactdetails_id')"
           />
         </b-col>
         <b-col cols="12" :md="cols">
-          <field :inline="inline" ref="fields" :disabled="disabled"
-            :entity="entity" :table-definition="definition" :field="getField('companydetails_id')"
+          <field ref="fields" :inline="inline" :disabled="disabled"
+                 :entity="entity" :table-definition="definition" :field="getField('companydetails_id')"
           />
         </b-col>
         <b-col cols="12" :md="cols">
-          <field :inline="inline" ref="fields" :disabled="disabled"
-            :entity="entity" :table-definition="definition" :field="getField('create_contactperson')"
+          <field ref="fields" :inline="inline" :disabled="disabled"
+                 :entity="entity" :table-definition="definition" :field="getField('create_contactperson')"
           />
         </b-col>
 
         <!-- contact person subform -->
         <b-col cols="12" :md="cols">
-          <field :inline="inline" ref="fields" :disabled="disabled"
-            :entity="entity" :table-definition="definition" :field="getField('contactperson_id')"
+          <field ref="fields" :inline="inline" :disabled="disabled"
+                 :entity="entity" :table-definition="definition" :field="getField('contactperson_id')"
           >
 
             <template #default="{subFormFields, subTableDefinition, subEntity}">
               <b-row >
 
                 <b-col cols="12" :md="cols">
-                  <field :inline="inline" ref="fields" :disabled="disabled"
-                    :entity="subEntity" :table-definition="subTableDefinition" :field="getSubFormField(subFormFields,'user_type')"
+                  <field ref="fields" :inline="inline" :disabled="disabled"
+                         :entity="subEntity" :table-definition="subTableDefinition" :field="getSubFormField(subFormFields,'user_type')"
                   />
                 </b-col>
                 <b-col cols="12" :md="cols">
-                  <field :inline="inline" ref="fields" :disabled="disabled"
-                    :entity="subEntity" :table-definition="subTableDefinition" :field="getSubFormField(subFormFields,'contactsalutation_id')"
+                  <field ref="fields" :inline="inline" :disabled="disabled"
+                         :entity="subEntity" :table-definition="subTableDefinition" :field="getSubFormField(subFormFields,'contactsalutation_id')"
                   />
                 </b-col>
                 <b-col cols="12" :md="cols">
-                  <field :inline="inline" ref="fields" :disabled="disabled"
-                    :entity="subEntity" :table-definition="subTableDefinition" :field="getSubFormField(subFormFields,'contactperson_firstname')"
+                  <field ref="fields" :inline="inline" :disabled="disabled"
+                         :entity="subEntity" :table-definition="subTableDefinition" :field="getSubFormField(subFormFields,'contactperson_firstname')"
                   />
                 </b-col>
                 <b-col cols="12" :md="cols">
-                  <field :inline="inline" ref="fields" :disabled="disabled"
-                    :entity="subEntity" :table-definition="subTableDefinition" :field="getSubFormField(subFormFields,'contactperson_lastname')"
+                  <field ref="fields" :inline="inline" :disabled="disabled"
+                         :entity="subEntity" :table-definition="subTableDefinition" :field="getSubFormField(subFormFields,'contactperson_lastname')"
                   />
                 </b-col>
                 <b-col cols="12" :md="cols">
-                  <field :inline="inline" ref="fields" :disabled="true"
-                    :entity="subEntity" :table-definition="subTableDefinition" :field="getSubFormField(subFormFields,'contactperson_shortname')"
+                  <field ref="fields" :inline="inline" :disabled="true"
+                         :entity="subEntity" :table-definition="subTableDefinition" :field="getSubFormField(subFormFields,'contactperson_shortname')"
                   />
                 </b-col>
                 <b-col cols="12" :md="cols">
-                  <field :inline="inline" ref="fields" :disabled="disabled"
-                    :entity="subEntity" :table-definition="subTableDefinition" :field="getSubFormField(subFormFields,'contactperson_function')"
+                  <field ref="fields" :inline="inline" :disabled="disabled"
+                         :entity="subEntity" :table-definition="subTableDefinition" :field="getSubFormField(subFormFields,'contactperson_function')"
                   />
                 </b-col>
                 <b-col cols="12" :md="cols">
-                  <field :inline="inline" ref="fields" :disabled="disabled"
-                    :entity="subEntity" :table-definition="subTableDefinition" :field="getSubFormField(subFormFields,'address_id')"
+                  <field ref="fields" :inline="inline" :disabled="disabled"
+                         :entity="subEntity" :table-definition="subTableDefinition" :field="getSubFormField(subFormFields,'address_id')"
                   />
                 </b-col>
                 <b-col cols="12" :md="cols">
-                  <field :inline="inline" ref="fields" :disabled="disabled"
-                    :entity="subEntity" :table-definition="subTableDefinition" :field="getSubFormField(subFormFields,'contactdetails_id')"
+                  <field ref="fields" :inline="inline" :disabled="disabled"
+                         :entity="subEntity" :table-definition="subTableDefinition" :field="getSubFormField(subFormFields,'contactdetails_id')"
                   >
 
                     <template #default="{subFormFields, subTableDefinition, subEntity}">
                       <b-row >
                         <b-col cols="12" :md="cols">
-                          <field :inline="inline"  :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                            :field="subFormFields.find(f=> f.key==='contactdetails_phone')"
+                          <field :inline="inline" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
+                                 :field="subFormFields.find(f=> f.key==='contactdetails_phone')"
                           />
                         </b-col>
                         <b-col cols="12" :md="cols">
-                          <field :inline="inline"  :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                            :field="subFormFields.find(f=> f.key==='contactdetails_mobile')"
+                          <field :inline="inline" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
+                                 :field="subFormFields.find(f=> f.key==='contactdetails_mobile')"
                           />
                         </b-col>
                         <b-col cols="12" :md="cols">
-                          <field :inline="inline"  :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                            :field="subFormFields.find(f=> f.key==='contactdetails_fax')"
+                          <field :inline="inline" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
+                                 :field="subFormFields.find(f=> f.key==='contactdetails_fax')"
                           />
                         </b-col>
                       </b-row>
@@ -125,14 +125,13 @@
 import FormMixin from '@/views/app/Generic/FormMixin'
 import Table from '@/table'
 
-
 export default {
-  name: "CompanyForm",
+  name: 'CompanyForm',
   mixins: [FormMixin],
 
   methods: {
-    getSubFormField(subFormFields, key){
-      return subFormFields.find(f=> f.key === key)
+    getSubFormField(subFormFields, key) {
+      return subFormFields.find(f => f.key === key)
     },
   },
 }

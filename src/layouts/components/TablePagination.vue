@@ -19,24 +19,24 @@
 
     <div class="d-flex align-items-center">
       <slot/>
-      <b-button v-if="withFilter && inlineFilter" @click="$emit('filter')" size="sm" variant="primary" class="mr-1 btn-icon">
+      <b-button v-if="withFilter && inlineFilter" size="sm" variant="primary" class="mr-1 btn-icon" @click="$emit('filter')">
         <feather-icon icon="FilterIcon"/>
       </b-button>
-      <b-button v-if="onNewElement!=null && canCreate" @click="onNewElement" size="sm" variant="info" class="mr-1">
+      <b-button v-if="onNewElement!=null && canCreate" size="sm" variant="info" class="mr-1" @click="onNewElement">
         <feather-icon icon="PlusCircleIcon" class="mr-50"/>
         <span>{{ $t('button~new') }}</span>
       </b-button>
-      <b-button v-if="onDeleteElements!=null && canDelete" @click="onDeleteElements" size="sm" variant="primary"
-                class="mr-1">
+      <b-button v-if="onDeleteElements!=null && canDelete" size="sm" variant="primary" class="mr-1"
+                @click="onDeleteElements">
         <feather-icon icon="Trash2Icon" class="mr-50"/>
         <span>{{ $t('button~delete') }}</span>
       </b-button>
-      <b-button v-for="(action,i) in actions" :key="i"  @click="$emit('action', action)" size="sm" variant="primary"
-                class="mr-1">
+      <b-button v-for="(action,i) in actions" :key="i" size="sm" variant="primary" class="mr-1"
+                @click="$emit('action', action)">
         <!--        <feather-icon icon="Trash2Icon" class="mr-50"/>-->
         <span>{{ action.text }}</span>
       </b-button>
-      <b-form-input debounce="500" id="filterInput" v-model="internalSearch" type="search" class="w-auto"
+      <b-form-input id="filterInput" v-model="internalSearch" debounce="500" type="search" class="w-auto"
                     placeholder="Search.."/>
     </div>
 

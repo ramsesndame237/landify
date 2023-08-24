@@ -4,15 +4,15 @@
       {{ $t('headline~new_business~title~contract') }}
     </b-col>
     <b-col cols="12" md="6">
-      <entity-form table="contract" :definition="definition" table-definition-key="contract"
-                   :create="initialData.contract_id==null" :initial-data="initialData" cols="12" ref="form"
+      <entity-form ref="form" table="contract" :definition="definition"
+                   table-definition-key="contract" :create="initialData.contract_id==null" :initial-data="initialData" cols="12"
                    :disabled="loading" :entity-id="initialData.contract_id"/>
     </b-col>
   </b-row>
 </template>
 
 <script>
-import Field from "@/views/app/Generic/Field";
+import Field from '@/views/app/Generic/Field'
 import EntityForm from '@/views/app/Generic/EntityForm'
 import Table from '@/table'
 import {
@@ -21,6 +21,9 @@ import {
 
 export default {
   name: 'Step6',
+  components: {
+    Field, BRow, BCol, EntityForm, BButton,
+  },
   props: ['context', 'disabled'],
   data() {
     return {
@@ -29,7 +32,6 @@ export default {
       initialData: { ...this.context.contract },
     }
   },
-  components: { Field, BRow, BCol, EntityForm, BButton },
   mounted() {
     this.$refs.form.loadDefinition()
   },

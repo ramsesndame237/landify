@@ -47,7 +47,7 @@ export default {
       Vue.set(state.listCache, entity, data)
     },
     deleteTableCacheKeyFromPrefix(state, prefix) {
-     Object.keys(state.tableCache).forEach(key => {
+      Object.keys(state.tableCache).forEach(key => {
         if (key.startsWith(prefix)) Vue.set(state.tableCache, key, null)
       })
     },
@@ -93,20 +93,20 @@ export default {
       context.commit('setListCache', payload)
     },
     fetchList(context, { entity, data, customEnpoint = null }) {
-      if(customEnpoint) {
+      if (customEnpoint) {
         data = [
-          ...(data ? data : [{}]),
-          {page: 1},
-          {per_page: 100000},
-          {order: 'desc'}
+          ...(data || [{}]),
+          { page: 1 },
+          { per_page: 100000 },
+          { order: 'desc' },
         ]
-        const requestQuery = data.map(i=> Object.keys(i).map(e=> `${e}=${i[e]}`).join('&')).join('&')
+        const requestQuery = data.map(i => Object.keys(i).map(e => `${e}=${i[e]}`).join('&')).join('&')
         return http.get(`${customEnpoint}?${requestQuery}`)
-        .then(({ data }) => {
-          Vue.set(context.state.listCache, entity, data.data)
-          context.commit('setDefinition', { data, table: entity })
-          return data.data
-        })
+          .then(({ data: respData }) => {
+            Vue.set(context.state.listCache, entity, respData.data)
+            context.commit('setDefinition', { data: respData, table: entity })
+            return respData.data
+          })
       }
       if (entity === 'document') {
         console.warn('Fetch of documents is disabled')
@@ -125,10 +125,10 @@ export default {
         filter_all: '',
         lang: window.$vue ? window.$vue.$i18n.locale : 'en',
       })
-        .then(({ data }) => {
-          Vue.set(context.state.listCache, entity, data.data.data)
-          context.commit('setDefinition', { data, table: entity })
-          return data.data.data
+        .then(({ data: respData }) => {
+          Vue.set(context.state.listCache, entity, respData.data.data)
+          context.commit('setDefinition', { data: respData, table: entity })
+          return respData.data.data
         })
     },
   },

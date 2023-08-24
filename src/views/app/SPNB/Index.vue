@@ -8,7 +8,7 @@
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex">
             <b-button size="sm" class="d-flex align-items-center" variant="primary">
-<!--              <img src="@/assets/images/pages/deleteIcons.svg" alt="">-->
+              <!--              <img src="@/assets/images/pages/deleteIcons.svg" alt="">-->
               {{ $t('button~cancel') }}
             </b-button>
           </div>

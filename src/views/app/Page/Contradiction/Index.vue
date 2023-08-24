@@ -7,13 +7,13 @@
           <span>{{ $t(title) }}</span>
         </div>
         <div class="d-flex align-items-center">
-          <notes v-if="definition.note" class="mr-2" :primary-key="primaryKey" :id="entityId" :note="definition.note"
+          <notes v-if="definition.note" :id="entityId" class="mr-2" :primary-key="primaryKey" :note="definition.note"
                  :note-rel="'note_user_'+table+'_rel'"/>
           <b-button v-if="view" size="sm" variant="info" class="mr-1" @click="edit">
             <feather-icon icon="EditIcon" class="mr-50"/>
             {{ $t('Edit') }}
           </b-button>
-          <b-button v-else size="sm" variant="info" class="mr-1" @click="update" :disabled="loading">
+          <b-button v-else size="sm" variant="info" class="mr-1" :disabled="loading" @click="update">
             <b-spinner v-if="loading" small class="mr-50"/>
             <feather-icon v-else icon="SaveIcon" class="mr-50"/>
             {{ $t('Save') }}
@@ -39,7 +39,7 @@
       <b-tab title="Inspection result" lazy>
         <b-card body-class="p-0" class="mb-1">
           <div class="d-flex justify-content-end" style="padding: 7px">
-            <b-button :disabled="saving" @click="saveReductions" variant="primary">
+            <b-button :disabled="saving" variant="primary" @click="saveReductions">
               <b-spinner v-if="saving" class="mr-1" small/>
               <span>{{ $t('button~save') }}</span>
             </b-button>
@@ -53,33 +53,29 @@
         </b-card>
 
       </b-tab>
-      <b-tab title="Contract" lazy>
-
-      </b-tab>
-      <b-tab title="Partial Invoice" lazy>
-
-      </b-tab>
+      <b-tab title="Contract" lazy/>
+      <b-tab title="Partial Invoice" lazy/>
       <b-tab title="Documents and communication" lazy>
         <correspondance-form/>
       </b-tab>
-      <b-tab title="Preview" lazy>
-
-      </b-tab>
+      <b-tab title="Preview" lazy/>
     </b-tabs>
   </div>
 </template>
 
 <script>
-import EditPageMixin from "@/views/app/Generic/EditPageMixin";
-import { BTabs, BTab, BCard, BButton, BSpinner } from "bootstrap-vue"
-import EntityForm from "@/views/app/Generic/EntityForm";
-import ContradictionForm from "@/views/app/FormComponent/ContradictionForm";
-import ContradictionPoint from "@/views/app/Page/Contradiction/ContradictionPoint";
-import Notes from "@/views/app/Generic/Notes";
-import ReductionAmount from '@/views/app/CreateComponent/ReductionAmount';
+import EditPageMixin from '@/views/app/Generic/EditPageMixin'
+import {
+  BTabs, BTab, BCard, BButton, BSpinner,
+} from 'bootstrap-vue'
+import EntityForm from '@/views/app/Generic/EntityForm'
+import ContradictionForm from '@/views/app/FormComponent/ContradictionForm'
+import ContradictionPoint from '@/views/app/Page/Contradiction/ContradictionPoint'
+import Notes from '@/views/app/Generic/Notes'
+import ReductionAmount from '@/views/app/CreateComponent/ReductionAmount'
 import { clone } from '@/libs/utils'
-import Field from "@/views/app/Generic/Field";
-import CorrespondanceForm from "@/views/app/Page/Contradiction/CorrespondanceForm";
+import Field from '@/views/app/Generic/Field'
+import CorrespondanceForm from '@/views/app/Page/Contradiction/CorrespondanceForm'
 
 export default {
   name: 'Index',
@@ -94,7 +90,7 @@ export default {
     BTabs,
     BCard,
     BButton,
-    BSpinner
+    BSpinner,
   },
   mixins: [EditPageMixin],
   data() {

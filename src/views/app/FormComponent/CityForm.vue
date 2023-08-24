@@ -2,20 +2,20 @@
   <b-row>
     <b-col cols="12" >
       <b-form-group :label="$t('attribute.city_zip') + '/' + $t('attribute.city_name')"
-        label-cols-md="4">
+                    label-cols-md="4">
         <div class="d-flex">
-          <field style="margin-right: 20px; width: 120px" :inline="false" :noLabel="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('city_zip')"/>
-          <field style="flex-grow: 1;" :inline="false" :noLabel="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('city_name')"/>
+          <field ref="fields" style="margin-right: 20px; width: 120px" :inline="false" :no-label="true" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('city_zip')"/>
+          <field ref="fields" style="flex-grow: 1;" :inline="false" :no-label="true" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('city_name')"/>
 
         </div>
       </b-form-group>
     </b-col>
     <b-col cols="12">
-      <field :inline="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('state')"/>
+      <field ref="fields" :inline="true" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('state')"/>
     </b-col>
 
     <b-col cols="12">
-      <field :inline="true" ref="fields" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('country_id')"/>
+      <field ref="fields" :inline="true" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('country_id')"/>
     </b-col>
   </b-row>
 </template>

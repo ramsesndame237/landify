@@ -14,11 +14,12 @@
 import {
   BRow, BCol,
 } from 'bootstrap-vue'
-import EntityForm from "@/views/app/Generic/EntityForm";
+import EntityForm from '@/views/app/Generic/EntityForm'
 import Table from '@/table'
 
 export default {
   name: 'Step2',
+  components: { EntityForm, BRow, BCol },
   props: ['context', 'disabled'],
   data() {
     return {
@@ -26,7 +27,6 @@ export default {
       initialData: { customergroup_id: this.context.customergroup_id, ...this.context.company },
     }
   },
-  components: { EntityForm, BRow, BCol },
   mounted() {
     this.definition.fields.find(f => f.key === 'customergroup_id').disabled = true
     this.$refs.form.loadDefinition()

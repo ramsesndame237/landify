@@ -52,10 +52,10 @@ export default {
             console.log('data', data)
             this.$router.push({ name: 'table-view', params: { id: data[this.primaryKey] }, query: { edit: true } })
           }
-          this.$store.commit('table/deleteTableCacheKeyFromPrefix', this.table + '-')
+          this.$store.commit('table/deleteTableCacheKeyFromPrefix', `${this.table}-`)
         })
         .catch(e => {
-          console.error("error", e);
+          console.error('error', e)
         })
         .finally(() => {
           this.loading = false

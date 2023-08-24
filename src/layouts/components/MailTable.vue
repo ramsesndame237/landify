@@ -42,8 +42,8 @@
         </b-tbody>
         <transition :key="'c'+idx" name="slide">
           <b-tbody v-if="item.documents.length>0" v-show="item.open" :id="'collapse'+item.email_id">
-            <mail-tr v-for="(child,idx) in item.documents" :key="idx" :item="child" child @classify="classify(child)"
-                     @reject="reject(child)" style="background-color: white !important;"/>
+            <mail-tr v-for="(child,idx) in item.documents" :key="idx" :item="child" child style="background-color: white !important;"
+                     @classify="classify(child)" @reject="reject(child)"/>
           </b-tbody>
         </transition>
       </template>
@@ -95,7 +95,7 @@ import Field from '@/views/app/Generic/Field'
 import moment from 'moment-business-time'
 import { getUserData } from '@/auth/utils'
 import _ from 'lodash'
-import Fuse from "fuse.js";
+import Fuse from 'fuse.js'
 
 export default {
   components: {
@@ -185,9 +185,7 @@ export default {
         if (this.filterValue === 0) return true
         if (this.filterValue === 1) {
           if (document.ticket_created || document.classification_dismissed) return false
-        } else {
-          if (!document.ticket_created && !document.classification_dismissed) return false
-        }
+        } else if (!document.ticket_created && !document.classification_dismissed) return false
         return true
       })
     },
@@ -448,7 +446,7 @@ export default {
           document.email_id = item.email_id
           if (!document.classification_id) {
             // fix classification
-            let classification = (await this.$api({
+            const classification = (await this.$api({
               action: 'create',
               entity: 'classification',
               data: [
@@ -456,7 +454,7 @@ export default {
               ],
             })).data.data.data[0][0]
 
-            let relData = (await this.$api({
+            const relData = (await this.$api({
               action: 'create',
               entity: 'classification_document_classficationtype_rel',
               data: [

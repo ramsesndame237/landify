@@ -1,5 +1,5 @@
 export default {
-  entity: 'frontend_2_1_1',
+  entityEndpoint: '/companies',
   primaryKey: 'company_id',
   formComponent: () => import('@/views/app/CreateComponent/CompanyForm.vue'),
   fields: [
@@ -52,26 +52,21 @@ export default {
       hideOnUpdate: true,
       hideOnIndex: true,
       change: (entity, vm) => {
-        let create_contactperson;
-        console.log("entity", entity);
-        if (entity.create_contactperson === 1){
+        console.log('entity', entity)
+        if (entity.create_contactperson === 1) {
           const companyAddressField = vm.$parent.$children[3]
           const companyCityField = companyAddressField.getSubFields()[3]
-
 
           const contactPersonAddressField = vm.$parent.$children[7].$children[0].$children[7]
           const contactPersonCityField = contactPersonAddressField.getSubFields()[3]
 
-
-          for (const key in companyAddressField.subEntity) {
+          Object.keys(companyAddressField.subEntity).forEach(key => {
             contactPersonAddressField.$set(contactPersonAddressField.subEntity, key, companyAddressField.subEntity[key])
-          }
+          })
 
-          for (const key in companyCityField.subEntity) {
+          Object.keys(companyCityField.subEntity).forEach(key => {
             contactPersonCityField.$set(contactPersonCityField.subEntity, key, companyCityField.subEntity[key])
-          }
-
-
+          })
         }
       },
     },
@@ -84,7 +79,7 @@ export default {
       alwaysNew: true,
       hideOnIndex: true,
       onlyForm: true,
-      visible: (entity) => entity.create_contactperson === 1,
+      visible: entity => entity.create_contactperson === 1,
     },
 
     { key: 'city_name', sortable: true, hideOnForm: true },
@@ -107,7 +102,6 @@ export default {
         { key: 'ticket_name', hideOnForm: true },
         { key: 'board_name', hideOnForm: true },
         { key: 'ticket_deadline', hideOnForm: true },
-        { key: 'ticket_planned_treatment_week', hideOnForm: true },
         { key: 'ticket_progress', hideOnForm: true },
       ],
     },

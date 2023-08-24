@@ -8,8 +8,8 @@
               <span class="text-uppercase">Ticket_id</span>
               <span v-if="entity.ticket_id" class="text-uppercase">
                 <b-link :to="{name: 'table-view', params: {table: 'ticket', id: entity.ticket_id}}">{{
-                    entity.ticket_id
-                  }}</b-link>
+                  entity.ticket_id
+                }}</b-link>
               </span>
             </b-col>
             <b-col cols="12" class="d-flex justify-content-between mb-1">
@@ -76,7 +76,7 @@
         <b-col cols="6">
           <div class="d-flex justify-content-between align-items-center flex-wrap mb-1">
             <span>Select respective contract to area</span>
-            <b-form-input debounce="500" id="filterInput" v-model="search" type="search" class="w-auto"
+            <b-form-input id="filterInput" v-model="search" debounce="500" type="search" class="w-auto"
                           placeholder="Search.." :disabled="entity.pos_id==null"/>
           </div>
           <data-tables ref="contracts" :disabled="disabled" :current-page="1" :per-page="100" :items="contracts"
@@ -95,7 +95,7 @@
 <script>
 import FormMixin from '@/views/app/Generic/FormMixin'
 import DataTables from '@/layouts/components/DataTables'
-import { getYearFormDateString } from "@/libs/utils"
+import { getYearFormDateString } from '@/libs/utils'
 
 export default {
   name: 'InvoiceForm',
@@ -146,9 +146,6 @@ export default {
     'entity.pos_id': function (val) {
       if (val) this.fetchContracts()
       else this.contracts = []
-    },
-    'entity.company_id': function (val) {
-      // if (val) this.posField.filterValue = this.entity.company_id
     },
     'entity.invoice_billing_period_to_date': function () {
       this.entity.invoice_contract_year = getYearFormDateString(this.entity.invoice_billing_period_to_date)

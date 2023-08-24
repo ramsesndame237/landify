@@ -16,7 +16,7 @@ export default {
       ],
       send: false,
       visible: () => false,
-      value: () => 0
+      value: () => 0,
     },
     { key: 'contactperson_firstname' },
     { key: 'contactperson_lastname' },
