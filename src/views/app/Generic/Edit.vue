@@ -42,7 +42,7 @@
       </div>
     </b-card>
 
-    <b-card class="">
+    <b-card class="" :no-body="noBody">
       <component
         :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
         ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="create"
@@ -165,6 +165,7 @@ export default {
       perPage: Number.MAX_SAFE_INTEGER,
       totalRows: 0,
       formLoaded: false,
+      noBody: false
     }
   },
   computed: {
@@ -200,6 +201,9 @@ export default {
     })
   },
   methods: {
+    removeBody(val = false){
+      return this.noBody = val
+    },
     onAction(action) {
       action.onClick(this.$refs.form.entity, this)
     },
