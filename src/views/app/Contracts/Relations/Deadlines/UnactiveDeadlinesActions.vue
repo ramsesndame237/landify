@@ -12,7 +12,6 @@
 <script>
 import sortBy from 'lodash/sortBy'
 import findIndex from 'lodash/findIndex'
-import minBy from 'lodash/minBy'
 
 export default ({
   name: 'UncativeDeadlinesActions',
@@ -24,7 +23,7 @@ export default ({
   },
   computed: {
     canActivate() {
-      // Les conditions pour tester l apossibilité de modification
+      // Les conditions pour tester la possibilité de modification
       const {
         isItemOnTopStatusNotDue,
         isItemActionCancelled,
