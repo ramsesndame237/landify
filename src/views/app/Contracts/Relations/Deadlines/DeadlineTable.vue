@@ -26,7 +26,7 @@
                 :multi-select="false" :with-actions="false"
                 :items="unactivatedDeadlines"
                 :entity="relation.entity"
-                default-sort-column="contractdeadline_status"
+                default-sort-column="contractdeadline_expected_from"
                 :selectable="false"
               />
             </b-card-text>
@@ -39,7 +39,7 @@
             :multi-select="false" :with-actions="false"
             :items="activatedDeadlines"
             :entity="relation.entity"
-            default-sort-column="contractdeadline_status"
+            default-sort-column="contractdeadline_expected_from"
             :selectable="false"
             @table-refreshed="getActions"
           />
@@ -438,6 +438,14 @@ export default {
         return deadline
       })
     },
+    editComponent() {
+      return this.$parent.$parent.$parent
+    }
+  },
+  watch: {
+    isOptionsVisible(newVal) {
+      this.editComponent.showTool = !newVal
+    }
   },
   mounted() {
     this.getActions()
