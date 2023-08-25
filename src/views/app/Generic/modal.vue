@@ -1,7 +1,7 @@
 <template>
   <!--modal-->
   <b-modal id="generic-modal" ref="modal" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary" centered
-           :title="$t(forceTitle || title)" size="lg" :busy="loading" @ok="handleOk">
+           :title="$t(forceTitle || title)" size="lg" :busy="loading" :no-close-on-backdrop="true" @ok="handleOk">
     <component
       :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
       ref="form" :fetch-data="fetchData" :table="table" :definition="definition"
@@ -10,17 +10,19 @@
     <p v-if="['headline~document~new','headline~document_contract_documentcontracttype_rel~new'].indexOf(forceTitle)>=0"
        class="text-danger text-center">No ticket will be created for this document</p>
     <template v-slot:modal-footer>
-      <b-button variant="warning" :disabled="loading" @click="$refs.modal.hide()">{{ $t('button~cancel') }}</b-button>
-      <b-button v-if="!create || !withContinue" variant="primary" :disabled="loading" @click="handleOk">
+      <b-button variant="warning" :disabled="loading" @click="$refs.modal.hide()">
+        {{ $t('button~cancel') }}
+      </b-button>
+      <b-button v-if="!create || withContinue" variant="primary" :disabled="loading" @click="handleOk">
         <b-spinner v-if="loading" small/>
         {{ $t('button~save') }}
       </b-button>
-      <b-dropdown v-else split text="Save" variant="primary" :disabled="loading" @click="handleOk" right>
+      <b-dropdown v-else split text="Save" variant="primary" :disabled="loading" right @click="handleOk">
         <template #button-content>
           <b-spinner v-if="loading" class="mr-1" small/>
           <span>{{ $t('button~save') }}</span>
         </template>
-        <b-dropdown-item @click="handleOk($event, 1)" v-if="!isRelation">
+        <b-dropdown-item v-if="!isRelation" @click="handleOk($event, 1)">
           {{ $t('button~save_continue') }}
         </b-dropdown-item>
         <b-dropdown-item v-if="create" @click="handleOk($event, 2)">
@@ -33,14 +35,16 @@
 
 <script>
 
-import EntityForm from "@/views/app/Generic/EntityForm";
+import EntityForm from '@/views/app/Generic/EntityForm'
 import {
   BButton, BSpinner, BDropdown, BDropdownItem,
 } from 'bootstrap-vue'
 
 export default {
   name: 'GenericModal',
-  components: { EntityForm, BButton, BSpinner, BDropdown, BDropdownItem },
+  components: {
+    EntityForm, BButton, BSpinner, BDropdown, BDropdownItem,
+  },
   props: {
     table: String,
     cacheKey: String,

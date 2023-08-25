@@ -1,4 +1,5 @@
-import {updateInvoiceApportionable, updateInvoiceFlatRate} from '@/table/utils'
+import { updateInvoiceApportionable, updateInvoiceFlatRate } from '@/table/utils'
+
 export default {
   fieldComponent: () => import('@/views/app/CreateComponent/InvoicePositionForm.vue'),
   create: false,

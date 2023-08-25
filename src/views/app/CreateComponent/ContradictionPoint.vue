@@ -13,7 +13,7 @@
         <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
                :field="getField('textmodule_id')"/>
       </b-col>
-      <b-col cols="12" md="6"></b-col>
+      <b-col cols="12" md="6"/>
       <b-col cols="12" md="6">
         <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
                :field="getField('contradictionpoint_text')"/>
@@ -24,7 +24,9 @@
       </b-col>
     </b-row>
 
-    <h4 class="mt-2 mb-1">Reduction Amounts*</h4>
+    <h4 class="mt-2 mb-1">
+      Reduction Amounts*
+    </h4>
 
     <reduction-amount :entity="entity" :disabled="disabled"/>
   </div>
@@ -35,8 +37,8 @@
 import {
   BRow, BCol,
 } from 'bootstrap-vue'
-import Field from '@/views/app/Generic/Field';
-import ReductionAmount from "@/views/app/CreateComponent/ReductionAmount";
+import Field from '@/views/app/Generic/Field'
+import ReductionAmount from '@/views/app/CreateComponent/ReductionAmount'
 
 export default {
   name: 'ContradictionPointForm',
@@ -67,4 +69,3 @@ export default {
   },
 }
 </script>
-

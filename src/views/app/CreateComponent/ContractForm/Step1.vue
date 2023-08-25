@@ -20,10 +20,10 @@
 </template>
 
 <script>
-import { ValidationObserver } from "vee-validate";
+import { ValidationObserver } from 'vee-validate'
 
 import {
-  BRow, BCol, BForm
+  BRow, BCol, BForm,
 } from 'bootstrap-vue'
 import EntityForm from '@/views/app/Generic/EntityForm'
 import Table from '@/table'
@@ -35,9 +35,9 @@ export default {
   },
   props: ['disabled', 'context'],
   data() {
-    const contractDefinition = {...Table.contract}
-    contractDefinition.submit = (vm) => {
-      const data = {...vm.entity}
+    const contractDefinition = { ...Table.contract }
+    contractDefinition.submit = vm => {
+      const data = { ...vm.entity }
       delete data.customergroup_id
       return vm.$http.post('/contracts/step/0', data).then(() => {
         vm.$successToast('Contract Created')
@@ -45,22 +45,22 @@ export default {
     }
     return {
       definition: contractDefinition,
-      initialData: {...this.context.contract_main_infos},
+      initialData: { ...this.context.contract_main_infos },
       loading: false,
     }
   },
+  computed: {
+    tableDefinition() {
+      return this.$store.getters['table/tableDefinition'](this.table)
+    },
+  },
 
   methods: {
-    async validate(){
+    async validate() {
       const entity = await this.$refs.form.submit()
       return entity
-    }
+    },
   },
-  computed: {
-    tableDefinition(){
-      return this.$store.getters['table/tableDefinition'](this.table)
-    }
-  }
 }
 </script>
 

@@ -30,7 +30,7 @@
     </b-card-actions>
 
     <b-card>
-      <div class="mb-1" v-if="table==='conditions'">
+      <div v-if="table==='conditions'" class="mb-1">
         <!--        <b-form-input debounce="500" id="filterInput" v-model="search" type="search" class="w-auto"-->
         <!--                      placeholder="Search.."/>-->
         <b-form-group label="Currency" label-cols="auto">
@@ -45,15 +45,23 @@
 
     <b-row v-if="table==='conditions'">
       <b-col lg="4" md="6">
-        <b-card title="Totals" v-if="items.length>0">
+        <b-card v-if="items.length>0" title="Totals">
           <table class="mt-2 mt-xl-0 w-100">
             <tr>
-              <th class="pb-50 font-weight-bold">Total Rental Space</th>
-              <td class="pb-50">{{ total_rental_space }}</td>
+              <th class="pb-50 font-weight-bold">
+                Total Rental Space
+              </th>
+              <td class="pb-50">
+                {{ total_rental_space }}
+              </td>
             </tr>
             <tr>
-              <th class="pb-50 font-weight-bold">Total rent per month</th>
-              <td class="pb-50">{{ total_rent_per_month }}</td>
+              <th class="pb-50 font-weight-bold">
+                Total rent per month
+              </th>
+              <td class="pb-50">
+                {{ total_rent_per_month }}
+              </td>
             </tr>
           </table>
         </b-card>
@@ -115,8 +123,8 @@ export default {
         entity: 'frontend_contractlist_criteria',
         fields: [
           ...(this.table === 'deadlines' ? ['notice_of_termination', 'action_date'] : []),
-          { key: 'contract_id', stickyColumn: true, variant: 'light', },
-          { key: 'contract_name', stickyColumn: true, variant: 'light', },
+          { key: 'contract_id', stickyColumn: true, variant: 'light' },
+          { key: 'contract_name', stickyColumn: true, variant: 'light' },
           { key: 'contract_status' },
           { key: 'contracttype_name' },
           { key: 'contract_begin_date' },
@@ -192,14 +200,13 @@ export default {
             entityCustomEndPoint: '/pos',
             filter_key: 'company_id',
             change: (entity, vm) => {
-              console.log('vm.entity.pos_id: ', vm.entity.pos_id);
-              const pos = vm.list.find(c=> c.pos_id === vm.entity.pos_id)
+              console.log('vm.entity.pos_id: ', vm.entity.pos_id)
+              const pos = vm.list.find(c => c.pos_id === vm.entity.pos_id)
               if (pos && pos.hasOwnProperty('pos_id')) {
                 vm.$set(vm.entity, 'country_id', pos.country_id)
               }
-              if(vm.entity.pos_id === null || vm.entity.pos_id === undefined)  vm.$set(vm.entity, 'country_id', null)
-
-            }
+              if (vm.entity.pos_id === null || vm.entity.pos_id === undefined) vm.$set(vm.entity, 'country_id', null)
+            },
           },
           {
             key: 'country_id',
@@ -244,193 +251,202 @@ export default {
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
-        const date = moment(this.data.date)
+        const date = moment(this.data.date, 'YYYY-MM-DD')
         const masterData = (await this.$http.get(`/contracts/conditionList?${requestQuery}`)).data.data
-        const contracts = masterData.map(r => {
-          const obj = _.pick(r.contract, ['contract_id', 'contract_name', 'contract_begin_date',
-            'contract_end_date', 'contract_first_possible_end_date', 'contract_creation_time', 'pos_branchnumber',
-            'contract_last_change_time', 'contract_migration_checked', 'contracttype_name', 'currency_name', 'currency_id', 'currency_short', 'currency_iso', 'currency_iso4217',
-            'contracttype_description', 'company_name', 'location_name', 'pos_name', 'contactperson_firstname', 'contactperson_lastname', 'country_name', 'owner_name', 'manager_name'])
+        const contracts = masterData
+          .filter(r => {
+            const begin_date = moment(r.contract.contract_begin_date, 'YYYY-MM-DD')
+            const end_date = moment(r.contract.contract_end_date, 'YYYY-MM-DD')
+            return begin_date.isBefore(end_date, 'day') && date.isSameOrAfter(begin_date, 'day') && date.isSameOrBefore(end_date, 'day')
+          })
+          .map(r => {
+            const obj = _.pick(r.contract, ['contract_id', 'contract_name', 'contract_begin_date',
+              'contract_end_date', 'contract_first_possible_end_date', 'contract_creation_time', 'pos_branchnumber',
+              'contract_last_change_time', 'contract_migration_checked', 'contracttype_name', 'currency_name', 'currency_id', 'currency_short', 'currency_iso', 'currency_iso4217',
+              'contracttype_description', 'company_name', 'location_name', 'pos_name', 'contactperson_firstname', 'contactperson_lastname', 'country_name', 'owner_name', 'manager_name'])
 
-          if (!r.areas || !r.areas.length) obj.areas = []
-          else{
-            obj.areas = r.areas
-              .filter(i=> (date.isBetween(i.contract_area_unit_usagetype_valid_from_date, i.contract_area_unit_usagetype_valid_to_date, "day", "[]")))
-              .map(i =>  _.pick(i, [
-                'area_id',
-                'area_name',
-                'areatype_id',
-                'areatype_name',
-                'contract_area_unit_usagetype_detail_description',
-                'contract_area_unit_usagetype_valid_from_date',
-                'contract_area_unit_usagetype_valid_to_date',
-                'contract_area_unit_usagetype_rentalspace_value',
-                'contract_area_unit_usagetype_allocationspace_value',
-                'unit_id',
-                'unit_name',
-              ])
-            )
-            obj.total_allocation_space = _.sumBy(obj.areas.filter(ar => (['Parkfläche', 'Werbefläche'].indexOf(ar.areatype_name) === -1)), 'contract_area_unit_usagetype_allocationspace_value')
-            obj.total_rental_space = _.sumBy(obj.areas.filter(ar => (['Hauptfläche'].indexOf(ar.areatype_name) >= 0)), 'contract_area_unit_usagetype_rentalspace_value')
-          }
-          obj.negotiator = `${obj.contactperson_firstname} ${obj.contactperson_lastname}`
-          /*
+            if (!r.areas || !r.areas.length) obj.areas = []
+            else {
+              obj.areas = r.areas
+                .filter(i => {
+                  const begin_date = moment(i.contract_area_unit_usagetype_valid_from_date, 'YYYY-MM-DD')
+                  const end_date = moment(i.contract_area_unit_usagetype_valid_to_date, 'YYYY-MM-DD')
+                  return begin_date.isBefore(end_date, 'day') && date.isSameOrAfter(begin_date, 'day') && date.isSameOrBefore(end_date, 'day')
+                })
+                .map(i => _.pick(i, [
+                  'area_id',
+                  'area_name',
+                  'areatype_id',
+                  'areatype_name',
+                  'contract_area_unit_usagetype_detail_description',
+                  'contract_area_unit_usagetype_valid_from_date',
+                  'contract_area_unit_usagetype_valid_to_date',
+                  'contract_area_unit_usagetype_rentalspace_value',
+                  'contract_area_unit_usagetype_allocationspace_value',
+                  'unit_id',
+                  'unit_name',
+                ]))
+              obj.total_allocation_space = _.sumBy(obj.areas.filter(ar => (['Parkfläche', 'Werbefläche'].indexOf(ar.areatype_name) === -1)), 'contract_area_unit_usagetype_allocationspace_value')
+              obj.total_rental_space = _.sumBy(obj.areas.filter(ar => (['Hauptfläche'].indexOf(ar.areatype_name) >= 0)), 'contract_area_unit_usagetype_rentalspace_value')
+            }
+            obj.negotiator = `${obj.contactperson_firstname} ${obj.contactperson_lastname}`
+            /*
           *!SECTION criteria
           */
-          if (!r.criterias || !r.criterias.length) obj.choices = []
-          else {
-            obj.choices = r.criterias.map(i => _.pick(i, [
-              'criteria_id',
-              'criteria_name',
-              'criteria_has_value',
-              'contract_criteria_valid_to_date',
-              'contract_criteria_valid_from_date',
-              'contract_criteria_comment',
-              'contract_criteria_exists',
-              'contract_criteria_value',
-              'contract_criteria_is_obsolete',
-              'criteriatype_id',
-              'criteriatype_name',
-              'criteriatype_description',
-              'choice_id',
-              'choice_name']))
-          }
+            if (!r.criterias || !r.criterias.length) obj.choices = []
+            else {
+              obj.choices = r.criterias.map(i => _.pick(i, [
+                'criteria_id',
+                'criteria_name',
+                'criteria_has_value',
+                'contract_criteria_valid_to_date',
+                'contract_criteria_valid_from_date',
+                'contract_criteria_comment',
+                'contract_criteria_exists',
+                'contract_criteria_value',
+                'contract_criteria_is_obsolete',
+                'criteriatype_id',
+                'criteriatype_name',
+                'criteriatype_description',
+                'choice_id',
+                'choice_name']))
+            }
 
-          const cc = obj.choices.find(c => c.criteria_name === 'aktueller Vertragstyp')
-          if (cc) {
-            obj.contract_status = cc.choice_name
-          } else {
+            const cc = obj.choices.find(c => c.criteria_name === 'aktueller Vertragstyp')
+            if (cc) {
+              obj.contract_status = cc.choice_name
+            } else {
             // check the date
-            obj.contract_status = date.isAfter(obj.contract_end_date) ? 'Terminated' : 'Running'
-          }
-          if (this.table === 'deadlines') {
-            obj.notice_of_termination = (cc && cc.choice_name === 'gekündigt') ? 'Yes' : 'No'
+              obj.contract_status = date.isAfter(obj.contract_end_date) ? 'Terminated' : 'Running'
+            }
+            if (this.table === 'deadlines') {
+              obj.notice_of_termination = (cc && cc.choice_name === 'gekündigt') ? 'Yes' : 'No'
             // obj.action_date = cc?.contract_criteria_value
-          }
+            }
 
-          /*
+            /*
           *!SECTION specialrights
           */
-          if (!r.specialrights || !r.specialrights.length) obj.specialRights = []
-          else {
-            obj.specialRights = _.sortBy(r.specialrights.map(i => _.pick(i, [
-              'contract_specialright_date',
-              'contract_specialright_termination_date',
-              'contract_specialright_description',
-              'contract_specialright_is_passive',
-              'contract_specialright_is_availed',
-              'contract_specialright_prior_notice_date',
-              'contract_specialright_is_obsolete',
-              'contract_specialright_automatic_renewal_in_months',
-              'specialright_name',
-              'specialright_description'])), 'contract_specialright_termination_date')
+            if (!r.specialrights || !r.specialrights.length) obj.specialRights = []
+            else {
+              obj.specialRights = _.sortBy(r.specialrights.map(i => _.pick(i, [
+                'contract_specialright_date',
+                'contract_specialright_termination_date',
+                'contract_specialright_description',
+                'contract_specialright_is_passive',
+                'contract_specialright_is_availed',
+                'contract_specialright_prior_notice_date',
+                'contract_specialright_is_obsolete',
+                'contract_specialright_automatic_renewal_in_months',
+                'specialright_name',
+                'specialright_description'])), 'contract_specialright_termination_date')
 
-            if (this.table !== 'deadlines') return obj
-            let sr
+              if (this.table !== 'deadlines') return obj
+              let sr
 
-            sr = _(obj.specialRights).filter(r => r.specialright_name === 'Optionsausübung' && date.isSameOrBefore(r.contract_specialright_prior_notice_date)).orderBy('contract_specialright_prior_notice_date').value()[0]
-            obj.action_date = sr?.contract_specialright_prior_notice_date
+              sr = _(obj.specialRights).filter(r => r.specialright_name === 'Optionsausübung' && date.isSameOrBefore(r.contract_specialright_prior_notice_date)).orderBy('contract_specialright_prior_notice_date').value()[0]
+              obj.action_date = sr?.contract_specialright_prior_notice_date
 
-            // 20
-            sr = obj.specialRights.find(csr => csr.specialright_name === 'Kündigungstermin Mieter')
-            obj.next_termination_date_tenant = sr?.contract_specialright_termination_date
+              // 20
+              sr = obj.specialRights.find(csr => csr.specialright_name === 'Kündigungstermin Mieter')
+              obj.next_termination_date_tenant = sr?.contract_specialright_termination_date
 
-            // 21
-            sr = obj.specialRights.find(csr => csr.specialright_name === 'Kündigungstermin Vermieter')
-            obj.next_termination_date_landloard = sr?.contract_specialright_termination_date
+              // 21
+              sr = obj.specialRights.find(csr => csr.specialright_name === 'Kündigungstermin Vermieter')
+              obj.next_termination_date_landloard = sr?.contract_specialright_termination_date
 
-            // 22
-            sr = obj.specialRights.filter(csr => csr.specialright_name === 'Optionsverlängerung')
-            sr = sr.find(csr => moment().isSameOrBefore(csr.contract_specialright_termination_date)) || sr[0]
-            obj.next_option_renewal = sr?.contract_specialright_termination_date
+              // 22
+              sr = obj.specialRights.filter(csr => csr.specialright_name === 'Optionsverlängerung')
+              sr = sr.find(csr => moment().isSameOrBefore(csr.contract_specialright_termination_date)) || sr[0]
+              obj.next_option_renewal = sr?.contract_specialright_termination_date
 
-            // 23
-            sr = obj.specialRights.find(csr => csr.specialright_name === 'Sonderkündigungstermin Mieter')
-            obj.next_special_termination_tenant = sr?.contract_specialright_description
+              // 23
+              sr = obj.specialRights.find(csr => csr.specialright_name === 'Sonderkündigungstermin Mieter')
+              obj.next_special_termination_tenant = sr?.contract_specialright_description
 
-            // 25
-            sr = obj.specialRights.find(csr => csr.specialright_name === 'Optionsausübung')
-            obj.available_options = sr ? 'Yes' : ''
+              // 25
+              sr = obj.specialRights.find(csr => csr.specialright_name === 'Optionsausübung')
+              obj.available_options = sr ? 'Yes' : ''
 
-            // 26
-            sr = obj.specialRights.find(csr => csr.specialright_name === 'Sonderkündigung Mieter')
-            obj.special_termination_tenant = sr?.contract_specialright_description
+              // 26
+              sr = obj.specialRights.find(csr => csr.specialright_name === 'Sonderkündigung Mieter')
+              obj.special_termination_tenant = sr?.contract_specialright_description
 
-            // 27
-            sr = obj.specialRights.find(csr => csr.specialright_name === 'Sonderkündigung Vermieter')
-            obj.special_termination_landlord = sr?.contract_specialright_description
-          }
+              // 27
+              sr = obj.specialRights.find(csr => csr.specialright_name === 'Sonderkündigung Vermieter')
+              obj.special_termination_landlord = sr?.contract_specialright_description
+            }
 
-          /*
+            /*
          *!SECTION recurringpayment
          */
 
-          if (!r.recurringpayments || !r.recurringpayments.length) obj.reccuringPayments = []
-          else {
-            obj.reccuringPayments = r.recurringpayments.map(i => _.pick(i, [
-              'recurringpayment_id',
-              'recurringpayment_sum_per_month',
-              'recurringpayment_condition_percentage',
-              'recurringpayment_percentage',
-              'recurringpayment_begin_date',
-              'recurringpayment_end_date',
-              'recurringpayment_condition_comment',
-              'recurringpayment_maturity_date',
-              'recurringpayment_maturity_daily_range',
-              'recurringpayment_maturity_monthly_range',
-              'recurringpayment_value_deposit',
-              'recurringpayment_name',
-              'recurringpayment_description',
-              'recurringpaymenttype_name',
-              'recurringpaymenttype_description',
-              'indexclause_id',
-              'indexclause_baseyear',
-              'indexclause_begin_date',
-              'indexclause_name',
-              'indexclause_adjustment_description',
-              'indexclause_adjustment_rule',
-              'indexclause_indextransmission_percent',
-              'indexclause_minimal_percent_change_agreed',
-              'indexclause_minimal_point_change_agreed',
-              'maturitytype_name',
-              'maturitytype_description']))
-          }
+            if (!r.recurringpayments || !r.recurringpayments.length) obj.reccuringPayments = []
+            else {
+              obj.reccuringPayments = r.recurringpayments.map(i => _.pick(i, [
+                'recurringpayment_id',
+                'recurringpayment_sum_per_month',
+                'recurringpayment_condition_percentage',
+                'recurringpayment_percentage',
+                'recurringpayment_begin_date',
+                'recurringpayment_end_date',
+                'recurringpayment_condition_comment',
+                'recurringpayment_maturity_date',
+                'recurringpayment_maturity_daily_range',
+                'recurringpayment_maturity_monthly_range',
+                'recurringpayment_value_deposit',
+                'recurringpayment_name',
+                'recurringpayment_description',
+                'recurringpaymenttype_name',
+                'recurringpaymenttype_description',
+                'indexclause_id',
+                'indexclause_baseyear',
+                'indexclause_begin_date',
+                'indexclause_name',
+                'indexclause_adjustment_description',
+                'indexclause_adjustment_rule',
+                'indexclause_indextransmission_percent',
+                'indexclause_minimal_percent_change_agreed',
+                'indexclause_minimal_point_change_agreed',
+                'maturitytype_name',
+                'maturitytype_description']))
+            }
 
-          if (this.table !== 'conditions') return obj
+            if (this.table !== 'conditions') return obj
 
-          const rcBasismiete = obj.reccuringPayments.find(r => r.recurringpaymenttype_name === '1-Basismiete' && date.isBetween(r.recurringpayment_begin_date, r.recurringpayment_end_date, "day", "[]"))
+            const rcBasismiete = obj.reccuringPayments.find(r => r.recurringpaymenttype_name === '1-Basismiete' && date.isBetween(r.recurringpayment_begin_date, r.recurringpayment_end_date, 'day', '[]'))
 
-          obj.rent_per_month = this.getRecurringPaymentMonthValue(rcBasismiete).toFixed(2)
-          obj.base_rent_per_area_amount = obj.total_allocation_space > 0 ? (obj.rent_per_month / obj.total_allocation_space).toFixed(2) : 0
-          obj.advertising_per_month = this.getRecurringPaymentMonthValue(obj.reccuringPayments.find(r => r.recurringpaymenttype_name === '6-Werbekosten')).toFixed(2)
-          obj.ancillary_cost_per_month = this.getRecurringPaymentMonthValue(obj.reccuringPayments.find(r => r.recurringpaymenttype_name === '5-Nebenkostenpauschale')).toFixed(2)
-          obj.heating_ancillary_cost_per_month = _.sum(obj.reccuringPayments.filter(r => (['4-Nebenkostenvorauszahlung', '7-Heizkostenvorauszahlung'].indexOf(r.recurringpaymenttype_name) >= 0)).map(rc => this.getRecurringPaymentMonthValue(rc))).toFixed(2)
+            obj.rent_per_month = this.getRecurringPaymentMonthValue(rcBasismiete).toFixed(2)
+            obj.base_rent_per_area_amount = obj.total_allocation_space > 0 ? (obj.rent_per_month / obj.total_allocation_space).toFixed(2) : 0
+            obj.advertising_per_month = this.getRecurringPaymentMonthValue(obj.reccuringPayments.find(r => r.recurringpaymenttype_name === '6-Werbekosten')).toFixed(2)
+            obj.ancillary_cost_per_month = this.getRecurringPaymentMonthValue(obj.reccuringPayments.find(r => r.recurringpaymenttype_name === '5-Nebenkostenpauschale')).toFixed(2)
+            obj.heating_ancillary_cost_per_month = _.sum(obj.reccuringPayments.filter(r => (['4-Nebenkostenvorauszahlung', '7-Heizkostenvorauszahlung'].indexOf(r.recurringpaymenttype_name) >= 0)).map(rc => this.getRecurringPaymentMonthValue(rc))).toFixed(2)
 
-          obj.local_rent_per_month = obj.rent_per_month
-          obj.local_base_rent_per_area_amount = obj.base_rent_per_area_amount
-          obj.local_advertising_per_month = obj.advertising_per_month
-          obj.local_ancillary_cost_per_month = obj.ancillary_cost_per_month
-          obj.local_heating_ancillary_cost_per_month = obj.heating_ancillary_cost_per_month
+            obj.local_rent_per_month = obj.rent_per_month
+            obj.local_base_rent_per_area_amount = obj.base_rent_per_area_amount
+            obj.local_advertising_per_month = obj.advertising_per_month
+            obj.local_ancillary_cost_per_month = obj.ancillary_cost_per_month
+            obj.local_heating_ancillary_cost_per_month = obj.heating_ancillary_cost_per_month
 
-          const rcIndex = obj.reccuringPayments.find(r => ['1', '3'].includes((r.recurringpaymenttype_name || '').split('-')[0]) && date.isBetween(r.recurringpayment_begin_date, r.recurringpayment_end_date, "day", "[]"))
+            const rcIndex = obj.reccuringPayments.find(r => ['1', '3'].includes((r.recurringpaymenttype_name || '').split('-')[0]) && date.isBetween(r.recurringpayment_begin_date, r.recurringpayment_end_date, 'day', '[]'))
 
-          if (rcIndex) {
-            obj.index_adjustment_lease = rcIndex.indexclause_indextransmission_percent ?? `${rcIndex.indexclause_indextransmission_percent} %`
-            obj.index_adjustment_rate_in_percent = rcIndex.indexclause_minimal_percent_change_aggreed ? `${rcIndex.indexclause_minimal_percent_change_aggreed} %` : rcIndex.indexclause_minimal_point_change_agreed
-          }
+            if (rcIndex) {
+              obj.index_adjustment_lease = rcIndex.indexclause_indextransmission_percent ?? `${rcIndex.indexclause_indextransmission_percent} %`
+              obj.index_adjustment_rate_in_percent = rcIndex.indexclause_minimal_percent_change_aggreed ? `${rcIndex.indexclause_minimal_percent_change_aggreed} %` : rcIndex.indexclause_minimal_point_change_agreed
+            }
 
-          const rcStaffe = _(obj.reccuringPayments).filter(r => r.recurringpaymenttype_name === '3-Staffelmiete' && date.isSameOrBefore(r.recurringpayment_begin_date)).orderBy('recurringpayment_begin_date').value()[0]
-          if (rcStaffe) {
-            obj.staggered_minimum_rent = 'Yes, ' + rcStaffe.recurringpayment_begin_date
-          }
+            const rcStaffe = _(obj.reccuringPayments).filter(r => r.recurringpaymenttype_name === '3-Staffelmiete' && date.isSameOrBefore(r.recurringpayment_begin_date)).orderBy('recurringpayment_begin_date').value()[0]
+            if (rcStaffe) {
+              obj.staggered_minimum_rent = `Yes, ${rcStaffe.recurringpayment_begin_date}`
+            }
 
-          const rcUmsat = obj.reccuringPayments.find(r => (r.recurringpaymenttype_name || '').split('-')[0] === '2')
-          obj.turnover_rent = rcUmsat?.recurringpayment_condition_percentage
-          // const val = rcUmsat?.recurringpayment_value_deposit
-          // contract.securities_related_to_contract = val != null ? (val ? 'yes' : 'no') : ''
-          // contract.type_of_rental_security = ''
-          return obj
-        })
+            const rcUmsat = obj.reccuringPayments.find(r => (r.recurringpaymenttype_name || '').split('-')[0] === '2')
+            obj.turnover_rent = rcUmsat?.recurringpayment_condition_percentage
+            // const val = rcUmsat?.recurringpayment_value_deposit
+            // contract.securities_related_to_contract = val != null ? (val ? 'yes' : 'no') : ''
+            // contract.type_of_rental_security = ''
+            return obj
+          })
 
         let tickets = (await this.$api({
           action: 'read-rich',

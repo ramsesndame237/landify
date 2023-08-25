@@ -3,7 +3,7 @@
     <p>A role provided access to predefined menus and features so that depending on assigned role an administrator can have access to what he need.</p>
     <b-overlay :show="roleLoading" rounded="sm">
       <div class="row">
-        <div v-for="role in roles.slice(0,5)" :key="role.role_id" class="col-lg-4 col-sm-3 col-12">
+        <div v-for="role in roles" :key="role.role_id" class="col-lg-4 col-sm-3 col-12">
           <b-card>
             <div class="d-flex justify-content-between align-items-center">
               <span class="h5"> {{ $t('text~role~nbr_users').replace(':users_number', role.users_number) }}</span>
@@ -70,7 +70,7 @@
         <Datatable :key="table" ref="table" :selectable="false" :search="search" primary-key-column="user_id"
                    entity="role" :fields="definition.fields" :total-rows.sync="totalRows"
                    :per-page="perPage" :current-page.sync="currentPage" entity-view="user" :with-delete="false"
-                   :with-edit="false" entity-endpoint="users/list-role"
+                   :with-edit="false" entity-endpoint="/users/list-role"
         />
       </b-card>
     </b-overlay>
@@ -135,7 +135,10 @@ export default {
     },
   },
   mounted() {
-    this.getRoles()
+    this.roles = this.$store.getters['table/listCache'](this.table)
+    if (!this.roles || !this.roles.length) {
+      this.getRoles()
+    }
   },
   beforeDestroy() {
     this.$store.commit('table/setTableData', {
@@ -181,6 +184,7 @@ export default {
       try {
         const response = await this.$store.dispatch('table/fetchList', payload)
         this.roles = response
+        await this.$store.dispatch('table/setListData', { entity: this.table, data: response })
       } catch (error) {
         console.log({ error })
       } finally {

@@ -15,20 +15,20 @@
 </template>
 
 <script>
-import Field from "@/views/app/Generic/Field";
+import Field from '@/views/app/Generic/Field'
 import {
   BRow, BCol,
 } from 'bootstrap-vue'
 
 export default {
   name: 'Step1',
+  components: { Field, BRow, BCol },
   props: ['context', 'disabled'],
   data() {
     return {
       entity: { customergroup_id: this.context.customergroup_id },
     }
   },
-  components: { Field, BRow, BCol },
   methods: {
     async validate() {
       if (!this.entity.customergroup_id && !this.entity.customergroup_name) {
@@ -47,7 +47,7 @@ export default {
             customergroup_description: 'WIP',
           }],
         })
-        console.log(response);
+        console.log(response)
         entityId = response.data.data.data[0][0].customergroup_id
       }
       return entityId

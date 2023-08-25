@@ -2,63 +2,63 @@
   <b-card-actions title="Statistics" action-collapse>
     <table class="table table-responsive">
       <thead>
-      <tr>
-        <th/>
-        <th>Invoice</th>
-        <th>SFM</th>
-        <th>Difference</th>
-        <th>
-          <b-form-checkbox v-if="hasError" :checked="true" disabled/>
-          <b-button size="sm" v-else variant="primary" @click="setErrorCriteria">
-            <b-spinner v-if="loading" small/>
-            Set Error Criteria
-          </b-button>
-        </th>
-      </tr>
+        <tr>
+          <th/>
+          <th>Invoice</th>
+          <th>SFM</th>
+          <th>Difference</th>
+          <th>
+            <b-form-checkbox v-if="hasError" :checked="true" disabled/>
+            <b-button v-else size="sm" variant="primary" @click="setErrorCriteria">
+              <b-spinner v-if="loading" small/>
+              Set Error Criteria
+            </b-button>
+          </th>
+        </tr>
       </thead>
       <tbody>
 
-      <tr>
-        <td>Total amount invoice</td>
-        <td>{{ a1 }}</td>
-        <td>{{ b1 }}</td>
-        <td :class="a1===b1?'text-success':'text-danger'">
-          {{ b1 - a1 }}
-        </td>
-      </tr>
-      <tr>
-        <td>Prepayment</td>
-        <td>{{ a2 }}</td>
-        <td>{{ b2 }}</td>
-        <td :class="a2===b2?'text-success':'text-danger'">
-          {{ b2 - a2 }}
-        </td>
-      </tr>
-      <tr>
-        <td>Contradiction total</td>
-        <td>0</td>
-        <td>0</td>
-        <td/>
-      </tr>
-      <tr>
-        <td>Settlement result</td>
-        <td>{{ a4 }}</td>
-        <td>{{ b4 }}</td>
-        <td/>
+        <tr>
+          <td>Total amount invoice</td>
+          <td>{{ a1 }}</td>
+          <td>{{ b1 }}</td>
+          <td :class="a1===b1?'text-success':'text-danger'">
+            {{ b1 - a1 }}
+          </td>
+        </tr>
+        <tr>
+          <td>Prepayment</td>
+          <td>{{ a2 }}</td>
+          <td>{{ b2 }}</td>
+          <td :class="a2===b2?'text-success':'text-danger'">
+            {{ b2 - a2 }}
+          </td>
+        </tr>
+        <tr>
+          <td>Contradiction total</td>
+          <td>0</td>
+          <td>0</td>
+          <td/>
+        </tr>
+        <tr>
+          <td>Settlement result</td>
+          <td>{{ a4 }}</td>
+          <td>{{ b4 }}</td>
+          <td/>
         <!--        <td :class="a4===b4?'text-success':'text-danger'">{{ b4 - a4 }}</td>-->
-      </tr>
-      <tr>
-        <td>Advance payment/credit note</td>
-        <td>0</td>
-        <td>{{ b5 }}</td>
-        <td/>
-      </tr>
-      <tr>
-        <td>Payment balance</td>
-        <td>{{ a4 - 0 }}</td>
-        <td>{{ b4 - b5 }}</td>
-        <td/>
-      </tr>
+        </tr>
+        <tr>
+          <td>Advance payment/credit note</td>
+          <td>0</td>
+          <td>{{ b5 }}</td>
+          <td/>
+        </tr>
+        <tr>
+          <td>Payment balance</td>
+          <td>{{ a4 - 0 }}</td>
+          <td>{{ b4 - b5 }}</td>
+          <td/>
+        </tr>
       </tbody>
     </table>
     <div class="d-flex gap-3 align-items-center"/>
@@ -130,11 +130,11 @@ export default {
           await this.$api({
             action: 'create',
             entity: 'invoice_invoicecriteria_rel',
-            data: [{ invoice_id: this.$route.params.id, invoicecriteria_id: 3, invoice_invoicecriteria_is_set: 1 }]
+            data: [{ invoice_id: this.$route.params.id, invoicecriteria_id: 3, invoice_invoicecriteria_is_set: 1 }],
           })
         }
         const entity = this.$parent.$refs.tabs.registeredTabs[3].$children[0].entity
-        this.$store.commit('table/deleteTableCacheKeyFromPrefix', entity + '-')
+        this.$store.commit('table/deleteTableCacheKeyFromPrefix', `${entity}-`)
         this.$parent.$refs.tabs.registeredTabs[3].$children[0].reload()
       } finally {
         this.loading = false

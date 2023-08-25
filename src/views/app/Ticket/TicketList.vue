@@ -6,7 +6,7 @@
                         :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
                         :actions="definition.actions" @action="(a)=>$refs.table.onAction(a)"
                         @filter="$refs.filter.openModal()">
-        <b-button @click="$refs.filter.openModal()" size="sm" variant="primary" class="mr-1 btn-icon">
+        <b-button size="sm" variant="primary" class="mr-1 btn-icon" @click="$refs.filter.openModal()">
           <feather-icon icon="FilterIcon"/>
         </b-button>
         <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions" class="mr-2"/>
@@ -21,11 +21,11 @@
                  :default-sort-column="initialSortBy||definition.defaultSortField" :default-sort-desc="initialSortDesc"
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
-                 :primary-key-column="definition.primaryKey" :ids="ids"/>
+                 :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"/>
     </b-card>
-    <generic-modal :fetch-data="false" :cache-key="table+'-'" @reload-table="$refs.table.reload()" :table="table"
+    <generic-modal :fetch-data="false" :cache-key="table+'-'" :table="table" ref="modal"
                    :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
-                   ref="modal"/>
+                   @reload-table="$refs.table.reload()"/>
   </div>
 </template>
 
@@ -36,9 +36,9 @@ import {
 } from 'bootstrap-vue'
 import TablePagination from '@/layouts/components/TablePagination.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
-import Tables from '@/table'
+import Table from '@/table/tables/ticket'
 import GenericFilter from '@/views/app/Generic/Filter.vue'
-import { getUserData } from "@/auth/utils";
+import { getUserData } from '@/auth/utils'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
 
@@ -74,13 +74,13 @@ export default {
           value: 4,
         },
       ],
-      filterValue: '',
+      filterValue: 1,
       user: getUserData(),
     }
   },
   computed: {
     definition() {
-      return Tables[this.table]
+      return Table
     },
     useModalToCreate() {
       return this.definition.createModal !== false
@@ -121,6 +121,7 @@ export default {
         case 4:
           data = { user_id: null }
           break
+        default:
       }
       this.filter({ ...this.$refs.filter.getFinalData(), ...data })
     },

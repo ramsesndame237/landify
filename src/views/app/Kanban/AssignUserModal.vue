@@ -9,11 +9,11 @@
 </template>
 
 <script>
-import Field from "@/views/app/Generic/Field";
-import moment from "moment-business-time";
+import Field from '@/views/app/Generic/Field'
+import moment from 'moment-business-time'
 
 export default {
-  name: "AssignUserModal",
+  name: 'AssignUserModal',
   components: { Field },
   data() {
     return {

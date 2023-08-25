@@ -1,8 +1,8 @@
 <template>
   <div>
-    <generic-modal cache-key="contradictionpoint-" is-relation @reload-table="$refs.table.reload()" :table="table"
+    <generic-modal cache-key="contradictionpoint-" is-relation :table="table" ref="modal"
                    :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
-                   ref="modal"/>
+                   @reload-table="$refs.table.reload()"/>
     <b-card body-class="p-0">
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage"
                         :on-new-element="onNewElement" :total-rows="totalRows"
@@ -16,10 +16,12 @@
                   :primary-key-column="contradictionpointDefinition.primaryKey" @items="onItems"/>
       <div class="text-center">
         <b-button variant="primary" @click="generatePoints">
-          <b-spinner small v-if="loading"/>
+          <b-spinner v-if="loading" small/>
           Generate contradiction points automatically
         </b-button>
-        <b-button variant="primary" class="ml-1" @click="$emit('go-to-reductions')">Edit reduction amounts</b-button>
+        <b-button variant="primary" class="ml-1" @click="$emit('go-to-reductions')">
+          Edit reduction amounts
+        </b-button>
         <b-button variant="primary" class="ml-1"
                   @click="$refs.modal.openModal(true, { contradiction_id: $route.params.id })">Add contradiction points
         </b-button>
@@ -29,15 +31,17 @@
 </template>
 
 <script>
-import DataTables from "@/layouts/components/DataTables";
-import TablePagination from "@/layouts/components/TablePagination";
+import DataTables from '@/layouts/components/DataTables'
+import TablePagination from '@/layouts/components/TablePagination'
 import Table from '@/table'
-import { BCard, BButton } from "bootstrap-vue";
-import GenericModal from "@/views/app/Generic/modal";
+import { BCard, BButton } from 'bootstrap-vue'
+import GenericModal from '@/views/app/Generic/modal'
 
 export default {
   name: 'ContradictionPoint',
-  components: { GenericModal, TablePagination, DataTables, BCard, BButton },
+  components: {
+    GenericModal, TablePagination, DataTables, BCard, BButton,
+  },
   data() {
     return {
       search: '',
@@ -50,7 +54,9 @@ export default {
       definition: {
         primaryKey: 'contradictionpoint_id',
         fields: [
-          { key: 'contradictionpoint_id', type: 'list', list: 'contradictionpoint', alwaysNew: true, onlyForm: true },
+          {
+            key: 'contradictionpoint_id', type: 'list', list: 'contradictionpoint', alwaysNew: true, onlyForm: true,
+          },
         ],
       },
       contradictionpointDefinition: Table.contradictionpoint,

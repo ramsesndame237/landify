@@ -1,4 +1,5 @@
-import { getContractCriteriaFields } from "@/table/utils"
+import { getContractCriteriaFields } from '@/table/utils'
+
 export default {
   entity: 'frontend_3_6_1',
   fields: [
@@ -6,7 +7,6 @@ export default {
     { key: 'criteria_name' },
     { key: 'criteria_description', type: 'textarea', hideOnIndex: true },
     { key: 'criteriatype_name', hideOnForm: true },
-    { key: 'criteria_has_value', type: 'boolean' },
     { key: 'contract_count', type: 'number', hideOnForm: true },
     {
       key: 'criteriatype_id',
@@ -15,9 +15,6 @@ export default {
       hideOnIndex: true,
       listLabel: 'criteriatype_name',
       required: false,
-    },
-    {
-      key: 'unit_id', type: 'list', list: 'unit', hideOnIndex: true, listLabel: 'unit_name', required: false,
     },
     {
       key: 'contracttype_id',

@@ -1,5 +1,6 @@
 export default {
   entity: 'frontend_6_1_4',
+  entityEndpoint: '/tickets/kanban/user',
   defaultSortField: 'board_id',
   fields: [
     {

@@ -1,3 +1,6 @@
+import { http } from '@/libs/axios'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+
 export default {
   customIndex: () => import('@/views/app/Role/RoleList.vue'),
   primaryKey: 'role_id',
@@ -5,8 +8,10 @@ export default {
     { key: 'user_id', hideOnForm: true, hideOnIndex: true },
     { key: 'role_id', auto: true },
     { key: 'role_name', hideOnIndex: true },
+    {
+      key: 'role_description', hideOnIndex: true, required: false, type: 'textarea',
+    },
     { key: 'role_is_internal', type: 'boolean', hideOnIndex: true },
-    { key: 'role_permission', hideOnIndex: true },
     {
       key: 'user_firstname',
       type: 'html',
@@ -19,6 +24,33 @@ export default {
         </div>
       </div>`,
       hideOnForm: true,
+    },
+    {
+      key: 'role_menu',
+      hideOnIndex: true,
+      type: 'custom-select',
+      items: async vm => {
+        let menus = vm.$store.getters['table/listCache']('menu')
+        if (!menus.length) {
+          try {
+            const response = await http.get('/configs/menu')
+            const configValue = JSON.parse(response.data?.config_val)
+            menus = configValue[0].menus
+            vm.$store.dispatch('table/setListData', { entity: 'menu', data: menus })
+          } catch (error) {
+            console.log({ error })
+            vm.$toast({
+              component: ToastificationContent,
+              props: {
+                title: error.response.data.detail,
+                icon: 'errorIcon',
+                variant: 'error',
+              },
+            })
+          }
+        }
+        return menus.map(menu => ({ label: menu.name, value: menu.name }))
+      },
     },
     {
       key: 'roles',
@@ -35,29 +67,9 @@ export default {
         return `<ul class="list-unstyled">${htmlString}</ul>`
       },
     },
-    { key: 'usertype', hideOnForm: true, formatter: value => value?.usertype_name.charAt(0).toUpperCase() + value?.usertype_name.slice(1) },
+    { key: 'usertype_name', hideOnForm: true, formatter: value => (value ? value?.charAt(0).toUpperCase() + value?.slice(1) : '') },
   ],
   relations: [
-    {
-      title: 'Access',
-      primaryKey: 'access_id',
-      entity: 'role_access_grp',
-      entityForm: 'role_access_rel',
-      entityView: 'access',
-      update: false,
-      view: false,
-      fields: [
-        {
-          key: 'access_id',
-          label: 'ID',
-          sortable: true,
-          type: 'list',
-          list: 'access',
-          listLabel: 'access_name',
-        },
-        { key: 'access_name', sortable: true, hideOnForm: true },
-      ],
-    },
     {
       title: 'Users',
       primaryKey: 'user_id',
@@ -87,7 +99,7 @@ export default {
       ],
     },
     {
-      title: 'Table Groups',
+      title: 'headline~role~tablegroups',
       primaryKey: 'tablegroup_id',
       entity: 'role_tablegroup_crud_grp',
       entityForm: 'role_tablegroup_crud_rel',
@@ -110,28 +122,28 @@ export default {
         { key: 'tablegroup_description', hideOnForm: true },
       ],
     },
-    {
-      title: 'Tables',
-      primaryKey: 'table_name',
-      composite: ['table_name', 'crud'],
-      entity: 'role_tablename_crud_grp',
-      entityForm: 'role_tablename_crud_rel',
-      entityView: 'tablename',
-      update: false,
-      create: false,
-      delete: false,
-      search: false,
-      // lazy: false,
-      component: () => import('@/views/app/Role/Relation/TableGroupMatrix.vue'),
-      tool: () => import('@/views/app/Role/Relation/MatrixTool.vue'),
-      fields: [
-        {
-          key: 'table_name', sortable: true, type: 'list', list: 'tablename', listLabel: 'table_name',
-        },
-        {
-          key: 'crud', type: 'list', list: 'crud', listLabel: 'crud', composite: true,
-        },
-      ],
-    },
+    // {
+    //   title: 'Tables',
+    //   primaryKey: 'table_name',
+    //   composite: ['table_name', 'crud'],
+    //   entity: 'role_tablename_crud_grp',
+    //   entityForm: 'role_tablename_crud_rel',
+    //   entityView: 'tablename',
+    //   update: false,
+    //   create: false,
+    //   delete: false,
+    //   search: false,
+    //   // lazy: false,
+    //   component: () => import('@/views/app/Role/Relation/TableGroupMatrix.vue'),
+    //   tool: () => import('@/views/app/Role/Relation/MatrixTool.vue'),
+    //   fields: [
+    //     {
+    //       key: 'table_name', sortable: true, type: 'list', list: 'tablename', listLabel: 'table_name',
+    //     },
+    //     {
+    //       key: 'crud', type: 'list', list: 'crud', listLabel: 'crud', composite: true,
+    //     },
+    //   ],
+    // },
   ],
 }

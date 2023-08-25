@@ -4,6 +4,7 @@ export default {
   fieldComponent: () => import('@/views/app/CreateComponent/TicketForm.vue'),
   create: false,
   entity: 'frontend_6_1_6_overview',
+  entityEndpoint: '/tickets/list',
   fields: [
     { key: 'ticket_id', auto: true },
     { key: 'ticket_name' },
@@ -15,7 +16,6 @@ export default {
     {
       key: 'ticket_deadline_red', type: 'date', time: true, hideOnIndex: true,
     },
-    { key: 'ticket_planned_treatment_week', required: false },
     {
       key: 'pos_id',
       listLabel: 'pos_name',
@@ -42,10 +42,14 @@ export default {
       formatter: val => window.$vue.$t(val ? 'header~board~status~closed' : 'header~board~status~open'),
     },
     { key: 'priority_name', hideOnForm: true },
-    { key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', hideOnIndex: true },
+    {
+      key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', hideOnIndex: true,
+    },
 
     // { key: 'column_name', hideOnForm: true },
-    { key: 'ticket_creation_time', type: 'date', time: true, hideOnForm: true },
+    {
+      key: 'ticket_creation_time', type: 'date', time: true, hideOnForm: true,
+    },
     { key: 'board_name', hideOnForm: true },
     // { key: 'contract_id', hideOnForm: true },
     // { key: 'contract_name', hideOnForm: true },
@@ -89,7 +93,9 @@ export default {
       filter_key: 'pos_id',
       required: false,
     },
-    { key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', required: false },
+    {
+      key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', required: false,
+    },
   ],
   note: 'frontend_0_8_2',
 }

@@ -63,7 +63,7 @@
             :entity="item"
             :disabled="view"
           />
-          <div class="d-flex flex-column" v-else>
+          <div v-else class="d-flex flex-column">
             <b-link
               v-for="(document, i) in item.documents"
               :key="i"
@@ -87,38 +87,38 @@
 
 <script>
 import { BImg } from 'bootstrap-vue'
-import Field from "@/views/app/Generic/Field.vue";
-import { getDocumentLink, getFileThumbnail } from "@/libs/utils";
-import VueTagsInput from "@johmun/vue-tags-input";
-import { email } from "vee-validate/dist/rules";
+import Field from '@/views/app/Generic/Field.vue'
+import { getDocumentLink } from '@/libs/utils'
+import VueTagsInput from '@johmun/vue-tags-input'
+import { email } from 'vee-validate/dist/rules'
 
 export default {
-  name: "EmailModal",
+  name: 'EmailModal',
   components: { Field, VueTagsInput, BImg },
   data() {
     return {
       item: {},
       view: true,
       loading: false,
-      tag: "",
-      tag_cc: "",
+      tag: '',
+      tag_cc: '',
       tags: [],
       tags_cc: [],
       contactpersons: [],
       validation: [
         {
-          classes: "invalid",
-          rule: (tag) => !email.validate(tag.text),
+          classes: 'invalid',
+          rule: tag => !email.validate(tag.text),
           disableAdd: true,
         },
       ],
-    };
+    }
   },
   computed: {},
   async mounted() {
-    this.contactpersons = await this.$store.dispatch("table/fetchList", {
-      entity: "frontend_2_3_1",
-    });
+    this.contactpersons = await this.$store.dispatch('table/fetchList', {
+      entity: 'frontend_2_3_1',
+    })
   },
   methods: {
     getFileThumbnail(fileType) {
@@ -135,66 +135,64 @@ export default {
       }
       return require('@/assets/images/icons/file-icons/doc.png')
     },
-    clickOnFile(doc){
-      console.log('doc: ', doc);
-
+    clickOnFile(doc) {
+      console.log('doc: ', doc)
     },
     filteredItems(tag) {
       return this.contactpersons
         .filter(
-          (i) =>
-            i.user_email && i.user_email.toLowerCase().indexOf(tag.toLowerCase()) !== -1
+          i => i.user_email && i.user_email.toLowerCase().indexOf(tag.toLowerCase()) !== -1,
         )
-        .map((i) => i.user_email);
+        .map(i => i.user_email)
     },
     getDocumentLink,
     show(view, item) {
       if (view) {
-        this.item = item;
+        this.item = item
       } else {
-        this.item = { email_from: "zelos@seybold-fm.com" };
+        this.item = { email_from: 'zelos@seybold-fm.com' }
       }
-      this.view = view;
-      this.$refs.mailContent.show();
+      this.view = view
+      this.$refs.mailContent.show()
     },
     async submit(event) {
-      if (this.view) return;
-      event.preventDefault();
-      this.loading = true;
+      if (this.view) return
+      event.preventDefault()
+      this.loading = true
       try {
-        console.log(this.$refs.file.getFiles(), "files");
-        const attachments = this.$refs.file.getFiles();
+        console.log(this.$refs.file.getFiles(), 'files')
+        const attachments = this.$refs.file.getFiles()
         if (attachments.length) {
-          const formData = new FormData();
+          const formData = new FormData()
           for (let i = 0; i < attachments.length; i++) {
-            formData.append("files", attachments[i]);
+            formData.append('files', attachments[i])
           }
-          const { data } = await this.$http.post("/document/uploadfiles", formData, {
-            headers: { "content-type": "form-data" },
-          });
-          console.log(data);
-          this.item.attachments = data.data.map((d) => d.document_id);
+          const { data } = await this.$http.post('/document/uploadfiles', formData, {
+            headers: { 'content-type': 'form-data' },
+          })
+          console.log(data)
+          this.item.attachments = data.data.map(d => d.document_id)
         }
 
-        await this.$http.post("/emails/send", {
-          email_to: this.tags.map((t) => t.text),
-          email_cc: this.tags_cc.map((t) => t.text),
+        await this.$http.post('/emails/send', {
+          email_to: this.tags.map(t => t.text),
+          email_cc: this.tags_cc.map(t => t.text),
           email_subject: this.item.email_subject,
           email_body: this.item.email_body,
           email_attachements: this.item.attachments || [],
           ticket_id: this.$route.params.id,
-        });
-        this.$refs.mailContent.hide();
-        this.$emit("reload");
+        })
+        this.$refs.mailContent.hide()
+        this.$emit('reload')
       } catch (e) {
-        console.error(e);
-        this.$errorToast(e.response.data.detail);
+        console.error(e)
+        this.$errorToast(e.response.data.detail)
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
   },
-};
+}
 </script>
 
 <style scoped>

@@ -8,7 +8,7 @@
             Board: {{ board_name }} </h4>
         </div>
         <div class="d-flex align-items-center">
-          <b-button @click="$refs.filter.openModal()" size="sm" variant="primary" class="mr-1 btn-icon">
+          <b-button size="sm" variant="primary" class="mr-1 btn-icon" @click="$refs.filter.openModal()">
             <feather-icon icon="FilterIcon"/>
           </b-button>
           <generic-filter ref="filter" vertical :table="table" :definition="definition" @filter="filter"/>
@@ -26,7 +26,9 @@
                     id-prop="ticket_id" @update-block="updateBlock">
         <div v-for="stage in stages" :key="stage" :slot="stage"
              class="w-100 d-flex justify-content-between align-items-center">
-          <h2 :title="getColumnTitle(stage)">{{ stage }}</h2>
+          <h2 :title="getColumnTitle(stage)">
+            {{ stage }}
+          </h2>
           <div :title="isQualityGate(stage)?'Quality Gate Column':''">
             <feather-icon v-if="isQualityGate(stage)" class="text-primary" icon="StarIcon"/>
           </div>
@@ -46,7 +48,7 @@
 </template>
 <script>
 import {
-  BAvatarGroup, BAvatar, BButton, BCard, BFormInput, BFormSelect, BFormCheckbox
+  BAvatarGroup, BAvatar, BButton, BCard, BFormInput, BFormSelect, BFormCheckbox,
 } from 'bootstrap-vue'
 // eslint-disable-next-line import/extensions
 import GenericModal from '@/views/app/Generic/modal'
@@ -55,14 +57,13 @@ import InvoiceTicketCard from '@/views/app/CustomComponents/WP6/InvoiceTicketCar
 import moment from 'moment-business-time'
 import { getUserData } from '@/auth/utils'
 import _ from 'lodash'
-import GenericFilter from "@/views/app/Generic/Filter";
-import AssignUserModal from "@/views/app/Kanban/AssignUserModal";
+import GenericFilter from '@/views/app/Generic/Filter'
+import AssignUserModal from '@/views/app/Kanban/AssignUserModal'
 import Fuse from 'fuse.js'
-import TicketMixin from "@/views/app/Kanban/TicketMixin";
+import TicketMixin from '@/views/app/Kanban/TicketMixin'
 
 export default {
   name: 'Kanban',
-  mixins: [TicketMixin],
   components: {
     AssignUserModal,
     GenericFilter,
@@ -76,6 +77,7 @@ export default {
     BCard,
     BFormInput,
   },
+  mixins: [TicketMixin],
   data() {
     return {
       table: 'ticket',
@@ -148,7 +150,7 @@ export default {
       if (loader) this.loading = true
       try {
         await this.loadTickets({ board_id: this.board_id, ...data })
-        console.log(this.tickets);
+        console.log(this.tickets)
       } finally {
         if (loader) this.loading = false
       }
@@ -161,7 +163,7 @@ export default {
     },
     getColumnTitle(stage) {
       const column = this.columns.find(c => c.column_name === stage)
-      return 'Team: ' + (column.team_name || 'None')
+      return `Team: ${column.team_name || 'None'}`
     },
     createBlock(stage) {
       this.blocks.push({

@@ -1,6 +1,7 @@
 const path = require('path')
 const moment = require('moment')
-const { gitDescribe, gitDescribeSync } = require('git-describe')
+const { gitDescribeSync } = require('git-describe')
+
 process.env.VUE_APP_GIT_HASH = gitDescribeSync().hash
 process.env.VUE_APP_BUILD_TIME = moment().format('DD - HH:mm')
 

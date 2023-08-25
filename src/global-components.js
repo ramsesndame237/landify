@@ -24,17 +24,20 @@ import {
   BFormInput,
   BFormCheckboxGroup,
   BDropdown, BDropdownItem,
-  BAvatarGroup, BAvatar, BCardTitle, BCardGroup, BCardText,
+  BAvatarGroup, BAvatar, BCardTitle, BCardGroup, BCardText, BTabs, BTab, BBadge,
 } from 'bootstrap-vue'
-import { BCardActions } from '@core/components/b-card-actions';
+import { BCardActions } from '@core/components/b-card-actions'
 
 Vue.component(FeatherIcon.name, FeatherIcon)
 Vue.component('b-avatar-group', BAvatarGroup)
+Vue.component('b-badge', BBadge)
 Vue.component('b-card-group', BCardGroup)
 Vue.component('b-avatar', BAvatar)
 Vue.component('b-card-text', BCardText)
 Vue.component('b-card-title', BCardTitle)
 Vue.component('b-button', BButton)
+Vue.component('b-tabs', BTabs)
+Vue.component('b-tab', BTab)
 Vue.component('b-dropdown', BDropdown)
 Vue.component('b-dropdown-item', BDropdownItem)
 Vue.component('b-overlay', BOverlay)

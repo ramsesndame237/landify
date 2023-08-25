@@ -4,8 +4,8 @@
 
 <script>
 import table from '@/table/index'
+import Table from '@/table'
 import Edit from '../Edit.vue'
-import Table from '@/table';
 
 export default {
   name: 'EditPage',

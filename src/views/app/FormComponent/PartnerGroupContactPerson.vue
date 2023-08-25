@@ -16,13 +16,13 @@
 </template>
 
 <script>
-import FormMixin from "@/views/app/Generic/FormMixin";
-import DataTables from "@/layouts/components/DataTables";
+import FormMixin from '@/views/app/Generic/FormMixin'
+import DataTables from '@/layouts/components/DataTables'
 
 export default {
-  name: "PartnerGroupContactPerson",
-  mixins: [FormMixin],
+  name: 'PartnerGroupContactPerson',
   components: { DataTables },
+  mixins: [FormMixin],
   data() {
     return {
       companyFields: [
@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     async afterSaveHook(contactperson) {
-      const data = this.$refs.companies.getSelected().map((c) => ({
+      const data = this.$refs.companies.getSelected().map(c => ({
         partnercompany_id: c.partnercompany_id,
         contactperson_id: contactperson.contactperson_id,
       }))

@@ -4,8 +4,8 @@
       {{ $t('headline~new_business~title~contract') }}
     </b-col>
     <b-col cols="12" md="6">
-      <entity-form table="contract_specialright_rel" :definition="definition" table-definition-key="contract_specialright_rel" create :initial-data="initialData" cols="12"
-                   ref="form" :disabled="loading"/>
+      <entity-form ref="form" table="contract_specialright_rel" :definition="definition" table-definition-key="contract_specialright_rel" create :initial-data="initialData"
+                   cols="12" :disabled="loading"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
           <b-spinner v-if="loading" small/>
@@ -31,7 +31,9 @@ import {
 
 export default {
   name: 'Step9',
-  components: { DataTables, entityForm, Table, BButton, BCol, BRow, Field },
+  components: {
+    DataTables, entityForm, Table, BButton, BCol, BRow, Field,
+  },
   props: ['context', 'disabled'],
   data() {
     const definition = JSON.parse(JSON.stringify(Table.contract.relations.find(x => x.primaryKey === 'specialright_id')))
@@ -39,7 +41,9 @@ export default {
     definition.fields = [
       { key: 'contract_id', disabled: true },
       { key: 'contract_name', disabled: true },
-      { key: 'specialright_id', type: 'list', list: 'specialright', listLabel: 'specialright_name' },
+      {
+        key: 'specialright_id', type: 'list', list: 'specialright', listLabel: 'specialright_name',
+      },
       ...definition.fields.slice(2),
     ]
     return {

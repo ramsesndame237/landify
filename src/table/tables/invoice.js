@@ -1,7 +1,9 @@
-import {updateInvoiceFlatRate, updateInvoiceApportionable} from "@/table/utils"
+import { updateInvoiceFlatRate, updateInvoiceApportionable } from '@/table/utils'
+
 export default {
   entity: 'frontend_4_1_1',
   createModal: false,
+  entityEndpoint: '/invoices',
   formComponent: () => import('@/views/app/FormComponent/InvoiceForm.vue'),
   fields: [
     { key: 'invoice_id', auto: true },
@@ -77,7 +79,7 @@ export default {
         console.log(invoices)
         try {
           // this.loading = true
-          const { data } = await vm.$http.post('/contradiction_generators/start', {
+          await vm.$http.post('/contradiction_generators/start', {
             invoice_ids: Array.isArray(invoices) ? invoices.map(i => i.invoice_id) : [invoices.invoice_id],
           })
           vm.$successToast('Contradictions generated')
@@ -245,5 +247,9 @@ export default {
       ],
     },
   ],
+  fetch(vm) {
+    return vm.$http.get(`/invoices/${vm.entityId}`)
+      .then(response => response.data)
+  },
   note: 'frontend_0_8_6',
 }
