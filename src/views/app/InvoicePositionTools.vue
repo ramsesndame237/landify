@@ -3,12 +3,12 @@
     <b-button class="mr-1" size="sm" variant="success" @click="openSplitModal">
       <span>Split Position</span>
     </b-button>
-    <b-modal title="Split Position" ref="modal" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary"
+    <b-modal ref="modal" title="Split Position" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary"
              size="lg" centered @ok="submit">
       <data-tables :fields="definition.fields" entity="invoiceposition" :items="[selectedPosition]"
                    :with-actions="false" :selectable="false"/>
       <!--      Form-->
-      <validation-observer ref="form" tag="div" v-slot="{ passes }" class="my-2">
+      <validation-observer ref="form" v-slot="{ passes }" tag="div" class="my-2">
         <h3>Spit Area <span class="text-sm">(Amount to Split: <span>{{ amountToSplit }}</span>)</span></h3>
         <b-form @submit.prevent="passes(splitPosition)">
           <b-row>
@@ -27,8 +27,10 @@
           </b-row>
 
           <div class="mt-1 d-flex justify-content-between">
-            <b-button type="submit" :disabled="loading||amountToSplit<=0" variant="success">Split</b-button>
-            <b-button type="button" v-if="splitedPositions.length>0" :disabled="loading" variant="primary"
+            <b-button type="submit" :disabled="loading||amountToSplit<=0" variant="success">
+              Split
+            </b-button>
+            <b-button v-if="splitedPositions.length>0" type="button" :disabled="loading" variant="primary"
                       @click="deleteSelectedPositions">Delete
             </b-button>
           </div>
@@ -36,7 +38,9 @@
       </validation-observer>
       <data-tables :fields="fields" entity="invoiceposition" :items="splitedPositions" :with-actions="false"/>
       <template v-slot:modal-footer>
-        <b-button variant="warning" :disabled="loading" @click="$refs.modal.hide()">Cancel</b-button>
+        <b-button variant="warning" :disabled="loading" @click="$refs.modal.hide()">
+          Cancel
+        </b-button>
         <b-button variant="primary" :disabled="loading" @click="submit">
           <b-spinner v-if="loading" small/>
           Save
@@ -52,15 +56,19 @@
 </template>
 
 <script>
-import { BButton, BModal, BForm, BSpinner, BRow, BCol } from "bootstrap-vue";
-import DataTables from "@/layouts/components/DataTables";
+import {
+  BButton, BModal, BForm, BSpinner, BRow, BCol,
+} from 'bootstrap-vue'
+import DataTables from '@/layouts/components/DataTables'
 import Table from '@/table'
-import Field from "@/views/app/Generic/Field";
+import Field from '@/views/app/Generic/Field'
 import _ from 'lodash'
 
 export default {
   name: 'InvoicePositionTools',
-  components: { Field, DataTables, BButton, BForm, BModal, BSpinner, BRow, BCol },
+  components: {
+    Field, DataTables, BButton, BForm, BModal, BSpinner, BRow, BCol,
+  },
   data() {
     const definition = Table.invoiceposition
     return {
@@ -79,7 +87,7 @@ export default {
   },
   computed: {
     amountToSplit() {
-      console.log(_.sumBy(this.splitedPositions, 'invoiceposition_amount_customer'), 'total', this.selectedPosition.invoiceposition_amount_customer);
+      console.log(_.sumBy(this.splitedPositions, 'invoiceposition_amount_customer'), 'total', this.selectedPosition.invoiceposition_amount_customer)
       return parseFloat((this.selectedPosition.invoiceposition_amount_customer - _.sumBy(this.splitedPositions, 'invoiceposition_amount_customer')).toFixed(2))
     },
     tableDefinition() {
@@ -134,7 +142,7 @@ export default {
         await this.$api({
           entity: 'invoiceposition_unit_rel',
           action: 'create',
-          data: result.map((ip) => ({
+          data: result.map(ip => ({
             invoiceposition_id: ip[0].invoiceposition_id,
             unit_id: this.selectedPosition.unit_id,
           })),
@@ -160,7 +168,7 @@ export default {
       this.$refs.form.validate()
         .then(success => {
           if (!success) {
-            console.error("form invalid")
+            console.error('form invalid')
             return
           }
           if (this.amountToSplit <= 0) return

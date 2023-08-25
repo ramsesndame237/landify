@@ -3,8 +3,12 @@
     <b-card>
       <div class="d-flex justify-content-between align-items-center">
         <div class="">
-          <h3 class="font-weight-bolder" style="color: black">{{ ticket.ticket_name }}</h3>
-          <h6 style="color: #ccc">{{ ticket.ticket_description }}</h6>
+          <h3 class="font-weight-bolder" style="color: black">
+            {{ ticket.ticket_name }}
+          </h3>
+          <h6 style="color: #ccc">
+            {{ ticket.ticket_description }}
+          </h6>
           <div class="d-flex justify-content-between align-items-center" style="font-size: 16px">
             <div class="date d-flex align-items-center">
               <b-icon-calendar-week style="margin-right: 4px;"/>
@@ -20,7 +24,9 @@
 </template>
 
 <script>
-import { BRow, BCol, BCard, BCardBody, BFormCheckbox, BIconCalendarWeek, BIconClockFill, BOverlay } from 'bootstrap-vue'
+import {
+  BRow, BCol, BCard, BCardBody, BFormCheckbox, BIconCalendarWeek, BIconClockFill, BOverlay,
+} from 'bootstrap-vue'
 import moment from 'moment'
 
 export default {
@@ -44,20 +50,20 @@ export default {
       loading: false,
     }
   },
-  watch: {
-    // 'ticket.ticket_progress': function() {
-    //   // this.checked = this.ticket.ticket_progress === 100
-    // },
-  },
   computed: {
     formatYellow() {
       return moment(this.ticket.ticket_deadline_yellow).format('lll')
     },
     formatRed() {
-      return moment(this.ticket.ticket_deadline_offset_yellow).isSame(moment(this.ticket.ticket_deadline_offset_red), 'date') ?
-        moment(this.ticket.ticket_deadline_red).format('HH:mm') :
-        moment(this.ticket.ticket_deadline_red).format('lll')
+      return moment(this.ticket.ticket_deadline_offset_yellow).isSame(moment(this.ticket.ticket_deadline_offset_red), 'date')
+        ? moment(this.ticket.ticket_deadline_red).format('HH:mm')
+        : moment(this.ticket.ticket_deadline_red).format('lll')
     },
+  },
+  watch: {
+    // 'ticket.ticket_progress': function() {
+    //   // this.checked = this.ticket.ticket_progress === 100
+    // },
   },
   methods: {
     async updateProgress() {
@@ -74,7 +80,6 @@ export default {
       } finally {
         this.loading = false
       }
-
     },
   },
 }

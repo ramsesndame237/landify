@@ -1,4 +1,4 @@
-import { Ability, AbilityBuilder } from '@casl/ability'
+import { Ability } from '@casl/ability'
 import _ from 'lodash'
 //  Read ability from localStorage
 // * Handles auto fetching previous abilities if already logged in user
@@ -16,11 +16,11 @@ function getAction(crud) {
     case 'u':
       return 'update'
   }
+  return ''
 }
 
 export const defineRules = () => {
   const userData = JSON.parse(localStorage.getItem('userData'))
-  const userEmail = localStorage.getItem('userEmail')
   const rules = [{ subject: 'Auth', action: 'read' }]
 
   if (!userData) return rules

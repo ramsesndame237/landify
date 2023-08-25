@@ -12,8 +12,8 @@
           <template v-if="disabled">
             <div class="p-1 border rounded" v-html="entity[field.key]"/>
           </template>
-          <b-form-textarea v-show="!disabled" :class="{'d-none' : editorInstance && editorInstance.isHidden}"
-                           :id="'tinyEditor-'+field.key" v-model="entity[field.key]"/>
+          <b-form-textarea v-show="!disabled" :id="'tinyEditor-'+field.key"
+                           v-model="entity[field.key]" :class="{'d-none' : editorInstance && editorInstance.isHidden}"/>
           <!-- <ckeditor v-else :id="'ckcontent-'+field.key" v-model="entity[field.key]" :disabled="disabled"
                     :editor="editor" :config="{}"
           /> -->
@@ -30,7 +30,7 @@
                     @click="showNewForm">New
           </b-button>
           <b-button v-if="field.withPopup && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
-                    @click="showNewPopupForm" :disabled="disablePopupButton">New
+                    :disabled="disablePopupButton" @click="showNewPopupForm">New
           </b-button>
 
           <b-button v-if="field.ids && !field.noShowButton" class="ml-2 text-nowrap" variant="info"
@@ -52,14 +52,14 @@
         <div v-else-if="field.type==='file'">
           <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
                        drop-placeholder="Drop file here..." :multiple="field.multiple" required
-                       @change="updateFilesData($event, validate)" :file-name-formatter="formatFileInputNames"/>
+                       :file-name-formatter="formatFileInputNames" @change="updateFilesData($event, validate)"/>
           <div class="d-flex flex-column mt-2">
             <div v-for="(file, index) in files" :key="index" class="d-flex justify-content-between mb-1">
               <div>
                 <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50"/>
                 <span class="text-muted font-weight-bolder align-text-top">{{
-                    file.name
-                  }}</span>
+                  file.name
+                }}</span>
                 <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
               </div>
               <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index, validate)"/>
@@ -107,11 +107,11 @@
                          :unchecked-value="0" style="margin-top: 5px"/>
         <b-input-group v-else class="w-100">
           <b-input-group-prepend v-if="field.unit && field.unit_key && field.isUnitOnLeft" class="w-20 bg-input">
-            <validation-provider :vid="field.unit_key" #default="{ errors }" rules="required" :name="field.unit_key">
+            <validation-provider #default="{ errors }" :vid="field.unit_key" rules="required" :name="field.unit_key">
 
-              <b-form-select :placeholder="field.unit_key" :disabled="disabled" :options="unitOptions"
-                             :loading="loading" :class="errors.length > 0 ? 'error':''" :text-field="field.unit_label"
-                             :value-field="field.unit_id" v-model="entity[field.unit_key]" class="w-100 bg-input"/>
+              <b-form-select v-model="entity[field.unit_key]" :placeholder="field.unit_key" :disabled="disabled"
+                             :options="unitOptions" :loading="loading" :class="errors.length > 0 ? 'error':''"
+                             :text-field="field.unit_label" :value-field="field.unit_id" class="w-100 bg-input"/>
               <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
             </validation-provider>
           </b-input-group-prepend>
@@ -119,10 +119,10 @@
                         :disabled="disabled" :step="field.type==='decimal'?0.01:1"
                         :state="errors.length > 0 ? false:null" :placeholder="field.key" class="w-80"/>
           <b-input-group-append v-if="field.unit && field.unit_key && !field.isUnitOnLeft" class="w-20 bg-input">
-            <validation-provider :vid="field.unit_key" #default="{ errors }" rules="required" :name="field.unit_key">
-              <b-form-select :placeholder="field.unit_key" :disabled="disabled" :options="unitOptions"
-                             :loading="loading" :class="errors.length > 0 ? 'error':''" :text-field="field.unit_label"
-                             :value-field="field.unit_id" v-model="entity[field.unit_key]" class="w-100 bg-input"/>
+            <validation-provider #default="{ errors }" :vid="field.unit_key" rules="required" :name="field.unit_key">
+              <b-form-select v-model="entity[field.unit_key]" :placeholder="field.unit_key" :disabled="disabled"
+                             :options="unitOptions" :loading="loading" :class="errors.length > 0 ? 'error':''"
+                             :text-field="field.unit_label" :value-field="field.unit_id" class="w-100 bg-input"/>
               <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
             </validation-provider>
 
@@ -166,7 +166,7 @@ import {
   BRow,
   BSpinner,
   BInputGroupPrepend,
-  BInputGroupAppend
+  BInputGroupAppend,
 } from 'bootstrap-vue'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
@@ -216,7 +216,7 @@ export default {
     BSpinner,
     BInputGroupPrepend,
     BInputGroupAppend,
-    'editor': Editor,
+    editor: Editor,
   },
   mixins: [togglePasswordVisibility],
   props: ['entity', 'field', 'tableDefinition', 'inline', 'disabled', 'filterValue', 'table', 'definition', 'noLabel', 'create'],
@@ -330,7 +330,7 @@ export default {
           this.editorInstance.hide()
         } else this.editorInstance.show()
       }
-    }
+    },
   },
   async created() {
     if (this.field.type === 'list' && ((!this.field.filter_key || !!this.entity[this.field.filter_key]) || this.field.noFetchOnChange) && !this.field.onlyForm) {
@@ -413,10 +413,10 @@ export default {
           'media',
         ],
         toolbar:
-          'undo redo | formatselect |' +
-          'bold italic backcolor | myCustomButton | alignleft aligncenter ' +
-          'alignright alignjustify | bullist numlist outdent indent | ' +
-          'removeformat | help',
+          'undo redo | formatselect |'
+          + 'bold italic backcolor | myCustomButton | alignleft aligncenter '
+          + 'alignright alignjustify | bullist numlist outdent indent | '
+          + 'removeformat | help',
         height: '400px',
         menubar: false,
         branding: false,
@@ -426,11 +426,11 @@ export default {
           '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
           '//www.tiny.cloud/css/codepen.min.css',
         ],
-        setup: (editor) => {
+        setup: editor => {
           this.editorInstance = editor
-          editor.on('input', (e) => {
+          editor.on('input', e => {
             const content = editor.getContent()
-            this.entity[this.field.key] = content;
+            this.entity[this.field.key] = content
           })
           editor.ui.registry.addButton('myCustomButton', {
             text: 'Separator',
@@ -439,9 +439,9 @@ export default {
               editor.insertContent(nonEditableContent)
               this.$set(this.entity, this.field.key, editor.getContent())
             },
-          });
+          })
         },
-      });
+      })
     },
     destroyEditor() {
       if (this.editorInstance) {
@@ -491,8 +491,7 @@ export default {
     async removeFile(index, validate) {
       if (index !== -1) {
         this.files.splice(index, 1)
-        if (this.files && this.files.length === 0)
-          this.$refs.file.reset()
+        if (this.files && this.files.length === 0) this.$refs.file.reset()
       }
       this.formatFileInputNames()
       await validate(this.files)
@@ -522,7 +521,7 @@ export default {
           this.randomPassword = resp.data.password
           this.waitPassword = false
         })
-        .catch(e => {
+        .catch(() => {
           this.$errorToast('Error')
           this.waitPassword = false
         })
@@ -536,11 +535,11 @@ export default {
             props: {
               title: 'Password copied',
               icon: 'BellIcon',
-              variant: 'success'
+              variant: 'success',
             },
           })
         } catch (error) {
-          console.log('error: ', error);
+          console.log('error: ', error)
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -693,14 +692,14 @@ export default {
     showNewPopupForm() {
       const self = this
       this.disablePopupButton = true
-      const popupWindow = window.open("/app/table/" + this.$route.params.table + "/popup/" + this.field.list, "Formpopup", "popup")
-      popupWindow.addEventListener('beforeunload', function () {
+      const popupWindow = window.open(`/app/table/${this.$route.params.table}/popup/${this.field.list}`, 'Formpopup', 'popup')
+      popupWindow.addEventListener('beforeunload', () => {
         // Réactivez le bouton ici
         self.disablePopupButton = false
       })
-      window.addEventListener('message', async function (event) {
+      window.addEventListener('message', async event => {
         // Vérifiez l'origine de l'événement pour des raisons de sécurité
-        if (event.origin === window.location.origin && event.data.message === "success") {
+        if (event.origin === window.location.origin && event.data.message === 'success') {
           // Réactivez le bouton ici
           self.disablePopupButton = false
           await self.fetchList(true)

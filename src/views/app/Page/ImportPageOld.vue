@@ -27,7 +27,9 @@
                               name="radio-inline"/>
         </b-form-group>
         <div class="mt-2">
-          <b-button variant="danger" @click="upload(file)">Upload</b-button>
+          <b-button variant="danger" @click="upload(file)">
+            Upload
+          </b-button>
         </div>
       </form>
       <div v-if="result" class="mt-5">

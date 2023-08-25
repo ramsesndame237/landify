@@ -26,7 +26,7 @@ import {
   BDropdown, BDropdownItem,
   BAvatarGroup, BAvatar, BCardTitle, BCardGroup, BCardText, BTabs, BTab, BBadge,
 } from 'bootstrap-vue'
-import { BCardActions } from '@core/components/b-card-actions';
+import { BCardActions } from '@core/components/b-card-actions'
 
 Vue.component(FeatherIcon.name, FeatherIcon)
 Vue.component('b-avatar-group', BAvatarGroup)

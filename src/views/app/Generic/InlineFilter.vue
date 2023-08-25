@@ -9,7 +9,7 @@
         </b-row>
       </b-form>
     </validation-observer>
-    <div class="d-flex justify-content-end">
+    <div class="d-flex justify-content-end" v-if="withActions">
       <b-button variant="info" @click="reset">
         Reset
       </b-button>
@@ -35,6 +35,7 @@ export default {
     tableDefinitionKey: String,
     initialData: Object,
     vertical: Boolean,
+    withActions: { type: Boolean, default: true },
   },
   data() {
     return { data: { ...this.initialData }, loading: false }
@@ -44,6 +45,16 @@ export default {
       return this.vertical || this.definition.filter_vertical
     },
   },
+  watch: {
+    data: {
+      handler(newVal) {
+        if(!this.withActions) {
+          this.handleOk()
+        }
+      },
+      deep: true,
+    }
+  },
   methods: {
     // Fonctions
     reset() {
@@ -51,9 +62,7 @@ export default {
       this.$refs.form.reset()
       // this.$refs.modal.hide()
     },
-    handleOk(bvModalEvt) {
-      // Prevent modal from closing
-      bvModalEvt.preventDefault()
+    handleOk() {
       // Trigger submit handler
       this.loading = true
       this.$refs.form.validate()

@@ -1,11 +1,11 @@
 <template>
-  <component :is="definition.customIndex || 'index'" :key="$route.path"/>
+  <component :is="definition.customIndex || 'index'" :key="$route.path" :definition="definition"/>
 </template>
 
 <script>
 import Table from '@/table'
+import table from '@/table'
 import Index from '../index'
-import table from "@/table";
 
 export default {
   name: 'IndexPage',

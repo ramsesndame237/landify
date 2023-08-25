@@ -71,7 +71,7 @@ import Step1 from '@/views/app/CreateComponent/SpecialrightForm/Step1.vue'
 import Step2 from '@/views/app/CreateComponent/SpecialrightForm/Step2.vue'
 
 export default {
-  name: "ContractDeadlineForm",
+  name: 'ContractDeadlineForm',
   components: {
     Step1,
     Step2,
@@ -85,7 +85,7 @@ export default {
   },
   data() {
     return {
-      table: "contract_specialright_rel",
+      table: 'contract_specialright_rel',
       current_step: 1,
       max_steps: 2,
       completed_step: 0,
@@ -125,10 +125,10 @@ export default {
       try {
         if (this.current_step === 1) {
           this.context = await this.$refs.step1.handleSubmit()
-          console.log('step 1 passed ', this.context);
+          console.log('step 1 passed ', this.context)
         } else if (this.current_step === 2) {
           await this.$refs.step2.submit().specialRights
-          console.log('step 2 passed ', this.context);
+          console.log('step 2 passed ', this.context)
         }
       } catch (e) {
         hasError = true
@@ -179,13 +179,13 @@ export default {
       })
       this.$store.commit('table/setDefinition', {
         data,
-        table: this.table
+        table: this.table,
       })
     },
-    submit(){
-      console.log(this.context);
-      return Promise.reject(new Error("bar"))
-    }
+    submit() {
+      console.log(this.context)
+      return Promise.reject(new Error('bar'))
+    },
   },
 
 }

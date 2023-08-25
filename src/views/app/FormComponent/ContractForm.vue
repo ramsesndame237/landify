@@ -17,21 +17,21 @@ export default {
           icon: 'HomeIcon',
           title: 'Basis Detail',
           subtitle: 'Contract detail',
-          content: this.formFields.filter(field => field.type !== 'date' && !field.key.includes('currency')),
+          content: this.formFields.filter(field => field.category === undefined),
           errors: 0,
         },
         {
           icon: 'CalendarIcon',
           title: 'Date details',
           subtitle: 'Dates of contract',
-          content: this.formFields.filter(field => field.type === 'date'),
+          content: this.formFields.filter(field => field.category === 'date'),
           errors: 0,
         },
         {
           icon: 'DollarSignIcon',
           title: 'Price details',
           subtitle: 'Prices of contract',
-          content: this.formFields.filter(field => field.key.includes('currency')),
+          content: this.formFields.filter(field => field.category === 'price'),
           errors: 0,
         },
       ]
@@ -70,7 +70,7 @@ export default {
     <b-overlay :show="loading">
       <validation-observer ref="form" v-slot="{ passes }" slim>
         <b-form autocomplete="off" @submit.prevent="passes(emitSubmit)">
-          <b-tabs ref="contract_tabs" v-model="tabIndex" fill vertical justified card nav-wrapper-class="w-25 col-3 text-left">
+          <b-tabs ref="contract_tabs" v-model="tabIndex" vertical card nav-wrapper-class="col text-left tabs_wrapper">
             <template v-for="(tab,idx) in tabsData">
               <b-tab :key="idx" title-item-class=" mb-3">
                 <template #title>
@@ -105,7 +105,7 @@ export default {
               </b-tab>
             </template>
           </b-tabs>
-          <div v-if="!disabled" class="col-9 text-center d-flex justify-content-between ml-auto">
+          <div v-if="!disabled" class="col-10 text-center d-flex justify-content-between ml-auto">
             <b-button href="#" :disabled="tabIndex === 0" variant="primary" @click="tabIndex--">
               Previous
             </b-button>
@@ -120,5 +120,7 @@ export default {
 </template>
 
 <style scoped>
-
+.tabs_wrapper > ul.nav.nav-tabs {
+  height: auto !important;
+}
 </style>

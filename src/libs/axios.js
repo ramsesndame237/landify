@@ -2,7 +2,6 @@ import Vue from 'vue'
 
 // axios
 import axios from 'axios'
-import moment from 'moment'
 
 const axiosIns = axios.create({
   // You can add your headers here

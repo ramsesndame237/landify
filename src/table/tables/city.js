@@ -12,22 +12,20 @@ export default {
       sortable: true,
       required: false,
       change: (entity, vm) => {
-        let city_state
+        let cityState
         if (entity.city_zip) {
           const debounced = _.debounce(
             () => vm.$http
               .get(`/users/state/${entity.city_zip}`)
-              .then(async (resp) => {
-                if (resp.data?.state) city_state = resp.data.state
-              })
-            ,
-            1600
+              .then(async resp => {
+                if (resp.data?.state) cityState = resp.data.state
+              }),
+            1600,
           )
 
-          debounced();
+          debounced()
         }
-        return city_state
-
+        return cityState
       },
     },
     { key: 'country_short', sortable: true, hideOnForm: true },

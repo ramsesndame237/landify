@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import { canNavigate } from '@/libs/acl/routeProtection'
-import { isUserLoggedIn, getUserData, getHomeRouteForLoggedInUser } from '@/auth/utils'
+import jwt from '@/auth/jwt/useJwt'
+import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 
 Vue.use(VueRouter)
 
@@ -33,6 +34,21 @@ const router = new VueRouter({
         breadcrumb: [
           {
             text: 'headline~dashboard',
+            active: true,
+          },
+        ],
+        resource: 'dashboard',
+      },
+    },
+    {
+      path: '/app/dashboard/ticket',
+      name: 'ticketDashboard',
+      component: () => import('@/views/app/Dashboard/TicketDashboard.vue'),
+      meta: {
+        pageTitle: 'headline~dashboard~ticket',
+        breadcrumb: [
+          {
+            text: 'headline~dashboard~ticket',
             active: true,
           },
         ],
@@ -160,7 +176,7 @@ const router = new VueRouter({
     {
       path: '/app/:table/profile',
       name: 'user-profile',
-      component: () => import("@/views/app/Page/UserProfile/Index.vue"),
+      component: () => import('@/views/app/Page/UserProfile/Index.vue'),
       meta: {
         pageTitle: 'User profile',
       },
@@ -227,9 +243,9 @@ const router = new VueRouter({
       path: '/app/table/:table/popup/:list',
       name: 'new-entity-popup',
       component: () => import('@/views/app/CreateComponent/NewEntityPopupForm.vue'),
-      meta:{
-        layout:'full',
-      }
+      meta: {
+        layout: 'full',
+      },
     },
     {
       path: '/app/menu',
@@ -336,7 +352,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, _, next) => {
-  const isLoggedIn = isUserLoggedIn()
+  const isLoggedIn = jwt.isUserLoggedIn()
   console.log(to, canNavigate(to), 'navigation')
   if (!canNavigate(to)) {
     // Redirect to login if not logged in
@@ -348,8 +364,7 @@ router.beforeEach((to, _, next) => {
 
   // Redirect if logged in
   if (to.meta.redirectIfLoggedIn && isLoggedIn) {
-    const userData = getUserData()
-    next(getHomeRouteForLoggedInUser(userData ? userData.role : null))
+    next(getHomeRouteForLoggedInUser())
   }
 
   return next()

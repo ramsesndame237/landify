@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import Field from '@/views/app/Generic/Field';
+import Field from '@/views/app/Generic/Field'
 
 export default {
   name: 'CorrespondanceForm',
@@ -34,14 +34,17 @@ export default {
           key: 'correspondancetype_id',
           type: 'list',
           list: 'correspondancetype',
-          listLabel: 'correspondancetype_name'
+          listLabel: 'correspondancetype_name',
         },
         {
-          key: 'contactperson_id', type: 'list',
+          key: 'contactperson_id',
+          type: 'list',
           list: 'contactperson',
-          listLabel: 'contactperson_name'
+          listLabel: 'contactperson_name',
         },
-        { key: 'documenttype_id', type: 'list', list: 'documenttype', listLabel: 'documenttype_name' },
+        {
+          key: 'documenttype_id', type: 'list', list: 'documenttype', listLabel: 'documenttype_name',
+        },
         { key: 'coverletter_title', type: 'text' },
         { key: 'coverletter_text', type: 'html' },
         { key: 'files', type: 'file', multiple: true },

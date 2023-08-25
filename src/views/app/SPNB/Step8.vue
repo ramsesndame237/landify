@@ -4,8 +4,8 @@
       {{ $t('headline~new_business~title~contract') }}
     </b-col>
     <b-col cols="12" md="6">
-      <entity-form table="contract_criteria_rel" :definition="definition" table-definition-key="contract_criteria_rel"
-                   create :initial-data="initialData" cols="12" ref="form" :disabled="loading"/>
+      <entity-form ref="form" table="contract_criteria_rel" :definition="definition"
+                   table-definition-key="contract_criteria_rel" create :initial-data="initialData" cols="12" :disabled="loading"/>
       <div class="d-flex justify-content-center">
         <b-button size="md" class="mt-2" variant="info" :disabled="loading" @click="add">
           <b-spinner v-if="loading" small/>
@@ -27,12 +27,14 @@ import DataTables from '@/layouts/components/DataTables'
 import entityForm from '@/views/app/Generic/EntityForm'
 import Field from '@/views/app/Generic/Field'
 import {
-  BRow, BCol, BButton, BSpinner
+  BRow, BCol, BButton, BSpinner,
 } from 'bootstrap-vue'
 
 export default {
   name: 'Step8',
-  components: { DataTables, entityForm, Table, BButton, BCol, BRow, Field, BSpinner },
+  components: {
+    DataTables, entityForm, BButton, BCol, BRow, BSpinner,
+  },
   props: ['context', 'disabled'],
   data() {
     const definition = {
@@ -43,7 +45,9 @@ export default {
     definition.fields = [
       { key: 'contract_id', disabled: true },
       { key: 'contract_name', disabled: true },
-      { key: 'criteria_id', type: 'list', list: 'criteria', listLabel: 'criteria_name', composite: true },
+      {
+        key: 'criteria_id', type: 'list', list: 'criteria', listLabel: 'criteria_name', composite: true,
+      },
       ...definition.fields.slice(2),
     ]
     return {

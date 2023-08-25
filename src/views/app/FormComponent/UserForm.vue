@@ -49,7 +49,7 @@
 
         <template
           v-for="key in ['firmengroup_type','partnergroup_id','partnercompany_id', 'customergroup_id', 'company_id']">
-          <b-col cols="12" md="6" :key="key">
+          <b-col :key="key" cols="12" md="6">
             <field ref="contactPersonField" :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
                    :field="getField(key)"/>
           </b-col>

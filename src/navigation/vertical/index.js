@@ -12,10 +12,10 @@ function item(tablename, title, route) {
   }
 }
 
-function headerItem(key) {
+function headerItem(itemKey) {
   return {
-    header: `menu~${key}`,
-    action: `menu~${key}`,
+    header: `menu~${itemKey}`,
+    action: `menu~${itemKey}`,
     resource: 'menu',
   }
 }
@@ -28,10 +28,13 @@ export default [
   headerItem('main'),
   {
     title: key('dashboard'),
-    route: 'home',
     icon: 'HomeIcon',
     action: 'menu~dashboard',
     resource: 'menu',
+    children: [
+      item(null, 'dashboard', 'home'),
+      item(null, 'ticketdashboard', 'ticketDashboard'),
+    ],
   },
   {
     title: key('ticket'),

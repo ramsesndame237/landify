@@ -21,7 +21,9 @@
           </div>
         </div>
         <div class="mt-2">
-          <b-button variant="danger" @click="upload(file)">Import</b-button>
+          <b-button variant="danger" @click="upload(file)">
+            Import
+          </b-button>
         </div>
       </form>
       <div class="mt-5">
@@ -30,14 +32,30 @@
             <b-tab v-for="(entity, index) in entities" :key="index" :title="entity" lazy>
               <table v-if="result[entity]" class="mt-2 mt-xl-0 w-100">
                 <tr>
-                  <th class="pb-50 font-weight-bold">Total</th>
-                  <td class="pb-50">{{ getCount(entity) }}</td>
-                  <th class="pb-50 font-weight-bold">Inserted</th>
-                  <td class="pb-50">{{ getCount(entity, 'success') }}</td>
-                  <th class="pb-50 font-weight-bold">Updated</th>
-                  <td class="pb-50">{{ getCount(entity, 'updated') }}</td>
-                  <th class="pb-50 font-weight-bold">Failed</th>
-                  <td class="pb-50">{{ getCount(entity, 'failed') }}</td>
+                  <th class="pb-50 font-weight-bold">
+                    Total
+                  </th>
+                  <td class="pb-50">
+                    {{ getCount(entity) }}
+                  </td>
+                  <th class="pb-50 font-weight-bold">
+                    Inserted
+                  </th>
+                  <td class="pb-50">
+                    {{ getCount(entity, 'success') }}
+                  </td>
+                  <th class="pb-50 font-weight-bold">
+                    Updated
+                  </th>
+                  <td class="pb-50">
+                    {{ getCount(entity, 'updated') }}
+                  </td>
+                  <th class="pb-50 font-weight-bold">
+                    Failed
+                  </th>
+                  <td class="pb-50">
+                    {{ getCount(entity, 'failed') }}
+                  </td>
                 </tr>
               </table>
               <data-tables :entity="entity" :selectable="false" :with-actions="false" :fields="fields" :items="getResult(entity)"/>

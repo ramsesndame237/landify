@@ -20,18 +20,12 @@
 <script>
 /* eslint-disable global-require */
 import {
-  BLink, BForm, BFormInput, BButton, BImg,
+  BImg,
 } from 'bootstrap-vue'
-import VuexyLogo from '@core/layouts/components/Logo.vue'
 import store from '@/store/index'
 
 export default {
   components: {
-    VuexyLogo,
-    BLink,
-    BForm,
-    BButton,
-    BFormInput,
     BImg,
   },
   data() {

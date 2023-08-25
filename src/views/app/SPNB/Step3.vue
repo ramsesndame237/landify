@@ -65,7 +65,7 @@ export default {
       {
         key: 'property_manager_valid_from_date',
         type: 'date',
-        tableKey: 'location_partnercompany_partnertype_valid_from_date'
+        tableKey: 'location_partnercompany_partnertype_valid_from_date',
       },
     ])
     return {

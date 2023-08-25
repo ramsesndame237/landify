@@ -23,7 +23,9 @@
     </div>
 
     <template v-if="show">
-      <h3 class="mb-1">Please select the partial billing items and data you want to transfer:</h3>
+      <h3 class="mb-1">
+        Please select the partial billing items and data you want to transfer:
+      </h3>
       <b-card>
         <b-table ref="table" striped hover responsive :busy.sync="loading" :per-page="perPage"
                  :current-page="currentPage" :items="provider" :fields="fields" :sort-by.sync="sortBy"
@@ -41,7 +43,7 @@
             </div>
           </template>
           <template #cell()="data">
-            <div class="d-flex" v-if="data.value">
+            <div v-if="data.value" class="d-flex">
               <b-form-checkbox v-model="data.item.meta[data.field.key]"/>
               <span>{{ data.value }}</span>
             </div>
@@ -53,8 +55,10 @@
 </template>
 
 <script>
-import { BButton, BCard, BTable, BRow, BFormCheckbox, BForm, BCol, BSpinner } from 'bootstrap-vue'
-import Field from '@/views/app/Generic/Field.vue';
+import {
+  BButton, BCard, BTable, BRow, BFormCheckbox, BForm, BCol, BSpinner,
+} from 'bootstrap-vue'
+import Field from '@/views/app/Generic/Field.vue'
 
 export default {
   name: 'InvoicePositionImport',
@@ -151,7 +155,9 @@ export default {
         },
         // { key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name' },
         // { key: 'invoice_contract_year', type: 'number' },
-        { key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_name' },
+        {
+          key: 'invoice_id', type: 'list', list: 'invoice', listLabel: 'invoice_name',
+        },
         // { key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name' },
       ],
       show: false,
@@ -181,9 +187,7 @@ export default {
     },
     async transfer() {
       const invoice_id = this.$route.params.invoice
-      const selectedItems = this.currentItems.filter(item => {
-        return Object.keys(item.meta).findIndex(key => item.meta[key]) >= 0
-      })
+      const selectedItems = this.currentItems.filter(item => Object.keys(item.meta).findIndex(key => item.meta[key]) >= 0)
       const data = selectedItems.map(item => {
         const el = {}
         Object.keys(item.meta).forEach(key => {
@@ -210,12 +214,10 @@ export default {
 
         const relations = response.data.data.data
           .filter(item => !!item[0])
-          .map(item => {
-            return {
-              invoice_id,
-              invoiceposition_id: item[0].invoiceposition_id,
-            }
-          })
+          .map(item => ({
+            invoice_id,
+            invoiceposition_id: item[0].invoiceposition_id,
+          }))
 
         await this.$api({
           action: 'create',
