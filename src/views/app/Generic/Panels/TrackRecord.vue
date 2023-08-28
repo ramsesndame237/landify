@@ -25,9 +25,12 @@ export default ({
     }
   },
   async mounted() {
-    this.$parent.$refs.form.$on('after-save', () => {
-      this.loadData(true)
-    })
+
+    if(this.$parent.$refs.form) {
+      this.$parent.$refs.form.$on('after-save', () => {
+        this.loadData(true)
+      })
+    }
     await this.loadData()
   },
   methods: {
@@ -39,7 +42,7 @@ export default ({
       try {
         const { data } = await this.$http.get(this.endpoint || '', {
           params: {
-            [this.definition.primaryKey ?? this.definition.fields.find(f => f.auto)?.key]: this.$route.params.id,
+            [this.definition.primaryKey ?? this.definition.fields.find(f => f.auto)?.key]: 192228,
           },
         })
         this.items.push(...data.data.data)
