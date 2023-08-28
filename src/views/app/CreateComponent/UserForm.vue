@@ -50,7 +50,9 @@ export default {
     }
   },
   async mounted() {
-    this.$parent.removeBody(true)
+    if(this.$parent.removeBody) {
+      this.$parent.removeBody(true)
+    }
     await this.$http.get('/users/select')
       .then(resp => {
         const data = resp.data
