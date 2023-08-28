@@ -204,6 +204,11 @@ export default {
           key: 'contractdeadline_status',
           hideOnForm: true,
           label: 'Status',
+          formatter: (value, key, item) => {
+            const status = { passed: 'Passed', active: 'Active', pulled: 'Pulled'}
+
+            return status[value]
+          }
         },
         {
           key: 'action',
