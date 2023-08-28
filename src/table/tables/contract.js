@@ -690,7 +690,6 @@ export default {
   fetch: async vm => {
     try {
       const response = await vm.$http.get(`/contracts/${vm.entityId}`)
-      console.log('Ici response fetch contract', { response })
       const { data } = response
 
       if (data.company) {
