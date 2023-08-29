@@ -7,7 +7,7 @@ export default {
   fetchWithEntity: true,
   updateComponent: () => import('@/views/app/FormComponent/ContractForm.vue'),
   // createModal: false,
-  createComponent: () => import('@/views/app/CreateComponent/ContractForm/ContractFormNew.vue'),
+  // createComponent: () => import('@/views/app/CreateComponent/ContractForm/ContractFormNew.vue'),
   fields: [
     { key: 'contract_id', auto: true },
     {
