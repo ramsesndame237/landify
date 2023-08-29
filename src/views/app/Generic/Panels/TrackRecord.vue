@@ -37,7 +37,7 @@ export default ({
       }
       this.$refs.card.showLoading = true
       try {
-        const { data } = await this.$http.get(this.endpoint || '', {
+        const { data } = await this.$http.get(this.endpoint || '/trackrecords', {
           params: {
             [this.definition.primaryKey ?? this.definition.fields.find(f => f.auto)?.key]: this.$route.params.id,
           },
