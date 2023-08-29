@@ -1,70 +1,177 @@
 <template>
-  <div>
-    <h3>{{ $t('headline~dashboard~subframe~open_tickets') }}</h3>
+  <div class="">
     <b-row>
-      <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~open_tickets_intime')" color="#343a40"
-                    :percent="(nearDeadlineIds.length*100/total).toFixed(0)" :number="nearDeadlineIds.length"
-                    variant="dark" cols="4" @click.native="show(nearDeadlineIds)"/>
-      <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~open_tickets_afteryellow')"
-                    color="#FF7A00" :percent="(criticalIds.length*100/total).toFixed(0)" :number="criticalIds.length"
-                    variant="warning" cols="4" @click.native="show(criticalIds)"/>
-      <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~open_tickets_afterred')" color="#D51130"
-                    :percent="(overdueIds.length*100/total).toFixed(0)" :number="overdueIds.length" variant="danger"
-                    cols="4" @click.native="show(overdueIds)"/>
+      <ticket-card color="rgba(0, 196, 177, .1)" text-color="#00C4B1" number="26" percents="-12" header-text="Tickets mit Zuordnung" footer-text="Lorem ipsum dolor ame lorem wiudh wk." cols="3"/>
+      <ticket-card color="rgba(255, 122, 0, .1)" text-color="#FF7A00" number="08" percents="45" header-text="Tickets mit Zuordnung" footer-text="Lorem ipsum dolor ame lorem wiudh wk." cols="3"/>
+      <ticket-card color="rgba(213, 17, 48, .1)" text-color="#D51130" number="03" percents="30" header-text="Tickets mit Zuordnung" footer-text="Lorem ipsum dolor ame lorem wiudh wk." cols="3"/>
+      <ticket-card color="#fff" text-color="#000" number="05" percents="09" header-text="Tickets mit Zuordnung" footer-text="Lorem ipsum dolor ame lorem wiudh wk." cols="3"/>
+    </b-row>
+    <b-row class="mt-3" align-v="stretch">
+      <open-ticket-card cols="3" number="26" hours="200" title="Offene Tickets bearbeitbar" bg-color="rgba(0, 196, 177, .1)" color="#00C4B1" with-btn="1"/>
+      <open-ticket-card cols="3" number="08" hours="650" title="Offene Tickets noch nicht bearbeitbar" bg-color="rgba(0, 196, 177, .1)" color="#00C4B1" with-btn="1"/>
+      <b-card class="col-lg-6"
+              title="Ticket analysis"
+      >
+        <b-card-sub-title>Hover over the Circular Graph and Get Information.</b-card-sub-title>
+        <b-card-body>
+          <b-row>
+            <b-col lg="6">
+              <vue-apex-charts
+                type="pie"
+                height="300"
+                :series="pieChart.series"
+                :options="pieChart.chartOptions"
+              />
+            </b-col>
+          </b-row>
+        </b-card-body>
+      </b-card>
+    </b-row>
+    <b-row>
+      <open-ticket-card title="Offene Tickets bearbeitbar" number="26" hours="200" cols="3" bg-color="rgba(255, 122, 0, .1)" color="#FF7A00" with-btn="1"/>
+      <b-card class="col-lg-9"
+              title="Offene Tickets noch nicht bearbeitbar: "
+      >
+        <b-card-body>
+          <b-row>
+            <open-ticket-card title="Offene Tickets bearbeitbar" number="26" hours="200" cols="4" bg-color="rgba(213, 17, 48, .1)" color="#D51130"/>
+            <open-ticket-card title="Offene Tickets bearbeitbar" number="26" hours="200" cols="4" bg-color="rgba(213, 17, 48, .1)" color="#D51130"/>
+            <b-col lg="4">
+              <b-row>
+                <custom-horizontal-progress :cols="12" color="rgba(0, 196, 177, .3)" bg-color="rgba(0, 196, 177, .1)" :value="70" :max="100" title=" Erstprüfungen" class="mb-2"/>
+                <custom-horizontal-progress :cols="12" color="rgba(255, 122, 0, .3)" bg-color="rgba(255, 122, 0, .1)" :value="100" :max="100" title=" Erstprüfungen mit Einsparungen" class="mb-2"/>
+                <custom-horizontal-progress :cols="12" color="rgba(213, 17, 48, .3)" bg-color="rgba(213, 17, 48, .1)" :value="95" :max="100" title=" Prozentual" class="mb-2" is-percentage/>
+              </b-row>
+            </b-col>
+          </b-row>
+        </b-card-body>
+      </b-card>
     </b-row>
   </div>
 </template>
 
 <script>
+import TicketCard from '@/views/app/CustomComponents/TicketCard'
+import OpenTicketCard from '@/views/app/CustomComponents/OpenTicketCard'
+import VueApexCharts from 'vue-apexcharts'
+import CustomHorizontalProgress from '@/views/app/CustomComponents/CustomHorizontalProgress'
+
 import {
-  BRow,
+  BRow, BCard, BCol, BIcon, BDropdown, BDropdownItem, BCardBody, BCardSubTitle, BProgress,
 } from 'bootstrap-vue'
-import moment from 'moment'
-import SummaryCard from './Components/SummaryCard'
 
 export default {
+  name: 'BackOffice',
   components: {
+    TicketCard,
+    OpenTicketCard,
     BRow,
-    SummaryCard,
+    BCol,
+    BCard,
+    BCardSubTitle,
+    VueApexCharts,
+    BCardBody,
+    CustomHorizontalProgress,
   },
   data() {
     return {
-      total: 1,
-      overdueIds: [],
-      nearDeadlineIds: [],
-      criticalIds: [],
-      loading: false,
+      pieChart: {
+        series: [14, 12, 16, 24],
+        chartOptions: {
+          legend: {
+            show: true,
+            position: 'bottom',
+            fontSize: '14px',
+            fontFamily: 'Montserrat',
+          },
+          colors: ['#01C3B1', '#F94C96', '#4DAEFF', '#FF902A'],
+          dataLabels: {
+            enabled: true,
+            formatter(val) {
+              // eslint-disable-next-line radix
+              return `${parseInt(val)}%`
+            },
+          },
+          plotOptions: {
+            pie: {
+              donut: {
+                labels: {
+                  show: true,
+                  name: {
+                    fontSize: '2rem',
+                    fontFamily: 'Montserrat',
+                  },
+                  value: {
+                    fontSize: '1rem',
+                    fontFamily: 'Montserrat',
+                    formatter(val) {
+                      // eslint-disable-next-line radix
+                      return `${parseInt(val)}%`
+                    },
+                  },
+                  total: {
+                    show: false,
+                    fontSize: '1rem',
+                    label: 'Summary',
+                    formatter() {
+                      return '31%'
+                    },
+                  },
+                },
+              },
+            },
+          },
+          labels: ['Tickets Done', 'Open Tickets', 'Faulty Tickets', 'N/A'],
+          responsive: [
+            {
+              breakpoint: 992,
+              options: {
+                chart: {
+                  height: 380,
+                },
+                legend: {
+                  position: 'bottom',
+                },
+              },
+            },
+            {
+              breakpoint: 576,
+              options: {
+                chart: {
+                  height: 320,
+                },
+                plotOptions: {
+                  pie: {
+                    donut: {
+                      labels: {
+                        show: true,
+                        name: {
+                          fontSize: '1.5rem',
+                        },
+                        value: {
+                          fontSize: '1rem',
+                        },
+                        total: {
+                          fontSize: '1.5rem',
+                        },
+                      },
+                    },
+                  },
+                },
+                legend: {
+                  show: true,
+                },
+              },
+            },
+          ],
+        },
+      },
     }
-  },
-  async mounted() {
-    this.loading = true
-    try {
-      const { data } = (await this.$api({
-        action: 'read-rich',
-        entity: 'frontend_6_1_6_overview',
-        data: [{ ticket_closed: 0 }],
-        per_page: 10000000,
-      })).data.data
-
-      const today = moment()
-      this.total = data.length
-      this.overdueIds = data.filter(t => today.isAfter(t.ticket_deadline_red)).map(t => t.ticket_id)
-      this.nearDeadlineIds = data.filter(t => today.isBefore(t.ticket_deadline_yellow)).map(t => t.ticket_id)
-      this.criticalIds = data.filter(t => today.isBetween(t.ticket_deadline_yellow, t.ticket_deadline_red)).map(t => t.ticket_id)
-    } finally {
-      this.loading = false
-    }
-  },
-  methods: {
-    show(ids) {
-      this.$router.push({ name: 'table', params: { table: 'ticket', ids } })
-    },
   },
 }
 </script>
 
 <style scoped>
-.center-col {
-  margin-top: 15px
-}
+.progress { border-radius: unset!important }
+.progress .progress-bar:last-child { border-top-right-radius: unset; border-bottom-right-radius: unset!important; }
 </style>
