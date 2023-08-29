@@ -474,7 +474,8 @@ export default {
       })
     },
     updateTicket() {
-      this.$refs.ticketModal.openModal(false, this.entity)
+      const model = _.pick(this.entity, ['ticket_id', 'company_id', 'pos_id', 'contract_id', 'ticket_name', 'ticket_description', 'priority_id', 'ticket_deadline_red', 'ticket_deadline_yellow', 'ticket_deadline'])
+      this.$refs.ticketModal.openModal(false, model)
     },
     async onNewTicket(ticket) {
       // Save subticket relation
