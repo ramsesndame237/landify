@@ -7,7 +7,7 @@ export default {
   fetchWithEntity: true,
   updateComponent: () => import('@/views/app/FormComponent/ContractForm.vue'),
   // createModal: false,
-  // createComponent: () => import('@/views/app/CreateComponent/ContractForm/Index.vue'),
+  createComponent: () => import('@/views/app/CreateComponent/ContractForm/ContractFormNew.vue'),
   fields: [
     { key: 'contract_id', auto: true },
     {
@@ -197,6 +197,20 @@ export default {
       hideOnForm: true,
     },
 
+  ],
+  filters: [
+    {
+      key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name',
+    },
+    {
+      key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name',
+    },
+    {
+      key: 'manager_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name',tableKey: 'partnercompany_id',
+    },
+    {
+      key: 'owner_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name',tableKey: 'partnercompany_id',
+    }
   ],
   default: {
     contract_migration_checked: 0,
