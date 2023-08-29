@@ -145,6 +145,7 @@ export default {
           this.$api({
             entity: 'user_team_grp',
             action: 'read-rich',
+            per_page: 9999,
             data: ids.map(id => ({ team_id: id })),
           }).then(({ data: respData }) => {
             this.teams = respData.data.data

@@ -279,7 +279,7 @@
                   </b-card-text>
                   <b-card-text>
                     <div class="w-100 d-flex flex-column justify-content-between">
-                      <h6>{{ document.document_entry_time }}</h6>
+                      <h6>{{ formatDate(document.document_entry_time, true) }}</h6>
                       <b-link v-if="canStamp(document)"
                               :to="{name:'sign-document', params: {id: document.document_id,ticket_id: entity.ticket_id, entity: document}}"
                               class="ml-2">Stamp
@@ -327,7 +327,7 @@ import AppTimeline from '@core/components/app-timeline/AppTimeline.vue'
 import AppTimelineItem from '@core/components/app-timeline/AppTimelineItem.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import TicketMixin from '@/views/app/Kanban/TicketMixin'
-import { getDocumentLink, getStampedDocumentLink } from '@/libs/utils'
+import { formatDate,getDocumentLink, getStampedDocumentLink } from '@/libs/utils'
 import moment from 'moment'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
 import Notes from '@/views/app/Generic/Notes.vue'
@@ -410,6 +410,7 @@ export default {
     }
   },
   methods: {
+    formatDate,
     async addToPos(document) {
       if (document.loading) return
       this.$refs.documentPosModal.openModal(document, this.entity.pos_id)
@@ -473,7 +474,8 @@ export default {
       })
     },
     updateTicket() {
-      this.$refs.ticketModal.openModal(false, this.entity)
+      const model = _.pick(this.entity, ['ticket_id', 'company_id', 'pos_id', 'contract_id', 'ticket_name', 'ticket_description', 'priority_id', 'ticket_deadline_red', 'ticket_deadline_yellow', 'ticket_deadline'])
+      this.$refs.ticketModal.openModal(false, model)
     },
     async onNewTicket(ticket) {
       // Save subticket relation
