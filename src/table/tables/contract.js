@@ -773,7 +773,6 @@ export default {
     {
       component: () => import('@/views/app/Generic/Panels/TrackRecord.vue'),
       props: {
-        endpoint: '/contracts/trackrecords',
       },
     },
   ],
