@@ -200,16 +200,16 @@ export default {
   ],
   filters: [
     {
-      key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name',
+      key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name', required: false ,
     },
     {
-      key: 'company_id', type: 'list', list: 'company', listLabel: 'company_name',
+      key: 'company_id', type: 'list', list: 'frontend_2_2_3_1',  filter_key: 'customergroup_id', listLabel: 'company_name', required: false,
     },
     {
-      key: 'manager_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name',tableKey: 'partnercompany_id',
+      key: 'manager_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name',tableKey: 'partnercompany_id', required: false,
     },
     {
-      key: 'owner_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name',tableKey: 'partnercompany_id',
+      key: 'owner_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name',tableKey: 'partnercompany_id', required: false,
     }
   ],
   default: {
