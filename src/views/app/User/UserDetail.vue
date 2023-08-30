@@ -12,7 +12,7 @@
                     <b-avatar :text="avatarPlaceholder" size="7rem" rounded></b-avatar>
                   </b-card-text>
                   <b-card-text class=" h3 bold mt-1">
-                   {{ user.user_firstname + ' '+ user.user_lastname  }}
+                    {{ user.user_firstname + ' '+ user.user_lastname  }}
                   </b-card-text>
                   <b-badge variant="success">{{ role.role_name }}</b-badge>
                 </div>
@@ -95,7 +95,7 @@
               <CompactDataTables  />
             </b-card>
             <b-card no-body>
-              <TrackRecord :definition="definition" :endpoint="endpoint" />
+<!--              <TrackRecord :definition="definition" :endpoint="endpoint" />-->
             </b-card>
           </b-tab>
           <b-tab >
@@ -112,7 +112,7 @@
                   Minimum 8 characters long, uppercase & symbol
                 </b-card-text>
               </b-alert>
-              <b-overlay >
+              <b-overlay :show="passwordLoading" spinner-variant="primary">
                 <validation-observer ref="form" v-slot="{passes}">
                   <b-form @submit.prevent="passes(savePassword)">
                     <b-row>
@@ -120,7 +120,7 @@
                         <field ref="fields" :entity="entity" :field="field" />
                       </b-col>
                     </b-row>
-                    <b-button variant="primary" class="mt-1">Change Password</b-button>
+                    <b-button variant="primary" class="mt-1" @click="savePassword">{{ $t('button~save_password	') }}</b-button>
                   </b-form>
                 </validation-observer>
               </b-overlay>
@@ -132,7 +132,7 @@
               Permissions
             </template>
             <b-card >
-              <TableGroupMatrix :entity-id="entityId" :relation="relation" />
+<!--              <TableGroupMatrix :entity-id="entityId" :relation="relation" />-->
             </b-card>
           </b-tab>
         </b-tabs>
@@ -167,9 +167,10 @@ export default {
         entityView: 'tablegroup',
     },
       updatePasswordField: [
-        {key: 'user_password', type: 'password', generate: true, },
-        {key: 'user_confirmation_password', type: 'password' },
-      ]
+        {key: 'old_password', type: 'password' },
+        {key: 'new_password', type: 'password', generate: true, },
+      ],
+      passwordLoading: false
     }
   },
   computed: {
@@ -195,8 +196,25 @@ export default {
     editUser() {
       this.$refs.modal.openModal(false, this.entity);
     },
-    savePassword() {
+    async savePassword() {
+      const result = await this.$refs.form.validate()
 
+      if (!result) return
+      this.passwordLoading = true
+
+      try {
+        await this.$http.put(`/users/${this.user.user_id}/password`, this.entity)
+        this.$successToast(this.$t('success~password~change~message'))
+      } catch (error) {
+        console.log({error})
+        if(error.response?.data) {
+          this.$errorToast(error.response.data.detail)
+        } else {
+          this.$errorToast(this.$t('error~message'))
+        }
+      } finally {
+        this.passwordLoading = false
+      }
     }
   }
 }
@@ -209,4 +227,3 @@ export default {
   padding-bottom: .5rem;
 }
 </style>
-
