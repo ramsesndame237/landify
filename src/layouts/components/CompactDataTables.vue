@@ -56,7 +56,7 @@ export default {
       type: Array, default: () => [10, 30, 100, { text: 'All', value: 100000 }]
     },
     definition: Object,
-    entityId: Number,
+    entityId: String,
     withSelect: {
       type: Boolean, default: true
     },

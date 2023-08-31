@@ -61,6 +61,14 @@
                         <span class="ml-1 font-weight-normal">{{ role.role_name }}</span>
                       </b-list-group-item>
                       <b-list-group-item class="d-flex align-items-center font-weight-bolder font-medium-1">
+                        User Type:
+                        <span class="ml-1 font-weight-normal text-capitalize">{{ usertype }}</span>
+                      </b-list-group-item>
+                      <b-list-group-item class="d-flex align-items-center font-weight-bolder font-medium-1">
+                        User Type:
+                        <span class="ml-1 font-weight-normal text-capitalize">{{ usertype }}</span>
+                      </b-list-group-item>
+                      <b-list-group-item class="d-flex align-items-center font-weight-bolder font-medium-1">
                         Mobile Phone :
                         <span class="ml-1 font-weight-normal">{{ user.user_mobile }}</span>
                       </b-list-group-item>
@@ -98,7 +106,7 @@
               />
             </b-card>
             <b-card no-body>
-<!--              <TrackRecord :definition="definition" :endpoint="endpoint" />-->
+              <TrackRecord :definition="definition" :endpoint="endpoint" />
             </b-card>
           </b-tab>
           <b-tab >
@@ -162,7 +170,6 @@ import EditPageMixin from "@/views/app/Generic/EditPageMixin";
 import RoleMixin from "@/views/app/Role/RoleMixin";
 import Field from "@/views/app/Generic/Field.vue";
 
-import ticketDefinition from '@/table/tables/ticket'
 import MatrixTool from "@/views/app/Role/Relation/MatrixTool.vue";
 
 export default {
@@ -171,7 +178,7 @@ export default {
   mixins: [EditPageMixin, RoleMixin],
   data(){
     return {
-      endpoint: '/contracts/trackrecords',
+      endpoint: '/trackrecords',
       name: '',
       relation: {
         entityView: 'tablegroup',
@@ -251,6 +258,9 @@ export default {
         ],
         entity: 'ticket'
       }
+    },
+    usertype() {
+      return this.user?.usertype?.usertype_name
     }
   },
   async mounted() {
