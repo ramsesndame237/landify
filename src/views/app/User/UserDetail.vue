@@ -85,7 +85,7 @@
         </div>
       </div>
       <div class="col-md-7 col-lg-8 col-12">
-        <b-tabs pills>
+        <b-tabs pills lazy>
           <b-tab >
             <template #title>
               <feather-icon icon="UserIcon" size="18" />
@@ -134,8 +134,12 @@
               <feather-icon icon="ShieldIcon" size="18" />
               Permissions
             </template>
-            <b-card >
-<!--              <TableGroupMatrix :entity-id="entityId" :relation="relation" />-->
+            <b-card title="List of Permissions">
+
+              <b-card-text class="text-right">
+                <MatrixTool  />
+              </b-card-text>
+              <TableGroupMatrix :entity-id="entityId" :relation="relation" />
             </b-card>
           </b-tab>
         </b-tabs>
@@ -159,10 +163,11 @@ import RoleMixin from "@/views/app/Role/RoleMixin";
 import Field from "@/views/app/Generic/Field.vue";
 
 import ticketDefinition from '@/table/tables/ticket'
+import MatrixTool from "@/views/app/Role/Relation/MatrixTool.vue";
 
 export default {
   name: "UserDetail",
-  components: {Field, GenericModal, TableGroupMatrix, CompactDataTables, TrackRecord },
+  components: {MatrixTool, Field, GenericModal, TableGroupMatrix, CompactDataTables, TrackRecord },
   mixins: [EditPageMixin, RoleMixin],
   data(){
     return {
@@ -170,6 +175,7 @@ export default {
       name: '',
       relation: {
         entityView: 'tablegroup',
+        entityName: 'user'
     },
       updatePasswordField: [
         {key: 'old_password', type: 'password' },

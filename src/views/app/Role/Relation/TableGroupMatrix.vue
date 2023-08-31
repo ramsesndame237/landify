@@ -46,11 +46,28 @@ export default {
     labelKey() {
       return this.table === 'tablegroup' ? 'tablegroup_name' : 'table_name'
     },
+    endpoint() {
+      const baseRoute = `/permissions/${this.table === 'tablegroup' ? 'tablegroups' : 'tablenames'}`;
+      let indexRoute,updateRoute = baseRoute
+
+      if (this.relation.entityName && this.relation.entityName !== 'role') {
+        indexRoute = `${baseRoute}/${this.relation.entityName}/${this.entityId}`;
+        updateRoute = `${baseRoute}/${this.relation.entityName}`;
+      } else {
+        indexRoute = `${baseRoute}/${this.entityId}`;
+        updateRoute = `${baseRoute}/${this.entityId}`;
+      }
+
+      return {
+        baseRoute,
+        indexRoute,
+        updateRoute
+      }
+    }
   },
   async mounted() {
-    const endpoint = this.table === 'tablegroup' ? `/permissions/tablegroups/${this.entityId}` : `/permissions/tablenames/${this.entityId}`
     this.loading = true
-    await this.$http.get(endpoint)
+    await this.$http.get(this.endpoint.indexRoute)
       .then(resp => {
         const { data } = resp
         this.rows = data
@@ -67,13 +84,13 @@ export default {
   methods: {
     async submit() {
       const payload = {
-        role_id: this.entityId,
+        [`${this.relation.entityName}_id`]: this.entityId,
         data: this.rows,
       }
-      const endpoint = this.table === 'tablegroup' ? '/permissions/tablegroups' : '/permissions/tablenames'
       this.loading = true
       try {
-        await this.$http.put(endpoint, payload)
+        await this.$http.put(this.endpoint.updateRoute, payload)
+        this.$successToast('Table Group assigned successfully')
       } catch (err) {
         console.error('err: ', err)
       } finally {
