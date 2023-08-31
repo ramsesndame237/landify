@@ -22,7 +22,7 @@
                       <feather-icon icon="CheckSquareIcon" />
                     </b-avatar>
                     <b-card-text class="">
-                      <h4 class="h4 m-0">1,230</h4>
+                      <h4 class="h4 m-0">{{ user.open_ticket }}</h4>
                       <span class="text-sm-center">Open Ticket</span>
                     </b-card-text>
                   </div>
@@ -31,7 +31,7 @@
                       <feather-icon icon="XIcon" />
                     </b-avatar>
                     <b-card-text class="">
-                      <h4 class="h4 m-0">500</h4>
+                      <h4 class="h4 m-0">{{ user.close_ticket }}</h4>
                       <span class="text-sm-center">Close Ticket</span>
                     </b-card-text>
                   </div>
@@ -92,7 +92,10 @@
               Account
             </template>
             <b-card class="" title="List of Tickets">
-              <CompactDataTables  />
+              <CompactDataTables :definition="ticketDefinition" :entity-id="entityId" :with-select="false" :with-search="true"
+                                 :with-pagination="true" :with-size="true" :size="size"
+                                  :initial-filter="{user_id: user.user_id}"
+              />
             </b-card>
             <b-card no-body>
 <!--              <TrackRecord :definition="definition" :endpoint="endpoint" />-->
@@ -155,6 +158,8 @@ import EditPageMixin from "@/views/app/Generic/EditPageMixin";
 import RoleMixin from "@/views/app/Role/RoleMixin";
 import Field from "@/views/app/Generic/Field.vue";
 
+import ticketDefinition from '@/table/tables/ticket'
+
 export default {
   name: "UserDetail",
   components: {Field, GenericModal, TableGroupMatrix, CompactDataTables, TrackRecord },
@@ -170,7 +175,9 @@ export default {
         {key: 'old_password', type: 'password' },
         {key: 'new_password', type: 'password', generate: true, },
       ],
-      passwordLoading: false
+      passwordLoading: false,
+      size: [10, 30, 100, { text: 'All', value: 100000 }]
+
     }
   },
   computed: {
@@ -180,7 +187,65 @@ export default {
     avatarPlaceholder() {
         return this.user?.user_firstname.charAt(0).toUpperCase()
               + this.user?.user_lastname.charAt(0).toUpperCase()
-  }
+  },
+    ticketDefinition() {
+      return {
+        entityEndpoint: '/tickets/list',
+        fields: [
+          { key: 'ticket_id', auto: true },
+          { key: 'ticket_name' },
+          { key: 'ticket_description', type: 'textarea', required: false },
+          // { key: 'ticket_deadline', type: 'date', time: true },
+          {
+            key: 'ticket_deadline_yellow', type: 'date', time: true, hideOnIndex: true,
+          },
+          {
+            key: 'ticket_deadline_red', type: 'date', time: true, hideOnIndex: true,
+          },
+          {
+            key: 'pos_id',
+            listLabel: 'pos_name',
+            type: 'list',
+            list: 'frontend_2_1_3_8',
+            filter_key: 'company_id',
+            relationEntity: 'ticket_pos_rel',
+            hideOnIndex: true,
+          },
+          {
+            key: 'contract_id',
+            listLabel: 'contract_name',
+            type: 'list',
+            list: 'frontend_4_2_1_contract_selector',
+            filter_key: 'pos_id',
+            relationEntity: 'ticket_contract_rel',
+            required: false,
+            hideOnIndex: true,
+          },
+          {
+            key: 'ticket_closed',
+            label: 'Status',
+            hideOnForm: true,
+            formatter: val => window.$vue.$t(val ? 'header~board~status~closed' : 'header~board~status~open'),
+          },
+          { key: 'priority_name', hideOnForm: true },
+          {
+            key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', hideOnIndex: true,
+          },
+
+          // { key: 'column_name', hideOnForm: true },
+          {
+            key: 'ticket_creation_time', type: 'date', time: true, hideOnForm: true,
+          },
+          { key: 'board_name', hideOnForm: true },
+          // { key: 'contract_id', hideOnForm: true },
+          // { key: 'contract_name', hideOnForm: true },
+          // { key: 'pos_id', hideOnForm: true },
+          { key: 'pos_name', hideOnForm: true },
+          // { key: 'sub_ticket_count', hideOnForm: true },
+        ],
+        entity: 'ticket'
+      }
+    }
   },
   async mounted() {
     if(this.definition) {
