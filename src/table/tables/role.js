@@ -111,6 +111,7 @@ export default {
       search: false,
       component: () => import('@/views/app/Role/Relation/TableGroupMatrix.vue'),
       tool: () => import('@/views/app/Role/Relation/MatrixTool.vue'),
+      entityName: 'role', // Ce champ est utilisé lors de l'affichage dans le TableGroupMatrix
       fields: [
         {
           key: 'tablegroup_id', type: 'list', list: 'tablegroup', listLabel: 'tablegroup_name',

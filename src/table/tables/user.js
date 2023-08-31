@@ -5,6 +5,7 @@ export default {
   entityEndpoint: '/users',
   formComponent: () => import('@/views/app/CreateComponent/UserForm.vue'),
   customIndex: () => import('@/views/app/User/UserIndex.vue'),
+  customPage: () => import('@/views/app/User/UserDetail.vue'),
   fields: [
     {
       key: 'usertype_id',

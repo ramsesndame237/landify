@@ -25,9 +25,12 @@ export default ({
     }
   },
   async mounted() {
-    this.$parent.$refs.form.$on('after-save', () => {
-      this.loadData(true)
-    })
+
+    if(this.$parent.$refs.form) {
+      this.$parent.$refs.form.$on('after-save', () => {
+        this.loadData(true)
+      })
+    }
     await this.loadData()
   },
   methods: {
