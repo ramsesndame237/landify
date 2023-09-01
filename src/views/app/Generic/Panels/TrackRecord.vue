@@ -6,7 +6,7 @@
         No records available
       </div>
 
-      <b-card-text class="text-center mt-2">
+      <b-card-text class="text-center mt-2" v-if="!noMoreData">
         <b-button variant="primary" @click="showMore" :disabled="noMoreData">
           {{ noMoreData? 'No more data' :  $t('button~showmore') }}
           <feather-icon icon="ChevronsDownIcon" />

@@ -61,10 +61,6 @@
                         <b-badge variant="success" class="ml-1 font-weight-normal" v-else>Actif</b-badge>
                       </b-list-group-item>
                       <b-list-group-item class="d-flex align-items-center font-weight-bolder font-medium-1">
-                        Country :
-                        <span class="ml-1 font-weight-normal">{{ user.country }}</span>
-                      </b-list-group-item>
-                      <b-list-group-item class="d-flex align-items-center font-weight-bolder font-medium-1">
                         Role :
                         <template v-if="role">
                           <span class="ml-1 font-weight-normal">{{ role.role_name }}</span>
@@ -79,6 +75,14 @@
                         <span class="ml-1 font-weight-normal text-capitalize">
                           <b-badge class="mr-1" variant="dark" v-for="team in userTeams" :key="team.team_id">{{team.team_name}}</b-badge>
                         </span>
+                      </b-list-group-item>
+                      <b-list-group-item class="d-flex align-items-center font-weight-bolder font-medium-1">
+                        Company :
+                        <template v-if="user.company">
+                          <span class="ml-1 font-weight-normal text-capitalize">
+                          {{ user.company.company_name }}
+                        </span>
+                        </template>
                       </b-list-group-item>
                       <b-list-group-item class="d-flex align-items-center font-weight-bolder font-medium-1">
                         Function :
@@ -97,6 +101,10 @@
                       <b-list-group-item class="d-flex align-items-center font-weight-bolder font-medium-1">
                         Fix Phone Number :
                         <span class="ml-1 font-weight-normal">{{ user.user_fix_phonenumber }}</span>
+                      </b-list-group-item>
+                      <b-list-group-item class="d-flex align-items-center font-weight-bolder font-medium-1">
+                        Country :
+                        <span class="ml-1 font-weight-normal">{{ user.country }}</span>
                       </b-list-group-item>
                     </b-list-group>
                   </div>
@@ -354,7 +362,6 @@ export default {
 </script>
 <style scoped>
 .list-group-item {
-  border: none;
   padding-left: 0;
   padding-top: .5rem;
   padding-bottom: .5rem;
