@@ -35,13 +35,13 @@ export default {
   },
   async mounted() {
     if(this.$parent.$refs.form) {
+      console.log('vm', this)
       this.$parent.$refs.form.$on('after-save', () => {
         this.loadData(true)
       })
-    } else {
-     if (this.items.length <= 0) {
-       await this.loadData()
-     }
+    }
+    if (this.items.length <= 0) {
+      await this.loadData()
     }
   },
   computed: {
