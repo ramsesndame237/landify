@@ -35,7 +35,6 @@ export default {
   props: { relation: Object, entityId: {} },
   data() {
     return {
-      rows: [],
       loading: false,
     }
   },
@@ -63,20 +62,15 @@ export default {
         indexRoute,
         updateRoute
       }
+    },
+    rows() {
+      return this.$store.getters['table/listCache'](`table-group-${this.entityId}`)
     }
   },
   async mounted() {
-    this.loading = true
-    await this.$http.get(this.endpoint.indexRoute)
-      .then(resp => {
-        const { data } = resp
-        this.rows = data
-        this.loading = false
-        this.$root.$on('update-matrix', this.submit)
-      })
-      .finally(() => {
-        this.loading = false
-      })
+    if(this.rows.length <= 0) {
+      await this.loadData()
+    }
   },
   beforeDestroy() {
     this.$root.$off('update-matrix', this.submit)
@@ -97,6 +91,20 @@ export default {
         this.loading = false
       }
     },
+    async loadData() {
+      this.loading = true
+      await this.$http.get(this.endpoint.indexRoute)
+        .then(resp => {
+          const { data } = resp
+          this.$store.dispatch('table/setListData', { entity: `table-group-${this.entityId}`, data: data })
+
+          this.loading = false
+          this.$root.$on('update-matrix', this.submit)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    }
   },
 }
 </script>
