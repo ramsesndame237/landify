@@ -128,7 +128,7 @@
             <b-card class="" title="List of Tickets">
               <template v-if="user">
                 <CompactDataTables :definition="ticketDefinition" :entity-id="entityId" :with-select="false" :with-search="true"
-                                   :with-pagination="true" :with-size="true" :size="size"
+                                   :with-pagination="true" :with-size="true"
                                    :initial-filter="{user_id: user.user_id}"
                 />
               </template>
@@ -217,7 +217,6 @@ export default {
         {key: 'new_password', type: 'password', generate: true, },
       ],
       passwordLoading: false,
-      size: [10, 30, 100, { text: 'All', value: 100000 }],
       userFunctions: []
     }
   },
