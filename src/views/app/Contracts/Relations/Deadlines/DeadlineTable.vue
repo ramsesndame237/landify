@@ -78,14 +78,18 @@ import moment from 'moment'
 import sortBy from 'lodash/sortBy'
 import DataTables from '@/layouts/components/DataTables.vue'
 import DeadlinesTools from '@/views/app/Contracts/Relations/Deadlines/DeadlinesTools.vue'
-import TablePagination from '@/layouts/components/TablePagination.vue'
 
 export default {
   name: 'DeadlineTable',
-  components: { DeadlinesTools, DataTables, TablePagination },
+  components: { DeadlinesTools, DataTables },
   props: { relation: Object, entityId: {} },
   data() {
     return {
+      acting_by: [
+        { label: ' Mieter & Vermieter', value: 'mieter_vermieter' },
+        { label: 'Mieter', value: 'mieter' },
+        { label: 'Vermieter', value: 'vermieter' },
+      ],
       deadlineFields: [
         {
           key: 'contractdeadline_type',
@@ -108,10 +112,7 @@ export default {
           label: 'Acting by',
 
           type: 'custom-select',
-          items: [
-            { label: 'Mieter', value: 'mieter' },
-            { label: 'Vermieter', value: 'vermieter' },
-          ],
+          items: this.acting_by,
         },
         {
           key: 'contractdeadline_option_position', type: 'number', label: 'N° options', hideOnIndex: true,
@@ -204,11 +205,11 @@ export default {
           key: 'contractdeadline_status',
           hideOnForm: true,
           label: 'Status',
-          formatter: (value, key, item) => {
-            const status = { passed: 'Passed', active: 'Active', pulled: 'Pulled'}
+          formatter: value => {
+            const status = { passed: 'Passed', active: 'Active', pulled: 'Pulled' }
 
             return status[value]
-          }
+          },
         },
         {
           key: 'action',
@@ -228,9 +229,7 @@ export default {
           hideOnForm: true,
           send: false,
           label: 'Action name',
-          formatter: value => {
-            return this.types[value]
-          },
+          formatter: value => this.types[value],
         },
         {
           key: 'contractdeadline_id',
@@ -243,10 +242,7 @@ export default {
           label: 'Acting by',
           hideOnIndex: true,
           type: 'custom-select',
-          items: [
-            { label: 'Mieter', value: 'mieter' },
-            { label: 'Vermieter', value: 'vermieter' },
-          ],
+          items: this.acting_by,
         },
         {
           key: 'contractdeadline_option_position', type: 'number', label: 'N° options',
@@ -338,11 +334,11 @@ export default {
           key: 'contractdeadline_status',
           hideOnForm: true,
           label: 'Status',
-          formatter: (value, key, item) => {
-            const status = { notdue: 'Not Due', deactivate: 'Deactivate'}
+          formatter: value => {
+            const status = { notdue: 'Not Due', deactivate: 'Deactivate' }
 
             return status[value]
-          }
+          },
         },
         {
           key: 'action',
@@ -352,7 +348,7 @@ export default {
           component: () => import('@/views/app/Contracts/Relations/Deadlines/UnactiveDeadlinesActions.vue'),
           props: {
             getDeadlines: () => this.deadlines,
-            reload: loading => this.loadingDeadline = loading,
+            reload: loading => { this.loadingDeadline = loading },
           },
         },
       ],
@@ -399,6 +395,7 @@ export default {
 
         return moment(contractdeadline_notice_date).isSameOrBefore(moment())
       }
+      return false
     },
     actionsToShow() {
       const finishedActions = []
@@ -443,12 +440,12 @@ export default {
     },
     editComponent() {
       return this.$parent.$parent.$parent
-    }
+    },
   },
   watch: {
     isOptionsVisible(newVal) {
       this.editComponent.showTool = !newVal
-    }
+    },
   },
   mounted() {
     this.getActions()

@@ -386,6 +386,7 @@ export default {
           key: 'acting_by',
           type: 'custom-select',
           items: [
+            { label: ' Mieter & Vermieter', value: 'mieter_vermieter' },
             { label: 'Mieter', value: 'mieter' },
             { label: 'Vermieter', value: 'vermieter' },
           ],
@@ -478,6 +479,7 @@ export default {
           label: 'Acting by',
           type: 'custom-select',
           items: [
+            { label: ' Mieter & Vermieter', value: 'mieter_vermieter' },
             { label: 'Mieter', value: 'mieter' },
             { label: 'Vermieter', value: 'vermieter' },
           ],

@@ -1,12 +1,11 @@
 <script>
 import { BForm, BModal } from 'bootstrap-vue'
 import Field from '@/views/app/Generic/Field.vue'
-import DataTables from '@/layouts/components/DataTables.vue'
 
 export default {
   name: 'DeadlinesTools',
   components: {
-    DataTables, Field, BModal, BForm,
+    Field, BModal, BForm,
   },
   props: {
     isButtonShowed: {
@@ -30,6 +29,7 @@ export default {
           items: [
             { label: 'Mieter', value: 'mieter' },
             { label: 'Vermieter', value: 'vermieter' },
+            { label: 'Mieter & Vermieter', value: 'Mieter & Vermieter' },
           ],
         },
         {
@@ -45,17 +45,24 @@ export default {
           ],
         },
         {
+          key: 'contractaction_unlimited_options',
+          label: 'is Number of options unlimited ?',
+          type: 'boolean',
+          visible: entity => entity.contractaction_type === 'automatic_extension',
+        },
+        {
           key: 'contractaction_resiliation_date',
           type: 'date',
           label: 'Resiliation date',
-          visible: (entity, vm) => entity.contractaction_type === 'special_resiliation',
+          visible: entity => entity.contractaction_type === 'special_resiliation',
         },
         {
           key: 'contractaction_options',
           visible: entity => !['resiliation', 'special_resiliation'].includes(entity.contractaction_type),
           type: 'number',
+          disabled: false,
           change: (entity, vm) => {
-            if (entity.contractaction_type === 'automatic_extension') {
+            if (entity.contractaction_unlimited_options === 1 && entity.contractaction_type === 'automatic_extension') {
               vm.field.disabled = true
               entity.contractaction_options = 99
             } else {
@@ -171,7 +178,7 @@ export default {
       <validation-observer ref="toolform" v-slot="{ passes }" tag="div" class="my-2">
         <b-form @submit.prevent="passes(submit)">
           <b-row>
-            <b-col v-for="(field,index) in fields.filter(field => !field.hideOnForm)" :key="index" cols="12">
+            <b-col v-for="(field,index) in fields.filter(_field => !_field.hideOnForm)" :key="index" cols="12">
               <field :field="field" :disabled="field.disabled" :entity="entity" :inline="true" />
             </b-col>
           </b-row>
