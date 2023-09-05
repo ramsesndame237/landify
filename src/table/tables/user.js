@@ -1,3 +1,5 @@
+import { pick } from 'lodash'
+
 const avatarPlaceholder = user => user?.user_firstname.charAt(0).toUpperCase()
     + user?.user_lastname.charAt(0).toUpperCase()
 
@@ -48,6 +50,7 @@ export default {
       key: 'user_password',
       type: 'password',
       hideOnIndex: true,
+      hideOnUpdate: true,
       required: false,
       generate: true,
     },
@@ -352,8 +355,15 @@ export default {
   note: 'frontend_0_8_13',
   submit(vm) {
     const data = { ...vm.entity }
-    data.user_functions = (vm.entity.user_functions || []).map(elt => ({ function_id: elt }))
-    console.log(data)
+
+    // Parfois les données viennent en Object juste, on contrôle ce cas là
+    const users_functions = vm.entity.user_functions
+    if (Array.isArray(users_functions)) {
+      data.user_functions = users_functions.map(elt => ({ function_id: elt }))
+    } else if (typeof users_functions === 'object') {
+      const functionData = pick(users_functions, 'function_id')
+      data.user_functions = [{ function_id: functionData.function_id }]
+    }
     return (vm.create ? vm.$http.post('/users', data) : vm.$http.put(`/users/${vm.entityId}`, data))
       .then(() => {
         vm.$successToast(vm.create ? 'User Created' : 'User Updated')
