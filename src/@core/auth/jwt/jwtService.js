@@ -152,6 +152,7 @@ export default class JwtService {
   }
 
   async redirectAfterLogin($vm) {
+    $vm.$store.commit('table/clearCacheData')
     const userData = await $vm.$store.dispatch('app/fetchUserData', localStorage.getItem('userEmail'))
     console.log(userData)
     $vm.$ability.update(defineRules())

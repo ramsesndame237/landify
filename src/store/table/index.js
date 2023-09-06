@@ -56,6 +56,11 @@ export default {
         if (key.startsWith(prefix)) Vue.set(state.listCache, key, null)
       })
     },
+    clearCacheData(state) {
+      state.tableData = {}
+      state.listCache = {}
+      state.tableCache = {}
+    },
   },
   actions: {
     fetchSingleItem(context, payload) {
