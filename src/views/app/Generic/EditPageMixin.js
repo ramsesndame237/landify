@@ -26,7 +26,7 @@ export default {
     },
     entityId() {
       // convert to string to fix bug on relation tables
-      return this.$route.params.id
+      return this.$route.params.id + ''
     },
     primaryKey() {
       return this.definition.primaryKey ?? this.definition.fields.find(f => f.auto).key

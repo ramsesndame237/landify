@@ -69,9 +69,22 @@ export default {
           text: this.$t('header~board~status~open'), value: 1,
         },
         { text: this.$t('header~board~status~my'), value: 2 },
-        { text: this.$t('header~board~status~closed'), value: 3 }, {
+        { text: this.$t('header~board~status~closed'), value: 3 },
+        {
           text: this.$t('header~board~status~notassigned'),
           value: 4,
+        },
+        {
+          text: 'Before deadline',
+          value: 5,
+        },
+        {
+          text: 'Before critical deadline',
+          value: 6,
+        },
+        {
+          text: 'After critical deadline',
+          value: 7,
         },
       ],
       filterValue: 1,
@@ -90,6 +103,9 @@ export default {
     filterValue() {
       this.allFilter()
     },
+  },
+  mounted() {
+     this.filterValue = this.$route.params.filterValue ? this.$route.params.filterValue : 1
   },
   beforeDestroy() {
     this.$store.commit('table/setTableData', {
@@ -120,6 +136,15 @@ export default {
           break
         case 4:
           data = { user_id: null }
+          break
+        case 5:
+          data = { before_deadline: 1 }
+          break
+        case 6:
+          data = { before_criticaldeadline: 1 }
+          break
+        case 7:
+          data = { after_criticaldeadline: 1 }
           break
         default:
       }
