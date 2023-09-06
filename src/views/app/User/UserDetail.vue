@@ -5,7 +5,7 @@
         <div class="col-md-5 col-lg-4 col-12">
           <div class="row">
             <div class="col col-12">
-              <b-overlay :show="loading">
+              <b-overlay :show="loading" spinner-variant="primary">
                 <b-card>
                   <template v-if="user">
                     <div class="text-center">
@@ -57,7 +57,7 @@
                             <span class=" font-weight-normal ml-1"> {{ user.user_firstname + ' '+ user.user_lastname }}</span>
                           </template>
                         </b-list-group-item>
-                        <b-list-group-item class="d-flex align-items-center font-weight-bolder font-medium-1">
+                        <b-list-group-item class="d-flex flex-wrap align-items-center font-weight-bolder font-medium-1">
                           Email :
                           <span class="font-weight-normal ml-1"> {{ user.user_email }}</span>
                         </b-list-group-item>
@@ -87,7 +87,7 @@
                           </span>
                         </b-list-group-item>
                         <template v-if="user.partnercompany_id.length > 0 ">
-                          <b-list-group-item class="d-flex align-items-center font-weight-bolder font-medium-1">
+                          <b-list-group-item class="d-flex flex-wrap align-items-center font-weight-bolder font-medium-1">
                             Partnercompany :
                             <span class="ml-1 font-weight-normal text-capitalize">
                               <b-badge v-for="partnercompany in userPartnerCompany" :key="partnercompany.partnercompany_id" class="mr-1" variant="dark">{{ partnercompany.partnercompany_name }}</b-badge>
@@ -95,7 +95,7 @@
                           </b-list-group-item>
                         </template>
                         <template v-else>
-                          <b-list-group-item class="d-flex align-items-center font-weight-bolder font-medium-1">
+                          <b-list-group-item class="d-flex flex-wrap align-items-center font-weight-bolder font-medium-1">
                             Company :
                             <template v-if="user.company">
                               <span class="ml-1 font-weight-normal text-capitalize">
@@ -203,7 +203,7 @@
                 <b-card-text class="text-right">
                   <MatrixTool />
                 </b-card-text>
-                <TableGroupMatrix :entity-id="entityId" :relation="relation" />
+                <TableGroupMatrix :entity-id="entityId" :relation="relation" :role-id="role.role_id" /> />
               </b-card>
             </b-tab>
           </b-tabs>
@@ -247,6 +247,7 @@ export default {
         { key: 'new_password', type: 'password', generate: true },
       ],
       passwordLoading: false,
+      size: [10, 30, 100, { text: 'All', value: 100000 }],
       userFunctions: [],
     }
   },
