@@ -208,17 +208,17 @@ export default {
   ],
   filters: [
     {
-      key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name', required: false ,
+      key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name', required: false,
     },
     {
-      key: 'company_id', type: 'list', list: 'frontend_2_2_3_1',  filter_key: 'customergroup_id', listLabel: 'company_name', required: false,
+      key: 'company_id', type: 'list', list: 'frontend_2_2_3_1', filter_key: 'customergroup_id', listLabel: 'company_name', required: false,
     },
     {
-      key: 'manager_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name',tableKey: 'partnercompany_id', required: false,
+      key: 'manager_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name', tableKey: 'partnercompany_id', required: false,
     },
     {
-      key: 'owner_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name',tableKey: 'partnercompany_id', required: false,
-    }
+      key: 'owner_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name', tableKey: 'partnercompany_id', required: false,
+    },
   ],
   default: {
     contract_migration_checked: 0,
