@@ -151,7 +151,6 @@ export default [
     children: [
       item('criteria'),
       item('indexclause'),
-      item('specialright'),
       item('recurringpayment'),
       item('choice'),
       item('contracttype'),
