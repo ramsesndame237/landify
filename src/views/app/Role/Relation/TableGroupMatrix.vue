@@ -47,7 +47,7 @@ export default {
     },
     endpoint() {
       const baseRoute = `/permissions/${this.table === 'tablegroup' ? 'tablegroups' : 'tablenames'}`;
-      let indexRoute,updateRoute = baseRoute
+      let indexRoute, updateRoute = baseRoute
 
       if (this.relation.entityName && this.relation.entityName !== 'role') {
         indexRoute = `${baseRoute}/${this.relation.entityName}/${this.entityId}`;
@@ -68,7 +68,7 @@ export default {
     }
   },
   async mounted() {
-    if(this.rows.length <= 0) {
+    if (this.rows.length <= 0) {
       await this.loadData()
     }
   },
