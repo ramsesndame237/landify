@@ -1,20 +1,19 @@
 <template>
   <div class="d-flex">
-    <b-button variant="info" size="sm" :disabled="!canActivate" @click="activeDeadline">
+    <b-button variant="info" size="sm" :disabled="!canUpdateDeadlineStatus" @click="activeDeadline">
       <feather-icon icon="CheckCircleIcon" />
     </b-button>
-    <b-button variant="primary" size="sm" :disabled="!canDeactivate" class="ml-1" @click="deactiveDeadline">
+    <b-button variant="primary" size="sm" :disabled="!canUpdateDeadlineStatus" class="ml-1" @click="deactiveDeadline">
       <feather-icon icon="XCircleIcon" />
     </b-button>
   </div>
 </template>
 
 <script>
-import sortBy from 'lodash/sortBy'
-import findIndex from 'lodash/findIndex'
+import moment from "moment";
 
 export default ({
-  name: 'UncativeDeadlinesActions',
+  name: 'UnactiveDeadlinesActions',
   props: ['rowData', 'data', 'items'],
   data() {
     return {
@@ -22,43 +21,16 @@ export default ({
     }
   },
   computed: {
-    canActivate() {
-      // Les conditions pour tester la possibilité de modification
-      const {
-        isItemOnTopStatusNotDue,
-        isItemActionCancelled,
-        isItemOnTopActionCancelled,
-        isItemOnTopDeactivate,
-        itemIndex,
-        contractdeadline_id,
-        contractdeadline_status,
-        _rowVariant,
-        isItemDeactivate,
-      } = this.getItemOnTop()
+    canUpdateDeadlineStatus() {
+      const { contractdeadline_expected_from, contractdeadline_status, } = this.deadline
 
-      if (itemIndex <= 0 && !isItemActionCancelled && !isItemDeactivate) {
-        return true
-      } if (!isItemDeactivate && (isItemOnTopActionCancelled || isItemOnTopDeactivate || !isItemOnTopStatusNotDue)) {
-        return true
-      }
+      if(contractdeadline_status === 'deactivate') return false
 
-      return false
-    },
-    canDeactivate() {
-      // Les conditions pour tester l apossibilité de modification
-      const {
-        isItemOnTopStatusNotDue,
-        isItemActionCancelled,
-        isItemOnTopActionCancelled,
-        isItemOnTopDeactivate,
-        itemIndex,
-        contractdeadline_id,
-        contractdeadline_status,
-        _rowVariant,
-        isItemDeactivate,
-      } = this.getItemOnTop()
+      const unDeactivateDeadlines = this.items.filter(item => !['deactivate'].includes(item.contractdeadline_status))
 
-      return (!isItemDeactivate && isItemOnTopDeactivate) || (itemIndex <= 0 && !isItemDeactivate)
+      const unDeactivateDeadlinesExpectedFrom = unDeactivateDeadlines.map(item => moment(item.contractdeadline_expected_from))
+
+      return moment.min(unDeactivateDeadlinesExpectedFrom).isSame(moment(contractdeadline_expected_from));
     },
     deadline() {
       return this.rowData.item
@@ -73,8 +45,7 @@ export default ({
   mounted() {
     // Je récupère les deadlines du composant parent
     if (this.data.getDeadlines) {
-      const deadlines = this.data.getDeadlines()
-      this.deadlines = sortBy(deadlines, ['contractdeadline_id'])
+      this.deadlines = this.data.getDeadlines()
     }
   },
   methods: {
@@ -107,34 +78,7 @@ export default ({
         this.data.reload(false)
       }
     },
-    getItemOnTop() {
-      const { contractdeadline_id, contractdeadline_status, _rowVariant } = this.rowData.item
-      const itemIndex = findIndex(this.items, ['contractdeadline_id', contractdeadline_id])
-      const isItemDeactivate = contractdeadline_status === 'deactivate'
-      let isItemOnTopStatusNotDue = false
-      const isItemActionCancelled = _rowVariant === 'danger'
-      let isItemOnTopActionCancelled = false
-      let isItemOnTopDeactivate = false
-      const itemOnTop = this.items[itemIndex - 1]
 
-      if (itemOnTop) {
-        isItemOnTopActionCancelled = itemOnTop._rowVariant === 'danger'
-        isItemOnTopDeactivate = itemOnTop.contractdeadline_status === 'deactivate'
-        isItemOnTopStatusNotDue = ['notdue'].includes(itemOnTop.contractdeadline_status)
-      }
-
-      return {
-        isItemOnTopStatusNotDue,
-        isItemActionCancelled,
-        isItemOnTopActionCancelled,
-        isItemOnTopDeactivate,
-        itemIndex,
-        contractdeadline_id,
-        contractdeadline_status,
-        _rowVariant,
-        isItemDeactivate,
-      }
-    },
   },
 })
 </script>

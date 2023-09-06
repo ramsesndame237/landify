@@ -84,7 +84,7 @@
         </b-tab>
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
-            <component :is="currentTool()" v-if="currentTool()"/>
+            <component :is="currentTool()" v-if="currentTool() && showTool"/>
             <b-button v-if="currentHasNew() && canCreateCurrent" class="mr-1" size="sm" variant="info"
                       @click="newElement">
               {{ $t('button~new') }}
@@ -165,7 +165,8 @@ export default {
       perPage: Number.MAX_SAFE_INTEGER,
       totalRows: 0,
       formLoaded: false,
-      noBody: false
+      noBody: false,
+      showTool: true,
     }
   },
   computed: {

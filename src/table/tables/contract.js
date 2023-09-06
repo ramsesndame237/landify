@@ -7,7 +7,7 @@ export default {
   fetchWithEntity: true,
   updateComponent: () => import('@/views/app/FormComponent/ContractForm.vue'),
   // createModal: false,
-  // createComponent: () => import('@/views/app/CreateComponent/ContractForm/Index.vue'),
+  // createComponent: () => import('@/views/app/CreateComponent/ContractForm/ContractFormNew.vue'),
   fields: [
     { key: 'contract_id', auto: true },
     {
@@ -105,16 +105,6 @@ export default {
       key: 'contract_first_possible_end_date', type: 'date', hideOnIndex: true, category: 'date', hideOnForm: true,
     },
     {
-      key: 'next_possible_end_of_contract',
-      type: 'date',
-      hideOnIndex: true,
-      hideOnCreate: true,
-      required: false,
-      disabled: true,
-      category: 'date',
-      hideOnForm: true,
-    },
-    {
       key: 'contract_last_change_time',
       type: 'date',
       hideOnIndex: true,
@@ -152,6 +142,23 @@ export default {
     },
     {
       key: 'actual_action_notice_period',
+      hideOnForm: true,
+      hideOnIndex: true,
+      required: false,
+      disabled: true,
+      category: 'date',
+      hideOnCreate: true,
+    },
+    {
+      key: 'next_possible_end_of_contract',
+      hideOnIndex: true,
+      required: false,
+      disabled: true,
+      category: 'date',
+      hideOnCreate: true,
+    },
+    {
+      key: 'last_possible_end_of_contract',
       hideOnIndex: true,
       required: false,
       disabled: true,
@@ -162,6 +169,7 @@ export default {
       key: 'actual_action_notice_day',
       type: 'date',
       hideOnIndex: true,
+      hideOnForm: true,
       required: false,
       disabled: true,
       category: 'date',
@@ -197,6 +205,20 @@ export default {
       hideOnForm: true,
     },
 
+  ],
+  filters: [
+    {
+      key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name', required: false ,
+    },
+    {
+      key: 'company_id', type: 'list', list: 'frontend_2_2_3_1',  filter_key: 'customergroup_id', listLabel: 'company_name', required: false,
+    },
+    {
+      key: 'manager_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name',tableKey: 'partnercompany_id', required: false,
+    },
+    {
+      key: 'owner_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name',tableKey: 'partnercompany_id', required: false,
+    }
   ],
   default: {
     contract_migration_checked: 0,
@@ -378,6 +400,7 @@ export default {
           key: 'acting_by',
           type: 'custom-select',
           items: [
+            { label: ' Mieter & Vermieter', value: 'mieter_vermieter' },
             { label: 'Mieter', value: 'mieter' },
             { label: 'Vermieter', value: 'vermieter' },
           ],
@@ -470,6 +493,7 @@ export default {
           label: 'Acting by',
           type: 'custom-select',
           items: [
+            { label: ' Mieter & Vermieter', value: 'mieter_vermieter' },
             { label: 'Mieter', value: 'mieter' },
             { label: 'Vermieter', value: 'vermieter' },
           ],
@@ -690,7 +714,6 @@ export default {
   fetch: async vm => {
     try {
       const response = await vm.$http.get(`/contracts/${vm.entityId}`)
-      console.log('Ici response fetch contract', { response })
       const { data } = response
 
       if (data.company) {
