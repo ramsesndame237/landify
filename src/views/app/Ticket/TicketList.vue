@@ -23,7 +23,7 @@
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
                  :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"/>
     </b-card>
-    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table"
+    <generic-modal :fetch-data="false" :cache-key="table+'-'" :table="table" ref="modal"
                    :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
                    @reload-table="$refs.table.reload()"/>
   </div>
@@ -105,7 +105,7 @@ export default {
     },
   },
   mounted() {
-    this.filterValue = this.$route.params.filterValue ? this.$route.params.filterValue : 1
+     this.filterValue = this.$route.params.filterValue ? this.$route.params.filterValue : 1
   },
   beforeDestroy() {
     this.$store.commit('table/setTableData', {
@@ -138,13 +138,13 @@ export default {
           data = { user_id: null }
           break
         case 5:
-          data = { dashboard_filter: 'before_deadline' }
+          data = { before_deadline: 1 }
           break
         case 6:
-          data = { dashboard_filter: 'critical_yellow' }
+          data = { before_criticaldeadline: 1 }
           break
         case 7:
-          data = { dashboard_filter: 'over_due_red' }
+          data = { after_criticaldeadline: 1 }
           break
         default:
       }
