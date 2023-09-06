@@ -3,11 +3,11 @@ export default {
     return {}
   },
   computed: {
-    teams(){
+    teams() {
       return this.$store.getters['table/listCache']('team')
     },
     userTeams() {
-      return this.teams.filter(team => this.user?.team_id.includes(team.team_id))
+      return this.teams.filter(team => this.user?.team_id?.includes(team.team_id))
     },
   },
   async mounted() {
@@ -16,10 +16,10 @@ export default {
   methods: {
     async getTeams() {
       try {
-        const response = await this.$store.dispatch('table/fetchList', { entity: 'team' })
+        await this.$store.dispatch('table/fetchList', { entity: 'team' })
       } catch (error) {
-        console.log({error})
+        console.log({ error })
       }
-    }
-  }
+    },
+  },
 }

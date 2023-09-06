@@ -7,7 +7,7 @@ export default {
   fetchWithEntity: true,
   updateComponent: () => import('@/views/app/FormComponent/ContractForm.vue'),
   // createModal: false,
-  // createComponent: () => import('@/views/app/CreateComponent/ContractForm/Index.vue'),
+  // createComponent: () => import('@/views/app/CreateComponent/ContractForm/ContractFormNew.vue'),
   fields: [
     { key: 'contract_id', auto: true },
     {
@@ -206,6 +206,20 @@ export default {
     },
 
   ],
+  filters: [
+    {
+      key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name', required: false,
+    },
+    {
+      key: 'company_id', type: 'list', list: 'frontend_2_2_3_1', filter_key: 'customergroup_id', listLabel: 'company_name', required: false,
+    },
+    {
+      key: 'manager_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name', tableKey: 'partnercompany_id', required: false,
+    },
+    {
+      key: 'owner_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name', tableKey: 'partnercompany_id', required: false,
+    },
+  ],
   default: {
     contract_migration_checked: 0,
   },
@@ -386,6 +400,7 @@ export default {
           key: 'acting_by',
           type: 'custom-select',
           items: [
+            { label: ' Mieter & Vermieter', value: 'mieter_vermieter' },
             { label: 'Mieter', value: 'mieter' },
             { label: 'Vermieter', value: 'vermieter' },
           ],
@@ -478,6 +493,7 @@ export default {
           label: 'Acting by',
           type: 'custom-select',
           items: [
+            { label: ' Mieter & Vermieter', value: 'mieter_vermieter' },
             { label: 'Mieter', value: 'mieter' },
             { label: 'Vermieter', value: 'vermieter' },
           ],

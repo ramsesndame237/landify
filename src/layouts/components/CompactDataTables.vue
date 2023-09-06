@@ -53,7 +53,7 @@ export default {
       type: Boolean, default: true
     },
     size: {
-      type: Array, default: () => [10, 30, 100, { text: 'All', value: 100000 }]
+      type: Array, default: () => [5, 10, 30, 100, { text: 'All', value: 100000 }]
     },
     definition: Object,
     entityId: String,
@@ -66,7 +66,7 @@ export default {
     return {
       search: '',
       currentPage: 1,
-      perPage: 10,
+      perPage: 5,
       totalRows: 0,
       formLoaded: false,
       noBody: false,
