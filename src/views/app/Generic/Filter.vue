@@ -61,6 +61,7 @@ export default {
     reset() {
       this.data = { ...this.initialData }
       this.$refs.form.reset()
+      this.$emit('reset', this.getFinalData())
       // this.$refs.modal.hide()
     },
     handleOk(bvModalEvt) {
