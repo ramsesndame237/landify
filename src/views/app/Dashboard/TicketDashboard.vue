@@ -1,12 +1,13 @@
 <template>
   <div class="">
     <b-row>
-      <ticket-card color="rgba(0, 196, 177, .1)" text-color="#00C4B1" number="26" percents="-12" header-text="Tickets mit Zuordnung" footer-text="Lorem ipsum dolor ame lorem wiudh wk." cols="3"/>
-      <ticket-card color="rgba(255, 122, 0, .1)" text-color="#FF7A00" number="08" percents="45" header-text="Tickets mit Zuordnung" footer-text="Lorem ipsum dolor ame lorem wiudh wk." cols="3"/>
-      <ticket-card color="rgba(213, 17, 48, .1)" text-color="#D51130" number="03" percents="30" header-text="Tickets mit Zuordnung" footer-text="Lorem ipsum dolor ame lorem wiudh wk." cols="3"/>
-      <ticket-card color="#fff" text-color="#000" number="05" percents="09" header-text="Tickets mit Zuordnung" footer-text="Lorem ipsum dolor ame lorem wiudh wk." cols="3"/>
+      <b-col v-for="(ticket,index) in ticketsData" :key="index" :md="ticket.cols.md" :xl="ticket.cols.xl">
+        <b-overlay :show="loading">
+          <ticket-card :key="index" :style="{backgroundColor: ticket.color}" :loading="loading" v-bind="ticket"/>
+        </b-overlay>
+      </b-col>
     </b-row>
-    <b-row class="mt-3" align-v="stretch">
+    <b-row class="mt-1" align-v="stretch">
       <open-ticket-card cols="3" number="26" hours="200" title="Offene Tickets bearbeitbar" bg-color="rgba(0, 196, 177, .1)" color="#00C4B1" with-btn="1"/>
       <open-ticket-card cols="3" number="08" hours="650" title="Offene Tickets noch nicht bearbeitbar" bg-color="rgba(0, 196, 177, .1)" color="#00C4B1" with-btn="1"/>
       <b-card class="col-lg-6"
@@ -57,7 +58,7 @@ import VueApexCharts from 'vue-apexcharts'
 import CustomHorizontalProgress from '@/views/app/CustomComponents/CustomHorizontalProgress'
 
 import {
-  BRow, BCard, BCol, BIcon, BDropdown, BDropdownItem, BCardBody, BCardSubTitle, BProgress,
+  BRow, BCard, BCol, BCardBody, BCardSubTitle,
 } from 'bootstrap-vue'
 
 export default {
@@ -166,7 +167,96 @@ export default {
           ],
         },
       },
+      ticket_total_assigned: 0,
+      ticket_total_closed: 0,
+      ticket_total_number: 1,
+      ticket_total_opened: 0,
+      ticket_total_unassigned: 0,
+      loading: false,
     }
+  },
+  computed: {
+    ticketsData() {
+      return [{
+        color: '#00c4b11a',
+        textColor: '#00C4B1',
+        number: this.ticket_total_number,
+        percents: 0,
+        headerText: 'Number of Ticket',
+        footerText: 'The we have total number of ticket',
+        cols: {
+          md: 6,
+          xl: 3,
+        },
+      },
+      {
+        color: '#ff7a001a',
+        textColor: '#FF7A00',
+        number: this.ticket_total_opened,
+        percents: this.calculPercentage(this.ticket_total_opened),
+        headerText: 'Open Ticket',
+        footerText: 'Number of open ticket',
+        cols: {
+          md: 6,
+          xl: 3,
+        },
+      },
+      {
+        color: '#d511301a',
+        textColor: '#D51130',
+        number: this.ticket_total_unassigned,
+        percents: this.calculPercentage(this.ticket_total_unassigned),
+        headerText: 'Unassigned Tickets',
+        footerText: 'Number of unassigned ticket',
+        cols: {
+          md: 6,
+          xl: 3,
+        },
+      },
+      {
+        color: '#fff',
+        textColor: '#000',
+        number: this.ticket_total_closed,
+        percents: this.calculPercentage(this.ticket_total_closed),
+        headerText: 'Closed Tickets',
+        footerText: 'Number of closed ticket',
+        cols: {
+          md: 6,
+          xl: 3,
+        },
+      },
+      ]
+    },
+  },
+  mounted() {
+    this.getDashboardTicketStatistics()
+  },
+  methods: {
+    async getDashboardTicketStatistics() {
+      this.loading = true
+      const payload = {
+      }
+      try {
+        const response = await this.$http.get('/statistics/dashboard', {
+          params: payload,
+        })
+
+        const { data } = response
+
+        this.ticket_total_unassigned = data.ticket_total_unassigned
+        this.ticket_total_assigned = data.ticket_total_assigned
+        this.ticket_total_number = data.ticket_total_number === 0 ? 1 : data.ticket_total_number
+        this.ticket_total_closed = data.ticket_total_closed
+        this.ticket_total_opened = data.ticket_total_opened
+      } catch (error) {
+        console.log({ error })
+      } finally {
+        this.loading = false
+      }
+    },
+    calculPercentage(value) {
+      return (value / this.ticket_total_number).toFixed(2)
+    },
   },
 }
 </script>
