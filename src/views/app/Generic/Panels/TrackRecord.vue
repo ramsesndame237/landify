@@ -29,8 +29,8 @@ export default {
   data() {
     return {
       page: 1,
-      size: 10,
-      noMoreData: false
+      size: 5,
+      noMoreData: false,
     }
   },
   async mounted() {
@@ -50,7 +50,7 @@ export default {
     },
     paramId(){
       return this.$route.params.id
-    }
+    },
   },
   methods: {
     async loadData(reset = false) {

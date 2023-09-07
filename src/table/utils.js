@@ -34,6 +34,12 @@ export async function updateInvoiceApportionable(data) {
 export function getContractCriteriaFields() {
   return [
     {
+      key: 'contract_criteria_value',
+      unit_key: 'contract_criteria_unit_id',
+      unit_label: 'unit_name',
+      isUnitOnLeft: false,
+    },
+    {
       key: 'choice_id',
       type: 'list',
       list: 'frontend_3_6_4',
@@ -54,7 +60,6 @@ export function getContractCriteriaFields() {
     { key: 'criteriatype_name', hideOnForm: true },
     { key: 'contract_criteria_unit_name', hideOnForm: true },
     { key: 'contract_criteria_comment', type: 'textarea', required: false },
-    { key: 'contract_criteria_value', type: 'number' },
     { key: 'choice_name', hideOnForm: true },
   ]
 }

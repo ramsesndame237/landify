@@ -56,27 +56,31 @@ export default {
       key: 'pos_name', hideOnIndex: true, hideOnCreate: true, disabled: true, required: false,
     },
     { key: 'location_name', hideOnForm: true },
+    // {
+    //   key: 'owner_name',
+    //   hideOnForm: true,
+    //   formatter: (value, key, item) => {
+    //     const array = item.owners
+    //     const ownersName = array.length > 0 ? array.map(obj => obj.owner_name) : []
+    //     const result = ownersName.join(', ')
+    //
+    //     return result || '-'
+    //   },
+    // },
+    // {
+    //   key: 'manager_name',
+    //   hideOnForm: true,
+    //   formatter: (value, key, item) => {
+    //     const array = item.managers
+    //     const managerName = array.length > 0 ? array.map(obj => obj.manager_name) : []
+    //     const result = managerName.join(', ')
+    //
+    //     return result || '-'
+    //   },
+    // },
     {
-      key: 'owner_name',
+      key: 'company_name',
       hideOnForm: true,
-      formatter: (value, key, item) => {
-        const array = item.owners
-        const ownersName = array.length > 0 ? array.map(obj => obj.owner_name) : []
-        const result = ownersName.join(', ')
-
-        return result || '-'
-      },
-    },
-    {
-      key: 'manager_name',
-      hideOnForm: true,
-      formatter: (value, key, item) => {
-        const array = item.managers
-        const managerName = array.length > 0 ? array.map(obj => obj.manager_name) : []
-        const result = managerName.join(', ')
-
-        return result || '-'
-      },
     },
     {
       key: 'pos_name',
@@ -91,13 +95,16 @@ export default {
     },
     {
       key: 'contract_resiliation',
+      hideOnIndex: true,
       formatter: value => (value === 1 ? 'Resiliated' : 'Pending'),
       type: 'custom-select',
       items: [{ label: 'Resiliated', value: 1 }, { label: 'Pending', value: 0 }],
       disabled: true,
       visible: entity => entity.contract_resiliation === 1,
     },
-    { key: 'contract_begin_date', type: 'date', category: 'date' }, // La clé category  permet de classer les champs dans les tabs en function de sa categorie
+    {
+      key: 'contract_begin_date', type: 'date', category: 'date', hideOnIndex: true,
+    }, // La clé category  permet de classer les champs dans les tabs en function de sa categorie
     {
       key: 'contract_end_date', type: 'date', hideOnIndex: true, category: 'date',
     },
@@ -116,6 +123,7 @@ export default {
     },
     {
       key: 'contract_creation_time',
+      hideOnIndex: true,
       hide: true,
       send: false,
     },
@@ -178,7 +186,7 @@ export default {
     { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
     { key: 'contract_sum_allarea_allocationspace', hideOnForm: true },
     {
-      key: 'currency_name', hideOnCreate: true, disabled: true, category: 'price',
+      key: 'currency_name', hideOnIndex: true, hideOnCreate: true, disabled: true, category: 'price',
     },
     { key: 'contract_count_area', hideOnForm: true },
     {
@@ -211,13 +219,28 @@ export default {
       key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name', required: false,
     },
     {
-      key: 'company_id', type: 'list', list: 'frontend_2_2_3_1', filter_key: 'customergroup_id', listLabel: 'company_name', required: false,
+      key: 'company_id',
+      type: 'list',
+      list: 'frontend_2_2_3_1',
+      filter_key: 'customergroup_id',
+      listLabel: 'company_name',
+      required: false,
     },
     {
-      key: 'manager_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name', tableKey: 'partnercompany_id', required: false,
+      key: 'manager_id',
+      type: 'list',
+      list: 'partnercompany',
+      listLabel: 'partnercompany_name',
+      tableKey: 'partnercompany_id',
+      required: false,
     },
     {
-      key: 'owner_id', type: 'list', list: 'partnercompany', listLabel: 'partnercompany_name', tableKey: 'partnercompany_id', required: false,
+      key: 'owner_id',
+      type: 'list',
+      list: 'partnercompany',
+      listLabel: 'partnercompany_name',
+      tableKey: 'partnercompany_id',
+      required: false,
     },
   ],
   default: {
@@ -612,12 +635,6 @@ export default {
           composite: true,
           disableOnUpdate: true,
         },
-        {
-          key: 'contract_criteria_value',
-          unit_key: 'contract_criteria_unit_id',
-          unit_label: 'unit_name',
-          isUnitOnLeft: false,
-        },
         ...getContractCriteriaFields(),
       ],
       // update: false,
@@ -709,8 +726,7 @@ export default {
   panels: [
     {
       component: () => import('@/views/app/Generic/Panels/TrackRecord.vue'),
-      props: {
-      },
+      props: {},
     },
   ],
 }
