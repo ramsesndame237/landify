@@ -347,6 +347,7 @@ export default {
       { key: 'choice_id', auto: true },
       { key: 'choice_name' },
       { key: 'choice_description', type: 'textarea' },
+      { key: 'choice_has_value', type: 'bool', default: 1 },
     ],
   },
 
@@ -385,25 +386,8 @@ export default {
       { key: 'criteriatype_name' },
       { key: 'criteriatype_has_value', type: 'boolean', required: false },
       { key: 'criteriatype_description', type: 'textarea' },
-    ],
-    relations: [
       {
-        title: 'Units',
-        entityForm: 'criteriatype_unit_rel',
-        entity: 'criteriatype_unit_grp',
-        entityView: 'unit',
-        primaryKey: 'unit_id',
-        fields: [
-          {
-            key: 'unit_id', type: 'list', list: 'unit', listLabel: 'unit_name',
-          },
-          {
-            key: 'unit_name', hideOnForm: true,
-          },
-          {
-            key: 'criteriatype_id', hideOnForm: true,
-          },
-        ],
+        key: 'unit_id', type: 'list', list: 'unit', listLabel: 'unit_name', multiple: true,
       },
     ],
   },

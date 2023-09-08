@@ -7,7 +7,7 @@ export default {
   fetchWithEntity: true,
   updateComponent: () => import('@/views/app/FormComponent/ContractForm.vue'),
   // createModal: false,
-  // createComponent: () => import('@/views/app/CreateComponent/ContractForm/Index.vue'),
+  // createComponent: () => import('@/views/app/CreateComponent/ContractForm/ContractFormNew.vue'),
   fields: [
     { key: 'contract_id', auto: true },
     {
@@ -56,27 +56,31 @@ export default {
       key: 'pos_name', hideOnIndex: true, hideOnCreate: true, disabled: true, required: false,
     },
     { key: 'location_name', hideOnForm: true },
+    // {
+    //   key: 'owner_name',
+    //   hideOnForm: true,
+    //   formatter: (value, key, item) => {
+    //     const array = item.owners
+    //     const ownersName = array.length > 0 ? array.map(obj => obj.owner_name) : []
+    //     const result = ownersName.join(', ')
+    //
+    //     return result || '-'
+    //   },
+    // },
+    // {
+    //   key: 'manager_name',
+    //   hideOnForm: true,
+    //   formatter: (value, key, item) => {
+    //     const array = item.managers
+    //     const managerName = array.length > 0 ? array.map(obj => obj.manager_name) : []
+    //     const result = managerName.join(', ')
+    //
+    //     return result || '-'
+    //   },
+    // },
     {
-      key: 'owner_name',
+      key: 'company_name',
       hideOnForm: true,
-      formatter: (value, key, item) => {
-        const array = item.owners
-        const ownersName = array.length > 0 ? array.map(obj => obj.owner_name) : []
-        const result = ownersName.join(', ')
-
-        return result || '-'
-      },
-    },
-    {
-      key: 'manager_name',
-      hideOnForm: true,
-      formatter: (value, key, item) => {
-        const array = item.managers
-        const managerName = array.length > 0 ? array.map(obj => obj.manager_name) : []
-        const result = managerName.join(', ')
-
-        return result || '-'
-      },
     },
     {
       key: 'pos_name',
@@ -91,28 +95,21 @@ export default {
     },
     {
       key: 'contract_resiliation',
+      hideOnIndex: true,
       formatter: value => (value === 1 ? 'Resiliated' : 'Pending'),
       type: 'custom-select',
       items: [{ label: 'Resiliated', value: 1 }, { label: 'Pending', value: 0 }],
       disabled: true,
       visible: entity => entity.contract_resiliation === 1,
     },
-    { key: 'contract_begin_date', type: 'date', category: 'date' }, // La clé category  permet de classer les champs dans les tabs en function de sa categorie
+    {
+      key: 'contract_begin_date', type: 'date', category: 'date', hideOnIndex: true,
+    }, // La clé category  permet de classer les champs dans les tabs en function de sa categorie
     {
       key: 'contract_end_date', type: 'date', hideOnIndex: true, category: 'date',
     },
     {
       key: 'contract_first_possible_end_date', type: 'date', hideOnIndex: true, category: 'date', hideOnForm: true,
-    },
-    {
-      key: 'next_possible_end_of_contract',
-      type: 'date',
-      hideOnIndex: true,
-      hideOnCreate: true,
-      required: false,
-      disabled: true,
-      category: 'date',
-      hideOnForm: true,
     },
     {
       key: 'contract_last_change_time',
@@ -126,6 +123,7 @@ export default {
     },
     {
       key: 'contract_creation_time',
+      hideOnIndex: true,
       hide: true,
       send: false,
     },
@@ -152,6 +150,23 @@ export default {
     },
     {
       key: 'actual_action_notice_period',
+      hideOnForm: true,
+      hideOnIndex: true,
+      required: false,
+      disabled: true,
+      category: 'date',
+      hideOnCreate: true,
+    },
+    {
+      key: 'next_possible_end_of_contract',
+      hideOnIndex: true,
+      required: false,
+      disabled: true,
+      category: 'date',
+      hideOnCreate: true,
+    },
+    {
+      key: 'last_possible_end_of_contract',
       hideOnIndex: true,
       required: false,
       disabled: true,
@@ -162,6 +177,7 @@ export default {
       key: 'actual_action_notice_day',
       type: 'date',
       hideOnIndex: true,
+      hideOnForm: true,
       required: false,
       disabled: true,
       category: 'date',
@@ -170,7 +186,7 @@ export default {
     { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
     { key: 'contract_sum_allarea_allocationspace', hideOnForm: true },
     {
-      key: 'currency_name', hideOnCreate: true, disabled: true, category: 'price',
+      key: 'currency_name', hideOnIndex: true, hideOnCreate: true, disabled: true, category: 'price',
     },
     { key: 'contract_count_area', hideOnForm: true },
     {
@@ -197,6 +213,35 @@ export default {
       hideOnForm: true,
     },
 
+  ],
+  filters: [
+    {
+      key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name', required: false,
+    },
+    {
+      key: 'company_id',
+      type: 'list',
+      list: 'frontend_2_2_3_1',
+      filter_key: 'customergroup_id',
+      listLabel: 'company_name',
+      required: false,
+    },
+    {
+      key: 'manager_id',
+      type: 'list',
+      list: 'partnercompany',
+      listLabel: 'partnercompany_name',
+      tableKey: 'partnercompany_id',
+      required: false,
+    },
+    {
+      key: 'owner_id',
+      type: 'list',
+      list: 'partnercompany',
+      listLabel: 'partnercompany_name',
+      tableKey: 'partnercompany_id',
+      required: false,
+    },
   ],
   default: {
     contract_migration_checked: 0,
@@ -364,93 +409,7 @@ export default {
       ],
     },
     {
-      title: 'Specialright',
-      primaryKey: 'specialright_id',
-      entity: 'frontend_3_4_3_2',
-      entityForm: 'contract_specialright_rel',
-      entityView: 'specialright',
-      withContinue: true,
-      // createComponent: () => import('@/views/app/CreateComponent/SpecialrightForm/Index.vue'),
-      updateComponent: () => import('@/views/app/UpdateComponent/SpecialrightForm.vue'),
-      fields: [
-        { key: 'action', hideOnForm: true },
-        {
-          key: 'acting_by',
-          type: 'custom-select',
-          items: [
-            { label: 'Mieter', value: 'mieter' },
-            { label: 'Vermieter', value: 'vermieter' },
-          ],
-        },
-        { key: 'contract_specialright_total_number_options', type: 'number' },
-        { key: 'to_activate', hideOnForm: true },
-        { key: 'available_options', hideOnForm: true },
-        { key: 'resiliation', hideOnForm: true },
-        { key: 'contract_specialright_extensions', type: 'number' },
-        { key: 'notice_day', type: 'number' },
-        {
-          key: 'notice_period',
-          type: 'custom-select',
-          items: [
-            { label: 'Day', value: 'day' },
-            { label: 'Week', value: 'week' },
-            { label: 'Month', value: 'month' },
-            { label: 'Year', value: 'year' },
-          ],
-        },
-        {
-          key: 'status',
-          hideOnForm: true,
-          type: 'custom-select',
-          items: [
-            { label: 'Pull Action', value: 'pull' },
-            { label: 'Extend Contract', value: 'extend' },
-            { label: 'Terminate Contract', value: 'END' },
-          ],
-        },
-      ],
-      // fields: [
-      //   {
-      //     key: 'specialright_id', type: 'list', list: 'specialright', listLabel: 'specialright_name',
-      //   },
-      //   { key: 'specialright_name', hideOnForm: true },
-      //   { key: 'contract_specialright_description', type: 'textarea' },
-      //   { key: 'contract_specialright_actual_options', type: 'number', disabled: true, hideOnForm: true },
-      //   { key: 'contract_specialright_total_number_options', hideOnForm: true, type: 'number' },
-      //   { key: 'contract_specialright_available_options', type: 'number', disabled: true, hideOnForm: true},
-      //   { key: 'contract_specialright_automatic_renewal_in_months', type: 'number', hideOnForm: true },
-      //   { key: 'contract_specialright_renewal_in_months', type: 'number' },
-      //   { key: 'contract_specialright_prior_notice_period', type: 'date' },
-      //   { key: 'contract_specialright_prior_notice_date', type: 'date' },
-      //   { key: 'contract_specialright_date_added', type: 'date' },
-      //   {
-      //     key: 'contract_specialright_termination_date',
-      //     type: 'date',
-      //     composite: true,
-      //     visible: entity => [1, 2].includes(entity.specialright_id),
-      //     change: (entity, vm) => {
-      //       const date = entity.contract_specialright_termination_date
-      //       if (date && moment().isSameOrAfter(date)) {
-      //         vm.$set(vm.entity, 'contract_specialright_is_passive', 1)
-      //         vm.$set(vm.entity, 'contract_specialright_is_availed', 0)
-      //       }
-      //     },
-      //   },
-      //   { key: 'contract_specialright_extensions', type: 'number' },
-      //   { key: 'contract_specialright_measurement_unit', hideOnForm: true, hideOnIndex: true, },
-      //   { key: 'contract_specialright_is_obsolete', hideOnForm: true, hideOnIndex: true, },
-      //   {
-      //     key: 'contract_specialright_date', type: 'date', composite: true, hideOnForm: true, hideOnIndex: true,
-      //   },
-      //   { key: 'contract_specialright_is_passive', type: 'boolean' },
-      //   { key: 'contract_specialright_is_availed', type: 'boolean' },
-      // ],
-      default: {
-        contract_specialright_date: '1990-01-01',
-      },
-    },
-    {
-      title: 'Deadline',
+      title: 'Deadlines',
       primaryKey: 'contractaction_id',
       entity: 'contractaction',
       entityEndpoint: '/contracts/deadlines',
@@ -470,6 +429,7 @@ export default {
           label: 'Acting by',
           type: 'custom-select',
           items: [
+            { label: ' Mieter & Vermieter', value: 'mieter_vermieter' },
             { label: 'Mieter', value: 'mieter' },
             { label: 'Vermieter', value: 'vermieter' },
           ],
@@ -675,12 +635,6 @@ export default {
           composite: true,
           disableOnUpdate: true,
         },
-        {
-          key: 'contract_criteria_value',
-          unit_key: 'contract_criteria_unit_id',
-          unit_label: 'unit_name',
-          isUnitOnLeft: false,
-        },
         ...getContractCriteriaFields(),
       ],
       // update: false,
@@ -690,7 +644,6 @@ export default {
   fetch: async vm => {
     try {
       const response = await vm.$http.get(`/contracts/${vm.entityId}`)
-      console.log('Ici response fetch contract', { response })
       const { data } = response
 
       if (data.company) {
@@ -773,9 +726,7 @@ export default {
   panels: [
     {
       component: () => import('@/views/app/Generic/Panels/TrackRecord.vue'),
-      props: {
-        endpoint: '/contracts/trackrecords',
-      },
+      props: {},
     },
   ],
 }

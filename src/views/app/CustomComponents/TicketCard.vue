@@ -1,8 +1,8 @@
 <template>
-  <b-col :lg="cols">
-    <div class="p-1" :style="{backgroundColor: color}">
-      <div class="d-flex justify-content-between align-content-center">
-        <div class="left d-flex justify-content-center align-content-center" style="font-size: 14px">
+  <b-card>
+    <template #header>
+      <div class="d-flex justify-content-between align-items-center w-100 p-0">
+        <div class="left d-flex justify-content-center align-items-center" style="font-size: 14px">
           <div class="bigdot"/>
           <span class="header-text">{{ headerText }}</span>
         </div>
@@ -13,8 +13,11 @@
           variant="transparent"
           class="chart-dropdown"
           toggle-class="p-50"
-          size="sm"
+          size="lg"
         >
+          <template #button-content>
+            <feather-icon icon="MoreHorizontalIcon" size="16" />
+          </template>
           <b-dropdown-item
             v-for="option in options"
             :key="option"
@@ -23,35 +26,33 @@
           </b-dropdown-item>
         </b-dropdown>
       </div>
-      <div class="my-2 d-flex">
+    </template>
+    <b-card-text class="" >
+      <div class=" my-1 d-flex align-items-center">
         <span style="margin-right: 5px; font-weight: 700; font-size: 35px" :style="{color: textColor}">{{ number }}</span>
-        <div class="my-auto">
-          <span class="d-flex align-items-center" style="padding: 8px 12px; font-size: 14px" :style="{color: textColor, 'background-color': bgPercentColor}">{{ percents }}%</span>
+        <div v-if="percents" class="my-auto ml-1">
+          <span v-if="percents" class="d-flex align-items-center rounded" style="padding: 8px 12px; font-size: 14px" :style="{color: textColor, 'background-color': bgPercentColor}">{{ percents }}%</span>
         </div>
       </div>
-      <p style="font-weight: 500; font-size: 12px">
-        {{ footerText }}
-      </p>
-    </div>
-  </b-col>
+    </b-card-text>
+    <b-card-text>
+      {{ footerText }}</b-card-text>
+  </b-card>
 </template>
 
 <script>
 import {
-  BRow, BCard, BCol, BIcon, BDropdown, BDropdownItem,
+  BCard, BDropdown, BDropdownItem,
 } from 'bootstrap-vue'
 
 export default {
   name: 'TicketCard',
   components: {
-    BRow,
     BCard,
-    BCol,
-    BIcon,
     BDropdown,
     BDropdownItem,
   },
-  props: ['color', 'number', 'percents', 'headerText', 'footerText', 'textColor', 'cols'],
+  props: ['color', 'number', 'percents', 'headerText', 'footerText', 'textColor', 'cols', 'loading'],
   data() {
     return {
       options: ['opt 1', 'opt 2', 'opt 3', 'opt 4'],
