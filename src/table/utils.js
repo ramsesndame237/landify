@@ -36,7 +36,8 @@ export function getContractCriteriaFields() {
     {
       key: 'contract_criteria_value',
       unit_key: 'contract_criteria_unit_id',
-      unit_label: 'unit_name',
+      unit_label_key: 'unit_name',
+      unit_value_key: 'unit_id',
       isUnitOnLeft: false,
     },
     {

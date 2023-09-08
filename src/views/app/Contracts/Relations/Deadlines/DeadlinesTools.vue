@@ -2,6 +2,13 @@
 import { BForm, BModal } from 'bootstrap-vue'
 import Field from '@/views/app/Generic/Field.vue'
 
+const period = [
+  { label: 'Day', value: 'Day' },
+  { label: 'Week', value: 'Week' },
+  { label: 'Month', value: 'Month' },
+  { label: 'Year', value: 'Year' },
+]
+
 export default {
   name: 'DeadlinesTools',
   components: {
@@ -74,33 +81,21 @@ export default {
         {
           key: 'contractaction_extension_value',
           visible: entity => !['resiliation', 'special_resiliation'].includes(entity.contractaction_type),
-          type: 'number',
+          type: 'decimal',
           label: 'Extension Value',
           required: true,
+          unit: () => period,
+          unit_key: 'contractaction_extension_unit',
+          unit_label_key: 'label',
+          unit_value_key: 'value',
         },
         {
-          key: 'contractaction_extension_unit',
-          visible: entity => !['resiliation', 'special_resiliation'].includes(entity.contractaction_type),
-          type: 'custom-select',
-          label: 'Extension Unit',
-          items: [
-            { label: 'Day', value: 'Day' },
-            { label: 'Week', value: 'Week' },
-            { label: 'Month', value: 'Month' },
-            { label: 'Year', value: 'Year' },
-          ],
-          required: true,
-        },
-        { key: 'contractaction_notice_period_value', type: 'decimal' },
-        {
-          key: 'contractaction_notice_period_unit',
-          type: 'custom-select',
-          items: [
-            { label: 'Day', value: 'Day' },
-            { label: 'Week', value: 'Week' },
-            { label: 'Month', value: 'Month' },
-            { label: 'Year', value: 'Year' },
-          ],
+          key: 'contractaction_notice_period_value',
+          type: 'decimal',
+          unit: () => period,
+          unit_key: 'contractaction_notice_period_unit',
+          unit_label_key: 'label',
+          unit_value_key: 'value',
         },
         {
           key: 'contractaction_comment',
