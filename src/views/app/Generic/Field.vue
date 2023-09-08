@@ -122,7 +122,7 @@
             <validation-provider #default="{ errors }" :vid="field.unit_key" rules="required" :name="field.unit_key">
               <b-form-select v-model="entity[field.unit_key]" :placeholder="field.unit_key" :disabled="disabled"
                              :options="unitOptions" :loading="loading" :class="errors.length > 0 ? 'error':''"
-                             :text-field="field.unit_label" :value-field="field.unit_id" class="w-100 bg-input"/>
+                             text-field="unit_name" value-field="unit_id" class="w-100 bg-input"/>
               <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
             </validation-provider>
 
