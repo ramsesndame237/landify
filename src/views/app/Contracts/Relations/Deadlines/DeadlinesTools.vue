@@ -49,6 +49,7 @@ export default {
           label: 'is Number of options unlimited ?',
           type: 'boolean',
           visible: entity => entity.contractaction_type === 'automatic_extension',
+          default: 1,
         },
         {
           key: 'contractaction_resiliation_date',
@@ -90,7 +91,7 @@ export default {
           ],
           required: true,
         },
-        { key: 'contractaction_notice_period_value', type: 'number' },
+        { key: 'contractaction_notice_period_value', type: 'decimal' },
         {
           key: 'contractaction_notice_period_unit',
           type: 'custom-select',

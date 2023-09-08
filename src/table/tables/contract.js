@@ -700,6 +700,15 @@ export default {
         data.manager_id = data.managers[0].manager_id
         data.manager_name = data.managers[0].manager_name
       }
+
+      if (data.action_begin === null) {
+        data.action_begin = ''
+      }
+      if (data.action_ende_final === null) {
+        data.action_ende_final = ''
+      } if (data.action_ende_soll === null) {
+        data.action_ende_soll = ''
+      }
       return data
     } catch (error) {
       console.log({ error })

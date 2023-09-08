@@ -337,7 +337,9 @@ export default {
       await this.fetchList()
     } else if (this.field.type === 'boolean') {
       // set false as default value
-      if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, 0)
+      if (this.entity[this.field.key] == null) {
+        this.$set(this.entity, this.field.key, this.field.default ? this.field.default : 0)
+      }
     } else if (this.field.default) {
       if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, this.field.default)
     }
