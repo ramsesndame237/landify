@@ -95,7 +95,7 @@ export default {
     },
     {
       key: 'contract_resiliation',
-      hideOnIndex: true,
+      hideOnForm: true,
       formatter: value => (value === 1 ? 'Resiliated' : 'Pending'),
       type: 'custom-select',
       items: [{ label: 'Resiliated', value: 1 }, { label: 'Pending', value: 0 }],
