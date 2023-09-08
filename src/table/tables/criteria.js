@@ -45,7 +45,6 @@ export default {
       primaryKey: 'choice_id',
       entity: 'frontend_3_6_4',
       entityForm: 'criteria_choice_rel',
-      update: false,
       entityView: 'choice',
       fields: [
         { key: 'choice_id', hideOnForm: true },

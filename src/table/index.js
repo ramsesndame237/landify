@@ -347,6 +347,7 @@ export default {
       { key: 'choice_id', auto: true },
       { key: 'choice_name' },
       { key: 'choice_description', type: 'textarea' },
+      { key: 'choice_has_value', type: 'bool', default: 1 },
     ],
   },
 
