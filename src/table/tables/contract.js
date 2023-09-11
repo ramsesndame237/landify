@@ -95,7 +95,7 @@ export default {
     },
     {
       key: 'contract_resiliation',
-      hideOnIndex: true,
+      hideOnForm: true,
       formatter: value => (value === 1 ? 'Resiliated' : 'Pending'),
       type: 'custom-select',
       items: [{ label: 'Resiliated', value: 1 }, { label: 'Pending', value: 0 }],
@@ -701,6 +701,15 @@ export default {
       if (data.managers.length > 0) {
         data.manager_id = data.managers[0].manager_id
         data.manager_name = data.managers[0].manager_name
+      }
+
+      if (data.action_begin === null) {
+        data.action_begin = ''
+      }
+      if (data.action_ende_final === null) {
+        data.action_ende_final = ''
+      } if (data.action_ende_soll === null) {
+        data.action_ende_soll = ''
       }
       return data
     } catch (error) {

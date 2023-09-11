@@ -111,7 +111,7 @@
 
               <b-form-select v-model="entity[field.unit_key]" :placeholder="field.unit_key" :disabled="disabled"
                              :options="unitOptions" :loading="loading" :class="errors.length > 0 ? 'error':''"
-                             :text-field="field.unit_label" :value-field="field.unit_id" class="w-100 bg-input"/>
+                             :text-field="field.unit_label_key" :value-field="field.unit_value_key" class="w-100"/>
               <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
             </validation-provider>
           </b-input-group-prepend>
@@ -122,7 +122,7 @@
             <validation-provider #default="{ errors }" :vid="field.unit_key" rules="required" :name="field.unit_key">
               <b-form-select v-model="entity[field.unit_key]" :placeholder="field.unit_key" :disabled="disabled"
                              :options="unitOptions" :loading="loading" :class="errors.length > 0 ? 'error':''"
-                             text-field="unit_name" value-field="unit_id" class="w-100 bg-input"/>
+                             :text-field="field.unit_label_key" :value-field="field.unit_value_key" class="w-100"/>
               <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
             </validation-provider>
 
@@ -337,7 +337,9 @@ export default {
       await this.fetchList()
     } else if (this.field.type === 'boolean') {
       // set false as default value
-      if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, 0)
+      if (this.entity[this.field.key] == null) {
+        this.$set(this.entity, this.field.key, this.field.default ? this.field.default : 0)
+      }
     } else if (this.field.default) {
       if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, this.field.default)
     }
@@ -386,7 +388,7 @@ export default {
 
     if (this.field.unit) {
       this.unitOptions = this.field.unit(this)
-      this.entity[this.field.unit_key] = this.unitOptions[0][this.field.unit_id]
+      this.entity[this.field.unit_key] = this.unitOptions[0][this.field.unit_value_key]
     }
 
     if (this.field.type === 'custom-select' && typeof this.field.items === 'function') {
