@@ -279,7 +279,7 @@ export default {
     },
     listItems() {
       if (this.field.filter && typeof this.field.filter === 'function') {
-        return this.list.filter(this.field.filter)
+        return this.list.filter(item => this.field.filter(item, this))
       }
       if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
         const val = (this.filterValue || this.entity[this.field.filter_key])
@@ -321,8 +321,11 @@ export default {
     randomPassword(newValue) {
       this.entity[this.field.key] = newValue
     },
-    list() {
-      this.onChange()
+    list: {
+      handler() {
+        this.onChange()
+      },
+      deep: true,
     },
     disabled(newValue) {
       if (this.editorInstance) {

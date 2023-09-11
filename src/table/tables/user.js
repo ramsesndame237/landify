@@ -3,6 +3,11 @@ import { pick } from 'lodash'
 const avatarPlaceholder = user => user?.user_firstname.charAt(0).toUpperCase()
     + user?.user_lastname.charAt(0).toUpperCase()
 
+const USER_TYPE = {
+  INTERN: 1,
+  EXTERN: 2,
+}
+
 export default {
   entityEndpoint: '/users',
   formComponent: () => import('@/views/app/CreateComponent/UserForm.vue'),
@@ -174,7 +179,22 @@ export default {
     { key: 'user_fax_phonenumber', hideOnIndex: true, required: false },
     { key: 'user_mobile' },
     {
-      key: 'role_id', type: 'list', list: 'role', listLabel: 'role_name', hideOnIndex: true,
+      key: 'role_id',
+      type: 'list',
+      list: 'role',
+      listLabel: 'role_name',
+      hideOnIndex: true,
+      filter: (role, vm) => {
+        const { entity } = vm
+
+        if (entity.usertype_id === USER_TYPE.INTERN && role.role_is_internal === USER_TYPE.INTERN) {
+          return true
+        }
+        if (entity.usertype_id === USER_TYPE.EXTERN && role.role_is_internal === 0) {
+          return true
+        }
+        return false
+      },
     },
     {
       key: 'role_name', hideOnForm: true,

@@ -86,7 +86,7 @@
                             <b-badge v-for="team in userTeams" :key="team.team_id" class="mr-1" variant="dark">{{ team.team_name }}</b-badge>
                           </span>
                         </b-list-group-item>
-                        <template v-if="user.partnercompany_id.length > 0 ">
+                        <template v-if="user.partnercompany_id">
                           <b-list-group-item class="d-flex flex-wrap align-items-center font-weight-bolder font-medium-1">
                             Partnercompany :
                             <span class="ml-1 font-weight-normal text-capitalize">
@@ -203,7 +203,9 @@
                 <b-card-text class="text-right">
                   <MatrixTool />
                 </b-card-text>
-                <TableGroupMatrix :entity-id="entityId" :relation="relation" :role-id="role.role_id" /> />
+                <template v-if="role">
+                  <TableGroupMatrix :entity-id="entityId" :relation="relation" :role-id="role.role_id" /> />
+                </template>
               </b-card>
             </b-tab>
           </b-tabs>
