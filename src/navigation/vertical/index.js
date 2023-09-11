@@ -240,16 +240,6 @@ export default [
     ],
   },
   {
-    title: 'Work Package 7',
-    children: [
-      {
-        title: 'BackOffice',
-        route: 'backoffice',
-        icon: 'CheckSquareIcon',
-      },
-    ],
-  },
-  {
     title: key('import'),
     action: 'menu~import',
     resource: 'menu',
