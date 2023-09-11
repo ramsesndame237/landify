@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <div class="row">
+    <div v-if="$isUserAdmin" class="row">
       <b-col v-for="(stat,index) in usersStatistics" :key="index" :sm="stat.cols.sm" :lg="stat.cols.lg">
         <b-overlay :show="loading">
           <b-card>
@@ -26,7 +26,7 @@
         </b-overlay>
       </b-col>
     </div>
-    <b-card title="Search Filter">
+    <b-card v-if="$isUserAdmin" title="Search Filter">
       <InlineFilter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
                     :with-actions="false" @filter="filter" />
     </b-card>
@@ -131,6 +131,14 @@ export default ({
   },
   mounted() {
     this.getUsersStatistics()
+    console.log(`
+      isAdmin: ${this.$isUserAdmin}\n
+      isUserInternal: ${this.$isUserIntern} \n
+      isUserExternal: ${this.$isUserExtern} \n
+      isUserAdminOrInternal: ${this.$isUserAdminOrIntern} \n
+      userHasRole(admin): ${this.$userHasRole('Administratoren')} \n
+    `)
+    console.log('vm', this)
   },
   methods: {
     filter(data) {
