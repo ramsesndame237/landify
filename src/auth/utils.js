@@ -61,7 +61,7 @@ const useUserAccess = () => {
    * Test if Logged user is Extern
    * @return boolean
    */
-  const isUserExtern = () => userType.usertype_external === 1
+  const isUserExtern = () => userType?.usertype_external === 1
   /**
    * Test if Logged user is Intern
    * @return boolean
