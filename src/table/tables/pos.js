@@ -66,6 +66,11 @@ export default {
       ],
     },
     {
+      customRequest: {
+        endpoint: '/pos',
+        relationKey: 'area_ids',
+        entityKey: 'pos_id',
+      },
       primaryKey: 'area_id',
       entity: 'frontend_3_1_3_1',
       entityForm: 'area_pos_rel',
@@ -92,7 +97,7 @@ export default {
           hideOnForm: true,
         },
         {
-          key: 'area_last_change_time', hideOnForm: true,
+          key: 'area_last_change_time', hideOnForm: true, type: 'date', time: true,
         }, {
           key: 'area_space_value', hideOnForm: true,
         },
@@ -305,8 +310,7 @@ export default {
   panels: [
     {
       component: () => import('@/views/app/Generic/Panels/TrackRecord.vue'),
-      props: {
-      },
+      props: {},
     },
   ],
 }

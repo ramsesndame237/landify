@@ -267,6 +267,13 @@ export default {
               payloadData = entity[primaryKey].map(val => ({ ...entity, [primaryKey]: val }))
             }
           }
+          if (definition.customRequest) {
+            return this.$http.put(definition.customRequest.endpoint, {
+              [definition.customRequest.relationKey]: [entity[primaryKey]],
+              action: 'update',
+              [definition.customRequest.entityKey]: entity[definition.customRequest.entityKey],
+            }).then(({ data }) => ({ data, message: 'Update Done.' }))
+          }
           return this.$api({
             entity: table,
             action,
