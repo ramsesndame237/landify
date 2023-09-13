@@ -99,6 +99,7 @@ export default {
     initialFilter: Object,
     canUpdateItem: { type: Function, required: false }, // si un item du tableau est editable
     canDeleteItem: { type: Function, required: false }, // si un item du tableau est supprimable
+    customRequest: { type: Object, required: false }, // un object qui contient des données pour personnaliser les requêtes vers le back dans les relations
   },
   data() {
     return {
@@ -359,6 +360,22 @@ export default {
             [this.primaryKey]: entity[this.primaryKey],
             [this.secondKey]: entity[this.secondKey],
           }))),
+        }
+
+        if (this.customRequest) {
+          await this.$http.put(this.customRequest.endpoint, {
+            [this.customRequest.relationKey]: entities.map(entity => entity[this.primaryKey]),
+            action: 'delete',
+            [this.customRequest.entityKey]: this.secondKeyValue,
+          }).then(res => {
+            this.$successToast('Delete Done.')
+            this.$store.commit('table/deleteTableCacheKeyFromPrefix', `${this.entity}-`)
+            this.$refs.table.refresh()
+          }).catch(error => {
+            console.log({ error })
+          })
+
+          return
         }
 
         this.$api(data).then(async resp => {
