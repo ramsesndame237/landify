@@ -46,8 +46,8 @@
       <component
         :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
         ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="create"
-        :is-relation="false" :disabled="view" :inline="false" :cols="6" @loaded="formLoaded=true" :initial-data="entity"
-        :entity-id="entityId"/>
+        :is-relation="false" :disabled="view" :inline="false" :cols="6" :initial-data="entity" :entity-id="entityId"
+        @loaded="formLoaded=true"/>
     </b-card>
 
     <template v-if="table==='invoice' && $refs.tabs">
@@ -68,7 +68,7 @@
                          :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
                          :entity-view="relation.entityView" :with-view="relation.view!==false" :fields="relation.fields"
                          :on-edit-element="editElement" :with-edit="relation.update!==false"
-                         :with-delete="relation.delete!==false"/>
+                         :with-delete="relation.delete!==false" :custom-request="relation.customRequest"/>
             <generic-modal :cache-key="relation.entity+'-'" title="Test" :table="relation.entityForm || relation.entity"
                            :definition="relation" is-relation
                            :table-definition-key="relation.entityForm || relation.entity"
@@ -107,7 +107,7 @@
 
     <template v-if="formLoaded && definition.panels && definition.panels.length > 0">
       <template v-for="(panel,idx) in definition.panels">
-        <component :is="panel.component" :key="idx" :definition="definition" v-bind="panel.props"></component>
+        <component :is="panel.component" :key="idx" :definition="definition" v-bind="panel.props"/>
       </template>
     </template>
   </div>
@@ -202,7 +202,7 @@ export default {
     })
   },
   methods: {
-    removeBody(val = false){
+    removeBody(val = false) {
       return this.noBody = val
     },
     onAction(action) {
