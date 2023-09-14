@@ -511,6 +511,7 @@ export default {
           label: 'Notice date',
           hideOnForm: true,
           send: false,
+          hideOnIndex: true,
         },
         {
           key: 'contractaction_creation_time',

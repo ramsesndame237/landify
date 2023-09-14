@@ -181,6 +181,7 @@ export default {
           label: 'Notice date',
           hideOnForm: true,
           send: false,
+          type: 'date',
         },
         {
           key: 'contractaction_extension',
@@ -193,7 +194,7 @@ export default {
           },
         },
         {
-          key: 'contractdeadline_resiliation_date', hideOnForm: true, label: 'Resiliation date', formatter: value => (!value ? '--' : value),
+          key: 'contractdeadline_resiliation_date', type: 'date', hideOnForm: true, label: 'Resiliation date', formatter: value => (!value ? '--' : value),
         },
         {
           key: 'contractdeadline_pulled_at',
@@ -268,7 +269,7 @@ export default {
         },
         { key: 'contractaction_extension_unit', label: 'Extension unit', hideOnIndex: true },
         {
-          key: 'contractdeadline_resiliation_date', hideOnForm: true, hideOnIndex: true, label: 'Resiliation date', formatter: value => (!value ? '--' : value),
+          key: 'contractdeadline_resiliation_date', type: 'date', hideOnForm: true, hideOnIndex: true, label: 'Resiliation date', formatter: value => (!value ? '--' : value),
         },
         {
           key: 'contractaction_extension',
@@ -286,6 +287,7 @@ export default {
           hideOnForm: true,
           label: 'Activation date',
           hideOnIndex: true,
+          type: 'date',
         },
         { key: 'contractdeadline_notice_period_value', type: 'number', hideOnIndex: true },
         {
@@ -329,6 +331,7 @@ export default {
           label: 'Notice date',
           hideOnForm: true,
           send: false,
+          type: 'date',
         },
         {
           key: 'contractdeadline_status',
