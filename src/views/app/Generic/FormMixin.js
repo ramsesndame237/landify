@@ -272,7 +272,10 @@ export default {
               [definition.customRequest.relationKey]: [entity[primaryKey]],
               action: 'create',
               [definition.customRequest.entityKey]: entity[definition.customRequest.entityKey],
-            }).then(({ data }) => ({ data, message: 'Update Done.' }))
+            }).then(({ data }) => {
+              this.$root.$emit('update-occured')
+              return { data, message: 'Update Done.' }
+            })
           }
           return this.$api({
             entity: table,
