@@ -270,6 +270,11 @@ export default {
       ],
     },
     {
+      customRequest: {
+        endpoint: '/pos',
+        relationKey: 'document_ids',
+        entityKey: 'pos_id',
+      },
       title: 'headline~document~tab',
       primaryKey: 'document_id',
       entityForm: 'document_pos_rel',
