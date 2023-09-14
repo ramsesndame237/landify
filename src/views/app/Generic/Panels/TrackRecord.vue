@@ -43,7 +43,7 @@ export default {
   },
   async mounted() {
     if (this.$parent.$refs.form) {
-      console.log('ici vm oghhh', this)
+      console.log('vm', this)
       this.$parent.$refs.form.$on('after-save', () => {
         this.loadData(true)
       })
@@ -54,7 +54,7 @@ export default {
 
     // Cet évènement permet de détecter les changements dans les relations des entitées
     this.$root.$on('update-occured', () => {
-      this.size = 1
+      this.page = 1
       this.loadData(true)
     })
   },
