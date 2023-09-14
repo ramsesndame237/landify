@@ -51,6 +51,12 @@ export default {
     if (this.items.length <= 0) {
       await this.loadData()
     }
+
+    // Cet évènement permet de détecter les changements dans les relations des entitées
+    this.$root.$on('update-occured', () => {
+      this.page = 1
+      this.loadData(true)
+    })
   },
   methods: {
     async loadData(reset = false) {
