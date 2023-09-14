@@ -43,7 +43,6 @@ export default {
   },
   async mounted() {
     if (this.$parent.$refs.form) {
-      console.log('vm', this)
       this.$parent.$refs.form.$on('after-save', () => {
         this.loadData(true)
       })
