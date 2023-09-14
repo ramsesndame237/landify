@@ -30,7 +30,7 @@
                           <h4 class="h4 m-0">
                             {{ user.open_ticket }}
                           </h4>
-                          <span class="text-sm-center">Open Ticket</span>
+                          <span class="text-sm-center">Open Tickets</span>
                         </b-card-text>
                       </div>
                       <div class="d-flex align-items-center">
@@ -41,7 +41,7 @@
                           <h4 class="h4 m-0">
                             {{ user.close_ticket }}
                           </h4>
-                          <span class="text-sm-center">Close Ticket</span>
+                          <span class="text-sm-center">Closed Tickets</span>
                         </b-card-text>
                       </div>
                     </div>
@@ -204,7 +204,7 @@
                   <MatrixTool />
                 </b-card-text>
                 <template v-if="role">
-                  <TableGroupMatrix :entity-id="entityId" :relation="relation" :role-id="role.role_id" /> />
+                  <TableGroupMatrix :entity-id="entityId" :relation="relation" :role-id="role.role_id" />
                 </template>
               </b-card>
             </b-tab>
