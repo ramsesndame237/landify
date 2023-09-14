@@ -154,7 +154,7 @@
               <b-card class="" title="List of Tickets">
                 <template v-if="user">
                   <CompactDataTables :definition="ticketDefinition" :entity-id="entityId" :with-select="false" :with-search="true"
-                                     :with-pagination="true" :with-size="true"
+                                     :with-pagination="true" :with-size="true" sort-column-by="ticket_creation_time" :sort-column-desc="true"
                                      :initial-filter="{user_id: user.user_id}"
                   />
                 </template>
