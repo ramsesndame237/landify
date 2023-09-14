@@ -179,6 +179,11 @@ export default {
       update: false,
     },
     {
+      customRequest: {
+        endpoint: '/pos',
+        relationKey: 'tag_ids',
+        entityKey: 'pos_id',
+      },
       primaryKey: 'tag_id',
       entity: 'frontend_3_1_3_3',
       entityForm: 'pos_tag_rel',

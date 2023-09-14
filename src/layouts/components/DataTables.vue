@@ -369,6 +369,7 @@ export default {
             [this.customRequest.entityKey]: this.secondKeyValue,
           }).then(res => {
             this.$successToast('Delete Done.')
+            this.$root.$emit('update-occured')
             this.$store.commit('table/deleteTableCacheKeyFromPrefix', `${this.entity}-`)
             this.$refs.table.refresh()
           }).catch(error => {
