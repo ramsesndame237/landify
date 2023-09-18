@@ -5,6 +5,7 @@ import {
   BFormInput,
 } from 'bootstrap-vue'
 import Field from '@/views/app/Generic/Field.vue'
+import merge from 'lodash/merge'
 
 export default {
   components: {
@@ -334,6 +335,9 @@ export default {
           this.loading = true
           if (this.definition.submit) {
             return this.definition.submit(this, this.entity, this.create)
+              .then(resp => {
+                this.originalEntity = merge(this.originalEntity, resp.data)
+              })
               .finally(async () => {
                 await this.afterSaveHook()
                 this.loading = false
@@ -354,6 +358,7 @@ export default {
               await this.afterSaveHook(result)
               this.$successToast(data.noupdate ? 'OK' : this.$t(data.message || data.data.message))
               // navigate to view page or reload table
+              this.originalEntity = merge(this.originalEntity, result)
               return result
             })
             .catch(e => {

@@ -732,7 +732,7 @@ export default {
     if (create) {
       await vm.$http.post('/contracts/step/0', _.pick(entity, attributes))
     } else {
-      await vm.$http.put(`/contracts/step/0/${entity.contract_id}`, _.pick(entity, attributes))
+      return vm.$http.put(`/contracts/step/0/${entity.contract_id}`, _.pick(entity, attributes))
     }
   },
   panels: [
