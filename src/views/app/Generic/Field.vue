@@ -398,6 +398,9 @@ export default {
       this.customSelectOptions = await this.field.items(this)
     } else {
       this.customSelectOptions = this.field.items
+      this.$watch('field.items', value => {
+        this.customSelectOptions = value
+      })
     }
   },
 
