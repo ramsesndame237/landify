@@ -1,13 +1,15 @@
 <template>
   <div v-if="isExpectedFromDateNotArrived">
-    <b-button variant="primary" :disabled="!isRecentAddedDeadline" size="sm" @click="removeActiveDeadline">Remove</b-button>
+    <b-button variant="primary" :disabled="!isRecentAddedDeadline" size="sm" @click="removeActiveDeadline">
+      Remove
+    </b-button>
   </div>
 </template>
 
 <script>
 import moment from 'moment'
 
-export default{
+export default {
   props: ['rowData', 'data', 'items'],
   data() {
     return {
@@ -35,6 +37,9 @@ export default{
     deadlineTableComponent() {
       return this.$parent.$parent.$parent.$parent.$parent.$parent
     },
+    contractFormComponent() {
+      return this.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$refs.form
+    },
   },
   methods: {
     async removeActiveDeadline() {
@@ -45,6 +50,7 @@ export default{
 
         await this.deadlineTableComponent.getDeadlines()
         this.data.reload(false)
+        await this.contractFormComponent.loadEntity()
         await this.deadlineTableComponent.getActions(true)
       } catch (error) {
         if (error.response) {
@@ -52,7 +58,7 @@ export default{
         } else {
           this.$errorToast(error.message)
         }
-        console.log({error})
+        console.log({ error })
       }
     },
 
