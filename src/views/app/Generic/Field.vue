@@ -99,6 +99,12 @@
             <div id="pickerContainer" :class="{'d-none': !isEmojiInputVisible}"/>
           </div>
         </template>
+        <CustomDatePicker v-else-if="field.type === 'date-picker'"
+                          :start-date="entity.start_date"
+                          :end-date="entity.end_date"
+                          @input-start-date="entity.start_date = $event"
+                          @input-end-date="entity.end_date = $event"
+        />
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
                     class="form-control"/>
@@ -188,6 +194,7 @@ import 'tinymce/models/dom'
 
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import CustomDatePicker from '@/views/app/Generic/CustomDatePicker.vue'
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -200,6 +207,7 @@ function isTrue(val) {
 export default {
   name: 'Field',
   components: {
+    CustomDatePicker,
     ckeditor: CKEditor.component,
     BFormInput,
     BFormSelect,

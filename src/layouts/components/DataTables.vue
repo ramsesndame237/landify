@@ -21,7 +21,10 @@
         <component :is="data.field.component" :items="items || provider" :row-data="data" :data="data.field.props"
                    @reload="reload"/>
       </div>
-      <span v-else>{{ data.value }}</span>
+      <span v-else>
+        <b-badge v-if="data.field.withBadge" :variant="data.field.setVariant(data)">{{ data.value }}</b-badge>
+        <template v-else>{{ data.value }}</template>
+      </span>
     </template>
     <template #head(__selected)>
       <b-form-checkbox v-if="multiSelect" v-model="selected" :disabled="disabled"/>

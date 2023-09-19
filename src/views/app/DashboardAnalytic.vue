@@ -10,7 +10,7 @@
         <div class="d-flex align-items-center">
           <date-picker v-model="date" v-bind="datePickerOptions" class="mb-1"
                        @change="datePickerHandler"/>
-          <field class="mx-1 w-50"
+          <field class="mx-1 w-75"
                  :field="{ key: 'team_id', type: 'custom-select', noLabel: true, required: false, items: filteredTeams }"
                  :entity="entity"/>
           <template v-if="entity.team_id">
@@ -24,13 +24,13 @@
     <b-row>
       <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~open_tickets_intime')" color="#343a40"
                     :percent="(before_deadline*100/total_open_tickets).toFixed(0)" :number="before_deadline"
-                    variant="dark" cols="4" @click.native="show(dashboard_filter.before_deadline)"/>
+                    variant="dark" cols="4" @click.native="show(dashboard_filter.BEFORE_DEADLINE)"/>
       <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~open_tickets_afteryellow')"
                     color="#FF7A00" :percent="(critical_yellow*100/total_open_tickets).toFixed(0)" :number="critical_yellow"
-                    variant="warning" cols="4" @click.native="show( dashboard_filter.critical_yellow)"/>
+                    variant="warning" cols="4" @click.native="show( dashboard_filter.CRITICAL_YELLOW)"/>
       <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~open_tickets_afterred')" color="#D51130"
                     :percent="(over_due_red*100/total_open_tickets).toFixed(0)" :number="over_due_red" variant="danger"
-                    cols="4" @click.native="show(dashboard_filter.over_due_red)"/>
+                    cols="4" @click.native="show(dashboard_filter.OVERDUE_RED)"/>
     </b-row>
   </div>
 </template>
@@ -52,7 +52,9 @@ export default {
   },
   data() {
     return {
-      entity: {},
+      entity: {
+        tickets: this.team_is_customer ? 'customers' : 'seybolds',
+      },
       total_open_tickets: 1,
       datePickerOptions: {
         // type: 'week',
@@ -95,9 +97,9 @@ export default {
       before_deadline: [],
       critical_yellow: [],
       dashboard_filter: {
-        before_deadline: 5,
-        critical_yellow: 6,
-        over_due_red: 7,
+        BEFORE_DEADLINE: 'before_deadline',
+        CRITICAL_YELLOW: 'critical_yellow',
+        OVERDUE_RED: 'over_due_red',
       },
     }
   },
@@ -151,7 +153,12 @@ export default {
       await this.fetchDashboardStatistics()
     },
     show(status) {
-      this.$router.push({ name: 'table', params: { table: 'ticket', filterValue: status } })
+      this.$router.push({
+        name: 'table',
+        params: {
+          table: 'ticket', ticket_deadline_status: status, start_date: this.date[0], end_date: this.date[1], team_id: this.entity.team_id, user_id: this.entity.user_id, tickets: this.entity.tickets,
+        },
+      })
     },
   },
 }

@@ -7,12 +7,12 @@
                         :actions="definition.actions" @action="(a)=>$refs.table.onAction(a)"
                         @filter="$refs.filter.openModal()">
         <b-button size="sm" variant="primary" class="mr-1 btn-icon" @click="$refs.filter.openModal()">
-          <feather-icon icon="FilterIcon"/>
+          <feather-icon icon="FilterIcon" :badge="filtersApplied" />
         </b-button>
         <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions" class="mr-2"/>
       </table-pagination>
       <generic-filter ref="filter" vertical :table="table" :definition="definition" :initial-data="initialFilterData"
-                      @filter="allFilter"/>
+                      @filter="allFilter" @reset="reset" />
     </b-card>
 
     <b-card>
@@ -66,29 +66,22 @@ export default {
       filterOptions: [
         { text: this.$t('header~board~status~all'), value: '' },
         {
-          text: this.$t('header~board~status~open'), value: 1,
+          text: this.$t('header~board~status~open'), value: 'opened',
         },
-        { text: this.$t('header~board~status~my'), value: 2 },
-        { text: this.$t('header~board~status~closed'), value: 3 },
+        { text: this.$t('header~board~status~my'), value: 'my_tickets' },
+        { text: this.$t('header~board~status~closed'), value: 'closed' },
         {
           text: this.$t('header~board~status~notassigned'),
-          value: 4,
-        },
-        {
-          text: 'Before deadline',
-          value: 5,
-        },
-        {
-          text: 'Before critical deadline',
-          value: 6,
-        },
-        {
-          text: 'After critical deadline',
-          value: 7,
+          value: 'not_assigned',
         },
       ],
-      filterValue: 1,
+      filterValue: 'opened',
+      ticket_deadline_status: '',
       user: getUserData(),
+      date: { start_date: '', end_date: '' },
+      filtersApplied: 0,
+      team_id: null,
+      user_id: null,
     }
   },
   computed: {
@@ -100,12 +93,15 @@ export default {
     },
   },
   watch: {
-    filterValue() {
-      this.allFilter()
+    filterValue: {
+      handler() {
+        this.allFilter()
+      },
+      immediate: true,
     },
   },
   mounted() {
-    this.filterValue = this.$route.params.filterValue ? this.$route.params.filterValue : 1
+    this.setInitData()
   },
   beforeDestroy() {
     this.$store.commit('table/setTableData', {
@@ -123,39 +119,18 @@ export default {
   },
   methods: {
     allFilter() {
-      let data = {}
-      switch (this.filterValue) {
-        case 1:
-          data = { ticket_closed: 0 }
-          break
-        case 2:
-          data = { user_id: this.user.user_id }
-          break
-        case 3:
-          data = { ticket_closed: 1 }
-          break
-        case 4:
-          data = { user_id: null }
-          break
-        case 5:
-          data = { dashboard_filter: 'before_deadline' }
-          break
-        case 6:
-          data = { dashboard_filter: 'critical_yellow' }
-          break
-        case 7:
-          data = { dashboard_filter: 'over_due_red' }
-          break
-        default:
-      }
-      this.filter({ ...this.$refs.filter.getFinalData(), ...data })
+      this.$nextTick(() => {
+        this.filter({ ...this.$refs.filter.getFinalData(), status: this.filterValue })
+      })
     },
     filter(obj) {
-      console.log('on filter', obj)
+      this.filtersApplied = Object.keys(obj).length
       this.currentPage = 1
       this.$refs.table.filter(obj)
     },
-    reset() {
+    reset(data) {
+      this.initialFilterData = {}
+      this.date = { start_date: '', end_date: '' }
       this.filter({})
     },
     editElement(entity) {
@@ -168,6 +143,30 @@ export default {
           name: 'table-form',
           params: { table: this.table },
         })
+      }
+    },
+    setInitData() {
+      const getParam = paramName => this.$route.params[paramName] || null
+
+      this.ticket_deadline_status = getParam('ticket_deadline_status')
+      this.date.start_date = getParam('start_date')
+      this.date.end_date = getParam('end_date')
+      this.team_id = getParam('team_id')
+      this.user_id = getParam('user_id')
+      this.tickets = getParam('tickets')
+
+      const getFilterData = () => ({
+        start_date: this.date.start_date,
+        end_date: this.date.end_date,
+        ticket_deadline_status: this.ticket_deadline_status,
+        team_id: this.team_id,
+        user_id: this.user_id,
+        tickets: this.tickets,
+      })
+
+      this.initialFilterData = {
+        ...this.initialFilterData,
+        ...getFilterData(),
       }
     },
   },
