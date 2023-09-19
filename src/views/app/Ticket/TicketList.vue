@@ -76,12 +76,9 @@ export default {
         },
       ],
       filterValue: 'opened',
-      ticket_deadline_status: '',
       user: getUserData(),
       date: { start_date: '', end_date: '' },
       filtersApplied: 0,
-      team_id: null,
-      user_id: null,
     }
   },
   computed: {
@@ -147,25 +144,19 @@ export default {
     },
     setInitData() {
       const getParam = paramName => this.$route.params[paramName] || null
-
-      this.ticket_deadline_status = getParam('ticket_deadline_status')
       this.date.start_date = getParam('start_date')
       this.date.end_date = getParam('end_date')
-      this.team_id = getParam('team_id')
-      this.user_id = getParam('user_id')
-      this.tickets = getParam('tickets')
 
       const getFilterData = () => ({
         start_date: this.date.start_date,
         end_date: this.date.end_date,
-        ticket_deadline_status: this.ticket_deadline_status,
-        team_id: this.team_id,
-        user_id: this.user_id,
-        tickets: this.tickets,
+        ticket_deadline_status: getParam('ticket_deadline_status'),
+        team_id: getParam('team_id'),
+        user_id: getParam('user_id'),
+        tickets: getParam('tickets'),
       })
 
       this.initialFilterData = {
-        ...this.initialFilterData,
         ...getFilterData(),
       }
     },

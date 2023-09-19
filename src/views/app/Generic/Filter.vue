@@ -54,6 +54,11 @@ export default {
       return this.vertical || this.definition.filter_vertical
     },
   },
+  watch: {
+    initialData(newValue) {
+      this.data = newValue
+    },
+  },
   methods: {
     openModal() {
       this.$refs.modal.show()
