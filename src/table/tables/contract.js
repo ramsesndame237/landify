@@ -477,8 +477,9 @@ export default {
           hideOnForm: true,
           send: false,
           formatter: (value, key, item) => {
-            const { contractaction_extension_value, contractaction_extension_unit } = item
-            if (!contractaction_extension_value && !contractaction_extension_unit) {
+            const { contractaction_extension_value, contractaction_extension_unit, contractaction_type } = item
+
+            if ((!contractaction_extension_value && !contractaction_extension_unit) || ['resiliation', 'special_resiliation'].includes(contractaction_type)) {
               return '--'
             }
             return `${contractaction_extension_value}  ${contractaction_extension_unit}`
