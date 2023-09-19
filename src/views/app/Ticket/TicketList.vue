@@ -64,7 +64,7 @@ export default {
       table: this.$route.params.table,
       ids: this.$route.params.ids,
       filterOptions: [
-        { text: this.$t('header~board~status~all'), value: '' },
+        { text: this.$t('header~board~status~all'), value: null },
         {
           text: this.$t('header~board~status~open'), value: 'opened',
         },
@@ -75,7 +75,7 @@ export default {
           value: 'not_assigned',
         },
       ],
-      filterValue: 'opened',
+      filterValue: '',
       user: getUserData(),
       date: { start_date: '', end_date: '' },
       filtersApplied: 0,
@@ -123,7 +123,9 @@ export default {
     filter(obj) {
       this.filtersApplied = Object.keys(obj).length
       this.currentPage = 1
-      this.$refs.table.filter(obj)
+      setTimeout(() => {
+        this.$refs.table.filter(obj)
+      }, 500)
     },
     reset(data) {
       this.initialFilterData = {}
