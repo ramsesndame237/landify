@@ -17,8 +17,9 @@ export default {
     },
     filteredTeams() {
       const data = this.team_is_customer ? this.customerTeams : this.seyboldTeams
+      const formatedData = data.map(team => ({ label: team.team_name, value: team.team_id, ...team }))
 
-      return data.map(team => ({ label: team.team_name, value: team.team_id, ...team }))
+      return [{ label: 'All', value: null }, ...formatedData]
     },
   },
   async mounted() {
@@ -30,7 +31,6 @@ export default {
     async getTeams() {
       try {
         const response = await this.$http.get('/teams')
-        console.log('teams data', { response })
         await this.$store.dispatch('table/setListData', { entity: 'teams', data: response.data.data })
       } catch (error) {
         console.log({ error })
