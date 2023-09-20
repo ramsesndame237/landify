@@ -54,7 +54,7 @@ export default {
         updateRoute = `${baseRoute}/${this.relation.entityName}`
       } else {
         indexRoute = `${baseRoute}/${this.entityId}`
-        updateRoute = `${baseRoute}/${this.entityId}`
+        updateRoute = baseRoute
       }
 
       return {
