@@ -9,6 +9,7 @@ export default {
   fields: [
     { key: 'ticket_id', auto: true },
     // { key: 'ticket_deadline', type: 'date', time: true },
+    { key: 'ticket_name' },
     {
       key: 'ticket_deadline_yellow', type: 'date', time: true, hideOnIndex: true,
     },
@@ -45,7 +46,7 @@ export default {
       hideOnForm: true,
     },
     { key: 'board_name', hideOnForm: true },
-    { key: 'ticket_name' },
+
     { key: 'priority_name', hideOnForm: true },
     { key: 'pos_name', hideOnForm: true },
     {
