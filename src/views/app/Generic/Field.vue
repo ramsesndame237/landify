@@ -99,6 +99,12 @@
             <div id="pickerContainer" :class="{'d-none': !isEmojiInputVisible}"/>
           </div>
         </template>
+        <CustomDatePicker v-else-if="field.type === 'date-picker'"
+                          :start-date="entity.start_date"
+                          :end-date="entity.end_date"
+                          @input-start-date="entity.start_date = $event"
+                          @input-end-date="entity.end_date = $event"
+        />
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
                     class="form-control"/>
@@ -111,7 +117,7 @@
 
               <b-form-select v-model="entity[field.unit_key]" :placeholder="field.unit_key" :disabled="disabled"
                              :options="unitOptions" :loading="loading" :class="errors.length > 0 ? 'error':''"
-                             :text-field="field.unit_label" :value-field="field.unit_id" class="w-100 bg-input"/>
+                             :text-field="field.unit_label_key" :value-field="field.unit_value_key" class="w-100"/>
               <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
             </validation-provider>
           </b-input-group-prepend>
@@ -122,7 +128,7 @@
             <validation-provider #default="{ errors }" :vid="field.unit_key" rules="required" :name="field.unit_key">
               <b-form-select v-model="entity[field.unit_key]" :placeholder="field.unit_key" :disabled="disabled"
                              :options="unitOptions" :loading="loading" :class="errors.length > 0 ? 'error':''"
-                             :text-field="field.unit_label" :value-field="field.unit_id" class="w-100 bg-input"/>
+                             :text-field="field.unit_label_key" :value-field="field.unit_value_key" class="w-100"/>
               <small v-for="(error,i) in errors" :key="i" class="text-danger">{{ error }}</small>
             </validation-provider>
 
@@ -188,6 +194,7 @@ import 'tinymce/models/dom'
 
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import CustomDatePicker from '@/views/app/Generic/CustomDatePicker.vue'
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -200,6 +207,7 @@ function isTrue(val) {
 export default {
   name: 'Field',
   components: {
+    CustomDatePicker,
     ckeditor: CKEditor.component,
     BFormInput,
     BFormSelect,
@@ -279,7 +287,7 @@ export default {
     },
     listItems() {
       if (this.field.filter && typeof this.field.filter === 'function') {
-        return this.list.filter(this.field.filter)
+        return this.list.filter(item => this.field.filter(item, this))
       }
       if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
         const val = (this.filterValue || this.entity[this.field.filter_key])
@@ -321,8 +329,11 @@ export default {
     randomPassword(newValue) {
       this.entity[this.field.key] = newValue
     },
-    list() {
-      this.onChange()
+    list: {
+      handler() {
+        this.onChange()
+      },
+      deep: true,
     },
     disabled(newValue) {
       if (this.editorInstance) {
@@ -337,7 +348,9 @@ export default {
       await this.fetchList()
     } else if (this.field.type === 'boolean') {
       // set false as default value
-      if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, 0)
+      if (this.entity[this.field.key] == null) {
+        this.$set(this.entity, this.field.key, this.field.default ? this.field.default : 0)
+      }
     } else if (this.field.default) {
       if (this.entity[this.field.key] == null) this.$set(this.entity, this.field.key, this.field.default)
     }
@@ -386,13 +399,16 @@ export default {
 
     if (this.field.unit) {
       this.unitOptions = this.field.unit(this)
-      this.entity[this.field.unit_key] = this.unitOptions[0][this.field.unit_id]
+      this.entity[this.field.unit_key] = this.unitOptions[0][this.field.unit_value_key]
     }
 
     if (this.field.type === 'custom-select' && typeof this.field.items === 'function') {
       this.customSelectOptions = await this.field.items(this)
     } else {
       this.customSelectOptions = this.field.items
+      this.$watch('field.items', value => {
+        this.customSelectOptions = value
+      })
     }
   },
 

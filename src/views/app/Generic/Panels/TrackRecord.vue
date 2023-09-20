@@ -6,9 +6,9 @@
         No records available
       </div>
 
-      <b-card-text class="text-center mt-2" v-if="!noMoreData">
-        <b-button variant="primary" @click="showMore" :disabled="noMoreData">
-          {{ noMoreData? 'No more data' :  $t('button~showmore') }}
+      <b-card-text v-if="!noMoreData" class="text-center mt-2">
+        <b-button variant="primary" :disabled="noMoreData" @click="showMore">
+          {{ noMoreData? 'No more data' : $t('button~showmore') }}
           <feather-icon icon="ChevronsDownIcon" />
         </b-button>
       </b-card-text>
@@ -29,13 +29,20 @@ export default {
   data() {
     return {
       page: 1,
-      size: 10,
-      noMoreData: false
+      size: 5,
+      noMoreData: false,
     }
   },
+  computed: {
+    items() {
+      return this.$store.getters['table/listCache'](`trackrecords-${this.paramId}`)
+    },
+    paramId() {
+      return this.$route.params.id
+    },
+  },
   async mounted() {
-    if(this.$parent.$refs.form) {
-      console.log('vm', this)
+    if (this.$parent.$refs.form) {
       this.$parent.$refs.form.$on('after-save', () => {
         this.loadData(true)
       })
@@ -43,14 +50,12 @@ export default {
     if (this.items.length <= 0) {
       await this.loadData()
     }
-  },
-  computed: {
-    items() {
-      return this.$store.getters['table/listCache'](`trackrecords-${this.paramId}`)
-    },
-    paramId(){
-      return this.$route.params.id
-    }
+
+    // Cet évènement permet de détecter les changements dans les relations des entitées
+    this.$root.$on('update-occured', () => {
+      this.page = 1
+      this.loadData(true)
+    })
   },
   methods: {
     async loadData(reset = false) {
@@ -66,9 +71,11 @@ export default {
             [this.definition.primaryKey ?? this.definition.fields.find(f => f.auto)?.key]: this.paramId,
           },
         })
-        let _items = [...this.items,...data.data.data]
+        const _items = [...this.items, ...data.data.data]
         await this.$store.dispatch('table/setListData', { entity: `trackrecords-${this.paramId}`, data: _items })
-        if (data.data.data.length <= 0) {
+
+        const { current_page, last_page } = data.data.links.pagination
+        if (current_page >= last_page) {
           this.noMoreData = true
         }
       } catch (e) {
@@ -79,9 +86,8 @@ export default {
     },
     showMore() {
       this.page++
-      this.size += 10
       this.loadData()
-    }
+    },
   },
 }
 </script>

@@ -66,6 +66,11 @@ export default {
       ],
     },
     {
+      customRequest: {
+        endpoint: '/pos',
+        relationKey: 'area_ids',
+        entityKey: 'pos_id',
+      },
       primaryKey: 'area_id',
       entity: 'frontend_3_1_3_1',
       entityForm: 'area_pos_rel',
@@ -92,7 +97,7 @@ export default {
           hideOnForm: true,
         },
         {
-          key: 'area_last_change_time', hideOnForm: true,
+          key: 'area_last_change_time', hideOnForm: true, type: 'date', time: true,
         }, {
           key: 'area_space_value', hideOnForm: true,
         },
@@ -174,6 +179,11 @@ export default {
       update: false,
     },
     {
+      customRequest: {
+        endpoint: '/pos',
+        relationKey: 'tag_ids',
+        entityKey: 'pos_id',
+      },
       primaryKey: 'tag_id',
       entity: 'frontend_3_1_3_3',
       entityForm: 'pos_tag_rel',
@@ -260,6 +270,11 @@ export default {
       ],
     },
     {
+      customRequest: {
+        endpoint: '/pos',
+        relationKey: 'document_ids',
+        entityKey: 'pos_id',
+      },
       title: 'headline~document~tab',
       primaryKey: 'document_id',
       entityForm: 'document_pos_rel',
@@ -305,8 +320,7 @@ export default {
   panels: [
     {
       component: () => import('@/views/app/Generic/Panels/TrackRecord.vue'),
-      props: {
-      },
+      props: {},
     },
   ],
 }

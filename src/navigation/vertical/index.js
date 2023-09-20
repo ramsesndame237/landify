@@ -151,7 +151,6 @@ export default [
     children: [
       item('criteria'),
       item('indexclause'),
-      item('specialright'),
       item('recurringpayment'),
       item('choice'),
       item('contracttype'),
@@ -238,16 +237,6 @@ export default [
       item('tablename', 'table'),
       item('tablegroup'),
       item('crud'),
-    ],
-  },
-  {
-    title: 'Work Package 7',
-    children: [
-      {
-        title: 'BackOffice',
-        route: 'backoffice',
-        icon: 'CheckSquareIcon',
-      },
     ],
   },
   {

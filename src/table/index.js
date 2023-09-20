@@ -334,6 +334,7 @@ export default {
     ],
   },
   unit: {
+    inlineEdit: true,
     fields: [
       { key: 'unit_id', auto: true },
       { key: 'unit_name' },
@@ -342,15 +343,18 @@ export default {
     ],
   },
   choice: {
+    inlineEdit: true,
     entity: 'frontend_3_12_1',
     fields: [
       { key: 'choice_id', auto: true },
       { key: 'choice_name' },
       { key: 'choice_description', type: 'textarea' },
+      { key: 'choice_has_value', type: 'boolean', default: 1 },
     ],
   },
 
   areatype: {
+    inlineEdit: true,
     fields: [
       { key: 'areatype_id', auto: true },
       { key: 'areatype_name' },
@@ -358,6 +362,7 @@ export default {
     ],
   },
   contracttype: {
+    inlineEdit: true,
     fields: [
       { key: 'contracttype_id', auto: true },
       { key: 'contracttype_name' },
@@ -365,6 +370,7 @@ export default {
     ],
   },
   documentcontracttype: {
+    inlineEdit: true,
     fields: [
       { key: 'documentcontracttype_id', auto: true },
       { key: 'documentcontracttype_name' },
@@ -372,6 +378,7 @@ export default {
     ],
   },
   product: {
+    inlineEdit: true,
     fields: [
       { key: 'product_id', auto: true },
       { key: 'product_name' },
@@ -380,34 +387,19 @@ export default {
     ],
   },
   criteriatype: {
+    inlineEdit: true,
     fields: [
       { key: 'criteriatype_id', auto: true },
       { key: 'criteriatype_name' },
       { key: 'criteriatype_has_value', type: 'boolean', required: false },
       { key: 'criteriatype_description', type: 'textarea' },
-    ],
-    relations: [
       {
-        title: 'Units',
-        entityForm: 'criteriatype_unit_rel',
-        entity: 'criteriatype_unit_grp',
-        entityView: 'unit',
-        primaryKey: 'unit_id',
-        fields: [
-          {
-            key: 'unit_id', type: 'list', list: 'unit', listLabel: 'unit_name',
-          },
-          {
-            key: 'unit_name', hideOnForm: true,
-          },
-          {
-            key: 'criteriatype_id', hideOnForm: true,
-          },
-        ],
+        key: 'unit_id', type: 'list', list: 'unit', listLabel: 'unit_name', multiple: true,
       },
     ],
   },
   locationtype: {
+    inlineEdit: true,
     fields: [
       { key: 'locationtype_id', auto: true },
       { key: 'locationtype_name' },
@@ -415,6 +407,7 @@ export default {
     ],
   },
   maturitytype: {
+    inlineEdit: true,
     fields: [
       { key: 'maturitytype_id', auto: true },
       { key: 'maturitytype_name' },
@@ -422,6 +415,7 @@ export default {
     ],
   },
   usagetype: {
+    inlineEdit: true,
     fields: [
       { key: 'usagetype_id', auto: true },
       { key: 'usagetype_name' },
@@ -429,6 +423,7 @@ export default {
     ],
   },
   serviceobjecttype: {
+    inlineEdit: true,
     fields: [
       { key: 'serviceobjecttype_id', auto: true },
       { key: 'serviceobjecttype_name' },
@@ -436,6 +431,7 @@ export default {
     ],
   },
   recurringpaymenttype: {
+    inlineEdit: true,
     fields: [
       { key: 'recurringpaymenttype_id', auto: true },
       { key: 'recurringpaymenttype_name' },

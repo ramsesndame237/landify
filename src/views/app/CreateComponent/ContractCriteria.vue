@@ -10,13 +10,13 @@
       <field ref="criteriaField" :disabled="disabled || (!create)" :entity="entity" :table-definition="tableDefinition"
              :field="getField('criteria_id')"/>
     </b-col>
-    <b-col v-if="showValueField" cols="12">
-      <field ref="contractCriteriaValue" :disabled="disabled || (!create)" :entity="entity" :table-definition="tableDefinition"
-             :field="getField('contract_criteria_value')"/>
-    </b-col>
     <b-col v-show="entity.criteria_id && (!$refs.choice || $refs.choice.listItems.length > 0)" cols="12">
-      <field ref="choice" :disabled="disabled" :entity="entity" :table-definition="tableDefinition" :field="getField('choice_id')"
-             :filter-value="entity.criteria_id"/>
+      <field ref="choice" :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
+             :field="getField('choice_id')" :filter-value="entity.criteria_id"/>
+    </b-col>
+    <b-col v-if="showValueField" cols="12">
+      <field ref="contractCriteriaValue" :disabled="disabled || (!create)" :entity="entity"
+             :table-definition="tableDefinition" :field="getField('contract_criteria_value')"/>
     </b-col>
     <b-col cols="12">
       <field :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
@@ -61,6 +61,10 @@ export default {
     showValueField() {
       if (this.mounted) {
         const selectedCriteria = this.$refs.criteriaField?.selectedValue
+        const selectedChoice = this.$refs.choice?.selectedValue
+        if (!selectedChoice || !selectedChoice.choice_has_value) {
+          return false
+        }
 
         if (selectedCriteria) {
           const { criteriatype } = selectedCriteria
@@ -93,7 +97,10 @@ export default {
       // Get Index of criteria_id key in the relation
       const index = this.definition.fields.findIndex(field => field.key === 'criteria_id')
       // Mise à jour des données du champ criteria_id
-      await this.$store.dispatch('table/setListData', { entity: this.definition.fields[index].list, data: data?.criterias })
+      await this.$store.dispatch('table/setListData', {
+        entity: this.definition.fields[index].list,
+        data: data?.criterias
+      })
     } catch (error) {
       console.log({ error })
       this.$toast({

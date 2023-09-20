@@ -21,7 +21,10 @@
         <component :is="data.field.component" :items="items || provider" :row-data="data" :data="data.field.props"
                    @reload="reload"/>
       </div>
-      <span v-else>{{ data.value }}</span>
+      <span v-else>
+        <b-badge v-if="data.field.withBadge" :variant="data.field.setVariant(data)">{{ data.value }}</b-badge>
+        <template v-else>{{ data.value }}</template>
+      </span>
     </template>
     <template #head(__selected)>
       <b-form-checkbox v-if="multiSelect" v-model="selected" :disabled="disabled"/>
@@ -99,6 +102,7 @@ export default {
     initialFilter: Object,
     canUpdateItem: { type: Function, required: false }, // si un item du tableau est editable
     canDeleteItem: { type: Function, required: false }, // si un item du tableau est supprimable
+    customRequest: { type: Object, required: false }, // un object qui contient des données pour personnaliser les requêtes vers le back dans les relations
   },
   data() {
     return {
@@ -161,6 +165,10 @@ export default {
     items() {
       this.currentItems = this.items
     },
+    filterData() {
+      this.$refs.table.refresh()
+      this.$emit('table-refreshed')
+    },
   },
   methods: {
     onViewClick(data) {
@@ -187,7 +195,6 @@ export default {
       } else this.$router.push(routeData)
     },
     provider(ctx) {
-      console.log('ctx', ctx)
       const {
         currentPage, perPage, filter, sortBy, sortDesc,
       } = ctx
@@ -359,6 +366,23 @@ export default {
             [this.primaryKey]: entity[this.primaryKey],
             [this.secondKey]: entity[this.secondKey],
           }))),
+        }
+
+        if (this.customRequest) {
+          await this.$http.put(this.customRequest.endpoint, {
+            [this.customRequest.relationKey]: entities.map(entity => entity[this.primaryKey]),
+            action: 'delete',
+            [this.customRequest.entityKey]: this.secondKeyValue,
+          }).then(res => {
+            this.$successToast('Delete Done.')
+            this.$root.$emit('update-occured')
+            this.$store.commit('table/deleteTableCacheKeyFromPrefix', `${this.entity}-`)
+            this.$refs.table.refresh()
+          }).catch(error => {
+            console.log({ error })
+          })
+
+          return
         }
 
         this.$api(data).then(async resp => {

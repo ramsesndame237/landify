@@ -19,8 +19,8 @@
                    :per-page="perPage" :total-rows.sync="totalRows" :primary-key-column="definition.primaryKey"
                    :entity="definition.entity" :search="search" :entity-form="definition.entityForm"
                    :entity-view="definition.entityView" :with-view="true" :with-actions="false"
-                   :fields="definition.fields"
-                    :initial-filter="initialFilter" :entity-endpoint="definition.entityEndpoint"
+                   :fields="definition.fields" :default-sort-column="sortColumnBy" :default-sort-desc="sortColumnDesc"
+                   :initial-filter="initialFilter" :entity-endpoint="definition.entityEndpoint"
       />
     </div>
     <div class="d-flex align-items-center justify-content-between mt-2">
@@ -37,31 +37,33 @@
 import DataTables from '@/layouts/components/DataTables.vue'
 
 export default {
-  name: "CompactDataTables",
-  components: {DataTables},
-  props:  {
+  name: 'CompactDataTables',
+  components: { DataTables },
+  props: {
     withSize: {
-      type: Boolean, default: true
+      type: Boolean, default: true,
     },
     withSearch: {
-      type: Boolean, default: true
+      type: Boolean, default: true,
     },
     withPagination: {
-      type: Boolean, default: true
+      type: Boolean, default: true,
     },
     withActions: {
-      type: Boolean, default: true
+      type: Boolean, default: true,
     },
     size: {
-      type: Array, default: () => [5, 10, 30, 100, { text: 'All', value: 100000 }]
+      type: Array, default: () => [5, 10, 30, 100, { text: 'All', value: 100000 }],
     },
+    sortColumnBy: { type: String, require: false },
+    sortColumnDesc: { type: Boolean, default: false },
     definition: Object,
     entityId: String,
     withSelect: {
-      type: Boolean, default: true
+      type: Boolean, default: true,
     },
-    initialFilter: Object
-},
+    initialFilter: Object,
+  },
   data() {
     return {
       search: '',
