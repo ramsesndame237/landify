@@ -165,6 +165,10 @@ export default {
     items() {
       this.currentItems = this.items
     },
+    filterData() {
+      this.$refs.table.refresh()
+      this.$emit('table-refreshed')
+    },
   },
   methods: {
     onViewClick(data) {

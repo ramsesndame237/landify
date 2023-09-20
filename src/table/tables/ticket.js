@@ -5,6 +5,7 @@ export default {
   create: false,
   entity: 'frontend_6_1_6_overview',
   entityEndpoint: '/tickets/list',
+  defaultSortField: 'ticket_name',
   fields: [
     { key: 'ticket_id', auto: true },
     // { key: 'ticket_deadline', type: 'date', time: true },
@@ -16,7 +17,6 @@ export default {
     },
     {
       key: 'ticket_deadline_status',
-      time: true,
       hideOnForm: true,
       withBadge: true,
       setVariant: value => {

@@ -10,41 +10,39 @@ export default {
     datePickerOptions: {
       type: Object,
       default: () => ({
-        datePickerOptions: {
-          // type: 'week',
-          range: true,
-          format: 'D MMM YYYY',
-          valueType: 'YYYY-MM-DD',
-          placeholder: 'Filter by date',
-          confirm: true,
-          // inline: true,
-          // showWeekNumber: true
-          shortcuts: [
-            { text: 'Today', onClick: () => [moment().toDate(), moment().toDate()] },
-            {
-              text: 'Yesterday',
-              onClick: () => {
-                const date = moment().subtract(1, 'day')
+        // type: 'week',
+        range: true,
+        format: 'D MMM YYYY',
+        valueType: 'YYYY-MM-DD',
+        placeholder: 'Filter by date',
+        confirm: true,
+        // inline: true,
+        // showWeekNumber: true
+        shortcuts: [
+          { text: 'Today', onClick: () => [moment().toDate(), moment().toDate()] },
+          {
+            text: 'Yesterday',
+            onClick: () => {
+              const date = moment().subtract(1, 'day')
 
-                return [date.toDate(), moment().toDate()]
-              },
+              return [date.toDate(), moment().toDate()]
             },
-            {
-              text: '7 day ago',
-              onClick: () => {
-                const date = moment().subtract(1, 'week').format('YYYY-MM-DD')
-                return [moment(date).toDate(), moment().toDate()]
-              },
+          },
+          {
+            text: '7 day ago',
+            onClick: () => {
+              const date = moment().subtract(1, 'week').format('YYYY-MM-DD')
+              return [moment(date).toDate(), moment().toDate()]
             },
-            {
-              text: 'This Month',
-              onClick: () => {
-                const date = moment().startOf('month').toDate()
-                return [date, moment().toDate()]
-              },
+          },
+          {
+            text: 'This Month',
+            onClick: () => {
+              const date = moment().startOf('month').toDate()
+              return [date, moment().toDate()]
             },
-          ],
-        },
+          },
+        ],
       }),
     },
     startDate: { type: String, default: '' },

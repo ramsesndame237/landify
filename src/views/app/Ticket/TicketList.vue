@@ -64,7 +64,7 @@ export default {
       table: this.$route.params.table,
       ids: this.$route.params.ids,
       filterOptions: [
-        { text: this.$t('header~board~status~all'), value: '' },
+        { text: this.$t('header~board~status~all'), value: null },
         {
           text: this.$t('header~board~status~open'), value: 'opened',
         },
@@ -75,13 +75,10 @@ export default {
           value: 'not_assigned',
         },
       ],
-      filterValue: 'opened',
-      ticket_deadline_status: '',
+      filterValue: '',
       user: getUserData(),
       date: { start_date: '', end_date: '' },
       filtersApplied: 0,
-      team_id: null,
-      user_id: null,
     }
   },
   computed: {
@@ -126,7 +123,9 @@ export default {
     filter(obj) {
       this.filtersApplied = Object.keys(obj).length
       this.currentPage = 1
-      this.$refs.table.filter(obj)
+      setTimeout(() => {
+        this.$refs.table.filter(obj)
+      }, 500)
     },
     reset(data) {
       this.initialFilterData = {}
@@ -147,25 +146,19 @@ export default {
     },
     setInitData() {
       const getParam = paramName => this.$route.params[paramName] || null
-
-      this.ticket_deadline_status = getParam('ticket_deadline_status')
       this.date.start_date = getParam('start_date')
       this.date.end_date = getParam('end_date')
-      this.team_id = getParam('team_id')
-      this.user_id = getParam('user_id')
-      this.tickets = getParam('tickets')
 
       const getFilterData = () => ({
         start_date: this.date.start_date,
         end_date: this.date.end_date,
-        ticket_deadline_status: this.ticket_deadline_status,
-        team_id: this.team_id,
-        user_id: this.user_id,
-        tickets: this.tickets,
+        ticket_deadline_status: getParam('ticket_deadline_status'),
+        team_id: getParam('team_id'),
+        user_id: getParam('user_id'),
+        tickets: getParam('tickets'),
       })
 
       this.initialFilterData = {
-        ...this.initialFilterData,
         ...getFilterData(),
       }
     },
