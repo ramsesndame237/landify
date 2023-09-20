@@ -7,12 +7,12 @@
                         :actions="definition.actions" @action="(a)=>$refs.table.onAction(a)"
                         @filter="$refs.filter.openModal()">
         <b-button size="sm" variant="primary" class="mr-1 btn-icon" @click="$refs.filter.openModal()">
-          <feather-icon icon="FilterIcon" :badge="filtersApplied" />
+          <feather-icon icon="FilterIcon" :badge="getFilterCount()"/>
         </b-button>
         <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions" class="mr-2"/>
       </table-pagination>
       <generic-filter ref="filter" vertical :table="table" :definition="definition" :initial-data="initialFilterData"
-                      @filter="allFilter" @reset="reset" />
+                      @filter="allFilter" @reset="reset"/>
     </b-card>
 
     <b-card>
@@ -21,10 +21,11 @@
                  :default-sort-column="initialSortBy||definition.defaultSortField" :default-sort-desc="initialSortDesc"
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
-                 :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"/>
+                 :primary-key-column="definition.primaryKey" :entity-endpoint="definition.entityEndpoint"
+                 :initial-filter="initialFilterData"/>
     </b-card>
-    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table"
-                   :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
+    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"
+                   with-continue :table-definition-key="table" :title="`headline~${table}~new`"
                    @reload-table="$refs.table.reload()"/>
   </div>
 </template>
@@ -39,6 +40,7 @@ import GenericModal from '@/views/app/Generic/modal.vue'
 import Table from '@/table/tables/ticket'
 import GenericFilter from '@/views/app/Generic/Filter.vue'
 import { getUserData } from '@/auth/utils'
+import _ from 'lodash'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
 
@@ -51,7 +53,24 @@ export default {
     BCard,
   },
   data() {
-    const payload = this.$store.getters['table/tableData'](this.$route.params.table)
+    let payload = this.$store.getters['table/tableData'](this.$route.params.table)
+    const params = this.$route.params
+    // we come from dashboard
+    if (params.start_date) {
+      payload = {
+        filter: {
+          start_date: params.start_date,
+          end_date: params.end_date,
+          ticket_deadline_status: params.ticket_deadline_status,
+          team_id: params.team_id,
+          user_id: params.user_id,
+          status: 'opened',
+          tickets: params.tickets,
+        },
+      }
+      payload.filter = _.omitBy(payload.filter, _.isNil)
+    }
+
     console.log('initial payload', payload)
     return {
       search: payload?.search || '',
@@ -62,7 +81,6 @@ export default {
       initialSortBy: payload?.sortBy,
       initialSortDesc: payload?.sortDesc ?? true,
       table: this.$route.params.table,
-      ids: this.$route.params.ids,
       filterOptions: [
         { text: this.$t('header~board~status~all'), value: null },
         {
@@ -75,10 +93,8 @@ export default {
           value: 'not_assigned',
         },
       ],
-      filterValue: '',
+      filterValue: payload?.filter?.status || null,
       user: getUserData(),
-      date: { start_date: '', end_date: '' },
-      filtersApplied: 0,
     }
   },
   computed: {
@@ -92,13 +108,12 @@ export default {
   watch: {
     filterValue: {
       handler() {
+        console.log('filter value change')
         this.allFilter()
       },
-      immediate: true,
     },
   },
   mounted() {
-    this.setInitData()
   },
   beforeDestroy() {
     this.$store.commit('table/setTableData', {
@@ -108,28 +123,36 @@ export default {
         currentPage: this.currentPage,
         perPage: this.perPage,
         totalRows: this.totalRows,
-        filter: { ...this.$refs.filter.data },
+        filter: { ...this.$refs.filter.getFinalData(), status: this.filterValue },
         sortBy: this.$refs.table.sortBy,
         sortDesc: this.$refs.table.sortDesc,
       },
     })
   },
   methods: {
+    getFilterCount() {
+      const obj = this.$refs.filter ? this.$refs.filter.getFinalData() : this.initialFilterData
+      if (obj == null) return null
+      let count = Object.keys(obj).length
+      if (obj.start_date) count--
+      if (obj.status) count--
+      if (count === 0) return null
+      return count
+    },
     allFilter() {
       this.$nextTick(() => {
         this.filter({ ...this.$refs.filter.getFinalData(), status: this.filterValue })
       })
     },
     filter(obj) {
-      this.filtersApplied = Object.keys(obj).length
+      console.log(obj, 'filter')
       this.currentPage = 1
       setTimeout(() => {
         this.$refs.table.filter(obj)
       }, 500)
     },
-    reset(data) {
+    reset() {
       this.initialFilterData = {}
-      this.date = { start_date: '', end_date: '' }
       this.filter({})
     },
     editElement(entity) {
@@ -142,24 +165,6 @@ export default {
           name: 'table-form',
           params: { table: this.table },
         })
-      }
-    },
-    setInitData() {
-      const getParam = paramName => this.$route.params[paramName] || null
-      this.date.start_date = getParam('start_date')
-      this.date.end_date = getParam('end_date')
-
-      const getFilterData = () => ({
-        start_date: this.date.start_date,
-        end_date: this.date.end_date,
-        ticket_deadline_status: getParam('ticket_deadline_status'),
-        team_id: getParam('team_id'),
-        user_id: getParam('user_id'),
-        tickets: getParam('tickets'),
-      })
-
-      this.initialFilterData = {
-        ...getFilterData(),
       }
     },
   },

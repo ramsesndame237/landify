@@ -195,7 +195,6 @@ export default {
       } else this.$router.push(routeData)
     },
     provider(ctx) {
-      console.log('ctx', ctx)
       const {
         currentPage, perPage, filter, sortBy, sortDesc,
       } = ctx
