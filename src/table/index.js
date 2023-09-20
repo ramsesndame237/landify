@@ -42,7 +42,6 @@ export default {
       {
         key: 'team_is_customer',
         type: 'boolean',
-        formatter: value => (value ? 1 : 0),
       },
       { key: 'team_description', type: 'textarea' },
     ],
