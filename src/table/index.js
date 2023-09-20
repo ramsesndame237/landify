@@ -39,6 +39,10 @@ export default {
     fields: [
       { key: 'team_id', auto: true },
       { key: 'team_name', sortable: true },
+      {
+        key: 'team_is_customer',
+        type: 'boolean',
+      },
       { key: 'team_description', type: 'textarea' },
     ],
     relations: [
