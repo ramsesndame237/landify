@@ -211,7 +211,7 @@ export default {
       filter_key: 'partnercompany_id',
       listLabel: 'user_lastname',
       relationEntity: 'contactperson_user_rel',
-      visible: entity => entity.usertype_id === 1 && entity.partnercompany_id,
+      visible: entity => entity.usertype_id === 1 && entity?.partnercompany_id.length > 0,
       // hideOnCreate: true,
       required: false,
     },
