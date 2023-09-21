@@ -134,7 +134,7 @@
                       <b-button v-if="$can('update', table)" variant="info" class="mx-1" @click="editUser">
                         Edit
                       </b-button>
-                      <b-button v-if="$can('delete ', table)" variant="primary" class="mx-1" @click="deleteEntity">
+                      <b-button v-if="$can('delete', table)" variant="primary" class="mx-1" @click="deleteEntity">
                         Delete
                       </b-button>
                     </div>
