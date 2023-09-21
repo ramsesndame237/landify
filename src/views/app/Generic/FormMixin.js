@@ -336,7 +336,9 @@ export default {
           if (this.definition.submit) {
             return this.definition.submit(this, this.entity, this.create)
               .then(resp => {
-                this.originalEntity = merge(this.originalEntity, resp.data)
+                if (resp) {
+                  this.originalEntity = merge(this.originalEntity, resp.data)
+                }
               })
               .finally(async () => {
                 await this.afterSaveHook()

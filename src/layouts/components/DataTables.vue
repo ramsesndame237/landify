@@ -38,7 +38,7 @@
     </template>
     <template v-if="withActions" #cell(Actions)="data">
       <div class="text-nowrap">
-        <b-button v-if="withView" class=" btn-icon" style="margin-bottom: 3px" variant="flat-success" pill
+        <b-button v-if="withView" :disabled="canReadItem && canReadItem(currentItems[data.index])" class=" btn-icon" style="margin-bottom: 3px" variant="flat-success" pill
                   @click="onViewClick(data)">
           <feather-icon icon="EyeIcon"/>
           <!--        <span>{{ $t('button~view') }}</span>-->
@@ -101,6 +101,7 @@ export default {
     ids: Array,
     initialFilter: Object,
     canUpdateItem: { type: Function, required: false }, // si un item du tableau est editable
+    canReadItem: { type: Function, required: false }, // si un item du tableau est consultable
     canDeleteItem: { type: Function, required: false }, // si un item du tableau est supprimable
     customRequest: { type: Object, required: false }, // un object qui contient des données pour personnaliser les requêtes vers le back dans les relations
   },
