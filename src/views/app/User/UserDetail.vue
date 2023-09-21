@@ -344,9 +344,7 @@ export default {
       await this.getRoles()
     }
     if (this.partnersCompany.length <= 0) {
-      // Je récupère les partnercompagny de l'utilisateur pour la requête, puisque il peut en avoir plusieurs
-      const partnersCompany = this.user?.partnercompany_id.map(partnercompany => ({ partnercompany_id: partnercompany }))
-      await this.$store.dispatch('table/fetchList', { entity: 'partnercompany', data: partnersCompany })
+      await this.getPartnerCompany()
     }
 
     await this.getUserSelectData()
@@ -354,6 +352,11 @@ export default {
   methods: {
     editUser() {
       this.$refs.modal.openModal(false, this.entity)
+    },
+    async getPartnerCompany() {
+      // Je récupère les partnercompagny de l'utilisateur pour la requête, puisque il peut en avoir plusieurs
+      const partnersCompany = this.user?.partnercompany_id.map(partnercompany => ({ partnercompany_id: partnercompany }))
+      await this.$store.dispatch('table/fetchList', { entity: 'partnercompany', data: partnersCompany })
     },
     async savePassword() {
       const result = await this.$refs.form.validate()
@@ -403,6 +406,7 @@ export default {
     async fetchUserData() {
       if (this.definition) {
         this.entity = await this.definition.fetch(this)
+        await this.getPartnerCompany()
       }
     },
   },

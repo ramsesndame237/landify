@@ -22,10 +22,9 @@ function getAction(crud) {
 export const defineRules = () => {
   const userData = JSON.parse(localStorage.getItem('userData'))
   const rules = [{ subject: 'Auth', action: 'read' }]
+  if (!userData) return rules
   const tablegroups = userData.tablegroups
   const users_tablegroups = userData.users_tablegroups
-
-  if (!userData) return rules
   rules.push({ action: 'read', subject: 'dashboard' })
   //
   try {
@@ -48,7 +47,6 @@ export const defineRules = () => {
           // J'ajoute les permissions propres à un User
           for (const [key, value] of Object.entries(userTableGroup)) {
             if (value === true && key !== tg.crud) {
-              console.log({ key, value, tg: tg.tablegroup_id })
               temptRules.push(...tablename.map(tn => ({ action: getAction(key), subject: tn.table_name })))
             }
           }
