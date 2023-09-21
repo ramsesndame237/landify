@@ -86,7 +86,7 @@
                             <b-badge v-for="team in userTeams" :key="team.team_id" class="mr-1" variant="dark">{{ team.team_name }}</b-badge>
                           </span>
                         </b-list-group-item>
-                        <template v-if="user.partnercompany_id">
+                        <template v-if="user.partnercompany_id && user.partnercompany_id.length > 0 ">
                           <b-list-group-item class="d-flex flex-wrap align-items-center font-weight-bolder font-medium-1">
                             Partnercompany :
                             <span class="ml-1 font-weight-normal text-capitalize">
@@ -131,10 +131,10 @@
                       </b-list-group>
                     </div>
                     <div class="d-flex justify-content-center mt-2 align-items-center">
-                      <b-button variant="info" class="mx-1" @click="editUser">
+                      <b-button v-if="$can('update', table)" variant="info" class="mx-1" @click="editUser">
                         Edit
                       </b-button>
-                      <b-button variant="primary" class="mx-1" @click="deleteEntity">
+                      <b-button v-if="$can('delete ', table)" variant="primary" class="mx-1" @click="deleteEntity">
                         Delete
                       </b-button>
                     </div>
