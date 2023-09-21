@@ -182,7 +182,7 @@ export default ({
       }
     },
     canReadItem() {
-      return this.$isUserExtern
+      return !this.$isUserExtern
     },
   },
 })

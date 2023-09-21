@@ -38,7 +38,7 @@
     </template>
     <template v-if="withActions" #cell(Actions)="data">
       <div class="text-nowrap">
-        <b-button v-if="withView" :disabled="canReadItem && canReadItem(currentItems[data.index])" class=" btn-icon" style="margin-bottom: 3px" variant="flat-success" pill
+        <b-button v-if="withView && canReadItem && canReadItem(currentItems[data.index])" class=" btn-icon" style="margin-bottom: 3px" variant="flat-success" pill
                   @click="onViewClick(data)">
           <feather-icon icon="EyeIcon"/>
           <!--        <span>{{ $t('button~view') }}</span>-->
