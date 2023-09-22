@@ -293,7 +293,12 @@ export default {
         const val = (this.filterValue || this.entity[this.field.filter_key])
         if (this.field.filter_key && val != null) {
           console.log('filter with value', val)
-          return this.list.filter(e => e[this.field.filter_key] === val)
+          return this.list.filter(e => {
+            if (Array.isArray(val)) {
+              return val.includes(e[this.field.filter_key])
+            }
+            return e[this.field.filter_key] === val
+          })
         }
         return this.list
       }
