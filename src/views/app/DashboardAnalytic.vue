@@ -7,7 +7,7 @@
         </h3>
       </div>
       <div class="w-50">
-        <div class="d-flex align-items-center flex-wrap flex-sm-nowrap w-100">
+        <div class="d-flex align-items-center flex-wrap flex-sm-nowrap w-100 dashboard_style">
           <date-picker v-model="date" v-bind="datePickerOptions" class="mb-1 w-100"
                        @change="datePickerHandler"/>
           <field class="ml-sm-1 w-100"
@@ -191,3 +191,8 @@ export default {
   },
 }
 </script>
+<style>
+.dashboard_style .vs__selected-options span.vs__selected {
+  max-width: 6rem !important;
+}
+</style>
