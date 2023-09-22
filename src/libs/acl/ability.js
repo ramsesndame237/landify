@@ -22,8 +22,9 @@ function getAction(crud) {
 export const defineRules = () => {
   const userData = JSON.parse(localStorage.getItem('userData'))
   const rules = [{ subject: 'Auth', action: 'read' }]
-
   if (!userData) return rules
+  const tablegroups = userData.tablegroups
+  const users_tablegroups = userData.users_tablegroups
   rules.push({ action: 'read', subject: 'dashboard' })
   //
   try {
@@ -31,11 +32,27 @@ export const defineRules = () => {
       rules.push({ action: 'manage', subject: 'all' })
     }
     userData.roles.forEach(role => {
-      rules.push(..._.flatten(role.tablegroups.map(tg => tg.tablename.map(tn => ({
-        action: getAction(tg.crud),
-        subject: tn.table_name,
-      })))))
-      rules.push(...role.tablenames.map(table => ({ action: getAction(table.crud), subject: table.table_name })))
+      const { tablegroups: roleTableGroups } = role
+      const temptRules = []
+
+      if (roleTableGroups.length > 0) {
+        roleTableGroups.forEach(tg => {
+          const userTableGroup = users_tablegroups.find(userTg => userTg.tablegroup_id === tg.tablegroup_id)
+          const { tablename } = tablegroups.find(tablegroup => tablegroup.tablegroup_id === tg.tablegroup_id)
+          if (userTableGroup && userTableGroup[tg.crud] === true) {
+            if (tablename && tablename.length > 0) {
+              temptRules.push(...tablename.map(tn => ({ action: getAction(tg.crud), subject: tn.table_name })))
+            }
+          }
+          // J'ajoute les permissions propres à un User
+          for (const [key, value] of Object.entries(userTableGroup)) {
+            if (value === true && key !== tg.crud) {
+              temptRules.push(...tablename.map(tn => ({ action: getAction(key), subject: tn.table_name })))
+            }
+          }
+        })
+      }
+      rules.push(...temptRules)
 
       // Récupération des configs de menu dans les data de l'utilisateur
       const tempsRules = []
