@@ -167,7 +167,16 @@ export default {
       this.$router.push({
         name: 'table',
         params: {
-          table: 'ticket', ticket_deadline_status: status, start_date: this.date[0], end_date: this.date[1], team_id: this.entity.team_id, user_id: this.entity.user_id, tickets: this.entity.tickets,
+          table: 'ticket',
+          dashboardData: {
+            ticket_deadline_status: status,
+            start_date: this.date[0],
+            end_date: this.date[1],
+            team_id: this.entity.team_id,
+            user_id: this.entity.user_id,
+            tickets: this.entity.tickets,
+            company_id: this.entity.company_id,
+          },
         },
       })
     },
