@@ -21,6 +21,12 @@ export default {
       type: 'list',
       list: 'usertype',
       listLabel: 'usertype_name',
+    }, {
+      key: 'user_is_director',
+      hideOnIndex: true,
+      type: 'boolean',
+      default: 0,
+      visible: entity => entity.usertype_id !== 1,
     },
     {
       key: 'user_id', label: 'Id', auto: true, hideOnForm: true,
@@ -208,6 +214,7 @@ export default {
       hideOnIndex: true,
       type: 'list',
       list: 'frontend_2_5_3_8',
+      tableKey: 'user_id',
       filter_key: 'partnercompany_id',
       listLabel: 'user_lastname',
       relationEntity: 'contactperson_user_rel',
