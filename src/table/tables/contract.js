@@ -593,6 +593,13 @@ export default {
               key: 'area_id',
               type: 'list',
               list: 'area',
+              entityList: 'frontend_3_4_3_10',
+              filter: (area, vm) => {
+                const { id: contract_id } = vm.$route.params
+                const { contract_id: areaContract_id } = area
+
+                return Number(contract_id) === areaContract_id
+              },
               listLabel: 'area_name',
               hideOnIndex: true,
               relationEntity: 'area_serviceobject_rel',
