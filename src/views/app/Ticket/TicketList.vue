@@ -68,6 +68,7 @@ export default {
           status: 'opened',
           tickets: data.tickets,
           company_id: data.company_id,
+          customergroup_id: data.customergroup_id,
         },
       }
       payload.filter = _.omitBy(payload.filter, _.isNil)

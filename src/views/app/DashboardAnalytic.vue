@@ -6,18 +6,18 @@
           {{ title }}
         </h3>
       </div>
-      <div class="">
-        <div class="d-flex align-items-center flex-wrap flex-sm-nowrap">
-          <date-picker v-model="date" v-bind="datePickerOptions" class="mb-1"
+      <div class="w-50">
+        <div class="d-flex align-items-center flex-wrap flex-sm-nowrap w-100">
+          <date-picker v-model="date" v-bind="datePickerOptions" class="mb-1 w-100"
                        @change="datePickerHandler"/>
           <field class="ml-sm-1 w-100"
                  :field="{ key: 'company_id', type: 'custom-select', noLabel: true, required: false, items: filteredCompanies, }"
                  :entity="entity"/>
-          <field class=" mx-sm-1 w-100 w-sm-75"
+          <field class=" mx-sm-1 w-100"
                  :field="{ key: 'team_id', type: 'custom-select', noLabel: true, required: false, items: filteredTeams}"
                  :entity="entity"/>
-          <template v-if="entity.team_id">
-            <field class="w-100 w-sm-75"
+          <template v-if="entity && entity.team_id">
+            <field class="w-100"
                    :field="{ key: 'user_id', type: 'list', list: 'user_team_grp', listLabel: 'user_email',filter_key: 'team_id', noLabel: true, required: false }"
                    :entity="entity"/>
           </template>
@@ -59,10 +59,8 @@ export default {
     return {
       entity: {
         tickets: this.team_is_customer ? 'customers' : 'seybolds',
-        team_id: this.initData?.team_id ? this.initData?.team_id : null,
-        ...(this.entity?.team_id !== null && {
-          user_id: this.initData?.user_id ? this.initData?.user_id : null,
-        }),
+        team_id: null,
+        user_id: null,
       },
       total_open_tickets: 1,
       datePickerOptions: {
@@ -130,6 +128,15 @@ export default {
   },
   mounted() {
     this.resetDatePicker()
+    setTimeout(() => {
+      if (this.isTeamExistInList(this.initData?.team_id)) {
+        this.entity.team_id = this.initData?.team_id
+
+        if (this.initData?.user_id) {
+          this.entity.user_id = this.initData?.user_id
+        }
+      }
+    }, 500)
   },
   methods: {
     async fetchDashboardStatistics() {
@@ -176,6 +183,7 @@ export default {
             user_id: this.entity.user_id,
             tickets: this.entity.tickets,
             company_id: this.entity.company_id,
+            customergroup_id: this.getCustomerGroupId(this.entity.company_id),
           },
         },
       })
