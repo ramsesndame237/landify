@@ -1,3 +1,5 @@
+import get from 'lodash/get'
+
 export default {
   data() {
     return {}
@@ -7,7 +9,7 @@ export default {
       return this.$store.getters['table/listCache']('companies')
     },
     filteredCompanies() {
-      const data = this.companies.map(company => ({ label: company.company_name, value: company.company_id }))
+      const data = this.companies.map(company => ({ label: company.company_name, value: company.company_id, ...company }))
 
       return [{ label: 'All', value: null }, ...data]
     },
@@ -25,6 +27,9 @@ export default {
       } catch (error) {
         console.log({ error })
       }
+    },
+    getCustomerGroupId(companyId) {
+      return get(this.filteredCompanies.find(compa => compa.company_id === companyId), 'customergroup_id')
     },
   },
 }

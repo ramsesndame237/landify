@@ -101,7 +101,7 @@ export default {
     ids: Array,
     initialFilter: Object,
     canUpdateItem: { type: Function, required: false }, // si un item du tableau est editable
-    canReadItem: { type: Function, required: false }, // si un item du tableau est consultable
+    canReadItem: { type: Function, required: false, default: () => true }, // si un item du tableau est consultable
     canDeleteItem: { type: Function, required: false }, // si un item du tableau est supprimable
     customRequest: { type: Object, required: false }, // un object qui contient des données pour personnaliser les requêtes vers le back dans les relations
   },

@@ -78,7 +78,10 @@
                         </b-list-group-item>
                         <b-list-group-item class="d-flex align-items-center font-weight-bolder font-medium-1">
                           User Type :
-                          <span class="ml-1 font-weight-normal text-capitalize">{{ usertype }}</span>
+                          <span class="ml-1 font-weight-normal text-capitalize"> {{ usertype }} </span>
+                          <template v-if="user.user_is_director">
+                            <span class="font-weight-normal font-italic ml3"> (Director)</span>
+                          </template>
                         </b-list-group-item>
                         <b-list-group-item class="d-flex align-items-center font-weight-bolder font-medium-1">
                           Team(s) :
@@ -417,5 +420,8 @@ export default {
   padding-left: 0;
   padding-top: .5rem;
   padding-bottom: .5rem;
+}
+.ml3 {
+  margin-left: .3rem;
 }
 </style>
