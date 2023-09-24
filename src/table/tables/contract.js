@@ -10,6 +10,15 @@ export default {
   // createComponent: () => import('@/views/app/CreateComponent/ContractForm/ContractFormNew.vue'),
   fields: [
     { key: 'contract_id', auto: true },
+    { key: 'contract_name' },
+    {
+      key: 'contracttype_name',
+      type: 'list',
+      list: 'contracttype',
+      listLabel: 'contracttype_name',
+      hideOnIndex: true,
+      hideOnUpdate: true,
+    },
     {
       key: 'customergroup_id',
       type: 'list',
@@ -39,7 +48,15 @@ export default {
       hideOnIndex: true,
       hideOnUpdate: true,
     },
-    { key: 'contract_name' },
+    {
+      key: 'pos_id',
+      type: 'list',
+      list: 'pos',
+      listLabel: 'pos_name',
+      hideOnIndex: true,
+      hideOnUpdate: true,
+    },
+
     {
       key: 'contracttype_name', hideOnCreate: true, disabled: true, required: false,
     },
@@ -56,28 +73,28 @@ export default {
       key: 'pos_name', hideOnIndex: true, hideOnCreate: true, disabled: true, required: false,
     },
     { key: 'location_name', hideOnForm: true },
-    // {
-    //   key: 'owner_name',
-    //   hideOnForm: true,
-    //   formatter: (value, key, item) => {
-    //     const array = item.owners
-    //     const ownersName = array.length > 0 ? array.map(obj => obj.owner_name) : []
-    //     const result = ownersName.join(', ')
-    //
-    //     return result || '-'
-    //   },
-    // },
-    // {
-    //   key: 'manager_name',
-    //   hideOnForm: true,
-    //   formatter: (value, key, item) => {
-    //     const array = item.managers
-    //     const managerName = array.length > 0 ? array.map(obj => obj.manager_name) : []
-    //     const result = managerName.join(', ')
-    //
-    //     return result || '-'
-    //   },
-    // },
+    {
+      key: 'owner_name',
+      hideOnForm: true,
+      formatter: (value, key, item) => {
+        const array = item.owners
+        const ownersName = array.length > 0 ? array.map(obj => obj.owner_name) : []
+        const result = ownersName.join(', ')
+
+        return result || '-'
+      },
+    },
+    {
+      key: 'manager_name',
+      hideOnForm: true,
+      formatter: (value, key, item) => {
+        const array = item.managers
+        const managerName = array.length > 0 ? array.map(obj => obj.manager_name) : []
+        const result = managerName.join(', ')
+
+        return result || '-'
+      },
+    },
     {
       key: 'company_name',
       hideOnForm: true,
@@ -185,26 +202,21 @@ export default {
     },
     { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
     { key: 'contract_sum_allarea_allocationspace', hideOnForm: true },
-    {
-      key: 'currency_name', hideOnIndex: true, hideOnCreate: true, disabled: true, category: 'price',
-    },
+
     { key: 'contract_count_area', hideOnForm: true },
     {
       key: 'currency_id',
       type: 'list',
       list: 'currency',
+      category: 'price',
       listLabel: 'currency_name',
       hideOnIndex: true,
       hideOnUpdate: true,
     },
     {
-      key: 'contracttype_id',
-      type: 'list',
-      list: 'contracttype',
-      listLabel: 'contracttype_name',
-      hideOnIndex: true,
-      hideOnUpdate: true,
+      key: 'currency_name', hideOnIndex: true, hideOnCreate: true, disabled: true, category: 'price',
     },
+
     {
       key: 'contract_migration_checked',
       type: 'boolean',

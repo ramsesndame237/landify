@@ -44,7 +44,7 @@
 
     <b-card class="" :no-body="noBody">
       <component
-        :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
+        :is="(create ? definition.updateComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
         ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="create"
         :is-relation="false" :disabled="view" :inline="false" :cols="6" :initial-data="entity" :entity-id="entityId"
         @loaded="formLoaded=true"/>
@@ -56,7 +56,7 @@
 
     <b-card v-if="definition.relations && formLoaded && visibleRelations.length>0 && !create ">
       <b-tabs ref="tabs" pills>
-        <b-tab v-for="(relation, index) in visibleRelations" :key="index"
+        <b-tab  v-for="(relation, index) in visibleRelations" :key="index"
                :title="$t(relation.title || ('headline~'+(relation.entityView||relation.entityForm)+'~tab'))"
                :active="index===tabIndex" :lazy="relation.lazy!==false">
           <template v-if="relation.component">

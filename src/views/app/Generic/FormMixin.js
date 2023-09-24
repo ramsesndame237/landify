@@ -327,6 +327,7 @@ export default {
       return this.$refs.fields || this.$children.filter(c => c.$options.name === 'Field')
     },
     submit() {
+      console.log("this is the entity to save", this.entity)
       return this.$refs.form.validate()
         .then(success => {
           if (!success) {
