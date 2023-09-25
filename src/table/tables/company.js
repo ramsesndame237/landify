@@ -20,7 +20,7 @@ export default {
     }
     return true
   },
-  perPage: 0, // Si cette entité à un nombre d'éléments fixe par page différent de celui par default (10)
+  perPage: 100000, // Si cette entité à un nombre d'éléments fixe par page différent de celui par default (10)
   fields: [
     { key: 'company_id', auto: true },
     { key: 'company_name' },
