@@ -43,7 +43,7 @@ export default {
           },
         },
         {
-          title: 'Clients tickets',
+          title: 'tickets',
           team_is_customer: true,
           ...((!this.$isUserExternDirector || this.$isUserInternAndNotAdmin) && {
             initData: {
