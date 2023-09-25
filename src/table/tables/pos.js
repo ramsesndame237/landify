@@ -1,9 +1,20 @@
 import _ from 'lodash'
+import { getUserData } from '@/auth/utils'
 
 export default {
   entity: 'frontend_3_1_1',
   primaryKey: 'pos_id',
   entityEndpoint: '/pos',
+  filter: (item, vm) => {
+    const user = getUserData()
+    if (!vm.$isUserExternPartner) {
+      if (user.customergroup) {
+        const { customergroup_id } = user.customergroup
+        return item.customergroup_id === customergroup_id
+      }
+    }
+    return true
+  },
   fields: [
     { key: 'pos_id', auto: true },
     {
