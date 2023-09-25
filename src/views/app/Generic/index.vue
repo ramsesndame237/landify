@@ -5,7 +5,7 @@
                     @filter="filter"/>
     </b-card>
     <b-card body-class="p-0">
-      <table-pagination :search.sync="search" :per-page.sync="definition.perPage || perPage" :current-page.sync="currentPage" :entity="table"
+      <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"
                         :on-new-element="definition.create ===false ? null : onNewElement" :total-rows.sync="totalRows"
                         :with-filter="definition.filters && definition.filters.length > 0"
                         :inline-filter="!definition.inline_filter"
@@ -20,7 +20,7 @@
       <Datatable :key="table" ref="table" :search="search" :entity="table" :entity-list="definition.entity"
                  :with-delete="definition.delete !== false" :with-edit="definition.update !== false"
                  :default-sort-column="initialSortBy||definition.defaultSortField" :default-sort-desc="initialSortDesc"
-                 :per-page="definition.perPage || perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
+                 :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
                  :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"
                  :filter-items="definition.filter"
@@ -59,7 +59,7 @@ export default {
     console.log('initial payload', payload)
     return {
       search: payload?.search || '',
-      perPage: payload?.perPage || 10,
+      perPage: payload?.perPage || this.definition?.perPage || 10,
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
       initialFilterData: payload?.filter,

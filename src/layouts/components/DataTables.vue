@@ -100,7 +100,6 @@ export default {
     items: Array,
     ids: Array,
     initialFilter: Object,
-    customPerPage: Number,
     filterItems: { type: Function, required: false }, // Cette function effectue le filtre sur les données de l'entité
     canUpdateItem: { type: Function, required: false }, // si un item du tableau est editable
     canReadItem: { type: Function, required: false, default: () => true }, // si un item du tableau est consultable
@@ -302,9 +301,6 @@ export default {
         if (this.filterItems && typeof this.filterItems === 'function') {
           this.currentItems = datas.filter(item => this.filterItems(item, this))
           this.$emit('update:totalRows', this.currentItems.length)
-          if (this.customPerPage) {
-            this.perPage = this.customPerPage
-          }
         } else {
           this.currentItems = datas
         }
@@ -321,9 +317,6 @@ export default {
       if (this.filterItems && typeof this.filterItems === 'function') {
         this.currentItems = datas.filter(item => this.filterItems(item, this))
         this.$emit('update:totalRows', this.currentItems.length)
-        if (this.customPerPage) {
-          this.perPage = this.customPerPage
-        }
       } else {
         this.currentItems = datas
       }
