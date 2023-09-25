@@ -311,7 +311,7 @@ export default {
       'contactperson_id',
     ]
     if (create) {
-      await vm.$http.post('/pos/', _.pick(entity, attributes))
+      await vm.$http.post('/pos', _.pick(entity, attributes))
     } else {
       attributes.push('pos_id')
       await vm.$http.put('/pos', _.pick(entity, attributes))

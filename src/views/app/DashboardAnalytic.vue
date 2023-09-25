@@ -6,15 +6,18 @@
           {{ title }}
         </h3>
       </div>
-      <div class="">
-        <div class="d-flex align-items-center">
-          <date-picker v-model="date" v-bind="datePickerOptions" class="mb-1"
+      <div class="w-50">
+        <div class="d-flex align-items-center flex-wrap flex-sm-nowrap w-100 dashboard_style">
+          <date-picker v-model="date" v-bind="datePickerOptions" class="mb-1 w-100"
                        @change="datePickerHandler"/>
-          <field class="mx-1 w-75"
-                 :field="{ key: 'team_id', type: 'custom-select', noLabel: true, required: false, items: filteredTeams }"
+          <field class="ml-sm-1 w-100"
+                 :field="{ key: 'company_id', type: 'custom-select', noLabel: true, required: false, items: filteredCompanies, }"
                  :entity="entity"/>
-          <template v-if="entity.team_id">
-            <field class="w-75"
+          <field class=" mx-sm-1 w-100"
+                 :field="{ key: 'team_id', type: 'custom-select', noLabel: true, required: false, items: filteredTeams}"
+                 :entity="entity"/>
+          <template v-if="entity && entity.team_id">
+            <field class="w-100"
                    :field="{ key: 'user_id', type: 'list', list: 'user_team_grp', listLabel: 'user_email',filter_key: 'team_id', noLabel: true, required: false }"
                    :entity="entity"/>
           </template>
@@ -22,13 +25,13 @@
       </div>
     </div>
     <b-row>
-      <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~open_tickets_intime')" color="#343a40"
+      <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~open_tickets_intime')" color="#008000"
                     :percent="(before_deadline*100/total_open_tickets).toFixed(0)" :number="before_deadline"
                     variant="dark" cols="4" @click.native="show(dashboard_filter.BEFORE_DEADLINE)"/>
       <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~open_tickets_afteryellow')"
-                    color="#FF7A00" :percent="(critical_yellow*100/total_open_tickets).toFixed(0)" :number="critical_yellow"
+                    color="#d1bf00" :percent="(critical_yellow*100/total_open_tickets).toFixed(0)" :number="critical_yellow"
                     variant="warning" cols="4" @click.native="show( dashboard_filter.CRITICAL_YELLOW)"/>
-      <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~open_tickets_afterred')" color="#D51130"
+      <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~open_tickets_afterred')" color="#d70000"
                     :percent="(over_due_red*100/total_open_tickets).toFixed(0)" :number="over_due_red" variant="danger"
                     cols="4" @click.native="show(dashboard_filter.OVERDUE_RED)"/>
     </b-row>
@@ -41,19 +44,23 @@ import Field from '@/views/app/Generic/Field.vue'
 import moment from 'moment'
 import SummaryCard from '@/views/app/Dashboard/Components/SummaryCard.vue'
 import TeamMixin from '@/views/app/Team/TeamMixin'
+import CompanyMixin from '@/views/app/Company/CompanyMixin'
 
 export default {
   name: 'DashboardAnalytic',
   components: { SummaryCard, DatePicker, Field },
-  mixins: [TeamMixin],
+  mixins: [TeamMixin, CompanyMixin],
   props: {
     title: String,
     team_is_customer: { type: Boolean, default: false },
+    initData: { type: Object, required: false },
   },
   data() {
     return {
       entity: {
         tickets: this.team_is_customer ? 'customers' : 'seybolds',
+        team_id: null,
+        user_id: null,
       },
       total_open_tickets: 1,
       datePickerOptions: {
@@ -110,8 +117,10 @@ export default {
   },
   watch: {
     entity: {
-      handler() {
-        console.log('change')
+      handler(newEntity) {
+        if (newEntity.team_id === null) {
+          delete newEntity.user_id
+        }
         this.fetchDashboardStatistics()
       },
       deep: true,
@@ -119,6 +128,15 @@ export default {
   },
   mounted() {
     this.resetDatePicker()
+    setTimeout(() => {
+      if (this.isTeamExistInList(this.initData?.team_id)) {
+        this.entity.team_id = this.initData?.team_id
+
+        if (this.initData?.user_id) {
+          this.entity.user_id = this.initData?.user_id
+        }
+      }
+    }, 500)
   },
   methods: {
     async fetchDashboardStatistics() {
@@ -156,10 +174,25 @@ export default {
       this.$router.push({
         name: 'table',
         params: {
-          table: 'ticket', ticket_deadline_status: status, start_date: this.date[0], end_date: this.date[1], team_id: this.entity.team_id, user_id: this.entity.user_id, tickets: this.entity.tickets,
+          table: 'ticket',
+          dashboardData: {
+            ticket_deadline_status: status,
+            start_date: this.date[0],
+            end_date: this.date[1],
+            team_id: this.entity.team_id,
+            user_id: this.entity.user_id,
+            tickets: this.entity.tickets,
+            company_id: this.entity.company_id,
+            customergroup_id: this.getCustomerGroupId(this.entity.company_id),
+          },
         },
       })
     },
   },
 }
 </script>
+<style>
+.dashboard_style .vs__selected-options span.vs__selected {
+  max-width: 6rem !important;
+}
+</style>

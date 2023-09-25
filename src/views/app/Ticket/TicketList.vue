@@ -56,16 +56,19 @@ export default {
     let payload = this.$store.getters['table/tableData'](this.$route.params.table)
     const params = this.$route.params
     // we come from dashboard
-    if (params.start_date) {
+    if (params.dashboardData) {
+      const data = params.dashboardData
       payload = {
         filter: {
-          start_date: params.start_date,
-          end_date: params.end_date,
-          ticket_deadline_status: params.ticket_deadline_status,
-          team_id: params.team_id,
-          user_id: params.user_id,
+          start_date: data.start_date,
+          end_date: data.end_date,
+          ticket_deadline_status: data.ticket_deadline_status,
+          team_id: data.team_id,
+          user_id: data.user_id,
           status: 'opened',
-          tickets: params.tickets,
+          tickets: data.tickets,
+          company_id: data.company_id,
+          customergroup_id: data.customergroup_id,
         },
       }
       payload.filter = _.omitBy(payload.filter, _.isNil)
