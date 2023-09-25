@@ -1,7 +1,19 @@
+import { getUserData } from '@/auth/utils'
+
 export default {
   entity: 'frontend_3_2_1',
   primaryKey: 'area_id',
   updateComponent: () => import('@/views/app/UpdateComponent/AreaForm'),
+  filter: (item, vm) => {
+    const user = getUserData()
+    if (!vm.$isUserExternPartner) {
+      if (user.customergroup) {
+        const { customergroup_id } = user.customergroup
+        return item.customergroup_id === customergroup_id
+      }
+    }
+    return true
+  },
   fields: [
     { key: 'area_id', auto: true },
     { key: 'area_name' },
