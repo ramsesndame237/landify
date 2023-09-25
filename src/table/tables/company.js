@@ -1,7 +1,26 @@
+import { getUserData } from '@/auth/utils'
+
 export default {
   entityEndpoint: '/companies',
   primaryKey: 'company_id',
   formComponent: () => import('@/views/app/CreateComponent/CompanyForm.vue'),
+  /**
+   * Cette fonction permettra d'effectuer un filtre sur l'entité de manière globale
+   * @param item L'élément sur lequel on effectue le teste
+   * @param vm L'instance de vue
+   */
+  filter: (item, vm) => {
+    const user = getUserData()
+    if (!vm.$isUserExternPartner) {
+      if (user.customergroup) {
+        const { customergroup_id } = user.customergroup
+
+        return item.customergroup_id === customergroup_id
+      }
+    }
+    return true
+  },
+  perPage: 100000, // Si cette entité à un nombre d'éléments fixe par page différent de celui par default (10)
   fields: [
     { key: 'company_id', auto: true },
     { key: 'company_name' },

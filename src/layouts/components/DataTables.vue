@@ -100,6 +100,7 @@ export default {
     items: Array,
     ids: Array,
     initialFilter: Object,
+    filterItems: { type: Function, required: false }, // Cette function effectue le filtre sur les données de l'entité
     canUpdateItem: { type: Function, required: false }, // si un item du tableau est editable
     canReadItem: { type: Function, required: false, default: () => true }, // si un item du tableau est consultable
     canDeleteItem: { type: Function, required: false }, // si un item du tableau est supprimable
@@ -296,7 +297,13 @@ export default {
           el.__selected = false
         })
         this.$store.commit('table/setDefinition', { data, table: this.table })
-        this.currentItems = data.data
+        const datas = data.data
+        if (this.filterItems && typeof this.filterItems === 'function') {
+          this.currentItems = datas.filter(item => this.filterItems(item, this))
+          this.$emit('update:totalRows', this.currentItems.length)
+        } else {
+          this.currentItems = datas
+        }
         this.$emit('items', this.currentItems)
         return this.currentItems
       }
@@ -305,7 +312,15 @@ export default {
         el.__selected = false
       })
       this.$store.commit('table/setDefinition', { data, table: this.table })
-      this.currentItems = data.data.data
+      const datas = data.data.data
+
+      if (this.filterItems && typeof this.filterItems === 'function') {
+        this.currentItems = datas.filter(item => this.filterItems(item, this))
+        this.$emit('update:totalRows', this.currentItems.length)
+      } else {
+        this.currentItems = datas
+      }
+
       this.$emit('items', this.currentItems)
       return this.currentItems
     },
