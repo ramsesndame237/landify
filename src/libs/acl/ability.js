@@ -33,26 +33,15 @@ export const defineRules = () => {
     }
     userData.roles.forEach(role => {
       const { tablegroups: roleTableGroups } = role
-      const temptRules = []
 
       if (roleTableGroups.length > 0) {
         roleTableGroups.forEach(tg => {
-          const userTableGroup = users_tablegroups.find(userTg => userTg.tablegroup_id === tg.tablegroup_id)
           const { tablename } = tablegroups.find(tablegroup => tablegroup.tablegroup_id === tg.tablegroup_id)
-          if (userTableGroup && userTableGroup[tg.crud] === true) {
-            if (tablename && tablename.length > 0) {
-              temptRules.push(...tablename.map(tn => ({ action: getAction(tg.crud), subject: tn.table_name })))
-            }
-          }
-          // J'ajoute les permissions propres à un User
-          for (const [key, value] of Object.entries(userTableGroup)) {
-            if (value === true && key !== tg.crud) {
-              temptRules.push(...tablename.map(tn => ({ action: getAction(key), subject: tn.table_name })))
-            }
+          if (tablename && tablename.length > 0) {
+            rules.push(...tablename.map(tn => ({ action: getAction(tg.crud), subject: tn.table_name })))
           }
         })
       }
-      rules.push(...temptRules)
 
       // Récupération des configs de menu dans les data de l'utilisateur
       const tempsRules = []
@@ -74,6 +63,14 @@ export const defineRules = () => {
 
       rules.push(...tempsRules)
       // rules.push(...role.access.map(access => ({ action: access.access_name, subject: 'menu' })))
+    })
+    // J'ajoute les permissions propres à un User
+    users_tablegroups.forEach(tg => {
+      const { tablename } = tablegroups.find(tablegroup => tablegroup.tablegroup_id === tg.tablegroup_id)
+      const tgCrud = _.pickBy(tg, val => val === true)
+      if (Object.keys(tgCrud).length > 0 && tablename && tablename.length > 0) {
+        rules.push(..._.flatten(tablename.map(tn => Object.keys(tgCrud).map(crud => ({ action: getAction(crud), subject: tn.table_name })))))
+      }
     })
   } catch (e) {
     console.error(e)
