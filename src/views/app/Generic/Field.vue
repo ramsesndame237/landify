@@ -325,7 +325,7 @@ export default {
       return this.field.type === 'list' ? this.list.find(e => e[this.field.key] === this.entity[this.field.key]) : this.entity[this.field.key]
     },
     selectedValues() {
-      return this.field.type === 'list' ? this.list.filter(e => this.entity[this.field.key].indexOf(e[this.field.key]) >= 0) : []
+      return this.field.type === 'list' ? this.list.filter(e => this.entity[this.field.key]?.indexOf(e[this.field.key]) >= 0) : []
     },
 
   },
@@ -360,30 +360,8 @@ export default {
     }
   },
   async mounted() {
-    const user = getUserData()
     this.$nextTick(() => {
-      if (this.$isUserExternClient) {
-        if (this.field.key === 'customergroup_id') {
-          const customergroup_id = user.customergroup?.customergroup_id
-          if (!this.entity.customergroup_id && customergroup_id) {
-            this.$set(this.entity, 'customergroup_id', customergroup_id)
-          }
-          if (this.entity.customergroup_id) {
-            this.isDisabled = true
-          }
-        }
-      }
-      if (this.$isUserExternPartner) {
-        if (this.field.key === 'partnergroup_id') {
-          const partnergroup_id = user.partnergroup?.partnergroup_id
-          if (!this.entity.partnergroup_id && partnergroup_id) {
-            this.$set(this.entity, 'partnergroup_id', partnergroup_id)
-          }
-          if (this.entity.partnergroup_id) {
-            this.isDisabled = true
-          }
-        }
-      }
+      this.initializeValue()
     })
 
     if (this.field.type && this.field.type === 'html') {
@@ -448,6 +426,32 @@ export default {
     }
   },
   methods: {
+    initializeValue() {
+      const user = getUserData()
+      if (this.$isUserExternClient) {
+        if (this.field.key === 'customergroup_id') {
+          console.log('reset ', this.entity)
+          const customergroup_id = user.customergroup?.customergroup_id
+          if (!this.entity.customergroup_id && customergroup_id) {
+            this.$set(this.entity, 'customergroup_id', customergroup_id)
+          }
+          if (this.entity.customergroup_id) {
+            this.isDisabled = true
+          }
+        }
+      }
+      if (this.$isUserExternPartner) {
+        if (this.field.key === 'partnergroup_id') {
+          const partnergroup_id = user.partnergroup?.partnergroup_id
+          if (!this.entity.partnergroup_id && partnergroup_id) {
+            this.$set(this.entity, 'partnergroup_id', partnergroup_id)
+          }
+          if (this.entity.partnergroup_id) {
+            this.isDisabled = true
+          }
+        }
+      }
+    },
     initEditor() {
       // Initialisation de TinyMCE
       tinymce.init({

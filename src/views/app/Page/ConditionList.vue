@@ -316,12 +316,12 @@ export default {
             if (cc) {
               obj.contract_status = cc.choice_name
             } else {
-            // check the date
+              // check the date
               obj.contract_status = date.isAfter(obj.contract_end_date) ? 'Terminated' : 'Running'
             }
             if (this.table === 'deadlines') {
               obj.notice_of_termination = (cc && cc.choice_name === 'gekündigt') ? 'Yes' : 'No'
-            // obj.action_date = cc?.contract_criteria_value
+              // obj.action_date = cc?.contract_criteria_value
             }
 
             /*
@@ -514,7 +514,15 @@ export default {
       return val
     },
     reset() {
-      this.data = { date: this.definition.filters.find(f => f.key === 'date').default }
+      Object.keys(this.data).forEach(key => {
+        this.$delete(this.data, key)
+      })
+      // call initial data for all the fields then reset (Do it later)
+      const components = (Array.isArray(this.$refs.fields) ? this.$refs.fields : [this.$refs.fields])
+      components.forEach(field => {
+        field.initializeValue()
+      })
+      this.data.date = this.definition.filters.find(f => f.key === 'date').default
       this.$refs.form.reset()
       this.items = []
     },
