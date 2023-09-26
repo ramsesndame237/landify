@@ -6,14 +6,15 @@ export default {
   entityEndpoint: '/contracts',
   fetchWithEntity: true,
   formComponent: () => import('@/views/app/FormComponent/ContractForm.vue'),
-  // createModal: false,
+  createModal: false,
   // createComponent: () => import('@/views/app/CreateComponent/ContractForm/ContractFormNew.vue'),
   fields: [
     { key: 'contract_id', auto: true },
-    { key: 'contract_name' },
+    { key: 'contract_name',size:40 },
     {
       key: 'contracttype_id',
       type: 'list',
+      size:40,
       list: 'contracttype',
       listLabel: 'contracttype_name',
       hideOnIndex: true,
@@ -22,6 +23,7 @@ export default {
     {
       key: 'customergroup_id',
       type: 'list',
+      size:40,
       list: 'customergroup',
       listLabel: 'customergroup_name',
       send: false,
@@ -31,6 +33,7 @@ export default {
     {
       key: 'company_id',
       type: 'list',
+      size:40,
       list: 'frontend_2_2_3_1',
       listLabel: 'company_name',
       filter_key: 'customergroup_id',
@@ -41,6 +44,7 @@ export default {
     {
       key: 'location_id',
       type: 'list',
+      size:40,
       list: 'frontend_3_1_3_7',
       listLabel: 'location_name',
       relationEntity: 'contract_location_rel',
@@ -51,6 +55,7 @@ export default {
     {
       key: 'pos_id',
       type: 'list',
+      size:40,
       list: 'pos',
       listLabel: 'pos_name',
       hideOnIndex: true,

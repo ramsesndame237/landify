@@ -6,12 +6,12 @@
     </b-card>
     <b-card body-class="p-0">
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"
-                        :on-new-element="definition.create ===false ? null : onNewElement" :total-rows="totalRows"
+                        :on-new-element="definition.create ===false ? null : onNewElement" :total-rows.sync="totalRows"
                         :with-filter="definition.filters && definition.filters.length > 0"
                         :inline-filter="!definition.inline_filter"
                         :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
                         :actions="definition.actions" @action="(a)=>$refs.table.onAction(a)"
-                        @filter="$refs.filter.openModal()"/>
+                        @filter="$refs.filter.openModal()" :filter-badge="getFilterCount()"/>
       <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
                       @filter="filter"/>
     </b-card>
@@ -54,16 +54,22 @@ export default {
   },
   data() {
     const payload = this.$store.getters['table/tableData'](this.$route.params.table)
-    console.log('initial payload', payload)
+    const table = this.$route.params.table
+    const definition = Tables[table]
+    let defaultPage = null
+    if (this.$isUserExternClient) {
+      defaultPage = definition.perPage
+    }
     return {
       search: payload?.search || '',
-      perPage: payload?.perPage || 10,
+      perPage: payload?.perPage || defaultPage || 10,
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
       initialFilterData: payload?.filter,
       initialSortBy: payload?.sortBy,
       initialSortDesc: payload?.sortDesc ?? true,
-      table: this.$route.params.table,
+      table,
+      definition,
       ids: this.$route.params.ids,
     }
   },
@@ -90,6 +96,13 @@ export default {
     })
   },
   methods: {
+    getFilterCount() {
+      const obj = this.$refs.filter ? this.$refs.filter.getFinalData() : this.initialFilterData
+      if (obj == null) return null
+      const count = Object.keys(obj).length
+      if (count === 0) return null
+      return count
+    },
     filter(data) {
       console.log('on filter', data)
       this.currentPage = 1
@@ -102,7 +115,7 @@ export default {
       this.$refs.modal.openModal(false, entity, `headline~${this.definition.entityForm || this.definition.entity}~detail`)
     },
     onNewElement() {
-      if (this.useModalToCreate) return   this.$router.push({ name: 'table-form',params: { table: this.table },})
+      if (this.useModalToCreate) this.$refs.modal.openModal(true, {})
       else {
         this.$router.push({
           name: 'table-form',
