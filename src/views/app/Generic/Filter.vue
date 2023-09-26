@@ -65,6 +65,7 @@ export default {
     },
     reset() {
       this.data = { ...this.initialData }
+      // call initial data for all the fields then reset (Do it later)
       this.$refs.form.reset()
       this.$emit('reset', this.getFinalData())
       // this.$refs.modal.hide()

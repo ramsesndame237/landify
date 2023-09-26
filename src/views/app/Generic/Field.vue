@@ -12,8 +12,8 @@
           <template v-if="disabled">
             <div class="p-1 border rounded" v-html="entity[field.key]"/>
           </template>
-          <b-form-textarea v-show="!disabled" :id="'tinyEditor-'+field.key"
-                           v-model="entity[field.key]" :class="{'d-none' : editorInstance && editorInstance.isHidden}"/>
+          <b-form-textarea v-show="!disabled" :id="'tinyEditor-'+field.key" v-model="entity[field.key]"
+                           :class="{'d-none' : editorInstance && editorInstance.isHidden}"/>
           <!-- <ckeditor v-else :id="'ckcontent-'+field.key" v-model="entity[field.key]" :disabled="disabled"
                     :editor="editor" :config="{}"
           /> -->
@@ -58,8 +58,8 @@
               <div>
                 <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50"/>
                 <span class="text-muted font-weight-bolder align-text-top">{{
-                  file.name
-                }}</span>
+                    file.name
+                  }}</span>
                 <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
               </div>
               <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index, validate)"/>
@@ -99,12 +99,9 @@
             <div id="pickerContainer" :class="{'d-none': !isEmojiInputVisible}"/>
           </div>
         </template>
-        <CustomDatePicker v-else-if="field.type === 'date-picker'"
-                          :start-date="entity.start_date"
-                          :end-date="entity.end_date"
-                          @input-start-date="entity.start_date = $event"
-                          @input-end-date="entity.end_date = $event"
-        />
+        <CustomDatePicker v-else-if="field.type === 'date-picker'" :start-date="entity.start_date"
+                          :end-date="entity.end_date" @input-start-date="entity.start_date = $event"
+                          @input-end-date="entity.end_date = $event"/>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
                     class="form-control"/>
@@ -195,6 +192,7 @@ import 'tinymce/models/dom'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import CustomDatePicker from '@/views/app/Generic/CustomDatePicker.vue'
+import { getUserData } from "@/auth/utils";
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -267,6 +265,7 @@ export default {
       isEmojiInputVisible: false,
       editorInstance: null,
       disablePopupButton: false,
+      isDisabled: false,
     }
   },
   computed: {
@@ -277,7 +276,7 @@ export default {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
     selectDisabled() {
-      return this.disabled || (this.field.filter_key && this.entity[this.field.filter_key] == null)
+      return this.isDisabled || this.disabled || (this.field.filter_key && this.entity[this.field.filter_key] == null)
     },
     rules() {
       return this.getValidationRules(this.field)
@@ -361,6 +360,32 @@ export default {
     }
   },
   async mounted() {
+    const user = getUserData()
+    this.$nextTick(() => {
+      if (this.$isUserExternClient) {
+        if (this.field.key === 'customergroup_id') {
+          const customergroup_id = user.customergroup?.customergroup_id
+          if (!this.entity.customergroup_id && customergroup_id) {
+            this.$set(this.entity, 'customergroup_id', customergroup_id)
+          }
+          if (this.entity.customergroup_id) {
+            this.isDisabled = true
+          }
+        }
+      }
+      if (this.$isUserExternPartner) {
+        if (this.field.key === 'partnergroup_id') {
+          const partnergroup_id = user.partnergroup?.partnergroup_id
+          if (!this.entity.partnergroup_id && partnergroup_id) {
+            this.$set(this.entity, 'partnergroup_id', partnergroup_id)
+          }
+          if (this.entity.partnergroup_id) {
+            this.isDisabled = true
+          }
+        }
+      }
+    })
+
     if (this.field.type && this.field.type === 'html') {
       this.initEditor()
     }

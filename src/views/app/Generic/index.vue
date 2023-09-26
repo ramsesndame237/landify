@@ -11,7 +11,7 @@
                         :inline-filter="!definition.inline_filter"
                         :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
                         :actions="definition.actions" @action="(a)=>$refs.table.onAction(a)"
-                        @filter="$refs.filter.openModal()"/>
+                        @filter="$refs.filter.openModal()" :filter-badge="getFilterCount()"/>
       <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
                       @filter="filter"/>
     </b-card>
@@ -23,11 +23,10 @@
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
                  :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"
-                 :filter-items="definition.filter"
-      />
+                 :filter-items="definition.filter"/>
     </b-card>
-    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table"
-                   :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
+    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"
+                   with-continue :table-definition-key="table" :title="`headline~${table}~new`"
                    @reload-table="$refs.table.reload()"/>
   </div>
 </template>
@@ -56,23 +55,29 @@ export default {
   },
   data() {
     const payload = this.$store.getters['table/tableData'](this.$route.params.table)
+    const table = this.$route.params.table
+    const definition = Tables[table]
     console.log('initial payload', payload)
+
+    let defaultPage = null
+    if (this.$isUserExternClient) {
+      console.log(Tables)
+      defaultPage = definition.perPage
+    }
     return {
       search: payload?.search || '',
-      perPage: payload?.perPage || this.definition?.perPage || 10,
+      perPage: payload?.perPage || defaultPage || 10,
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
       initialFilterData: payload?.filter,
       initialSortBy: payload?.sortBy,
       initialSortDesc: payload?.sortDesc ?? true,
-      table: this.$route.params.table,
+      table,
+      definition,
       ids: this.$route.params.ids,
     }
   },
   computed: {
-    definition() {
-      return Tables[this.table]
-    },
     useModalToCreate() {
       return this.definition.createModal !== false
     },
@@ -92,6 +97,13 @@ export default {
     })
   },
   methods: {
+    getFilterCount() {
+      const obj = this.$refs.filter ? this.$refs.filter.getFinalData() : this.initialFilterData
+      if (obj == null) return null
+      const count = Object.keys(obj).length
+      if (count === 0) return null
+      return count
+    },
     filter(data) {
       console.log('on filter', data)
       this.currentPage = 1
