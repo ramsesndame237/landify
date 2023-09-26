@@ -300,7 +300,9 @@ export default {
         const datas = data.data
         if (this.filterItems && typeof this.filterItems === 'function') {
           this.currentItems = datas.filter(item => this.filterItems(item, this))
-          this.$emit('update:totalRows', this.currentItems.length)
+          if (this.$isUserExternClient) {
+            this.$emit('update:totalRows', this.currentItems.length)
+          }
         } else {
           this.currentItems = datas
         }
@@ -316,7 +318,9 @@ export default {
 
       if (this.filterItems && typeof this.filterItems === 'function') {
         this.currentItems = datas.filter(item => this.filterItems(item, this))
-        this.$emit('update:totalRows', this.currentItems.length)
+        if (this.$isUserExternClient) {
+          this.$emit('update:totalRows', this.currentItems.length)
+        }
       } else {
         this.currentItems = datas
       }

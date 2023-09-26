@@ -6,7 +6,7 @@ export default {
   updateComponent: () => import('@/views/app/UpdateComponent/AreaForm'),
   filter: (item, vm) => {
     const user = getUserData()
-    if (!vm.$isUserExternPartner) {
+    if (vm.$isUserExternClient) {
       if (user.customergroup) {
         const { customergroup_id } = user.customergroup
         return item.customergroup_id === customergroup_id
