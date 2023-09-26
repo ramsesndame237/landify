@@ -5,7 +5,7 @@ export default {
   // entity: 'frontend_3_4_1_1',
   entityEndpoint: '/contracts',
   fetchWithEntity: true,
-  updateComponent: () => import('@/views/app/FormComponent/ContractForm.vue'),
+  formComponent: () => import('@/views/app/FormComponent/ContractForm.vue'),
   // createModal: false,
   // createComponent: () => import('@/views/app/CreateComponent/ContractForm/ContractFormNew.vue'),
   fields: [

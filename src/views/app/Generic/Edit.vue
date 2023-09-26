@@ -44,10 +44,10 @@
 
     <b-card class="" :no-body="noBody">
       <component
-        :is="(create ? definition.updateComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
+        :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
         ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="create"
         :is-relation="false" :disabled="view" :inline="false" :cols="6" :initial-data="entity" :entity-id="entityId"
-        @loaded="formLoaded=true"/>
+        @loaded="formLoaded=true" />
     </b-card>
 
     <template v-if="table==='invoice' && $refs.tabs">

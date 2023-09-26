@@ -24,9 +24,9 @@
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
                  :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"/>
     </b-card>
-<!--    <generic-modal :fetch-data="false" :cache-key="table+'-'" :table="table" ref="modal"-->
-<!--                   :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"-->
-<!--                   @reload-table="$refs.table.reload()"/>-->
+    <generic-modal :fetch-data="false" :cache-key="table+'-'" :table="table" ref="modal"
+                   :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
+                   @reload-table="$refs.table.reload()"/>
   </div>
 </template>
 
