@@ -1,9 +1,22 @@
 import _ from 'lodash'
+import { getUserData } from '@/auth/utils'
 
 export default {
   entity: 'frontend_3_1_1',
   primaryKey: 'pos_id',
   entityEndpoint: '/pos',
+  filter: (item, vm) => {
+    const user = getUserData()
+    if (vm.$isUserExternClient) {
+      if (user.customergroup) {
+        const { customergroup_id } = user.customergroup
+        return item.customergroup_id === customergroup_id
+      }
+      return false
+    }
+    return true
+  },
+  perPage: 100000,
   fields: [
     { key: 'pos_id', auto: true },
     {
@@ -311,7 +324,7 @@ export default {
       'contactperson_id',
     ]
     if (create) {
-      await vm.$http.post('/pos/', _.pick(entity, attributes))
+      await vm.$http.post('/pos', _.pick(entity, attributes))
     } else {
       attributes.push('pos_id')
       await vm.$http.put('/pos', _.pick(entity, attributes))

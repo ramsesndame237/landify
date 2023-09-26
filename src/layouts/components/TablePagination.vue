@@ -19,8 +19,9 @@
 
     <div class="d-flex align-items-center">
       <slot/>
-      <b-button v-if="withFilter && inlineFilter" size="sm" variant="primary" class="mr-1 btn-icon" @click="$emit('filter')">
-        <feather-icon icon="FilterIcon"/>
+      <b-button v-if="withFilter && inlineFilter" size="sm" variant="primary" class="mr-1 btn-icon"
+                @click="$emit('filter')">
+        <feather-icon icon="FilterIcon" :badge="filterBadge"/>
       </b-button>
       <b-button v-if="onNewElement!=null && canCreate" size="sm" variant="info" class="mr-1" @click="onNewElement">
         <feather-icon icon="PlusCircleIcon" class="mr-50"/>
@@ -77,6 +78,7 @@ export default {
     totalRows: Number,
     entity: String,
     actions: Array,
+    filterBadge: Number,
     inlineFilter: Boolean, // Indique s'il s'agit d'un filtre en ligne, afin de masquer l'icône de filtre
   },
   data() {
@@ -105,7 +107,7 @@ export default {
 </script>
 
 <style scoped>
-.btn{
+.btn {
   white-space: nowrap;
 }
 </style>

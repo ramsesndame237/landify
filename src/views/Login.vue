@@ -182,8 +182,10 @@ export default {
 
               useJwt.setToken(resp.data.user_token)
               useJwt.setRefreshToken(resp.data.user_refresh_token)
-              localStorage.setItem('userEmail', resp.data.user.user_email)
-              await useJwt.redirectAfterLogin(this)
+              if (resp.data.user) {
+                localStorage.setItem('userEmail', resp.data.user.user_email)
+                await useJwt.redirectAfterLogin(this)
+              }
             })
             .catch(e => {
               console.error(e)
