@@ -265,7 +265,7 @@ export default {
       isEmojiInputVisible: false,
       editorInstance: null,
       disablePopupButton: false,
-      isVisible: true
+      isDisabled: false,
     }
   },
   computed: {
@@ -276,13 +276,13 @@ export default {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
     selectDisabled() {
-      return this.disabled || (this.field.filter_key && this.entity[this.field.filter_key] == null)
+      return this.isDisabled || this.disabled || (this.field.filter_key && this.entity[this.field.filter_key] == null)
     },
     rules() {
       return this.getValidationRules(this.field)
     },
     visible() {
-      return this.field.visible ? this.field.visible(this.entity, this) : this.isVisible
+      return this.field.visible ? this.field.visible(this.entity, this) : true
     },
     listItems() {
       if (this.field.filter && typeof this.field.filter === 'function') {
@@ -369,7 +369,7 @@ export default {
             this.$set(this.entity, 'customergroup_id', customergroup_id)
           }
           if (this.entity.customergroup_id) {
-            this.isVisible = false
+            this.isDisabled = true
           }
         }
       }
@@ -380,7 +380,7 @@ export default {
             this.$set(this.entity, 'partnergroup_id', partnergroup_id)
           }
           if (this.entity.partnergroup_id) {
-            this.isVisible = false
+            this.isDisabled = true
           }
         }
       }

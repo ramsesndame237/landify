@@ -100,13 +100,7 @@ export default {
     getFilterCount() {
       const obj = this.$refs.filter ? this.$refs.filter.getFinalData() : this.initialFilterData
       if (obj == null) return null
-      let count = Object.keys(obj).length
-      if (this.$isUserExternClient) {
-        if (obj.customergroup_id) count--
-      }
-      if (this.$isUserExternPartner) {
-        if (obj.partnergroup_id) count--
-      }
+      const count = Object.keys(obj).length
       if (count === 0) return null
       return count
     },
