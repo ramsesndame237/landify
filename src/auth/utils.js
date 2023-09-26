@@ -90,10 +90,26 @@ const useUserAccess = () => {
   }
 
   /**
+   * Test if User Belong to company
+   * @return boolean
+   */
+  const isUserBelongToCompany = () => {
+    const { company } = userData
+
+    return !!(company && Object.keys(company).length > 0)
+  }
+
+  /**
    * Test if Extern user is Partner or Client
    * @return boolean
    */
   const isUserExternPartner = () => isUserExtern() && isUserBelongToPartner()
+
+  /**
+   * Test if Extern user is Client
+   * @return boolean
+   */
+  const isUserExternClient = () => isUserExtern() && isUserBelongToCompany()
 
   /**
    * Test if user is Director
@@ -107,16 +123,17 @@ const useUserAccess = () => {
    */
   const isUserExternDirector = () => isUserExtern() && !isUserExternPartner() && isUserDirector()
 
-  // console.log(`
-  //   isAdmin: ${isUserAdmin()}\n
-  //   isUserInternal: ${isUserIntern()} \n
-  //   isUserExternal: ${isUserExtern()} \n
-  //   isUserAdminOrInternal: ${isUserAdminOrIntern()} \n
-  //   isUserExternPartner: ${isUserExternPartner()} \n
-  //   isUserBelongToPartner: ${isUserBelongToPartner()} \n
-  //   isUserExternDirector: ${isUserExternDirector()} \n
-  //   isUserInternAndNotAdmin: ${isUserInternAndNotAdmin()} \n
-  // `)
+  console.log(`
+    isAdmin: ${isUserAdmin()}\n
+    isUserInternal: ${isUserIntern()} \n
+    isUserExternal: ${isUserExtern()} \n
+    isUserAdminOrInternal: ${isUserAdminOrIntern()} \n
+    isUserExternPartner: ${isUserExternPartner()} \n
+    isUserBelongToPartner: ${isUserBelongToPartner()} \n
+    isUserExternDirector: ${isUserExternDirector()} \n
+    isUserInternAndNotAdmin: ${isUserInternAndNotAdmin()} \n
+    isUserExternClient: ${isUserExternClient()} \n
+  `)
 
   return {
     isUserIntern,
@@ -127,13 +144,14 @@ const useUserAccess = () => {
     isUserExternPartner,
     isUserExternDirector,
     isUserInternAndNotAdmin,
+    isUserExternClient,
     noData: false,
   }
 }
 
 const {
   userHasRole, isUserAdminOrIntern, isUserExtern, isUserAdmin, isUserIntern, noData, isUserExternPartner, isUserExternDirector,
-  isUserInternAndNotAdmin,
+  isUserInternAndNotAdmin, isUserExternClient,
 } = useUserAccess()
 if (!noData) {
   Vue.prototype.$userHasRole = userHasRole
@@ -144,4 +162,5 @@ if (!noData) {
   Vue.prototype.$isUserExternPartner = isUserExternPartner()
   Vue.prototype.$isUserExternDirector = isUserExternDirector()
   Vue.prototype.$isUserInternAndNotAdmin = isUserInternAndNotAdmin()
+  Vue.prototype.$isUserExternClient = isUserExternClient()
 }
