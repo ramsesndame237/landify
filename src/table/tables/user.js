@@ -206,7 +206,19 @@ export default {
       key: 'role_name', hideOnForm: true,
     },
     {
-      key: 'team_id', type: 'list', list: 'team', listLabel: 'team_name', multiple: true, hideOnIndex: true,
+      key: 'team_id',
+      type: 'list',
+      list: 'team',
+      listLabel: 'team_name',
+      multiple: true,
+      hideOnIndex: true,
+      filter: (team, vm) => {
+        const { entity } = vm
+        if (entity.usertype_id === USER_TYPE.EXTERN) {
+          return team.team_is_customer
+        }
+        return !team.team_is_customer
+      },
     },
     {
       key: 'hollyday_representative',

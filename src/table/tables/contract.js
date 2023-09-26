@@ -111,6 +111,14 @@ export default {
       },
     },
     {
+      key: 'pos_id',
+      type: 'list',
+      list: 'frontend_2_1_3_8',
+      listLabel: 'pos_name',
+      filter_key: 'company_id',
+      hideOnUpdate: true,
+    },
+    {
       key: 'contract_resiliation',
       hideOnForm: true,
       hideOnIndex: true,
@@ -749,6 +757,7 @@ export default {
       'company_id',
       'location_id',
       'currency_id',
+      'pos_id',
     ]
     if (create) {
       await vm.$http.post('/contracts/step/0', _.pick(entity, attributes))
