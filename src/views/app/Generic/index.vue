@@ -23,11 +23,10 @@
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
                  :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"
-                 :filter-items="definition.filter"
-      />
+                 :filter-items="definition.filter"/>
     </b-card>
-    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table"
-                   :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
+    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"
+                   with-continue :table-definition-key="table" :title="`headline~${table}~new`"
                    @reload-table="$refs.table.reload()"/>
   </div>
 </template>
@@ -57,9 +56,14 @@ export default {
   data() {
     const payload = this.$store.getters['table/tableData'](this.$route.params.table)
     console.log('initial payload', payload)
+
+    let defaultPage = 10
+    if (this.$isUserExternClient) {
+      defaultPage = 100000000
+    }
     return {
       search: payload?.search || '',
-      perPage: payload?.perPage || this.definition?.perPage || 10,
+      perPage: payload?.perPage || defaultPage,
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
       initialFilterData: payload?.filter,

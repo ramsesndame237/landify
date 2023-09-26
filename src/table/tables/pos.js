@@ -12,6 +12,7 @@ export default {
         const { customergroup_id } = user.customergroup
         return item.customergroup_id === customergroup_id
       }
+      return false
     }
     return true
   },
