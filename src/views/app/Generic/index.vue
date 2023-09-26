@@ -74,9 +74,6 @@ export default {
     }
   },
   computed: {
-    definition() {
-      return Tables[this.table]
-    },
     useModalToCreate() {
       return this.definition.createModal !== false
     },
