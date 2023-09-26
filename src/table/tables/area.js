@@ -14,6 +14,7 @@ export default {
     }
     return true
   },
+  perPage: 100000,
   fields: [
     { key: 'area_id', auto: true },
     { key: 'area_name' },

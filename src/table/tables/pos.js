@@ -15,6 +15,7 @@ export default {
     }
     return true
   },
+  perPage: 100000,
   fields: [
     { key: 'pos_id', auto: true },
     {
