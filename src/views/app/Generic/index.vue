@@ -11,7 +11,7 @@
                         :inline-filter="!definition.inline_filter"
                         :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
                         :actions="definition.actions" @action="(a)=>$refs.table.onAction(a)"
-                        @filter="$refs.filter.openModal()"/>
+                        @filter="$refs.filter.openModal()" :filter-badge="getFilterCount()"/>
       <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
                       @filter="filter"/>
     </b-card>
@@ -55,28 +55,29 @@ export default {
   },
   data() {
     const payload = this.$store.getters['table/tableData'](this.$route.params.table)
+    const table = this.$route.params.table
+    const definition = Tables[table]
     console.log('initial payload', payload)
 
-    let defaultPage = 10
+    let defaultPage = null
     if (this.$isUserExternClient) {
-      defaultPage = 100000000
+      console.log(Tables)
+      defaultPage = definition.perPage
     }
     return {
       search: payload?.search || '',
-      perPage: payload?.perPage || defaultPage,
+      perPage: payload?.perPage || defaultPage || 10,
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
       initialFilterData: payload?.filter,
       initialSortBy: payload?.sortBy,
       initialSortDesc: payload?.sortDesc ?? true,
-      table: this.$route.params.table,
+      table,
+      definition,
       ids: this.$route.params.ids,
     }
   },
   computed: {
-    definition() {
-      return Tables[this.table]
-    },
     useModalToCreate() {
       return this.definition.createModal !== false
     },
@@ -96,6 +97,19 @@ export default {
     })
   },
   methods: {
+    getFilterCount() {
+      const obj = this.$refs.filter ? this.$refs.filter.getFinalData() : this.initialFilterData
+      if (obj == null) return null
+      let count = Object.keys(obj).length
+      if (this.$isUserExternClient) {
+        if (obj.customergroup_id) count--
+      }
+      if (this.$isUserExternPartner) {
+        if (obj.partnergroup_id) count--
+      }
+      if (count === 0) return null
+      return count
+    },
     filter(data) {
       console.log('on filter', data)
       this.currentPage = 1
