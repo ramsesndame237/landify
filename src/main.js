@@ -127,7 +127,6 @@ if (process.env.VUE_APP_SENTRY_DNS) {
     // replaysOnErrorSampleRate: 1.0,
   })
 }
-
 async function init() {
   try {
     let data = localStorage.getItem('app-data')

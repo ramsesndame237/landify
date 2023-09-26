@@ -12,7 +12,7 @@ export default {
     { key: 'contract_id', auto: true },
     { key: 'contract_name' },
     {
-      key: 'contracttype_name',
+      key: 'contracttype_id',
       type: 'list',
       list: 'contracttype',
       listLabel: 'contracttype_name',
@@ -668,7 +668,6 @@ export default {
     try {
       const response = await vm.$http.get(`/contracts/${vm.entityId}`)
       const { data } = response
-
       if (data.company) {
         data.company_id = data.company.company_id
         data.company_name = data.company.company_name
@@ -729,7 +728,8 @@ export default {
       }
       if (data.action_ende_final === null) {
         data.action_ende_final = ''
-      } if (data.action_ende_soll === null) {
+      }
+      if (data.action_ende_soll === null) {
         data.action_ende_soll = ''
       }
       return data
