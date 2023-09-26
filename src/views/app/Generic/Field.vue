@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-form-group v-if="visible" :label=" (field.noLabel|| noLabel) ? '' : $t(field.label||'attribute.'+field.key)"
-                  :label-for="'field-'+field.listLabel" :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null">
+                  :label-for="'field-'+field.key" :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null">
       <b-form-input :size="field.size || null" v-if="field.auto" v-model="entity[field.key]" disabled
                     :placeholder="$t('attribute.general_automaticid')"/>
       <validation-provider v-else #default="{ errors, validate }" :rules="rules" :name="field.key"
