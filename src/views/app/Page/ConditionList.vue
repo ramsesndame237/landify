@@ -141,7 +141,7 @@ export default {
           ...(this.table === 'deadlines' ? [
             { key: 'next_possible_end_of_contract' },
             { key: 'last_possible_end_of_contract' }] : []),
-          ...(this.table === 'conditions' ? { key: 'total_rental_space' } : []),
+          ...(this.table === 'conditions' ? [{ key: 'total_rental_space' }] : []),
           'owner_name',
           'manager_name',
           { key: 'max_contract_end_date', hideOnIndex: true },
