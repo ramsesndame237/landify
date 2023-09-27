@@ -3,22 +3,20 @@
     <div class="d-sm-flex justify-content-between align-items-center ">
       <div class="font-weight-bolder">
         <h3 class="text-uppercase">
-          {{ title }}
-        </h3>
+          {{ title }} </h3>
       </div>
       <div class="w-50">
         <div class="d-flex align-items-center flex-wrap flex-sm-nowrap w-100 dashboard_style">
-          <date-picker v-model="date" v-bind="datePickerOptions" class="mb-1 w-100"
-                       @change="datePickerHandler"/>
+          <date-picker v-model="date" v-bind="datePickerOptions" class="mb-1 w-100" @change="datePickerHandler"/>
           <field class="ml-sm-1 w-100"
-                 :field="{ key: 'company_id', type: 'custom-select', noLabel: true, required: false, items: filteredCompanies, }"
+                 :field="{ key: 'company_id', type: 'custom-select', noLabel: true, required: false, items: filteredCompanies, clearable: false}"
                  :entity="entity"/>
           <field class=" mx-sm-1 w-100"
-                 :field="{ key: 'team_id', type: 'custom-select', noLabel: true, required: false, items: filteredTeams}"
+                 :field="{ key: 'team_id', type: 'custom-select', noLabel: true, required: false, items: filteredTeams, clearable: false}"
                  :entity="entity"/>
           <template v-if="entity && entity.team_id">
             <field class="w-100"
-                   :field="{ key: 'user_id', type: 'list', list: 'user_team_grp', listLabel: 'user_email',filter_key: 'team_id', noLabel: true, required: false }"
+                   :field="{ key: 'user_id', type: 'list', list: 'user_team_grp', listLabel: 'user_email',filter_key: 'team_id', noLabel: true, required: false, clearable: false }"
                    :entity="entity"/>
           </template>
         </div>
@@ -29,8 +27,9 @@
                     :percent="(before_deadline*100/total_open_tickets).toFixed(0)" :number="before_deadline"
                     variant="dark" cols="4" @click.native="show(dashboard_filter.BEFORE_DEADLINE)"/>
       <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~open_tickets_afteryellow')"
-                    color="#d1bf00" :percent="(critical_yellow*100/total_open_tickets).toFixed(0)" :number="critical_yellow"
-                    variant="warning" cols="4" @click.native="show( dashboard_filter.CRITICAL_YELLOW)"/>
+                    color="#d1bf00" :percent="(critical_yellow*100/total_open_tickets).toFixed(0)"
+                    :number="critical_yellow" variant="warning" cols="4"
+                    @click.native="show( dashboard_filter.CRITICAL_YELLOW)"/>
       <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~open_tickets_afterred')" color="#d70000"
                     :percent="(over_due_red*100/total_open_tickets).toFixed(0)" :number="over_due_red" variant="danger"
                     cols="4" @click.native="show(dashboard_filter.OVERDUE_RED)"/>

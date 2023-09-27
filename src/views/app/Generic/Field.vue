@@ -25,7 +25,7 @@
                     :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
                     :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
                     :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
-                    :clearable="field.clearable || true" @input="onChange"/>
+                    :clearable="field.clearable != null ? field.clearable : true" @input="onChange"/>
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm">New
           </b-button>
@@ -40,7 +40,7 @@
         </div>
         <div v-else-if="field.type==='yesno' || field.type==='custom-select'">
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
-                    :multiple="field.multiple" :placeholder="field.key" :clearable="field.clearable || true"
+                    :multiple="field.multiple" :placeholder="field.key" :clearable="field.clearable != null ? field.clearable : true"
                     :options="field.type==='yesno'?yesNoOptions: customSelectOptions" transition="" label="label"
                     class="w-100" :reduce="i => i.value"/>
         </div>
