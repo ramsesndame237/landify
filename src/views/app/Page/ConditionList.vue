@@ -126,7 +126,7 @@ export default {
         fields: [
           { key: 'contract_id', stickyColumn: true, variant: 'light' },
           { key: 'contract_name', stickyColumn: true, variant: 'light' },
-          { key: 'contract_resiliation' },
+          // { key: 'contract_resiliation' },
           ...(this.table === 'deadlines' ? ['notice_of_termination', 'action_date'] : []),
           { key: 'contract_status' },
           { key: 'contracttype_name' },
