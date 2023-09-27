@@ -45,7 +45,7 @@ export default {
         {
           title: 'tickets',
           team_is_customer: true,
-          ...((!this.$isUserExternDirector || this.$isUserInternAndNotAdmin) && {
+          ...((!this.$isUserExternClientDirector || this.$isUserInternAndNotAdmin) && {
             initData: {
               team_id: this.user?.team_id[0],
               user_id: this.user?.user_id,
