@@ -59,8 +59,9 @@ export default {
     return {
       entity: {
         tickets: this.team_is_customer ? 'customers' : 'seybolds',
-        team_id: null,
-        user_id: null,
+        team_id: -1,
+        user_id: -1,
+        company_id: -1,
       },
       total_open_tickets: 1,
       datePickerOptions: {

@@ -19,7 +19,7 @@ export default {
       const data = this.team_is_customer ? this.customerTeams : this.seyboldTeams
       const formatedData = data.map(team => ({ label: team.team_name, value: team.team_id, ...team }))
 
-      return [{ label: 'All', value: null }, ...formatedData]
+      return [{ label: 'All', value: -1 }, ...formatedData]
     },
   },
   async mounted() {
