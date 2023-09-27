@@ -158,22 +158,23 @@ export default {
             'staggered_minimum_rent',
             'turnover_rent',
             'securities_related_to_contract'] : []),
-          ...(this.table === 'deadlines' ? ['contract_ends_automatically',
+          ...(this.table === 'deadlines' ? [
+            // 'contract_ends_automatically',
             // 'next_special_termination_date_tenant',
             // 'automatic_renewal_by_month',
             'available_options',
             // 'special_termination_tenant',
             // 'special_termination_landlord',
             'status_negotiations',
-            'date_of_status_determination',
+            // 'date_of_status_determination',
             'comment_negotiation',
           ] : []),
           'comment',
-          {
-            key: 'missing_documents',
-            // type: 'html',
-            // export_key: 'missing_documents_export'
-          },
+          // {
+          //   key: 'missing_documents',
+          //   // type: 'html',
+          //   // export_key: 'missing_documents_export'
+          // },
           // 'state',
           'negotiator',
         ],
