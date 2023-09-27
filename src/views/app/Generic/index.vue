@@ -27,6 +27,11 @@
     <generic-modal :fetch-data="false" :cache-key="table+'-'" :table="table" ref="modal"
                    :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
                    @reload-table="$refs.table.reload()"/>
+    <SidebarModalComponent
+      :title="`headline~${table}~new`"
+      ref="sidebarComponent"
+      :options="definition.options || null"
+    />
   </div>
 </template>
 
@@ -40,11 +45,13 @@ import GenericModal from '@/views/app/Generic/modal.vue'
 import Tables from '../../../table'
 import GenericFilter from './Filter.vue'
 import InlineFilter from './InlineFilter.vue'
+import SidebarModalComponent from "@/components/SidebarModalComponent.vue";
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
 
 export default {
   components: {
+    SidebarModalComponent,
     GenericFilter,
     GenericModal,
     TablePagination,
@@ -86,7 +93,7 @@ export default {
         currentPage: this.currentPage,
         perPage: this.perPage,
         totalRows: this.totalRows,
-        filter: { ...this.$refs.filter.data },
+        filter: {...this.$refs.filter.data},
         sortBy: this.$refs.table.sortBy,
         sortDesc: this.$refs.table.sortDesc,
       },
@@ -113,10 +120,11 @@ export default {
     },
     onNewElement() {
       if (this.useModalToCreate) this.$refs.modal.openModal(true, {})
+      if (this.definition.createSideBar) return this.$refs.sidebarComponent.openSidebarComponent()
       else {
         this.$router.push({
           name: 'table-form',
-          params: { table: this.table },
+          params: {table: this.table},
         })
       }
     },

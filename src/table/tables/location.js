@@ -1,24 +1,39 @@
 export default {
   entity: 'frontend_3_3_1',
   primaryKey: 'location_id',
+  formComponent:() => import('@/components/SidebarModalComponent.vue'),
+  createModal:false,
+  createSideBar:true,
+  options:{
+    id: 'siderbar_location',
+    shadow: true,
+    rigth_position: true,
+    no_header: false,
+    custom_footer: false,
+    backdrop: true,
+    width:'auto',
+    createComponent:() =>import(''),
+    backdrop_variant: 'variant'
+  },
   fields: [
     { key: 'location_id', auto: true },
     { key: 'location_name' },
     {
       key: 'location_objectdescription', type: 'textarea', hideOnIndex: true, required: false,
     },
-    {
-      key: 'location_total_area', type: 'number', hideOnIndex: true, required: false,
-    },
-    {
-      key: 'location_start_date', type: 'date', hideOnIndex: true, required: false,
-    },
+    // {
+    //   key: 'location_total_area', type: 'number', hideOnIndex: true, required: false,
+    // },
+    // {
+    //   key: 'location_start_date', type: 'date', hideOnIndex: true, required: false,
+    // },
     { key: 'owner_name', hideOnForm: true },
     { key: 'manager_name', hideOnForm: true },
     { key: 'locationtype_name', hideOnForm: true },
     { key: 'city_name', hideOnForm: true },
     { key: 'country_name', hideOnForm: true },
     { key: 'area_count', hideOnForm: true },
+
     {
       key: 'locationtype_id',
       type: 'list',
