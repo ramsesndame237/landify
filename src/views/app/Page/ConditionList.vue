@@ -40,7 +40,9 @@
         </b-form-group>
       </div>
       <Datatable :key="table" ref="table" :selectable="false" :search="search" primary-key-column="contract_id"
-                 entity="contract" :with-delete="false" :with-edit="false" :fields="definition.fields" :items="items"/>
+                 entity="contract" :with-delete="false" :with-edit="false" with-nested :sub-fields="definition.subFields"
+                 :fields="definition.fields" :items="items" sub-fields-data-key="deadlines"
+      />
     </b-card>
 
     <b-row v-if="table==='conditions'">
@@ -122,22 +124,27 @@ export default {
         title: 'headline~contractlist~condition',
         entity: 'frontend_contractlist_criteria',
         fields: [
-          ...(this.table === 'deadlines' ? ['notice_of_termination', 'action_date'] : []),
           { key: 'contract_id', stickyColumn: true, variant: 'light' },
           { key: 'contract_name', stickyColumn: true, variant: 'light' },
+          { key: 'contract_resiliation' },
+          ...(this.table === 'deadlines' ? ['notice_of_termination', 'action_date'] : []),
           { key: 'contract_status' },
           { key: 'contracttype_name' },
-          { key: 'contract_begin_date' },
-          { key: 'contract_end_date' },
-          { key: 'max_contract_end_date' },
+          // { key: 'customer_name' },
           { key: 'company_name' },
           { key: 'location_name' },
           { key: 'pos_name' },
           { key: 'pos_branchnumber' },
           { key: 'country_name' },
-          { key: 'total_rental_space' },
+          { key: 'contract_begin_date' },
+          { key: 'contract_end_date' },
+          ...(this.table === 'deadlines' ? [
+            { key: 'next_possible_end_of_contract' },
+            { key: 'last_possible_end_of_contract' }] : []),
+          ...(this.table === 'conditions' ? { key: 'total_rental_space' } : []),
           'owner_name',
           'manager_name',
+          { key: 'max_contract_end_date', hideOnIndex: true },
           ...(this.table === 'conditions' ? [
             'retail_space',
             { key: 'currency_name' },
@@ -152,14 +159,11 @@ export default {
             'turnover_rent',
             'securities_related_to_contract'] : []),
           ...(this.table === 'deadlines' ? ['contract_ends_automatically',
-            'next_termination_date_tenant',
-            'next_termination_date_landlord',
-            'next_option_renewal',
-            'next_special_termination_date_tenant',
-            'automatic_renewal_by_month',
+            // 'next_special_termination_date_tenant',
+            // 'automatic_renewal_by_month',
             'available_options',
-            'special_termination_tenant',
-            'special_termination_landlord',
+            // 'special_termination_tenant',
+            // 'special_termination_landlord',
             'status_negotiations',
             'date_of_status_determination',
             'comment_negotiation',
@@ -173,6 +177,58 @@ export default {
           // 'state',
           'negotiator',
         ],
+        // subFields: [
+        //   {
+        //     key: 'contractdeadline_id',
+        //   }, {
+        //     key: 'contractaction_id',
+        //   },
+        //   { key: 'next_action' },
+        //   { key: 'action_begin' },
+        //   { key: 'action_type' },
+        //   { key: 'contractdeadline_acting_by', label: 'Acting By' },
+        //   {
+        //     key: 'contractdeadline_available_options',
+        //     label: 'Available options',
+        //     hideOnForm: true,
+        //     formatter: (value, key, item) => {
+        //       const { contractdeadline_options, contractdeadline_option_position, contractdeadline_status } = item
+        //       if (contractdeadline_status === 'resiliated') {
+        //         return 0
+        //       }
+        //       return contractdeadline_options - contractdeadline_option_position
+        //     },
+        //   },
+        //   { key: 'contractdeadline_options', label: 'Nbr of Options' },
+        //   {
+        //     key: 'contractdeadline_notice_period',
+        //     label: 'Notice period',
+        //     hideOnForm: true,
+        //     send: false,
+        //     formatter: (value, key, item) => {
+        //       const { contractdeadline_notice_period_value, contractdeadline_notice_period_unit } = item
+        //       return `${contractdeadline_notice_period_value}  ${contractdeadline_notice_period_unit}`
+        //     },
+        //   },
+        //   {
+        //     key: 'extension',
+        //     label: 'Extension(unit)',
+        //     formatter: (value, key, item) => {
+        //       const { contractdeadline_extension_value, contractdeadline_extension_unit } = item
+        //       return `${contractdeadline_extension_value}  ${contractdeadline_extension_unit}`
+        //     },
+        //   },
+        //   {
+        //     key: 'contractdeadline_status',
+        //     hideOnForm: true,
+        //     label: 'Status',
+        //     formatter: value => {
+        //       const status = { passed: 'Passed', active: 'Active', pulled: 'Pulled' }
+        //
+        //       return status[value]
+        //     },
+        //   },
+        // ],
         filter_vertical: true,
         filters: [
           {
@@ -316,12 +372,12 @@ export default {
             if (cc) {
               obj.contract_status = cc.choice_name
             } else {
-              // check the date
+            // check the date
               obj.contract_status = date.isAfter(obj.contract_end_date) ? 'Terminated' : 'Running'
             }
             if (this.table === 'deadlines') {
               obj.notice_of_termination = (cc && cc.choice_name === 'gekündigt') ? 'Yes' : 'No'
-              // obj.action_date = cc?.contract_criteria_value
+            // obj.action_date = cc?.contract_criteria_value
             }
 
             /*
@@ -411,6 +467,12 @@ export default {
                 'maturitytype_name',
                 'maturitytype_description']))
             }
+            // /**
+            //    * Section deadlines
+            //    */
+            // if (this.table === 'deadlines') {
+            //   obj.deadlines = r.deadlines
+            // }
 
             if (this.table !== 'conditions') return obj
 

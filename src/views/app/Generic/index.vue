@@ -22,11 +22,10 @@
                  :default-sort-column="initialSortBy||definition.defaultSortField" :default-sort-desc="initialSortDesc"
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
-                 :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"
-                 :filter-items="definition.filter"/>
+                 :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"/>
     </b-card>
-    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"
-                   with-continue :table-definition-key="table" :title="`headline~${table}~new`"
+    <generic-modal :fetch-data="false" :cache-key="table+'-'" :table="table" ref="modal"
+                   :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
                    @reload-table="$refs.table.reload()"/>
   </div>
 </template>
@@ -57,11 +56,8 @@ export default {
     const payload = this.$store.getters['table/tableData'](this.$route.params.table)
     const table = this.$route.params.table
     const definition = Tables[table]
-    console.log('initial payload', payload)
-
     let defaultPage = null
     if (this.$isUserExternClient) {
-      console.log(Tables)
       defaultPage = definition.perPage
     }
     return {
