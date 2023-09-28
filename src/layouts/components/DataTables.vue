@@ -38,7 +38,7 @@
     </template>
     <template v-if="withActions" #cell(Actions)="data">
       <div class="text-nowrap">
-        <b-button v-if="withView && canReadItem && canReadItem(currentItems[data.index])" class=" btn-icon" style="margin-bottom: 3px" variant="flat-success" pill
+        <b-button v-if="withView" class=" btn-icon" style="margin-bottom: 3px" variant="flat-success" pill
                   @click="onViewClick(data)">
           <feather-icon icon="EyeIcon"/>
           <!--        <span>{{ $t('button~view') }}</span>-->
@@ -246,7 +246,7 @@ export default {
         if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
         // create request query string
         const requestQuery = Object.keys(filterData)
-          .filter(key => filterData[key] != null)
+          .filter(key => ![null, -1].includes(filterData[key]))
           .map(key => `${key}=${filterData[key]}`).join('&')
         return this.$http.get(`${this.entityEndpoint}?${requestQuery}`)
           .then(({ data }) => {

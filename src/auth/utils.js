@@ -72,6 +72,11 @@ const useUserAccess = () => {
    * @return boolean
    */
   const isUserAdminOrIntern = () => isUserAdmin() || isUserIntern()
+  /**
+   * Test if Logged user is Admin and Intern
+   * @return boolean
+   */
+  const isUserInternAndAdmin = () => isUserAdmin() && isUserIntern()
 
   /**
    * Test if Logged user is Intern et non admin
@@ -118,22 +123,44 @@ const useUserAccess = () => {
   const isUserDirector = () => userData?.user_is_director === 1
 
   /**
+   * Test if Extern user is director
+   * @return boolean
+   */
+  const isUserExternDirector = () => isUserExtern() && isUserDirector()
+
+  /**
    * Test if Extern client user is director
    * @return boolean
    */
-  const isUserExternDirector = () => isUserExtern() && !isUserExternPartner() && isUserDirector()
+  const isUserExternClientDirector = () => isUserExternClient() && isUserDirector()
 
-  console.log(`
-    isAdmin: ${isUserAdmin()}\n
-    isUserInternal: ${isUserIntern()} \n
-    isUserExternal: ${isUserExtern()} \n
-    isUserAdminOrInternal: ${isUserAdminOrIntern()} \n
-    isUserExternPartner: ${isUserExternPartner()} \n
-    isUserBelongToPartner: ${isUserBelongToPartner()} \n
-    isUserExternDirector: ${isUserExternDirector()} \n
-    isUserInternAndNotAdmin: ${isUserInternAndNotAdmin()} \n
-    isUserExternClient: ${isUserExternClient()} \n
-  `)
+  /**
+   * Test if Extern client user is director
+   * @return boolean
+   */
+  const isUserExternClientNotDirector = () => isUserExternClient() && !isUserDirector()
+
+  /**
+   * Test if Extern Partner user is director
+   * @return boolean
+   */
+  const isUserExternPartnerDirector = () => isUserExternPartner() && isUserDirector()
+
+  // console.log(`
+  //   isAdmin: ${isUserAdmin()}\n
+  //   isUserInternal: ${isUserIntern()} \n
+  //   isUserExtern: ${isUserExtern()} \n
+  //   isUserAdminOrInternal: ${isUserAdminOrIntern()} \n
+  //   isUserExternPartner: ${isUserExternPartner()} \n
+  //   isUserBelongToPartner: ${isUserBelongToPartner()} \n
+  //   isUserExternDirector: ${isUserExternDirector()} \n
+  //   isUserInternAndNotAdmin: ${isUserInternAndNotAdmin()} \n
+  //   isUserExternClient: ${isUserExternClient()} \n
+  //   isUserExternClientDirector: ${isUserExternClientDirector()} \n
+  //   isUserExternPartnerDirector: ${isUserExternPartnerDirector()} \n
+  //   isUserAdminAndIntern: ${isUserInternAndAdmin()} \n
+  //   isUserExternClientNotDirector: ${isUserExternClientNotDirector()} \n
+  // `)
 
   return {
     isUserIntern,
@@ -145,13 +172,18 @@ const useUserAccess = () => {
     isUserExternDirector,
     isUserInternAndNotAdmin,
     isUserExternClient,
+    isUserExternClientDirector,
+    isUserExternPartnerDirector,
+    isUserInternAndAdmin,
+    isUserExternClientNotDirector,
     noData: false,
   }
 }
 
 const {
   userHasRole, isUserAdminOrIntern, isUserExtern, isUserAdmin, isUserIntern, noData, isUserExternPartner, isUserExternDirector,
-  isUserInternAndNotAdmin, isUserExternClient,
+  isUserInternAndNotAdmin, isUserExternClient, isUserExternClientDirector, isUserExternPartnerDirector, isUserInternAndAdmin,
+  isUserExternClientNotDirector,
 } = useUserAccess()
 if (!noData) {
   Vue.prototype.$userHasRole = userHasRole
@@ -163,4 +195,8 @@ if (!noData) {
   Vue.prototype.$isUserExternDirector = isUserExternDirector()
   Vue.prototype.$isUserInternAndNotAdmin = isUserInternAndNotAdmin()
   Vue.prototype.$isUserExternClient = isUserExternClient()
+  Vue.prototype.$isUserExternClientDirector = isUserExternClientDirector()
+  Vue.prototype.$isUserExternPartnerDirector = isUserExternPartnerDirector()
+  Vue.prototype.$isUserInternAndAdmin = isUserInternAndAdmin()
+  Vue.prototype.$isUserExternClientNotDirector = isUserExternClientNotDirector()
 }

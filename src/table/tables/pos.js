@@ -20,12 +20,22 @@ export default {
   fields: [
     { key: 'pos_id', auto: true },
     {
+      key: 'customergroup_id',
+      type: 'list',
+      list: 'customergroup',
+      listLabel: 'customergroup_name',
+      send: false,
+      hideOnIndex: true,
+      hideOnUpdate: true,
+    },
+    {
       key: 'company_id',
       type: 'list',
-      list: 'company',
+      list: 'frontend_2_2_3_1',
       listLabel: 'company_name',
       hideOnIndex: true,
       relationEntity: 'company_pos_rel',
+      filter_key: 'customergroup_id',
     },
     { key: 'pos_name' },
     { key: 'pos_branchnumber' },
@@ -33,7 +43,7 @@ export default {
     // { key: 'location_count', hideOnForm: true },
     { key: 'area_count', hideOnForm: true },
     {
-      key: 'pos_first_year', type: 'date', required: false, hideOnIndex: true,
+      key: 'pos_first_year', type: 'date', hideOnIndex: true,
     },
     {
       key: 'contactperson_id',

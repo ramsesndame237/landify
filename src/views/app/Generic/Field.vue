@@ -2,7 +2,7 @@
   <div>
     <b-form-group v-if="visible" :label=" (field.noLabel|| noLabel) ? '' : $t(field.label||'attribute.'+field.key)"
                   :label-for="'field-'+field.key" :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null">
-      <b-form-input :size="field.size || null" v-if="field.auto" v-model="entity[field.key]" disabled
+      <b-form-input v-if="field.auto" v-model="entity[field.key]" :size="field.size || null" disabled
                     :placeholder="$t('attribute.general_automaticid')"/>
       <validation-provider v-else #default="{ errors, validate }" :rules="rules" :name="field.key"
                            :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message&& tableDefinition.attribute_regexp_failure_message[field.key]}">
@@ -58,8 +58,8 @@
               <div>
                 <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50"/>
                 <span class="text-muted font-weight-bolder align-text-top">{{
-                    file.name
-                  }}</span>
+                  file.name
+                }}</span>
                 <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
               </div>
               <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index, validate)"/>
@@ -192,7 +192,7 @@ import 'tinymce/models/dom'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import CustomDatePicker from '@/views/app/Generic/CustomDatePicker.vue'
-import { getUserData } from "@/auth/utils";
+import { getUserData } from '@/auth/utils'
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -692,7 +692,7 @@ export default {
         }
         if (this.field.filter_key) {
           const value = this.entity[this.field.filter_key]
-          if (value) {
+          if (value && ![null, -1, undefined].includes(value)) {
             if (Array.isArray(value)) {
               if (value.length > 0) {
                 payload.data = value.map(v => ({ [this.field.filter_key]: v }))
