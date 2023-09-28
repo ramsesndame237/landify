@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <div v-if="$isUserAdmin" class="row">
+    <div v-if="isUserAdmin" class="row">
       <b-col v-for="(stat,index) in usersStatistics" :key="index" :sm="stat.cols.sm" :lg="stat.cols.lg">
         <b-overlay :show="loading">
           <b-card>
@@ -26,7 +26,7 @@
         </b-overlay>
       </b-col>
     </div>
-    <b-card v-if="$isUserAdmin" title="Search Filter">
+    <b-card v-if="isUserAdmin" title="Search Filter">
       <InlineFilter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
                     :with-actions="false" @filter="filter" />
     </b-card>
@@ -58,6 +58,7 @@
 import InlineFilter from '@/views/app/Generic/InlineFilter.vue'
 import TablePagination from '@/layouts/components/TablePagination.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
+import { mapGetters } from 'vuex'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
 
@@ -128,6 +129,7 @@ export default ({
         },
       ]
     },
+    ...mapGetters('user', ['isUserAdmin', 'isUserExtern']),
   },
   mounted() {
     this.getUsersStatistics()
@@ -182,7 +184,7 @@ export default ({
       }
     },
     canReadItem() {
-      return !this.$isUserExtern
+      return !this.isUserExtern
     },
   },
 })

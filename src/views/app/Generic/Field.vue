@@ -193,6 +193,7 @@ import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import CustomDatePicker from '@/views/app/Generic/CustomDatePicker.vue'
 import { getUserData } from '@/auth/utils'
+import { mapGetters } from 'vuex'
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -327,6 +328,7 @@ export default {
     selectedValues() {
       return this.field.type === 'list' ? this.list.filter(e => this.entity[this.field.key]?.indexOf(e[this.field.key]) >= 0) : []
     },
+    ...mapGetters('user', ['isUserExternClient', 'isUserExternPartner']),
 
   },
   watch: {
@@ -428,7 +430,7 @@ export default {
   methods: {
     initializeValue() {
       const user = getUserData()
-      if (this.$isUserExternClient) {
+      if (this.isUserExternClient) {
         if (this.field.key === 'customergroup_id') {
           console.log('reset ', this.entity)
           const customergroup_id = user.customergroup?.customergroup_id
@@ -440,8 +442,8 @@ export default {
           }
         }
       }
-      if (this.$isUserExternPartner) {
-        if (this.field.key === 'partnergroup_id') {
+      if (this.isUserExternPartner) {
+          if (this.field.key === 'partnergroup_id') {
           const partnergroup_id = user.partnergroup?.partnergroup_id
           if (!this.entity.partnergroup_id && partnergroup_id) {
             this.$set(this.entity, 'partnergroup_id', partnergroup_id)
