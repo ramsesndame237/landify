@@ -39,7 +39,7 @@ export default {
           title: 'SeyBold tickets',
           team_is_customer: false,
           initData: {
-            team_id: null,
+            team_id: -1,
           },
         },
         {

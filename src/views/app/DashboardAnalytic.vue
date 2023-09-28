@@ -16,7 +16,7 @@
                  :entity="entity" :disabled="entity.company_id === -1" />
           <field class="w-100"
                  :field="{ key: 'user_id', type: 'custom-select', items: usersData, noLabel: true, required: false, clearable: false }"
-                 :entity="entity" :disabled="entity.team_id === -1" />
+                 :entity="entity" :disabled="entity.team_id === -1 || entity.company_id === -1" />
         </div>
       </div>
     </div>
@@ -160,6 +160,8 @@ export default {
           }
           return { label: user.user_email, value: user.user_id, ...user }
         })
+        this.entity.user_id = data.some(user => user.user_id === user_id) ? user_id : -1
+
         this.usersData = [{ label: 'All', value: -1 }, ...transformedData]
       } catch (error) {
         console.log({ error })
