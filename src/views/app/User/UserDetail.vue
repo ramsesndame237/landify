@@ -134,10 +134,10 @@
                       </b-list-group>
                     </div>
                     <div class="d-flex justify-content-center mt-2 align-items-center">
-                      <b-button v-if="$can('update', table)" variant="info" class="mx-1" @click="editUser">
+                      <b-button v-if="canSeeEditButton" variant="info" class="mx-1" @click="editUser">
                         Edit
                       </b-button>
-                      <b-button v-if="$can('delete', table)" variant="primary" class="mx-1" @click="deleteEntity">
+                      <b-button v-if="canSeeDeleteButton" variant="primary" class="mx-1" @click="deleteEntity">
                         Delete
                       </b-button>
                     </div>
@@ -166,7 +166,7 @@
                 <TrackRecord :definition="definition" :endpoint="endpoint" />
               </b-card>
             </b-tab>
-            <b-tab >
+            <b-tab :disabled="!canSeeEditButton">
               <template #title>
                 <feather-icon icon="LockIcon" size="18" />
                 Security
@@ -196,7 +196,7 @@
                 </b-overlay>
               </b-card>
             </b-tab>
-            <b-tab >
+            <b-tab :disabled="!canSeeEditButton">
               <template #title>
                 <feather-icon icon="ShieldIcon" size="18" />
                 Permissions
@@ -232,6 +232,8 @@ import Field from '@/views/app/Generic/Field.vue'
 
 import MatrixTool from '@/views/app/Role/Relation/MatrixTool.vue'
 import TeamMixin from '@/views/app/Team/TeamMixin'
+import { getUserData } from '@/auth/utils'
+import intersection from 'lodash/intersection'
 
 export default {
   name: 'UserDetail',
@@ -340,6 +342,23 @@ export default {
     userPermissions() {
       return this.$store.getters['table/listCache'](`table-group-${this.entityId}`)
     },
+    canSeeEditButton() {
+      const loggedUserData = getUserData()
+      const check1 = this.$isUserAdmin || this.$isUserInternAndAdmin
+      let check2 = false
+
+      if (this.$isUserExternDirector) {
+        if (this.$isUserExternClientDirector) {
+          check2 = this.hadSameCompany(loggedUserData, this.user)
+        } else if (this.$isUserExternPartnerDirector) {
+          check2 = this.hadSamePartnerCompany(loggedUserData, this.user)
+        }
+      }
+      return check1 || check2
+    },
+    canSeeDeleteButton() {
+      return this.canSeeEditButton
+    },
   },
   async mounted() {
     await this.fetchUserData()
@@ -353,11 +372,24 @@ export default {
     await this.getUserSelectData()
   },
   methods: {
+    hadSameCompany(loggedUser, user) {
+      if (user?.company === null) return false
+      const { company_id: loggedUserCompany } = loggedUser.company
+      const company_id = user?.company ? user?.company.company_id : null
+      return loggedUserCompany === company_id
+    },
+    hadSamePartnerCompany(loggedUser, user) {
+      if (!user?.partnercompany_id || user.partnercompany_id.length <= 0) return false
+      const loggedUserPartnerCompany = loggedUser.partnercompany.map(partnercompany => partnercompany.partnercompany_id)
+      const userPartnerCompany = user.partnercompany_id
+      return intersection(loggedUserPartnerCompany, userPartnerCompany).length > 0
+    },
+
     editUser() {
       this.$refs.modal.openModal(false, this.entity)
     },
     async getPartnerCompany() {
-      // Je récupère les partnercompagny de l'utilisateur pour la requête, puisque il peut en avoir plusieurs
+    // Je récupère les partnercompany de l'utilisateur pour la requête, puisqu'il peut en avoir plusieurs
       const partnersCompany = this.user?.partnercompany_id.map(partnercompany => ({ partnercompany_id: partnercompany }))
       await this.$store.dispatch('table/fetchList', { entity: 'partnercompany', data: partnersCompany })
     },
