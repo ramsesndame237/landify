@@ -160,7 +160,9 @@ export default {
           }
           return { label: user.user_email, value: user.user_id, ...user }
         })
-        this.entity.user_id = data.some(user => user.user_id === user_id) ? user_id : -1
+        if (this.entity.team_id !== -1) {
+          this.entity.user_id = data.some(user => user.user_id === user_id) ? user_id : -1
+        }
 
         this.usersData = [{ label: 'All', value: -1 }, ...transformedData]
       } catch (error) {
