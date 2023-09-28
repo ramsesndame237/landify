@@ -15,7 +15,7 @@
                  :field="{ key: 'team_id', type: 'custom-select', noLabel: true, required: false, items: filteredTeams, clearable: false}"
                  :entity="entity" :disabled="entity.company_id === -1" />
           <field class="w-100"
-                 :field="{ key: 'user_id', type: 'custom-select', items: getUsers, noLabel: true, required: false, clearable: false }"
+                 :field="{ key: 'user_id', type: 'custom-select', items: usersData, noLabel: true, required: false, clearable: false }"
                  :entity="entity" :disabled="entity.team_id === -1" />
         </div>
       </div>
@@ -43,6 +43,7 @@ import SummaryCard from '@/views/app/Dashboard/Components/SummaryCard.vue'
 import TeamMixin from '@/views/app/Team/TeamMixin'
 import CompanyMixin from '@/views/app/Company/CompanyMixin'
 import { getUserData } from '@/auth/utils'
+import pickBy from 'lodash/pickBy'
 
 export default {
   name: 'DashboardAnalytic',
@@ -108,6 +109,7 @@ export default {
         OVERDUE_RED: 'over_due_red',
       },
       user: getUserData(),
+      usersData: [{ label: 'All', value: -1 }],
     }
   },
   computed: {
@@ -117,14 +119,17 @@ export default {
   },
   watch: {
     entity: {
-      handler(newEntity) {
-        if (newEntity.team_id === -1) {
-          console.log('ici team === -1', { newEntity })
-          delete newEntity.user_id
-        }
+      handler() {
         this.fetchDashboardStatistics()
       },
       deep: true,
+    },
+    'entity.team_id': function () {
+      // this.entity.user_id = -1
+      this.getUsers()
+    },
+    'entity.company_id': function () {
+      this.getUsers()
     },
   },
   mounted() {
@@ -140,16 +145,13 @@ export default {
     }, 500)
   },
   methods: {
-    async getUsers(vm) {
+    async getUsers() {
       try {
         const { user_id } = this.user
-        const filteredEntity = Object.fromEntries(Object.entries(this.entity).filter(([, val]) => ![-1, null, undefined].includes(val)))
+        const filteredEntity = pickBy(this.entity, val => ![-1, null, undefined].includes(val))
 
-        const payload = {
-          ...filteredEntity,
-        }
         const response = await this.$http.get('users', {
-          params: payload,
+          params: filteredEntity,
         })
         const data = response.data.data.data
         const transformedData = data.map(user => {
@@ -158,7 +160,7 @@ export default {
           }
           return { label: user.user_email, value: user.user_id, ...user }
         })
-        return [{ label: 'All', value: -1 }, ...transformedData]
+        this.usersData = [{ label: 'All', value: -1 }, ...transformedData]
       } catch (error) {
         console.log({ error })
       }
