@@ -135,6 +135,12 @@ const useUserAccess = () => {
   const isUserExternClientDirector = () => isUserExternClient() && isUserDirector()
 
   /**
+   * Test if Extern client user is director
+   * @return boolean
+   */
+  const isUserExternClientNotDirector = () => isUserExternClient() && !isUserDirector()
+
+  /**
    * Test if Extern Partner user is director
    * @return boolean
    */
@@ -153,6 +159,7 @@ const useUserAccess = () => {
   //   isUserExternClientDirector: ${isUserExternClientDirector()} \n
   //   isUserExternPartnerDirector: ${isUserExternPartnerDirector()} \n
   //   isUserAdminAndIntern: ${isUserInternAndAdmin()} \n
+  //   isUserExternClientNotDirector: ${isUserExternClientNotDirector()} \n
   // `)
 
   return {
@@ -168,6 +175,7 @@ const useUserAccess = () => {
     isUserExternClientDirector,
     isUserExternPartnerDirector,
     isUserInternAndAdmin,
+    isUserExternClientNotDirector,
     noData: false,
   }
 }
@@ -175,6 +183,7 @@ const useUserAccess = () => {
 const {
   userHasRole, isUserAdminOrIntern, isUserExtern, isUserAdmin, isUserIntern, noData, isUserExternPartner, isUserExternDirector,
   isUserInternAndNotAdmin, isUserExternClient, isUserExternClientDirector, isUserExternPartnerDirector, isUserInternAndAdmin,
+  isUserExternClientNotDirector,
 } = useUserAccess()
 if (!noData) {
   Vue.prototype.$userHasRole = userHasRole
@@ -189,4 +198,5 @@ if (!noData) {
   Vue.prototype.$isUserExternClientDirector = isUserExternClientDirector()
   Vue.prototype.$isUserExternPartnerDirector = isUserExternPartnerDirector()
   Vue.prototype.$isUserInternAndAdmin = isUserInternAndAdmin()
+  Vue.prototype.$isUserExternClientNotDirector = isUserExternClientNotDirector()
 }

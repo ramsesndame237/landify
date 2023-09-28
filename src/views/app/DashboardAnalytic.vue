@@ -13,12 +13,10 @@
                  :entity="entity"/>
           <field class=" mx-sm-1 w-100"
                  :field="{ key: 'team_id', type: 'custom-select', noLabel: true, required: false, items: filteredTeams, clearable: false}"
-                 :entity="entity"/>
-          <template v-if="entity && entity.team_id">
-            <field class="w-100"
-                   :field="{ key: 'user_id', type: 'list', list: 'user_team_grp', listLabel: 'user_email',filter_key: 'team_id', noLabel: true, required: false, clearable: false }"
-                   :entity="entity"/>
-          </template>
+                 :entity="entity" :disabled="entity.company_id === -1" />
+          <field class="w-100"
+                 :field="{ key: 'user_id', type: 'custom-select', items: usersData, noLabel: true, required: false, clearable: false }"
+                 :entity="entity" :disabled="entity.team_id === -1" />
         </div>
       </div>
     </div>
@@ -44,6 +42,8 @@ import moment from 'moment'
 import SummaryCard from '@/views/app/Dashboard/Components/SummaryCard.vue'
 import TeamMixin from '@/views/app/Team/TeamMixin'
 import CompanyMixin from '@/views/app/Company/CompanyMixin'
+import { getUserData } from '@/auth/utils'
+import pickBy from 'lodash/pickBy'
 
 export default {
   name: 'DashboardAnalytic',
@@ -52,7 +52,7 @@ export default {
   props: {
     title: String,
     team_is_customer: { type: Boolean, default: false },
-    initData: { type: Object, required: false },
+    initData: { type: Object, default: () => ({}) },
   },
   data() {
     return {
@@ -108,6 +108,8 @@ export default {
         CRITICAL_YELLOW: 'critical_yellow',
         OVERDUE_RED: 'over_due_red',
       },
+      user: getUserData(),
+      usersData: [{ label: 'All', value: -1 }],
     }
   },
   computed: {
@@ -117,13 +119,17 @@ export default {
   },
   watch: {
     entity: {
-      handler(newEntity) {
-        if (newEntity.team_id === null) {
-          delete newEntity.user_id
-        }
+      handler() {
         this.fetchDashboardStatistics()
       },
       deep: true,
+    },
+    'entity.team_id': function () {
+      // this.entity.user_id = -1
+      this.getUsers()
+    },
+    'entity.company_id': function () {
+      this.getUsers()
     },
   },
   mounted() {
@@ -139,12 +145,33 @@ export default {
     }, 500)
   },
   methods: {
+    async getUsers() {
+      try {
+        const { user_id } = this.user
+        const filteredEntity = pickBy(this.entity, val => ![-1, null, undefined].includes(val))
+
+        const response = await this.$http.get('users', {
+          params: filteredEntity,
+        })
+        const data = response.data.data.data
+        const transformedData = data.map(user => {
+          if (user.user_id === user_id) {
+            return { label: 'My Tickets', value: user.user_id, ...user }
+          }
+          return { label: user.user_email, value: user.user_id, ...user }
+        })
+        this.usersData = [{ label: 'All', value: -1 }, ...transformedData]
+      } catch (error) {
+        console.log({ error })
+      }
+    },
     async fetchDashboardStatistics() {
       this.loading = true
+      const filteredEntity = Object.fromEntries(Object.entries(this.entity).filter(([, val]) => ![-1, null, undefined].includes(val)))
       const payload = {
         start_date: this.date[0],
         end_date: this.date[1],
-        ...this.entity,
+        ...filteredEntity,
       }
       try {
         const response = await this.$http.get('/statistics/dashboard/ticket', {
