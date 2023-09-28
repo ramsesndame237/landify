@@ -11,7 +11,7 @@ export default {
    */
   filter: (item, vm) => {
     const user = getUserData()
-    if (vm.$isUserExternClient) {
+    if (vm.$store.getters['user/isUserExternClient']) {
       if (user.customergroup) {
         const { customergroup_id } = user.customergroup
         return item.customergroup_id === customergroup_id

@@ -63,6 +63,7 @@
 <script>
 import { BButton, BFormCheckbox, BTable } from 'bootstrap-vue'
 import { formatDate, getDocumentLink } from '@/libs/utils'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -151,6 +152,7 @@ export default {
     canUpdate() {
       return this.$can('update', this.entityForm || this.entity)
     },
+    ...mapGetters('user', ['isUserExternClient']),
   },
   watch: {
     currentItems: {
@@ -300,7 +302,7 @@ export default {
         const datas = data.data
         if (this.filterItems && typeof this.filterItems === 'function') {
           this.currentItems = datas.filter(item => this.filterItems(item, this))
-          if (this.$isUserExternClient) {
+          if (this.isUserExternClient) {
             this.$emit('update:totalRows', this.currentItems.length)
           }
         } else {
@@ -318,7 +320,7 @@ export default {
 
       if (this.filterItems && typeof this.filterItems === 'function') {
         this.currentItems = datas.filter(item => this.filterItems(item, this))
-        if (this.$isUserExternClient) {
+        if (this.isUserExternClient) {
           this.$emit('update:totalRows', this.currentItems.length)
         }
       } else {

@@ -79,8 +79,9 @@ export default {
         date: moment().toISOString(),
       }
     },
-    async fetchUserData() {
+    async fetchUserData({ dispatch }) {
       const user = (await axiosIns.get('/user/')).data
+      dispatch('user/refreshUserData', user, { root: true })
       localStorage.setItem('userData', JSON.stringify(user))
     },
   },
