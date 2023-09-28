@@ -140,6 +140,29 @@ export default {
     }, 500)
   },
   methods: {
+    async getUsers(vm) {
+      try {
+        const { user_id } = this.user
+        const filteredEntity = Object.fromEntries(Object.entries(this.entity).filter(([, val]) => ![-1, null, undefined].includes(val)))
+
+        const payload = {
+          ...filteredEntity,
+        }
+        const response = await this.$http.get('users', {
+          params: payload,
+        })
+        const data = response.data.data.data
+        const transformedData = data.map(user => {
+          if (user.user_id === user_id) {
+            return { label: 'My Tickets', value: user.user_id, ...user }
+          }
+          return { label: user.user_email, value: user.user_id, ...user }
+        })
+        return [{ label: 'All', value: -1 }, ...transformedData]
+      } catch (error) {
+        console.log({ error })
+      }
+    },
     async fetchDashboardStatistics() {
       this.loading = true
       const filteredEntity = Object.fromEntries(Object.entries(this.entity).filter(([, val]) => ![-1, null, undefined].includes(val)))
