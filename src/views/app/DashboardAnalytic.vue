@@ -13,12 +13,10 @@
                  :entity="entity"/>
           <field class=" mx-sm-1 w-100"
                  :field="{ key: 'team_id', type: 'custom-select', noLabel: true, required: false, items: filteredTeams, clearable: false}"
-                 :entity="entity"/>
-          <template v-if="entity && entity.team_id">
-            <field class="w-100"
-                   :field="{ key: 'user_id', type: 'list', list: 'user_team_grp', listLabel: 'user_email',filter_key: 'team_id', noLabel: true, required: false, clearable: false }"
-                   :entity="entity"/>
-          </template>
+                 :entity="entity" :disabled="entity.company_id === -1" />
+          <field class="w-100"
+                 :field="{ key: 'user_id', type: 'custom-select', items: getUsers, noLabel: true, required: false, clearable: false }"
+                 :entity="entity" :disabled="entity.team_id === -1" />
         </div>
       </div>
     </div>
@@ -44,6 +42,7 @@ import moment from 'moment'
 import SummaryCard from '@/views/app/Dashboard/Components/SummaryCard.vue'
 import TeamMixin from '@/views/app/Team/TeamMixin'
 import CompanyMixin from '@/views/app/Company/CompanyMixin'
+import { getUserData } from '@/auth/utils'
 
 export default {
   name: 'DashboardAnalytic',
@@ -52,7 +51,7 @@ export default {
   props: {
     title: String,
     team_is_customer: { type: Boolean, default: false },
-    initData: { type: Object, required: false },
+    initData: { type: Object, default: () => ({}) },
   },
   data() {
     return {
@@ -108,6 +107,7 @@ export default {
         CRITICAL_YELLOW: 'critical_yellow',
         OVERDUE_RED: 'over_due_red',
       },
+      user: getUserData(),
     }
   },
   computed: {
@@ -118,7 +118,8 @@ export default {
   watch: {
     entity: {
       handler(newEntity) {
-        if (newEntity.team_id === null) {
+        if (newEntity.team_id === -1) {
+          console.log('ici team === -1', { newEntity })
           delete newEntity.user_id
         }
         this.fetchDashboardStatistics()
@@ -141,10 +142,11 @@ export default {
   methods: {
     async fetchDashboardStatistics() {
       this.loading = true
+      const filteredEntity = Object.fromEntries(Object.entries(this.entity).filter(([, val]) => ![-1, null, undefined].includes(val)))
       const payload = {
         start_date: this.date[0],
         end_date: this.date[1],
-        ...this.entity,
+        ...filteredEntity,
       }
       try {
         const response = await this.$http.get('/statistics/dashboard/ticket', {

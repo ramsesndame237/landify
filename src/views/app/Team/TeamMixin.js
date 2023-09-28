@@ -37,7 +37,7 @@ export default {
       }
     },
     isTeamExistInList(teamId) {
-      return ![null, undefined].includes(teamId) ? this.filteredTeams?.some(team => team.team_id === teamId) : false
+      return ![null, undefined, -1].includes(teamId) ? this.filteredTeams?.some(team => team.team_id === teamId) : false
     },
   },
 }
