@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template v-if="!$isUserExternPartner">
+    <template v-if="!isUserExternPartner">
       <div v-for="(card, index) in dashboardCardOrdered" :key="index" :class="{'mt-2': index !== 0}">
         <DashboardAnalytic :title="card.title" :init-data="card.initData" :team_is_customer="card.team_is_customer" />
       </div>
@@ -18,6 +18,7 @@
 <script>
 import DashboardAnalytic from '@/views/app/DashboardAnalytic.vue'
 import { getUserData } from '@/auth/utils'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Dashboard',
@@ -31,7 +32,7 @@ export default {
   },
   computed: {
     dashboardCardOrdered() {
-      return !this.$isUserExternPartner && !this.$isUserAdminOrIntern ? this.dashboardCard.reverse() : this.dashboardCard
+      return !this.isUserExternPartner && !this.isUserAdminOrIntern ? this.dashboardCard.reverse() : this.dashboardCard
     },
     dashboardCard() {
       return [
@@ -40,21 +41,24 @@ export default {
           team_is_customer: false,
           initData: {
             team_id: -1,
+            company_id: -1,
           },
         },
         {
           title: 'tickets',
           team_is_customer: true,
-          ...((this.$isUserExternClientNotDirector || this.$isUserInternAndNotAdmin) && {
+          ...((this.isUserExternClientNotDirector || this.isUserInternAndNotAdmin) && {
             initData: {
-              team_id: this.user?.team_id[0],
+              team_id: -1,
               user_id: this.user?.user_id,
-              company_id: this.user?.company.company_id,
+              company_id: this.user?.company?.company_id,
             },
           }),
         },
       ]
     },
+    ...mapGetters('user',
+      ['isUserExternPartner', 'isUserExternClientNotDirector', 'isUserExternClient', 'isUserExternPartner', 'isUserAdminOrIntern', 'isUserInternAndNotAdmin']),
   },
 }
 </script>

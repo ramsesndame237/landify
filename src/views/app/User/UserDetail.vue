@@ -234,6 +234,7 @@ import MatrixTool from '@/views/app/Role/Relation/MatrixTool.vue'
 import TeamMixin from '@/views/app/Team/TeamMixin'
 import { getUserData } from '@/auth/utils'
 import intersection from 'lodash/intersection'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'UserDetail',
@@ -344,13 +345,13 @@ export default {
     },
     canSeeEditButton() {
       const loggedUserData = getUserData()
-      const check1 = this.$isUserAdmin || this.$isUserInternAndAdmin
+      const check1 = this.isUserAdmin || this.isUserInternAndAdmin
       let check2 = false
 
-      if (this.$isUserExternDirector) {
-        if (this.$isUserExternClientDirector) {
+      if (this.isUserExternDirector) {
+        if (this.isUserExternClientDirector) {
           check2 = this.hadSameCompany(loggedUserData, this.user)
-        } else if (this.$isUserExternPartnerDirector) {
+        } else if (this.isUserExternPartnerDirector) {
           check2 = this.hadSamePartnerCompany(loggedUserData, this.user)
         }
       }
@@ -359,6 +360,7 @@ export default {
     canSeeDeleteButton() {
       return this.canSeeEditButton
     },
+    ...mapGetters('user', ['isUserAdmin', 'isUserInternAndAdmin', 'isUserExternDirector', 'isUserExternClientDirector', 'isUserExternPartnerDirector']),
   },
   async mounted() {
     await this.fetchUserData()
