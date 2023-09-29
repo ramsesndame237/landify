@@ -7,16 +7,16 @@
       </div>
       <div class="w-50">
         <div class="d-flex align-items-center flex-wrap flex-sm-nowrap w-100 dashboard_style">
-          <date-picker v-model="date" v-bind="datePickerOptions" class="mb-1 w-100" @change="datePickerHandler"/>
+          <date-picker v-model="date" v-bind="datePickerOptions" style="margin-bottom: -0.5rem;" class=" w-100" @change="datePickerHandler"/>
           <field class="ml-sm-1 w-100"
-                 :field="{ key: 'company_id', type: 'custom-select', noLabel: true, required: false, items: filteredCompanies, clearable: false}"
-                 :entity="entity"/>
+                 :field="{ key: 'company_id', type: 'custom-select', required: false, items: filteredCompanies, clearable: false}"
+                 :entity="entity" :disabled="(isUserExternClientNotDirector || isUserInternAndNotAdmin) && team_is_customer" />
           <field class=" mx-sm-1 w-100"
-                 :field="{ key: 'team_id', type: 'custom-select', noLabel: true, required: false, items: filteredTeams, clearable: false}"
+                 :field="{ key: 'team_id', type: 'custom-select', required: false, items: filteredTeams, clearable: false}"
                  :entity="entity" :disabled="entity.company_id === -1" />
           <field class="w-100"
-                 :field="{ key: 'user_id', type: 'custom-select', items: usersData, noLabel: true, required: false, clearable: false }"
-                 :entity="entity" :disabled="entity.team_id === -1 || entity.company_id === -1" />
+                 :field="{ key: 'user_id', type: 'custom-select', items: usersData, required: false, clearable: false }"
+                 :entity="entity" :disabled="entity.company_id === -1" />
         </div>
       </div>
     </div>
@@ -43,7 +43,8 @@ import SummaryCard from '@/views/app/Dashboard/Components/SummaryCard.vue'
 import TeamMixin from '@/views/app/Team/TeamMixin'
 import CompanyMixin from '@/views/app/Company/CompanyMixin'
 import { getUserData } from '@/auth/utils'
-import pickBy from 'lodash/pickBy'
+import { pickBy, filter } from 'lodash'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'DashboardAnalytic',
@@ -116,6 +117,7 @@ export default {
     initDate() {
       return [moment().startOf('week').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
     },
+    ...mapGetters('user', ['isUserExternClientNotDirector', 'isUserInternAndNotAdmin']),
   },
   watch: {
     entity: {
@@ -125,21 +127,30 @@ export default {
       deep: true,
     },
     'entity.team_id': function () {
-      // this.entity.user_id = -1
       this.getUsers()
     },
-    'entity.company_id': function () {
-      this.getUsers()
+    'entity.company_id': function (newValue) {
+      if (newValue === -1) {
+        this.entity.team_id = -1
+        if (!this.isUserExternClientNotDirector) {
+          this.entity.user_id = -1
+        }
+      } else {
+        this.getUsers()
+      }
     },
   },
   mounted() {
     this.resetDatePicker()
     setTimeout(() => {
-      if (this.isTeamExistInList(this.initData?.team_id)) {
-        this.entity.team_id = this.initData?.team_id
+      if (this.initData && this.entity?.company_id) {
+        this.entity.company_id = this.initData?.company_id
+        if (this.isTeamExistInList(this.initData?.team_id)) {
+          this.entity.team_id = this.initData?.team_id
 
-        if (this.initData?.user_id) {
-          this.entity.user_id = this.initData?.user_id
+          if (this.initData?.user_id) {
+            this.entity.user_id = this.initData?.user_id
+          }
         }
       }
     }, 500)
@@ -154,13 +165,15 @@ export default {
           params: filteredEntity,
         })
         const data = response.data.data.data
-        const transformedData = data.map(user => {
+        let transformedData = data.map(user => {
           if (user.user_id === user_id) {
             return { label: 'My Tickets', value: user.user_id, ...user }
           }
           return { label: user.user_email, value: user.user_id, ...user }
         })
-        if (this.entity.team_id !== -1) {
+
+        if (this.isUserExternClientNotDirector) {
+          transformedData = filter(data, { user_id }).map(user => ({ label: 'My Tickets', value: user.user_id, ...user }))
           this.entity.user_id = data.some(user => user.user_id === user_id) ? user_id : -1
         }
 

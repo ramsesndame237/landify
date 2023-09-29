@@ -41,6 +41,7 @@ export default {
           team_is_customer: false,
           initData: {
             team_id: -1,
+            company_id: -1,
           },
         },
         {
@@ -48,9 +49,9 @@ export default {
           team_is_customer: true,
           ...((this.isUserExternClientNotDirector || this.isUserInternAndNotAdmin) && {
             initData: {
-              team_id: this.user?.team_id[0],
+              team_id: -1,
               user_id: this.user?.user_id,
-              company_id: this.user?.company.company_id,
+              company_id: this.user?.company?.company_id,
             },
           }),
         },
