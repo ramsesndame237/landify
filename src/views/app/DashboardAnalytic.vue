@@ -115,7 +115,7 @@ export default {
   },
   computed: {
     initDate() {
-      return [moment().startOf('week').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+      return [moment().subtract(30, 'days').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
     },
     ...mapGetters('user', ['isUserExternClientNotDirector', 'isUserInternAndNotAdmin']),
   },
