@@ -172,7 +172,7 @@ export default {
           return { label: user.user_email, value: user.user_id, ...user }
         })
 
-        if (this.isUserExternClientNotDirector && this.team_is_customer) {
+        if (this.isUserExternClientNotDirector) {
           transformedData = filter(data, { user_id }).map(user => ({ label: 'My Tickets', value: user.user_id, ...user }))
           this.entity.user_id = data.some(user => user.user_id === user_id) ? user_id : -1
         }
