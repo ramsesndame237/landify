@@ -126,24 +126,31 @@ export default {
         fields: [
           { key: 'contract_id', stickyColumn: true, variant: 'light' },
           { key: 'contract_name', stickyColumn: true, variant: 'light' },
-          // { key: 'contract_resiliation' },
-          ...(this.table === 'deadlines' ? ['notice_of_termination', 'action_date'] : []),
-          { key: 'contract_status' },
           { key: 'contracttype_name' },
-          // { key: 'customer_name' },
-          { key: 'company_name' },
-          { key: 'location_name' },
           { key: 'pos_name' },
-          { key: 'pos_branchnumber' },
-          { key: 'country_name' },
+          { key: 'country_short' },
+          { key: 'contract_status' },
+          { key: 'term_type' },
           { key: 'contract_begin_date' },
           { key: 'contract_end_date' },
           ...(this.table === 'deadlines' ? [
-            { key: 'next_possible_end_of_contract' },
-            { key: 'last_possible_end_of_contract' }] : []),
+            { key: 'next_possible_end_of_contract', type: 'date' },
+            { key: 'last_possible_end_of_contract', type: 'date' },
+            // { key: 'available_options' },
+            // { key: 'total_options' },
+            { key: 'next_action' },
+            { key: 'action_begin' },
+            { key: 'action_ende_soll' },
+            { key: 'action_ende_final' },
+            { key: 'planned_termination' },
+            { key: 'planned_special_termination' },
+          ] : []),
+          // { key: 'company_name' },
+          // { key: 'location_name' },
+          // { key: 'pos_branchnumber' },
           ...(this.table === 'conditions' ? [{ key: 'total_rental_space' }] : []),
-          'owner_name',
-          'manager_name',
+          // 'owner_name',
+          // 'manager_name',
           { key: 'max_contract_end_date', hideOnIndex: true },
           ...(this.table === 'conditions' ? [
             'retail_space',
@@ -157,79 +164,9 @@ export default {
             'index_adjustment_rate_in_percent',
             'staggered_minimum_rent',
             'turnover_rent',
-            'securities_related_to_contract'] : []),
-          ...(this.table === 'deadlines' ? [
-            // 'contract_ends_automatically',
-            // 'next_special_termination_date_tenant',
-            // 'automatic_renewal_by_month',
-            'available_options',
-            // 'special_termination_tenant',
-            // 'special_termination_landlord',
-            'status_negotiations',
-            // 'date_of_status_determination',
-            'comment_negotiation',
-          ] : []),
-          'comment',
-          // {
-          //   key: 'missing_documents',
-          //   // type: 'html',
-          //   // export_key: 'missing_documents_export'
-          // },
-          // 'state',
-          'negotiator',
+            'securities_related_to_contract', 'negotiator'] : []),
+
         ],
-        // subFields: [
-        //   {
-        //     key: 'contractdeadline_id',
-        //   }, {
-        //     key: 'contractaction_id',
-        //   },
-        //   { key: 'next_action' },
-        //   { key: 'action_begin' },
-        //   { key: 'action_type' },
-        //   { key: 'contractdeadline_acting_by', label: 'Acting By' },
-        //   {
-        //     key: 'contractdeadline_available_options',
-        //     label: 'Available options',
-        //     hideOnForm: true,
-        //     formatter: (value, key, item) => {
-        //       const { contractdeadline_options, contractdeadline_option_position, contractdeadline_status } = item
-        //       if (contractdeadline_status === 'resiliated') {
-        //         return 0
-        //       }
-        //       return contractdeadline_options - contractdeadline_option_position
-        //     },
-        //   },
-        //   { key: 'contractdeadline_options', label: 'Nbr of Options' },
-        //   {
-        //     key: 'contractdeadline_notice_period',
-        //     label: 'Notice period',
-        //     hideOnForm: true,
-        //     send: false,
-        //     formatter: (value, key, item) => {
-        //       const { contractdeadline_notice_period_value, contractdeadline_notice_period_unit } = item
-        //       return `${contractdeadline_notice_period_value}  ${contractdeadline_notice_period_unit}`
-        //     },
-        //   },
-        //   {
-        //     key: 'extension',
-        //     label: 'Extension(unit)',
-        //     formatter: (value, key, item) => {
-        //       const { contractdeadline_extension_value, contractdeadline_extension_unit } = item
-        //       return `${contractdeadline_extension_value}  ${contractdeadline_extension_unit}`
-        //     },
-        //   },
-        //   {
-        //     key: 'contractdeadline_status',
-        //     hideOnForm: true,
-        //     label: 'Status',
-        //     formatter: value => {
-        //       const status = { passed: 'Passed', active: 'Active', pulled: 'Pulled' }
-        //
-        //       return status[value]
-        //     },
-        //   },
-        // ],
         filter_vertical: true,
         filters: [
           {
@@ -320,7 +257,10 @@ export default {
             const obj = _.pick(r.contract, ['contract_id', 'contract_name', 'contract_begin_date',
               'contract_end_date', 'contract_first_possible_end_date', 'contract_creation_time', 'pos_branchnumber',
               'contract_last_change_time', 'contract_migration_checked', 'contracttype_name', 'currency_name', 'currency_id', 'currency_short', 'currency_iso', 'currency_iso4217',
-              'contracttype_description', 'company_name', 'location_name', 'pos_name', 'contactperson_firstname', 'contactperson_lastname', 'country_name', 'owner_name', 'manager_name'])
+              'contracttype_description', 'company_name', 'location_name', 'pos_name', 'contactperson_firstname', 'contactperson_lastname', 'country_name', 'owner_name', 'manager_name',
+              'action_ende_final', 'action_ende_soll', 'last_possible_end_of_contract', 'action_begin', 'next_possible_end_of_contract', 'country_short', 'term_type', 'next_action', 'planned_termination',
+              'planned_special_termination',
+            ])
 
             if (!r.areas || !r.areas.length) obj.areas = []
             else {
