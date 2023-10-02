@@ -82,6 +82,7 @@ import BCardActions from '@core/components/b-card-actions/BCardActions'
 import Field from '@/views/app/Generic/Field'
 import _ from 'lodash'
 import moment from 'moment'
+import { formatDate } from '@/libs/utils'
 import rates from './rates.json'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
@@ -129,21 +130,46 @@ export default {
           { key: 'contracttype_name' },
           { key: 'pos_name' },
           { key: 'country_short' },
-          { key: 'contract_status' },
-          { key: 'term_type' },
-          { key: 'contract_begin_date' },
-          { key: 'contract_end_date' },
+          {
+            key: 'contract_of_status',
+            formatter: value => this.$t(value),
+          },
+          { key: 'term_type', formatter: value => this.$t(value) },
+          { key: 'contract_begin_date', type: 'date' },
+          { key: 'contract_end_date', type: 'date' },
           ...(this.table === 'deadlines' ? [
             { key: 'next_possible_end_of_contract', type: 'date' },
             { key: 'last_possible_end_of_contract', type: 'date' },
             // { key: 'available_options' },
             // { key: 'total_options' },
             { key: 'next_action' },
-            { key: 'action_begin' },
-            { key: 'action_ende_soll' },
-            { key: 'action_ende_final' },
-            { key: 'planned_termination' },
-            { key: 'planned_special_termination' },
+            { key: 'action_begin', type: 'date' },
+            { key: 'action_ende_soll', type: 'date' },
+            { key: 'action_ende_final', type: 'date' },
+            {
+              key: 'planned_termination',
+              formatter: (value, key, item) => {
+                const { resiliation_acting_by, resiliation_date } = item
+
+                if (resiliation_date === null) {
+                  return this.$t(value)
+                }
+
+                return `${formatDate(resiliation_date)} ${this.$t('text~by')} ${resiliation_acting_by}`
+              },
+            },
+            {
+              key: 'planned_special_termination',
+              formatter: (value, key, item) => {
+                const { resiliation_acting_by, resiliation_date } = item
+
+                if (resiliation_date === null) {
+                  return this.$t(value)
+                }
+
+                return `${formatDate(resiliation_date)} ${this.$t('text~by')} ${resiliation_acting_by}`
+              },
+            },
           ] : []),
           // { key: 'company_name' },
           // { key: 'location_name' },
@@ -259,7 +285,8 @@ export default {
               'contract_last_change_time', 'contract_migration_checked', 'contracttype_name', 'currency_name', 'currency_id', 'currency_short', 'currency_iso', 'currency_iso4217',
               'contracttype_description', 'company_name', 'location_name', 'pos_name', 'contactperson_firstname', 'contactperson_lastname', 'country_name', 'owner_name', 'manager_name',
               'action_ende_final', 'action_ende_soll', 'last_possible_end_of_contract', 'action_begin', 'next_possible_end_of_contract', 'country_short', 'term_type', 'next_action', 'planned_termination',
-              'planned_special_termination',
+              'planned_special_termination', 'contract_of_status', 'resiliation_acting_by',
+              'resiliation_date',
             ])
 
             if (!r.areas || !r.areas.length) obj.areas = []
