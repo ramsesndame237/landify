@@ -40,7 +40,7 @@
         </b-form-group>
       </div>
       <Datatable :key="table" ref="table" :selectable="false" :search="search" primary-key-column="contract_id"
-                 entity="contract" :with-delete="false" :with-edit="false" with-nested :sub-fields="definition.subFields"
+                 entity="contract" :with-delete="false" :with-edit="false" :with-nested="table === 'deadlines'" :sub-fields="definition.subFields"
                  :fields="definition.fields" :items="items" sub-fields-data-key="deadlines"
       />
     </b-card>
@@ -83,6 +83,7 @@ import Field from '@/views/app/Generic/Field'
 import _ from 'lodash'
 import moment from 'moment'
 import { formatDate } from '@/libs/utils'
+import DeadlineMixin from '@/views/app/Contracts/Relations/Deadlines/DeadlineMixin'
 import rates from './rates.json'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
@@ -102,6 +103,7 @@ export default {
     BRow,
     BCol,
   },
+  mixins: [DeadlineMixin],
   data() {
     const payload = this.$store.getters['table/tableData'](this.$route.params.table)
     console.log('initial payload', payload)
@@ -134,7 +136,7 @@ export default {
             key: 'contract_of_status',
             formatter: value => this.$t(value),
           },
-          { key: 'term_type', formatter: value => this.$t(value) },
+          ...(this.table === 'deadlines' ? [{ key: 'term_type', formatter: value => this.$t(value) }] : []),
           { key: 'contract_begin_date', type: 'date' },
           { key: 'contract_end_date', type: 'date' },
           ...(this.table === 'deadlines' ? [
@@ -142,7 +144,7 @@ export default {
             { key: 'last_possible_end_of_contract', type: 'date' },
             // { key: 'available_options' },
             // { key: 'total_options' },
-            { key: 'next_action' },
+            { key: 'next_action', formatter: value => this.typeFormatter(value) },
             { key: 'action_begin', type: 'date' },
             { key: 'action_ende_soll', type: 'date' },
             { key: 'action_ende_final', type: 'date' },
@@ -171,14 +173,9 @@ export default {
               },
             },
           ] : []),
-          // { key: 'company_name' },
-          // { key: 'location_name' },
-          // { key: 'pos_branchnumber' },
-          ...(this.table === 'conditions' ? [{ key: 'total_rental_space' }] : []),
-          // 'owner_name',
-          // 'manager_name',
           { key: 'max_contract_end_date', hideOnIndex: true },
           ...(this.table === 'conditions' ? [
+            { key: 'total_rental_space' },
             'retail_space',
             { key: 'currency_name' },
             { key: 'base_rent_per_area_amount' },
@@ -191,7 +188,51 @@ export default {
             'staggered_minimum_rent',
             'turnover_rent',
             'securities_related_to_contract', 'negotiator'] : []),
-
+        ],
+        subFields: [
+          {
+            key: 'contractdeadline_type',
+            formatter: value => this.typeFormatter(value),
+          },
+          { key: 'contractdeadline_acting_by', label: 'Acting By' },
+          {
+            key: 'contractdeadline_available_options',
+            label: 'Available options',
+            hideOnForm: true,
+            formatter: (value, key, item) => {
+              const { contractdeadline_options, contractdeadline_option_position, contractdeadline_status } = item
+              if (contractdeadline_status === 'resiliated') {
+                return 0
+              }
+              return contractdeadline_options - contractdeadline_option_position
+            },
+          },
+          { key: 'contractdeadline_options', label: 'Nbr of Options' },
+          {
+            key: 'extension',
+            label: 'Extension(unit)',
+            formatter: (value, key, item) => {
+              const { contractdeadline_extension_value, contractdeadline_extension_unit, contractdeadline_type } = item
+              if (['resiliation', 'special_resiliation'].includes(contractdeadline_type)) return '--'
+              return `${contractdeadline_extension_value}  ${contractdeadline_extension_unit}`
+            },
+          },
+          {
+            key: 'contractdeadline_notice_period',
+            label: 'Notice period',
+            hideOnForm: true,
+            send: false,
+            formatter: (value, key, item) => {
+              const { contractdeadline_notice_period_value, contractdeadline_notice_period_unit } = item
+              return `${contractdeadline_notice_period_value}  ${contractdeadline_notice_period_unit}`
+            },
+          },
+          {
+            key: 'contractdeadline_status',
+            hideOnForm: true,
+            label: 'Status',
+            formatter: value => this.statusDeadlineFormatter(value),
+          },
         ],
         filter_vertical: true,
         filters: [
@@ -435,12 +476,12 @@ export default {
                 'maturitytype_name',
                 'maturitytype_description']))
             }
-            // /**
-            //    * Section deadlines
-            //    */
-            // if (this.table === 'deadlines') {
-            //   obj.deadlines = r.deadlines
-            // }
+            /**
+               * Section deadlines
+               */
+            if (this.table === 'deadlines') {
+              obj.deadlines = r.deadlines
+            }
 
             if (this.table !== 'conditions') return obj
 

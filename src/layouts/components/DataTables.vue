@@ -1,68 +1,79 @@
 <template>
-  <b-table ref="table" sticky-header striped hover responsive :busy.sync="loading" :per-page="perPage"
-           :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
-           :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" show-empty @row-clicked="onRowClicked">
-    <template #cell(__selected)="data">
-      <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"
-                       :disabled="disabled" @change="onSelect(data.index)"/>
-    </template>
-    <template #cell()="data">
-      <b-form-checkbox v-if="data.field.type==='boolean'" v-model="data.value" :disabled="!data.field.editable"
-                       :value="1" :unchecked-value="0"
-                       @change="data.field.onChange ? data.field.onChange(data) : null"/>
-      <b-button v-else-if="data.field.type==='button'" size="xs" @click="$router.push(data.field.getRoute(data.item))">
-        {{ data.field.btnLabel }}
-      </b-button>
-      <a v-else-if="data.field.type==='download'" target="_blank" :href="data.field.getLink(data.item)">
-        {{ data.field.btnLabel }}
-      </a>
-      <div v-else-if="data.field.type==='html'" v-html="data.value"/>
-      <div v-else-if="data.field.type==='component'">
-        <component :is="data.field.component" :items="items || provider" :row-data="data" :data="data.field.props"
-                   @reload="reload"/>
-      </div>
-      <span v-else>
-        <b-badge v-if="data.field.withBadge" :variant="data.field.setVariant(data)">{{ data.value }}</b-badge>
-        <template v-else>{{ data.value }}</template>
-      </span>
-    </template>
-    <template #head(__selected)>
-      <b-form-checkbox v-if="multiSelect" v-model="selected" :disabled="disabled"/>
-      <span v-else/>
-    </template>
-    <template #empty>
-      {{ $t('message~table~empty') }}
-    </template>
-    <template #emptyfiltered>
-      {{ $t('message~table~emptyFiltered') }}
-    </template>
-    <template v-if="withActions" #cell(Actions)="data">
-      <div class="text-nowrap">
-        <b-button v-if="withView" class=" btn-icon" style="margin-bottom: 3px" variant="flat-success" pill
-                  @click="onViewClick(data)">
-          <feather-icon icon="EyeIcon"/>
-          <!--        <span>{{ $t('button~view') }}</span>-->
+  <div class="">
+    <b-table ref="table" sticky-header striped hover responsive :busy.sync="loading" :per-page="perPage"
+             :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
+             :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" show-empty @row-clicked="onRowClicked">
+      <template #cell(__selected)="data">
+        <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"
+                         :disabled="disabled" @change="onSelect(data.index)"/>
+      </template>
+      <template #cell()="data">
+        <b-form-checkbox v-if="data.field.type === 'boolean'" v-model="data.value" :disabled="!data.field.editable"
+                         :value="1" :unchecked-value="0"
+                         @change="data.field.onChange ? data.field.onChange(data) : null"/>
+        <b-button v-else-if="data.field.type === 'button'" size="xs" @click="$router.push(data.field.getRoute(data.item))">
+          {{ data.field.btnLabel }}
         </b-button>
-        <b-button v-if="withEdit && canUpdate " :disabled="canUpdateItem && canUpdateItem(currentItems[data.index])"
-                  class="btn-icon" variant="flat-info" style="margin-bottom: 3px" pill
-                  @click="onEditElement ? onEditElement(currentItems[data.index]) : $router.push({name: 'table-view', params: {table: entity,id: currentItems[data.index][primaryKey], entity: currentItems[data.index], ids: currentItems.map(i => i[primaryKey])}, query: {edit: 'true'}})">
-          <feather-icon icon="EditIcon"/>
-          <!--        <span>{{ $t('button~edit') }}</span>-->
+        <a v-else-if="data.field.type === 'download'" target="_blank" :href="data.field.getLink(data.item)">
+          {{ data.field.btnLabel }}
+        </a>
+        <div v-else-if="data.field.type === 'html'" v-html="data.value"/>
+        <div v-else-if="data.field.type === 'component'">
+          <component :is="data.field.component" :items="items || provider" :row-data="data" :data="data.field.props"
+                     @reload="reload"/>
+        </div>
+        <span v-else>
+          <b-badge v-if="data.field.withBadge" :variant="data.field.setVariant(data)">{{ data.value }}</b-badge>
+          <template v-else>{{ data.value }}</template>
+        </span>
+      </template>
+      <template #head(__selected)>
+        <b-form-checkbox v-if="multiSelect" v-model="selected" :disabled="disabled"/>
+        <span v-else/>
+      </template>
+      <template #empty>
+        {{ $t('message~table~empty') }}
+      </template>
+      <template #emptyfiltered>
+        {{ $t('message~table~emptyFiltered') }}
+      </template>
+      <template v-if="withActions" #cell(Actions)="data">
+        <div class="text-nowrap">
+          <b-button v-if="withView" class=" btn-icon" style="margin-bottom: 3px" variant="flat-success" pill
+                    @click="onViewClick(data)">
+            <feather-icon icon="EyeIcon"/>
+            <!--        <span>{{ $t('button~view') }}</span>-->
+          </b-button>
+          <b-button v-if="withEdit && canUpdate" :disabled="canUpdateItem && canUpdateItem(currentItems[data.index])"
+                    class="btn-icon" variant="flat-info" style="margin-bottom: 3px" pill
+                    @click="onEditElement ? onEditElement(currentItems[data.index]) : $router.push({ name: 'table-view', params: { table: entity, id: currentItems[data.index][primaryKey], entity: currentItems[data.index], ids: currentItems.map(i => i[primaryKey]) }, query: { edit: 'true' } })">
+            <feather-icon icon="EditIcon"/>
+            <!--        <span>{{ $t('button~edit') }}</span>-->
+          </b-button>
+          <b-button v-if="withDelete && canDelete" :disabled="canDeleteItem && canDeleteItem(currentItems[data.index])"
+                    class="btn-icon" variant="flat-primary" style="margin-bottom: 3px" pill
+                    @click="deleteElement(data.index)">
+            <feather-icon icon="Trash2Icon"/>
+            <!--        <span>{{ $t('button~delete') }}</span>-->
+          </b-button>
+        </div>
+      </template>
+      <template v-if="withNested" #cell(ShowDetails)="row">
+        <b-button v-if="row.item[subFieldsDataKey] && row.item[subFieldsDataKey].length > 0" size="sm" variant="secondary" @click="showDetails(row, $event.target)">
+          Show Options
         </b-button>
-        <b-button v-if="withDelete && canDelete" :disabled="canDeleteItem && canDeleteItem(currentItems[data.index])"
-                  class="btn-icon" variant="flat-primary" style="margin-bottom: 3px" pill
-                  @click="deleteElement(data.index)">
-          <feather-icon icon="Trash2Icon"/>
-          <!--        <span>{{ $t('button~delete') }}</span>-->
-        </b-button>
-      </div>
-    </template>
-  </b-table>
+      </template>
+    </b-table>
+    <b-modal ref="modal_test" ok-only centered scrollable size="xl" :title="infoModal.title">
+      <b-table :items="infoModal.content[subFieldsDataKey]" :fields="subFields" />
+    </b-modal>
+  </div>
 </template>
 
 <script>
 import { BButton, BFormCheckbox, BTable } from 'bootstrap-vue'
 import { formatDate, getDocumentLink } from '@/libs/utils'
+import flatten from 'lodash/flatten'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -85,6 +96,9 @@ export default {
     withDelete: { type: Boolean, default: true },
     canMakeDeleteCall: { type: Boolean, default: true },
     withActions: { type: Boolean, default: true },
+    withNested: { type: Boolean, default: false }, // Ce champ indique si on doit avoir des imbrications sous les lignes de tableau
+    subFields: { type: Array, required: false }, // Ce champ donne les fields à afficher lorsqu'on veut afficher plus de détail d'une ligne
+    subFieldsDataKey: { type: String, required: false }, // Ce champ indique la clé de l'objet du tableau qui contiendra les données du sous tableau
     multiSelect: { type: Boolean, default: true },
     defaultSortColumn: { type: String, default: '' },
     secondKey: {},
@@ -115,6 +129,11 @@ export default {
       selected: false,
       currentItems: this.items || [],
       filterData: { ...this.initialFilter },
+      infoModal: {
+        id: 'info-modal',
+        title: '',
+        content: '',
+      },
     }
   },
   computed: {
@@ -133,6 +152,14 @@ export default {
           tdClass: 'p-0',
           label: this.$t('attribute.general_actions'),
           variant: 'light',
+          thStyle: { width: '80px' },
+        }] : []),
+        ...(this.withNested ? [{
+          key: 'ShowDetails',
+          stickyColumn: true,
+          tdClass: 'p-0',
+          label: 'Show Details',
+          variant: 'none',
           thStyle: { width: '80px' },
         }] : []),
         ...this.fields.filter(f => !f.hideOnIndex && !f.auto).map(field => {
@@ -473,6 +500,12 @@ export default {
       link.setAttribute('download', filename)
       document.body.appendChild(link)
       link.click()
+    },
+    showDetails(row, event) {
+      this.infoModal.title = `Details of ${this.entity} ${row.item[`${this.entity}_name`]}`
+      this.infoModal.content = row.item
+      // this.$root.$emit('bv::show::modal', this.infoModal.id, event)
+      this.$refs.modal_test.show()
     },
   },
 }
