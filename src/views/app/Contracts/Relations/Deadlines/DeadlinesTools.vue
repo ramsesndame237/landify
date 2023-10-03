@@ -143,9 +143,13 @@ export default {
           const tab = tabs[currentTab]
           await tab.$children[0].getActions(true)
           await tab.$children[0].getDeadlines()
+          const { loadEntity } = this.$parent.$parent.$refs.form
+          await loadEntity()
         } else {
           const { getActions } = this.$parent.$parent
+          const { loadEntity } = this.$parent.$parent.$parent.$parent.$parent.$refs.form
           await getActions(true)
+          await loadEntity()
         }
       } catch (error) {
         if (error.response) {

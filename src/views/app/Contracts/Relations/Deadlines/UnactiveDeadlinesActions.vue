@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import moment from "moment";
+import moment from 'moment'
 
 export default ({
   name: 'UnactiveDeadlinesActions',
@@ -21,16 +21,23 @@ export default ({
     }
   },
   computed: {
+    entityData() {
+      return this.contractFormComponent.entity
+    },
     canUpdateDeadlineStatus() {
-      const { contractdeadline_expected_from, contractdeadline_status, } = this.deadline
+      // Je récupère les données du contract
+      const { action_begin } = this.entityData
 
-      if(contractdeadline_status === 'deactivate') return false
+      if (!moment(action_begin).isSameOrBefore(moment())) return false
+      const { contractdeadline_expected_from, contractdeadline_status } = this.deadline
+
+      if (contractdeadline_status === 'deactivate') return false
 
       const unDeactivateDeadlines = this.items.filter(item => !['deactivate'].includes(item.contractdeadline_status))
 
       const unDeactivateDeadlinesExpectedFrom = unDeactivateDeadlines.map(item => moment(item.contractdeadline_expected_from))
 
-      return moment.min(unDeactivateDeadlinesExpectedFrom).isSame(moment(contractdeadline_expected_from));
+      return moment.min(unDeactivateDeadlinesExpectedFrom).isSame(moment(contractdeadline_expected_from))
     },
     deadline() {
       return this.rowData.item
