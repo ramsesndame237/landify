@@ -1,10 +1,10 @@
 export default {
   primaryKey: 'address_id',
   entity: 'frontend_2_7_1',
-  fieldComponent: () => import('@/views/app/FormComponent/AddressForm.vue'),
+  // fieldComponent: () => import('@/views/app/FormComponent/AddressForm.vue'),
   fields: [
     { key: 'address_id', auto: true },
-    { key: 'address_street' },
+    { key: 'address_street'},
     { key: 'address_house_number' },
     { key: 'address_extra', rules: { required: false } },
     {

@@ -28,10 +28,17 @@
                    :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
                    @reload-table="$refs.table.reload()"/>
     <SidebarModalComponent
-      :title="`headline~${table}~new`"
-      ref="sidebarComponent"
-      :options="definition.options || null"
-    />
+        :title="`headline~${table}~new`"
+        ref="sidebarComponent"
+        :definition="definition"
+        :options="definition.options || null"
+    >
+      <div class="header-customer mb-3 d-flex align-items-center justify-content-center " slot="customHeader">
+        <span>
+          {{ $t(`headline~${table}~new`) }}
+        </span>
+      </div>
+    </SidebarModalComponent>
   </div>
 </template>
 
@@ -82,7 +89,7 @@ export default {
   },
   computed: {
     useModalToCreate() {
-      return this.definition.createModal !== false
+      return this.definition.createModal === 'modal'
     },
   },
   beforeDestroy() {
@@ -108,7 +115,6 @@ export default {
       return count
     },
     filter(data) {
-      console.log('on filter', data)
       this.currentPage = 1
       this.$refs.table.filter(data)
     },
@@ -119,14 +125,21 @@ export default {
       this.$refs.modal.openModal(false, entity, `headline~${this.definition.entityForm || this.definition.entity}~detail`)
     },
     onNewElement() {
-      if (this.useModalToCreate) this.$refs.modal.openModal(true, {})
-      if (this.definition.createSideBar) return this.$refs.sidebarComponent.openSidebarComponent()
-      else {
-        this.$router.push({
-          name: 'table-form',
-          params: {table: this.table},
-        })
-      }
+console.log("this is the modal data", this.definition.createModal)
+      // if (this.definition.createModal ==='sidebar') this.$refs.sidebarComponent.openSidebarComponent()
+      // else {
+      //   if (this.useModalToCreate) this.$refs.modal.openModal(true, {})
+      //   else {
+      //     this.$router.push({
+      //       name: 'table-form',
+      //       params: {table: this.table},
+      //     })
+      //   }
+      // }
+      this.definition.createModal === 'sidebar' ? this.$refs.sidebarComponent.openSidebarComponent() : this.useModalToCreate ? this.$refs.modal.openModal(true, {}) : this.$router.push({
+              name: 'table-form',
+              params: {table: this.table},
+            })
     },
   },
 }

@@ -6,7 +6,7 @@ export default {
     entityEndpoint: '/contracts',
     fetchWithEntity: true,
     formComponent: () => import('@/views/app/FormComponent/ContractForm.vue'),
-    createModal: false,
+    createModal:'otherPage',
     // createComponent: () => import('@/views/app/CreateComponent/ContractForm/ContractFormNew.vue'),
     fields: [
         {key: 'contract_id', auto: true},

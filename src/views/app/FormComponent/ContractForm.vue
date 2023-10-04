@@ -49,7 +49,6 @@ export default {
   },
   methods: {
     navigate(index) {
-      console.log("this is the new index of the page ", this.tabIndex)
       const { form } = this.$refs
       form.validate()
       const tab = this.tabsData[index]

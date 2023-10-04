@@ -198,7 +198,6 @@ export default {
             [field.key]: originalEntity[field.key],
           }
           const original = formField.subOriginalEntity
-          console.log(create, entityData, original, originalEntity)
           return this.saveEntity(entityData, original,
             this.getFormFields(subDefinition), formField.getSubFields(), field.list, subDefinition, this.getPrimaryKey(subDefinition), create)
             .then(async data => {
@@ -224,10 +223,8 @@ export default {
       const action = create ? 'create' : 'update'
       return this.createNewEntities(fieldComponents, formFields, entity, originalEntity)
         .then(async () => {
-          /// if we updating and we have no changes
           if (!create && formFields.filter(f => f.type !== 'list' || f.relationEntity === false)
             .every(f => entity[f.key] === originalEntity[f.key])) {
-            console.log('no update', table)
             await this.saveRelations(table, definition, primaryKey, entity[primaryKey], entity, originalEntity)
             return {
               noupdate: true,
@@ -237,7 +234,6 @@ export default {
           if (table === 'document') {
             const formData = new FormData()
             const files = fieldComponents.find(f => f.field.key === 'files').getFiles()
-            console.log('files', files)
             for (let i = 0; i < files.length; i++) {
               formData.append('files', files[i])
             }

@@ -1,25 +1,22 @@
 export default {
   entity: 'frontend_3_3_1',
   primaryKey: 'location_id',
-  formComponent:() => import('@/components/SidebarModalComponent.vue'),
-  createModal:false,
-  createSideBar:true,
+  createModal:'sidebar',
+  // formComponent: () => import('@/views/app/FormComponent/LocationForm.vue'),
   options:{
     id: 'siderbar_location',
     shadow: true,
     rigth_position: true,
-    no_header: false,
+    no_header: true,
     custom_footer: false,
     backdrop: true,
-    width:'auto',
-    createComponent:() =>import(''),
     backdrop_variant: 'variant'
   },
   fields: [
     { key: 'location_id', auto: true },
-    { key: 'location_name' },
+    { key: 'location_name',cols:12 },
     {
-      key: 'location_objectdescription', type: 'textarea', hideOnIndex: true, required: false,
+      key: 'location_objectdescription', type: 'textarea', hideOnIndex: true, required: false,cols:12
     },
     // {
     //   key: 'location_total_area', type: 'number', hideOnIndex: true, required: false,
@@ -27,12 +24,12 @@ export default {
     // {
     //   key: 'location_start_date', type: 'date', hideOnIndex: true, required: false,
     // },
-    { key: 'owner_name', hideOnForm: true },
-    { key: 'manager_name', hideOnForm: true },
-    { key: 'locationtype_name', hideOnForm: true },
-    { key: 'city_name', hideOnForm: true },
-    { key: 'country_name', hideOnForm: true },
-    { key: 'area_count', hideOnForm: true },
+    { key: 'owner_name', hideOnForm: true,cols:12 },
+    { key: 'manager_name', hideOnForm: true,cols: 12 },
+    { key: 'locationtype_name', hideOnForm: true,cols: 12 },
+    { key: 'city_name', hideOnForm: true,cols:12 },
+    { key: 'country_name', hideOnForm: true,cols:12 },
+    { key: 'area_count', hideOnForm: true,cols:12 },
 
     {
       key: 'locationtype_id',
@@ -41,6 +38,8 @@ export default {
       listLabel: 'locationtype_name',
       sortable: true,
       hideOnIndex: true,
+      size:40,
+      cols:12
     },
     {
       key: 'address_id',
@@ -50,6 +49,8 @@ export default {
       hideOnIndex: true,
       withNew: true,
       alwaysNew: true,
+      onlyForm:true,
+      cols:12
     },
   ],
   relations: [
