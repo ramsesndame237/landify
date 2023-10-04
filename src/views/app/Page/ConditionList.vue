@@ -41,7 +41,7 @@
       </div>
       <Datatable :key="table" ref="table" :selectable="false" :search="search" primary-key-column="contract_id"
                  entity="contract" :with-delete="false" :with-edit="false" :with-nested="table === 'deadlines'" :sub-fields="definition.subFields"
-                 :fields="definition.fields" :items="items" sub-fields-data-key="deadlines"
+                 :fields="definition.fields" :items="items" sub-fields-data-key="deadlines" :with-actions="false"
       />
     </b-card>
 
@@ -127,7 +127,6 @@ export default {
         title: 'headline~contractlist~condition',
         entity: 'frontend_contractlist_criteria',
         fields: [
-          { key: 'contract_id', stickyColumn: true, variant: 'light' },
           { key: 'contract_name', stickyColumn: true, variant: 'light' },
           { key: 'contracttype_name' },
           { key: 'pos_name' },
