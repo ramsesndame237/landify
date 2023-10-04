@@ -41,6 +41,7 @@
 import moment from 'moment'
 import DeadlineMixin from '@/views/app/Contracts/Relations/Deadlines/DeadlineMixin'
 import Field from '@/views/app/Generic/Field.vue'
+import { formatDate } from '@/libs/utils'
 
 export default ({
   name: 'UnactiveDeadlinesActions',
@@ -50,7 +51,15 @@ export default ({
   data() {
     return {
       deadlines: [],
-      fields: [
+      loading: false,
+      entity: {},
+    }
+  },
+  computed: {
+    fields() {
+      const { action_ende_final } = this.entityData
+      const minDate = moment().
+      return [
         {
           key: 'contractnegotiation_notice_date',
           type: 'date',
@@ -61,12 +70,8 @@ export default ({
           type: 'textarea',
           label: 'Comment',
         },
-      ],
-      loading: false,
-      entity: {},
-    }
-  },
-  computed: {
+      ]
+    },
     entityData() {
       return this.contractFormComponent.entity
     },
