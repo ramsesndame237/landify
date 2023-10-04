@@ -58,7 +58,6 @@ export default ({
   computed: {
     fields() {
       const { action_ende_final } = this.entityData
-      const minDate = moment().
       return [
         {
           key: 'contractnegotiation_notice_date',
