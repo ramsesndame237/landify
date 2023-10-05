@@ -65,13 +65,30 @@
         </div>
       </template>
       <template v-if="withNested" #cell(ShowDetails)="row">
-        <b-button v-if="row.item[subFieldsDataKey] && row.item[subFieldsDataKey].length > 0" size="sm" variant="secondary" @click="showDetails(row, $event.target)">
-          Show Options
-        </b-button>
+        <template v-if="(subFieldsData && subFieldsData.btnStyle === 'button')">
+          <b-button v-if="row.item[subFieldsDataKey] && row.item[subFieldsDataKey].length > 0" size="sm" variant="secondary" @click="showDetails(row, $event.target)">
+            {{ (subFieldsData && subFieldsData.btnText) || 'Show options' }}
+          </b-button>
+          <span v-else>No</span>
+        </template>
+        <template v-else>
+          <b-button
+            v-b-tooltip.hover
+            title="See list of comments" class="btn-icon"
+            variant="flat-success" style="margin-bottom: 3px" pill @click="showDetails(row, $event.target)">
+            <feather-icon icon="EyeIcon"/>
+            <!--        <span>{{ $t('button~edit') }}</span>-->
+          </b-button>
+        </template>
       </template>
     </b-table>
-    <b-modal ref="modal_test" ok-only centered scrollable size="xl" :title="infoModal.title">
-      <b-table :items="infoModal.content[subFieldsDataKey]" :fields="subFields" />
+    <b-modal ref="modal_test" ok-only centered scrollable :size="(subFieldsData && subFieldsData.modalSize) || 'xl'" :title="(subFieldsData && subFieldsData.modalTitle) || infoModal.title">
+      <template v-if="subFieldsType=== 'component'">
+        <component :is="subFieldsComponent" :item="infoModal.content" />
+      </template>
+      <template v-else>
+        <b-table :items="infoModal.content[subFieldsDataKey]" :fields="subFields" />
+      </template>
     </b-modal>
   </div>
 </template>
@@ -105,6 +122,9 @@ export default {
     withNested: { type: Boolean, default: false }, // Ce champ indique si on doit avoir des imbrications sous les lignes de tableau
     subFields: { type: Array, required: false }, // Ce champ donne les fields à afficher lorsqu'on veut afficher plus de détail d'une ligne
     subFieldsDataKey: { type: String, required: false }, // Ce champ indique la clé de l'objet du tableau qui contiendra les données du sous tableau
+    subFieldsType: { type: String, required: false }, // Ce champ indique si les éléments à afficher sous le tableau est un composant ou un tableau
+    subFieldsComponent: { type: Object, required: false }, // Ce champ indique le composant pour le sous tableau
+    subFieldsData: { type: Object, required: false }, // Ce champ contient certaines configuration pour les données du subfields
     multiSelect: { type: Boolean, default: true },
     defaultSortColumn: { type: String, default: '' },
     secondKey: {},
@@ -150,7 +170,7 @@ export default {
       return `table-${this.entity}-edit`
     },
     allFields() {
-      return [
+      const fields = [
         ...(this.selectable ? [{ key: '__selected', thStyle: { width: '50px' } }] : []),
         ...(this.withActions ? [{
           key: 'Actions',
@@ -158,14 +178,6 @@ export default {
           tdClass: 'p-0',
           label: this.$t('attribute.general_actions'),
           variant: 'light',
-          thStyle: { width: '80px' },
-        }] : []),
-        ...(this.withNested ? [{
-          key: 'ShowDetails',
-          stickyColumn: true,
-          tdClass: 'p-0',
-          label: 'Show Details',
-          variant: 'none',
           thStyle: { width: '80px' },
         }] : []),
         ...this.fields.filter(f => !f.hideOnIndex && !f.auto).map(field => {
@@ -178,6 +190,25 @@ export default {
           return f
         }),
       ]
+
+      if (this.withNested) {
+        const newField = {
+          key: 'ShowDetails',
+          stickyColumn: true,
+          tdClass: 'p-0',
+          label: (this.subFieldsData && this.subFieldsData.theadText) || 'Options',
+          variant: 'none',
+          thStyle: { width: '80px' },
+        }
+
+        if (this.subFieldsData && this.subFieldsData.insertAtIndex) {
+          fields.splice(this.subFieldsData.insertAtIndex, 0, newField)
+        } else {
+          fields.splice(1, 0, newField)
+        }
+      }
+
+      return fields
     },
     canDelete() {
       return this.$can('delete', this.entityForm || this.entity)

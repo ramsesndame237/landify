@@ -14,6 +14,12 @@ export default {
         { label: 'Pulled', value: 'pulled' },
         { label: 'Not Due', value: 'notdue' },
       ],
+      period: [
+        { label: 'Day', value: 'Day' },
+        { label: 'Week', value: 'Week' },
+        { label: 'Month', value: 'Month' },
+        { label: 'Year', value: 'Year' },
+      ],
     }
   },
   methods: {
