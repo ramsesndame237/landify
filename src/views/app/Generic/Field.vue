@@ -412,13 +412,18 @@ export default {
       this.entity[this.field.unit_key] = this.unitOptions[0][this.field.unit_value_key]
     }
 
-    if (this.field.type === 'custom-select' && typeof this.field.items === 'function') {
-      this.customSelectOptions = await this.field.items(this)
-    } else {
-      this.customSelectOptions = this.field.items
-      this.$watch('field.items', value => {
-        this.customSelectOptions = value
-      })
+    if (this.field.type === 'custom-select') {
+      if (typeof this.field.items === 'function') {
+        this.customSelectOptions = await this.field.items(this)
+        this.$watch('entity', async () => {
+          this.customSelectOptions = await this.field.items(this)
+        }, { deep: true })
+      } else {
+        this.customSelectOptions = this.field.items
+        this.$watch('field.items', value => {
+          this.customSelectOptions = value
+        })
+      }
     }
   },
 
@@ -443,7 +448,7 @@ export default {
         }
       }
       if (this.isUserExternPartner) {
-          if (this.field.key === 'partnergroup_id') {
+        if (this.field.key === 'partnergroup_id') {
           const partnergroup_id = user.partnergroup?.partnergroup_id
           if (!this.entity.partnergroup_id && partnergroup_id) {
             this.$set(this.entity, 'partnergroup_id', partnergroup_id)
