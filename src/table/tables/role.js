@@ -30,6 +30,7 @@ export default {
       hideOnIndex: true,
       type: 'custom-select',
       items: async vm => {
+        const { entity } = vm
         let menus = vm.$store.getters['table/listCache']('menu')
         if (!menus.length) {
           try {
@@ -49,7 +50,8 @@ export default {
             })
           }
         }
-        return menus.map(menu => ({ label: menu.name, value: menu.name }))
+        const filteredMenu = menus.filter(menu => menu.menu_is_internal === entity.role_is_internal)
+        return filteredMenu.map(menu => ({ label: menu.name, value: menu.name, menu_is_internal: menu.menu_is_internal }))
       },
     },
     {
