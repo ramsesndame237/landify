@@ -348,6 +348,15 @@ export default {
         } else this.editorInstance.show()
       }
     },
+    listItems: {
+      handler(newValue) {
+        if (this.field.withOptionAll) {
+          newValue.unshift({ [this.field.listLabel]: 'All', [this.field.tableKey || this.field.key]: -1 })
+        }
+        return newValue
+      },
+      deep: true,
+    },
   },
   async created() {
     if (this.field.type === 'list' && ((!this.field.filter_key || !!this.entity[this.field.filter_key]) || this.field.noFetchOnChange) && !this.field.onlyForm) {
