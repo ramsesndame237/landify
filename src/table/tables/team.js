@@ -1,0 +1,117 @@
+export default {
+  fields: [
+    { key: 'team_id', auto: true },
+    { key: 'team_name', sortable: true },
+    {
+      key: 'team_type',
+      type: 'custom-select',
+      items: [
+        { label: 'Intern', value: 0 },
+        { label: 'Extern Client', value: 1 },
+        { label: 'Extern Partner', value: 2 },
+        { label: 'Friendtzieze', value: 3 },
+      ],
+    },
+    {
+      key: 'customergroup_id',
+      type: 'list',
+      list: 'customergroup',
+      listLabel: 'customergroup_name',
+      required: true,
+      multiple: true,
+      visible: entity => entity.team_type === 1,
+    },
+    {
+      key: 'company_id',
+      type: 'list',
+      list: 'frontend_2_2_3_1',
+      listLabel: 'company_name',
+      filter_key: 'customergroup_id',
+      required: false,
+      multiple: true,
+      visible: entity => entity.team_type === 1,
+    },
+    {
+      key: 'partnergroup_is_internal',
+      visible: () => false,
+      hideOnIndex: true,
+      type: 'boolean',
+      default: 1,
+      change: entity => {
+        if (entity.team_type === 0) return 1
+        return 0
+      },
+    },
+    {
+      key: 'partnergroup_id',
+      type: 'list',
+      list: 'partnergroup',
+      listLabel: 'partnergroup_name',
+      hideOnIndex: true,
+      required: true,
+      filter_key: 'partnergroup_is_internal',
+      multiple: true,
+      visible: entity => entity.team_type === 2,
+    },
+    {
+      key: 'partnercompany_id',
+      type: 'list',
+      list: 'frontend_2_5_1',
+      listLabel: 'partnercompany_name',
+      filter_key: 'partnergroup_id',
+      relationEntity: 'user_partnercompany_rel',
+      hideOnIndex: true,
+      multiple: true,
+      required: false,
+      visible: entity => entity.team_type === 2,
+    },
+    { key: 'team_description', type: 'textarea' },
+  ],
+  relations: [
+    {
+      title: 'Users',
+      primaryKey: 'user_id',
+      entity: 'user_team_grp',
+      entityForm: 'user_team_rel',
+      view: false,
+      fields: [
+        {
+          key: 'user_id',
+          type: 'list',
+          list: 'user',
+          listLabel: 'user_email',
+          disableOnUpdate: true,
+          multiple: true,
+        },
+        { key: 'user_firstname', hideOnForm: true },
+        { key: 'user_lastname', hideOnForm: true },
+        { key: 'team_name', sortable: true, hideOnForm: true },
+        {
+          key: 'user_team_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,
+        },
+        {
+          key: 'user_team_valid_to', required: false, type: 'date', rules: { date_after: ['@user_team_valid_from'] },
+        },
+      ],
+    },
+    {
+      title: 'Roles',
+      primaryKey: 'role_id',
+      entity: 'team_role_grp',
+      entityForm: 'team_role_rel',
+      view: false,
+      update: false,
+      fields: [
+        {
+          key: 'role_id',
+          type: 'list',
+          list: 'role',
+          listLabel: 'role_name',
+          multiple: true,
+          hideOnIndex: true,
+        },
+        { key: 'role_name', hideOnForm: true },
+      ],
+    },
+  ],
+}
