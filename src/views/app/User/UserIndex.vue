@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <div v-if="$isUserAdmin" class="row">
+    <div v-if="isUserAdmin" class="row">
       <b-col v-for="(stat,index) in usersStatistics" :key="index" :sm="stat.cols.sm" :lg="stat.cols.lg">
         <b-overlay :show="loading">
           <b-card>
@@ -26,7 +26,7 @@
         </b-overlay>
       </b-col>
     </div>
-    <b-card v-if="$isUserAdmin" title="Search Filter">
+    <b-card v-if="isUserAdmin" title="Search Filter">
       <InlineFilter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
                     :with-actions="false" @filter="filter" />
     </b-card>
@@ -46,7 +46,7 @@
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
                  :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"
-                 :selectable="false"
+                 :selectable="false" :can-read-item="canReadItem"
       />
     </b-card>
     <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table"
@@ -58,6 +58,7 @@
 import InlineFilter from '@/views/app/Generic/InlineFilter.vue'
 import TablePagination from '@/layouts/components/TablePagination.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
+import { mapGetters } from 'vuex'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
 
@@ -128,17 +129,30 @@ export default ({
         },
       ]
     },
+    ...mapGetters('user', ['isUserAdmin', 'isUserExtern']),
   },
   mounted() {
     this.getUsersStatistics()
-    console.log(`
-      isAdmin: ${this.$isUserAdmin}\n
-      isUserInternal: ${this.$isUserIntern} \n
-      isUserExternal: ${this.$isUserExtern} \n
-      isUserAdminOrInternal: ${this.$isUserAdminOrIntern} \n
-      userHasRole(admin): ${this.$userHasRole('Administratoren')} \n
-    `)
-    console.log('vm', this)
+  },
+  beforeDestroy() {
+    this.$store.commit('table/setTableData', {
+      table: this.table,
+      payload: {
+        search: this.search || '',
+        perPage: this.perPage || 10,
+        currentPage: this.currentPage || 1,
+        totalRows: this.totalRows || 0,
+        initialFilterData: this.filter,
+        initialSortBy: this.sortBy,
+        initialSortDesc: this.sortDesc ?? true,
+        ids: this.ids,
+        total_active_users: this.total_active_users,
+        total_locked_users: this.total_locked_users,
+        total_users: this.total_users,
+        loading: this.loading,
+      },
+
+    })
   },
   methods: {
     filter(data) {
@@ -168,6 +182,9 @@ export default ({
       } finally {
         this.loading = false
       }
+    },
+    canReadItem() {
+      return !this.isUserExtern
     },
   },
 })

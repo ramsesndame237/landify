@@ -6,12 +6,12 @@
     </b-card>
     <b-card body-class="p-0">
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"
-                        :on-new-element="definition.create ===false ? null : onNewElement" :total-rows="totalRows"
+                        :on-new-element="definition.create ===false ? null : onNewElement" :total-rows.sync="totalRows"
                         :with-filter="definition.filters && definition.filters.length > 0"
                         :inline-filter="!definition.inline_filter"
                         :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
-                        :actions="definition.actions" @action="(a)=>$refs.table.onAction(a)"
-                        @filter="$refs.filter.openModal()"/>
+                        :actions="definition.actions" :filter-badge="getFilterCount()"
+                        @action="(a)=>$refs.table.onAction(a)" @filter="$refs.filter.openModal()"/>
       <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
                       @filter="filter"/>
     </b-card>
@@ -22,9 +22,9 @@
                  :default-sort-column="initialSortBy||definition.defaultSortField" :default-sort-desc="initialSortDesc"
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
-                 :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"/>
+                 :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint" :filter-items="definition.filter"/>
     </b-card>
-    <generic-modal :fetch-data="false" :cache-key="table+'-'" :table="table" ref="modal"
+    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table"
                    :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
                    @reload-table="$refs.table.reload()"/>
   </div>
@@ -37,6 +37,7 @@ import {
 } from 'bootstrap-vue'
 import TablePagination from '@/layouts/components/TablePagination.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
+import { mapGetters } from 'vuex'
 import Tables from '../../../table'
 import GenericFilter from './Filter.vue'
 import InlineFilter from './InlineFilter.vue'
@@ -54,26 +55,30 @@ export default {
   },
   data() {
     const payload = this.$store.getters['table/tableData'](this.$route.params.table)
-    console.log('initial payload', payload)
+    const table = this.$route.params.table
+    const definition = Tables[table]
+    let defaultPage = null
+    if (this.isUserExternClient) {
+      defaultPage = definition.perPage
+    }
     return {
       search: payload?.search || '',
-      perPage: payload?.perPage || 10,
+      perPage: payload?.perPage || defaultPage || 10,
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
       initialFilterData: payload?.filter,
       initialSortBy: payload?.sortBy,
       initialSortDesc: payload?.sortDesc ?? true,
-      table: this.$route.params.table,
+      table,
+      definition,
       ids: this.$route.params.ids,
     }
   },
   computed: {
-    definition() {
-      return Tables[this.table]
-    },
     useModalToCreate() {
       return this.definition.createModal !== false
     },
+    ...mapGetters('user', ['isUserExternClient']),
   },
   beforeDestroy() {
     this.$store.commit('table/setTableData', {
@@ -90,6 +95,13 @@ export default {
     })
   },
   methods: {
+    getFilterCount() {
+      const obj = this.$refs.filter ? this.$refs.filter.getFinalData() : this.initialFilterData
+      if (obj == null) return null
+      const count = Object.keys(obj).length
+      if (count === 0) return null
+      return count
+    },
     filter(data) {
       console.log('on filter', data)
       this.currentPage = 1

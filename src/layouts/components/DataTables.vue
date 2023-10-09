@@ -2,6 +2,12 @@
   <b-table ref="table" sticky-header striped hover responsive :busy.sync="loading" :per-page="perPage"
            :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
            :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" show-empty @row-clicked="onRowClicked">
+    <template #table-busy>
+      <div class="text-center text-danger">
+        <b-spinner class="align-middle"/>
+        <strong class="ml-1">{{ $t('table~message~loading') }}</strong>
+      </div>
+    </template>
     <template #cell(__selected)="data">
       <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"
                        :disabled="disabled" @change="onSelect(data.index)"/>
@@ -63,6 +69,7 @@
 <script>
 import { BButton, BFormCheckbox, BTable } from 'bootstrap-vue'
 import { formatDate, getDocumentLink } from '@/libs/utils'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -100,7 +107,9 @@ export default {
     items: Array,
     ids: Array,
     initialFilter: Object,
+    filterItems: { type: Function, required: false }, // Cette function effectue le filtre sur les données de l'entité
     canUpdateItem: { type: Function, required: false }, // si un item du tableau est editable
+    canReadItem: { type: Function, required: false, default: () => true }, // si un item du tableau est consultable
     canDeleteItem: { type: Function, required: false }, // si un item du tableau est supprimable
     customRequest: { type: Object, required: false }, // un object qui contient des données pour personnaliser les requêtes vers le back dans les relations
   },
@@ -149,6 +158,7 @@ export default {
     canUpdate() {
       return this.$can('update', this.entityForm || this.entity)
     },
+    ...mapGetters('user', ['isUserExternClient']),
   },
   watch: {
     currentItems: {
@@ -243,7 +253,9 @@ export default {
 
         if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
         // create request query string
-        const requestQuery = Object.keys(filterData).map(key => `${key}=${filterData[key]}`).join('&')
+        const requestQuery = Object.keys(filterData)
+          .filter(key => ![null, -1].includes(filterData[key]))
+          .map(key => `${key}=${filterData[key]}`).join('&')
         return this.$http.get(`${this.entityEndpoint}?${requestQuery}`)
           .then(({ data }) => {
             let items
@@ -293,7 +305,15 @@ export default {
           el.__selected = false
         })
         this.$store.commit('table/setDefinition', { data, table: this.table })
-        this.currentItems = data.data
+        const datas = data.data
+        if (this.filterItems && typeof this.filterItems === 'function') {
+          this.currentItems = datas.filter(item => this.filterItems(item, this))
+          if (this.isUserExternClient) {
+            this.$emit('update:totalRows', this.currentItems.length)
+          }
+        } else {
+          this.currentItems = datas
+        }
         this.$emit('items', this.currentItems)
         return this.currentItems
       }
@@ -302,7 +322,17 @@ export default {
         el.__selected = false
       })
       this.$store.commit('table/setDefinition', { data, table: this.table })
-      this.currentItems = data.data.data
+      const datas = data.data.data
+
+      if (this.filterItems && typeof this.filterItems === 'function') {
+        this.currentItems = datas.filter(item => this.filterItems(item, this))
+        if (this.isUserExternClient) {
+          this.$emit('update:totalRows', this.currentItems.length)
+        }
+      } else {
+        this.currentItems = datas
+      }
+
       this.$emit('items', this.currentItems)
       return this.currentItems
     },

@@ -19,7 +19,6 @@
         </b-dropdown-item>
       </b-dropdown>
     </div>
-    <p>{{ ticket.ticket_description }}</p>
     <div v-if="advanced" class="d-flex">
       <strong class="mr-1">{{ $t('attribute.ticket_id') }}:</strong>
       <span>{{ ticket.ticket_id }}</span>

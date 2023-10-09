@@ -22,8 +22,9 @@ function getAction(crud) {
 export const defineRules = () => {
   const userData = JSON.parse(localStorage.getItem('userData'))
   const rules = [{ subject: 'Auth', action: 'read' }]
-
   if (!userData) return rules
+  const tablegroups = userData.tablegroups
+  const users_tablegroups = userData.users_tablegroups
   rules.push({ action: 'read', subject: 'dashboard' })
   //
   try {
@@ -31,11 +32,16 @@ export const defineRules = () => {
       rules.push({ action: 'manage', subject: 'all' })
     }
     userData.roles.forEach(role => {
-      rules.push(..._.flatten(role.tablegroups.map(tg => tg.tablename.map(tn => ({
-        action: getAction(tg.crud),
-        subject: tn.table_name,
-      })))))
-      rules.push(...role.tablenames.map(table => ({ action: getAction(table.crud), subject: table.table_name })))
+      const { tablegroups: roleTableGroups } = role
+
+      if (roleTableGroups.length > 0) {
+        roleTableGroups.forEach(tg => {
+          const { tablename } = tablegroups.find(tablegroup => tablegroup.tablegroup_id === tg.tablegroup_id)
+          if (tablename && tablename.length > 0) {
+            rules.push(...tablename.map(tn => ({ action: getAction(tg.crud), subject: tn.table_name })))
+          }
+        })
+      }
 
       // Récupération des configs de menu dans les data de l'utilisateur
       const tempsRules = []
@@ -57,6 +63,14 @@ export const defineRules = () => {
 
       rules.push(...tempsRules)
       // rules.push(...role.access.map(access => ({ action: access.access_name, subject: 'menu' })))
+    })
+    // J'ajoute les permissions propres à un User
+    users_tablegroups.forEach(tg => {
+      const { tablename } = tablegroups.find(tablegroup => tablegroup.tablegroup_id === tg.tablegroup_id)
+      const tgCrud = _.pickBy(tg, val => val === true)
+      if (Object.keys(tgCrud).length > 0 && tablename && tablename.length > 0) {
+        rules.push(..._.flatten(tablename.map(tn => Object.keys(tgCrud).map(crud => ({ action: getAction(crud), subject: tn.table_name })))))
+      }
     })
   } catch (e) {
     console.error(e)

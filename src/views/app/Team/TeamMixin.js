@@ -1,3 +1,6 @@
+import intersectionBy from 'lodash/intersectionBy'
+import { mapGetters } from 'vuex'
+
 export default {
   data() {
     return {}
@@ -16,11 +19,17 @@ export default {
       return this.teams.filter(team => !team.team_is_customer)
     },
     filteredTeams() {
-      const data = this.team_is_customer ? this.customerTeams : this.seyboldTeams
-      const formatedData = data.map(team => ({ label: team.team_name, value: team.team_id, ...team }))
+      const dataTeams = this.team_is_customer ? this.customerTeams : this.seyboldTeams
+      let filteredTeam = dataTeams
+      if ((this.isUserExternClientNotDirector || this.isUserInternAndNotAdmin) && this.team_is_customer) {
+        filteredTeam = intersectionBy(dataTeams, this.userTeams, 'team_id')
+      }
 
-      return [{ label: 'All', value: null }, ...formatedData]
+      const formatedData = filteredTeam.map(team => ({ label: team.team_name, value: team.team_id, ...team }))
+
+      return [{ label: 'All', value: -1 }, ...formatedData]
     },
+    ...mapGetters('user', ['isUserExternClientNotDirector', 'isUserInternAndNotAdmin']),
   },
   async mounted() {
     if (this.teams.length <= 0) {
@@ -35,6 +44,9 @@ export default {
       } catch (error) {
         console.log({ error })
       }
+    },
+    isTeamExistInList(teamId) {
+      return ![null, undefined, -1].includes(teamId) ? this.filteredTeams?.some(team => team.team_id === teamId) : false
     },
   },
 }

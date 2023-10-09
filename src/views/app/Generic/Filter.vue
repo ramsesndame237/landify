@@ -5,7 +5,8 @@
     <validation-observer ref="form" v-slot="{ passes }">
       <b-form @submit.prevent="passes(handleOk)">
         <b-row>
-          <b-col v-for="(field,index) in definition.filters.filter(f => !f.hideOnForm)" :key="index" cols="12" :md="isVertical?12:4">
+          <b-col v-for="(field,index) in definition.filters.filter(f => !f.hideOnForm)" :key="index" cols="12"
+                 :md="isVertical?12:4">
             <field ref="fields" :entity="data" :field="field"/>
           </b-col>
         </b-row>
@@ -31,6 +32,7 @@ import {
   BButton, BCol, BForm, BRow,
 } from 'bootstrap-vue'
 import Field from '@/views/app/Generic/Field'
+import { getUserData } from "@/auth/utils";
 
 export default {
   name: 'GenericFilter',
@@ -64,7 +66,18 @@ export default {
       this.$refs.modal.show()
     },
     reset() {
-      this.data = { ...this.initialData }
+      Object.keys(this.data).forEach(key => {
+        if (this.initialData && this.initialData[key] != null) {
+          this.$set(this.data, key, this.initialData[key])
+        } else {
+          this.$delete(this.data, key)
+        }
+      })
+      // call initial data for all the fields then reset (Do it later)
+      const components = (Array.isArray(this.$refs.fields) ? this.$refs.fields : [this.$refs.fields])
+      components.forEach(field => {
+        field.initializeValue()
+      })
       this.$refs.form.reset()
       this.$emit('reset', this.getFinalData())
       // this.$refs.modal.hide()

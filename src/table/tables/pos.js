@@ -1,18 +1,41 @@
 import _ from 'lodash'
+import { getUserData } from '@/auth/utils'
 
 export default {
   entity: 'frontend_3_1_1',
   primaryKey: 'pos_id',
   entityEndpoint: '/pos',
+  filter: (item, vm) => {
+    const user = getUserData()
+    if (vm.$store.getters['user/isUserExternClient']) {
+      if (user.customergroup) {
+        const { customergroup_id } = user.customergroup
+        return item.customergroup_id === customergroup_id
+      }
+      return false
+    }
+    return true
+  },
+  perPage: 100000,
   fields: [
     { key: 'pos_id', auto: true },
     {
+      key: 'customergroup_id',
+      type: 'list',
+      list: 'customergroup',
+      listLabel: 'customergroup_name',
+      send: false,
+      hideOnIndex: true,
+      hideOnUpdate: true,
+    },
+    {
       key: 'company_id',
       type: 'list',
-      list: 'company',
+      list: 'frontend_2_2_3_1',
       listLabel: 'company_name',
       hideOnIndex: true,
       relationEntity: 'company_pos_rel',
+      filter_key: 'customergroup_id',
     },
     { key: 'pos_name' },
     { key: 'pos_branchnumber' },
@@ -20,7 +43,7 @@ export default {
     // { key: 'location_count', hideOnForm: true },
     { key: 'area_count', hideOnForm: true },
     {
-      key: 'pos_first_year', type: 'date', required: false, hideOnIndex: true,
+      key: 'pos_first_year', type: 'date', hideOnIndex: true,
     },
     {
       key: 'contactperson_id',
@@ -311,11 +334,10 @@ export default {
       'contactperson_id',
     ]
     if (create) {
-      await vm.$http.post('/pos/', _.pick(entity, attributes))
-    } else {
-      attributes.push('pos_id')
-      await vm.$http.put('/pos', _.pick(entity, attributes))
+      return vm.$http.post('/pos', _.pick(entity, attributes))
     }
+    attributes.push('pos_id')
+    return vm.$http.put('/pos', _.pick(entity, attributes))
   },
   panels: [
     {

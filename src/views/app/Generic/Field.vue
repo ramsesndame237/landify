@@ -2,7 +2,7 @@
   <div>
     <b-form-group v-if="visible" :label=" (field.noLabel|| noLabel) ? '' : $t(field.label||'attribute.'+field.key)"
                   :label-for="'field-'+field.key" :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null">
-      <b-form-input v-if="field.auto" v-model="entity[field.key]" disabled
+      <b-form-input v-if="field.auto" v-model="entity[field.key]" :size="field.size || null" disabled
                     :placeholder="$t('attribute.general_automaticid')"/>
       <validation-provider v-else #default="{ errors, validate }" :rules="rules" :name="field.key"
                            :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message&& tableDefinition.attribute_regexp_failure_message[field.key]}">
@@ -12,8 +12,8 @@
           <template v-if="disabled">
             <div class="p-1 border rounded" v-html="entity[field.key]"/>
           </template>
-          <b-form-textarea v-show="!disabled" :id="'tinyEditor-'+field.key"
-                           v-model="entity[field.key]" :class="{'d-none' : editorInstance && editorInstance.isHidden}"/>
+          <b-form-textarea v-show="!disabled" :id="'tinyEditor-'+field.key" v-model="entity[field.key]"
+                           :class="{'d-none' : editorInstance && editorInstance.isHidden}"/>
           <!-- <ckeditor v-else :id="'ckcontent-'+field.key" v-model="entity[field.key]" :disabled="disabled"
                     :editor="editor" :config="{}"
           /> -->
@@ -25,7 +25,7 @@
                     :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
                     :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
                     :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
-                    @input="onChange"/>
+                    :clearable="field.clearable != null ? field.clearable : true" @input="onChange"/>
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm">New
           </b-button>
@@ -40,7 +40,7 @@
         </div>
         <div v-else-if="field.type==='yesno' || field.type==='custom-select'">
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
-                    :multiple="field.multiple" :placeholder="field.key"
+                    :multiple="field.multiple" :placeholder="field.key" :clearable="field.clearable != null ? field.clearable : true"
                     :options="field.type==='yesno'?yesNoOptions: customSelectOptions" transition="" label="label"
                     class="w-100" :reduce="i => i.value"/>
         </div>
@@ -99,12 +99,9 @@
             <div id="pickerContainer" :class="{'d-none': !isEmojiInputVisible}"/>
           </div>
         </template>
-        <CustomDatePicker v-else-if="field.type === 'date-picker'"
-                          :start-date="entity.start_date"
-                          :end-date="entity.end_date"
-                          @input-start-date="entity.start_date = $event"
-                          @input-end-date="entity.end_date = $event"
-        />
+        <CustomDatePicker v-else-if="field.type === 'date-picker'" :start-date="entity.start_date"
+                          :end-date="entity.end_date" @input-start-date="entity.start_date = $event"
+                          @input-end-date="entity.end_date = $event"/>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
                     class="form-control"/>
@@ -195,6 +192,8 @@ import 'tinymce/models/dom'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import CustomDatePicker from '@/views/app/Generic/CustomDatePicker.vue'
+import { getUserData } from '@/auth/utils'
+import { mapGetters } from 'vuex'
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -267,6 +266,7 @@ export default {
       isEmojiInputVisible: false,
       editorInstance: null,
       disablePopupButton: false,
+      isDisabled: false,
     }
   },
   computed: {
@@ -277,7 +277,7 @@ export default {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
     selectDisabled() {
-      return this.disabled || (this.field.filter_key && this.entity[this.field.filter_key] == null)
+      return this.isDisabled || this.disabled || (this.field.filter_key && this.entity[this.field.filter_key] == null)
     },
     rules() {
       return this.getValidationRules(this.field)
@@ -293,7 +293,12 @@ export default {
         const val = (this.filterValue || this.entity[this.field.filter_key])
         if (this.field.filter_key && val != null) {
           console.log('filter with value', val)
-          return this.list.filter(e => e[this.field.filter_key] === val)
+          return this.list.filter(e => {
+            if (Array.isArray(val)) {
+              return val.includes(e[this.field.filter_key])
+            }
+            return e[this.field.filter_key] === val
+          })
         }
         return this.list
       }
@@ -321,8 +326,9 @@ export default {
       return this.field.type === 'list' ? this.list.find(e => e[this.field.key] === this.entity[this.field.key]) : this.entity[this.field.key]
     },
     selectedValues() {
-      return this.field.type === 'list' ? this.list.filter(e => this.entity[this.field.key].indexOf(e[this.field.key]) >= 0) : []
+      return this.field.type === 'list' ? this.list.filter(e => this.entity[this.field.key]?.indexOf(e[this.field.key]) >= 0) : []
     },
+    ...mapGetters('user', ['isUserExternClient', 'isUserExternPartner']),
 
   },
   watch: {
@@ -356,6 +362,10 @@ export default {
     }
   },
   async mounted() {
+    this.$nextTick(() => {
+      this.initializeValue()
+    })
+
     if (this.field.type && this.field.type === 'html') {
       this.initEditor()
     }
@@ -418,6 +428,32 @@ export default {
     }
   },
   methods: {
+    initializeValue() {
+      const user = getUserData()
+      if (this.isUserExternClient) {
+        if (this.field.key === 'customergroup_id') {
+          console.log('reset ', this.entity)
+          const customergroup_id = user.customergroup?.customergroup_id
+          if (!this.entity.customergroup_id && customergroup_id) {
+            this.$set(this.entity, 'customergroup_id', customergroup_id)
+          }
+          if (this.entity.customergroup_id) {
+            this.isDisabled = true
+          }
+        }
+      }
+      if (this.isUserExternPartner) {
+          if (this.field.key === 'partnergroup_id') {
+          const partnergroup_id = user.partnergroup?.partnergroup_id
+          if (!this.entity.partnergroup_id && partnergroup_id) {
+            this.$set(this.entity, 'partnergroup_id', partnergroup_id)
+          }
+          if (this.entity.partnergroup_id) {
+            this.isDisabled = true
+          }
+        }
+      }
+    },
     initEditor() {
       // Initialisation de TinyMCE
       tinymce.init({
@@ -658,7 +694,7 @@ export default {
         }
         if (this.field.filter_key) {
           const value = this.entity[this.field.filter_key]
-          if (value) {
+          if (value && ![null, -1, undefined].includes(value)) {
             if (Array.isArray(value)) {
               if (value.length > 0) {
                 payload.data = value.map(v => ({ [this.field.filter_key]: v }))

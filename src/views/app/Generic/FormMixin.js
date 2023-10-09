@@ -336,7 +336,18 @@ export default {
           if (this.definition.submit) {
             return this.definition.submit(this, this.entity, this.create)
               .then(resp => {
-                this.originalEntity = merge(this.originalEntity, resp.data)
+                if (resp) {
+                  this.originalEntity = merge(this.originalEntity, resp.data)
+                  this.$successToast(this.create ? 'Entity Created' : 'Entity Updated')
+                }
+              })
+              .catch(err => {
+                let message = err.message
+                if (err.response && err.response.data) {
+                  message = err.response.data.detail
+                }
+                this.$errorToast(message)
+                return Promise.reject(err)
               })
               .finally(async () => {
                 await this.afterSaveHook()

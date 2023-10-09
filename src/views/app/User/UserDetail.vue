@@ -78,7 +78,10 @@
                         </b-list-group-item>
                         <b-list-group-item class="d-flex align-items-center font-weight-bolder font-medium-1">
                           User Type :
-                          <span class="ml-1 font-weight-normal text-capitalize">{{ usertype }}</span>
+                          <span class="ml-1 font-weight-normal text-capitalize"> {{ usertype }} </span>
+                          <template v-if="user.user_is_director">
+                            <span class="font-weight-normal font-italic ml3"> (Director)</span>
+                          </template>
                         </b-list-group-item>
                         <b-list-group-item class="d-flex align-items-center font-weight-bolder font-medium-1">
                           Team(s) :
@@ -86,7 +89,7 @@
                             <b-badge v-for="team in userTeams" :key="team.team_id" class="mr-1" variant="dark">{{ team.team_name }}</b-badge>
                           </span>
                         </b-list-group-item>
-                        <template v-if="user.partnercompany_id">
+                        <template v-if="user.partnercompany_id && user.partnercompany_id.length > 0 ">
                           <b-list-group-item class="d-flex flex-wrap align-items-center font-weight-bolder font-medium-1">
                             Partnercompany :
                             <span class="ml-1 font-weight-normal text-capitalize">
@@ -131,10 +134,10 @@
                       </b-list-group>
                     </div>
                     <div class="d-flex justify-content-center mt-2 align-items-center">
-                      <b-button variant="info" class="mx-1" @click="editUser">
+                      <b-button v-if="canSeeEditButton" variant="info" class="mx-1" @click="editUser">
                         Edit
                       </b-button>
-                      <b-button variant="primary" class="mx-1" @click="deleteEntity">
+                      <b-button v-if="canSeeDeleteButton" variant="primary" class="mx-1" @click="deleteEntity">
                         Delete
                       </b-button>
                     </div>
@@ -163,7 +166,7 @@
                 <TrackRecord :definition="definition" :endpoint="endpoint" />
               </b-card>
             </b-tab>
-            <b-tab >
+            <b-tab :disabled="!canSeeEditButton">
               <template #title>
                 <feather-icon icon="LockIcon" size="18" />
                 Security
@@ -193,7 +196,7 @@
                 </b-overlay>
               </b-card>
             </b-tab>
-            <b-tab >
+            <b-tab :disabled="!canSeeEditButton">
               <template #title>
                 <feather-icon icon="ShieldIcon" size="18" />
                 Permissions
@@ -229,6 +232,9 @@ import Field from '@/views/app/Generic/Field.vue'
 
 import MatrixTool from '@/views/app/Role/Relation/MatrixTool.vue'
 import TeamMixin from '@/views/app/Team/TeamMixin'
+import { getUserData } from '@/auth/utils'
+import intersection from 'lodash/intersection'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'UserDetail',
@@ -337,6 +343,24 @@ export default {
     userPermissions() {
       return this.$store.getters['table/listCache'](`table-group-${this.entityId}`)
     },
+    canSeeEditButton() {
+      const loggedUserData = getUserData()
+      const check1 = this.isUserAdmin || this.isUserInternAndAdmin
+      let check2 = false
+
+      if (this.isUserExternDirector) {
+        if (this.isUserExternClientDirector) {
+          check2 = this.hadSameCompany(loggedUserData, this.user)
+        } else if (this.isUserExternPartnerDirector) {
+          check2 = this.hadSamePartnerCompany(loggedUserData, this.user)
+        }
+      }
+      return check1 || check2
+    },
+    canSeeDeleteButton() {
+      return this.canSeeEditButton
+    },
+    ...mapGetters('user', ['isUserAdmin', 'isUserInternAndAdmin', 'isUserExternDirector', 'isUserExternClientDirector', 'isUserExternPartnerDirector']),
   },
   async mounted() {
     await this.fetchUserData()
@@ -344,16 +368,32 @@ export default {
       await this.getRoles()
     }
     if (this.partnersCompany.length <= 0) {
-      // Je récupère les partnercompagny de l'utilisateur pour la requête, puisque il peut en avoir plusieurs
-      const partnersCompany = this.user?.partnercompany_id.map(partnercompany => ({ partnercompany_id: partnercompany }))
-      await this.$store.dispatch('table/fetchList', { entity: 'partnercompany', data: partnersCompany })
+      await this.getPartnerCompany()
     }
 
     await this.getUserSelectData()
   },
   methods: {
+    hadSameCompany(loggedUser, user) {
+      if (user?.company === null) return false
+      const { company_id: loggedUserCompany } = loggedUser.company
+      const company_id = user?.company ? user?.company.company_id : null
+      return loggedUserCompany === company_id
+    },
+    hadSamePartnerCompany(loggedUser, user) {
+      if (!user?.partnercompany_id || user.partnercompany_id.length <= 0) return false
+      const loggedUserPartnerCompany = loggedUser.partnercompany.map(partnercompany => partnercompany.partnercompany_id)
+      const userPartnerCompany = user.partnercompany_id
+      return intersection(loggedUserPartnerCompany, userPartnerCompany).length > 0
+    },
+
     editUser() {
       this.$refs.modal.openModal(false, this.entity)
+    },
+    async getPartnerCompany() {
+    // Je récupère les partnercompany de l'utilisateur pour la requête, puisqu'il peut en avoir plusieurs
+      const partnersCompany = this.user?.partnercompany_id.map(partnercompany => ({ partnercompany_id: partnercompany }))
+      await this.$store.dispatch('table/fetchList', { entity: 'partnercompany', data: partnersCompany })
     },
     async savePassword() {
       const result = await this.$refs.form.validate()
@@ -403,6 +443,7 @@ export default {
     async fetchUserData() {
       if (this.definition) {
         this.entity = await this.definition.fetch(this)
+        await this.getPartnerCompany()
       }
     },
   },
@@ -413,5 +454,8 @@ export default {
   padding-left: 0;
   padding-top: .5rem;
   padding-bottom: .5rem;
+}
+.ml3 {
+  margin-left: .3rem;
 }
 </style>

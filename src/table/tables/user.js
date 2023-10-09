@@ -21,6 +21,12 @@ export default {
       type: 'list',
       list: 'usertype',
       listLabel: 'usertype_name',
+    }, {
+      key: 'user_is_director',
+      hideOnIndex: true,
+      type: 'boolean',
+      default: 0,
+      visible: entity => entity.usertype_id !== 1,
     },
     {
       key: 'user_id', label: 'Id', auto: true, hideOnForm: true,
@@ -200,7 +206,19 @@ export default {
       key: 'role_name', hideOnForm: true,
     },
     {
-      key: 'team_id', type: 'list', list: 'team', listLabel: 'team_name', multiple: true, hideOnIndex: true,
+      key: 'team_id',
+      type: 'list',
+      list: 'team',
+      listLabel: 'team_name',
+      multiple: true,
+      hideOnIndex: true,
+      filter: (team, vm) => {
+        const { entity } = vm
+        if (entity.usertype_id === USER_TYPE.EXTERN) {
+          return team.team_is_customer
+        }
+        return !team.team_is_customer
+      },
     },
     {
       key: 'hollyday_representative',
@@ -208,10 +226,11 @@ export default {
       hideOnIndex: true,
       type: 'list',
       list: 'frontend_2_5_3_8',
+      tableKey: 'user_id',
       filter_key: 'partnercompany_id',
       listLabel: 'user_lastname',
       relationEntity: 'contactperson_user_rel',
-      visible: entity => entity.usertype_id === 1 && entity.partnercompany_id,
+      visible: entity => entity.usertype_id === 1 && entity?.partnercompany_id.length > 0,
       // hideOnCreate: true,
       required: false,
     },
