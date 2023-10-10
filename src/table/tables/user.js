@@ -217,7 +217,7 @@ export default {
         if (entity.usertype_id === USER_TYPE.EXTERN) {
           return team.team_is_customer
         }
-        return !team.team_is_customer
+        return true
       },
     },
     {
