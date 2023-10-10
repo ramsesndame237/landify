@@ -192,10 +192,10 @@ export default {
     currentUserInTeam(teamId) {
       const user = getUserData()
       const email = user.user_email
-      return this.teams.find(team => team.team_id === teamId && team.user_email === email && moment().isBetween(team.user_team_valid_from, team.user_team_valid_to, 'day')) != null
+      return this.teams.find(team => team.team_id === teamId && team.user_email === email && moment().isBetween(team.user_team_valid_from, team.user_team_valid_to, 'day', '[]')) != null
     },
     userIdsOfTeam(teamId) {
-      return this.teams.filter(team => team.team_id === teamId && moment().isBetween(team.user_team_valid_from, team.user_team_valid_to, 'day')).map(t => t.user_id)
+      return this.teams.filter(team => team.team_id === teamId && moment().isBetween(team.user_team_valid_from, team.user_team_valid_to, 'day', '[]')).map(t => t.user_id)
     },
   },
 
