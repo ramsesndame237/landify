@@ -205,7 +205,8 @@ export default {
       type: 'list',
       list: 'customergroup',
       listLabel: 'customergroup_name',
-      withPopup: true,
+      // withPopup: true,
+      cols: 12,
       relationEntity: 'customergroup_company_rel',
     },
     {
