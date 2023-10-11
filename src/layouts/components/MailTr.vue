@@ -13,9 +13,9 @@
     <b-td @click="toggle">
       {{ child ? '' : item.email_from }}
     </b-td>
-    <b-td @click="toggle">
-      {{ child ? '' : item.email_to }}
-    </b-td>
+<!--    <b-td @click="toggle">-->
+<!--      {{ child ? '' : item.email_to }}-->
+<!--    </b-td>-->
     <b-td>
       {{ child ? '' : item.email_subject }}
       <feather-icon v-if="!child" class="text-success" icon="EyeIcon" size="24" @click="$emit('show-content')"/>

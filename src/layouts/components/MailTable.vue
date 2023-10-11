@@ -7,7 +7,7 @@
           <b-th>Email Id</b-th>
           <b-th>Received date</b-th>
           <b-th>From</b-th>
-          <b-th>To</b-th>
+<!--          <b-th>To</b-th>-->
           <b-th>Subject</b-th>
           <b-th class="text-center">
             Ticket Id
