@@ -32,6 +32,8 @@
         ref="sidebarComponent"
         :definition="definition"
         :options="definition.options || null"
+        :table-definition-key="table"
+        :table="table"
     >
       <div class="header-customer mb-3 d-flex align-items-center justify-content-center " slot="customHeader">
         <span>

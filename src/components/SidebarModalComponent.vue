@@ -13,9 +13,12 @@ export default {
 
   },
   props: {
+    title: {
+      type: String
+    },
     options: {
       type: Object,
-      default: function () {
+      default() {
         return {
           id: 'siderbar_location',
           shadow: false,
@@ -27,17 +30,17 @@ export default {
         }
       }
     },
-    title: {
-      type: String
-    },
     sidebar_class: {
       type: Array
     },
     definition: Object,
-    componentProps: null
+    componentProps: null,
+    table: String,
+    cacheKey: String,
+    tableDefinitionKey: String,
 
   },
-  data: () => {
+  data() {
     return {
       openSidebar: false
     }

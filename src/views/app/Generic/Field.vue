@@ -2,7 +2,7 @@
   <div>
     <b-form-group v-if="visible" :label=" (field.noLabel|| noLabel) ? '' : $t(field.label||'attribute.'+field.key)"
                   :label-for="'field-'+field.key" :class="field.onlyForm?'hide-main':''" :label-cols-md="inline?4:null">
-      <b-form-input :size="field.size || null" v-if="field.auto" v-model="entity[field.key]" disabled
+      <b-form-input v-if="field.auto" v-model="entity[field.key]" :size="field.size || null" disabled
                     :placeholder="$t('attribute.general_automaticid')"/>
       <validation-provider v-else #default="{ errors, validate }" :rules="rules" :name="field.key"
                            :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message&& tableDefinition.attribute_regexp_failure_message[field.key]}">
@@ -18,7 +18,7 @@
                     :editor="editor" :config="{}"
           /> -->
         </div>
-        <div v-else-if="field.type==='list'" :class="(field.withNew || field.withPopup || field.ids) ? 'd-flex': ''">
+        <div v-else-if="field.type==='list'" :class="(field.withNew || field.withPopup || field.ids || field.withRoundedNew) ? 'd-flex': ''">
           <v-select v-model="entity[field.key]" :dropdown-should-open="true" :disabled="selectDisabled"
                     :class="{'error': errors.length > 0, 'multiple_select': field.multiple }"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
@@ -29,6 +29,11 @@
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm">New
           </b-button>
+          <div v-if="field.withRoundedNew && !field.alwaysNew && !disabled"
+                    class="ml-2 text-nowrap d-flex align-items-center justify-content-center custom_rounded_button cursor-pointer "
+                    @click="showNewForm">
+            <feather-icon icon="PlusIcon"/>
+          </div>
           <b-button v-if="field.withPopup && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     :disabled="disablePopupButton" @click="showNewPopupForm">New
           </b-button>
@@ -37,6 +42,10 @@
                     @click="showAll=!showAll">
             {{ showAll ? 'Show Created' : 'Show All' }}
           </b-button>
+        </div>
+        <div v-else-if="field.type === 'list_select'">
+          <SelectedButtonList :key-object="field.key" :label-string="field.listLabel"
+                              :options="[{team_name:'Front endFront endFront endFront endFront end',team_id:'1'},{team_name:'Back end',team_id:'2'},{team_name:'Dev Ops',team_id:'3'},{team_name:'Designer',team_id:'4'} ]"/>
         </div>
         <div v-else-if="field.type==='yesno' || field.type==='custom-select'">
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
@@ -192,7 +201,8 @@ import 'tinymce/models/dom'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import CustomDatePicker from '@/views/app/Generic/CustomDatePicker.vue'
-import { getUserData } from "@/auth/utils";
+import { getUserData } from '@/auth/utils'
+import SelectedButtonList from '@/components/SelectedButtonList.vue'
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -205,6 +215,7 @@ function isTrue(val) {
 export default {
   name: 'Field',
   components: {
+    SelectedButtonList,
     CustomDatePicker,
     ckeditor: CKEditor.component,
     BFormInput,
@@ -253,8 +264,14 @@ export default {
         },
       },
       yesNoOptions: [
-        { value: 1, label: 'Yes' },
-        { value: 0, label: 'No' },
+        {
+          value: 1,
+          label: 'Yes',
+        },
+        {
+          value: 0,
+          label: 'No',
+        },
       ],
       files: [],
       unitOptions: [],
@@ -286,6 +303,7 @@ export default {
     },
     listItems() {
       if (this.field.filter && typeof this.field.filter === 'function') {
+        console.log('this is the list', this.list)
         return this.list.filter(item => this.field.filter(item, this))
       }
       if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
@@ -343,7 +361,9 @@ export default {
       if (this.editorInstance) {
         if (newValue) {
           this.editorInstance.hide()
-        } else this.editorInstance.show()
+        } else {
+          this.editorInstance.show()
+        }
       }
     },
   },
@@ -576,6 +596,7 @@ export default {
           this.waitPassword = false
         })
     },
+
     doCopy() {
       if (this.entity[this.field.key]) {
         try {
@@ -632,12 +653,14 @@ export default {
             })
         }
         if (this.field.alwaysNew) {
-          this.getFormFields(this.subDefinition).forEach(field => {
-            if (this.entity[field.key]) this.subEntity[field.key] = this.entity[field.key]
-          })
-          this.getSubFields().forEach(field => {
-            field.getRelationValue()
-          })
+          this.getFormFields(this.subDefinition)
+            .forEach(field => {
+              if (this.entity[field.key]) this.subEntity[field.key] = this.entity[field.key]
+            })
+          this.getSubFields()
+            .forEach(field => {
+              field.getRelationValue()
+            })
         }
       }
     },
@@ -647,7 +670,8 @@ export default {
         shouldSort: true,
       })
       return search.length
-        ? fuse.search(search).map(({ item }) => item)
+        ? fuse.search(search)
+          .map(({ item }) => item)
         : fuse.list
     },
     getSubFields() {
@@ -784,7 +808,7 @@ export default {
 </script>
 
 <style lang="scss">
-
+@import '@/assets/scss/variables/variables';
 .emoji_container {
   position: relative;
 
@@ -823,5 +847,18 @@ export default {
 .bg-input {
   background-color: #e9ecef;
   color: #495057
+}
+
+.custom_rounded_button {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #eee;
+
+  svg{
+    fill: $primary;
+    stroke: $primary;
+  }
+
 }
 </style>

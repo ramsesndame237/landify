@@ -32,14 +32,13 @@ export default {
     //   list: 'usertype',
     //   listLabel: 'usertype_name',
     // },
-    {
-      key: 'user_is_director',
-      hideOnIndex: true,
-      type: 'boolean',
-      default: 0,
-      cols:12,
-      visible: entity => entity.usertype_id !== 1,
-    },
+    // {
+    //   key: 'user_is_director',
+    //   hideOnIndex: true,
+    //   type: 'boolean',
+    //   default: 0,
+    //   visible: entity => entity.usertype_id !== 1,
+    // },
     {
       key: 'user_id', label: 'Id', auto: true, hideOnForm: true,
     },
@@ -47,7 +46,8 @@ export default {
       key: 'user_firstname',
       type: 'html',
       label: 'User',
-      cols:12,
+      size: '40',
+      cols: 12,
       formatter: (value, key, item) => `<div class="d-flex h5">
         <div>
             <img src='https://placehold.co/36x36?text=${avatarPlaceholder(item)}' class="rounded-circle" style="width: 36px;"
@@ -68,34 +68,54 @@ export default {
       formatter: value => value.charAt(0).toUpperCase() + value.substring(1),
     },
     {
-      key: 'user_email', sortable: true, type: 'email', hideOnIndex: true,cols:12
+      key: 'user_email', sortable: true, type: 'email', hideOnIndex: true, cols: 12, size: 40
     },
     {
       key: 'user_password',
       type: 'password',
       hideOnIndex: true,
-      hideOnUpdate: true,
       required: false,
-      generate: true,
-      cols:12
+      generate: false,
+      cols: 12
     },
-    { key: 'user_password_reset_required', hideOnIndex: true, type: 'boolean',cols:12 },
-    {
-      key: 'user_locked', hideOnIndex: true, hideOnCreate: true, type: 'boolean',
-    },
-
-    { key: 'user_firstname', sortable: true, hideOnIndex: true,cols:12 },
-    { key: 'user_lastname', sortable: true, hideOnIndex: true,cols:12 },
+    { key: 'user_password_reset_required', hideOnIndex: true, type: 'boolean'},
+    { key: 'user_firstname', sortable: true, hideOnIndex: true,cols: 12 },
+    { key: 'user_lastname', sortable: true, hideOnIndex: true,cols: 12 },
     {
       key: 'user_abbreviation',
       sortable: true,
       hideOnIndex: true,
       disabled: true,
+      size: '40',
       hideOnUpdate: true,
+      cols: 12,
       value: entity => (entity.user_firstname?.charAt(0) || '') + (entity.user_lastname?.charAt(0) || ''),
     },
     {
-      key: 'user_abbreviation', sortable: true, hideOnIndex: true, hideOnCreate: true,
+      key: 'user_abbreviation', sortable: true, hideOnIndex: true, hideOnCreate: true,cols: 12
+    },
+
+    // {
+    //   key: 'user_locked', hideOnIndex: true, hideOnCreate: true, type: 'boolean'
+    // },
+    {
+      key: 'role_id',
+      type: 'list',
+      list: 'role',
+      listLabel: 'role_name',
+      cols: 12,
+      hideOnIndex: true,
+      filter: (role, vm) => {
+        const { entity } = vm
+
+        if (entity.usertype_id === USER_TYPE.INTERN && role.role_is_internal === USER_TYPE.INTERN) {
+          return true
+        }
+        if (entity.usertype_id === USER_TYPE.EXTERN && role.role_is_internal === 0) {
+          return true
+        }
+        return false
+      },
     },
     {
       key: 'function_id',
@@ -106,6 +126,7 @@ export default {
       noFetch: true,
       relationEntity: 'user_function_rel',
       hideOnIndex: true,
+      cols: 12
     },
     // {
     //   key: 'user_functions',
@@ -125,6 +146,7 @@ export default {
       type: 'custom-select',
       hideOnIndex: true,
       required: false,
+      cols:12,
       items: [
         { value: 1, label: 'Company' },
         { value: 0, label: 'Partner Company' },
@@ -178,6 +200,15 @@ export default {
       noFetch: true,
     },
     {
+      key: 'customergroup_id',
+      hideOnIndex: true,
+      type: 'list',
+      list: 'customergroup',
+      listLabel: 'customergroup_name',
+      withPopup: true,
+      relationEntity: 'customergroup_company_rel',
+    },
+    {
       key: 'company_id',
       type: 'list',
       definition: 'company',
@@ -185,55 +216,32 @@ export default {
       listLabel: 'company_name',
       filter_key: 'customergroup_id',
       relationEntity: 'user_company_rel',
+      cols:12,
       hideOnIndex: true,
-      visible: entity => entity.firmengroup_type === 1,
+      // visible: entity => entity.firmengroup_type === 1,
       // withNew: true
+      withRoundedNew:true
     },
     {
       key: 'user_last_login_time', sortable: true, hideOnForm: true, type: 'date', time: true,
     },
     {
-      key: 'user_last_activity_time', sortable: true, hideOnForm: true, type: 'date', time: true,
+      key: 'user_last_activity_time', sortable: true, hideOnForm: true, type: 'date', time: true
     },
-    { key: 'user_fix_phonenumber', hideOnIndex: true, required: false },
-    { key: 'user_fax_phonenumber', hideOnIndex: true, required: false },
-    { key: 'user_mobile' },
-    {
-      key: 'role_id',
-      type: 'list',
-      list: 'role',
-      listLabel: 'role_name',
-      hideOnIndex: true,
-      filter: (role, vm) => {
-        const { entity } = vm
+    { key: 'user_fix_phonenumber', hideOnIndex: true, required: false, cols: 12 },
+    { key: 'user_fax_phonenumber', hideOnIndex: true, required: false, cols: 12 },
+    { key: 'user_mobile', cols: 12 },
 
-        if (entity.usertype_id === USER_TYPE.INTERN && role.role_is_internal === USER_TYPE.INTERN) {
-          return true
-        }
-        if (entity.usertype_id === USER_TYPE.EXTERN && role.role_is_internal === 0) {
-          return true
-        }
-        return false
-      },
-    },
     {
       key: 'role_name', hideOnForm: true,
     },
-    // {
-    //   key: 'team_id',
-    //   type: 'list',
-    //   list: 'team',
-    //   listLabel: 'team_name',
-    //   multiple: true,
-    //   hideOnIndex: true,
-    //   filter: (team, vm) => {
-    //     const { entity } = vm
-    //     if (entity.usertype_id === USER_TYPE.EXTERN) {
-    //       return team.team_is_customer
-    //     }
-    //     return !team.team_is_customer
-    //   },
-    // },
+    {
+      key: 'team_id',
+      type: 'list_select',
+      listLabel: 'team_name',
+      hideOnIndex: true,
+      cols: 12
+    },
     {
       key: 'hollyday_representative',
       label: 'hollyday_representative',
