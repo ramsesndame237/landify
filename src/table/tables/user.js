@@ -75,10 +75,10 @@ export default {
       type: 'password',
       hideOnIndex: true,
       required: false,
-      generate: false,
+      generate: true,
       cols: 12
     },
-    { key: 'user_password_reset_required', hideOnIndex: true, type: 'boolean'},
+    { key: 'user_password_reset_required', hideOnIndex: true, type: 'boolean', inline:true,},
     { key: 'user_firstname', sortable: true, hideOnIndex: true,cols: 12 },
     { key: 'user_lastname', sortable: true, hideOnIndex: true,cols: 12 },
     {

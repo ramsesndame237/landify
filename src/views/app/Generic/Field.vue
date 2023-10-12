@@ -45,7 +45,7 @@
         </div>
         <div v-else-if="field.type === 'list_select'">
           <SelectedButtonList :key-object="field.key" :label-string="field.listLabel"
-                              :options="[{team_name:'Front endFront endFront endFront endFront end',team_id:'1'},{team_name:'Back end',team_id:'2'},{team_name:'Dev Ops',team_id:'3'},{team_name:'Designer',team_id:'4'} ]"/>
+                              :options="[field.options]"/>
         </div>
         <div v-else-if="field.type==='yesno' || field.type==='custom-select'">
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"

@@ -1,5 +1,5 @@
 const state = {
-  team_by_company: {},
+  team_by_company: [],
   teams_all: [],
 }
 
