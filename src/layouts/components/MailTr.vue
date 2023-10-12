@@ -17,15 +17,13 @@
       {{ child ? '' : item.email_from }}
       </span>
     </b-td>
-    <!--    <b-td @click="toggle">-->
-    <!--      {{ child ? '' : item.email_to }}-->
-    <!--    </b-td>-->
     <b-td>
-      <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center subject-content">
         <span class="d-inline-block text-truncate" style="max-width: 150px" :title="child ? '' : item.email_subject">
         {{ child ? '' : item.email_subject }}
       </span>
-        <feather-icon v-if="!child" class="text-success" icon="EyeIcon" size="24" @click="$emit('show-content')"/>
+        <feather-icon v-if="!child" class="text-success eye-icon" icon="EyeIcon" size="24"
+                      @click="$emit('show-content')"/>
       </div>
     </b-td>
     <b-td class="td-form">
@@ -267,5 +265,13 @@ export default {
   padding-left: 4px !important;
   padding-right: 4px !important;
   min-width: 250px;
+}
+
+.eye-icon {
+  opacity: 0;
+}
+
+.subject-content:hover .eye-icon {
+  opacity: 1;
 }
 </style>

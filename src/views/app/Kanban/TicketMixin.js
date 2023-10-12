@@ -140,6 +140,7 @@ export default {
         action: 'read-rich',
         order_by: 'rank_order',
         order_dir: 'ASC',
+        per_page: 9999,
         data: [{ board_id: boardId }],
       })
         .then(({ data }) => {
