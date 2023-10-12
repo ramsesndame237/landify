@@ -46,6 +46,7 @@ export default {
       hideOnForm: true,
     },
     { key: 'board_name', hideOnForm: true },
+    { key: 'column_name', hideOnForm: true },
 
     { key: 'priority_name', hideOnForm: true },
     { key: 'pos_name', hideOnForm: true },
