@@ -8,17 +8,25 @@
       {{ child ? '' : item.email_id }}
     </b-td>
     <b-td @click="toggle">
-      {{ child ? '' : formatDate(item.email_received_datetime,true) }}
+      <span class="text-truncate">
+      {{ child ? '' : customFormatDate(item.email_received_datetime) }}
+      </span>
     </b-td>
     <b-td @click="toggle">
+      <span class="d-inline-block text-truncate" style="max-width: 130px" :title="child ? '' : item.email_from">
       {{ child ? '' : item.email_from }}
+      </span>
     </b-td>
-<!--    <b-td @click="toggle">-->
-<!--      {{ child ? '' : item.email_to }}-->
-<!--    </b-td>-->
+    <!--    <b-td @click="toggle">-->
+    <!--      {{ child ? '' : item.email_to }}-->
+    <!--    </b-td>-->
     <b-td>
-      {{ child ? '' : item.email_subject }}
-      <feather-icon v-if="!child" class="text-success" icon="EyeIcon" size="24" @click="$emit('show-content')"/>
+      <div class="d-flex align-items-center">
+        <span class="d-inline-block text-truncate" style="max-width: 150px" :title="child ? '' : item.email_subject">
+        {{ child ? '' : item.email_subject }}
+      </span>
+        <feather-icon v-if="!child" class="text-success" icon="EyeIcon" size="24" @click="$emit('show-content')"/>
+      </div>
     </b-td>
     <b-td class="td-form">
       <field v-if="visible" :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/>
@@ -85,8 +93,9 @@
 
 <script>
 import Field from '@/views/app/Generic/Field'
-import { getDocumentLink, formatDate } from '@/libs/utils'
+import { getDocumentLink, formatDate, getDateFormat } from '@/libs/utils'
 import { VBToggle } from 'bootstrap-vue'
+import moment from "moment";
 
 export default {
   name: 'MailTr',
@@ -172,7 +181,18 @@ export default {
     this.onTicketIdChange()
   },
   methods: {
-    formatDate,
+    customFormatDate(date) {
+      if (!date) return ''
+      const mDate = moment(date)
+      const now = moment()
+      let format = getDateFormat(true)
+      if (mDate.isSame(now, 'day')) {
+        format = 'HH:mm'
+      } else if (!mDate.isSame(now, 'isoWeek')) {
+        format = getDateFormat(false)
+      }
+      return mDate.format(format)
+    },
     display() {
       console.log(this.item)
     },
