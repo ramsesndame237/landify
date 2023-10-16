@@ -22,7 +22,9 @@
                  :default-sort-column="initialSortBy||definition.defaultSortField" :default-sort-desc="initialSortDesc"
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
-                 :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint" :filter-items="definition.filter"/>
+                 :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"
+                 :filter-items="definition.filter" :custom-request="definition.customRequest"
+      />
     </b-card>
     <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table"
                    :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
