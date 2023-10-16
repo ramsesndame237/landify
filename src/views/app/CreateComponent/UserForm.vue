@@ -33,8 +33,8 @@ export default {
         index = definition.fields.findIndex(f => f.key === 'function_id') // function_id field
         this.$store.dispatch('table/setListData', { entity: definition.fields[index].list, data: data?.function })
 
-        index = definition.fields.findIndex(f => f.key === 'user_functions') // user_functions field
-        this.$store.dispatch('table/setListData', { entity: definition.fields[index].list, data: data?.function })
+        // index = definition.fields.findIndex(f => f.key === 'user_functions') // user_functions field
+        // this.$store.dispatch('table/setListData', { entity: definition.fields[index].list, data: data?.function })
 
         index = definition.fields.findIndex(f => f.key === 'customergroup_id') // customer_group field
         this.$store.dispatch('table/setListData', { entity: definition.fields[index].list, data: data?.customergroup })
