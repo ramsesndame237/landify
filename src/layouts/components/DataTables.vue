@@ -30,6 +30,7 @@
         </div>
         <span v-else>
           <b-badge v-if="data.field.withBadge" :variant="data.field.setVariant(data)">{{ data.value }}</b-badge>
+          <template v-else-if="data.field.translateValue">{{ $t(data.value) }}</template>
           <template v-else>{{ data.value }}</template>
         </span>
       </template>
@@ -457,10 +458,15 @@ export default {
         }
 
         if (this.customRequest) {
-          await this.$http.put(this.customRequest.endpoint, {
+          const payload = {
             [this.customRequest.relationKey]: entities.map(entity => entity[this.primaryKey]),
             action: 'delete',
             [this.customRequest.entityKey]: this.secondKeyValue,
+          }
+          await this.$http({
+            method: this.customRequest.method ? this.customRequest.method : 'put',
+            url: this.customRequest.endpoint,
+            data: payload,
           }).then(res => {
             this.$successToast('Delete Done.')
             this.$root.$emit('update-occured')
