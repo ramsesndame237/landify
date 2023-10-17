@@ -394,7 +394,10 @@ export default {
     } else if (this.field.value != null) {
       this.$set(this.entity, this.field.key, this.field.value)
     }
-    this.$watch(`entity.${this.field.key}`, () => {
+    this.$watch(`entity.${this.field.key}`, (newValue, oldValue) => {
+      if (this.field.handleFieldChange && typeof this.field.handleFieldChange === 'function') {
+        this.field.handleFieldChange(newValue, oldValue, this.entity, this)
+      }
       this.onChange()
     })
     if (this.field.filter_key && !this.field.noFetchOnChange) {
@@ -418,7 +421,7 @@ export default {
 
     if (this.field.unit) {
       this.unitOptions = this.field.unit(this)
-      this.entity[this.field.unit_key] = this.unitOptions[0][this.field.unit_value_key]
+      this.entity[this.field.unit_key] = this.entity[this.field.unit_key] || this.unitOptions[0][this.field.unit_value_key]
     }
 
     if (this.field.type === 'custom-select') {
