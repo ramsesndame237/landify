@@ -123,7 +123,16 @@ export default {
         {
           key: 'contractdeadline_option_position', type: 'number', label: 'N° options', hideOnIndex: true,
         },
-        { key: 'contractdeadline_options', type: 'number', label: 'To Activate' },
+        {
+          key: 'contractdeadline_options',
+          type: 'number',
+          label: 'To Activate',
+          formatter: (value, key, item) => {
+            const { contractaction_unlimited_options, contractdeadline_type } = item
+            if (contractaction_unlimited_options === 1 && ['automatic_extension'].includes(contractdeadline_type)) return '\u{221E}'
+            return (!value ? '--' : value)
+          },
+        },
         {
           key: 'contractdeadline_available_options',
           label: 'Available options',

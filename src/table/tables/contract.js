@@ -290,35 +290,6 @@ export default {
     contract_migration_checked: 0,
   },
   relations: [
-
-    // {
-    //   entity: 'frontend_3_4_3_8',
-    //   entityView: 'company',
-    //   fields: [
-    //     { key: 'company_id' },
-    //     { key: 'company_name' },
-    //     { key: 'company_shortname' },
-    //     { key: 'city_name' },
-    //     { key: 'customergroup_name' },
-    //   ],
-    //   create: false,
-    //   update: false,
-    //   delete: false,
-    // },
-    // {
-    //   entity: 'frontend_3_4_3_9',
-    //   entityView: 'pos',
-    //   fields: [
-    //     { key: 'pos_id' },
-    //     { key: 'pos_name' },
-    //     { key: 'pos_branchnumber' },
-    //     { key: 'pos_name_external' },
-    //     { key: 'area_count' },
-    //   ],
-    //   create: false,
-    //   update: false,
-    //   delete: false,
-    // },
     {
       primaryKey: 'invoice_id',
       entity: 'frontend_3_4_3_6',
@@ -511,7 +482,11 @@ export default {
           key: 'contractaction_options',
           type: 'number',
           label: 'Expected number of options',
-          formatter: value => (!value ? '--' : value),
+          formatter: (value, key, item) => {
+            const { contractaction_unlimited_options, contractaction_type } = item
+            if (contractaction_unlimited_options === 1 && ['automatic_extension'].includes(contractaction_type)) return '\u{221E}'
+            return (!value ? '--' : value)
+          },
         },
         {
           key: 'contractaction_extension_value', type: 'number', label: 'Extension value', hideOnIndex: true,
