@@ -22,25 +22,25 @@
     </div>
     <p class="text-truncate" :title="ticket.ticket_description">{{ ticket.ticket_description }}</p>
     <div v-if="advanced" class="d-flex">
-      <strong class="mr-1">{{ $t('attribute.ticket_id') }}:</strong>
+      <strong class="mr-1">{{ $t('attribute.ticket_id') | title }}:</strong>
       <span>{{ ticket.ticket_id }}</span>
     </div>
     <div class="d-flex">
-      <strong class="mr-1">{{ $t('attribute.assigned_to') }}:</strong>
+      <strong class="mr-1">{{ $t('attribute.assigned_to') | title }}:</strong>
       <span class="text-truncate" :title="assignedUser">{{ assignedUser }}</span>
     </div>
     <div class="d-flex">
-      <strong class="mr-1">{{ $t('attribute.ticket_deadline') }}:</strong>
+      <strong class="mr-1">{{ $t('attribute.ticket_deadline') | title }}:</strong>
       <span :class="deadlineColor?('text-'+deadlineColor):''">{{ deadlineForHuman }}</span>
       <b-icon-calendar-date :class="'ml-auto '+ (deadlineColor?('text-'+deadlineColor):'')"/>
     </div>
     <div v-if="advanced" class="d-flex">
-      <strong class="mr-1">{{ $t('attribute.ticket_deadline_offset') }}:</strong>
+      <strong class="mr-1">{{ $t('attribute.ticket_deadline_offset') | title }}:</strong>
       <span :class="columnDeadlineColor?('text-'+columnDeadlineColor):''">{{ columnDeadlineForHuman }}</span>
       <b-icon-calendar-date :class="'ml-auto '+ (columnDeadlineColor?('text-'+columnDeadlineColor):'')"/>
     </div>
     <div v-if="advanced" class="d-flex">
-      <strong class="mr-1">{{ $t('attribute.priority_name') }}:</strong>
+      <strong class="mr-1">{{ $t('attribute.priority_name') | title }}:</strong>
       <span>{{ ticket.priority_name }}</span>
     </div>
   </div>
@@ -62,6 +62,7 @@ import CustomHorizontalProgress from '@/views/app/CustomComponents/CustomHorizon
 import moment from 'moment'
 import { mapGetters } from 'vuex'
 import TicketMixin from '@/views/app/Kanban/TicketMixin'
+import { title } from '@core/utils/filter'
 
 export default {
   name: 'InvoiceTicketCard',
@@ -82,6 +83,7 @@ export default {
     format(val) {
       return moment(val).format('DD.MM.YYYY (HH:mm)')
     },
+    title,
   },
   mixins: [TicketMixin],
   props: {
