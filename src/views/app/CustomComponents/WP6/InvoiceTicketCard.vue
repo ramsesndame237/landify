@@ -2,7 +2,8 @@
   <div class="p-1 ticket" :class="'ticket-'+deadlineColor">
     <div class="d-flex align-items-center mb-1">
       <b-avatar variant="light-warning" text="I"/>
-      <h4 class="font-weight-bolder mb-0 ml-1" style="color: #ccc; font-size: 15px" :title="ticket.ticket_id">
+      <h4 class="font-weight-bolder text-truncate mb-0 ml-1" style="color: #ccc; font-size: 15px"
+          :title="ticket.ticket_name">
         {{ ticket.ticket_name }}</h4>
       <b-dropdown variant="link-" toggle-class="p-0" right no-caret class="ml-auto">
         <template v-slot:button-content>
@@ -19,18 +20,14 @@
         </b-dropdown-item>
       </b-dropdown>
     </div>
+    <p class="text-truncate" :title="ticket.ticket_description">{{ ticket.ticket_description }}</p>
     <div v-if="advanced" class="d-flex">
       <strong class="mr-1">{{ $t('attribute.ticket_id') }}:</strong>
       <span>{{ ticket.ticket_id }}</span>
     </div>
-    <div v-if="advanced" class="d-flex">
-      <strong class="mr-1">{{ $t('attribute.ticket_creation_time') }}:</strong>
-      <span>{{ ticket.ticket_creation_time | format }}</span>
-      <b-icon-clock-fill class="ml-auto"/>
-    </div>
-    <div v-if="advanced" class="d-flex">
-      <strong class="mr-1">{{ $t('attribute.ticket_last_change_time') }}:</strong>
-      <span>{{ ticket.ticket_last_change_time | format }}</span>
+    <div class="d-flex">
+      <strong class="mr-1">{{ $t('attribute.assigned_to') }}:</strong>
+      <span class="text-truncate" :title="assignedUser">{{ assignedUser }}</span>
     </div>
     <div class="d-flex">
       <strong class="mr-1">{{ $t('attribute.ticket_deadline') }}:</strong>
@@ -45,16 +42,6 @@
     <div v-if="advanced" class="d-flex">
       <strong class="mr-1">{{ $t('attribute.priority_name') }}:</strong>
       <span>{{ ticket.priority_name }}</span>
-    </div>
-
-    <!--    <div class="mt-1">-->
-    <!--      <b-progress max="100" :value="ticket.ticket_progress" style="margin-bottom: 2px;"></b-progress>-->
-    <!--    </div>-->
-    <div class="values d-flex justify-content-between align-items-center font-weight-light">
-      <div class="hours">
-        {{ ticket.columns[0].user_email_assigned }}
-      </div>
-      <!--      <div class="percents">{{ ticket.ticket_progress + '%' }}</div>-->
     </div>
   </div>
 </template>
@@ -113,6 +100,16 @@ export default {
     ...mapGetters({
       now: 'app/now',
     }),
+    assignedUser() {
+      const column = this.ticket.columns[0]
+      if (column.user_id_assigned) {
+        if (column.user_firstname_assigned) {
+          return `${column.user_firstname_assigned} ${column.user_lastname_assigned}`
+        }
+        return column.user_email_assigned
+      }
+      return 'None'
+    },
     deadlineColor() {
       if (this.now.isAfter(this.deadline_red)) return 'danger'
       if (this.now.isAfter(this.deadline_yellow)) return 'warning'
