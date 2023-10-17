@@ -711,7 +711,11 @@ export default {
           if (value && ![null, -1, undefined].includes(value)) {
             if (Array.isArray(value)) {
               if (value.length > 0) {
-                payload.data = value.map(v => ({ [this.field.filter_key]: v }))
+                if (this.field.entityCustomEndPoint) {
+                  payload.data = [{ [this.field.filter_key]: value }]
+                } else {
+                  payload.data = value.map(v => ({ [this.field.filter_key]: v }))
+                }
               }
             } else {
               payload.data = [{ [this.field.filter_key]: this.entity[this.field.filter_key] }]
