@@ -74,6 +74,7 @@
         </template>
         <template v-else>
           <b-button
+            v-if="row.item[subFieldsDataKey] && row.item[subFieldsDataKey].length > 0"
             v-b-tooltip.hover
             title="See list of comments" class="btn-icon"
             variant="flat-success" style="margin-bottom: 3px" pill @click="showDetails(row, $event.target)">
