@@ -53,12 +53,12 @@
                    :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
                    @reload-table="$refs.table.reload()"/>
     <SidebarModalComponent
-      :title="`headline~${table}~new`"
       ref="sidebarComponent"
+      :title="`headline~${table}~new`"
       :definition="definition"
       :options="definition.options || null"
     >
-      <div class="header-customer mb-3 d-flex align-items-center justify-content-center bg-white  " slot="customHeader">
+      <div slot="customHeader" class="header-customer mb-3 d-flex align-items-center justify-content-center bg-white  ">
         <span>
           {{ $t(`headline~${table}~new`) }}
         </span>
@@ -70,14 +70,14 @@
 import InlineFilter from '@/views/app/Generic/InlineFilter.vue'
 import TablePagination from '@/layouts/components/TablePagination.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
-import SidebarModalComponent from "@/components/SidebarModalComponent.vue";
+import SidebarModalComponent from '@/components/SidebarModalComponent.vue'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
 
 export default ({
   name: 'UserIndex',
   components: {
-    InlineFilter, Datatable, TablePagination, GenericModal, SidebarModalComponent
+    InlineFilter, Datatable, TablePagination, GenericModal, SidebarModalComponent,
   },
   props: ['definition'],
   data() {
@@ -181,19 +181,19 @@ export default ({
       // }
       this.definition.createModal === 'sidebar' ? this.$refs.sidebarComponent.openSidebarComponent() : this.useModalToCreate ? this.$refs.modal.openModal(true, {}) : this.$router.push({
         name: 'table-form',
-        params: {table: this.table},
+        params: { table: this.table },
       })
     },
     async getUsersStatistics() {
       this.loading = true
       try {
         const response = await this.$http.get('/statistics/users')
-        const {data} = response
+        const { data } = response
         this.total_active_users = data.total_active_users
         this.total_locked_users = data.total_locked_users
         this.total_users = data.total_users
       } catch (error) {
-        console.log({error})
+        console.log({ error })
       } finally {
         this.loading = false
       }
@@ -213,4 +213,5 @@ export default ({
         font-weight: 700;
       }
     }
+
 </style>

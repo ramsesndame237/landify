@@ -1,20 +1,20 @@
 <script>
 
-import {BSidebar} from 'bootstrap-vue'
-import EntityForm from "@/views/app/Generic/EntityForm.vue";
+import { BSidebar } from 'bootstrap-vue'
+import EntityForm from '@/views/app/Generic/EntityForm.vue'
 
 export default {
-  name: "SidebarModalComponent",
+  name: 'SidebarModalComponent',
   components: {
     BSidebar,
-    EntityForm
+    EntityForm,
   },
   errorCaptured(err, vm, info) {
 
   },
   props: {
     title: {
-      type: String
+      type: String,
     },
     options: {
       type: Object,
@@ -26,12 +26,12 @@ export default {
           no_header: false,
           custom_footer: false,
           backdrop: true,
-          backdrop_variant: 'variant'
+          backdrop_variant: 'variant',
         }
-      }
+      },
     },
     sidebar_class: {
-      type: Array
+      type: Array,
     },
     definition: Object,
     componentProps: null,
@@ -42,7 +42,7 @@ export default {
   },
   data() {
     return {
-      openSidebar: false
+      openSidebar: false,
     }
   },
   methods: {
@@ -57,23 +57,23 @@ export default {
 <template>
   <div>
     <b-sidebar
-      ref="sidebarRef"
       :id="options.id || 'sidebarId'"
+      ref="sidebarRef"
+      v-model="openSidebar"
       :title="$t(title || '')"
       :backdrop-variant="options.backdrop_variant || 'dark'"
       :backdrop="options.backdrop"
       :shadow="options.shadow"
       :no-header="options.no_header"
       :right="options.rigth_position"
-      v-model="openSidebar"
-      :width="options.width || '450px'"
-      class="overflow-x-hidden "
+      :width="options.width || '350px'"
+      :class="['overflow-x-hidden'] "
     >
-      <slot v-if="options.no_header" name="customHeader"></slot>
+      <slot v-if="options.no_header" name="customHeader"/>
       <div class="px-2 overflow-hidden sidebar-content ">
         <component :is="definition.formComponent || 'entity-form' || componentProps" :definition="definition"/>
       </div>
-      <slot v-if="options.custom_footer" name="custom-footer"></slot>
+      <slot v-if="options.custom_footer" name="custom-footer"/>
     </b-sidebar>
   </div>
 </template>

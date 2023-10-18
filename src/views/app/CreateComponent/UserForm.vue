@@ -66,6 +66,7 @@ import FormMixin from '@/views/app/Generic/FormMixin'
 // eslint-disable-next-line import/no-cycle
 import Table from '@/table'
 import DStepper from '@/components/Stepper.vue'
+import { mapState } from 'vuex'
 
 export default {
   name: 'UserForm',
@@ -85,7 +86,7 @@ export default {
       },
       {
         labelStep: 1,
-        children: ['role_id', 'function_id', 'customergroup_id', 'company_id', 'user_fix_phonenumber', 'user_fax_phonenumber', 'user_mobile'],
+        children: ['role_id', 'function_id', 'customergroup_id', 'firmengroup_type','partnergroup_id','partnercompany_id', 'company_id', 'user_fix_phonenumber', 'user_fax_phonenumber', 'user_mobile'],
       },
       {
         labelStep: 2,
@@ -97,14 +98,28 @@ export default {
   watch: {
     entity: {
       deep: true,
-      handler(newValue, oldValue) {
+      async handler(newValue) {
         console.log('this is the data change', newValue)
         const companyKeyName = 'company_id'
         if (companyKeyName in newValue && newValue.company_id !== '') {
-          this.fetchTeamData(newValue.company_id)
+          await this.fetchTeamData(newValue.company_id)
         }
       },
     },
+    team_by_company: {
+      deep: true,
+      handler(newValue) {
+        if ((newValue || []).length !== 0) {
+          const teamField = this.formFields.find(x => x.key === 'team_id')
+          console.log({ teamField })
+          if (teamField) teamField.options = newValue
+        }
+      },
+    },
+  },
+
+  computed: {
+    ...mapState('team', ['team_by_company']),
   },
   async mounted() {
     this.getActiveStep(0)
@@ -152,7 +167,6 @@ export default {
         this.$errorToast(e.response ? e.response.data?.detail : 'Unknow Error')
       })
   },
-
   methods: {
     getCountryField(formField) {
       return { ...formField.find(f => f.key === 'country_id') }
@@ -162,7 +176,10 @@ export default {
     },
     choseUserType(value) {
       this.userType = value
-      this.entity.usertype_id = value
+      this.entity.usertype_id = value.usertype_id
+      this.entity.firmengroup_type = value.usertype_id === 1 ? 0 : 1
+      this.entity.partnergroup_is_internal = value.usertype_id === 1 ? 1 : 0
+      console.log('this is the value of my entity', this.entity)
     },
     handleSubmit() {
 

@@ -100,7 +100,7 @@ export default {
     // },
     {
       key: 'role_id',
-      type: 'list',
+      type: 'custom_list',
       list: 'role',
       listLabel: 'role_name',
       cols: 12,
@@ -119,11 +119,11 @@ export default {
     },
     {
       key: 'function_id',
-      type: 'list',
+      type: 'custom_list',
       composite: true,
       listLabel: 'function_name',
       list: 'function',
-      noFetch: true,
+      noFetch: false,
       relationEntity: 'user_function_rel',
       hideOnIndex: true,
       cols: 12
@@ -141,22 +141,22 @@ export default {
     //   hideOnIndex: true,
     //   visible: entity => entity.usertype_id === 1,
     // },
-    {
-      key: 'firmengroup_type',
-      type: 'custom-select',
-      hideOnIndex: true,
-      required: false,
-      cols:12,
-      items: [
-        { value: 1, label: 'Company' },
-        { value: 0, label: 'Partner Company' },
-      ],
-      change: entity => {
-        if (entity.usertype_id === 1) return 0
-        return undefined
-      },
-      visible: entity => entity.usertype_id !== 1,
-    },
+    // {
+    //   key: 'firmengroup_type',
+    //   type: 'custom-select',
+    //   hideOnIndex: true,
+    //   required: false,
+    //   cols:12,
+    //   items: [
+    //     { value: 1, label: 'Company' },
+    //     { value: 0, label: 'Partner Company' },
+    //   ],
+    //   change: entity => {
+    //     if (entity.usertype_id === 1) return 0
+    //     return undefined
+    //   },
+    //   visible: entity => entity.usertype_id !== 1,
+    // },
     {
       key: 'partnergroup_is_internal',
       visible: () => false,
@@ -170,48 +170,41 @@ export default {
     },
     {
       key: 'partnergroup_id',
-      type: 'list',
+      type: 'custom_list',
       list: 'partnergroup',
       listLabel: 'partnergroup_name',
       hideOnIndex: true,
       visible: entity => entity.firmengroup_type === 0,
       filter_key: 'partnergroup_is_internal',
-      noFetch: true,
+      noFetch: false,
+      cols:12
     },
     {
       key: 'partnercompany_id',
-      type: 'list',
+      type: 'custom_list',
       list: 'frontend_2_5_1',
       listLabel: 'partnercompany_name',
       filter_key: 'partnergroup_id',
       relationEntity: 'user_partnercompany_rel',
       hideOnIndex: true,
-      multiple: true,
+      multiple: false,
+      cols:12,
       visible: entity => entity.firmengroup_type === 0,
     },
     {
       key: 'customergroup_id',
-      type: 'list',
+      type: 'custom_list',
       send: false,
       list: 'customergroup',
       listLabel: 'customergroup_name',
       hideOnIndex: true,
       visible: entity => entity.firmengroup_type === 1,
-      noFetch: true,
-    },
-    {
-      key: 'customergroup_id',
-      hideOnIndex: true,
-      type: 'list',
-      list: 'customergroup',
-      listLabel: 'customergroup_name',
-      // withPopup: true,
-      cols: 12,
-      relationEntity: 'customergroup_company_rel',
+      noFetch: false,
+      cols:12
     },
     {
       key: 'company_id',
-      type: 'list',
+      type: 'custom_list',
       definition: 'company',
       list: 'frontend_2_2_3_1',
       listLabel: 'company_name',
@@ -219,7 +212,7 @@ export default {
       relationEntity: 'user_company_rel',
       cols:12,
       hideOnIndex: true,
-      // visible: entity => entity.firmengroup_type === 1,
+      visible: entity => entity.firmengroup_type === 1,
       // withNew: true
       withRoundedNew:true
     },
@@ -229,9 +222,10 @@ export default {
     {
       key: 'user_last_activity_time', sortable: true, hideOnForm: true, type: 'date', time: true
     },
+    { key: 'user_mobile', cols: 12 },
     { key: 'user_fix_phonenumber', hideOnIndex: true, required: false, cols: 12 },
     { key: 'user_fax_phonenumber', hideOnIndex: true, required: false, cols: 12 },
-    { key: 'user_mobile', cols: 12 },
+
 
     {
       key: 'role_name', hideOnForm: true,
@@ -240,6 +234,7 @@ export default {
       key: 'team_id',
       type: 'list_select',
       listLabel: 'team_name',
+      listButtonClass: 'list_custom_style',
       hideOnIndex: true,
       cols: 12
     },

@@ -23,7 +23,7 @@ export default {
     }
   },
   mounted() {
-    console.log('thisi sithe key', this.keyObject)
+    console.log('thisi sithe key', this.options)
   },
 
   methods: {
@@ -33,6 +33,7 @@ export default {
       } else {
         this.selectedOptions.push(value[this.keyObject])
       }
+      this.$emit('selectedOptions',this.selectedOptions,this.keyObject)
     },
   },
 }
@@ -43,7 +44,7 @@ export default {
     <b-button v-for="(item,index) in options" :key="index"
               pill
               :variant="selectedOptions.includes(item[keyObject || '']) ? 'primary' : 'secondary'" :class="['m-1 button_container',classes]" @click="getTeamSelected(item)">
-      <span>
+      <span >
         {{ item[labelString] }}
       </span>
     </b-button>
@@ -52,7 +53,14 @@ export default {
 
 <style>
 .button_container {
-  border: solid green;
+  max-width: 161px;
+  min-width: 160px;
+  overflow: hidden;
+  white-space: nowrap;
+  span{
+    text-overflow: ellipsis;
+  }
+
 }
 
 </style>

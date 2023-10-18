@@ -7,6 +7,7 @@ import appConfig from './app-config'
 import verticalMenu from './vertical-menu'
 import table from './table'
 import team from "@/store/modules/team";
+import location from '@/store/modules/locations'
 
 Vue.use(Vuex)
 
@@ -16,7 +17,8 @@ export default new Vuex.Store({
     appConfig,
     verticalMenu,
     table,
-    team
+    team,
+    location
   },
   strict: process.env.DEV,
 })

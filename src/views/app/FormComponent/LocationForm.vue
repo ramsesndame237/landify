@@ -1,25 +1,24 @@
 <script>
-import formMixin from "@/views/app/Generic/FormMixin";
+import formMixin from '@/views/app/Generic/FormMixin'
 
 export default {
-  name: "LocationForm",
+  name: 'LocationForm',
   mixins: [formMixin],
-  data:()=>{
-    return{
-      loading:false
-    }
+  data: () => ({
+    loading: false,
+  }),
+  mounted() {
+    console.log('this is the field of the location', this.formFields)
   },
-  methods:{
-    handleSubmit(){
-      this.loading = false
-      this.$refs.form.submit()
-          .then(entity => {
-            console.log(entity)
-            this.loading = true
-          })
-          .finally(() => this.loading = false)
-    }
-  }
+  methods: {
+    handleSubmit() {
+      this.loading = true
+      this.$refs.form.handleSubmit(entity => {
+        console.log('this is the entity', entity)
+        this.loading = false
+      })
+    },
+  },
 
 }
 </script>
@@ -37,11 +36,12 @@ export default {
           />
         </b-col>
       </b-row>
-      <b-button :disabled="loading" class="save_button text-center d-flex align-items-center justify-content-center" variant="primary" @click="handleSubmit" >
+      <b-button :disabled="loading" class="save_button text-center d-flex align-items-center justify-content-center"
+                variant="primary" @click="handleSubmit">
         <span>
           {{ $t('button~save') }}
         </span>
-        <b-spinner v-if="loading" label="Spinning"></b-spinner>
+        <b-spinner v-if="loading" label="Spinning"/>
       </b-button>
     </b-form>
   </validation-observer>
@@ -64,7 +64,8 @@ export default {
 .b-sidebar-body {
   background: $body-bg-white;
 }
-.save_button{
+
+.save_button {
   width: 100%;
 }
 </style>

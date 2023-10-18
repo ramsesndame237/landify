@@ -18,7 +18,8 @@
                     :editor="editor" :config="{}"
           /> -->
         </div>
-        <div v-else-if="field.type==='list'" :class="(field.withNew || field.withPopup || field.ids || field.withRoundedNew) ? 'd-flex': ''">
+        <div v-else-if="field.type==='list'"
+             :class="(field.withNew || field.withPopup || field.ids || field.withRoundedNew) ? 'd-flex': ''">
           <v-select v-model="entity[field.key]" :dropdown-should-open="true" :disabled="selectDisabled"
                     :class="{'error': errors.length > 0, 'multiple_select': field.multiple }"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
@@ -30,8 +31,8 @@
                     @click="showNewForm">New
           </b-button>
           <div v-if="field.withRoundedNew && !field.alwaysNew && !disabled"
-                    class="ml-2 text-nowrap d-flex align-items-center justify-content-center custom_rounded_button cursor-pointer "
-                    @click="showNewForm">
+               class="ml-2 text-nowrap d-flex align-items-center justify-content-center custom_rounded_button cursor-pointer "
+               @click="showNewForm">
             <feather-icon icon="PlusIcon"/>
           </div>
           <b-button v-if="field.withPopup && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
@@ -43,9 +44,22 @@
             {{ showAll ? 'Show Created' : 'Show All' }}
           </b-button>
         </div>
+        <div v-else-if="field.type ==='custom_list'">
+          <AutoCompleteInput
+            :options="listItems"
+            :key_label="field.listLabel || ''"
+            :key_value="field.key || ''"
+            icon_open="ChevronUpIcon"
+            icon_close="ChevronDownIcon"
+          />
+        </div>
         <div v-else-if="field.type === 'list_select'">
-          <SelectedButtonList :key-object="field.key" :label-string="field.listLabel"
-                              :options="[field.options]"/>
+          <SelectedButtonList v-if="field.options.length > 0" :key-object="field.key" :label-string="field.listLabel"
+                              :options="field.options" :classes="[field.listButtonClass]"
+                              @selectedOptions="SelectedButtonOptions"/>
+          <span v-else>
+            No teams available for the company you previous selected
+          </span>
         </div>
         <div v-else-if="field.type==='yesno' || field.type==='custom-select'">
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
@@ -203,6 +217,7 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 import CustomDatePicker from '@/views/app/Generic/CustomDatePicker.vue'
 import { getUserData } from '@/auth/utils'
 import SelectedButtonList from '@/components/SelectedButtonList.vue'
+import AutoCompleteInput from '@/components/AutoCompleteInput.vue'
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -215,6 +230,7 @@ function isTrue(val) {
 export default {
   name: 'Field',
   components: {
+    AutoCompleteInput,
     SelectedButtonList,
     CustomDatePicker,
     ckeditor: CKEditor.component,
@@ -340,7 +356,7 @@ export default {
       return this.newValue === this.entity[this.field.key]
     },
     selectedValue() {
-      return this.field.type === 'list' ? this.list.find(e => e[this.field.key] === this.entity[this.field.key]) : this.entity[this.field.key]
+      return (this.field.type === 'list' || this.field.type === 'custom_list') ? this.list.find(e => e[this.field.key] === this.entity[this.field.key]) : this.entity[this.field.key]
     },
     selectedValues() {
       return this.field.type === 'list' ? this.list.filter(e => this.entity[this.field.key]?.indexOf(e[this.field.key]) >= 0) : []
@@ -471,6 +487,10 @@ export default {
           }
         }
       }
+    },
+    SelectedButtonOptions(value, keyValue) {
+      console.log('this is the value', value, keyValue)
+      if (keyValue) this.entity[keyValue] = value
     },
     initEditor() {
       // Initialisation de TinyMCE
@@ -629,7 +649,7 @@ export default {
     },
     async getRelationValue() {
       console.log('get relation value')
-      if (this.field.type === 'list') {
+      if (this.field.type === 'list' || this.field.type ==='custom_list') {
         if (this.entity[this.field.key] == null) {
           const primaryKey = this.getPrimaryKey(this.definition)
           await this.$api({
@@ -704,6 +724,7 @@ export default {
       if (this.list.length === 0 || force) this.loading = true
       try {
         let { list } = this.field
+        console.log("this is the field list debug",list)
         if (list === 'address') {
           list = this.subDefinition.entity
           await this.$store.dispatch('table/fetchTableDefinition', 'address')
@@ -809,6 +830,7 @@ export default {
 
 <style lang="scss">
 @import '@/assets/scss/variables/variables';
+
 .emoji_container {
   position: relative;
 
@@ -855,7 +877,7 @@ export default {
   border-radius: 50%;
   background: #eee;
 
-  svg{
+  svg {
     fill: $primary;
     stroke: $primary;
   }

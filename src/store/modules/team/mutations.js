@@ -1,8 +1,8 @@
 import state from './state'
 
 const mutations = {
-  setTeamByCompany: team_company => {
-    state.team_by_company = team_company
+  SET_TEAM_COMPANY: (stateTeam = state, team_company) => {
+    stateTeam.team_by_company = team_company
   },
 }
 
