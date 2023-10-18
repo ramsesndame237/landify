@@ -1,6 +1,7 @@
 import moment from 'moment-business-time'
 import { getUserData } from '@/auth/utils'
 import _ from 'lodash'
+import { mapGetters } from 'vuex'
 
 export default {
   data() {
@@ -32,6 +33,9 @@ export default {
         },
       },
     }
+  },
+  computed: {
+    ...mapGetters('user', ['isUserAdmin']),
   },
   methods: {
     async moveToNextColumn(ticket) {
@@ -136,6 +140,7 @@ export default {
         action: 'read-rich',
         order_by: 'rank_order',
         order_dir: 'ASC',
+        per_page: 9999,
         data: [{ board_id: boardId }],
       })
         .then(({ data }) => {
@@ -190,12 +195,13 @@ export default {
       }
     },
     currentUserInTeam(teamId) {
+      if (this.isUserAdmin) return true
       const user = getUserData()
       const email = user.user_email
-      return this.teams.find(team => team.team_id === teamId && team.user_email === email && moment().isBetween(team.user_team_valid_from, team.user_team_valid_to, 'day')) != null
+      return this.teams.find(team => team.team_id === teamId && team.user_email === email && moment().isBetween(team.user_team_valid_from, team.user_team_valid_to, 'day', '[]')) != null
     },
     userIdsOfTeam(teamId) {
-      return this.teams.filter(team => team.team_id === teamId && moment().isBetween(team.user_team_valid_from, team.user_team_valid_to, 'day')).map(t => t.user_id)
+      return this.teams.filter(team => team.team_id === teamId && moment().isBetween(team.user_team_valid_from, team.user_team_valid_to, 'day', '[]')).map(t => t.user_id)
     },
   },
 

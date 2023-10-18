@@ -1,5 +1,7 @@
 import Vue from 'vue'
-import { ToastPlugin, ModalPlugin, VBTogglePlugin } from 'bootstrap-vue'
+import {
+  ToastPlugin, ModalPlugin, VBTogglePlugin, VBTooltipPlugin,
+} from 'bootstrap-vue'
 import VueCompositionAPI from '@vue/composition-api'
 import i18n from '@/libs/i18n'
 
@@ -84,6 +86,7 @@ extend('lower', {
 Vue.use(ToastPlugin)
 Vue.use(ModalPlugin)
 Vue.use(VBTogglePlugin)
+Vue.use(VBTooltipPlugin)
 
 // Composition API
 Vue.use(VueCompositionAPI)

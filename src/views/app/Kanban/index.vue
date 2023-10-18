@@ -236,7 +236,7 @@ ul {
   background: #E9E9E9;
   overflow: hidden;
   //flex-basis: 250px;
-  min-width: 300px;
+  min-width: 400px;
   border-radius: 15px;
 
   @media (max-width: 690px) {

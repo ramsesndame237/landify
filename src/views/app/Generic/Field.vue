@@ -26,7 +26,7 @@
                     :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
                     :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
                     :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
-                    @input="onChange"/>
+                    :clearable="field.clearable != null ? field.clearable : true" @input="onChange"/>
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm">New
           </b-button>
@@ -63,7 +63,7 @@
         </div>
         <div v-else-if="field.type==='yesno' || field.type==='custom-select'">
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
-                    :multiple="field.multiple" :placeholder="field.key"
+                    :multiple="field.multiple" :placeholder="field.key" :clearable="field.clearable != null ? field.clearable : true"
                     :options="field.type==='yesno'?yesNoOptions: customSelectOptions" transition="" label="label"
                     class="w-100" :reduce="i => i.value"/>
         </div>
@@ -81,8 +81,8 @@
               <div>
                 <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50"/>
                 <span class="text-muted font-weight-bolder align-text-top">{{
-                    file.name
-                  }}</span>
+                  file.name
+                }}</span>
                 <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
               </div>
               <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index, validate)"/>
@@ -215,6 +215,8 @@ import 'tinymce/models/dom'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import CustomDatePicker from '@/views/app/Generic/CustomDatePicker.vue'
+import { getUserData } from '@/auth/utils'
+import { mapGetters } from 'vuex'
 import { getUserData } from '@/auth/utils'
 import SelectedButtonList from '@/components/SelectedButtonList.vue'
 import AutoCompleteInput from '@/components/AutoCompleteInput.vue'
@@ -361,6 +363,7 @@ export default {
     selectedValues() {
       return this.field.type === 'list' ? this.list.filter(e => this.entity[this.field.key]?.indexOf(e[this.field.key]) >= 0) : []
     },
+    ...mapGetters('user', ['isUserExternClient', 'isUserExternPartner']),
 
   },
   watch: {
@@ -381,6 +384,15 @@ export default {
           this.editorInstance.show()
         }
       }
+    },
+    listItems: {
+      handler(newValue) {
+        if (this.field.withOptionAll) {
+          newValue.unshift({ [this.field.listLabel]: 'All', [this.field.tableKey || this.field.key]: -1 })
+        }
+        return newValue
+      },
+      deep: true,
     },
   },
   async created() {
@@ -419,7 +431,10 @@ export default {
     } else if (this.field.value != null) {
       this.$set(this.entity, this.field.key, this.field.value)
     }
-    this.$watch(`entity.${this.field.key}`, () => {
+    this.$watch(`entity.${this.field.key}`, (newValue, oldValue) => {
+      if (this.field.handleFieldChange && typeof this.field.handleFieldChange === 'function') {
+        this.field.handleFieldChange(newValue, oldValue, this.entity, this)
+      }
       this.onChange()
     })
     if (this.field.filter_key && !this.field.noFetchOnChange) {
@@ -443,16 +458,21 @@ export default {
 
     if (this.field.unit) {
       this.unitOptions = this.field.unit(this)
-      this.entity[this.field.unit_key] = this.unitOptions[0][this.field.unit_value_key]
+      this.entity[this.field.unit_key] = this.entity[this.field.unit_key] || this.unitOptions[0][this.field.unit_value_key]
     }
 
-    if (this.field.type === 'custom-select' && typeof this.field.items === 'function') {
-      this.customSelectOptions = await this.field.items(this)
-    } else {
-      this.customSelectOptions = this.field.items
-      this.$watch('field.items', value => {
-        this.customSelectOptions = value
-      })
+    if (this.field.type === 'custom-select') {
+      if (typeof this.field.items === 'function') {
+        this.customSelectOptions = await this.field.items(this)
+        this.$watch('entity', async () => {
+          this.customSelectOptions = await this.field.items(this)
+        }, { deep: true })
+      } else {
+        this.customSelectOptions = this.field.items
+        this.$watch('field.items', value => {
+          this.customSelectOptions = value
+        })
+      }
     }
   },
 
@@ -464,7 +484,7 @@ export default {
   methods: {
     initializeValue() {
       const user = getUserData()
-      if (this.$isUserExternClient) {
+      if (this.isUserExternClient) {
         if (this.field.key === 'customergroup_id') {
           console.log('reset ', this.entity)
           const customergroup_id = user.customergroup?.customergroup_id
@@ -476,7 +496,7 @@ export default {
           }
         }
       }
-      if (this.$isUserExternPartner) {
+      if (this.isUserExternPartner) {
         if (this.field.key === 'partnergroup_id') {
           const partnergroup_id = user.partnergroup?.partnergroup_id
           if (!this.entity.partnergroup_id && partnergroup_id) {
@@ -737,10 +757,14 @@ export default {
         }
         if (this.field.filter_key) {
           const value = this.entity[this.field.filter_key]
-          if (value) {
+          if (value && ![null, -1, undefined].includes(value)) {
             if (Array.isArray(value)) {
               if (value.length > 0) {
-                payload.data = value.map(v => ({ [this.field.filter_key]: v }))
+                if (this.field.entityCustomEndPoint) {
+                  payload.data = [{ [this.field.filter_key]: value }]
+                } else {
+                  payload.data = value.map(v => ({ [this.field.filter_key]: v }))
+                }
               }
             } else {
               payload.data = [{ [this.field.filter_key]: this.entity[this.field.filter_key] }]

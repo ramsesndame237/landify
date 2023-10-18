@@ -23,7 +23,16 @@ export default {
   data() {
     return {
       loading: false,
-      fields: [
+      entity: {
+        contract_id: this.$route.params.id,
+      },
+      create: true,
+      forceTitle: '',
+    }
+  },
+  computed: {
+    fields() {
+      return [
         {
           key: 'contractaction_id',
           hideOnForm: true,
@@ -44,12 +53,18 @@ export default {
           label: 'Action Type',
           type: 'custom-select',
           items: [
-            { label: 'Active Option', value: 'active_option' },
-            { label: 'Automatic Option', value: 'automatic_option' },
-            { label: 'Automatic extension', value: 'automatic_extension' },
-            { label: 'Resiliation', value: 'resiliation' },
-            { label: 'Special Resiliation', value: 'special_resiliation' },
+            ...(!this.isThereAutomaticOption ? [{ label: 'Active Option', value: 'active_option' },
+              { label: 'Automatic Option', value: 'automatic_option' }, { label: 'Automatic extension', value: 'automatic_extension' }] : []),
+            ...(!this.isThereResiliationOption ? [{ label: 'Resiliation', value: 'resiliation' }] : []),
+            ...(!this.isThereSpecialResiliationOption ? [{ label: 'Special Resiliation', value: 'special_resiliation' }] : []),
           ],
+          handleFieldChange: (newValue, oldValue, entity, vm) => {
+            if (newValue !== 'automatic_extension') {
+              vm.$set(vm.entity, 'contractaction_options', undefined)
+            } else {
+              vm.$set(vm.entity, 'contractaction_options', '\u{221E}')
+            }
+          },
         },
         {
           key: 'contractaction_unlimited_options',
@@ -57,26 +72,33 @@ export default {
           type: 'boolean',
           visible: entity => entity.contractaction_type === 'automatic_extension',
           default: 1,
+          handleFieldChange: (newValue, oldValue, entity, vm) => {
+            if (newValue === 1 && entity.contractaction_type === 'automatic_extension') {
+              vm.$set(vm.entity, 'contractaction_options', '\u{221E}')
+            } else {
+              vm.$set(vm.entity, 'contractaction_options', undefined)
+            }
+          },
+        },
+        {
+          key: 'contractaction_options',
+          visible: entity => !['resiliation', 'special_resiliation'].includes(entity.contractaction_type),
+          type: 'number',
+          handleFieldChange: (newValue, oldValue, entity, vm) => {
+            if (newValue === '\u{221E}') {
+              vm.field.type = 'text'
+              vm.field.disabled = true
+            } else if (newValue === undefined) {
+              vm.field.type = 'number'
+              vm.field.disabled = false
+            }
+          },
         },
         {
           key: 'contractaction_resiliation_date',
           type: 'date',
           label: 'Resiliation date',
           visible: entity => entity.contractaction_type === 'special_resiliation',
-        },
-        {
-          key: 'contractaction_options',
-          visible: entity => !['resiliation', 'special_resiliation'].includes(entity.contractaction_type),
-          type: 'number',
-          disabled: false,
-          change: (entity, vm) => {
-            if (entity.contractaction_unlimited_options === 1 && entity.contractaction_type === 'automatic_extension') {
-              vm.field.disabled = true
-              entity.contractaction_options = 99
-            } else {
-              vm.field.disabled = false
-            }
-          },
         },
         {
           key: 'contractaction_extension_value',
@@ -106,13 +128,20 @@ export default {
           },
           required: false,
         },
-      ],
-      entity: {
-        contract_id: this.$route.params.id,
-      },
-      create: true,
-      forceTitle: '',
-    }
+      ]
+    },
+    actionsList() {
+      return this.$store.getters['table/listCache'](`contract-actions-${this.$route.params.id}`)
+    },
+    isThereAutomaticOption() {
+      return this.actionsList.some(action => ['automatic_extension'].includes(action.contractaction_type))
+    },
+    isThereResiliationOption() {
+      return this.actionsList.some(action => ['resiliation'].includes(action.contractaction_type))
+    },
+    isThereSpecialResiliationOption() {
+      return this.actionsList.some(action => ['special_resiliation'].includes(action.contractaction_type))
+    },
   },
   methods: {
     openModal(create, data, title) {
@@ -128,11 +157,16 @@ export default {
         return
       }
       this.loading = true
+      const payload = {
+        ...this.entity,
+        ...(this.entity.contractaction_options === '\u{221E}' && { contractaction_options: 99 }),
+        ...(this.entity.contractaction_type !== 'automatic_extension' && { contractaction_unlimited_options: 0 }),
+      }
       try {
         await this.$http({
           method: this.create ? 'post' : 'put',
           url: `/contracts/deadline${!this.create ? '/action' : ''}`,
-          data: this.entity,
+          data: payload,
         })
 
         this.$refs.toolform.reset()
@@ -143,9 +177,13 @@ export default {
           const tab = tabs[currentTab]
           await tab.$children[0].getActions(true)
           await tab.$children[0].getDeadlines()
+          const { loadEntity } = this.$parent.$parent.$refs.form
+          await loadEntity()
         } else {
           const { getActions } = this.$parent.$parent
+          const { loadEntity } = this.$parent.$parent.$parent.$parent.$parent.$refs.form
           await getActions(true)
+          await loadEntity()
         }
       } catch (error) {
         if (error.response) {

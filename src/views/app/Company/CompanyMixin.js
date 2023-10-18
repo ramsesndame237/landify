@@ -11,7 +11,7 @@ export default {
     filteredCompanies() {
       const data = this.companies.map(company => ({ label: company.company_name, value: company.company_id, ...company }))
 
-      return [{ label: 'All', value: null }, ...data]
+      return [{ label: 'All', value: -1 }, ...data]
     },
   },
   async mounted() {

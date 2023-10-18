@@ -8,7 +8,7 @@ export default {
   entityEndpoint: '/pos',
   filter: (item, vm) => {
     const user = getUserData()
-    if (vm.$isUserExternClient) {
+    if (vm.$store.getters['user/isUserExternClient']) {
       if (user.customergroup) {
         const { customergroup_id } = user.customergroup
         return item.customergroup_id === customergroup_id
@@ -30,6 +30,15 @@ export default {
   fields: [
     { key: 'pos_id', auto: true },
     {
+      key: 'customergroup_id',
+      type: 'list',
+      list: 'customergroup',
+      listLabel: 'customergroup_name',
+      send: false,
+      hideOnIndex: true,
+      hideOnUpdate: true,
+    },
+    {
       key: 'company_id',
       type: 'custom_list',
       list: 'company',
@@ -37,12 +46,25 @@ export default {
       listLabel: 'company_name',
       hideOnIndex: true,
       relationEntity: 'company_pos_rel',
+      filter_key: 'customergroup_id',
     },
     { key: 'pos_name', cols: 12 },
     { key: 'pos_branchnumber', cols: 12 },
     { key: 'pos_name_external', required: false },
     // { key: 'location_count', hideOnForm: true },
     { key: 'area_count', hideOnForm: true },
+    {
+      key: 'pos_first_year', type: 'date', hideOnIndex: true,
+    },
+    {
+      key: 'contactperson_id',
+      type: 'list',
+      list: 'frontend_2_1_3_5',
+      listLabel: 'contactperson_name',
+      hideOnIndex: true,
+      relationEntity: 'contactperson_pos_rel',
+      filter_key: 'company_id',
+    },
     // {
     //   key: 'pos_first_year', type: 'date', required: false, hideOnIndex: true,cols: 12
     // },
@@ -335,11 +357,10 @@ export default {
       'contactperson_id',
     ]
     if (create) {
-      await vm.$http.post('/pos', _.pick(entity, attributes))
-    } else {
-      attributes.push('pos_id')
-      await vm.$http.put('/pos', _.pick(entity, attributes))
+      return vm.$http.post('/pos', _.pick(entity, attributes))
     }
+    attributes.push('pos_id')
+    return vm.$http.put('/pos', _.pick(entity, attributes))
   },
   panels: [
     {

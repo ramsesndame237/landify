@@ -56,7 +56,7 @@
 
     <b-card v-if="definition.relations && formLoaded && visibleRelations.length>0 && !create ">
       <b-tabs ref="tabs" pills>
-        <b-tab  v-for="(relation, index) in visibleRelations" :key="index"
+        <b-tab v-for="(relation, index) in visibleRelations" :key="index"
                :title="$t(relation.title || ('headline~'+(relation.entityView||relation.entityForm)+'~tab'))"
                :active="index===tabIndex" :lazy="relation.lazy!==false">
           <template v-if="relation.component">
@@ -68,7 +68,7 @@
                          :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
                          :entity-view="relation.entityView" :with-view="relation.view!==false" :fields="relation.fields"
                          :on-edit-element="editElement" :with-edit="relation.update!==false"
-                         :with-delete="relation.delete!==false" :custom-request="relation.customRequest"/>
+                         :with-delete="relation.delete!==false" :custom-request="relation.customRequest" :entity-endpoint="relation.entityEndpoint" />
             <generic-modal :cache-key="relation.entity+'-'" title="Test" :table="relation.entityForm || relation.entity"
                            :definition="relation" is-relation
                            :table-definition-key="relation.entityForm || relation.entity"
@@ -162,7 +162,7 @@ export default {
     return {
       search: '',
       currentPage: 1,
-      perPage: Number.MAX_SAFE_INTEGER,
+      perPage: 100_000,
       totalRows: 0,
       formLoaded: false,
       noBody: false,

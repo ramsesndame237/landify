@@ -7,7 +7,7 @@
           <b-th>Email Id</b-th>
           <b-th>Received date</b-th>
           <b-th>From</b-th>
-          <b-th>To</b-th>
+<!--          <b-th>To</b-th>-->
           <b-th>Subject</b-th>
           <b-th class="text-center">
             Ticket Id
@@ -512,7 +512,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 .slide-enter-active {
   -moz-transition-duration: 0.3s;
   -webkit-transition-duration: 0.3s;
@@ -545,7 +545,9 @@ export default {
   max-height: 0;
 }
 
-.mail-table .vs__dropdown-menu {
-  min-width: 300px;
+.mail-table {
+  .vs__selected {
+    max-width: 150px;
+  }
 }
 </style>

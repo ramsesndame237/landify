@@ -10,8 +10,8 @@
                         :with-filter="definition.filters && definition.filters.length > 0"
                         :inline-filter="!definition.inline_filter"
                         :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
-                        :actions="definition.actions" @action="(a)=>$refs.table.onAction(a)"
-                        @filter="$refs.filter.openModal()" :filter-badge="getFilterCount()"/>
+                        :actions="definition.actions" :filter-badge="getFilterCount()"
+                        @action="(a)=>$refs.table.onAction(a)" @filter="$refs.filter.openModal()"/>
       <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
                       @filter="filter"/>
     </b-card>
@@ -22,9 +22,11 @@
                  :default-sort-column="initialSortBy||definition.defaultSortField" :default-sort-desc="initialSortDesc"
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
-                 :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"/>
+                 :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"
+                 :filter-items="definition.filter" :custom-request="definition.customRequest"
+      />
     </b-card>
-    <generic-modal :fetch-data="false" :cache-key="table+'-'" :table="table" ref="modal"
+    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table"
                    :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
                    @reload-table="$refs.table.reload()"/>
     <SidebarModalComponent
@@ -51,6 +53,7 @@ import {
 } from 'bootstrap-vue'
 import TablePagination from '@/layouts/components/TablePagination.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
+import { mapGetters } from 'vuex'
 import Tables from '../../../table'
 import GenericFilter from './Filter.vue'
 import InlineFilter from './InlineFilter.vue'
@@ -73,7 +76,7 @@ export default {
     const table = this.$route.params.table
     const definition = Tables[table]
     let defaultPage = null
-    if (this.$isUserExternClient) {
+    if (this.isUserExternClient) {
       defaultPage = definition.perPage
     }
     return {
@@ -93,6 +96,7 @@ export default {
     useModalToCreate() {
       return this.definition.createModal === 'modal'
     },
+    ...mapGetters('user', ['isUserExternClient']),
   },
   beforeDestroy() {
     this.$store.commit('table/setTableData', {
