@@ -127,7 +127,7 @@ export default {
         title: 'headline~contractlist~condition',
         entity: 'frontend_contractlist_criteria',
         fields: [
-          { key: 'contract_name', stickyColumn: true, variant: 'light' },
+          { key: 'contract_name', stickyColumn: false, variant: 'light' },
           { key: 'contracttype_name' },
           { key: 'pos_name' },
           { key: 'country_short' },
