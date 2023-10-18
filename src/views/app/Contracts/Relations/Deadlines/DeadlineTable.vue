@@ -128,8 +128,8 @@ export default {
           type: 'number',
           label: 'To Activate',
           formatter: (value, key, item) => {
-            const { contractaction_unlimited_options, contractdeadline_type } = item
-            if (contractaction_unlimited_options === 1 && ['automatic_extension'].includes(contractdeadline_type)) return '\u{221E}'
+            const { contractdeadline_unlimitted_option, contractdeadline_type } = item
+            if (contractdeadline_unlimitted_option === 1 && ['automatic_extension'].includes(contractdeadline_type)) return '\u{221E}'
             return (!value ? '--' : value)
           },
         },
@@ -138,10 +138,18 @@ export default {
           label: 'Available options',
           hideOnForm: true,
           formatter: (value, key, item) => {
-            const { contractaction_id, contractdeadline_option_position, contractdeadline_status } = item
+            const {
+              contractaction_id,
+              contractdeadline_option_position,
+              contractdeadline_status,
+              contractdeadline_unlimitted_option,
+              contractdeadline_type,
+            } = item
+
             if (contractdeadline_status === 'resiliated') {
               return 0
             }
+            if (contractdeadline_unlimitted_option === 1 && ['automatic_extension'].includes(contractdeadline_type)) return '\u{221E}'
 
             const deadlineByActionId = this.deadlines.filter(deadline => deadline.contractaction_id === contractaction_id)
             const greaterThanItemDeadline = deadlineByActionId.filter(deadline => deadline.contractdeadline_option_position > contractdeadline_option_position)
