@@ -26,53 +26,54 @@
                       @click="$emit('show-content')"/>
       </div>
     </b-td>
-    <b-td class="td-form">
-      <field v-if="visible" :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/>
-      <router-link v-if="is_done" target="_blank"
-                   :to="{name: 'table-view', params: {table: 'ticket',id: item.ticket_id_created}}">
-        {{ item.ticket_id_created + ' - ' + getTicketName() }}
-      </router-link>
-    </b-td>
-    <b-td class="td-form">
-      <field v-if="visible" :field="posIdField" :entity="item"
-             :disabled="is_dismissed || is_done || item.ticket_id!=null"/>
-      <router-link v-if="is_done && item.pos_id" target="_blank"
-                   :to="{name: 'table-view', params: {table: 'pos',id: item.pos_id}}">
-        {{ getPosName() }}
-      </router-link>
-    </b-td>
-    <b-td class="td-form">
-      <field v-if="visible" :field="contractIdField" :entity="item"
-             :disabled="is_dismissed|| is_done ||item.ticket_id!=null"/>
-      <router-link v-if="is_done && item.contract_id" target="_blank"
-                   :to="{name: 'table-view', params: {table: 'contract',id: item.contract_id}}">
-        {{ getContractName() }}
-      </router-link>
-    </b-td>
-    <b-td>
-      <b-form-checkbox v-if="item.documents && item.documents.length" :checked="1" disabled :value="1"
-                       :unchecked-value="0"/>
-    </b-td>
-    <b-td>
-      <b-link v-if="item.document_id" class="m-auto" variant="danger" target="_blank" :href="getDocumentLink(item)">
-        {{ item.document_name }}
-      </b-link>
-    </b-td>
-    <b-td class="td-form">
-      <field v-if="visible && item.document_id" :field="documenttypeIdField" :entity="item"
-             :disabled="is_dismissed || is_done"/>
-      <span v-if="is_done && item.document_id" target="_blank">
+    <template v-if="toggle_row">
+      <b-td class="td-form">
+        <field v-if="visible" :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/>
+        <router-link v-if="is_done" target="_blank"
+                     :to="{name: 'table-view', params: {table: 'ticket',id: item.ticket_id_created}}">
+          {{ item.ticket_id_created + ' - ' + getTicketName() }}
+        </router-link>
+      </b-td>
+      <b-td class="td-form">
+        <field v-if="visible" :field="posIdField" :entity="item"
+               :disabled="is_dismissed || is_done || item.ticket_id!=null"/>
+        <router-link v-if="is_done && item.pos_id" target="_blank"
+                     :to="{name: 'table-view', params: {table: 'pos',id: item.pos_id}}">
+          {{ getPosName() }}
+        </router-link>
+      </b-td>
+      <b-td class="td-form">
+        <field v-if="visible" :field="contractIdField" :entity="item"
+               :disabled="is_dismissed|| is_done ||item.ticket_id!=null"/>
+        <router-link v-if="is_done && item.contract_id" target="_blank"
+                     :to="{name: 'table-view', params: {table: 'contract',id: item.contract_id}}">
+          {{ getContractName() }}
+        </router-link>
+      </b-td>
+      <b-td>
+        <b-form-checkbox v-if="item.documents && item.documents.length" :checked="1" disabled :value="1"
+                         :unchecked-value="0"/>
+      </b-td>
+      <b-td>
+        <b-link v-if="item.document_id" class="m-auto" variant="danger" target="_blank" :href="getDocumentLink(item)">
+          {{ item.document_name }}
+        </b-link>
+      </b-td>
+      <b-td class="td-form">
+        <field v-if="visible && item.document_id" :field="documenttypeIdField" :entity="item"
+               :disabled="is_dismissed || is_done"/>
+        <span v-if="is_done && item.document_id" target="_blank">
         {{ getDocumentTypeName() }}
       </span>
-    </b-td>
-    <b-td class="td-form">
-      <field v-if="visible" :field="boardIdField" :entity="item"
-             :disabled="is_dismissed || is_done || item.ticket_id!=null"/>
-      <router-link v-if="is_done" target="_blank"
-                   :to="{name: 'table-kanban', params: {table: 'board',id: item.board_id}}">
-        {{ getBoardName() }}
-      </router-link>
-    </b-td>
+      </b-td>
+      <b-td class="td-form">
+        <field v-if="visible" :field="boardIdField" :entity="item"
+               :disabled="is_dismissed || is_done || item.ticket_id!=null"/>
+        <router-link v-if="is_done" target="_blank"
+                     :to="{name: 'table-kanban', params: {table: 'board',id: item.board_id}}">
+          {{ getBoardName() }}
+        </router-link>
+      </b-td>
     <b-td class="text-center">
       <div v-if="visible && !is_done && !is_dismissed && (item.document_id ? item.classification_id : true)"
            class="d-flex align-items-center">
@@ -86,6 +87,7 @@
       <span v-if="is_done" class="text-success">Done</span>
       <span v-if="is_dismissed" class="text-warning">Dismissed</span>
     </b-td>
+    </template>
   </b-tr>
 </template>
 
@@ -93,7 +95,8 @@
 import Field from '@/views/app/Generic/Field'
 import { getDocumentLink, formatDate, getDateFormat } from '@/libs/utils'
 import { VBToggle } from 'bootstrap-vue'
-import moment from "moment";
+import moment from 'moment'
+import store from '@/store/index'
 
 export default {
   name: 'MailTr',
@@ -107,6 +110,7 @@ export default {
   },
   data() {
     return {
+      toggle_row:false,
       ticketIdField: {
         key: 'ticket_id',
         type: 'list',
@@ -177,6 +181,9 @@ export default {
   mounted() {
     this.onDocumentTypeChange()
     this.onTicketIdChange()
+    this.$watch(this.$store.getters['mails/toggle_table_row_visibility'], () => {
+      this.toggle_row = this.toggle_table_row_visibility;
+    });
   },
   methods: {
     customFormatDate(date) {

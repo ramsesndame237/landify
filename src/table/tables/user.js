@@ -13,15 +13,15 @@ export default {
   formComponent: () => import('@/views/app/CreateComponent/UserForm.vue'),
   customIndex: () => import('@/views/app/User/UserIndex.vue'),
   customPage: () => import('@/views/app/User/UserDetail.vue'),
-  createModal:'sidebar',
-  options:{
+  createModal: 'sidebar',
+  options: {
     id: 'siderbar_user',
     shadow: true,
     rigth_position: true,
     no_header: true,
     custom_footer: false,
     backdrop: true,
-    backdrop_variant: 'variant'
+    backdrop_variant: 'variant',
   },
   fields: [
     // {
@@ -68,7 +68,7 @@ export default {
       formatter: value => value.charAt(0).toUpperCase() + value.substring(1),
     },
     {
-      key: 'user_email', sortable: true, type: 'email', hideOnIndex: true, cols: 12, size: 40
+      key: 'user_email', sortable: true, type: 'email', hideOnIndex: true, cols: 12, size: 40,
     },
     {
       key: 'user_password',
@@ -76,11 +76,17 @@ export default {
       hideOnIndex: true,
       required: false,
       generate: true,
-      cols: 12
+      cols: 12,
     },
-    { key: 'user_password_reset_required', hideOnIndex: true, type: 'boolean', inline:true,},
-    { key: 'user_firstname', sortable: true, hideOnIndex: true,cols: 12 },
-    { key: 'user_lastname', sortable: true, hideOnIndex: true,cols: 12 },
+    {
+      key: 'user_password_reset_required', hideOnIndex: true, type: 'boolean', inline: true,
+    },
+    {
+      key: 'user_firstname', sortable: true, hideOnIndex: true, cols: 12,
+    },
+    {
+      key: 'user_lastname', sortable: true, hideOnIndex: true, cols: 12,
+    },
     {
       key: 'user_abbreviation',
       sortable: true,
@@ -92,7 +98,7 @@ export default {
       value: entity => (entity.user_firstname?.charAt(0) || '') + (entity.user_lastname?.charAt(0) || ''),
     },
     {
-      key: 'user_abbreviation', sortable: true, hideOnIndex: true, hideOnCreate: true,cols: 12
+      key: 'user_abbreviation', sortable: true, hideOnIndex: true, hideOnCreate: true, cols: 12,
     },
 
     // {
@@ -126,7 +132,7 @@ export default {
       noFetch: false,
       relationEntity: 'user_function_rel',
       hideOnIndex: true,
-      cols: 12
+      cols: 12,
     },
     // {
     //   key: 'user_functions',
@@ -157,10 +163,7 @@ export default {
     //   },
     //   visible: entity => entity.usertype_id !== 1,
     // },
-      noFetch: true,
-      relationEntity: 'user_function_rel',
-      hideOnIndex: true,
-    },
+
     {
       key: 'firmengroup_type',
       type: 'custom-select',
@@ -196,7 +199,7 @@ export default {
       visible: entity => entity.firmengroup_type === 0,
       filter_key: 'partnergroup_is_internal',
       noFetch: false,
-      cols:12
+      cols: 12,
     },
     {
       key: 'partnercompany_id',
@@ -207,7 +210,7 @@ export default {
       relationEntity: 'user_partnercompany_rel',
       hideOnIndex: true,
       multiple: false,
-      cols:12,
+      cols: 12,
       visible: entity => entity.firmengroup_type === 0,
     },
     {
@@ -219,7 +222,7 @@ export default {
       hideOnIndex: true,
       visible: entity => entity.firmengroup_type === 1,
       noFetch: false,
-      cols:12
+      cols: 12,
     },
     {
       key: 'company_id',
@@ -229,22 +232,25 @@ export default {
       listLabel: 'company_name',
       filter_key: 'customergroup_id',
       relationEntity: 'user_company_rel',
-      cols:12,
+      cols: 12,
       hideOnIndex: true,
       visible: entity => entity.firmengroup_type === 1,
       // withNew: true
-      withRoundedNew:true
+      withRoundedNew: true,
     },
     {
       key: 'user_last_login_time', sortable: true, hideOnForm: true, type: 'date', time: true,
     },
     {
-      key: 'user_last_activity_time', sortable: true, hideOnForm: true, type: 'date', time: true
+      key: 'user_last_activity_time', sortable: true, hideOnForm: true, type: 'date', time: true,
     },
     { key: 'user_mobile', cols: 12 },
-    { key: 'user_fix_phonenumber', hideOnIndex: true, required: false, cols: 12 },
-    { key: 'user_fax_phonenumber', hideOnIndex: true, required: false, cols: 12 },
-
+    {
+      key: 'user_fix_phonenumber', hideOnIndex: true, required: false, cols: 12,
+    },
+    {
+      key: 'user_fax_phonenumber', hideOnIndex: true, required: false, cols: 12,
+    },
 
     {
       key: 'role_name', hideOnForm: true,
@@ -255,7 +261,7 @@ export default {
       listLabel: 'team_name',
       listButtonClass: 'list_custom_style',
       hideOnIndex: true,
-      cols: 12
+      cols: 12,
     },
     {
       key: 'hollyday_representative',
@@ -423,17 +429,17 @@ export default {
   filters: [
 
     {
-      key: 'companygroup_id', type: 'list', list: 'companytype', listLabel: 'company_name', required: false,cols:3 // partnergroup et companyGroup
+      key: 'companygroup_id', type: 'list', list: 'companytype', listLabel: 'company_name', required: false, cols: 3, // partnergroup et companyGroup
     },
     {
-      key: 'company_id', type: 'list', list: 'companytype', listLabel: 'company_name', required: false,cols:3 // partnerCompany et les company
+      key: 'company_id', type: 'list', list: 'companytype', listLabel: 'company_name', required: false, cols: 3, // partnerCompany et les company
     },
     {
-      key: 'role_id', type: 'list', list: 'role', listLabel: 'role_name', required: false,cols:3
+      key: 'role_id', type: 'list', list: 'role', listLabel: 'role_name', required: false, cols: 3,
     },
     {
-      key: 'usertype_id', type: 'list', list: 'usertype', listLabel: 'usertype_name', required: false,cols:3
-    }
+      key: 'usertype_id', type: 'list', list: 'usertype', listLabel: 'usertype_name', required: false, cols: 3,
+    },
   ],
   note: 'frontend_0_8_13',
   submit(vm) {

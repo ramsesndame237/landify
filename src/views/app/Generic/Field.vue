@@ -217,7 +217,6 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 import CustomDatePicker from '@/views/app/Generic/CustomDatePicker.vue'
 import { getUserData } from '@/auth/utils'
 import { mapGetters } from 'vuex'
-import { getUserData } from '@/auth/utils'
 import SelectedButtonList from '@/components/SelectedButtonList.vue'
 import AutoCompleteInput from '@/components/AutoCompleteInput.vue'
 
