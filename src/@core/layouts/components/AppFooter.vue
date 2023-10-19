@@ -29,13 +29,13 @@ import 'animate.css';
 export const refreshPageMixin = {
   data() {
     return {
-      currentHash: process.env.VUE_APP_HASH,
+      currentHash: this.$root.hash,
       hashChanged: false,
       newHash: ''
     }
   },
   methods: {
-    initVersionCheck(url, frequency = 1000 * 2 * 2) {
+    initVersionCheck(url, frequency = 1000 * 60) {
       setInterval(() => {
         this.checkVersion(url);
       }, frequency);
@@ -87,7 +87,7 @@ export default {
   mounted() {
     // online environment
     if (process.env.VUE_APP_BASE_URL) {
-    this.initVersionCheck('/version.json')
+      this.initVersionCheck('/version.json')
     }
   }
 }

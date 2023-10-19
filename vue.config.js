@@ -2,7 +2,6 @@ const path = require('path')
 const moment = require('moment')
 
 process.env.VUE_APP_BUILD_TIME = moment().toISOString()
-process.env.VUE_APP_HASH = '{{POST_BUILD_ENTERS_HASH_HERE}}'
 
 // const fs = require('fs')
 // const webpack = require('webpack')
