@@ -61,7 +61,17 @@ import { getUserData } from '@/auth/utils'
 export default {
   name: 'Notes',
   components: { EntityForm },
-  props: ['id', 'primaryKey', 'note', 'noteRel'],
+  props: {
+    id: String,
+    primaryKey: String,
+    note: String,
+    noteRel: String,
+    noteToInternal: { type: Boolean, default: true },
+    noteToEveryone: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     const userData = getUserData()
     return {
@@ -74,7 +84,10 @@ export default {
           {
             key: 'note_visibility',
             type: 'custom-select',
-            items: [{ value: 0, label: 'Only Internal' }, { value: 1, label: 'Every one' }],
+            items: [
+              ...(this.noteToInternal ? [{ value: 0, label: 'Only Internal' }] : []),
+              ...(this.noteToEveryone ? [{ value: 1, label: 'Every one' }] : []),
+            ],
           },
           // { key: 'document_id', type: 'list', list: 'document',onlyForm: true, alwaysNew: true, relationEntity: 'note_document_rel' }
         ],

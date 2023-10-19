@@ -122,13 +122,14 @@ export default {
               'ticket_id',
               'ticket_last_change_time',
               'ticket_name',
+              'team_type',
               'ticket_closed',
               'ticket_progress',
               'priority_id', 'priority_name', 'priority_color', 'priority_smiley',
               'invoice_id', 'invoice_number',
               'contract_name', 'contract_id', 'company_name', 'company_id', 'pos_id', 'pos_name', 'customergroup_id', 'customergroup_name',
             ])
-            obj.columns = _.orderBy(r, 'ticket_move_time_in', 'desc').map(i => _.pick(i, ['ticket_id', 'column_id', 'column_name', 'rank_order', 'user_email_assigned', 'user_id', 'user_email', 'user_id_assigned', 'team_name', 'team_id', 'ticket_move_time_in', 'ticket_move_time_out', 'ticket_deadline_offset', 'ticket_deadline_offset_yellow', 'ticket_deadline_offset_red']))
+            obj.columns = _.orderBy(r, 'ticket_move_time_in', 'desc').map(i => _.pick(i, ['ticket_id', 'column_id', 'column_name', 'rank_order', 'user_email_assigned', 'user_id', 'user_email', 'user_id_assigned', 'team_name', 'team_id', 'team_type', 'ticket_move_time_in', 'ticket_move_time_out', 'ticket_deadline_offset', 'ticket_deadline_offset_yellow', 'ticket_deadline_offset_red']))
             obj.column_name = obj.columns[0].column_name
             return obj
           })
