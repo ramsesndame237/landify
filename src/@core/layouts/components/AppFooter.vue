@@ -61,11 +61,8 @@ export const refreshPageMixin = {
       }
     },
     hasHashChanged(currentHash, newHash) {
+      console.log(currentHash, newHash)
       return currentHash !== newHash;
-    },
-    reloadApp() {
-      this.currentHash = this.newHash;
-      window.location.reload();
     }
   }
 };
@@ -90,7 +87,7 @@ export default {
   mounted() {
     // online environment
     if (process.env.VUE_APP_BASE_URL) {
-      this.initVersionCheck('/version.json')
+    this.initVersionCheck('/version.json')
     }
   }
 }
