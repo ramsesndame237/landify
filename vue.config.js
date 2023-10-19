@@ -1,9 +1,8 @@
 const path = require('path')
 const moment = require('moment')
-const { gitDescribeSync } = require('git-describe')
 
-process.env.VUE_APP_GIT_HASH = gitDescribeSync().hash
-process.env.VUE_APP_BUILD_TIME = moment().format('DD - HH:mm')
+process.env.VUE_APP_BUILD_TIME = moment().toISOString()
+process.env.VUE_APP_HASH = '{{POST_BUILD_ENTERS_HASH_HERE}}'
 
 // const fs = require('fs')
 // const webpack = require('webpack')
