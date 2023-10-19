@@ -725,6 +725,9 @@ export default {
             }
           }
         }
+        if (this.field.customPagination) {
+          payload.data.push(...this.field.customPagination)
+        }
         await this.$store.dispatch('table/fetchList', payload)
         if (this.field.entityList) {
           await this.$store.dispatch('table/fetchTableDefinition', list)
