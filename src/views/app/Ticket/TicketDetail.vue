@@ -13,7 +13,7 @@
         <div class="d-flex align-items-center">
           <notes v-if="definition.note" :id="entityId" class="mr-2" :primary-key="primaryKey" :note="definition.note"
                  :note-rel="'note_user_'+table+'_rel'"/>
-          <b-button variant="primary" @click="createInvoice">
+          <b-button hidden variant="primary" @click="createInvoice">
             {{ $t('button~newinvoice') }}
           </b-button>
           <b-button v-if="!entity.ticket_closed" variant="primary" class="ml-2"
@@ -23,13 +23,13 @@
           <b-button v-if="canMoveBack()" class="ml-2" variant="primary" @click="moveBack">
             {{ $t('button~moveback') }}
           </b-button>
-          <b-button v-if="canMoveToNext()" class="ml-2" variant="primary" @click="moveToNext">
+          <b-button v-if="canMoveToNext()" hidden class="ml-2" variant="primary" @click="moveToNext">
             {{ $t('button~movetonextcolumn') }}
           </b-button>
-          <b-button v-if="!entity.ticket_closed" variant="primary" class="ml-2" @click="updateTicket">
+          <b-button v-if="!entity.ticket_closed" hidden variant="primary" class="ml-2" @click="updateTicket">
             {{ $t('button~edit') }}
           </b-button>
-          <b-button variant="primary" class="ml-2" @click="toggleTicket(entity)">
+          <b-button hidden variant="primary" class="ml-2" @click="toggleTicket(entity)">
             {{ $t('button~ticket~' + (entity.ticket_closed ? 'reopen' : 'close')) }}
           </b-button>
           <assign-user-modal ref="assign" @reload="loadSingleTicket"/>
@@ -173,7 +173,7 @@
           </b-card-actions>
           <div class="d-flex justify-content-between align-items-center mb-2">
             <h2>{{ $t('headline~ticket~subtasks') }}</h2>
-            <b-button v-if="!entity.ticket_closed" variant="primary" @click="createSubTicket">
+            <b-button v-if="!entity.ticket_closed" hidden variant="primary" @click="createSubTicket">
               {{ $t('button~newsubtask') }}
             </b-button>
           </div>
@@ -223,7 +223,7 @@
               </b-table-simple>
             </b-overlay>
             <div class="text-right p-1">
-              <b-button v-if="!entity.ticket_closed" variant="primary" @click="$refs.emailModal.show(false)">New Email
+              <b-button v-if="!entity.ticket_closed" hidden variant="primary" @click="$refs.emailModal.show(false)">New Email
               </b-button>
             </div>
           </b-card-actions>
@@ -290,7 +290,7 @@
               </b-overlay>
             </b-col>
           </b-row>
-          <div>
+          <div hidden>
             <b-button variant="primary" @click="createDocument">
               {{ $t('button~newdocument') }}
             </b-button>
@@ -327,7 +327,7 @@ import AppTimeline from '@core/components/app-timeline/AppTimeline.vue'
 import AppTimelineItem from '@core/components/app-timeline/AppTimelineItem.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import TicketMixin from '@/views/app/Kanban/TicketMixin'
-import { formatDate,getDocumentLink, getStampedDocumentLink } from '@/libs/utils'
+import { formatDate, getDocumentLink, getStampedDocumentLink } from '@/libs/utils'
 import moment from 'moment'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
 import Notes from '@/views/app/Generic/Notes.vue'
