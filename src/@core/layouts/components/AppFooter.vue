@@ -61,10 +61,6 @@ export const refreshPageMixin = {
       }
     },
     hasHashChanged(currentHash, newHash) {
-      if (!currentHash || currentHash === process.env.VUE_APP_HASH) {
-        return true;
-      }
-
       return currentHash !== newHash;
     },
     reloadApp() {
