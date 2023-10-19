@@ -77,12 +77,17 @@ export default {
     {
       key: 'company_id',
       type: 'list',
+      list: 'company',
       entityCustomEndPoint: '/companies',
       listLabel: 'company_name',
       filter_key: 'customergroup_id',
       required: false,
       multiple: true,
       hideOnIndex: true,
+      /**
+       * Cette clé renseigne les éléments de pagination personalisés
+       */
+      customPagination: [{ size: 100_000 }],
       visible: entity => entity.team_type === 'extern_client' && entity.team_for_all_customer === 0,
     },
     {
@@ -105,6 +110,13 @@ export default {
       primaryKey: 'user_id',
       entityEndpoint: 'users',
       // entityForm: 'user_team_rel',
+      entityCustomEndpoint: 'teams/users',
+      customRequest: {
+        method: 'DELETE',
+        relationKey: 'user_id',
+        entityKey: 'team_id',
+        endpoint: 'teams/users',
+      },
       view: false,
       fields: [
         {
@@ -162,12 +174,16 @@ export default {
           },
         },
         {
-          key: 'user_team_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true,
+          key: 'user_team_valid_from', sortable: true, type: 'date', composite: true, disableOnUpdate: true, hideOnForm: true, hideOnIndex: true,
         },
         {
-          key: 'user_team_valid_to', required: false, type: 'date', rules: { date_after: ['@user_team_valid_from'] },
+          key: 'user_team_valid_to', required: false, type: 'date', rules: { date_after: ['@user_team_valid_from'] }, hideOnForm: true, hideOnIndex: true,
         },
       ],
+      submit: async vm => {
+        const data = { ...vm.entity }
+        return vm.$http.put('/teams/users', data)
+      },
     },
     {
       title: 'Roles',
