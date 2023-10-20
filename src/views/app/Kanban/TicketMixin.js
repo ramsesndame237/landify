@@ -1,10 +1,16 @@
 import moment from 'moment-business-time'
 import { getUserData } from '@/auth/utils'
-import _ from 'lodash'
+import _, { uniqBy } from 'lodash'
 import { mapGetters } from 'vuex'
 
 export default {
   data() {
+    const TICKET_PRIORITY = {
+      1: { label: 'Critical', key: 'critical', priorityMaxExecuteTime: 8 },
+      2: { label: 'High', key: 'high', priorityMaxExecuteTime: 24 },
+      3: { label: 'Normal', key: 'normal', priorityMaxExecuteTime: 48 },
+      4: { label: 'Low', key: 'low', priorityMaxExecuteTime: 72 },
+    }
     return {
       columns: [],
       tickets: [],
@@ -32,6 +38,7 @@ export default {
           return false
         },
       },
+      TICKET_PRIORITY,
     }
   },
   computed: {
@@ -148,11 +155,12 @@ export default {
           this.columns = data.data.data.sort(c => c.rank_order)
           const ids = this.columns.map(c => c.team_id).filter(c => c != null)
           if (ids.length === 0) return
+          const payload = uniqBy(ids.map(id => ({ team_id: id })), 'team_id')
           this.$api({
             entity: 'user_team_grp',
             action: 'read-rich',
             per_page: 9999,
-            data: ids.map(id => ({ team_id: id })),
+            data: payload,
           }).then(({ data: respData }) => {
             this.teams = respData.data.data
           })
@@ -202,7 +210,7 @@ export default {
       return this.teams.find(team => team.team_id === teamId && team.user_email === email && moment().isBetween(team.user_team_valid_from, team.user_team_valid_to, 'day', '[]')) != null
     },
     userIdsOfTeam(teamId) {
-      return this.teams.filter(team => team.team_id === teamId && moment().isBetween(team.user_team_valid_from, team.user_team_valid_to, 'day', '[]')).map(t => t.user_id)
+      return this.teams.filter(team => team.team_id === teamId).map(t => t.user_id)
     },
   },
 

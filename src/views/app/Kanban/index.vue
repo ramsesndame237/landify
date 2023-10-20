@@ -35,7 +35,7 @@
 
         </div>
         <div v-for="ticket in visibleTickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
-          <invoice-ticket-card :advanced="advanced" :ticket="ticket"
+          <invoice-ticket-card :advanced="advanced" :ticket="ticket" :team-users="teams.filter(team => team.team_id === ticket.columns[0].team_id)"
                                @moredetails="$router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
                                @assign="$refs.assign.openModal(ticket, userIdsOfTeam(ticket.columns[0].team_id))"/>
         </div>
