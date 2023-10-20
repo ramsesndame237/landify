@@ -40,6 +40,7 @@ export const refreshPageMixin = {
       this.interval = setInterval(() => {
         this.checkVersion(url);
       }, frequency);
+      this.checkVersion(url)
     },
     async checkVersion(url) {
       try {
