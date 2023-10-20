@@ -31,12 +31,13 @@ export const refreshPageMixin = {
     return {
       currentHash: this.$root.hash,
       hashChanged: false,
-      newHash: ''
+      newHash: '',
+      interval: null
     }
   },
   methods: {
     initVersionCheck(url, frequency = 1000 * 60) {
-      setInterval(() => {
+      this.interval = setInterval(() => {
         this.checkVersion(url);
       }, frequency);
     },
@@ -61,7 +62,7 @@ export const refreshPageMixin = {
       }
     },
     hasHashChanged(currentHash, newHash) {
-      console.log(currentHash, newHash)
+      console.log('hash diff',currentHash, newHash)
       return currentHash !== newHash;
     }
   }
@@ -89,6 +90,9 @@ export default {
     if (process.env.VUE_APP_BASE_URL) {
       this.initVersionCheck('/version.json')
     }
+  },
+  beforeDestroy() {
+    if (this.interval) clearInterval(this.interval)
   }
 }
 </script>
