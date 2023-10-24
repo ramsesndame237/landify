@@ -27,18 +27,18 @@
       </div>
     </b-td>
     <b-td class="td-form">
+        <field v-if="visible" :field="posIdField" :entity="item"
+               :disabled="is_dismissed || is_done || item.ticket_id != null"/>
+        <router-link v-if="is_done && item.pos_id" target="_blank"
+                     :to="{ name: 'table-view', params: { table: 'pos', id: item.pos_id } }">
+          {{ getPosName() }}
+        </router-link>
+      </b-td>
+    <b-td class="td-form">
       <field v-if="visible" ref="ticket" :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/>
       <router-link v-if="is_done" target="_blank"
                    :to="{name: 'table-view', params: {table: 'ticket',id: item.ticket_id_created}}">
         {{ item.ticket_id_created + ' - ' + getTicketName() }}
-      </router-link>
-    </b-td>
-    <b-td class="td-form">
-      <field v-if="visible" :field="posIdField" :entity="item"
-             :disabled="is_dismissed || is_done || item.ticket_id!=null"/>
-      <router-link v-if="is_done && item.pos_id" target="_blank"
-                   :to="{name: 'table-view', params: {table: 'pos',id: item.pos_id}}">
-        {{ getPosName() }}
       </router-link>
     </b-td>
     <b-td class="td-form">
@@ -91,9 +91,9 @@
 
 <script>
 import Field from '@/views/app/Generic/Field'
-import { getDocumentLink, formatDate, getDateFormat } from '@/libs/utils'
+import { getDocumentLink, getDateFormat } from '@/libs/utils'
 import { VBToggle } from 'bootstrap-vue'
-import moment from "moment";
+import moment from 'moment'
 
 export default {
   name: 'MailTr',
@@ -116,6 +116,7 @@ export default {
         required: false,
         filter_key: 'pos_id',
         noCache: true,
+        optionWithTooltipDetail: true,
       },
       posIdField: {
         key: 'pos_id',
@@ -125,6 +126,11 @@ export default {
         listLabel: 'pos_name',
         noLabel: true,
         noFetch: true,
+        /**
+        * Cette clé permet de spécifier si lorsque les options dans le champ sont trop long, au
+        * Hover du champ, on doit afficher les détails sous un tooltip
+        */
+        optionWithTooltipDetail: true,
       },
       contractIdField: {
         key: 'contract_id',
@@ -135,6 +141,7 @@ export default {
         filter_key: 'pos_id',
         noLabel: true,
         noCache: true,
+        optionWithTooltipDetail: true,
       },
       boardIdField: {
         key: 'board_id',
@@ -143,6 +150,7 @@ export default {
         listLabel: 'board_name',
         noLabel: true,
         noFetch: true,
+        optionWithTooltipDetail: true,
       },
       documenttypeIdField: {
         key: 'documenttype_id',

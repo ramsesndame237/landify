@@ -10,10 +10,10 @@
           <!--          <b-th>To</b-th>-->
           <b-th>Subject</b-th>
           <b-th class="text-center">
-            Ticket Id
+            Pos Id
           </b-th>
           <b-th class="text-center">
-            Pos Id
+            Ticket Id
           </b-th>
           <b-th class="text-center">
             Contract Id
