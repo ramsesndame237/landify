@@ -40,7 +40,8 @@
         </div>
         <div v-else-if="field.type==='yesno' || field.type==='custom-select'">
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
-                    :multiple="field.multiple" :placeholder="field.key" :clearable="field.clearable != null ? field.clearable : true"
+                    :multiple="field.multiple" :placeholder="field.key"
+                    :clearable="field.clearable != null ? field.clearable : true"
                     :options="field.type==='yesno'?yesNoOptions: customSelectOptions" transition="" label="label"
                     class="w-100" :reduce="i => i.value"/>
         </div>
@@ -58,8 +59,8 @@
               <div>
                 <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50"/>
                 <span class="text-muted font-weight-bolder align-text-top">{{
-                  file.name
-                }}</span>
+                    file.name
+                  }}</span>
                 <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
               </div>
               <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index, validate)"/>
@@ -267,11 +268,12 @@ export default {
       editorInstance: null,
       disablePopupButton: false,
       isDisabled: false,
+      nonCachedItems: []
     }
   },
   computed: {
     list() {
-      return this.$store.getters['table/listCache'](this.field.entityList || this.field.list)
+      return this.field.noCache ? this.nonCachedItems : this.$store.getters['table/listCache'](this.field.entityList || this.field.list)
     },
     passwordToggleIcon() {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
@@ -728,7 +730,7 @@ export default {
         if (this.field.customPagination) {
           payload.data.push(...this.field.customPagination)
         }
-        await this.$store.dispatch('table/fetchList', payload)
+        this.nonCachedItems = await this.$store.dispatch('table/fetchList', payload)
         if (this.field.entityList) {
           await this.$store.dispatch('table/fetchTableDefinition', list)
         }

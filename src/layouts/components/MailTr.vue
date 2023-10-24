@@ -113,8 +113,9 @@ export default {
         list: 'frontend_6_1_6_overview',
         listLabel: item => `${item.ticket_id} - ${item.ticket_name}`,
         noLabel: true,
-        noFetch: true,
         required: false,
+        filter_key: 'pos_id',
+        noCache: true,
       },
       posIdField: {
         key: 'pos_id',
@@ -133,7 +134,7 @@ export default {
         listLabel: 'contract_name',
         filter_key: 'pos_id',
         noLabel: true,
-        noFetch: true,
+        noCache: true,
       },
       boardIdField: {
         key: 'board_id',
@@ -218,8 +219,8 @@ export default {
     },
     getTicketName() {
       const list = this.$store.state.table.listCache.frontend_6_1_6_overview
-      const el = list.find(e => e.ticket_id === this.item.ticket_id_created)
-      return el?.ticket_name
+      const el = list?.find(e => e.ticket_id === this.item.ticket_id_created)
+      return el?.ticket_name || ''
     },
     getPosName() {
       const list = this.$store.state.table.listCache.frontend_2_1_3_8
@@ -228,8 +229,8 @@ export default {
     },
     getContractName() {
       const list = this.$store.state.table.listCache.frontend_4_2_1_contract_selector
-      const el = list.find(e => e.contract_id === this.item.contract_id)
-      return el?.contract_name
+      const el = list?.find(e => e.contract_id === this.item.contract_id)
+      return el?.contract_name || ''
     },
     getBoardName() {
       const list = this.$store.state.table.listCache.board

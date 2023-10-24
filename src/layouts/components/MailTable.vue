@@ -380,12 +380,12 @@ export default {
       // this.loading = true
       try {
         const { data } = await this.$http.get('/emails/filters/data')
-        await this.$store.dispatch('table/setListData', { entity: 'frontend_6_1_6_overview', data: data.ticket })
+        // await this.$store.dispatch('table/setListData', { entity: 'frontend_6_1_6_overview', data: data.ticket })
         await this.$store.dispatch('table/setListData', { entity: 'frontend_2_1_3_8', data: data.pos })
-        await this.$store.dispatch('table/setListData', {
-          entity: 'frontend_4_2_1_contract_selector',
-          data: data.contract,
-        })
+        // await this.$store.dispatch('table/setListData', {
+        //   entity: 'frontend_4_2_1_contract_selector',
+        //   data: data.contract,
+        // })
         await this.$store.dispatch('table/setListData', { entity: 'board', data: data.board })
         await this.$store.dispatch('table/setListData', { entity: 'documenttype', data: data.documenttype })
         this.listLoaded = true
