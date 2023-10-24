@@ -200,7 +200,6 @@ export default {
       try {
         let ticket_id = null
         let success = true
-        let updateTicketList = false
 
         item.contract_name = $tr.$refs.contract?.selectedValue?.contract_name
         item.ticket_name_created = $tr.$refs.ticket?.selectedValue?.ticket_name
@@ -290,7 +289,6 @@ export default {
           })).data.data.data[0][0]
 
           ticket_id = ticket.ticket_id
-          updateTicketList = true
         }
 
         const master_ticket_id = item.ticket_id || ticket_id
@@ -336,10 +334,6 @@ export default {
           this.$successToast('Ticket Created')
         } else {
           this.$errorToast('Error, Please try again')
-        }
-
-        if (updateTicketList) {
-          // await this.$store.dispatch('table/fetchList', { entity: 'frontend_6_1_6_overview' })
         }
       } catch (e) {
         console.error(e)
