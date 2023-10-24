@@ -4,7 +4,7 @@ export default {
   // fieldComponent: () => import('@/views/app/FormComponent/AddressForm.vue'),
   fields: [
     { key: 'address_id', auto: true },
-    { key: 'address_street'},
+    { key: 'address_street' },
     { key: 'address_house_number' },
     { key: 'address_extra', rules: { required: false } },
     {
