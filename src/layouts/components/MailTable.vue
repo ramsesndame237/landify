@@ -7,7 +7,7 @@
           <b-th>Email Id</b-th>
           <b-th>Received date</b-th>
           <b-th>From</b-th>
-<!--          <b-th>To</b-th>-->
+          <!--          <b-th>To</b-th>-->
           <b-th>Subject</b-th>
           <b-th class="text-center">
             Ticket Id
@@ -37,13 +37,14 @@
       <!--    </template>-->
       <template v-for="(item,idx) in items">
         <b-tbody :key="idx">
-          <mail-tr :item="item" @show-content="showMailContent(item)" @classify="classify(item)"
+          <mail-tr :item="item" @show-content="showMailContent(item)" @classify="($vm) => classify(item, $vm)"
                    @reject="reject(item)"/>
         </b-tbody>
         <transition :key="'c'+idx" name="slide">
           <b-tbody v-if="item.documents.length>0" v-show="item.open" :id="'collapse'+item.email_id">
-            <mail-tr v-for="(child,idx) in item.documents" :key="idx" :item="child" child style="background-color: white !important;"
-                     @classify="classify(child)" @reject="reject(child)"/>
+            <mail-tr v-for="(child,idx) in item.documents" :key="idx" :item="child" child
+                     style="background-color: white !important;" @classify="($vm) => classify(child, $vm)"
+                     @reject="reject(child)"/>
           </b-tbody>
         </transition>
       </template>
@@ -189,8 +190,7 @@ export default {
         return true
       })
     },
-    async classify(item) {
-      console.log(item)
+    async classify(item, $tr) {
       if (!item.ticket_id) {
         if (!item.pos_id) return this.$errorToast('Please select a pos')
         // if (!item.contract_id) return this.$errorToast('Please select a contract')
@@ -201,6 +201,10 @@ export default {
         let ticket_id = null
         let success = true
         let updateTicketList = false
+
+        item.contract_name = $tr.$refs.contract?.selectedValue?.contract_name
+        item.ticket_name_created = $tr.$refs.ticket?.selectedValue?.ticket_name
+
         // create ticket
         if (item.ticket_id) {
           // create subticket
@@ -210,7 +214,6 @@ export default {
             data: [
               {
                 ticket_name: item.email_subject.substr(0, 20),
-                // ticket_description: item.email_body,
                 ticket_progress: 0,
                 ticket_closed: 0,
               },
@@ -225,18 +228,21 @@ export default {
           ticket_id = subticket.ticket_id
         } else {
           // create ticket
+          const ticket_name = item.email_subject.substr(0, 20)
           const ticket = (await this.$api({
             action: 'create',
             entity: 'ticket',
             data: [
               {
-                ticket_name: item.email_subject.substr(0, 20),
+                ticket_name,
                 // ticket_description: item.email_body,
                 ticket_progress: 0,
                 ticket_closed: 0,
               },
             ],
           })).data.data.data[0][0]
+
+          item.ticket_name_created = ticket_name
 
           await this.$api({
             action: 'create',
@@ -333,7 +339,7 @@ export default {
         }
 
         if (updateTicketList) {
-          await this.$store.dispatch('table/fetchList', { entity: 'frontend_6_1_6_overview' })
+          // await this.$store.dispatch('table/fetchList', { entity: 'frontend_6_1_6_overview' })
         }
       } catch (e) {
         console.error(e)

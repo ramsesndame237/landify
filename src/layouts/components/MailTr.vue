@@ -27,7 +27,7 @@
       </div>
     </b-td>
     <b-td class="td-form">
-      <field v-if="visible" :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/>
+      <field v-if="visible" ref="ticket" :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/>
       <router-link v-if="is_done" target="_blank"
                    :to="{name: 'table-view', params: {table: 'ticket',id: item.ticket_id_created}}">
         {{ item.ticket_id_created + ' - ' + getTicketName() }}
@@ -42,7 +42,7 @@
       </router-link>
     </b-td>
     <b-td class="td-form">
-      <field v-if="visible" :field="contractIdField" :entity="item"
+      <field v-if="visible" ref="contract" :field="contractIdField" :entity="item"
              :disabled="is_dismissed|| is_done ||item.ticket_id!=null"/>
       <router-link v-if="is_done && item.contract_id" target="_blank"
                    :to="{name: 'table-view', params: {table: 'contract',id: item.contract_id}}">
@@ -76,7 +76,7 @@
     <b-td class="text-center">
       <div v-if="visible && !is_done && !is_dismissed && (item.document_id ? item.classification_id : true)"
            class="d-flex align-items-center">
-        <b-button class="btn-icon" variant="flat-success" pill @click="$emit('classify')">
+        <b-button class="btn-icon" variant="flat-success" pill @click="onClassifyClick">
           <feather-icon icon="CheckIcon" size="24"/>
         </b-button>
         <b-button class="btn-icon" variant="flat-danger" style="margin-bottom: 3px" pill @click="$emit('reject')">
@@ -180,6 +180,9 @@ export default {
     this.onTicketIdChange()
   },
   methods: {
+    onClassifyClick() {
+      this.$emit('classify', this)
+    },
     customFormatDate(date) {
       if (!date) return ''
       const mDate = moment(date)
@@ -218,9 +221,7 @@ export default {
       }
     },
     getTicketName() {
-      const list = this.$store.state.table.listCache.frontend_6_1_6_overview
-      const el = list?.find(e => e.ticket_id === this.item.ticket_id_created)
-      return el?.ticket_name || ''
+      return this.item.ticket_name_created || ''
     },
     getPosName() {
       const list = this.$store.state.table.listCache.frontend_2_1_3_8
@@ -228,9 +229,7 @@ export default {
       return el?.pos_name
     },
     getContractName() {
-      const list = this.$store.state.table.listCache.frontend_4_2_1_contract_selector
-      const el = list?.find(e => e.contract_id === this.item.contract_id)
-      return el?.contract_name || ''
+      return this.item.contract_name || ''
     },
     getBoardName() {
       const list = this.$store.state.table.listCache.board
