@@ -47,7 +47,7 @@
         <div v-else-if="field.type ==='custom_list'">
           <AutoCompleteInput
             :options="listItems"
-            :key_label="field.listLabel || ''"
+            :key-label="field.listLabel || ''"
             :key_value="field.key || ''"
             icon_open="ChevronUpIcon"
             icon_close="ChevronDownIcon"
@@ -70,7 +70,7 @@
         <div v-else-if="field.type==='checkbox'">
           <b-form-checkbox-group v-model="entity[field.key]" :disabled="disabled"
                                  :state="errors.length > 0 ? false:null" :placeholder="field.key" text-field="label"
-                                 :options="field.items"/>
+                                 :options="field.items" />
         </div>
         <div v-else-if="field.type==='file'">
           <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
@@ -129,7 +129,7 @@
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
                     class="form-control"/>
         <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
-                         :state="errors.length > 0 ? false:null" :placeholder="field.key" :value="1"
+                         :state="errors.length > 0 ? false:null" :value="1"
                          :unchecked-value="0" style="margin-top: 5px"/>
         <b-input-group v-else class="w-100">
           <b-input-group-prepend v-if="field.unit && field.unit_key && field.isUnitOnLeft" class="w-20 bg-input">
@@ -360,7 +360,7 @@ export default {
       return (this.field.type === 'list' || this.field.type === 'custom_list') ? this.list.find(e => e[this.field.key] === this.entity[this.field.key]) : this.entity[this.field.key]
     },
     selectedValues() {
-      return this.field.type === 'list' ? this.list.filter(e => this.entity[this.field.key]?.indexOf(e[this.field.key]) >= 0) : []
+      return (this.field.type === 'list' || this.field.type === 'custom_list') ? this.list.filter(e => this.entity[this.field.key]?.indexOf(e[this.field.key]) >= 0) : []
     },
     ...mapGetters('user', ['isUserExternClient', 'isUserExternPartner']),
 
@@ -395,7 +395,7 @@ export default {
     },
   },
   async created() {
-    if (this.field.type === 'list' && ((!this.field.filter_key || !!this.entity[this.field.filter_key]) || this.field.noFetchOnChange) && !this.field.onlyForm) {
+    if ((this.field.type === 'list' || this.field.type === 'custom_list') && ((!this.field.filter_key || !!this.entity[this.field.filter_key]) || this.field.noFetchOnChange) && !this.field.onlyForm) {
       await this.fetchList()
     } else if (this.field.type === 'boolean') {
       // set false as default value
@@ -668,7 +668,7 @@ export default {
     },
     async getRelationValue() {
       console.log('get relation value')
-      if (this.field.type === 'list' || this.field.type ==='custom_list') {
+      if (this.field.type === 'list' || this.field.type === 'custom_list') {
         if (this.entity[this.field.key] == null) {
           const primaryKey = this.getPrimaryKey(this.definition)
           await this.$api({
@@ -743,7 +743,7 @@ export default {
       if (this.list.length === 0 || force) this.loading = true
       try {
         let { list } = this.field
-        console.log("this is the field list debug",list)
+        console.log('this is the field list debug', list)
         if (list === 'address') {
           list = this.subDefinition.entity
           await this.$store.dispatch('table/fetchTableDefinition', 'address')

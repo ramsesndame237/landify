@@ -15,7 +15,7 @@ export default {
       required: true,
       default: '',
     },
-    key_label: {
+    keyLabel: {
       required: true,
       type: String,
       default: '',
@@ -46,15 +46,62 @@ export default {
       query: {},
     }
   },
+  computed: {
+    filteredOptions() {
+      if (Object.keys(this.query).length > 0) {
+        const optionsData = this.options.filter(option => option[this.keyLabel] !== undefined)
+        const dataFilter = optionsData.filter(option => option[this.keyLabel].toLowerCase()
+          .includes(this.query[this.keyLabel].toLowerCase()))
+          .sort((a, b) => a[this.keyLabel].toLowerCase()
+            .indexOf(this.query[this.keyLabel].toLowerCase()) - b[this.keyLabel].toLowerCase()
+            .indexOf(this.query[this.keyLabel].toLowerCase()))
+        return dataFilter
+      }
+      console.log('this is the ', Object.keys(this.query).length)
+      return this.options
+    },
+  },
+  watch: {
+    query(newValue) {
+      if (Object.keys(newValue).length === 0) {
+        this.filteredOptions
+      }
+    },
+  },
   methods: {
     getSelectionElement(item) {
       if (this.multiple) {
         this.selectedOptions.push(item)
       } else {
-        console.log('this is the item', item)
         this.query = item
       }
-      this.openOption = !this.openOption
+      this.openOption = false
+    },
+    onEnter() {
+      this.selectedOptions = this.filteredOptions[this.selectedIndex]
+    },
+    onUp() {
+      this.selectedIndex--
+      if (this.selectedIndex < 0) {
+        this.selectedIndex = this.filteredOptions.length - 1
+      }
+    },
+    onDown() {
+      // Déplacez la sélection vers le bas
+      this.selectedIndex++
+      if (this.selectedIndex >= this.filteredOptions.length) {
+        this.selectedIndex = 0
+      }
+    },
+    onBlur() {
+      // Réinitialisez la sélection
+      this.selectedIndex = -1
+    },
+    openOptionsList() {
+      this.openOption = true
+    },
+    closeOptionsList() {
+      this.openOption = false
     },
   },
 }
@@ -63,9 +110,11 @@ export default {
 <template>
   <div class="autocomplete_container">
     <div :class="['custom-autocomplete']">
-      <input v-if="selectedOptions == null" v-model="query[key_label]" type="text" @focusout="openOption=false" @focusin="openOption = true" >
+      <input v-if="selectedOptions == null" v-model="query[keyLabel]" :data-tip="query[keyLabel]" type="text"
+             @keyup.enter="onEnter" @keydown.up="onUp" @keydown.down="onDown" @focus="openOptionsList" >
       <div class="action_container">
         <slot v-if="action_component" name="action_button"/>
+        <!--        <b-spinner small variant="primary"/>-->
         <button v-if="selectedOptions" @click="selectedOptions = null">
           <feather-icon icon="XIcon"/>
         </button>
@@ -75,14 +124,15 @@ export default {
       </div>
     </div>
     <transition name="slide-fade">
-      <div v-if="openOption" :class="['rounded-sm', options.length ===0 ? 'options_container_2':'options_container']">
+      <div v-if="openOption"
+           :class="['rounded-sm', filteredOptions.length ===0 ? 'options_container_2':'options_container']">
         <slot v-if="custom_options" name="options_components"/>
-        <ul v-if="custom_options === false && options.length > 0">
-          <li v-for="(option,index) in options" :key="index" @click="getSelectionElement(option)">
-            {{ option[key_label] }}
+        <ul v-if="custom_options === false && filteredOptions.length > 0">
+          <li v-for="(option,index) in filteredOptions" :key="index" @click="getSelectionElement(option)">
+            {{ option[keyLabel] }}
           </li>
         </ul>
-        <span v-if="options.length ===0">{{ $t(field_name) }} is not  available  </span>
+        <span v-if="filteredOptions.length ===0">{{ $t(field_name) }} is not  available  </span>
       </div>
     </transition>
   </div>

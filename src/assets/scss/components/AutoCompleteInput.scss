@@ -11,23 +11,42 @@
   width: 100%;
   background: #f8f8f8;
   border: solid 1px #d7d7d7;
-  overflow: hidden;
+  overflow: auto;
   margin-top: 10px;
   text-align: center;
+  &::-webkit-scrollbar {
+    width: 10px;
+    cursor: all-scroll;
+    border-radius: 8px;
+  }
 
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $primary;
+  }
   span {
     font-size: 1.39vw;
     font-weight: 700;
     color: #676d7d;
   }
 }
+
 .autocomplete_container {
   position: relative;
+
+
   ul{
     text-align: start;
     padding: 0;
     margin:0;
-    height: 100%;
+    height: auto;
+    max-height: 350px;
+    //overflow: auto;
+    margin: 5px;
+
   li{
     list-style: none;
     //border: 1px solid red;
@@ -71,6 +90,7 @@
       max-width: 5.56vw;
       display: flex;
       cursor: pointer;
+      align-items: center;
       justify-content:flex-end;
     }
 
@@ -85,7 +105,7 @@
 
   .options_container {
     @include shared_property;
-    height: auto;
+
   }
   .options_container_2{
     @include shared_property;
