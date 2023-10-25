@@ -29,11 +29,15 @@
       <span v-else>{{ $t('not-defined') }}</span>
     </div>
     <div class="d-flex">
+      <strong class="mr-1">{{ $t('attribute.assigned_to') | title }}:</strong>
+      <span class="text-truncate" :title="assignedUser">{{ assignedUser }}</span>
+    </div>
+    <div class="d-flex">
       <strong class="mr-1">{{ $t('attribute.ticket_deadline') | title }}:</strong>
       <span :class="deadlineColor?('text-'+deadlineColor):''">{{ deadlineForHuman }}</span>
       <b-icon-calendar-date :class="'ml-auto '+ (deadlineColor?('text-'+deadlineColor):'')"/>
     </div>
-    <div v-if="advanced" class="d-flex">
+    <div v-if="advanced" hidden class="d-flex">
       <strong class="mr-1">{{ $t('attribute.ticket_deadline_offset') | title }}:</strong>
       <span :class="columnDeadlineColor?('text-'+columnDeadlineColor):''">{{ columnDeadlineForHuman }}</span>
       <b-icon-calendar-date :class="'ml-auto '+ (columnDeadlineColor?('text-'+columnDeadlineColor):'')"/>
@@ -43,19 +47,25 @@
       <span :class="deadlineColor?('text-'+deadlineColor):''">{{ deadlineStatus }}</span>
     </div>
     <div class="d-flex justify-content-between mt-2 align-items-center">
-      <b-avatar-group v-if="filteredUsers.length > 1" size="20px" variant="warning" overlap="0.2">
-        <template v-for="user in filteredUsers.slice(0,4)">
-          <b-avatar :key="user.user_id" :text="generateUserAvatar(user)" />
-        </template>
-        <b-avatar v-if="filteredUsers.length > 4">
-          <feather-icon
-            icon="PlusIcon"
-            size="12"
-          />
-          {{ filteredUsers.length - 4 }}
-        </b-avatar>
-      </b-avatar-group>
-      <b-avatar v-else variant="warning" size="20px" :text="generateUserAvatar(filteredUsers[0])" />
+      <template v-if="false">
+        <b-avatar-group v-if="filteredUsers.length > 1" size="20px" variant="warning" overlap="0.2">
+          <template v-for="user in filteredUsers.slice(0,4)">
+            <b-avatar :key="user.user_id" :text="generateUserAvatar(user)" />
+          </template>
+          <b-avatar v-if="filteredUsers.length > 4">
+            <feather-icon
+              icon="PlusIcon"
+              size="12"
+            />
+            {{ filteredUsers.length - 4 }}
+          </b-avatar>
+        </b-avatar-group>
+        <b-avatar v-else variant="warning" size="20px" :text="generateUserAvatar(filteredUsers[0])" />
+      </template>
+      <p class="d-flex align-items-center mb-0">
+        <icon icon="tdesign:task" width="16px" height="16px" />
+        <span class="ml"> {{ ` ${ticket.ticket_subticket_closed_count}/${ticket.ticket_subticket_count}` }}</span>
+      </p>
       <span>{{ formatDate(ticket.ticket_creation_time) }}</span>
     </div>
   </div>

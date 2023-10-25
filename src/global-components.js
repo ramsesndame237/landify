@@ -28,7 +28,9 @@ import {
   BTable, BPagination, BAlert,
 } from 'bootstrap-vue'
 import { BCardActions } from '@core/components/b-card-actions'
+import { Icon } from '@iconify/vue2'
 
+Vue.component('icon', Icon)
 Vue.component(FeatherIcon.name, FeatherIcon)
 Vue.component('b-avatar-group', BAvatarGroup)
 Vue.component('b-badge', BBadge)
