@@ -331,7 +331,7 @@ import { formatDate, getDocumentLink, getStampedDocumentLink } from '@/libs/util
 import moment from 'moment'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
 import Notes from '@/views/app/Generic/Notes.vue'
-import _ from 'lodash'
+import _, { uniqBy } from 'lodash'
 import EmailModal from '@/views/app/Ticket/EmailModal.vue'
 import AddDocumentToContract from '@/views/app/Ticket/AddDocumentToContract.vue'
 import AddDocumentToPos from '@/views/app/Ticket/AddDocumentToPos.vue'
@@ -375,6 +375,8 @@ export default {
     //   tableKey: 'ticket_id',
     //   // visible: () => false,
     // })
+
+    subTicketDef.submit = this.submitSubticket
     return {
       subTicketDef,
       ticketDef: Table.ticket,
@@ -441,6 +443,17 @@ export default {
     }
   },
   methods: {
+    async submitSubticket(vm) {
+      const data = { ...vm.entity }
+
+      try {
+        const response = await this.$http.post('/tickets/subticket', data)
+        await this.fetchSubTickets()
+        return response
+      } catch (error) {
+        console.log(error)
+      }
+    },
     formatDate,
     async addToPos(document) {
       if (document.loading) return
@@ -492,7 +505,6 @@ export default {
     createSubTicket() {
       this.$refs.modal.openModal(true, {
         ticket_id_group: parseInt(this.entityId),
-
       })
     },
     createDocument() {
@@ -545,12 +557,14 @@ export default {
     },
     async fetchSubTickets() {
       // load subtickets
-      this.subTickets = (await this.$api({
+      const data = (await this.$api({
         entity: 'frontend_6_1_6_listall',
         action: 'read-rich',
         per_page: 1000000,
         data: [{ ticket_id_group: this.entity.ticket_id }],
       })).data.data.data
+
+      this.subTickets = uniqBy(data, 'ticket_id')
     },
     async fetchDocuments() {
       const documents = (await this.$http.get('/tickets/documents', {
