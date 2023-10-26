@@ -25,7 +25,14 @@
                     :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
                     :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
                     :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
-                    :clearable="field.clearable != null ? field.clearable : true" @input="onChange"/>
+                    :clearable="field.clearable != null ? field.clearable : true" @input="onChange">
+            <template v-if="field.optionWithTooltipDetail" #option="option">
+              <span v-b-tooltip.hover :title="getOptionLabel(option)">{{ getOptionLabel(option) }}</span>
+            </template>
+            <template v-if="field.optionWithTooltipDetail" #selected-option="option">
+              <span v-b-tooltip.hover.dh10 :title="getOptionLabel(option)">{{ getOptionLabel(option) }}</span>
+            </template>
+          </v-select>
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm">New
           </b-button>
@@ -59,8 +66,8 @@
               <div>
                 <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50"/>
                 <span class="text-muted font-weight-bolder align-text-top">{{
-                    file.name
-                  }}</span>
+                  file.name
+                }}</span>
                 <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
               </div>
               <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index, validate)"/>
@@ -268,7 +275,7 @@ export default {
       editorInstance: null,
       disablePopupButton: false,
       isDisabled: false,
-      nonCachedItems: []
+      nonCachedItems: [],
     }
   },
   computed: {
@@ -447,6 +454,12 @@ export default {
     }
   },
   methods: {
+    getOptionLabel(option) {
+      if (typeof this.field.listLabel === 'function') {
+        return this.field.listLabel(option)
+      }
+      return option[(typeof this.field.listLabel === 'string') ? this.field.listLabel : null]
+    },
     initializeValue() {
       const user = getUserData()
       if (this.isUserExternClient) {
