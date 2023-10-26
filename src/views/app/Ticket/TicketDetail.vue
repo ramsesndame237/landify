@@ -557,14 +557,14 @@ export default {
     },
     async fetchSubTickets() {
       // load subtickets
-      const data = (await this.$api({
-        entity: 'frontend_6_1_6_listall',
-        action: 'read-rich',
-        per_page: 1000000,
-        data: [{ ticket_id_group: this.entity.ticket_id }],
-      })).data.data.data
-
-      this.subTickets = uniqBy(data, 'ticket_id')
+      try {
+        const response = await this.$http.get('/tickets/sub-tickets', {
+          params: { ticket_id: this.entity.ticket_id },
+        })
+        this.subTickets = response.data.data
+      } catch (error) {
+        console.log({ error })
+      }
     },
     async fetchDocuments() {
       const documents = (await this.$http.get('/tickets/documents', {
