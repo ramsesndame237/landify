@@ -110,18 +110,18 @@ export default {
       listLabel: 'company_name',
       filter_key: 'customergroup_id',
       required: false,
-      filter: (company, vm) => {
-        const isUserExternClientNotDirector = vm.$store.getters['user/isUserExternClientNotDirector']
-
-        if (isUserExternClientNotDirector) {
-          const { company: userCompany } = vm.$store.getters['user/user']
-          vm.isDisabled = true
-          vm.$set(vm.entity, 'company_id', userCompany.company_id)
-          return userCompany.company_id === company.company_id
-        }
-
-        return true
-      },
+      // filter: (company, vm) => {
+      //   const isUserExternClientNotDirector = vm.$store.getters['user/isUserExternClientNotDirector']
+      //
+      //   if (isUserExternClientNotDirector) {
+      //     const { company: userCompany } = vm.$store.getters['user/user']
+      //     // vm.isDisabled = true
+      //     vm.$set(vm.entity, 'company_id', userCompany.company_id)
+      //     // return userCompany.company_id === company.company_id
+      //   }
+      //
+      //   return true
+      // },
     },
     {
       key: 'pos_id',

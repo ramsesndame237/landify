@@ -10,7 +10,7 @@
           <date-picker v-model="date" v-bind="datePickerOptions" style="margin-bottom: -0.5rem;" class=" w-100" @change="datePickerHandler"/>
           <field class="ml-sm-1 w-100"
                  :field="{ key: 'company_id', type: 'custom-select', required: false, items: filteredCompanies, clearable: false}"
-                 :entity="entity" :disabled="(isUserExternClientNotDirector || isUserInternAndNotAdmin) && team_is_customer" />
+                 :entity="entity" />
           <field class=" mx-sm-1 w-100"
                  :field="{ key: 'team_id', type: 'custom-select', required: false, items: filteredTeams, clearable: false}"
                  :entity="entity" :disabled="entity.company_id === -1" />
