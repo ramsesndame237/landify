@@ -57,7 +57,6 @@ export default {
             .indexOf(this.query[this.keyLabel].toLowerCase()))
         return dataFilter
       }
-      console.log('this is the ', Object.keys(this.query).length)
       return this.options
     },
   },
@@ -114,7 +113,6 @@ export default {
              @keyup.enter="onEnter" @keydown.up="onUp" @keydown.down="onDown" @focus="openOptionsList" >
       <div class="action_container">
         <slot v-if="action_component" name="action_button"/>
-        <!--        <b-spinner small variant="primary"/>-->
         <button v-if="selectedOptions" @click="selectedOptions = null">
           <feather-icon icon="XIcon"/>
         </button>

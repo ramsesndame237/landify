@@ -130,6 +130,7 @@ if (process.env.VUE_APP_SENTRY_DNS) {
     // replaysOnErrorSampleRate: 1.0,
   })
 }
+
 async function init() {
   try {
     let data = localStorage.getItem('app-data')
@@ -155,6 +156,9 @@ async function init() {
     router,
     store,
     i18n,
+    data() {
+      return { hash: '{{POST_BUILD_ENTERS_HASH_HERE}}' }
+    },
     render: h => h(App),
   }).$mount('#app')
 }

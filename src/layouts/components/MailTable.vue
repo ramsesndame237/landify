@@ -9,28 +9,26 @@
           <b-th>From</b-th>
           <!--          <b-th>To</b-th>-->
           <b-th>Subject</b-th>
-          <template v-if="listLoaded">
-            <b-th class="text-center">
-              Ticket Id
-            </b-th>
-            <b-th class="text-center">
-              Pos Id
-            </b-th>
-            <b-th class="text-center">
-              Contract Id
-            </b-th>
-            <b-th>Attachments</b-th>
-            <b-th>File Name</b-th>
-            <b-th class="text-center">
-              DocumentType
-            </b-th>
-            <b-th class="text-center">
-              Board
-            </b-th>
-            <b-th class="text-center">
-              Action
-            </b-th>
-          </template>
+          <b-th class="text-center">
+            Pos Id
+          </b-th>
+          <b-th class="text-center">
+            Ticket Id
+          </b-th>
+          <b-th class="text-center">
+            Contract Id
+          </b-th>
+          <b-th>Attachments</b-th>
+          <b-th>File Name</b-th>
+          <b-th class="text-center">
+            DocumentType
+          </b-th>
+          <b-th class="text-center">
+            Board
+          </b-th>
+          <b-th class="text-center">
+            Action
+          </b-th>
         </b-tr>
       </b-thead>
       <!--    <template #cell(__selected)="data">-->
@@ -39,14 +37,14 @@
       <!--    </template>-->
       <template v-for="(item,idx) in items">
         <b-tbody :key="idx">
-          <mail-tr :item="item" @show-content="showMailContent(item)" @classify="classify(item)"
+          <mail-tr :item="item" @show-content="showMailContent(item)" @classify="($vm) => classify(item, $vm)"
                    @reject="reject(item)"/>
         </b-tbody>
         <transition :key="'c'+idx" name="slide">
           <b-tbody v-if="item.documents.length>0" v-show="item.open" :id="'collapse'+item.email_id">
             <mail-tr v-for="(child,idx) in item.documents" :key="idx" :item="child" child
-                     style="background-color: white !important;"
-                     @classify="classify(child)" @reject="reject(child)"/>
+                     style="background-color: white !important;" @classify="($vm) => classify(child, $vm)"
+                     @reject="reject(child)"/>
           </b-tbody>
         </transition>
       </template>
@@ -99,7 +97,6 @@ import moment from 'moment-business-time'
 import { getUserData } from '@/auth/utils'
 import _ from 'lodash'
 import Fuse from 'fuse.js'
-import store from '@/store/index'
 
 export default {
   components: {
@@ -161,8 +158,7 @@ export default {
           keys: Object.keys(prefiltered[0]),
           shouldSort: true,
         })
-        prefiltered = fuse.search(this.search)
-          .map(({ item }) => item)
+        prefiltered = fuse.search(this.search).map(({ item }) => item)
       }
       return prefiltered
     },
@@ -194,8 +190,7 @@ export default {
         return true
       })
     },
-    async classify(item) {
-      console.log(item)
+    async classify(item, $tr) {
       if (!item.ticket_id) {
         if (!item.pos_id) return this.$errorToast('Please select a pos')
         // if (!item.contract_id) return this.$errorToast('Please select a contract')
@@ -205,7 +200,10 @@ export default {
       try {
         let ticket_id = null
         let success = true
-        let updateTicketList = false
+
+        item.contract_name = $tr.$refs.contract?.selectedValue?.contract_name
+        item.ticket_name_created = $tr.$refs.ticket?.selectedValue?.ticket_name
+
         // create ticket
         if (item.ticket_id) {
           // create subticket
@@ -215,7 +213,6 @@ export default {
             data: [
               {
                 ticket_name: item.email_subject.substr(0, 20),
-                // ticket_description: item.email_body,
                 ticket_progress: 0,
                 ticket_closed: 0,
               },
@@ -225,20 +222,18 @@ export default {
           await this.$api({
             action: 'create',
             entity: 'ticket_ticket_rel',
-            data: [{
-              ticket_id_group: item.ticket_id,
-              ticket_id: subticket.ticket_id,
-            }],
+            data: [{ ticket_id_group: item.ticket_id, ticket_id: subticket.ticket_id }],
           })
           ticket_id = subticket.ticket_id
         } else {
           // create ticket
+          const ticket_name = item.email_subject.substr(0, 20)
           const ticket = (await this.$api({
             action: 'create',
             entity: 'ticket',
             data: [
               {
-                ticket_name: item.email_subject.substr(0, 20),
+                ticket_name,
                 // ticket_description: item.email_body,
                 ticket_progress: 0,
                 ticket_closed: 0,
@@ -246,23 +241,19 @@ export default {
             ],
           })).data.data.data[0][0]
 
+          item.ticket_name_created = ticket_name
+
           await this.$api({
             action: 'create',
             entity: 'ticket_pos_rel',
-            data: [{
-              ticket_id: ticket.ticket_id,
-              pos_id: item.pos_id,
-            }],
+            data: [{ ticket_id: ticket.ticket_id, pos_id: item.pos_id }],
           })
 
           if (item.contract_id) {
             await this.$api({
               action: 'create',
               entity: 'ticket_contract_rel',
-              data: [{
-                ticket_id: ticket.ticket_id,
-                contract_id: item.contract_id,
-              }],
+              data: [{ ticket_id: ticket.ticket_id, contract_id: item.contract_id }],
             })
           }
 
@@ -277,15 +268,9 @@ export default {
 
           const now = moment()
           const user = getUserData()
-          const deadline = now.clone()
-            .addWorkingTime(column.default_deadline_period || 0, 'hours')
-            .format('YYYY-MM-DD HH:mm:ss')
-          const deadline_yellow = now.clone()
-            .addWorkingTime(column.default_deadline_yellow || 0, 'hours')
-            .format('YYYY-MM-DD HH:mm:ss')
-          const deadline_red = now.clone()
-            .addWorkingTime(column.default_deadline_red || 0, 'hours')
-            .format('YYYY-MM-DD HH:mm:ss')
+          const deadline = now.clone().addWorkingTime(column.default_deadline_period || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
+          const deadline_yellow = now.clone().addWorkingTime(column.default_deadline_yellow || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
+          const deadline_red = now.clone().addWorkingTime(column.default_deadline_red || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
 
           const columnTicket = (await this.$api({
             action: 'create',
@@ -304,7 +289,6 @@ export default {
           })).data.data.data[0][0]
 
           ticket_id = ticket.ticket_id
-          updateTicketList = true
         }
 
         const master_ticket_id = item.ticket_id || ticket_id
@@ -351,17 +335,10 @@ export default {
         } else {
           this.$errorToast('Error, Please try again')
         }
-
-        if (updateTicketList) {
-          await this.$store.dispatch('table/fetchList', { entity: 'frontend_6_1_6_overview' })
-        }
       } catch (e) {
         console.error(e)
-        if (e.response) {
-          this.$errorToast(e.response.data.detail)
-        } else {
-          this.$errorToast(e.message)
-        }
+        if (e.response) this.$errorToast(e.response.data.detail)
+        else this.$errorToast(e.message)
       } finally {
         this.loading = false
       }
@@ -378,20 +355,14 @@ export default {
                 document_id: item.document_id,
                 classification_id: item.classification_id,
                 classification_dismissed: 1,
-              } : {
-                email_id: item.email_id,
-                email_dismissed: 1,
-              }),
+              } : { email_id: item.email_id, email_dismissed: 1 }),
             },
           ],
         })).data.data.data[0][0]
         if (result) {
           this.$successToast(item.document_id ? 'Document Dismissed' : 'Mail Dismissed')
-          if (item.document_id) {
-            this.$set(item, 'classification_dismissed', true)
-          } else {
-            this.$set(item, 'email_dismissed', true)
-          }
+          if (item.document_id) this.$set(item, 'classification_dismissed', true)
+          else this.$set(item, 'email_dismissed', true)
         } else {
           this.$errorToast('Error, Please try again')
         }
@@ -409,28 +380,15 @@ export default {
       // this.loading = true
       try {
         const { data } = await this.$http.get('/emails/filters/data')
-        await this.$store.dispatch('table/setListData', {
-          entity: 'frontend_6_1_6_overview',
-          data: data.ticket,
-        })
-        await this.$store.dispatch('table/setListData', {
-          entity: 'frontend_2_1_3_8',
-          data: data.pos,
-        })
-        await this.$store.dispatch('table/setListData', {
-          entity: 'frontend_4_2_1_contract_selector',
-          data: data.contract,
-        })
-        await this.$store.dispatch('table/setListData', {
-          entity: 'board',
-          data: data.board,
-        })
-        await this.$store.dispatch('table/setListData', {
-          entity: 'documenttype',
-          data: data.documenttype,
-        })
+        // await this.$store.dispatch('table/setListData', { entity: 'frontend_6_1_6_overview', data: data.ticket })
+        await this.$store.dispatch('table/setListData', { entity: 'frontend_2_1_3_8', data: data.pos })
+        // await this.$store.dispatch('table/setListData', {
+        //   entity: 'frontend_4_2_1_contract_selector',
+        //   data: data.contract,
+        // })
+        await this.$store.dispatch('table/setListData', { entity: 'board', data: data.board })
+        await this.$store.dispatch('table/setListData', { entity: 'documenttype', data: data.documenttype })
         this.listLoaded = true
-        this.$store.commit('mails/SET_TOGGLE_VIEW_ROW', true)
       } catch (e) {
         console.error(e)
       }
@@ -457,33 +415,20 @@ export default {
       //   this.loading = false
       //   return this.processData(fromCache)
       // }
-      // if (this.loading) return
+      if (this.loading) return
       this.loading = true
 
-      // const promises = [this.$http.get('/emails', { params: payload })]
-      // if (!this.listLoaded) promises.push(this.fetchList())
-      // const [result0, result1] = await Promise.allSettled(promises)
-      // console.log(result0, result1)
-      // if (result0.status === 'fulfilled') {
-      //   await this.processData(result0.value.data)
-      // } else {
-      //   const title = result0.value.response?.data.detail
-      //   this.$errorToast(title)
-      // }
-      this.$http.get('/emails', { params: payload })
-        .then( async (response) => {
-          if (!this.listLoaded) {
-            this.items = response.data.items
-            await this.processData(response.data)
-            const listData = await this.fetchList()
-          }
-          this.loading = false
-        })
-        .catch(e => {
-          this.$errorToast(e.error.message())
-
-        }).finally(()=> this.loading = false)
-
+      const promises = [this.$http.get('/emails', { params: payload })]
+      if (!this.listLoaded) promises.push(this.fetchList())
+      const [result0, result1] = await Promise.allSettled(promises)
+      console.log(result0, result1)
+      if (result0.status === 'fulfilled') {
+        await this.processData(result0.value.data)
+      } else {
+        const title = result0.value.response?.data.detail
+        this.$errorToast(title)
+      }
+      this.loading = false
     },
     getCacheKey(payload) {
       return `${this.entity}-${JSON.stringify(payload)}`

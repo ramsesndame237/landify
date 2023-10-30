@@ -11,25 +11,25 @@
           </p>
         </div>
         <div class="d-flex align-items-center">
-          <notes v-if="definition.note" :id="entityId" class="mr-2" :primary-key="primaryKey" :note="definition.note"
+          <notes v-if="definition.note" :id="entityId" :note-to-everyone="noteToEveryOne" :note-to-internal="noteToInternal" class="mr-2" :primary-key="primaryKey" :note="definition.note"
                  :note-rel="'note_user_'+table+'_rel'"/>
-          <b-button variant="primary" @click="createInvoice">
+          <b-button v-if="showButton.all" variant="primary" @click="createInvoice">
             {{ $t('button~newinvoice') }}
           </b-button>
-          <b-button v-if="!entity.ticket_closed" variant="primary" class="ml-2"
+          <b-button v-if="!entity.ticket_closed && (showButton.all || showButton.assign)" variant="primary" class="ml-2"
                     @click="$refs.assign.openModal(entity, userIdsOfTeam(entity.columns[0].team_id))">
             {{ $t('button~assignto') }}
           </b-button>
           <b-button v-if="canMoveBack()" class="ml-2" variant="primary" @click="moveBack">
             {{ $t('button~moveback') }}
           </b-button>
-          <b-button v-if="canMoveToNext()" class="ml-2" variant="primary" @click="moveToNext">
+          <b-button v-if="canMoveToNext() && (showButton.all || showButton.confirm)" class="ml-2" variant="primary" @click="moveToNext">
             {{ $t('button~movetonextcolumn') }}
           </b-button>
-          <b-button v-if="!entity.ticket_closed" variant="primary" class="ml-2" @click="updateTicket">
+          <b-button v-if="!entity.ticket_closed & showButton.all" variant="primary" class="ml-2" @click="updateTicket">
             {{ $t('button~edit') }}
           </b-button>
-          <b-button variant="primary" class="ml-2" @click="toggleTicket(entity)">
+          <b-button v-if="showButton.all" variant="primary" class="ml-2" @click="toggleTicket(entity)">
             {{ $t('button~ticket~' + (entity.ticket_closed ? 'reopen' : 'close')) }}
           </b-button>
           <assign-user-modal ref="assign" @reload="loadSingleTicket"/>
@@ -173,7 +173,7 @@
           </b-card-actions>
           <div class="d-flex justify-content-between align-items-center mb-2">
             <h2>{{ $t('headline~ticket~subtasks') }}</h2>
-            <b-button v-if="!entity.ticket_closed" variant="primary" @click="createSubTicket">
+            <b-button v-if="!entity.ticket_closed && showButton.all" variant="primary" @click="createSubTicket">
               {{ $t('button~newsubtask') }}
             </b-button>
           </div>
@@ -223,7 +223,7 @@
               </b-table-simple>
             </b-overlay>
             <div class="text-right p-1">
-              <b-button v-if="!entity.ticket_closed" variant="primary" @click="$refs.emailModal.show(false)">New Email
+              <b-button v-if="!entity.ticket_closed && showButton.all" variant="primary" @click="$refs.emailModal.show(false)">New Email
               </b-button>
             </div>
           </b-card-actions>
@@ -290,7 +290,7 @@
               </b-overlay>
             </b-col>
           </b-row>
-          <div>
+          <div v-if="showButton.all">
             <b-button variant="primary" @click="createDocument">
               {{ $t('button~newdocument') }}
             </b-button>
@@ -327,14 +327,15 @@ import AppTimeline from '@core/components/app-timeline/AppTimeline.vue'
 import AppTimelineItem from '@core/components/app-timeline/AppTimelineItem.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import TicketMixin from '@/views/app/Kanban/TicketMixin'
-import { formatDate,getDocumentLink, getStampedDocumentLink } from '@/libs/utils'
+import { formatDate, getDocumentLink, getStampedDocumentLink } from '@/libs/utils'
 import moment from 'moment'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
 import Notes from '@/views/app/Generic/Notes.vue'
-import _ from 'lodash'
+import _, { uniqBy } from 'lodash'
 import EmailModal from '@/views/app/Ticket/EmailModal.vue'
 import AddDocumentToContract from '@/views/app/Ticket/AddDocumentToContract.vue'
 import AddDocumentToPos from '@/views/app/Ticket/AddDocumentToPos.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'TicketDetail',
@@ -374,6 +375,8 @@ export default {
     //   tableKey: 'ticket_id',
     //   // visible: () => false,
     // })
+
+    subTicketDef.submit = this.submitSubticket
     return {
       subTicketDef,
       ticketDef: Table.ticket,
@@ -384,12 +387,42 @@ export default {
       emails: [],
       loadingEmail: false,
       contractDocument: {},
+      noteToInternal: true,
+      noteToEveryOne: true,
     }
   },
   computed: {
     invoiceTicket() {
       return true
     },
+    firstColumn() {
+      return this.entity.columns[0]
+    },
+    showButton() {
+      const { team_type } = this.firstColumn
+      const typeOfButton = {
+        all: true,
+        assign: true,
+        confirm: true,
+      }
+
+      if (!this.isUserExtern) return { ...typeOfButton }
+
+      if (team_type === 'intern') {
+        this.noteToInternal = false
+        typeOfButton.all = false
+        typeOfButton.assign = false
+        typeOfButton.confirm = false
+      } else {
+        this.noteToEveryOne = false
+        typeOfButton.all = false
+        typeOfButton.assign = true
+        typeOfButton.confirm = true
+      }
+
+      return { ...typeOfButton }
+    },
+    ...mapGetters('user', ['isUserExtern']),
   },
   async mounted() {
     this.loading = true
@@ -410,6 +443,17 @@ export default {
     }
   },
   methods: {
+    async submitSubticket(vm) {
+      const data = { ...vm.entity }
+
+      try {
+        const response = await this.$http.post('/tickets/subticket', data)
+        await this.fetchSubTickets()
+        return response
+      } catch (error) {
+        console.log(error)
+      }
+    },
     formatDate,
     async addToPos(document) {
       if (document.loading) return
@@ -461,7 +505,6 @@ export default {
     createSubTicket() {
       this.$refs.modal.openModal(true, {
         ticket_id_group: parseInt(this.entityId),
-
       })
     },
     createDocument() {
@@ -514,12 +557,14 @@ export default {
     },
     async fetchSubTickets() {
       // load subtickets
-      this.subTickets = (await this.$api({
-        entity: 'frontend_6_1_6_listall',
-        action: 'read-rich',
-        per_page: 1000000,
-        data: [{ ticket_id_group: this.entity.ticket_id }],
-      })).data.data.data
+      try {
+        const response = await this.$http.get('/tickets/sub-tickets', {
+          params: { ticket_id: this.entity.ticket_id },
+        })
+        this.subTickets = response.data.data
+      } catch (error) {
+        console.log({ error })
+      }
     },
     async fetchDocuments() {
       const documents = (await this.$http.get('/tickets/documents', {
