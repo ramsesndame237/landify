@@ -7,10 +7,7 @@ export default {
   mounted() {
     const allElements = document.querySelectorAll('.tab_container li')
     if (allElements) {
-      allElements[0].addEventListener('click', event => {
-        console.log("this is the click",allElements)
-        this.activeOrDiseableItemsNavigation(event, this.tabTitle[0])
-      })
+      allElements[3].click()
     }
   },
   methods: {
