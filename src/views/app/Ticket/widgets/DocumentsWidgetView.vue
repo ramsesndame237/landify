@@ -1,8 +1,24 @@
 <script>
+import DataTable from '@/views/app/CustomComponents/DataTable/DataTable.vue'
+
 export default {
   name: 'DocumentsWidgetView',
+  components: { DataTable },
   props: {
     documents: Array,
+  },
+  data() {
+    return {
+      columDataDocument: [
+        {
+          id: 'datum',
+          key: '',
+          header: {
+            name: 'datum',
+          },
+        },
+      ],
+    }
   },
 }
 </script>
@@ -26,6 +42,11 @@ export default {
           {{ $t('button~newdocument') }}
         </b-button>
       </div>
+      <section>
+        <DataTable columns="" />
+
+      </section>
+
     </div>
   </div>
 </template>
