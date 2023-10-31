@@ -62,11 +62,94 @@
         </b-avatar-group>
         <b-avatar v-else variant="warning" size="20px" :text="generateUserAvatar(filteredUsers[0])" />
       </template>
-      <p class="d-flex align-items-center mb-0">
+      <b-link v-b-toggle="`subticket-sidebar-${ticket.ticket_id}`" class="d-flex align-items-center mb-0">
         <icon icon="tdesign:task" width="16px" height="16px" />
         <span class="ml"> {{ ` ${ticket.ticket_subticket_closed_count}/${ticket.ticket_subticket_count}` }}</span>
-      </p>
+      </b-link>
+      <b-sidebar :id="`subticket-sidebar-${ticket.ticket_id}`" lazy width="55%" right no-header shadow backdrop @hidden="updateBoard">
+        <template #default="{hide}" >
+          <div class="px-1 py-2">
+            <p class="text-right">
+              <b-button class="btn-icon" variant="primary" @click="hide">
+                <icon icon="ph:x-bold" width="15" />
+              </b-button>
+            </p>
+            <b-card class="border-style">
+              <b-card-text text-tag="h4">
+                {{ ticket.ticket_name }}
+              </b-card-text>
+            </b-card>
+            <b-card >
+              <div class="d-flex justify-content-between">
+                <div class=""/>
+                <div class="d-flex justify-content-between" >
+                  <icon icon="fad:copy" width="18" class="mr-1"/>
+                  <icon icon="streamline:interface-time-reset-time-clock-reset-stopwatch-circle-measure-loading" width="18" class="mr-1"/>
+                  <b-link class="btn-icon" @click="fetchSubTickets">
+                    <icon icon="jam:refresh" width="18" class="mr-1"/>
+                  </b-link>
+                  <icon icon="ph:bell-thin" width="18"/>
+                </div>
+              </div>
+            </b-card>
+            <b-tabs card lazy>
+              <b-tab title="Detail"/>
+              <b-tab title="Subtickets" active >
+                <div class="d-flex justify-content-between align-items-center">
+                  <b-button variant="primary" @click="createSubTicket">
+                    Add new subticket
+                  </b-button>
+                  <field :field="{key:'subticket', noLabel :true, required: false}" :entity="entity"/>
+                </div>
+                <div class="mt-1">
+                  <b-overlay :show="loading">
+                    <b-table-simple fixed hover small :filter="entity.search">
+                      <b-thead>
+                        <b-tr>
+                          <b-th>Name</b-th>
+                          <b-th >
+                            Status
+                          </b-th>
+                          <b-th>Start Date</b-th>
+                          <b-th>Assigned To</b-th>
+                        </b-tr>
+                      </b-thead>
+                      <b-tbody >
+                        <subticket-tr v-for="(subticket, index) in subTickets" :key="index" :team-users="teamUsers" :subticket="subticket" @entity-updated="updateData" />
+                      </b-tbody>
+                      <b-tfoot>
+                        <b-tr variant="secondary">
+                          <b-td >
+                            Summary : {{ subTickets.length }}
+                          </b-td>
+                          <b-td>
+                            <b-progress :value="1" :max="subTickets.length" height="1.5rem" class="bg-white" show-value variant="success">
+                              <b-progress-bar :value="1">
+                                <span class="text-secondary text-">{{ 1 +'/'+ subTickets.length }}</span>
+                              </b-progress-bar>
+                            </b-progress>
+                          </b-td>
+                          <b-td>10/09/2023</b-td>
+                          <b-td />
+                        </b-tr>
+                      </b-tfoot>
+                    </b-table-simple>
+                    <b-card-text class="text-right mt-2">
+                      <b-button variant="primary" @click="saveSubtickets">
+                        Save
+                      </b-button>
+                    </b-card-text>
+                  </b-overlay>
+                </div>
+              </b-tab>
+              <b-tab title="Comments"/>
+            </b-tabs>
+          </div>
+        </template>
+      </b-sidebar>
       <span>{{ formatDate(ticket.ticket_creation_time) }}</span>
+      <generic-modal ref="modal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
+                     :title="$t('headline~ticket~newsubtask')" @reload-table="onNewSubTicket"/>
     </div>
   </div>
 </template>
@@ -81,11 +164,18 @@ import { mapGetters } from 'vuex'
 import TicketMixin from '@/views/app/Kanban/TicketMixin'
 import { title } from '@core/utils/filter'
 import { formatDate } from '@/libs/utils'
-import { find } from 'lodash'
+import { find, findIndex } from 'lodash'
+import Field from '@/views/app/Generic/Field.vue'
+import SubticketTr from '@/views/app/Ticket/Subticket/SubticketTr.vue'
+import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.vue'
+import GenericModal from '@/views/app/Generic/modal.vue'
 
 export default {
   name: 'InvoiceTicketCard',
   components: {
+    GenericModal,
+    SubticketTr,
+    Field,
     BAvatar,
     BIconCalendarDate,
     BDropdown,
@@ -97,7 +187,7 @@ export default {
     },
     title,
   },
-  mixins: [TicketMixin],
+  mixins: [TicketMixin, SubTicketMixin],
   props: {
     ticket: Object,
     advanced: Boolean,
@@ -110,6 +200,9 @@ export default {
       column_deadline_red: moment(this.ticket.columns[0].ticket_deadline_offset_red),
       column_deadline_yellow: moment(this.ticket.columns[0].ticket_deadline_offset_yellow),
       deadlineColor: '',
+      subticketsForm: [],
+      entity: {
+      },
     }
   },
   computed: {
@@ -187,6 +280,22 @@ export default {
       return user?.user_firstname.charAt(0).toUpperCase()
           + user?.user_lastname.charAt(0).toUpperCase()
     },
+    updateData(data) {
+      const index = findIndex(this.subticketsForm, { ticket_id: data.ticket_id })
+
+      if (index !== -1) {
+        this.subticketsForm[index] = data
+        return
+      }
+
+      this.subticketsForm.push(data)
+    },
+    async saveSubtickets() {
+      // Ici on soumet au serveur les mise à jour sur les sous tickets
+    },
+    updateBoard(isOpen) {
+      this.$emit('subticket-updated')
+    },
   },
 }
 </script>
@@ -195,6 +304,9 @@ export default {
 @import "~bootstrap/scss/functions";
 @import "~bootstrap/scss/variables";
 
+.border-style{
+  border-inline-start: 5px solid red;
+}
 .ticket {
   border-left: 4px solid;
   border-top-left-radius: 4px;

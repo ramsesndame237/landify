@@ -15,7 +15,7 @@
           <b-form-checkbox v-model="advanced" switch title="Advanced Mode"/>
           <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
           <b-button v-b-tooltip.hover :title="showSubTickets ? 'Hide Sub-tickets' : 'Show Sub-tickets' " :variant="showSubTickets ? 'primary' : ''" class="ml-1 btn-icon" @click="showSubTickets = !showSubTickets">
-            <Icon icon="mdi:subtasks" width="16" />
+            <icon icon="mdi:subtasks" width="16" />
           </b-button>
           <b-button variant="primary" class="mx-1" block @click="createTicket()">
             {{ $t('button~newticket') }}
@@ -40,7 +40,7 @@
         <div v-for="ticket in visibleTickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
           <invoice-ticket-card v-if="ticket.ticket_id_group === null || showSubTickets" :advanced="advanced" :ticket="ticket" :team-users="teams.filter(team => team.team_id === ticket.columns[0].team_id)"
                                @moredetails="$router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
-                               @assign="$refs.assign.openModal(ticket, userIdsOfTeam(ticket.columns[0].team_id))"/>
+                               @assign="$refs.assign.openModal(ticket, userIdsOfTeam(ticket.columns[0].team_id))" @subticket-updated="loadBoardTickets" />
         </div>
       </kanban-board>
     </b-overlay>

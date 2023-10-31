@@ -178,7 +178,7 @@
             </b-button>
           </div>
           <generic-modal ref="modal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
-                         :title="$t('headline~ticket~newsubtask')" @reload-table="onNewTicket"/>
+                         :title="$t('headline~ticket~newsubtask')" />
           <sub-ticket-card v-for="(ticket,idx) in subTickets" :key="idx" :ticket="ticket"/>
           <p v-if="subTickets.length===0" class="text-center">
             {{ $t('headline~ticket~nosubticket') }}
@@ -336,6 +336,7 @@ import EmailModal from '@/views/app/Ticket/EmailModal.vue'
 import AddDocumentToContract from '@/views/app/Ticket/AddDocumentToContract.vue'
 import AddDocumentToPos from '@/views/app/Ticket/AddDocumentToPos.vue'
 import { mapGetters } from 'vuex'
+import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.vue'
 
 export default {
   name: 'TicketDetail',
@@ -357,26 +358,9 @@ export default {
     BCardText,
     BLink,
   },
-  mixins: [EditPageMixin, TicketMixin],
+  mixins: [EditPageMixin, TicketMixin, SubTicketMixin],
   data() {
-    const subTicketDef = JSON.parse(JSON.stringify(Table.ticket))
-    let index = subTicketDef.fields.findIndex(f => f.key === 'column_id')
-    subTicketDef.fields.splice(index, 1)
-    index = subTicketDef.fields.findIndex(f => f.key === 'pos_id')
-    subTicketDef.fields.splice(index, 1)
-    index = subTicketDef.fields.findIndex(f => f.key === 'contract_id')
-    subTicketDef.fields.splice(index, 1)
-    // ticketDef.fields.push({
-    //   key: 'ticket_id_group',
-    //   type: 'list',
-    //   list: 'ticket',
-    //   listLabel: 'ticket_name',
-    //   relationEntity: 'ticket_ticket_rel',
-    //   tableKey: 'ticket_id',
-    //   // visible: () => false,
-    // })
     return {
-      subTicketDef,
       ticketDef: Table.ticket,
       documentDef: Table.document,
       subTickets: [],
@@ -489,12 +473,6 @@ export default {
       if (document.document_already_stamp) return getStampedDocumentLink(document)
       return getDocumentLink(document)
     },
-    createSubTicket() {
-      this.$refs.modal.openModal(true, {
-        ticket_id_group: parseInt(this.entityId),
-
-      })
-    },
     createDocument() {
       this.$refs.documentModal.openModal(true, { ticket_id: this.entity.ticket_id })
     },
@@ -542,15 +520,6 @@ export default {
         .finally(() => {
           this.fetchDocuments()
         })
-    },
-    async fetchSubTickets() {
-      // load subtickets
-      this.subTickets = (await this.$api({
-        entity: 'frontend_6_1_6_listall',
-        action: 'read-rich',
-        per_page: 1000000,
-        data: [{ ticket_id_group: this.entity.ticket_id }],
-      })).data.data.data
     },
     async fetchDocuments() {
       const documents = (await this.$http.get('/tickets/documents', {
