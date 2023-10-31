@@ -5,10 +5,13 @@ import Table from '@/table'
 
 export default {
   name: 'DocumentsWidgetView',
-  components: { GenericModal, DataTable },
+  components: {
+    GenericModal,
+    DataTable,
+  },
   props: {
     documents: Array,
-    ticket_id: String,
+    ticket_id: Number,
   },
   data() {
     return {
@@ -17,7 +20,7 @@ export default {
         {
           id: 'document_entry_time',
           key: 'document_entry_time',
-          type:'date',
+          type: 'date',
           header: {
             name: 'datum',
           },
@@ -40,6 +43,10 @@ export default {
     deleteDocument() {
       console.log('this is the delete ')
     },
+    stampDocument(document) {
+      console.log('this is the document', document)
+      this.$router.push({ name: 'sign-document', params: { id: document.document_id, ticket_id: this.ticket_id, entity: document } })
+    },
   },
 }
 </script>
@@ -51,20 +58,22 @@ export default {
     <div>
       <div class="search-container mb-5 ">
         <div class="searchinput mr-3 d-flex">
-<!--          <input type="text">-->
-<!--          <div class="bg-primary mx-2 cursor-pointer d-flex align-items-center justify-content-center" style="width: 50px; height: 35px">-->
-<!--            <feather-icon icon="SearchIcon" size="25" class="text-white"/>-->
-<!--          </div>-->
-<!--          <div class="bg-primary cursor-pointer d-flex align-items-center justify-content-center" style="width: 50px; height: 35px">-->
-<!--            <feather-icon icon="DownloadIcon" size="25" class="text-white"/>-->
-<!--          </div>-->
+          <!--          <input type="text">-->
+          <!--          <div class="bg-primary mx-2 cursor-pointer d-flex align-items-center justify-content-center" style="width: 50px; height: 35px">-->
+          <!--            <feather-icon icon="SearchIcon" size="25" class="text-white"/>-->
+          <!--          </div>-->
+          <!--          <div class="bg-primary cursor-pointer d-flex align-items-center justify-content-center" style="width: 50px; height: 35px">-->
+          <!--            <feather-icon icon="DownloadIcon" size="25" class="text-white"/>-->
+          <!--          </div>-->
         </div>
         <b-button variant="primary" @click="createDocument">
           {{ $t('button~newdocument') }}
         </b-button>
       </div>
       <section>
-        <DataTable v-if="ticket_id" :columns="columDataDocument" :url="`/tickets/documents?ticket_id=${ticket_id}`" :on-delete-click="deleteDocument  " hide-top-bar="true" :resolve-data="data =>data.data" />
+        <DataTable v-if="ticket_id" :columns="columDataDocument" :url="`/tickets/documents?ticket_id=${ticket_id}`"
+                   :on-delete-click="deleteDocument " hide-top-bar="true" :resolve-data="data =>data.data"
+                   :custom-actions="[{icon:'FeatherIcon',onClick:stampDocument, label:'Stamp'}]"/>
       </section>
 
     </div>
