@@ -1,0 +1,103 @@
+:root {
+  --tr-bg: #fff;
+  --tr-bg-gray: #fafafa;
+  --tr-bg-active: #e7e7e790;
+}
+
+.data-table {
+  th {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    padding-bottom: 5px !important;
+  }
+
+  /*
+  .table-striped tbody:not([style*="display: none"]) tr {
+    background-color: #fafafa !important;
+  }
+  */
+
+  table {
+    border-spacing: 10px;
+  }
+
+  .table-striped tbody tr td {
+    background-color: var(--tr-bg) !important;
+    border-color: transparent !important;
+  }
+
+  .table-striped tr:not(.active) td:first-child {
+    border-top-left-radius: 16px !important;
+    border-bottom-left-radius: 16px !important;
+  }
+
+  .table-striped tr td:last-child {
+    border-top-right-radius: 16px !important;
+    border-bottom-right-radius: 16px !important;
+  }
+
+  .table-striped tbody {
+    position: relative;
+    border-left: 8px solid var(--tr-bg);
+    border-right: 8px solid var(--tr-bg);
+    border-top: 15px solid transparent;
+    background-color: var(--tr-bg) !important;
+    border-radius: 16px !important;
+  }
+
+  .table-striped tbody:before {
+    content: "";
+    width: calc(100% + 32px);
+    position: absolute;
+    top: -20px;
+    left: -18px;
+    border-radius: 16px;
+    height: calc(100% + 40px);
+    background-color: var(--tr-bg);
+    z-index: -1;
+  }
+
+  .table-striped tbody tr {
+    background-color: var(--tr-bg) !important;
+  }
+
+  .table-striped tbody tr:nth-child(2n - 1) td {
+    background-color: var(--tr-bg-gray) !important;
+  }
+
+  .table-striped tbody tr.active td {
+    background-color: var(--tr-bg-active) !important;
+  }
+
+  .table-striped tbody tr.active td:first-child {
+    border-left: 8px solid red !important;
+  }
+
+  .table tbody+tbody {
+    border-top: none;
+  }
+
+  .table-responsive {
+    overflow: visible !important;
+    // min-height: 50vh !important;
+    height: max-content !important;
+    padding-bottom: 26px !important;
+  }
+
+  .table tbody tr:hover td {
+    background-color: var(--light) !important;
+  }
+
+  .no-data-td {
+    cursor: default;
+  }
+
+  .badge {
+    padding: 10px;
+  }
+
+  .badge-warning {
+    background-color: #FF9A3D33 !important;
+    color: var(--warning);
+  }
+}
