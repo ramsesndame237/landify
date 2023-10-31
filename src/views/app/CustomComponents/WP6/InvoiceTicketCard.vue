@@ -1,5 +1,13 @@
 <template>
   <div class="p-1 ticket" :class="'ticket-'+deadlineColor">
+    <b-card v-if="!isTicket" class="mb-1" body-class="body-padding" bg-variant="secondary" text-variant="white">
+      <b-card-text class="d-flex align-items-center text-truncate justify-content-between">
+        <p v-b-tooltip class="w-80 text-truncate mb-0" :title="ticket.ticket_name_group">
+          {{ ticket.ticket_name_group }}
+        </p>
+        <icon icon="mdi:subtasks" width="16" />
+      </b-card-text>
+    </b-card>
     <div class="d-flex align-items-center mb-1">
       <b-avatar variant="light-warning" text="I"/>
       <h4 class="font-weight-bolder text-truncate mb-0 ml-1" style="color: #ccc; font-size: 15px"
@@ -46,7 +54,7 @@
       <strong class="mr-1">{{ $t('ticket~deadline~status') | title }}:</strong>
       <span :class="deadlineColor?('text-'+deadlineColor):''">{{ deadlineStatus }}</span>
     </div>
-    <div class="d-flex justify-content-between mt-2 align-items-center">
+    <div class="d-flex justify-content-between mt-2 align-items-center" >
       <template v-if="false">
         <b-avatar-group v-if="filteredUsers.length > 1" size="20px" variant="warning" overlap="0.2">
           <template v-for="user in filteredUsers.slice(0,4)">
@@ -62,9 +70,9 @@
         </b-avatar-group>
         <b-avatar v-else variant="warning" size="20px" :text="generateUserAvatar(filteredUsers[0])" />
       </template>
-      <b-link v-b-toggle="`subticket-sidebar-${ticket.ticket_id}`" class="d-flex align-items-center mb-0">
+      <b-link v-if="isTicket" v-b-toggle="`subticket-sidebar-${ticket.ticket_id}`" class="d-flex align-items-center mb-0" @click="fetchSubTickets">
         <icon icon="tdesign:task" width="16px" height="16px" />
-        <span class="ml"> {{ ` ${ticket.ticket_subticket_closed_count}/${ticket.ticket_subticket_count}` }}</span>
+        <span > {{ ` ${ticket.ticket_subticket_closed_count}/${ticket.ticket_subticket_count}` }}</span>
       </b-link>
       <b-sidebar :id="`subticket-sidebar-${ticket.ticket_id}`" lazy width="55%" right no-header shadow backdrop @hidden="updateBoard">
         <template #default="{hide}" >
@@ -147,9 +155,9 @@
           </div>
         </template>
       </b-sidebar>
-      <span>{{ formatDate(ticket.ticket_creation_time) }}</span>
+      <span class="ml-auto">{{ formatDate(ticket.ticket_creation_time) }}</span>
       <generic-modal ref="modal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
-                     :title="$t('headline~ticket~newsubtask')" @reload-table="onNewSubTicket"/>
+                     :title="$t('headline~ticket~newsubtask')"/>
     </div>
   </div>
 </template>
@@ -164,7 +172,7 @@ import { mapGetters } from 'vuex'
 import TicketMixin from '@/views/app/Kanban/TicketMixin'
 import { title } from '@core/utils/filter'
 import { formatDate } from '@/libs/utils'
-import { find, findIndex } from 'lodash'
+import { find, findIndex, isEqual } from 'lodash'
 import Field from '@/views/app/Generic/Field.vue'
 import SubticketTr from '@/views/app/Ticket/Subticket/SubticketTr.vue'
 import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.vue'
@@ -203,6 +211,7 @@ export default {
       subticketsForm: [],
       entity: {
       },
+      isDataUpdated: false,
     }
   },
   computed: {
@@ -263,6 +272,19 @@ export default {
 
       return 'Overdue'
     },
+    isTicket() {
+      return this.ticket.ticket_id_group === null
+    },
+  },
+  watch: {
+    subticketsForm: {
+      handler(newValue, oldValue) {
+        if (!isEqual(newValue, oldValue)) {
+          this.isDataUpdated = true
+        }
+      },
+      deep: true,
+    },
   },
   methods: {
     formatDate,
@@ -293,8 +315,10 @@ export default {
     async saveSubtickets() {
       // Ici on soumet au serveur les mise à jour sur les sous tickets
     },
-    updateBoard(isOpen) {
-      this.$emit('subticket-updated')
+    updateBoard() {
+      if (this.isDataUpdated) {
+        this.$emit('subticket-updated')
+      }
     },
   },
 }
@@ -323,5 +347,11 @@ export default {
   &-warning {
     border-left-color: $warning;
   }
+}
+.body-padding {
+  padding: .4rem;
+}
+.w-80{
+  width: 80% !important;
 }
 </style>

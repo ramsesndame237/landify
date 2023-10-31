@@ -19,7 +19,6 @@
 </template>
 <script>
 import Field from '@/views/app/Generic/Field.vue'
-import { pick } from 'lodash'
 
 export default {
   name: 'SubticketTr',
