@@ -578,6 +578,6 @@ body {
 }
 }
 
-@import '../../../../assets/scss/overrides/tables.scss';
+@import '@/assets/scss/overrides/tables';
 @import '../../../../assets/scss/overrides/toast.scss';
 </style>
