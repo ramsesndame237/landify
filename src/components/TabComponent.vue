@@ -4,10 +4,18 @@ export default {
   props: {
     tabTitle: Array,
   },
+  mounted() {
+    const allElements = document.querySelectorAll('.tab_container li')
+    if (allElements) {
+      allElements[0].addEventListener('click', event => {
+        console.log("this is the click",allElements)
+        this.activeOrDiseableItemsNavigation(event, this.tabTitle[0])
+      })
+    }
+  },
   methods: {
     activeOrDiseableItemsNavigation(event, item) {
       const allElements = document.querySelectorAll('.tab_container li')
-      console.log('this is the element', allElements)
       if (allElements) {
         allElements.forEach(element => {
           element.classList.remove('active')

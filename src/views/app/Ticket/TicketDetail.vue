@@ -1,45 +1,50 @@
 <template>
   <div class="global-container">
-    <TabComponent :tab-title="tabTitle" @selected-item="getActiveItemData" />
+    <TabComponent :tab-title="tabTitle" @selected-item="getActiveItemData"/>
     <b-overlay :show="loading">
       <div v-if="entity && entity.columns">
-        <div class="d-flex justify-content-between align-items-center mb-1">
-          <div>
-            <h4 class="mb-0 font-weight-bolder">
-              {{ entity.ticket_id }}
-            </h4>
-            <p class="mb-0">
-              {{ entity.ticket_name }}
-            </p>
-          </div>
 
-          <div class="d-flex align-items-center">
-            <notes v-if="definition.note" :id="entityId" :note-to-everyone="noteToEveryOne" :note-to-internal="noteToInternal" class="mr-2" :primary-key="primaryKey" :note="definition.note"
-                   :note-rel="'note_user_'+table+'_rel'"/>
-            <b-button v-if="showButton.all" variant="primary" @click="createInvoice">
-              {{ $t('button~newinvoice') }}
-            </b-button>
-            <b-button v-if="!entity.ticket_closed && (showButton.all || showButton.assign)" variant="primary" class="ml-2"
-                      @click="$refs.assign.openModal(entity, userIdsOfTeam(entity.columns[0].team_id))">
-              {{ $t('button~assignto') }}
-            </b-button>
-            <b-button v-if="canMoveBack()" class="ml-2" variant="primary" @click="moveBack">
-              {{ $t('button~moveback') }}
-            </b-button>
-            <b-button v-if="canMoveToNext() && (showButton.all || showButton.confirm)" class="ml-2" variant="primary" @click="moveToNext">
-              {{ $t('button~movetonextcolumn') }}
-            </b-button>
-            <b-button v-if="!entity.ticket_closed & showButton.all" variant="primary" class="ml-2" @click="updateTicket">
-              {{ $t('button~edit') }}
-            </b-button>
-            <b-button v-if="showButton.all" variant="primary" class="ml-2" @click="toggleTicket(entity)">
-              {{ $t('button~ticket~' + (entity.ticket_closed ? 'reopen' : 'close')) }}
-            </b-button>
-            <assign-user-modal ref="assign" @reload="loadSingleTicket"/>
-          </div>
-        </div>
         <b-row>
-          <b-col lg="8">
+          <b-col v-if="activeTabItem && activeTabItem.id ==='1'" lg="12">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <div>
+                <h4 class="mb-0 font-weight-bolder">
+                  {{ entity.ticket_id }}
+                </h4>
+                <p class="mb-0">
+                  {{ entity.ticket_name }}
+                </p>
+              </div>
+
+              <div class="d-flex align-items-center">
+                <notes v-if="definition.note" :id="entityId" :note-to-everyone="noteToEveryOne"
+                       :note-to-internal="noteToInternal" class="mr-2" :primary-key="primaryKey" :note="definition.note"
+                       :note-rel="'note_user_'+table+'_rel'"/>
+                <b-button v-if="showButton.all" variant="primary" @click="createInvoice">
+                  {{ $t('button~newinvoice') }}
+                </b-button>
+                <b-button v-if="!entity.ticket_closed && (showButton.all || showButton.assign)" variant="primary"
+                          class="ml-2"
+                          @click="$refs.assign.openModal(entity, userIdsOfTeam(entity.columns[0].team_id))">
+                  {{ $t('button~assignto') }}
+                </b-button>
+                <b-button v-if="canMoveBack()" class="ml-2" variant="primary" @click="moveBack">
+                  {{ $t('button~moveback') }}
+                </b-button>
+                <b-button v-if="canMoveToNext() && (showButton.all || showButton.confirm)" class="ml-2"
+                          variant="primary" @click="moveToNext">
+                  {{ $t('button~movetonextcolumn') }}
+                </b-button>
+                <b-button v-if="!entity.ticket_closed & showButton.all" variant="primary" class="ml-2"
+                          @click="updateTicket">
+                  {{ $t('button~edit') }}
+                </b-button>
+                <b-button v-if="showButton.all" variant="primary" class="ml-2" @click="toggleTicket(entity)">
+                  {{ $t('button~ticket~' + (entity.ticket_closed ? 'reopen' : 'close')) }}
+                </b-button>
+                <assign-user-modal ref="assign" @reload="loadSingleTicket"/>
+              </div>
+            </div>
             <b-card-actions :title="$t('headline~ticket~information')" action-collapse>
               <table class="mt-2 mt-xl-0 w-100">
                 <tr>
@@ -186,7 +191,10 @@
             <p v-if="subTickets.length===0" class="text-center">
               {{ $t('headline~ticket~nosubticket') }}
             </p>
-            <b-card-actions v-if="entity.columns" class="mt-3" :title="$t('headline~ticket~timeline')" action-collapse
+            <email-modal ref="emailModal" @reload="fetchEmail"/>
+          </b-col>
+          <b-col v-if="entity.columns &&activeTabItem && activeTabItem.id ==='2'">
+            <b-card-actions class="mt-3" :title="$t('headline~ticket~timeline')" action-collapse
                             collapsed>
               <app-timeline>
                 <app-timeline-item v-for="(column,idx) in entity.columns" :key="idx" :title="column.column_name"
@@ -194,6 +202,8 @@
                                    :variant="getColumnColor(column,idx)"/>
               </app-timeline>
             </b-card-actions>
+          </b-col>
+          <b-col v-if="activeTabItem && activeTabItem.id ==='3'" lg="12">
             <b-card-actions no-body="dd" :title="$t('headline~ticket~emails')" class="mt-2" action-collapse>
               <b-overlay :show="loadingEmail">
                 <b-table-simple class="mail-table">
@@ -226,84 +236,85 @@
                 </b-table-simple>
               </b-overlay>
               <div class="text-right p-1">
-                <b-button v-if="!entity.ticket_closed && showButton.all" variant="primary" @click="$refs.emailModal.show(false)">New Email
+                <b-button v-if="!entity.ticket_closed && showButton.all" variant="primary"
+                          @click="$refs.emailModal.show(false)">New Email
                 </b-button>
               </div>
             </b-card-actions>
-            <email-modal ref="emailModal" @reload="fetchEmail"/>
           </b-col>
           <b-col lg="12">
-            <DocumentsWidgetView :documents="documents" />
+            <DocumentsWidgetView v-if="activeTabItem && activeTabItem.id==='4'" :documents="documents"
+                                 :ticket_id="entity.ticket_id"/>
 
-            <b-row>
-              <b-col v-for="(document,i) in documents" :key="i" cols="6">
-                <b-overlay :show="document.loading">
-                  <b-card>
-                    <template #header>
-                      <div class=" w-100 d-flex justify-content-between">
-                        <h5
-                          class="document-header"
-                          :title="document.document_name + (document.document_already_stamp ? '(Stamped)' : '') + ' - ' + (document.document_type_name || '')"
-                        >
-                          {{
-                            document.document_name + (document.document_already_stamp ? '(Stamped)' : '') + ' - ' + (document.document_type_name || '')
-                          }}
-                        </h5>
-                        <!--                    <b-link variant="danger" target="_blank" :href="getLink(document)">-->
-                        <!--                      <feather-icon icon="EyeIcon"/>-->
-                        <!--                    </b-link>-->
-                        <b-dropdown variant="link-" toggle-class="p-0" right no-caret class="ml-auto document-header-dropdown">
-                          <template v-slot:button-content>
-                            <feather-icon icon="MoreHorizontalIcon"/>
-                          </template>
-                          <b-dropdown-item target="_blank" :href="getLink(document)">
-                            {{ $t('button~view') }}
-                          </b-dropdown-item>
-                          <b-dropdown-item @click="$refs.documentModal.openModal(false, document)">
-                            {{ $t('button~edit') }}
-                          </b-dropdown-item>
-                          <b-dropdown-item v-if="!document.pos_id && !document.contract_id" @click="addToPos(document)">
-                            {{ $t('button~document~addtopos') }}
-                          </b-dropdown-item>
-                          <b-dropdown-item v-if="!document.pos_id && !document.contract_id"
-                                           @click="addToContract(document)">
-                            {{ $t('button~document~addtocontract') }}
-                          </b-dropdown-item>
-                        </b-dropdown>
-                      </div>
-                    </template>
-                    <b-card-text>
-                      <h5 class="font-weight-bolder" style="color: black">
-                        {{
-                          document.document_mime_type + (document.pos_id ? ' (POS)' : (document.contract_id ? ' (Contract)' : ''))
-                        }}
-                      </h5>
-                    </b-card-text>
-                    <b-card-text>
-                      <div class="w-100 d-flex flex-column justify-content-between">
-                        <h6>{{ formatDate(document.document_entry_time, true) }}</h6>
-                        <b-link v-if="canStamp(document)"
-                                :to="{name:'sign-document', params: {id: document.document_id,ticket_id: entity.ticket_id, entity: document}}"
-                                class="ml-2">Stamp
-                        </b-link>
-                      </div>
-                    </b-card-text>
-                  </b-card>
-                </b-overlay>
-              </b-col>
-            </b-row>
-<!--            <div v-if="showButton.all">-->
-<!--              <b-button variant="primary" @click="createDocument">-->
-<!--                {{ $t('button~newdocument') }}-->
-<!--              </b-button>-->
-<!--            </div>-->
+            <!--            <b-row>-->
+            <!--              <b-col v-for="(document,i) in documents" :key="i" cols="6">-->
+            <!--                <b-overlay :show="document.loading">-->
+            <!--                  <b-card>-->
+            <!--                    <template #header>-->
+            <!--                      <div class=" w-100 d-flex justify-content-between">-->
+            <!--                        <h5-->
+            <!--                          class="document-header"-->
+            <!--                          :title="document.document_name + (document.document_already_stamp ? '(Stamped)' : '') + ' - ' + (document.document_type_name || '')"-->
+            <!--                        >-->
+            <!--                          {{-->
+            <!--                            document.document_name + (document.document_already_stamp ? '(Stamped)' : '') + ' - ' + (document.document_type_name || '')-->
+            <!--                          }}-->
+            <!--                        </h5>-->
+            <!--                        &lt;!&ndash;                    <b-link variant="danger" target="_blank" :href="getLink(document)">&ndash;&gt;-->
+            <!--                        &lt;!&ndash;                      <feather-icon icon="EyeIcon"/>&ndash;&gt;-->
+            <!--                        &lt;!&ndash;                    </b-link>&ndash;&gt;-->
+            <!--                        <b-dropdown variant="link-" toggle-class="p-0" right no-caret class="ml-auto document-header-dropdown">-->
+            <!--                          <template v-slot:button-content>-->
+            <!--                            <feather-icon icon="MoreHorizontalIcon"/>-->
+            <!--                          </template>-->
+            <!--                          <b-dropdown-item target="_blank" :href="getLink(document)">-->
+            <!--                            {{ $t('button~view') }}-->
+            <!--                          </b-dropdown-item>-->
+            <!--                          <b-dropdown-item @click="$refs.documentModal.openModal(false, document)">-->
+            <!--                            {{ $t('button~edit') }}-->
+            <!--                          </b-dropdown-item>-->
+            <!--                          <b-dropdown-item v-if="!document.pos_id && !document.contract_id" @click="addToPos(document)">-->
+            <!--                            {{ $t('button~document~addtopos') }}-->
+            <!--                          </b-dropdown-item>-->
+            <!--                          <b-dropdown-item v-if="!document.pos_id && !document.contract_id"-->
+            <!--                                           @click="addToContract(document)">-->
+            <!--                            {{ $t('button~document~addtocontract') }}-->
+            <!--                          </b-dropdown-item>-->
+            <!--                        </b-dropdown>-->
+            <!--                      </div>-->
+            <!--                    </template>-->
+            <!--                    <b-card-text>-->
+            <!--                      <h5 class="font-weight-bolder" style="color: black">-->
+            <!--                        {{-->
+            <!--                          document.document_mime_type + (document.pos_id ? ' (POS)' : (document.contract_id ? ' (Contract)' : ''))-->
+            <!--                        }}-->
+            <!--                      </h5>-->
+            <!--                    </b-card-text>-->
+            <!--                    <b-card-text>-->
+            <!--                      <div class="w-100 d-flex flex-column justify-content-between">-->
+            <!--                        <h6>{{ formatDate(document.document_entry_time, true) }}</h6>-->
+            <!--                        <b-link v-if="canStamp(document)"-->
+            <!--                                :to="{name:'sign-document', params: {id: document.document_id,ticket_id: entity.ticket_id, entity: document}}"-->
+            <!--                                class="ml-2">Stamp-->
+            <!--                        </b-link>-->
+            <!--                      </div>-->
+            <!--                    </b-card-text>-->
+            <!--                  </b-card>-->
+            <!--                </b-overlay>-->
+            <!--              </b-col>-->
+            <!--            </b-row>-->
+            <!--            <div v-if="showButton.all">-->
+            <!--              <b-button variant="primary" @click="createDocument">-->
+            <!--                {{ $t('button~newdocument') }}-->
+            <!--              </b-button>-->
+            <!--            </div>-->
 
-            <generic-modal ref="documentModal" table="document" :definition="documentDef" table-definition-key="document"
+            <generic-modal ref="documentModal" table="document" :definition="documentDef"
+                           table-definition-key="document"
                            :title="$t('headline~document~new')" @reload-table="onNewDocuments"/>
             <generic-modal ref="ticketModal" :fetch-data="false" table="ticket" :definition="ticketDef"
                            table-definition-key="ticket" title="Update the ticket" @reload-table="onTicketUpdate"/>
-            <generic-modal ref="documentModal" :fetch-data="false" table="document" :definition="documentDef"
-                           table-definition-key="document" title="Update the document" @reload-table="onDocumentUpdate"/>
+
             <add-document-to-contract ref="documentContractModal"/>
             <add-document-to-pos ref="documentPosModal"/>
           </b-col>
@@ -391,25 +402,26 @@ export default {
       subTickets: [],
       documents: [],
       loading: false,
-      activeTabItem:null,
+      activeTabItem: null,
       emails: [],
       tabTitle: [
         {
-          id: '1',
-          title: 'Information',
-        },
-        {
           id: '2',
           title: 'Timeline',
+        },
+        {
+          id: '4',
+          title: 'Documents',
         },
         {
           id: '3',
           title: 'Messages and Emails',
         },
         {
-          id: '4',
-          title: 'Documents',
-        },
+          id: '1',
+          title: 'Information',
+        }
+
       ],
       loadingEmail: false,
       contractDocument: {},
@@ -480,7 +492,7 @@ export default {
         console.log(error)
       }
     },
-    getActiveItemData(item){
+    getActiveItemData(item) {
       this.activeTabItem = item
     },
     formatDate,
@@ -542,7 +554,10 @@ export default {
     createInvoice() {
       this.$router.push({
         name: 'table-form',
-        params: { table: 'invoice', entity: { ticket_id: this.entity.ticket_id } },
+        params: {
+          table: 'invoice',
+          entity: { ticket_id: this.entity.ticket_id }
+        },
       })
     },
     updateTicket() {
@@ -554,7 +569,11 @@ export default {
       await this.$api({
         entity: 'ticket_ticket_rel',
         action: 'create',
-        data: [{ ticket_id: ticket.ticket_id, ticket_id_group: parseInt(this.entityId), ticket_type: 'test' }],
+        data: [{
+          ticket_id: ticket.ticket_id,
+          ticket_id_group: parseInt(this.entityId),
+          ticket_type: 'test'
+        }],
       })
       await this.fetchSubTickets()
     },
@@ -563,7 +582,10 @@ export default {
       await this.$api({
         entity: 'document_ticket_rel',
         action: 'create',
-        data: documents.map(document => ({ document_id: document.document_id, ticket_id: parseInt(this.entityId) })),
+        data: documents.map(document => ({
+          document_id: document.document_id,
+          ticket_id: parseInt(this.entityId)
+        })),
       })
       await this.fetchDocuments()
     },
@@ -597,7 +619,10 @@ export default {
     },
     async fetchDocuments() {
       const documents = (await this.$http.get('/tickets/documents', {
-        params: { ticket_id: this.entity.ticket_id, size: 100_000 },
+        params: {
+          ticket_id: this.entity.ticket_id,
+          size: 100_000
+        },
       })).data.data
       documents.forEach(document => {
         document.loading = false
@@ -608,10 +633,14 @@ export default {
       this.loadingEmail = true
       try {
         const results = (await this.$http.get('/tickets/emails', {
-          params: { ticket_id: this.entity.ticket_id, size: 100_000 },
+          params: {
+            ticket_id: this.entity.ticket_id,
+            size: 100_000
+          },
         })).data.data
         if (!results.length) return
-        this.emails = Object.values(_.groupBy(results, 'email_id')).map(r => _.pick(r[0], ['email_id', 'email_from', 'email_received_datetime', 'email_to', 'email_cc', 'email_subject', 'email_body', 'documents']))
+        this.emails = Object.values(_.groupBy(results, 'email_id'))
+          .map(r => _.pick(r[0], ['email_id', 'email_from', 'email_received_datetime', 'email_to', 'email_cc', 'email_subject', 'email_body', 'documents']))
       } finally {
         this.loadingEmail = false
       }
@@ -633,12 +662,14 @@ export default {
 .mail-table {
   word-break: break-word;
 }
-.document-header{
+
+.document-header {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.document-header-dropdown{
+
+.document-header-dropdown {
   align-self: flex-start;
 }
 </style>

@@ -1,6 +1,7 @@
 <template>
   <div class="data-table">
     <table-filters
+      v-if="hideTopBar ===false"
       :filters="filters"
       :search.sync="search"
       :per-page.sync="perPage"
@@ -274,6 +275,10 @@ export default {
     deleteUrl: {
       type: String,
       default: '',
+    },
+    hideTopBar: {
+      type: Boolean,
+      default: false,
     },
     deleteBulkUrl: {
       type: String,
