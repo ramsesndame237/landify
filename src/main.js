@@ -28,12 +28,14 @@ import moment from 'moment'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-
+import { Plugin } from 'vue-fragment'
 // Vee validate
 Vue.component('validation-provider', ValidationProvider)
 Vue.component('validation-observer', ValidationObserver)
 
 Vue.use(vueKanban)
+// Vue Fragment
+Vue.use(Plugin)
 extend('email', email)
 extend('size', {
   ...size,
