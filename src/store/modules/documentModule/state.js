@@ -1,5 +1,7 @@
 const  documentState = {
-  documents:[]
+  documents:[],
+  documenttype: [],
+  subdocumenttype:[]
 }
 
 export default  documentState

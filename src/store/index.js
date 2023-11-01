@@ -8,6 +8,8 @@ import verticalMenu from './vertical-menu'
 import table from './table'
 import user from './modules/user'
 
+import document from './modules/documentModule'
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -15,6 +17,7 @@ export default new Vuex.Store({
     app,
     appConfig,
     verticalMenu,
+    document,
     table,
     user,
   },
