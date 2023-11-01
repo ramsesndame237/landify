@@ -208,7 +208,7 @@ export default {
                 // if the response is from alexander api
                 id = data.data.data[0][0][field.key]
               } else {
-                // if it was documents from jordy
+                // if it was documentModule from jordy
                 id = data.data[0].document_id
               }
               // if (field.key === 'address_id') {
@@ -363,7 +363,7 @@ export default {
                 // if the response is from alexander api
                 result = data.data.data[0][0]
               } else {
-                // if it was documents from jordy
+                // if it was documentModule from jordy
                 result = data.data
               }
               await this.afterSaveHook(result)

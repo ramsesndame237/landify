@@ -1,6 +1,7 @@
 <template>
   <div class="data-table">
     <table-filters
+      v-if="!hiddeFilterBar"
       :filters="filters"
       :search.sync="search"
       :per-page.sync="perPage"
@@ -290,6 +291,10 @@ export default {
     filters: {
       type: Array,
       default: () => [],
+    },
+    hiddeFilterBar:{
+      type:Boolean,
+      default:false
     },
     withCheckbox: {
       type: Boolean,
