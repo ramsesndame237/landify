@@ -1,10 +1,16 @@
 import moment from 'moment-business-time'
 import { getUserData } from '@/auth/utils'
-import _ from 'lodash'
+import _, { uniqBy } from 'lodash'
 import { mapGetters } from 'vuex'
 
 export default {
   data() {
+    const TICKET_PRIORITY = {
+      1: { label: 'Critical', key: 'critical', priorityMaxExecuteTime: 8 },
+      2: { label: 'High', key: 'high', priorityMaxExecuteTime: 24 },
+      3: { label: 'Normal', key: 'normal', priorityMaxExecuteTime: 48 },
+      4: { label: 'Low', key: 'low', priorityMaxExecuteTime: 72 },
+    }
     return {
       columns: [],
       tickets: [],
@@ -32,6 +38,7 @@ export default {
           return false
         },
       },
+      TICKET_PRIORITY,
     }
   },
   computed: {
@@ -124,10 +131,11 @@ export default {
               'ticket_name',
               'team_type',
               'ticket_closed',
-              'ticket_progress',
+              'ticket_progress', 'ticket_id_group', 'ticket_name_group',
               'priority_id', 'priority_name', 'priority_color', 'priority_smiley',
               'invoice_id', 'invoice_number',
-              'contract_name', 'contract_id', 'company_name', 'company_id', 'pos_id', 'pos_name', 'customergroup_id', 'customergroup_name',
+              'contract_name', 'contract_id', 'company_name', 'company_id', 'pos_id', 'pos_name',
+              'customergroup_id', 'customergroup_name', 'ticket_subticket_count', 'ticket_subticket_closed_count',
             ])
             obj.columns = _.orderBy(r, 'ticket_move_time_in', 'desc').map(i => _.pick(i, ['ticket_id', 'column_id', 'column_name', 'rank_order', 'user_email_assigned', 'user_id', 'user_email', 'user_id_assigned', 'team_name', 'team_id', 'team_type', 'ticket_move_time_in', 'ticket_move_time_out', 'ticket_deadline_offset', 'ticket_deadline_offset_yellow', 'ticket_deadline_offset_red']))
             obj.column_name = obj.columns[0].column_name
@@ -148,11 +156,12 @@ export default {
           this.columns = data.data.data.sort(c => c.rank_order)
           const ids = this.columns.map(c => c.team_id).filter(c => c != null)
           if (ids.length === 0) return
+          const payload = uniqBy(ids.map(id => ({ team_id: id })), 'team_id')
           this.$api({
             entity: 'user_team_grp',
             action: 'read-rich',
             per_page: 9999,
-            data: ids.map(id => ({ team_id: id })),
+            data: payload,
           }).then(({ data: respData }) => {
             this.teams = respData.data.data
           })
@@ -202,7 +211,7 @@ export default {
       return this.teams.find(team => team.team_id === teamId && team.user_email === email && moment().isBetween(team.user_team_valid_from, team.user_team_valid_to, 'day', '[]')) != null
     },
     userIdsOfTeam(teamId) {
-      return this.teams.filter(team => team.team_id === teamId && moment().isBetween(team.user_team_valid_from, team.user_team_valid_to, 'day', '[]')).map(t => t.user_id)
+      return this.teams.filter(team => team.team_id === teamId).map(t => t.user_id)
     },
   },
 

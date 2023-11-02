@@ -14,6 +14,9 @@
           <generic-filter ref="filter" vertical :table="table" :definition="definition" @filter="filter"/>
           <b-form-checkbox v-model="advanced" switch title="Advanced Mode"/>
           <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
+          <b-button v-b-tooltip.hover :title="showSubTickets ? 'Hide Sub-tickets' : 'Show Sub-tickets' " :variant="showSubTickets ? 'primary' : ''" class="ml-1 btn-icon" @click="showSubTickets = !showSubTickets">
+            <icon icon="mdi:subtasks" width="16" />
+          </b-button>
           <b-button variant="primary" class="mx-1" block @click="createTicket()">
             {{ $t('button~newticket') }}
           </b-button>
@@ -35,9 +38,9 @@
 
         </div>
         <div v-for="ticket in visibleTickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
-          <invoice-ticket-card :advanced="advanced" :ticket="ticket"
+          <invoice-ticket-card v-if="ticket.ticket_id_group === null || showSubTickets" :advanced="advanced" :ticket="ticket" :team-users="teams.filter(team => team.team_id === ticket.columns[0].team_id)"
                                @moredetails="$router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
-                               @assign="$refs.assign.openModal(ticket, userIdsOfTeam(ticket.columns[0].team_id))"/>
+                               @assign="$refs.assign.openModal(ticket, userIdsOfTeam(ticket.columns[0].team_id))" @subticket-updated="loadBoardTickets" />
         </div>
       </kanban-board>
     </b-overlay>
@@ -48,7 +51,7 @@
 </template>
 <script>
 import {
-  BAvatarGroup, BAvatar, BButton, BCard, BFormInput, BFormSelect, BFormCheckbox,
+  BButton, BCard, BFormInput, BFormSelect, BFormCheckbox,
 } from 'bootstrap-vue'
 // eslint-disable-next-line import/extensions
 import GenericModal from '@/views/app/Generic/modal'
@@ -56,7 +59,6 @@ import Table from '@/table'
 import InvoiceTicketCard from '@/views/app/CustomComponents/WP6/InvoiceTicketCard'
 import moment from 'moment-business-time'
 import { getUserData } from '@/auth/utils'
-import _ from 'lodash'
 import GenericFilter from '@/views/app/Generic/Filter'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal'
 import Fuse from 'fuse.js'
@@ -69,8 +71,6 @@ export default {
     GenericFilter,
     InvoiceTicketCard,
     GenericModal,
-    BAvatarGroup,
-    BAvatar,
     BButton,
     BFormCheckbox,
     BFormSelect,
@@ -96,6 +96,7 @@ export default {
       filterValue: 0,
       definition: Table.ticket,
       loading: false,
+      showSubTickets: true,
     }
   },
   computed: {
@@ -150,7 +151,7 @@ export default {
       if (loader) this.loading = true
       try {
         await this.loadTickets({ board_id: this.board_id, ...data })
-        console.log(this.tickets)
+        // console.log(this.tickets)
       } finally {
         if (loader) this.loading = false
       }
