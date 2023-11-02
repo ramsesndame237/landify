@@ -158,7 +158,7 @@
                     {{ $t('attribute.user_email') }}
                   </th>
                   <td class="pb-50">
-                    {{ entity.columns[0].user_email }}
+                    {{ entity.columns[0].user_email_assigned }}
                   </td>
                 </tr>
                 <tr>
