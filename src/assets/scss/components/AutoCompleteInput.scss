@@ -1,0 +1,133 @@
+@import "@/assets/scss/variables/variables";
+
+
+@mixin  shared_property{
+  position: absolute;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+  width: 100%;
+  background: #f8f8f8;
+  border: solid 1px #d7d7d7;
+  overflow: auto;
+  margin-top: 10px;
+  text-align: center;
+  &::-webkit-scrollbar {
+    width: 10px;
+    cursor: all-scroll;
+    border-radius: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $primary;
+  }
+  span {
+    font-size: 1.39vw;
+    font-weight: 700;
+    color: #676d7d;
+  }
+}
+.disable_input{
+  background:#EBEBE4 !important;
+  .action_container{
+    cursor:default !important;
+  }
+}
+
+.autocomplete_container {
+  position: relative;
+
+
+  ul{
+    text-align: start;
+    padding: 0;
+    margin:0;
+    height: auto;
+    max-height: 350px;
+    //overflow: auto;
+    margin: 5px;
+
+    li{
+      list-style: none;
+      //border: 1px solid red;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding-left: 10px;
+      background:#fff;
+      transition: all ease-in-out .3s;
+      &:hover{
+        background: $primary;
+        color: #f8f8f8;
+      }
+    }
+
+
+  }
+
+  button {
+    border: 1px;
+    margin-right: 5px;
+    margin-left: 5px;
+    background: transparent;
+  }
+  button:last-child{
+    margin-right: 0px;
+  }
+
+  .custom-autocomplete {
+    border: solid 1px #dedede;
+    width: 100%;
+    height: 40px;
+    border-radius: 5px;
+    overflow: hidden;
+    display: flex;
+
+    .action_container {
+      height: 100%;
+      min-width: 2.78vw;
+      max-width: 5.56vw;
+      display: flex;
+      cursor: pointer;
+      align-items: center;
+      justify-content:flex-end;
+    }
+
+    input {
+      height: 100%;
+      flex-grow: 1;
+      border: none;
+      outline: none;
+      padding-left: 0.695vw;
+    }
+  }
+
+  .options_container {
+    @include shared_property;
+
+  }
+  .options_container_2{
+    @include shared_property;
+    min-height: 90px;
+  }
+}
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}

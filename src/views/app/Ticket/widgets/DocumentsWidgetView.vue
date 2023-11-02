@@ -2,10 +2,12 @@
 import DataTable from '@/views/app/CustomComponents/DataTable/DataTable.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
 import Table from '@/table'
+import AddOrUpdateDocumentsTicket from "@/views/app/Documents/AddOrUpdateDocumentsTicket.vue";
 
 export default {
   name: 'DocumentsWidgetView',
   components: {
+    AddOrUpdateDocumentsTicket,
     GenericModal,
     DataTable,
   },
@@ -38,6 +40,7 @@ export default {
   methods: {
     createDocument() {
       console.log('this this the ticket id ', this.ticket_id)
+        console.log('this is the docjument of the modal',this.$refs.documentModal)
       this.$refs.documentModal.openModal(true, { ticket_id: this.ticket_id })
     },
     deleteDocument() {
@@ -77,9 +80,7 @@ export default {
       </section>
 
     </div>
-    <generic-modal ref="documentModal" :fetch-data="false" table="document" :definition="documentDef"
-                   table-definition-key="document" title="Update the document"
-                   @reload-table="onDocumentUpdate"/>
+    <AddOrUpdateDocumentsTicket ref="documentModal" />
   </div>
 </template>
 

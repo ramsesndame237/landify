@@ -247,7 +247,7 @@
                                  :ticket_id="entity.ticket_id"/>
 
             <!--            <b-row>-->
-            <!--              <b-col v-for="(document,i) in documentModule" :key="i" cols="6">-->
+            <!--              <b-col v-for="(document,i) in document-module" :key="i" cols="6">-->
             <!--                <b-overlay :show="document.loading">-->
             <!--                  <b-card>-->
             <!--                    <template #header>-->
