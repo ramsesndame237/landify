@@ -145,12 +145,12 @@ export default {
         if (this.filterValue === 1) {
           if (email.email_dismissed) return false
           if (email.ticket_id_created) return false
-          // if (email.document-module.length > 0 && email.document-module.every(d => d.ticket_created || d.classification_dismissed) && (!email.email_dismissed && !email.ticket_id_created)) return false
+          // if (email.document.length > 0 && email.document.every(d => d.ticket_created || d.classification_dismissed) && (!email.email_dismissed && !email.ticket_id_created)) return false
           return true
         }
         if (email.email_dismissed) return true
         if (email.ticket_id_created) return true
-        // if (email.document-module.every(d => d.ticket_created || d.classification_dismissed)) return true
+        // if (email.document.every(d => d.ticket_created || d.classification_dismissed)) return true
         return false
       })
       if (this.search && prefiltered[0]) {

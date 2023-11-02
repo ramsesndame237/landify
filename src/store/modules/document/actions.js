@@ -1,5 +1,5 @@
 import DocumentServiceMock from "@/services/mocks/DocumentService.mock";
-import mutationsDocument from "@/store/modules/document-module/mutations";
+import mutationsDocument from "@/store/modules/document/mutations";
 const actionsDocuments = {
   async fetchGetAllDocumentsTicket({ commit }) {
 alert('nous somme bien dans le fetchgetall')

@@ -1,4 +1,4 @@
-import documentState from "@/store/modules/document-module/state";
+import documentState from "@/store/modules/document/state";
 
 const gettersDocument ={
 getAllDocumentType:()=> documentState.documenttype

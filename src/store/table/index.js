@@ -114,7 +114,7 @@ export default {
           })
       }
       if (entity === 'document') {
-        console.warn('Fetch of document-module is disabled')
+        console.warn('Fetch of document is disabled')
         return []
       }
       return api({

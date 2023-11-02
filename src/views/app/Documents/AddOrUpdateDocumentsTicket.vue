@@ -3,7 +3,7 @@
 
 import AutoCompleteInput from "@/components/AutoCompleteInput.vue";
 import {BFormFile} from "bootstrap-vue";
-import document from "src/store/modules/document-module";
+import document from "src/store/modules/document";
 import {mapActions} from "vuex";
 
 export default {
@@ -52,7 +52,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('document-module',['fetchGetAllDocumentsTicket']),
+    ...mapActions('document',['fetchGetAllDocumentsTicket']),
     openModal(create, data, title) {
       this.initialData = data
       this.forceTitle = title
