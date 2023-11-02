@@ -45,12 +45,12 @@
       <span :class="deadlineColor?('text-'+deadlineColor):''">{{ deadlineForHuman }}</span>
       <b-icon-calendar-date :class="'ml-auto '+ (deadlineColor?('text-'+deadlineColor):'')"/>
     </div>
-    <div v-if="advanced" hidden class="d-flex">
+    <div v-if="false" class="d-flex ">
       <strong class="mr-1">{{ $t('attribute.ticket_deadline_offset') | title }}:</strong>
       <span :class="columnDeadlineColor?('text-'+columnDeadlineColor):''">{{ columnDeadlineForHuman }}</span>
       <b-icon-calendar-date :class="'ml-auto '+ (columnDeadlineColor?('text-'+columnDeadlineColor):'')"/>
     </div>
-    <div v-if="advanced" class="d-flex">
+    <div v-if="false" class="d-flex">
       <strong class="mr-1">{{ $t('ticket~deadline~status') | title }}:</strong>
       <span :class="deadlineColor?('text-'+deadlineColor):''">{{ deadlineStatus }}</span>
     </div>
@@ -87,7 +87,7 @@
                 {{ ticket.ticket_name }}
               </b-card-text>
             </b-card>
-            <b-card >
+            <b-card hidden>
               <div class="d-flex justify-content-between">
                 <div class=""/>
                 <div class="d-flex justify-content-between" >
@@ -101,13 +101,12 @@
               </div>
             </b-card>
             <b-tabs card lazy>
-              <b-tab title="Detail"/>
-              <b-tab title="Subtickets" active >
+              <b-tab :title="$t('headline~ticket~subtasks')" active >
                 <div class="d-flex justify-content-between align-items-center">
                   <b-button variant="primary" @click="createSubTicket">
                     Add new subticket
                   </b-button>
-                  <field :field="{key:'subticket', noLabel :true, required: false}" :entity="entity"/>
+                  <!--                  <field :field="{key:'subticket', noLabel :true, required: false}" :entity="entity"/>-->
                 </div>
                 <div class="mt-1">
                   <b-overlay :show="loading">
@@ -115,6 +114,7 @@
                       <b-thead>
                         <b-tr>
                           <b-th>Name</b-th>
+                          <b-th>Board</b-th>
                           <b-th >
                             Status
                           </b-th>
@@ -123,41 +123,45 @@
                         </b-tr>
                       </b-thead>
                       <b-tbody >
-                        <subticket-tr v-for="(subticket, index) in subTickets" :key="index" :team-users="teamUsers" :subticket="subticket" @entity-updated="updateData" />
+                        <subticket-tr
+                          v-for="(subticket, index) in subTickets"
+                          :key="index"
+                          :team-users="teamUsers"
+                          :subticket="subticket"
+                          @entity-updated="updateData"
+                          @subticket-assigned="fetchSubTickets"
+                          @show-subticket="$emit('moredetails')"
+                        />
                       </b-tbody>
                       <b-tfoot>
                         <b-tr variant="secondary">
                           <b-td >
                             Summary : {{ subTickets.length }}
                           </b-td>
-                          <b-td>
-                            <b-progress :value="1" :max="subTickets.length" height="1.5rem" class="bg-white" show-value variant="success">
-                              <b-progress-bar :value="1">
-                                <span class="text-secondary text-">{{ 1 +'/'+ subTickets.length }}</span>
-                              </b-progress-bar>
-                            </b-progress>
-                          </b-td>
-                          <b-td>10/09/2023</b-td>
                           <b-td />
+                          <b-td>
+                            <!--                            <b-progress :value="ticket.ticket_closed" :max="subTickets.length" height="1.5rem" class="bg-white" show-value variant="success">-->
+                            <!--                              <b-progress-bar :value="ticket.ticket_closed">-->
+                            <!--                                <span class="text-secondary text-">{{ ticket.ticket_closed +'/'+ subTickets.length }}</span>-->
+                            <!--                              </b-progress-bar>-->
+                            <!--                            </b-progress>-->
+                          </b-td>
+                          <b-td/>
+                          <b-td />
+
                         </b-tr>
                       </b-tfoot>
                     </b-table-simple>
-                    <b-card-text class="text-right mt-2">
-                      <b-button variant="primary" @click="saveSubtickets">
-                        Save
-                      </b-button>
-                    </b-card-text>
                   </b-overlay>
                 </div>
               </b-tab>
-              <b-tab title="Comments"/>
             </b-tabs>
           </div>
         </template>
       </b-sidebar>
       <span class="ml-auto">{{ formatDate(ticket.ticket_creation_time) }}</span>
       <generic-modal ref="modal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
-                     :title="$t('headline~ticket~newsubtask')"/>
+                     :title="$t('headline~ticket~newsubtask')" @reload-table="isDataUpdated = true" />
     </div>
   </div>
 </template>
@@ -175,7 +179,7 @@ import { formatDate } from '@/libs/utils'
 import { find, findIndex, isEqual } from 'lodash'
 import Field from '@/views/app/Generic/Field.vue'
 import SubticketTr from '@/views/app/Ticket/Subticket/SubticketTr.vue'
-import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.vue'
+import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.js'
 import GenericModal from '@/views/app/Generic/modal.vue'
 
 export default {
@@ -207,7 +211,6 @@ export default {
       deadline_yellow: moment(this.ticket.ticket_deadline_yellow),
       column_deadline_red: moment(this.ticket.columns[0].ticket_deadline_offset_red),
       column_deadline_yellow: moment(this.ticket.columns[0].ticket_deadline_offset_yellow),
-      deadlineColor: '',
       subticketsForm: [],
       entity: {
       },
@@ -260,30 +263,25 @@ export default {
       const ticketState = this.getDeadlineStatus(this.ticket)
 
       if (ticketState <= 45) {
-        this.deadlineColor = 'success'
+        // this.deadlineColor = 'success'
         return 'On Time'
       }
 
       if (ticketState > 45 && ticketState <= 85) {
-        this.deadlineColor = 'warning'
+        // this.deadlineColor = 'warning'
         return 'Due Soon'
       }
-      this.deadlineColor = 'danger'
+      // this.deadlineColor = 'danger'
 
       return 'Overdue'
     },
     isTicket() {
       return this.ticket.ticket_id_group === null
     },
-  },
-  watch: {
-    subticketsForm: {
-      handler(newValue, oldValue) {
-        if (!isEqual(newValue, oldValue)) {
-          this.isDataUpdated = true
-        }
-      },
-      deep: true,
+    deadlineColor() {
+      if (this.now.isAfter(this.deadline_red)) return 'danger'
+      if (this.now.isAfter(this.deadline_yellow)) return 'warning'
+      return 'success'
     },
   },
   methods: {
@@ -312,12 +310,10 @@ export default {
 
       this.subticketsForm.push(data)
     },
-    async saveSubtickets() {
-      // Ici on soumet au serveur les mise à jour sur les sous tickets
-    },
     updateBoard() {
       if (this.isDataUpdated) {
         this.$emit('subticket-updated')
+        this.isDataUpdated = false
       }
     },
   },

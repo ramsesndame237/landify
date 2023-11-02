@@ -29,7 +29,11 @@ export default {
   },
   computed: {
     ticketColum() {
-      return this.ticket.columns[0]
+      if (this.ticket?.colums) {
+        return this.ticket.colums[0]
+      }
+
+      return { team_id: this.ticket.team_id, column_id: this.ticket.column_id }
     },
   },
   methods: {
@@ -52,9 +56,9 @@ export default {
         })
 
         const { data } = response.data.data
-        console.log({ data })
-        const formattedData = data.filter(user => this.ids.includes(user.user_id)).map(user => ({ label: user.user_email, value: user.user_id }))
-        console.log({ formattedData })
+
+        const formattedData = this.ids.length > 0 ? data.filter(user => this.ids.includes(user.user_id)).map(user => ({ label: user.user_email, value: user.user_id })) : data.map(user => ({ label: user.user_email, value: user.user_id }))
+
         this.users = [{ label: 'All', value: -1 }, ...formattedData]
       } catch (error) {
         console.log({ error })
@@ -73,7 +77,7 @@ export default {
           action: 'create',
           data: [{
             ticket_id: this.ticket.ticket_id,
-            column_id: this.ticket.columns[0].column_id,
+            column_id: this.ticketColum.column_id,
             ...(![-1].includes(this.entity.user_id) ? { user_id: this.entity.user_id } : []),
             ticket_columnx_user_creationtime: moment().format('YYYY-MM-DD HH:mm:ss'),
           }],

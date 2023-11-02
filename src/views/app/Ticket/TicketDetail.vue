@@ -171,18 +171,20 @@
               </tr>
             </table>
           </b-card-actions>
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <h2>{{ $t('headline~ticket~subtasks') }}</h2>
-            <b-button v-if="!entity.ticket_closed && showButton.all" variant="primary" @click="createSubTicket">
-              {{ $t('button~newsubtask') }}
-            </b-button>
+          <div v-if="isTicket" class="">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h2>{{ $t('headline~ticket~subtasks') }}</h2>
+              <b-button v-if="!entity.ticket_closed && showButton.all" variant="primary" @click="createSubTicket">
+                {{ $t('button~newsubtask') }}
+              </b-button>
+            </div>
+            <generic-modal ref="modal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
+                           :title="$t('headline~ticket~newsubtask')" />
+            <sub-ticket-card v-for="(ticket,idx) in subTickets" :key="idx" :ticket="ticket"/>
+            <p v-if="subTickets.length===0" class="text-center">
+              {{ $t('headline~ticket~nosubticket') }}
+            </p>
           </div>
-          <generic-modal ref="modal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
-                         :title="$t('headline~ticket~newsubtask')" />
-          <sub-ticket-card v-for="(ticket,idx) in subTickets" :key="idx" :ticket="ticket"/>
-          <p v-if="subTickets.length===0" class="text-center">
-            {{ $t('headline~ticket~nosubticket') }}
-          </p>
           <b-card-actions v-if="entity.columns" class="mt-3" :title="$t('headline~ticket~timeline')" action-collapse
                           collapsed>
             <app-timeline>
@@ -336,7 +338,7 @@ import EmailModal from '@/views/app/Ticket/EmailModal.vue'
 import AddDocumentToContract from '@/views/app/Ticket/AddDocumentToContract.vue'
 import AddDocumentToPos from '@/views/app/Ticket/AddDocumentToPos.vue'
 import { mapGetters } from 'vuex'
-import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.vue'
+import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.js'
 
 export default {
   name: 'TicketDetail',
@@ -376,6 +378,9 @@ export default {
   computed: {
     invoiceTicket() {
       return true
+    },
+    isTicket() {
+      return this.entity.ticket_id_group === null
     },
     firstColumn() {
       return this.entity.columns[0]

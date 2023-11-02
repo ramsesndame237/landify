@@ -45,7 +45,7 @@
       </kanban-board>
     </b-overlay>
     <generic-modal ref="modal" :table="table" :definition="definition" :table-definition-key="table"
-                   title="Create a new Ticket" @reload-table="onNewTicket"/>
+                   :title="$t('headline~ticket~newticket')" @reload-table="onNewTicket"/>
     <assign-user-modal ref="assign" @reload="loadBoardTickets()"/>
   </div>
 </template>
@@ -109,10 +109,6 @@ export default {
     visibleTickets() {
       const user = getUserData()
       let prefiltered = this.tickets.filter(ticket => {
-        if (ticket.ticket_id_group) {
-          console.log('Ici subticket')
-          console.log({ ticket })
-        }
         if (this.filterValue === 0) {
           return !ticket.ticket_closed
         }

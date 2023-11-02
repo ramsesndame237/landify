@@ -1,33 +1,10 @@
-<script>
 import Table from '@/table'
 
 export default {
   name: 'SubTicketMixin',
   data() {
     return {
-      subTickets: [
-        {
-          ticket_name: 'Sous ticket 1',
-          ticket_status: 'inprogress',
-          ticket_start_date: '2023-09-10',
-          ticket_assigned_to: 5,
-          ticket_id: 1,
-        },
-        {
-          ticket_name: 'Sous ticket 2',
-          ticket_status: 'done',
-          ticket_start_date: '2023-09-10',
-          ticket_assigned_to: 50385,
-          ticket_id: 2,
-        },
-        {
-          ticket_name: 'Sous ticket 3',
-          ticket_status: 'inprogress',
-          ticket_start_date: '2023-09-18',
-          ticket_assigned_to: 14,
-          ticket_id: 3,
-        },
-      ],
+      subTickets: [],
       loading: false,
     }
   },
@@ -75,6 +52,9 @@ export default {
       try {
         const response = await this.$http.post('/tickets/subticket', data)
         await this.fetchSubTickets()
+        if (this.isDataUpdated) {
+          this.isDataUpdated = true
+        }
         return response
       } catch (error) {
         console.log(error)
@@ -82,4 +62,3 @@ export default {
     },
   },
 }
-</script>

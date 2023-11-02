@@ -1,28 +1,52 @@
 <template>
   <b-tr>
     <b-td>
-      <b-link>{{ subticket.ticket_name }}</b-link>
+      <b-link to="#">
+        <p v-b-tooltip class="w-90 text-truncate" :title=" subticket.ticket_name ">
+          {{ subticket.ticket_name }}
+        </p>
+      </b-link>
     </b-td>
     <b-td>
-      <field :entity="entity" :no-label="true"
-             :field="{ key: 'ticket_status', type: 'custom-select', items: statusOptions, required: false, clearable: false }" />
+      <p v-b-tooltip class="w-90 text-truncate" :title=" subticket.board_name ">
+        {{ subticket.board_name }}
+      </p>
     </b-td>
     <b-td>
-      <field :entity="entity" :no-label="true"
-             :field="{ key: 'ticket_creation_time', type: 'date', required: false, clearable: false }" />
+      <p v-b-tooltip class="w-90 text-truncate" :title=" subticket.column_name ">
+        {{ subticket.column_name }}
+      </p>
     </b-td>
     <b-td>
-      <field :entity="entity" :no-label="true"
-             :field="{ key: 'user_id_assigned', type: 'custom-select', items: users, required: false, clearable: false }" />
+      {{ formatDate(subticket.ticket_creation_time) }}
     </b-td>
+    <b-td>
+      <template v-if="subticket.user_id_assigned !== null">
+        <p v-b-tooltip class="w-90 text-truncate" :title="subticket.user_email_assigned">
+          {{ subticket.user_email_assigned }}
+        </p>
+
+      </template>
+      <template v-else>
+        <!--        <b-button variant="primary" size="sm" @click="$refs.assign.openModal(subticket,[], users)">-->
+        <!--          {{ $t('btn~assign') }}-->
+        <!--        </b-button>-->
+        <span class="text-italic">Not assigned</span>
+      </template>
+
+    </b-td>
+    <assign-user-modal ref="assign" @reload="$emit('subticket-assigned')"/>
   </b-tr>
 </template>
 <script>
 import Field from '@/views/app/Generic/Field.vue'
+import { pick } from 'lodash'
+import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
+import { formatDate } from '../../../../libs/utils'
 
 export default {
   name: 'SubticketTr',
-  components: { Field },
+  components: { AssignUserModal, Field },
   props: {
     subticket: { type: Object, required: true },
     teamUsers: { type: Array, required: true },
@@ -39,12 +63,17 @@ export default {
     },
   },
   created() {
-    this.entity = pick(this.subticket, ['ticket_name', 'ticket_status', 'ticket_creation_time', 'user_id_assigned', 'ticket_id'])
-    this.$watch('entity', (newValue, oldValue) => {
-      this.$emit('entity-updated', newValue)
-    }, { deep: true })
+    this.entity = pick(this.subticket, ['ticket_name', 'ticket_status', 'ticket_creation_time', 'user_id_assigned', 'ticket_id', 'column_name'])
   },
+  methods: { formatDate },
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.w-80{
+  width: 80% !important;
+}
+.w-90{
+  width: 90% !important;
+}
+</style>
