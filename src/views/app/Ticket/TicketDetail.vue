@@ -322,7 +322,7 @@
           </b-col>
           <b-col v-if="activeTabItem && activeTabItem.id ==='5'" lg="12">
             <b-card :title="$t('headline~ticket~subtasks')">
-              We are still working for this design...</b-card>
+              We are still working on this design...</b-card>
           </b-col>
         </b-row>
       </div>
@@ -388,12 +388,12 @@ export default {
       emails: [],
       tabTitle: [
         {
-          id: '5',
-          title: this.$t('headline~ticket~subtasks'),
-        },
-        {
           id: '2',
           title: 'Timeline',
+        },
+        {
+          id: '5',
+          title: this.$t('headline~ticket~subtasks'),
         },
         {
           id: '4',
