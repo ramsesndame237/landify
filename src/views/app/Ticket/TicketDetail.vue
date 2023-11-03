@@ -158,7 +158,7 @@
                     {{ $t('attribute.user_email') }}
                   </th>
                   <td class="pb-50">
-                    {{ entity.columns[0].user_email }}
+                    {{ entity.columns[0].user_email_assigned }}
                   </td>
                 </tr>
                 <tr>
@@ -179,18 +179,20 @@
                 </tr>
               </table>
             </b-card-actions>
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <h2>{{ $t('headline~ticket~subtasks') }}</h2>
-              <b-button v-if="!entity.ticket_closed && showButton.all" variant="primary" @click="createSubTicket">
-                {{ $t('button~newsubtask') }}
-              </b-button>
+            <div v-if="isTicket" class="">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2>{{ $t('headline~ticket~subtasks') }}</h2>
+                <b-button v-if="!entity.ticket_closed && showButton.all" variant="primary" @click="createSubTicket">
+                  {{ $t('button~newsubtask') }}
+                </b-button>
+              </div>
+              <generic-modal ref="modal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
+                             :title="$t('headline~ticket~newsubtask')" @reload-table="onNewTicket"/>
+              <sub-ticket-card v-for="(ticket,idx) in subTickets" :key="idx" :ticket="ticket"/>
+              <p v-if="subTickets.length===0" class="text-center">
+                {{ $t('headline~ticket~nosubticket') }}
+              </p>
             </div>
-            <generic-modal ref="modal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
-                           :title="$t('headline~ticket~newsubtask')" @reload-table="onNewTicket"/>
-            <sub-ticket-card v-for="(ticket,idx) in subTickets" :key="idx" :ticket="ticket"/>
-            <p v-if="subTickets.length===0" class="text-center">
-              {{ $t('headline~ticket~nosubticket') }}
-            </p>
             <email-modal ref="emailModal" @reload="fetchEmail"/>
           </b-col>
           <b-col v-if="entity.columns &&activeTabItem && activeTabItem.id ==='2'">
@@ -329,9 +331,6 @@ import {
   BButton,
   BCol,
   BRow,
-  BCard,
-  BCardText,
-  BLink,
 } from 'bootstrap-vue'
 import EditPageMixin from '@/views/app/Generic/EditPageMixin'
 import Table from '@/table'
@@ -352,6 +351,7 @@ import AddDocumentToPos from '@/views/app/Ticket/AddDocumentToPos.vue'
 import { mapGetters } from 'vuex'
 import TabComponent from '@/components/TabComponent.vue'
 import DocumentsWidgetView from '@/views/app/Ticket/widgets/DocumentsWidgetView.vue'
+import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.js'
 
 export default {
   name: 'TicketDetail',
@@ -371,32 +371,10 @@ export default {
     BButton,
     BCol,
     BRow,
-    BCard,
-    BCardText,
-    BLink,
   },
-  mixins: [EditPageMixin, TicketMixin],
+  mixins: [EditPageMixin, TicketMixin, SubTicketMixin],
   data() {
-    const subTicketDef = JSON.parse(JSON.stringify(Table.ticket))
-    let index = subTicketDef.fields.findIndex(f => f.key === 'column_id')
-    subTicketDef.fields.splice(index, 1)
-    index = subTicketDef.fields.findIndex(f => f.key === 'pos_id')
-    subTicketDef.fields.splice(index, 1)
-    index = subTicketDef.fields.findIndex(f => f.key === 'contract_id')
-    subTicketDef.fields.splice(index, 1)
-    // ticketDef.fields.push({
-    //   key: 'ticket_id_group',
-    //   type: 'list',
-    //   list: 'ticket',
-    //   listLabel: 'ticket_name',
-    //   relationEntity: 'ticket_ticket_rel',
-    //   tableKey: 'ticket_id',
-    //   // visible: () => false,
-    // })
-
-    subTicketDef.submit = this.submitSubticket
     return {
-      subTicketDef,
       ticketDef: Table.ticket,
       documentDef: Table.document,
       subTickets: [],
@@ -420,7 +398,7 @@ export default {
         {
           id: '1',
           title: 'Information',
-        }
+        },
 
       ],
       loadingEmail: false,
@@ -432,6 +410,9 @@ export default {
   computed: {
     invoiceTicket() {
       return true
+    },
+    isTicket() {
+      return this.entity.ticket_id_group === null
     },
     firstColumn() {
       return this.entity.columns[0]
@@ -473,7 +454,9 @@ export default {
         this.columns = this.$route.params.columns
         this.teams = this.$route.params.teams
       }
-      await this.fetchSubTickets()
+      if (this.isTicket) {
+        await this.fetchSubTickets()
+      }
       await this.fetchDocuments()
       await this.fetchEmail()
     } finally {
@@ -543,11 +526,6 @@ export default {
       if (document.document_already_stamp) return getStampedDocumentLink(document)
       return getDocumentLink(document)
     },
-    createSubTicket() {
-      this.$refs.modal.openModal(true, {
-        ticket_id_group: parseInt(this.entityId),
-      })
-    },
     createDocument() {
       this.$refs.documentModal.openModal(true, { ticket_id: this.entity.ticket_id })
     },
@@ -556,7 +534,7 @@ export default {
         name: 'table-form',
         params: {
           table: 'invoice',
-          entity: { ticket_id: this.entity.ticket_id }
+          entity: { ticket_id: this.entity.ticket_id },
         },
       })
     },
@@ -572,7 +550,7 @@ export default {
         data: [{
           ticket_id: ticket.ticket_id,
           ticket_id_group: parseInt(this.entityId),
-          ticket_type: 'test'
+          ticket_type: 'test',
         }],
       })
       await this.fetchSubTickets()
@@ -584,7 +562,7 @@ export default {
         action: 'create',
         data: documents.map(document => ({
           document_id: document.document_id,
-          ticket_id: parseInt(this.entityId)
+          ticket_id: parseInt(this.entityId),
         })),
       })
       await this.fetchDocuments()
@@ -606,22 +584,11 @@ export default {
           this.fetchDocuments()
         })
     },
-    async fetchSubTickets() {
-      // load subtickets
-      try {
-        const response = await this.$http.get('/tickets/sub-tickets', {
-          params: { ticket_id: this.entity.ticket_id },
-        })
-        this.subTickets = response.data.data
-      } catch (error) {
-        console.log({ error })
-      }
-    },
     async fetchDocuments() {
       const documents = (await this.$http.get('/tickets/documents', {
         params: {
           ticket_id: this.entity.ticket_id,
-          size: 100_000
+          size: 100_000,
         },
       })).data.data
       documents.forEach(document => {
@@ -635,7 +602,7 @@ export default {
         const results = (await this.$http.get('/tickets/emails', {
           params: {
             ticket_id: this.entity.ticket_id,
-            size: 100_000
+            size: 100_000,
           },
         })).data.data
         if (!results.length) return
