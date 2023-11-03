@@ -3,12 +3,11 @@
 
 import AutoCompleteInput from "@/components/AutoCompleteInput.vue";
 import {BFormFile} from "bootstrap-vue";
-import document from "src/store/modules/document";
-import {mapActions} from "vuex";
+import {mapActions, mapGetters, mapState} from "vuex";
 
 export default {
   name: "AddOrUpdateDocumentsTicket",
-  components: {AutoCompleteInput,BFormFile},
+  components: {AutoCompleteInput, BFormFile},
   props: {
     initialState: {
       type: Object,
@@ -26,16 +25,18 @@ export default {
         subdocumenttype_id: '',
         document_files: []
       },
+      // documenttype: [],
       subdocumenttype: []
     }
   },
+
   computed: {
+    ...mapState('document',['documenttype']),
+    ...mapGetters('document',['getAllDocumentType']),
     state() {
 
     },
-    documentType(){
-      return this.$store.state.document.documentType || []
-    },
+
     formatFileInputNames() {
       return this.documentData.document_files.length === 1 ? this.documentData.document_files[0].name : `${this.documentData.document_files.length} files selected`
     },
@@ -52,7 +53,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('document',['fetchGetAllDocumentsTicket']),
+
     openModal(create, data, title) {
       this.initialData = data
       this.forceTitle = title
@@ -81,7 +82,9 @@ export default {
     },
   },
   mounted() {
-    this.fetchGetAllDocumentsTicket()
+    const dataObject = this.documenttype
+    console.log("this is the store of the state  document",[dataObject])
+
   }
 
 }
@@ -90,7 +93,6 @@ export default {
 <template>
   <b-modal id="documentModal" ref="documentModalRef" :title="initialState ? 'Update the document': 'Add new document'">
     <validation-observer ref="form" v-slot="{ passes }">
-
       <b-row>
         <b-col>
           <b-form-group
@@ -116,7 +118,7 @@ export default {
             :state="state"
           >
             <AutoCompleteInput
-              :options="documentType"
+              :options="subdocumenttype"
               key_value="documenttype_id"
               key-label="documenttype_name"
               icon_open="ChevronUpIcon"
@@ -132,7 +134,7 @@ export default {
             :state="state"
           >
             <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
-                         drop-placeholder="Drop file here..."  required
+                         drop-placeholder="Drop file here..." required
                          :file-name-formatter="formatFileInputNames" @change="updateFilesData($event, validate)"/>
           </b-form-group>
         </b-col>

@@ -1,24 +1,25 @@
 <template>
-  <div class="p-1 ticket" :class="'ticket-'+deadlineColor">
+  <div class="p-1 ticket cursor-pointer position-relative " :class="'ticket-'+deadlineColor" @click="$emit('moredetails')"
+       v-on:mouseenter="(event) => onmouseAction(event,ticket)" v-on:mouseleave="(event)=> onmouseAction(event,null)">
     <div class="d-flex align-items-center mb-1">
       <b-avatar variant="light-warning" text="I"/>
       <h4 class="font-weight-bolder text-truncate mb-0 ml-1" style="color: #ccc; font-size: 15px"
           :title="ticket.ticket_name">
         {{ ticket.ticket_name }}</h4>
-      <b-dropdown variant="link-" toggle-class="p-0" right no-caret class="ml-auto">
-        <template v-slot:button-content>
-          <feather-icon icon="MoreHorizontalIcon"/>
-        </template>
-        <b-dropdown-item @click="$emit('moredetails')">
-          {{ $t('button~moredetails') }}
-        </b-dropdown-item>
-        <b-dropdown-item @click="$emit('assign')">
-          {{ $t('button~assignto') }}
-        </b-dropdown-item>
-        <b-dropdown-item @click="toggleTicket(ticket)">
-          {{ $t(ticket.ticket_closed ? 'button~ticket~reopen' : 'button~ticket~close') }}
-        </b-dropdown-item>
-      </b-dropdown>
+      <!--      <b-dropdown variant="link-" toggle-class="p-0" right no-caret class="ml-auto">-->
+      <!--        <template v-slot:button-content>-->
+      <!--          <feather-icon icon="MoreHorizontalIcon"/>-->
+      <!--        </template>-->
+      <!--        <b-dropdown-item @click="$emit('moredetails')">-->
+      <!--          {{ $t('button~moredetails') }}-->
+      <!--        </b-dropdown-item>-->
+      <!--        <b-dropdown-item @click="$emit('assign')">-->
+      <!--          {{ $t('button~assignto') }}-->
+      <!--        </b-dropdown-item>-->
+      <!--        <b-dropdown-item @click="toggleTicket(ticket)">-->
+      <!--          {{ $t(ticket.ticket_closed ? 'button~ticket~reopen' : 'button~ticket~close') }}-->
+      <!--        </b-dropdown-item>-->
+      <!--      </b-dropdown>-->
     </div>
     <p class="text-truncate" :title="ticket.ticket_description">{{ ticket.ticket_description }}</p>
     <div v-if="advanced" class="d-flex">
@@ -43,6 +44,20 @@
       <strong class="mr-1">{{ $t('attribute.priority_name') | title }}:</strong>
       <span>{{ ticket.priority_name }}</span>
     </div>
+
+    <FloatingActionButton v-if="itemOver" class="position-absolute" :style="{top:topFloatElement,left:leftFloatElement}">
+      <b-row slot="action">
+        <b-col>
+          <b-button @click="$emit('assign')" v-b-tooltip.hover :title="$t('button~assignto')" size="sm" class="mr-2">
+            <feather-icon icon="UserCheckIcon" size="15" class="text-white"/>
+          </b-button>
+          <b-button @click="toggleTicket(ticket)" size="sm" v-b-tooltip.hover
+                    :title="$t(ticket.ticket_closed ? 'button~ticket~reopen' : 'button~ticket~close') ">
+            <feather-icon icon="KeyIcon" size="15" class="text-white"/>
+          </b-button>
+        </b-col>
+      </b-row>
+    </FloatingActionButton>
   </div>
 </template>
 
@@ -60,13 +75,15 @@ import {
 } from 'bootstrap-vue'
 import CustomHorizontalProgress from '@/views/app/CustomComponents/CustomHorizontalProgress'
 import moment from 'moment'
-import { mapGetters } from 'vuex'
+import {mapGetters} from 'vuex'
 import TicketMixin from '@/views/app/Kanban/TicketMixin'
-import { title } from '@core/utils/filter'
+import {title} from '@core/utils/filter'
+import FloatingActionButton from "@/components/FloatingActionButton.vue";
 
 export default {
   name: 'InvoiceTicketCard',
   components: {
+    FloatingActionButton,
     BIconPaperclip,
     BAvatar,
     BAvatarGroup,
@@ -96,6 +113,9 @@ export default {
       deadline_yellow: moment(this.ticket.ticket_deadline_yellow),
       column_deadline_red: moment(this.ticket.columns[0].ticket_deadline_offset_red),
       column_deadline_yellow: moment(this.ticket.columns[0].ticket_deadline_offset_yellow),
+      itemOver: null,
+      topFloatElement: 0,
+      leftFloatElement: 0
     }
   },
   computed: {
@@ -129,6 +149,14 @@ export default {
       return this.column_deadline_yellow.from(this.now)
     },
   },
+  methods: {
+    onmouseAction(event, value) {
+      this.leftFloatElement = event.clientX
+      this.topFloatElement = event.clientY
+      this.itemOver = value
+
+    }
+  }
 }
 </script>
 

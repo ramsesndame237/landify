@@ -1,4 +1,5 @@
 <script>
+import _ from 'lodash'
 export default {
   name: 'AutoCompleteInput',
   props: {
@@ -53,10 +54,9 @@ export default {
   computed: {
     filteredOptions() {
       if (Object.keys(this.query).length > 0) {
-        const optionsData = this.options.filter(option => option[this.keyLabel] !== undefined)
+        const optionsData = _.cloneDeep(this.options).filter(option => option[this.keyLabel] !== undefined)
         const dataFilter = optionsData.filter(option => option[this.keyLabel].toLowerCase()
-          .includes(this.query[this.keyLabel].toLowerCase()))
-          .sort((a, b) => a[this.keyLabel].toLowerCase()
+          .includes(this.query[this.keyLabel].toLowerCase())).sort((a, b) => a[this.keyLabel].toLowerCase()
             .indexOf(this.query[this.keyLabel].toLowerCase()) - b[this.keyLabel].toLowerCase()
             .indexOf(this.query[this.keyLabel].toLowerCase()))
         return dataFilter
@@ -106,6 +106,7 @@ export default {
       this.openOption = false
     },
   },
+
 }
 </script>
 
