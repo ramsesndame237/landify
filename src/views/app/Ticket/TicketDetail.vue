@@ -166,7 +166,7 @@
                     {{ $t('attribute.ticket_deadline_yellow') }}
                   </th>
                   <td class="pb-50">
-                    {{ entity.ticket_deadline_yellow }}
+                    {{ formatDate(entity.ticket_deadline_yellow, true) }}
                   </td>
                 </tr>
                 <tr>
@@ -174,7 +174,7 @@
                     {{ $t('attribute.ticket_deadline_red') }}
                   </th>
                   <td class="pb-50">
-                    {{ entity.ticket_deadline_red }}
+                    {{ formatDate(entity.ticket_deadline_red, true) }}
                   </td>
                 </tr>
               </table>
