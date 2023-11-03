@@ -179,7 +179,7 @@
                 </tr>
               </table>
             </b-card-actions>
-            <div v-if="isTicket" class="">
+            <div v-if="false" class="">
               <div class="d-flex justify-content-between align-items-center mb-2">
                 <h2>{{ $t('headline~ticket~subtasks') }}</h2>
                 <b-button v-if="!entity.ticket_closed && showButton.all" variant="primary" @click="createSubTicket">
@@ -320,6 +320,10 @@
             <add-document-to-contract ref="documentContractModal"/>
             <add-document-to-pos ref="documentPosModal"/>
           </b-col>
+          <b-col v-if="activeTabItem && activeTabItem.id ==='5'" lg="12">
+            <b-card :title="$t('headline~ticket~subtasks')">
+              We are still working for this design...</b-card>
+          </b-col>
         </b-row>
       </div>
     </b-overlay>
@@ -383,6 +387,10 @@ export default {
       activeTabItem: null,
       emails: [],
       tabTitle: [
+        {
+          id: '5',
+          title: this.$t('headline~ticket~subtasks'),
+        },
         {
           id: '2',
           title: 'Timeline',
