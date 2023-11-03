@@ -103,8 +103,8 @@
             <b-tabs card lazy>
               <b-tab :title="$t('headline~ticket~subtasks')" active >
                 <div class="d-flex justify-content-between align-items-center">
-                  <b-button variant="primary" @click="createSubTicket">
-                    Add new subticket
+                  <b-button v-if="$can('create', table)" variant="primary" @click="createSubTicket">
+                    {{ $t('headline~ticket~newsubtask') }}
                   </b-button>
                   <!--                  <field :field="{key:'subticket', noLabel :true, required: false}" :entity="entity"/>-->
                 </div>
@@ -138,13 +138,7 @@
                             Summary : {{ subTickets.length }}
                           </b-td>
                           <b-td />
-                          <b-td>
-                            <!--                            <b-progress :value="ticket.ticket_closed" :max="subTickets.length" height="1.5rem" class="bg-white" show-value variant="success">-->
-                            <!--                              <b-progress-bar :value="ticket.ticket_closed">-->
-                            <!--                                <span class="text-secondary text-">{{ ticket.ticket_closed +'/'+ subTickets.length }}</span>-->
-                            <!--                              </b-progress-bar>-->
-                            <!--                            </b-progress>-->
-                          </b-td>
+                          <b-td/>
                           <b-td/>
                           <b-td />
 
@@ -214,6 +208,7 @@ export default {
       entity: {
       },
       isDataUpdated: false,
+      table: 'ticket',
     }
   },
   computed: {
