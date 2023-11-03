@@ -14,10 +14,10 @@
           <generic-filter ref="filter" vertical :table="table" :definition="definition" @filter="filter"/>
           <b-form-checkbox v-model="advanced" switch title="Advanced Mode"/>
           <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
-          <b-button v-b-tooltip.hover :title="showSubTickets ? 'Hide Sub-tickets' : 'Show Sub-tickets' " :variant="showSubTickets ? 'primary' : ''" class="ml-1 btn-icon" @click="showSubTickets = !showSubTickets">
+          <b-button v-b-tooltip.hover :title="showSubTickets ? 'Hide Sub-tickets' : 'Show Sub-tickets' " :variant="showSubTickets ? 'primary' : ''" class="mx-1 btn-icon" @click="showSubTickets = !showSubTickets">
             <icon icon="mdi:subtasks" width="16" />
           </b-button>
-          <b-button variant="primary" class="mx-1" block @click="createTicket()">
+          <b-button v-if="$can('create', table)" variant="primary" class="mr-1" block @click="createTicket()">
             {{ $t('button~newticket') }}
           </b-button>
           <b-form-input v-model="search" debounce="500" type="search" class="w-16" placeholder="Search.."/>
