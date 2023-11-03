@@ -31,15 +31,15 @@ export default {
   },
 
   computed: {
-    ...mapState('document',['documenttype']),
+    ...mapState({
+      documenttype:state => state.document.documenttype
+    }),
     ...mapGetters('document',['getAllDocumentType']),
     state() {
 
     },
 
-    formatFileInputNames() {
-      return this.documentData.document_files.length === 1 ? this.documentData.document_files[0].name : `${this.documentData.document_files.length} files selected`
-    },
+
     invalidFeedback() {
       if (this.documentData.documenttype_id) {
         return 'Please select a type of the document'
@@ -53,7 +53,9 @@ export default {
     }
   },
   methods: {
-
+    formatFileInputNames() {
+      return this.documentData.document_files.length === 1 ? this.documentData.document_files[0].name : `${this.documentData.document_files.length} files selected`
+    },
     openModal(create, data, title) {
       this.initialData = data
       this.forceTitle = title
@@ -81,11 +83,6 @@ export default {
       this.formatFileInputNames()
     },
   },
-  mounted() {
-    const dataObject = this.documenttype
-    console.log("this is the store of the state  document",[dataObject])
-
-  }
 
 }
 </script>

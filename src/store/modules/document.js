@@ -13,8 +13,11 @@ export default {
   },
   mutations: {
     SET_TYPE_DOCUMENT: (state, documentTypes) => {
-      console.log("this is the state of the value of send", documentTypes)
-      state.documenttype = documentTypes
+      console.log("this is the state of the value of send", JSON.parse(JSON.stringify(documentTypes)))
+      // documentTypes.map((element) =>{
+      //   state.documenttype.push(element.toRaw())
+      // })
+      state.documenttype = JSON.parse(JSON.stringify(documentTypes))
     }
   },
   actions: {
@@ -22,7 +25,7 @@ export default {
       await DocumentServiceMock.get_all_type_document().then(async (response) => {
         return response.json()
       }).then((data) =>{
-        commit('SET_TYPE_DOCUMENT', data)
+        commit('document/SET_TYPE_DOCUMENT', data,{root:true})
       }).catch(error => {
         console.log(error)
       })

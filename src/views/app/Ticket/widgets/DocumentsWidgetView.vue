@@ -38,14 +38,14 @@ export default {
       ],
     }
   },
-  created() {
-    this.getData()
+  beforeCreate() {
+    this.$store.dispatch('document/fetchGetAllDocumentsTicket',null,{root:true})
     console.log("this is the created of the page")
   },
 
   methods: {
     async getData() {
-      await this.$store.dispatch('document/fetchGetAllDocumentsTicket')
+      await this.$store.dispatch('document/fetchGetAllDocumentsTicket',null,{root:true})
     },
     createDocument() {
       this.$refs.documentModal.openModal(true, {ticket_id: this.ticket_id})
@@ -92,7 +92,7 @@ export default {
       </section>
 
     </div>
-    <AddOrUpdateDocumentsTicket ref="documentModal"/>
+    <AddOrUpdateDocumentsTicket :initial-state="null" ref="documentModal"/>
   </div>
 </template>
 

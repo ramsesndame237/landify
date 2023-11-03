@@ -1,5 +1,6 @@
 <script>
 import _ from 'lodash'
+
 export default {
   name: 'AutoCompleteInput',
   props: {
@@ -31,7 +32,7 @@ export default {
     icon_close: {
       type: String,
     },
-      action_component: {
+    action_component: {
       type: Boolean,
       default: false,
     },
@@ -39,9 +40,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    disable:{
-      type:Boolean,
-      default:false
+    disable: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -53,13 +54,13 @@ export default {
   },
   computed: {
     filteredOptions() {
-      if (Object.keys(this.query).length > 0) {
-        const optionsData = _.cloneDeep(this.options).filter(option => option[this.keyLabel] !== undefined)
-        const dataFilter = optionsData.filter(option => option[this.keyLabel].toLowerCase()
-          .includes(this.query[this.keyLabel].toLowerCase())).sort((a, b) => a[this.keyLabel].toLowerCase()
-            .indexOf(this.query[this.keyLabel].toLowerCase()) - b[this.keyLabel].toLowerCase()
-            .indexOf(this.query[this.keyLabel].toLowerCase()))
-        return dataFilter
+      if (Object.keys(this.query).length !== 0) {
+        const searchTerm = this.query[this.keyLabel].toLowerCase();
+        let dataToSearch = [...this.options]
+        if (searchTerm !== '') {
+          return dataToSearch.filter((options) => options[this.keyLabel].toLowerCase() === searchTerm)
+        }
+
       }
       return this.options
     },
@@ -67,54 +68,22 @@ export default {
   watch: {
     query(newValue) {
       if (Object.keys(newValue).length === 0) {
-        this.filteredOptions
+        this.selectedIndex = -1;
       }
     },
   },
-  methods: {
-    getSelectionElement(item) {
-      if (this.multiple) {
-        this.selectedOptions.push(item)
-      } else {
-        this.query = item
-      }
-      this.openOption = false
-    },
-    onEnter() {
-      this.selectedOptions = this.filteredOptions[this.selectedIndex]
-    },
-    onUp() {
-      this.selectedIndex--
-      if (this.selectedIndex < 0) {
-        this.selectedIndex = this.filteredOptions.length - 1
-      }
-    },
-    onDown() {
-      this.selectedIndex++
-      if (this.selectedIndex >= this.filteredOptions.length) {
-        this.selectedIndex = 0
-      }
-    },
-    onBlur() {
-      // Réinitialisez la sélection
-      this.selectedIndex = -1
-    },
-    openOptionsList() {
-      this.openOption = true
-    },
-    closeOptionsList() {
-      this.openOption = false
-    },
-  },
+  mounted() {
+    console.log("this is the options on label", this.filteredOptions)
+  }
 
 }
 </script>
-
 <template>
   <div class="autocomplete_container">
     <div :class="['custom-autocomplete', disable ? 'disable_input' : '']">
       <input v-if="selectedOptions == null" v-model="query[keyLabel]" :data-tip="query[keyLabel]" type="text"
-             @keyup.enter="onEnter" @keydown.up="onUp" @keydown.down="onDown" @focus="openOptionsList" :disabled="disable" @blur="closeOptionsList" >
+             @keyup.enter="onEnter" @keydown.up="onUp" @keydown.down="onDown" @focus="openOptionsList"
+             :disabled="disable" @blur="closeOptionsList">
       <div class="action_container">
         <slot v-if="action_component" name="action_button"/>
         <button v-if="selectedOptions" @click="selectedOptions = null">
