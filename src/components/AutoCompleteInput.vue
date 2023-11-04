@@ -1,6 +1,4 @@
 <script>
-import _ from 'lodash'
-
 export default {
   name: 'AutoCompleteInput',
   props: {
@@ -40,10 +38,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    disable: {
-      type: Boolean,
-      default: false
-    }
   },
   data() {
     return {
@@ -54,13 +48,15 @@ export default {
   },
   computed: {
     filteredOptions() {
-      if (Object.keys(this.query).length !== 0) {
-        const searchTerm = this.query[this.keyLabel].toLowerCase();
-        let dataToSearch = [...this.options]
-        if (searchTerm !== '') {
-          return dataToSearch.filter((options) => options[this.keyLabel].toLowerCase() === searchTerm)
-        }
-
+      console.log("this is the query send", this.query)
+      if (Object.keys(this.query).length > 0 && this.query[this.keyLabel] !== '') {
+        let copyOption = [...this.options]
+        const optionsData = copyOption.filter(option => option[this.keyLabel] !== undefined || option[this.keyLabel] !=='')
+        return optionsData.filter(option => option[this.keyLabel].toLowerCase()
+          .includes(this.query[this.keyLabel].toLowerCase()))
+          .sort((a, b) => a[this.keyLabel].toLowerCase()
+            .indexOf(this.query[this.keyLabel].toLowerCase()) - b[this.keyLabel].toLowerCase()
+            .indexOf(this.query[this.keyLabel].toLowerCase()))
       }
       return this.options
     },
@@ -68,28 +64,60 @@ export default {
   watch: {
     query(newValue) {
       if (Object.keys(newValue).length === 0) {
-        this.selectedIndex = -1;
+        this.filteredOptions
       }
     },
   },
-  mounted() {
-    console.log("this is the options on label", this.filteredOptions)
-  }
-
+  methods: {
+    getSelectionElement(item) {
+      if (this.multiple) {
+        this.selectedOptions.push(item)
+      } else {
+        this.query = item
+      }
+      this.openOption = false
+    },
+    onEnter() {
+      this.selectedOptions = this.filteredOptions[this.selectedIndex]
+    },
+    onUp() {
+      this.selectedIndex--
+      if (this.selectedIndex < 0) {
+        this.selectedIndex = this.filteredOptions.length - 1
+      }
+    },
+    onDown() {
+      // Déplacez la sélection vers le bas
+      this.selectedIndex++
+      if (this.selectedIndex >= this.filteredOptions.length) {
+        this.selectedIndex = 0
+      }
+    },
+    onBlur() {
+      // Réinitialisez la sélection
+      this.selectedIndex = -1
+    },
+    openOptionsList() {
+      this.openOption = true
+    },
+    closeOptionsList() {
+      this.openOption = false
+    },
+  },
 }
 </script>
+
 <template>
   <div class="autocomplete_container">
-    <div :class="['custom-autocomplete', disable ? 'disable_input' : '']">
+    <div :class="['custom-autocomplete']">
       <input v-if="selectedOptions == null" v-model="query[keyLabel]" :data-tip="query[keyLabel]" type="text"
-             @keyup.enter="onEnter" @keydown.up="onUp" @keydown.down="onDown" @focus="openOptionsList"
-             :disabled="disable" @blur="closeOptionsList">
+             @keyup.enter="onEnter" @keydown.up="onUp" @keydown.down="onDown" @focus="openOptionsList" >
       <div class="action_container">
         <slot v-if="action_component" name="action_button"/>
         <button v-if="selectedOptions" @click="selectedOptions = null">
           <feather-icon icon="XIcon"/>
         </button>
-        <button @click="openOption = !openOption" :disabled="disable">
+        <button @click="openOption = !openOption">
           <feather-icon :icon="openOption ? icon_open : icon_close"/>
         </button>
       </div>
