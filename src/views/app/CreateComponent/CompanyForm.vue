@@ -172,6 +172,11 @@ import Table from '@/table'
 export default {
   name: 'CompanyForm',
   mixins: [FormMixin],
+  data() {
+    return {
+      tabIndex: 0,
+    }
+  },
   computed: {
     tabsData() {
       const tabs = [
