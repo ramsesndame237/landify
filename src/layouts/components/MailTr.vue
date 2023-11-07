@@ -167,7 +167,7 @@ export default {
       return this.item.document_id ? !!this.item.classification_dismissed : !!this.item.email_dismissed
     },
     is_done() {
-      return this.item.document_id ? !!this.item.ticket_created : !!this.item.ticket_id_created
+      return this.item.document_id ? !!this.item.ticket_created : (this.item?.email_processed && !this.item?.email_dismissed) || !!this.item?.ticket_id_created
     },
     visible() {
       return this.item.document_id

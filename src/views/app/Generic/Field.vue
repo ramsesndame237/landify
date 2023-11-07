@@ -397,6 +397,7 @@ export default {
       handler(newValue) {
         if (this.field.withOptionAll) {
           newValue.unshift({ [this.field.listLabel]: 'All', [this.field.tableKey || this.field.key]: -1 })
+          this.$set(this.entity, (this.field.tableKey || this.field.key), this.entity[this.field.tableKey || this.field.key] || -1)
         }
         return newValue
       },

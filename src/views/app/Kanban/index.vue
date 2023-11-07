@@ -14,7 +14,10 @@
           <generic-filter ref="filter" vertical :table="table" :definition="definition" @filter="filter"/>
           <b-form-checkbox v-model="advanced" switch title="Advanced Mode"/>
           <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
-          <b-button variant="primary" class="mx-1" block @click="createTicket()">
+          <b-button v-b-tooltip.hover :title="showSubTickets ? 'Hide Sub-tickets' : 'Show Sub-tickets' " :variant="showSubTickets ? 'primary' : ''" class="mx-1 btn-icon" @click="showSubTickets = !showSubTickets">
+            <icon icon="mdi:subtasks" width="16" />
+          </b-button>
+          <b-button v-if="$can('create', table)" variant="primary" class="mr-1" block @click="createTicket()">
             {{ $t('button~newticket') }}
           </b-button>
           <b-form-input v-model="search" debounce="500" type="search" class="w-16" placeholder="Search.."/>
@@ -51,14 +54,14 @@
           <feather-icon v-if="isQualityGate(stage)" class="text-primary" icon="StarIcon"/>
         </div>
 
-      </div>
-      <div v-for="ticket in visibleTickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
-        <invoice-ticket-card :advanced="advanced" :ticket="ticket"
-                             @moredetails="$router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
-                             @assign="$refs.assign.openModal(ticket, userIdsOfTeam(ticket.columns[0].team_id))"/>
-      </div>
-    </kanban-board>
-
+        </div>
+        <div v-for="ticket in visibleTickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
+          <invoice-ticket-card v-if="ticket.ticket_id_group === null || showSubTickets" :advanced="advanced" :ticket="ticket" :team-users="teams.filter(team => team.team_id === ticket.columns[0].team_id)"
+                               @moredetails="$router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
+                               @assign="$refs.assign.openModal(ticket, userIdsOfTeam(ticket.columns[0].team_id))" @subticket-updated="loadBoardTickets" />
+        </div>
+      </kanban-board>
+    </b-overlay>
     <generic-modal ref="modal" :table="table" :definition="definition" :table-definition-key="table"
                    title="Create a new Ticket" @reload-table="onNewTicket"/>
     <assign-user-modal ref="assign" @reload="loadBoardTickets()"/>
@@ -75,6 +78,7 @@ import InvoiceTicketCard from '@/views/app/CustomComponents/WP6/InvoiceTicketCar
 import moment from 'moment-business-time'
 import {getUserData} from '@/auth/utils'
 import _ from 'lodash'
+import { getUserData } from '@/auth/utils'
 import GenericFilter from '@/views/app/Generic/Filter'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal'
 import Fuse from 'fuse.js'
@@ -87,8 +91,6 @@ export default {
     GenericFilter,
     InvoiceTicketCard,
     GenericModal,
-    BAvatarGroup,
-    BAvatar,
     BButton,
     BFormCheckbox,
     BFormSelect,
@@ -115,6 +117,7 @@ export default {
       ],
       filterValue: 0,
       definition: Table.ticket,
+      showSubTickets: true,
       loading: true,
     }
   },
@@ -170,7 +173,7 @@ export default {
       if (loader) this.loading = true
       try {
         await this.loadTickets({board_id: this.board_id, ...data})
-        console.log(this.tickets)
+        // console.log(this.tickets)
       } finally {
         if (loader) this.loading = false
       }
