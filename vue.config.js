@@ -15,6 +15,7 @@ module.exports = {
   lintOnSave: false,
   devServer: {
     proxy: 'https://api.dev-zelos.de',
+    // proxy: 'http://192.168.1.39:8000',
   },
   css: {
     loaderOptions: {

@@ -37,14 +37,14 @@
       <!--    </template>-->
       <template v-for="(item,idx) in items">
         <b-tbody :key="idx">
-          <mail-tr :item="item" @show-content="showMailContent(item)" @classify="($vm) => classify(item, $vm)"
-                   @reject="reject(item)"/>
+          <mail-tr :item="item" @show-content="showMailContent(item)" @classify="($vm) => classifyNew(item, $vm, 'classify')"
+                   @reject="classifyNew(item, $vm, 'dismiss')"/>
         </b-tbody>
         <transition :key="'c'+idx" name="slide">
           <b-tbody v-if="item.documents.length>0" v-show="item.open" :id="'collapse'+item.email_id">
             <mail-tr v-for="(child,idx) in item.documents" :key="idx" :item="child" child
-                     style="background-color: white !important;" @classify="($vm) => classify(child, $vm)"
-                     @reject="reject(child)"/>
+                     style="background-color: white !important;" @classify="($vm) => classifyNew(child, $vm, 'classify')"
+                     @reject="classifyNew(item, $vm, 'dismiss')"/>
           </b-tbody>
         </transition>
       </template>
@@ -116,6 +116,7 @@ export default {
   },
   data() {
     return {
+      api: process.env.VUE_APP_BASE_URL,
       loading: false,
       sortBy: 'email_received_datetime',
       sortDesc: 'DESC',
@@ -189,6 +190,66 @@ export default {
         } else if (!document.ticket_created && !document.classification_dismissed) return false
         return true
       })
+    },
+    async classifyNew(item, $tr, action) {
+      if (!item.ticket_id) {
+        if (!item.pos_id) return this.$errorToast('Please select a pos')
+        // if (!item.contract_id) return this.$errorToast('Please select a contract')
+        if (!item.board_id) return this.$errorToast('Please select a board')
+      }
+      try {
+        this.loading = true
+        // get first column of selected board
+        const column = (await this.$api({
+          entity: 'frontend_column_list',
+          action: 'read-rich',
+          order_by: 'rank_order',
+          order_dir: 'ASC',
+          data: [{ board_id: item.board_id }],
+        })).data.data.data[0]
+
+        const now = moment()
+        // const user = getUserData()
+        const deadline = now.clone().addWorkingTime(column.default_deadline_period || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
+        const deadline_yellow = now.clone().addWorkingTime(column.default_deadline_yellow || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
+        const deadline_red = now.clone().addWorkingTime(column.default_deadline_red || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
+
+        const _payload = {
+          pos_id: item.pos_id,
+          contract_id: item.contract_id,
+
+          board_id: item.board_id,
+
+          // column_id: column.column_id,
+          ticket_move_time_in: now.format('YYYY-MM-DD HH:mm:ss'),
+          ticket_deadline_offset: deadline,
+          ticket_deadline_offset_yellow: deadline_yellow,
+          ticket_deadline_offset_red: deadline_red,
+
+          ticket_id_group: item.ticket_id,
+
+          email_id: item.email_id,
+          action,
+        }
+
+        const payload = {}
+        Object.keys(_payload).forEach(key => {
+          if (_payload[key]) {
+            payload[key] = _payload[key]
+          }
+        })
+
+        await this.$http.put('/tickets/classification', payload)
+        this.fetch()
+        this.$successToast('Ticket Created')
+      } catch (e) {
+        if (e.response) this.$errorToast(e.response.data.detail)
+        else this.$errorToast(e.message)
+      } finally {
+        this.loading = false
+      }
+
+      return undefined
     },
     async classify(item, $tr) {
       if (!item.ticket_id) {
