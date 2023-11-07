@@ -13,21 +13,32 @@ export default {
   formComponent: () => import('@/views/app/CreateComponent/UserForm.vue'),
   customIndex: () => import('@/views/app/User/UserIndex.vue'),
   customPage: () => import('@/views/app/User/UserDetail.vue'),
+  createModal: 'sidebar',
+  options: {
+    id: 'siderbar_user',
+    shadow: true,
+    rigth_position: true,
+    no_header: true,
+    custom_footer: false,
+    backdrop: true,
+    backdrop_variant: 'variant',
+  },
   fields: [
-    {
-      key: 'usertype_id',
-      hideOnIndex: true,
-      noFetch: true,
-      type: 'list',
-      list: 'usertype',
-      listLabel: 'usertype_name',
-    }, {
-      key: 'user_is_director',
-      hideOnIndex: true,
-      type: 'boolean',
-      default: 0,
-      visible: entity => entity.usertype_id !== 1,
-    },
+    // {
+    //   key: 'usertype_id',
+    //   hideOnIndex: true,
+    //   noFetch: true,
+    //   type: 'list',
+    //   list: 'usertype',
+    //   listLabel: 'usertype_name',
+    // },
+    // {
+    //   key: 'user_is_director',
+    //   hideOnIndex: true,
+    //   type: 'boolean',
+    //   default: 0,
+    //   visible: entity => entity.usertype_id !== 1,
+    // },
     {
       key: 'user_id', label: 'Id', auto: true, hideOnForm: true,
     },
@@ -35,6 +46,8 @@ export default {
       key: 'user_firstname',
       type: 'html',
       label: 'User',
+      size: '40',
+      cols: 12,
       formatter: (value, key, item) => `<div class="d-flex h5">
         <div>
             <img src='https://placehold.co/36x36?text=${avatarPlaceholder(item)}' class="rounded-circle" style="width: 36px;"
@@ -55,44 +68,102 @@ export default {
       formatter: value => value.charAt(0).toUpperCase() + value.substring(1),
     },
     {
-      key: 'user_email', sortable: true, type: 'email', hideOnIndex: true,
+      key: 'user_email', sortable: true, type: 'email', hideOnIndex: true, cols: 12, size: 40,
     },
     {
       key: 'user_password',
       type: 'password',
       hideOnIndex: true,
-      hideOnUpdate: true,
       required: false,
       generate: true,
+      cols: 12,
     },
-    { key: 'user_password_reset_required', hideOnIndex: true, type: 'boolean' },
     {
-      key: 'user_locked', hideOnIndex: true, hideOnCreate: true, type: 'boolean',
+      key: 'user_password_reset_required', hideOnIndex: true, type: 'boolean', inline: true,
     },
-
-    { key: 'user_firstname', sortable: true, hideOnIndex: true },
-    { key: 'user_lastname', sortable: true, hideOnIndex: true },
+    {
+      key: 'user_firstname', sortable: true, hideOnIndex: true, cols: 12,
+    },
+    {
+      key: 'user_lastname', sortable: true, hideOnIndex: true, cols: 12,
+    },
     {
       key: 'user_abbreviation',
       sortable: true,
       hideOnIndex: true,
       disabled: true,
+      size: '40',
       hideOnUpdate: true,
+      cols: 12,
       value: entity => (entity.user_firstname?.charAt(0) || '') + (entity.user_lastname?.charAt(0) || ''),
     },
     {
-      key: 'user_abbreviation', sortable: true, hideOnIndex: true, hideOnCreate: true,
+      key: 'user_abbreviation', sortable: true, hideOnIndex: true, hideOnCreate: true, cols: 12,
+    },
+
+    // {
+    //   key: 'user_locked', hideOnIndex: true, hideOnCreate: true, type: 'boolean'
+    // },
+    {
+      key: 'role_id',
+      type: 'custom_list',
+      list: 'role',
+      listLabel: 'role_name',
+      cols: 12,
+      hideOnIndex: true,
+      filter: (role, vm) => {
+        const { entity } = vm
+
+        if (entity.usertype_id === USER_TYPE.INTERN && role.role_is_internal === USER_TYPE.INTERN) {
+          return true
+        }
+        if (entity.usertype_id === USER_TYPE.EXTERN && role.role_is_internal === 0) {
+          return true
+        }
+        return false
+      },
     },
     {
       key: 'function_id',
-      type: 'list',
+      type: 'custom_list',
       composite: true,
       listLabel: 'function_name',
       list: 'function',
-      noFetch: true,
+      noFetch: false,
       relationEntity: 'user_function_rel',
       hideOnIndex: true,
+      cols: 12,
     },
+    // {
+    //   key: 'user_functions',
+    //   multiple: true,
+    //   listLabel: 'function_name',
+    //   noFetch: true,
+    //   tableKey: 'function_id',
+    //   type: 'list',
+    //   composite: true,
+    //   list: 'function',
+    //   relationEntity: 'user_function_rel',
+    //   hideOnIndex: true,
+    //   visible: entity => entity.usertype_id === 1,
+    // },
+    // {
+    //   key: 'firmengroup_type',
+    //   type: 'custom-select',
+    //   hideOnIndex: true,
+    //   required: false,
+    //   cols:12,
+    //   items: [
+    //     { value: 1, label: 'Company' },
+    //     { value: 0, label: 'Partner Company' },
+    //   ],
+    //   change: entity => {
+    //     if (entity.usertype_id === 1) return 0
+    //     return undefined
+    //   },
+    //   visible: entity => entity.usertype_id !== 1,
+    // },
+
     {
       key: 'firmengroup_type',
       type: 'custom-select',
@@ -121,46 +192,51 @@ export default {
     },
     {
       key: 'partnergroup_id',
-      type: 'list',
+      type: 'custom_list',
       list: 'partnergroup',
       listLabel: 'partnergroup_name',
       hideOnIndex: true,
       visible: entity => entity.firmengroup_type === 0,
       filter_key: 'partnergroup_is_internal',
-      noFetch: true,
+      noFetch: false,
+      cols: 12,
     },
     {
       key: 'partnercompany_id',
-      type: 'list',
+      type: 'custom_list',
       list: 'frontend_2_5_1',
       listLabel: 'partnercompany_name',
       filter_key: 'partnergroup_id',
       relationEntity: 'user_partnercompany_rel',
       hideOnIndex: true,
-      multiple: true,
+      multiple: false,
+      cols: 12,
       visible: entity => entity.firmengroup_type === 0,
     },
     {
       key: 'customergroup_id',
-      type: 'list',
+      type: 'custom_list',
       send: false,
       list: 'customergroup',
       listLabel: 'customergroup_name',
       hideOnIndex: true,
       visible: entity => entity.firmengroup_type === 1,
-      noFetch: true,
+      noFetch: false,
+      cols: 12,
     },
     {
       key: 'company_id',
-      type: 'list',
+      type: 'custom_list',
       definition: 'company',
       list: 'frontend_2_2_3_1',
       listLabel: 'company_name',
       filter_key: 'customergroup_id',
       relationEntity: 'user_company_rel',
+      cols: 12,
       hideOnIndex: true,
       visible: entity => entity.firmengroup_type === 1,
       // withNew: true
+      withRoundedNew: true,
     },
     {
       key: 'user_last_login_time', sortable: true, hideOnForm: true, type: 'date', time: true,
@@ -168,44 +244,24 @@ export default {
     {
       key: 'user_last_activity_time', sortable: true, hideOnForm: true, type: 'date', time: true,
     },
-    { key: 'user_fix_phonenumber', hideOnIndex: true, required: false },
-    { key: 'user_fax_phonenumber', hideOnIndex: true, required: false },
-    { key: 'user_mobile' },
+    { key: 'user_mobile', cols: 12 },
     {
-      key: 'role_id',
-      type: 'list',
-      list: 'role',
-      listLabel: 'role_name',
-      hideOnIndex: true,
-      filter: (role, vm) => {
-        const { entity } = vm
-
-        if (entity.usertype_id === USER_TYPE.INTERN && role.role_is_internal === USER_TYPE.INTERN) {
-          return true
-        }
-        if (entity.usertype_id === USER_TYPE.EXTERN && role.role_is_internal === 0) {
-          return true
-        }
-        return false
-      },
+      key: 'user_fix_phonenumber', hideOnIndex: true, required: false, cols: 12,
     },
+    {
+      key: 'user_fax_phonenumber', hideOnIndex: true, required: false, cols: 12,
+    },
+
     {
       key: 'role_name', hideOnForm: true,
     },
     {
       key: 'team_id',
-      type: 'list',
-      list: 'team',
+      type: 'list_select',
       listLabel: 'team_name',
-      multiple: true,
+      listButtonClass: 'list_custom_style',
       hideOnIndex: true,
-      filter: (team, vm) => {
-        const { entity } = vm
-        if (entity.usertype_id === USER_TYPE.EXTERN) {
-          return team.team_is_customer
-        }
-        return true
-      },
+      cols: 12,
     },
     {
       key: 'hollyday_representative',
@@ -371,11 +427,18 @@ export default {
   },
   inline_filter: true,
   filters: [
+
     {
-      key: 'role_id', type: 'list', list: 'role', listLabel: 'role_name', required: false,
+      key: 'companygroup_id', type: 'list', list: 'companytype', listLabel: 'company_name', required: false, cols: 3, // partnergroup et companyGroup
     },
     {
-      key: 'usertype_id', type: 'list', list: 'usertype', listLabel: 'usertype_name', required: false,
+      key: 'company_id', type: 'list', list: 'companytype', listLabel: 'company_name', required: false, cols: 3, // partnerCompany et les company
+    },
+    {
+      key: 'role_id', type: 'list', list: 'role', listLabel: 'role_name', required: false, cols: 3,
+    },
+    {
+      key: 'usertype_id', type: 'list', list: 'usertype', listLabel: 'usertype_name', required: false, cols: 3,
     },
   ],
   note: 'frontend_0_8_13',

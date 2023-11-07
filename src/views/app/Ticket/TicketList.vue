@@ -105,7 +105,7 @@ export default {
       return Table
     },
     useModalToCreate() {
-      return this.definition.createModal !== false
+      return this.definition.createModal === 'modal'
     },
   },
   watch: {

@@ -226,7 +226,7 @@
                       <b-th>{{ $t('attribute.email_received_datetime') }}</b-th>
                       <b-th>{{ $t('attribute.email_from') }}</b-th>
                       <b-th>{{ $t('attribute.email_subject') }}</b-th>
-                      <b-th>{{ $t('attribute.documents') }}</b-th>
+                      <b-th>{{ $t('attribute.documentModule') }}</b-th>
                     </b-tr>
                   </b-thead>
                   <b-tbody>
@@ -256,11 +256,16 @@
             </b-card-actions>
           </b-col>
           <b-col lg="12">
+            <div v-if="showButton.all">
+              <b-button variant="primary" @click="createDocument">
+                {{ $t('button~newdocument') }}
+              </b-button>
+            </div>
             <DocumentsWidgetView v-if="activeTabItem && activeTabItem.id==='4'" :documents="documents"
                                  :ticket_id="entity.ticket_id"/>
 
             <!--            <b-row>-->
-            <!--              <b-col v-for="(document,i) in documents" :key="i" cols="6">-->
+            <!--              <b-col v-for="(document,i) in document" :key="i" cols="6">-->
             <!--                <b-overlay :show="document.loading">-->
             <!--                  <b-card>-->
             <!--                    <template #header>-->
@@ -316,11 +321,7 @@
             <!--                </b-overlay>-->
             <!--              </b-col>-->
             <!--            </b-row>-->
-            <!--            <div v-if="showButton.all">-->
-            <!--              <b-button variant="primary" @click="createDocument">-->
-            <!--                {{ $t('button~newdocument') }}-->
-            <!--              </b-button>-->
-            <!--            </div>-->
+
 
             <generic-modal ref="documentModal" table="document" :definition="documentDef"
                            table-definition-key="document"

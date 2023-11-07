@@ -24,17 +24,35 @@
         </div>
       </div>
     </b-card>
-    <b-overlay :show="loading">
-      <kanban-board :blocks="visibleTickets" :stages="stages" :config="config" status-prop="column_name"
-                    id-prop="ticket_id" @update-block="updateBlock">
-        <div v-for="stage in stages" :key="stage" :slot="stage"
-             class="w-100 d-flex justify-content-between align-items-center">
-          <h2 :title="getColumnTitle(stage)">
-            {{ stage }}
-          </h2>
-          <div :title="isQualityGate(stage)?'Quality Gate Column':''">
-            <feather-icon v-if="isQualityGate(stage)" class="text-primary" icon="StarIcon"/>
+    <div v-if="loading">
+      <b-row>
+        <b-col lg="3" md="3" sm="2" v-for="(item,index) in 4">
+          <div class="kanban-container">
+            <div class="header-kaban">
+                <b-skeleton animation="wave" type="input"></b-skeleton>
+            </div>
+            <div class="body-kanban">
+              <b-card>
+                <div v-for="(item,index) in 2" :class="[index ===1 ? 'mt-3' :'']">
+                  <b-skeleton-img  no-aspect height="250px"></b-skeleton-img>
+                </div>
+              </b-card>
+
+            </div>
           </div>
+        </b-col>
+      </b-row>
+    </div>
+    <kanban-board v-else :blocks="visibleTickets" :stages="stages" :config="config" status-prop="column_name"
+                  id-prop="ticket_id" @update-block="updateBlock">
+      <div v-for="stage in stages" :key="stage" :slot="stage"
+           class="w-100 d-flex justify-content-between align-items-center">
+        <h2 :title="getColumnTitle(stage)">
+          {{ stage }}
+        </h2>
+        <div :title="isQualityGate(stage)?'Quality Gate Column':''">
+          <feather-icon v-if="isQualityGate(stage)" class="text-primary" icon="StarIcon"/>
+        </div>
 
         </div>
         <div v-for="ticket in visibleTickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
@@ -51,14 +69,15 @@
 </template>
 <script>
 import {
-  BButton, BCard, BFormInput, BFormSelect, BFormCheckbox,
+  BAvatarGroup, BAvatar, BButton, BCard, BFormInput, BFormSelect, BFormCheckbox,BSkeleton,BSkeletonImg
 } from 'bootstrap-vue'
 // eslint-disable-next-line import/extensions
 import GenericModal from '@/views/app/Generic/modal'
 import Table from '@/table'
 import InvoiceTicketCard from '@/views/app/CustomComponents/WP6/InvoiceTicketCard'
 import moment from 'moment-business-time'
-import { getUserData } from '@/auth/utils'
+import {getUserData} from '@/auth/utils'
+import _ from 'lodash'
 import GenericFilter from '@/views/app/Generic/Filter'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal'
 import Fuse from 'fuse.js'
@@ -76,6 +95,8 @@ export default {
     BFormSelect,
     BCard,
     BFormInput,
+    BSkeleton,
+    BSkeletonImg
   },
   mixins: [TicketMixin],
   data() {
@@ -87,16 +108,16 @@ export default {
         {
           text: this.$t('header~board~status~open'), value: 0,
         },
-        { text: this.$t('header~board~status~my'), value: 1 },
-        { text: this.$t('header~board~status~closed'), value: 2 }, {
+        {text: this.$t('header~board~status~my'), value: 1},
+        {text: this.$t('header~board~status~closed'), value: 2}, {
           text: this.$t('header~board~status~notassigned'),
           value: 3,
         },
       ],
       filterValue: 0,
       definition: Table.ticket,
-      loading: false,
       showSubTickets: true,
+      loading: true,
     }
   },
   computed: {
@@ -128,7 +149,7 @@ export default {
           keys: Object.keys(prefiltered[0]),
           shouldSort: true,
         })
-        prefiltered = fuse.search(this.search).map(({ item }) => item)
+        prefiltered = fuse.search(this.search).map(({item}) => item)
       }
 
       return prefiltered
@@ -143,18 +164,19 @@ export default {
       this.loadStages(this.board_id)
       this.loadBoardTickets(null, false)
     } finally {
-      this.loading = false
+      // this.loading = false
     }
   },
   methods: {
     async loadBoardTickets(data, loader = true) {
       if (loader) this.loading = true
       try {
-        await this.loadTickets({ board_id: this.board_id, ...data })
+        await this.loadTickets({board_id: this.board_id, ...data})
         // console.log(this.tickets)
       } finally {
         if (loader) this.loading = false
       }
+      this.loading = false
     },
     filter(data) {
       this.loadBoardTickets(data)
@@ -292,7 +314,7 @@ ul {
 }
 
 .drag-inner-list {
-  min-height: 50px;
+  min-height: 50vh;
   max-height: calc(80vh - 30px);
   overflow-x: hidden;
   overflow-y: auto;
