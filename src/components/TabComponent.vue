@@ -4,6 +4,11 @@ export default {
   props: {
     tabTitle: Array,
   },
+  computed: {
+    visibleTabs() {
+      return this.tabTitle.filter(tab => tab.show)
+    },
+  },
   mounted() {
     const allElements = document.querySelectorAll('.tab_container li')
     if (allElements) {
@@ -28,7 +33,7 @@ export default {
 <template>
   <div class="tab_container">
     <ul>
-      <li v-for="(item,index) in tabTitle" :key="index" class="list-item" @click="(event) =>activeOrDiseableItemsNavigation(event, item)">
+      <li v-for="(item,index) in visibleTabs" :key="index" class="list-item" @click="(event) =>activeOrDiseableItemsNavigation(event, item)">
         {{ item.title }}
       </li>
     </ul>

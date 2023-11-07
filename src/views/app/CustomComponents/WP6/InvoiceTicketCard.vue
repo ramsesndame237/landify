@@ -32,6 +32,10 @@
       {{ ticket.ticket_description }}
     </p>
     <div class="d-flex">
+      <strong class="mr-1">{{ $t('attribute.ticket_id') | title }}:</strong>
+      <span v-if="ticket.ticket_id">{{ ticket.ticket_id }}</span>
+    </div>
+    <div class="d-flex">
       <strong class="mr-1">{{ $t('attribute.priority_name') | title }}:</strong>
       <span v-if="ticket.priority_name">{{ ticket.priority_name }}</span>
       <span v-else>{{ $t('not-defined') }}</span>
@@ -109,43 +113,7 @@
                   <!--                  <field :field="{key:'subticket', noLabel :true, required: false}" :entity="entity"/>-->
                 </div>
                 <div class="mt-1">
-                  <b-overlay :show="loading">
-                    <b-table-simple fixed hover small :filter="entity.search">
-                      <b-thead>
-                        <b-tr>
-                          <b-th>Name</b-th>
-                          <b-th>Board</b-th>
-                          <b-th >
-                            Status
-                          </b-th>
-                          <b-th>Start Date</b-th>
-                          <b-th>Assigned To</b-th>
-                        </b-tr>
-                      </b-thead>
-                      <b-tbody >
-                        <subticket-tr
-                          v-for="(subticket, index) in subTickets"
-                          :key="index"
-                          :team-users="teamUsers"
-                          :subticket="subticket"
-                          @entity-updated="updateData"
-                          @subticket-assigned="fetchSubTickets"
-                        />
-                      </b-tbody>
-                      <b-tfoot>
-                        <b-tr variant="secondary">
-                          <b-td >
-                            Summary : {{ subTickets.length }}
-                          </b-td>
-                          <b-td />
-                          <b-td/>
-                          <b-td/>
-                          <b-td />
-
-                        </b-tr>
-                      </b-tfoot>
-                    </b-table-simple>
-                  </b-overlay>
+                  <SubticketTable :team-users="teamUsers" :subtickets="subTickets" />
                 </div>
               </b-tab>
             </b-tabs>
@@ -170,17 +138,15 @@ import TicketMixin from '@/views/app/Kanban/TicketMixin'
 import { title } from '@core/utils/filter'
 import { formatDate } from '@/libs/utils'
 import { find, findIndex } from 'lodash'
-import Field from '@/views/app/Generic/Field.vue'
-import SubticketTr from '@/views/app/Ticket/Subticket/SubticketTr.vue'
 import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.js'
 import GenericModal from '@/views/app/Generic/modal.vue'
+import SubticketTable from '@/views/app/CustomComponents/WP6/SubticketTable.vue'
 
 export default {
   name: 'InvoiceTicketCard',
   components: {
+    SubticketTable,
     GenericModal,
-    SubticketTr,
-    Field,
     BAvatar,
     BIconCalendarDate,
     BDropdown,
