@@ -243,6 +243,11 @@
             </b-card-actions>
           </b-col>
           <b-col lg="12">
+            <div v-if="showButton.all">
+              <b-button variant="primary" @click="createDocument">
+                {{ $t('button~newdocument') }}
+              </b-button>
+            </div>
             <DocumentsWidgetView v-if="activeTabItem && activeTabItem.id==='4'" :documents="documents"
                                  :ticket_id="entity.ticket_id"/>
 
@@ -303,11 +308,7 @@
             <!--                </b-overlay>-->
             <!--              </b-col>-->
             <!--            </b-row>-->
-            <!--            <div v-if="showButton.all">-->
-            <!--              <b-button variant="primary" @click="createDocument">-->
-            <!--                {{ $t('button~newdocument') }}-->
-            <!--              </b-button>-->
-            <!--            </div>-->
+
 
             <generic-modal ref="documentModal" table="document" :definition="documentDef"
                            table-definition-key="document"

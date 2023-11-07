@@ -2,7 +2,7 @@ import { updateInvoiceFlatRate, updateInvoiceApportionable } from '@/table/utils
 
 export default {
   entity: 'frontend_4_1_1',
-  createModal: false,
+  createModal: 'otherPage',
   entityEndpoint: '/invoices',
   formComponent: () => import('@/views/app/FormComponent/InvoiceForm.vue'),
   fields: [

@@ -4,6 +4,7 @@ import { getUserData } from '@/auth/utils'
 export default {
   entity: 'frontend_3_1_1',
   primaryKey: 'pos_id',
+  createModal: 'sidebar',
   entityEndpoint: '/pos',
   filter: (item, vm) => {
     const user = getUserData()
@@ -15,6 +16,15 @@ export default {
       return false
     }
     return true
+  },
+  options: {
+    id: 'siderbar_point_of_sale',
+    shadow: true,
+    rigth_position: true,
+    no_header: true,
+    custom_footer: false,
+    backdrop: true,
+    backdrop_variant: 'variant',
   },
   perPage: 100000,
   fields: [
@@ -30,15 +40,16 @@ export default {
     },
     {
       key: 'company_id',
-      type: 'list',
-      list: 'frontend_2_2_3_1',
+      type: 'custom_list',
+      list: 'company',
+      cols: 12,
       listLabel: 'company_name',
       hideOnIndex: true,
       relationEntity: 'company_pos_rel',
       filter_key: 'customergroup_id',
     },
-    { key: 'pos_name' },
-    { key: 'pos_branchnumber' },
+    { key: 'pos_name', cols: 12 },
+    { key: 'pos_branchnumber', cols: 12 },
     { key: 'pos_name_external', required: false },
     // { key: 'location_count', hideOnForm: true },
     { key: 'area_count', hideOnForm: true },
@@ -54,6 +65,18 @@ export default {
       relationEntity: 'contactperson_pos_rel',
       filter_key: 'company_id',
     },
+    // {
+    //   key: 'pos_first_year', type: 'date', required: false, hideOnIndex: true,cols: 12
+    // },
+    // {
+    //   key: 'contactperson_id',
+    //   type: 'list',
+    //   list: 'frontend_2_1_3_5',
+    //   listLabel: 'contactperson_name',
+    //   hideOnIndex: true,
+    //   relationEntity: 'contactperson_pos_rel',
+    //   filter_key: 'company_id',
+    // },
   ],
   filters: [
     {

@@ -94,7 +94,7 @@ export default {
         <b-col>
           <b-form-group
             id="fieldset-1"
-            label="Choose the type"
+            label="Typ (Dokumentsart)"
             label-for="input-1"
             :invalid-feedback="invalidFeedback"
             :state="state"
@@ -109,7 +109,7 @@ export default {
           </b-form-group>
           <b-form-group
             id="fieldset-1"
-            label="Choose the subtype"
+            label="Typ (Dokumentstyp)"
             label-for="input-1"
             :invalid-feedback="invalidFeedback"
             :state="state"

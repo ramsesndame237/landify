@@ -6,7 +6,10 @@ import app from './app'
 import appConfig from './app-config'
 import verticalMenu from './vertical-menu'
 import table from './table'
+import team from '@/store/modules/team';
+import location from '@/store/modules/locations'
 import user from './modules/user'
+import mails from '@/store/modules/mails'
 
 import document from './modules/document'
 
@@ -19,6 +22,9 @@ export default new Vuex.Store({
     verticalMenu,
     document,
     table,
+    team,
+    location,
+    mails,
     user,
   },
   strict: process.env.DEV,

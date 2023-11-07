@@ -48,15 +48,14 @@ export default {
   },
   computed: {
     filteredOptions() {
-      console.log("this is the query send", this.query)
-      if (Object.keys(this.query).length > 0 && this.query[this.keyLabel] !== '') {
-        let copyOption = [...this.options]
-        const optionsData = copyOption.filter(option => option[this.keyLabel] !== undefined || option[this.keyLabel] !=='')
-        return optionsData.filter(option => option[this.keyLabel].toLowerCase()
+      if (Object.keys(this.query).length > 0) {
+        const optionsData = this.options.filter(option => option[this.keyLabel] !== undefined)
+        const dataFilter = optionsData.filter(option => option[this.keyLabel].toLowerCase()
           .includes(this.query[this.keyLabel].toLowerCase()))
           .sort((a, b) => a[this.keyLabel].toLowerCase()
             .indexOf(this.query[this.keyLabel].toLowerCase()) - b[this.keyLabel].toLowerCase()
             .indexOf(this.query[this.keyLabel].toLowerCase()))
+        return dataFilter
       }
       return this.options
     },

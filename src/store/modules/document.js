@@ -6,7 +6,8 @@ export default {
   state: {
     documents: [],
     documenttype: [],
-    subdocumenttype: []
+    subdocumenttype: [],
+    previewDocument:""
   },
   getters: {
     getAllDocumentType: (state) => state.documenttype
@@ -30,7 +31,8 @@ export default {
         console.log(error)
       })
 
-    }
+    },
+
   },
 
 }

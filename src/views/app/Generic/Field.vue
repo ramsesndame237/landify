@@ -18,7 +18,8 @@
                     :editor="editor" :config="{}"
           /> -->
         </div>
-        <div v-else-if="field.type==='list'" :class="(field.withNew || field.withPopup || field.ids) ? 'd-flex': ''">
+        <div v-else-if="field.type==='list'"
+             :class="(field.withNew || field.withPopup || field.ids || field.withRoundedNew) ? 'd-flex': ''">
           <v-select v-model="entity[field.key]" :dropdown-should-open="true" :disabled="selectDisabled"
                     :class="{'error': errors.length > 0, 'multiple_select': field.multiple }"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
@@ -36,6 +37,11 @@
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm">New
           </b-button>
+          <div v-if="field.withRoundedNew && !field.alwaysNew && !disabled"
+               class="ml-2 text-nowrap d-flex align-items-center justify-content-center custom_rounded_button cursor-pointer "
+               @click="showNewForm">
+            <feather-icon icon="PlusIcon"/>
+          </div>
           <b-button v-if="field.withPopup && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     :disabled="disablePopupButton" @click="showNewPopupForm">New
           </b-button>
@@ -44,6 +50,23 @@
                     @click="showAll=!showAll">
             {{ showAll ? 'Show Created' : 'Show All' }}
           </b-button>
+        </div>
+        <div v-else-if="field.type ==='custom_list'">
+          <AutoCompleteInput
+            :options="listItems"
+            :key-label="field.listLabel || ''"
+            :key_value="field.key || ''"
+            icon_open="ChevronUpIcon"
+            icon_close="ChevronDownIcon"
+          />
+        </div>
+        <div v-else-if="field.type === 'list_select'">
+          <SelectedButtonList v-if="field.options.length > 0" :key-object="field.key" :label-string="field.listLabel"
+                              :options="field.options" :classes="[field.listButtonClass]"
+                              @selectedOptions="SelectedButtonOptions"/>
+          <span v-else>
+            No teams available for the company you previous selected
+          </span>
         </div>
         <div v-else-if="field.type==='yesno' || field.type==='custom-select'">
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
@@ -55,7 +78,7 @@
         <div v-else-if="field.type==='checkbox'">
           <b-form-checkbox-group v-model="entity[field.key]" :disabled="disabled"
                                  :state="errors.length > 0 ? false:null" :placeholder="field.key" text-field="label"
-                                 :options="field.items"/>
+                                 :options="field.items" />
         </div>
         <div v-else-if="field.type==='file'">
           <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
@@ -114,7 +137,7 @@
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
                     class="form-control"/>
         <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
-                         :state="errors.length > 0 ? false:null" :placeholder="field.key" :value="1"
+                         :state="errors.length > 0 ? false:null" :value="1"
                          :unchecked-value="0" style="margin-top: 5px"/>
         <b-input-group v-else class="w-100">
           <b-input-group-prepend v-if="field.unit && field.unit_key && field.isUnitOnLeft" class="w-20 bg-input">
@@ -202,6 +225,8 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 import CustomDatePicker from '@/views/app/Generic/CustomDatePicker.vue'
 import { getUserData } from '@/auth/utils'
 import { mapGetters } from 'vuex'
+import SelectedButtonList from '@/components/SelectedButtonList.vue'
+import AutoCompleteInput from '@/components/AutoCompleteInput.vue'
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -214,6 +239,8 @@ function isTrue(val) {
 export default {
   name: 'Field',
   components: {
+    AutoCompleteInput,
+    SelectedButtonList,
     CustomDatePicker,
     ckeditor: CKEditor.component,
     BFormInput,
@@ -262,8 +289,14 @@ export default {
         },
       },
       yesNoOptions: [
-        { value: 1, label: 'Yes' },
-        { value: 0, label: 'No' },
+        {
+          value: 1,
+          label: 'Yes',
+        },
+        {
+          value: 0,
+          label: 'No',
+        },
       ],
       files: [],
       unitOptions: [],
@@ -296,6 +329,7 @@ export default {
     },
     listItems() {
       if (this.field.filter && typeof this.field.filter === 'function') {
+        console.log('this is the list', this.list)
         return this.list.filter(item => this.field.filter(item, this))
       }
       if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
@@ -332,10 +366,10 @@ export default {
       return this.newValue === this.entity[this.field.key]
     },
     selectedValue() {
-      return this.field.type === 'list' ? this.list.find(e => e[this.field.key] === this.entity[this.field.key]) : this.entity[this.field.key]
+      return (this.field.type === 'list' || this.field.type === 'custom_list') ? this.list.find(e => e[this.field.key] === this.entity[this.field.key]) : this.entity[this.field.key]
     },
     selectedValues() {
-      return this.field.type === 'list' ? this.list.filter(e => this.entity[this.field.key]?.indexOf(e[this.field.key]) >= 0) : []
+      return (this.field.type === 'list' || this.field.type === 'custom_list') ? this.list.filter(e => this.entity[this.field.key]?.indexOf(e[this.field.key]) >= 0) : []
     },
     ...mapGetters('user', ['isUserExternClient', 'isUserExternPartner']),
 
@@ -354,7 +388,9 @@ export default {
       if (this.editorInstance) {
         if (newValue) {
           this.editorInstance.hide()
-        } else this.editorInstance.show()
+        } else {
+          this.editorInstance.show()
+        }
       }
     },
     listItems: {
@@ -368,7 +404,7 @@ export default {
     },
   },
   async created() {
-    if (this.field.type === 'list' && ((!this.field.filter_key || !!this.entity[this.field.filter_key]) || this.field.noFetchOnChange) && !this.field.onlyForm) {
+    if ((this.field.type === 'list' || this.field.type === 'custom_list') && ((!this.field.filter_key || !!this.entity[this.field.filter_key]) || this.field.noFetchOnChange) && !this.field.onlyForm) {
       await this.fetchList()
     } else if (this.field.type === 'boolean') {
       // set false as default value
@@ -485,6 +521,10 @@ export default {
           }
         }
       }
+    },
+    SelectedButtonOptions(value, keyValue) {
+      console.log('this is the value', value, keyValue)
+      if (keyValue) this.entity[keyValue] = value
     },
     initEditor() {
       // Initialisation de TinyMCE
@@ -610,6 +650,7 @@ export default {
           this.waitPassword = false
         })
     },
+
     doCopy() {
       if (this.entity[this.field.key]) {
         try {
@@ -642,7 +683,7 @@ export default {
     },
     async getRelationValue() {
       console.log('get relation value')
-      if (this.field.type === 'list') {
+      if (this.field.type === 'list' || this.field.type === 'custom_list') {
         if (this.entity[this.field.key] == null) {
           const primaryKey = this.getPrimaryKey(this.definition)
           await this.$api({
@@ -666,12 +707,14 @@ export default {
             })
         }
         if (this.field.alwaysNew) {
-          this.getFormFields(this.subDefinition).forEach(field => {
-            if (this.entity[field.key]) this.subEntity[field.key] = this.entity[field.key]
-          })
-          this.getSubFields().forEach(field => {
-            field.getRelationValue()
-          })
+          this.getFormFields(this.subDefinition)
+            .forEach(field => {
+              if (this.entity[field.key]) this.subEntity[field.key] = this.entity[field.key]
+            })
+          this.getSubFields()
+            .forEach(field => {
+              field.getRelationValue()
+            })
         }
       }
     },
@@ -681,7 +724,8 @@ export default {
         shouldSort: true,
       })
       return search.length
-        ? fuse.search(search).map(({ item }) => item)
+        ? fuse.search(search)
+          .map(({ item }) => item)
         : fuse.list
     },
     getSubFields() {
@@ -714,6 +758,7 @@ export default {
       if (this.list.length === 0 || force) this.loading = true
       try {
         let { list } = this.field
+        console.log('this is the field list debug', list)
         if (list === 'address') {
           list = this.subDefinition.entity
           await this.$store.dispatch('table/fetchTableDefinition', 'address')
@@ -825,6 +870,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/assets/scss/variables/variables';
 
 .emoji_container {
   position: relative;
@@ -864,5 +910,18 @@ export default {
 .bg-input {
   background-color: #e9ecef;
   color: #495057
+}
+
+.custom_rounded_button {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #eee;
+
+  svg {
+    fill: $primary;
+    stroke: $primary;
+  }
+
 }
 </style>

@@ -61,6 +61,8 @@ extend('max_value', {
   ...maxValue,
   message: (_, values) => i18n.t('validations.messages.max_value', values),
 })
+// Vue Fragment
+Vue.use(Plugin)
 extend('date_after', {
   params: ['attribute'],
   validate: (value, { attribute }) => value >= attribute,
