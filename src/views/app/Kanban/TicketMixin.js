@@ -91,7 +91,8 @@ export default {
       }
       return true
     },
-    async toggleTicket(ticket) {
+    async toggleTicket(e,ticket) {
+      e.stopPropagation()
       const result = await this.$swal({
         title: 'Are you sure?',
         text: ticket.ticket_closed ? 'This ticket will be re-opened' : 'This ticket will be closed',

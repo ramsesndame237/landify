@@ -78,7 +78,6 @@ import InvoiceTicketCard from '@/views/app/CustomComponents/WP6/InvoiceTicketCar
 import moment from 'moment-business-time'
 import {getUserData} from '@/auth/utils'
 import _ from 'lodash'
-import { getUserData } from '@/auth/utils'
 import GenericFilter from '@/views/app/Generic/Filter'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal'
 import Fuse from 'fuse.js'
