@@ -1,11 +1,11 @@
 <template>
   <b-tr>
     <b-td>
-      <b-link @click="$router.push({name: 'table-view', params: {table: 'ticket', id: subticket.ticket_id, entity: subticket}})">
-        <p v-b-tooltip class="w-90 text-truncate" :title=" subticket.ticket_name ">
+      <router-link :to="{name:'table-view',params: {table:'ticket',id: subticket.ticket_id, entity: subticket, columns:[], teams: []}}">
+        <p v-b-tooltip class="w-90 text-truncate" :title=" subticket.ticket_name">
           {{ subticket.ticket_name }}
         </p>
-      </b-link>
+      </router-link>
     </b-td>
     <b-td>
       <p v-b-tooltip class="w-90 text-truncate" :title=" subticket.board_name ">

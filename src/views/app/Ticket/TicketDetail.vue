@@ -47,6 +47,17 @@
             </div>
             <b-card-actions :title="$t('headline~ticket~information')" action-collapse>
               <table class="mt-2 mt-xl-0 w-100">
+                <tr v-if="!isTicket">
+                  <th class="pb-50 font-weight-bold">
+                    {{ $t('attribute.ticket_name_group') }}
+                  </th>
+                  <td class="pb-50">
+                    <router-link v-if="entity.ticket_id_group"
+                                 :to="{name:'table-view',params: {table:'ticket',id: entity.ticket_id_group, entity: {}, columns:[], teams: []}}">
+                      {{ entity.ticket_name_group }}
+                    </router-link>
+                  </td>
+                </tr>
                 <tr>
                   <th class="pb-50 font-weight-bold">
                     {{ $t('attribute.board_name') }}
@@ -320,9 +331,17 @@
             <add-document-to-contract ref="documentContractModal"/>
             <add-document-to-pos ref="documentPosModal"/>
           </b-col>
-          <b-col v-if="activeTabItem && activeTabItem.id ==='5'" lg="12">
+          <b-col v-if="activeTabItem && activeTabItem.id ==='5' && isTicket" lg="12">
             <b-card :title="$t('headline~ticket~subtasks')">
-              We are still working on this design...</b-card>
+              <b-card-text class="text-right">
+                <b-button v-if="$can('create', table)" variant="primary" @click="createSubTicket">
+                  {{ $t('headline~ticket~newsubtask') }}
+                </b-button>
+              </b-card-text>
+              <SubticketTable :subtickets="subTickets" :team-users="[]" :loading="loading" />
+            </b-card>
+            <generic-modal ref="modal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
+                           :title="$t('headline~ticket~newsubtask')" />
           </b-col>
         </b-row>
       </div>
@@ -356,10 +375,12 @@ import { mapGetters } from 'vuex'
 import TabComponent from '@/components/TabComponent.vue'
 import DocumentsWidgetView from '@/views/app/Ticket/widgets/DocumentsWidgetView.vue'
 import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.js'
+import SubticketTable from '@/views/app/CustomComponents/WP6/SubticketTable.vue'
 
 export default {
   name: 'TicketDetail',
   components: {
+    SubticketTable,
     DocumentsWidgetView,
     TabComponent,
     AddDocumentToContract,
@@ -386,29 +407,6 @@ export default {
       loading: false,
       activeTabItem: null,
       emails: [],
-      tabTitle: [
-        {
-          id: '2',
-          title: 'Timeline',
-        },
-        {
-          id: '5',
-          title: this.$t('headline~ticket~subtasks'),
-        },
-        {
-          id: '4',
-          title: 'Documents',
-        },
-        {
-          id: '3',
-          title: 'Messages and Emails',
-        },
-        {
-          id: '1',
-          title: 'Information',
-        },
-
-      ],
       loadingEmail: false,
       contractDocument: {},
       noteToInternal: true,
@@ -416,6 +414,36 @@ export default {
     }
   },
   computed: {
+    tabTitle() {
+      return [
+        {
+          id: '2',
+          title: 'Timeline',
+          show: true,
+        },
+        {
+          id: '5',
+          title: this.$t('headline~ticket~subtasks'),
+          show: this.isTicket,
+        },
+        {
+          id: '4',
+          title: 'Documents',
+          show: true,
+        },
+        {
+          id: '3',
+          title: 'Messages and Emails',
+          show: true,
+        },
+        {
+          id: '1',
+          title: 'Information',
+          show: true,
+        },
+
+      ]
+    },
     invoiceTicket() {
       return true
     },
