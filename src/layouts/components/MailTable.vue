@@ -37,14 +37,14 @@
       <!--    </template>-->
       <template v-for="(item,idx) in items">
         <b-tbody :key="idx">
-          <mail-tr :item="item" @show-content="showMailContent(item)" @classify="($vm) => classify(item, $vm)"
-                   @reject="reject(item)"/>
+          <mail-tr :item="item" @show-content="showMailContent(item)" @classify="($vm) => classifyNew(item, $vm, 'classify')"
+                   @reject="classifyNew(item, $vm, 'dismiss')"/>
         </b-tbody>
         <transition :key="'c'+idx" name="slide">
           <b-tbody v-if="item.documents.length>0" v-show="item.open" :id="'collapse'+item.email_id">
             <mail-tr v-for="(child,idx) in item.documents" :key="idx" :item="child" child
-                     style="background-color: white !important;" @classify="($vm) => classify(child, $vm)"
-                     @reject="reject(child)"/>
+                     style="background-color: white !important;" @classify="($vm) => classifyNew(child, $vm, 'classify', item)"
+                     @reject="classifyNew(child, $vm, 'dismiss', item)"/>
           </b-tbody>
         </transition>
       </template>
@@ -116,6 +116,7 @@ export default {
   },
   data() {
     return {
+      api: process.env.VUE_APP_BASE_URL,
       loading: false,
       sortBy: 'email_received_datetime',
       sortDesc: 'DESC',
@@ -189,6 +190,104 @@ export default {
         } else if (!document.ticket_created && !document.classification_dismissed) return false
         return true
       })
+    },
+    async classifyNew(item, $tr, action, parentEmail) {
+      if (!item.ticket_id && action !== 'dismiss') {
+        if (!item.pos_id) return this.$errorToast('Please select a pos')
+        // if (!item.contract_id) return this.$errorToast('Please select a contract')
+        if (!item.board_id) return this.$errorToast('Please select a board')
+      }
+      try {
+        this.loading = true
+        // get first column of selected board
+        const column = (await this.$api({
+          entity: 'frontend_column_list',
+          action: 'read-rich',
+          order_by: 'rank_order',
+          order_dir: 'ASC',
+          data: [{ board_id: item.board_id }],
+        })).data.data.data[0]
+
+        const now = moment()
+        // const user = getUserData()
+        const deadline = now.clone().addWorkingTime(column.default_deadline_period || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
+        const deadline_yellow = now.clone().addWorkingTime(column.default_deadline_yellow || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
+        const deadline_red = now.clone().addWorkingTime(column.default_deadline_red || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
+
+        const _payload = {
+          pos_id: item.pos_id,
+
+          board_id: item.board_id,
+
+          // column_id: column.column_id,
+          ticket_move_time_in: now.format('YYYY-MM-DD HH:mm:ss'),
+          ticket_deadline_offset: deadline,
+          ticket_deadline_offset_yellow: deadline_yellow,
+          ticket_deadline_offset_red: deadline_red,
+
+          ticket_id_group: item.ticket_id,
+
+          email_id: item.email_id,
+
+          contract_id: item.contract_id,
+          document_id: item.document_id,
+          documenttype_id: item.documenttype_id,
+
+          action,
+        }
+
+        const payload = {}
+        Object.keys(_payload).forEach(key => {
+          if (typeof _payload[key] !== typeof undefined) {
+            payload[key] = _payload[key]
+          }
+        })
+
+        const { data } = await this.$http.put('/tickets/classification', payload)
+        const ticket_id = data.ticket_id
+        const master_ticket_id = item.ticket_id || ticket_id
+        this.fetch()
+        if (item.document_id) {
+          this.$set(
+            item,
+            action === 'dismiss'
+              ? 'classification_dismissed'
+              : 'ticket_created',
+            true,
+          )
+        }
+        if (item.document_id) this.$set(item, 'processed', true)
+        this.$set(
+          item,
+          action === 'dismiss'
+            ? 'email_dismissed'
+            : 'ticket_id_created',
+          action === 'dismiss' ? true : master_ticket_id,
+        )
+        if (item.ticket_id) this.$set(item, 'subticket_id_created', ticket_id)
+
+        // Make the mail proceed if it should be
+        const currentEmail = (parentEmail || item)
+        if (currentEmail) {
+          currentEmail.email_processed = currentEmail.documents?.length > 0
+            ? !(parentEmail || item).documents.map(doc => !!doc.processed || !!doc.classification_dismissed).includes(false)
+            : true
+        }
+        this.$successToast(action === 'dismiss' ? 'Dismiss success' : 'Ticket Created')
+        this.loading = false
+      } catch (e) {
+        if (e.response) this.$errorToast(e.response.data.detail)
+        else this.$errorToast(e.message)
+      } finally {
+        this.loading = false
+        const isEmailHasBeenClassified = !!(parentEmail || item)?.email_processed
+
+        if (isEmailHasBeenClassified) {
+          this.fetch(true)
+        }
+      }
+
+      return undefined
     },
     async classify(item, $tr) {
       if (!item.ticket_id) {
@@ -397,7 +496,7 @@ export default {
       if (this.loading) return
       await this.fetch()
     },
-    async fetch() {
+    async fetch(ignoreLoading) {
       const payload = {
         // order_by: this.sortBy,
         // order_dir: this.sortDesc ? 'DESC' : 'ASC',
@@ -415,7 +514,7 @@ export default {
       //   this.loading = false
       //   return this.processData(fromCache)
       // }
-      if (this.loading) return
+      if (this.loading && !ignoreLoading) return
       this.loading = true
 
       const promises = [this.$http.get('/emails', { params: payload })]
