@@ -570,26 +570,26 @@ export default {
         })
         // process ticket data
         if (!item.email_subject) return
-        const id = item.email_subject.match(/^#\d+/g)
-        if (id) {
-          const ticket_id = parseInt(id[0].substr(1))
-          const list = this.$store.state.table.listCache.frontend_6_1_6_overview
-          const el = list.find(e => e.ticket_id === ticket_id)
-          if (el) {
-            if (!item.ticket_id) {
-              item.ticket_id = el.ticket_id
-              item.pos_id = el.pos_id
-              item.contract_id = el.contract_id
-            }
-            item.documents.forEach(document => {
-              if (!document.ticket_id) {
-                document.ticket_id = el.ticket_id
-                document.pos_id = el.pos_id
-                document.contract_id = el.contract_id
-              }
-            })
-          }
-        }
+        // const id = item.email_subject.match(/^#\d+/g)
+        // if (id) {
+        //   const ticket_id = parseInt(id[0].substr(1))
+        //   const list = this.$store.state.table.listCache.frontend_6_1_6_overview
+        //   const el = list.find(e => e.ticket_id === ticket_id)
+        //   if (el) {
+        //     if (!item.ticket_id) {
+        //       item.ticket_id = el.ticket_id
+        //       item.pos_id = el.pos_id
+        //       item.contract_id = el.contract_id
+        //     }
+        //     item.documents.forEach(document => {
+        //       if (!document.ticket_id) {
+        //         document.ticket_id = el.ticket_id
+        //         document.pos_id = el.pos_id
+        //         document.contract_id = el.contract_id
+        //       }
+        //     })
+        //   }
+        // }
       })
       this.items = items
       return this.items
