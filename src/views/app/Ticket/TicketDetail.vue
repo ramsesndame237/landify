@@ -420,10 +420,10 @@ export default {
       return true
     },
     isTicket() {
-      return this.entity.ticket_id_group === null
+      return this.entity?.ticket_id_group === null
     },
     firstColumn() {
-      return this.entity.columns[0]
+      return this.entity?.columns[0]
     },
     showButton() {
       const { team_type } = this.firstColumn
@@ -454,10 +454,10 @@ export default {
   async mounted() {
     this.loading = true
     try {
-      if (!this.entity || !this.entity.columns) {
+      if (!this.entity || !this.entity?.columns) {
         await this.loadSingleTicket(false)
         this.entity = this.tickets[0]
-        await this.loadStages(this.entity.board_id)
+        await this.loadStages(this.entity?.board_id)
       } else {
         this.columns = this.$route.params.columns
         this.teams = this.$route.params.teams
@@ -489,31 +489,31 @@ export default {
     formatDate,
     async addToPos(document) {
       if (document.loading) return
-      this.$refs.documentPosModal.openModal(document, this.entity.pos_id)
+      this.$refs.documentPosModal.openModal(document, this.entity?.pos_id)
     },
     addToContract(document) {
       this.contractDocument.document_id = document.document_id
-      this.$refs.documentContractModal.openModal(document, this.entity.contract_id)
+      this.$refs.documentContractModal.openModal(document, this.entity?.contract_id)
     },
     canStamp(document) {
-      if (!this.entity || !this.entity.columns) return false
+      if (!this.entity || !this.entity?.columns) return false
       if (document.document_mime_type !== 'application/pdf') return false
-      return this.columns.find(c => c.column_id === this.entity.columns[0].column_id).column_has_stamp
+      return this.columns.find(c => c.column_id === this.entity?.columns[0].column_id).column_has_stamp
     },
     canMoveBack() {
       if (!this.entity) return false
-      if (this.entity.ticket_closed) return false
-      if (!this.entity.columns[1]) return false
-      if (this.entity.columns[1].rank_order > this.entity.columns[0].rank_order) return false
-      const column_name = this.entity.columns[1].column_name
-      return this.config.accepts(null, { dataset: { status: column_name } }, { dataset: { status: this.entity.column_name } }, true)
+      if (this.entity?.ticket_closed) return false
+      if (!this.entity?.columns[1]) return false
+      if (this.entity?.columns[1].rank_order > this.entity?.columns[0].rank_order) return false
+      const column_name = this.entity?.columns[1].column_name
+      return this.config.accepts(null, { dataset: { status: column_name } }, { dataset: { status: this.entity?.column_name } }, true)
     },
     canMoveToNext() {
       if (!this.entity) return false
-      if (this.entity.ticket_closed) return false
-      const colIdx = this.columns.findIndex(c => c.column_name === this.entity.column_name)
+      if (this.entity?.ticket_closed) return false
+      const colIdx = this.columns.findIndex(c => c.column_name === this.entity?.column_name)
       if (colIdx === this.columns.length - 1) return false
-      return this.config.accepts(null, { dataset: { status: this.columns[colIdx + 1].column_name } }, { dataset: { status: this.entity.column_name } })
+      return this.config.accepts(null, { dataset: { status: this.columns[colIdx + 1].column_name } }, { dataset: { status: this.entity?.column_name } })
     },
     async moveToNext() {
       const result = await this.moveToNextColumn(this.entity)
@@ -535,14 +535,14 @@ export default {
       return getDocumentLink(document)
     },
     createDocument() {
-      this.$refs.documentModal.openModal(true, { ticket_id: this.entity.ticket_id })
+      this.$refs.documentModal.openModal(true, { ticket_id: this.entity?.ticket_id })
     },
     createInvoice() {
       this.$router.push({
         name: 'table-form',
         params: {
           table: 'invoice',
-          entity: { ticket_id: this.entity.ticket_id },
+          entity: { ticket_id: this.entity?.ticket_id },
         },
       })
     },
@@ -585,7 +585,7 @@ export default {
         entity: 'document_ticket_rel',
         data: data.map(doc => ({
           document_id: doc.document_id,
-          ticket_id: this.entity.ticket_id,
+          ticket_id: this.entity?.ticket_id,
         })),
       })
         .finally(() => {
@@ -595,7 +595,7 @@ export default {
     async fetchDocuments() {
       const documents = (await this.$http.get('/tickets/documents', {
         params: {
-          ticket_id: this.entity.ticket_id,
+          ticket_id: this.entity?.ticket_id,
           size: 100_000,
         },
       })).data.data
@@ -609,7 +609,7 @@ export default {
       try {
         const results = (await this.$http.get('/tickets/emails', {
           params: {
-            ticket_id: this.entity.ticket_id,
+            ticket_id: this.entity?.ticket_id,
             size: 100_000,
           },
         })).data.data

@@ -20,6 +20,9 @@ export default {
         {
           id: 'document_entry_time',
           key: 'document_entry_time',
+          props: {
+            style: 'width: 200px;',
+          },
           type: 'date',
           header: {
             name: 'datum',
