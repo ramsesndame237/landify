@@ -536,12 +536,14 @@ export default {
       items.forEach(item => {
         item.documents.forEach(async document => {
           if (document.classification_dismissed) document.status = 'dismiss'
-          if (document.ticket_created) document.status = 'done'
+          else if (document.ticket_created) document.status = 'done'
+          else document.status = 'notprocess'
         })
 
         if (item.email_dismissed) item.status = 'dismiss'
         else if (item.email_processed) item.status = 'done'
-        else if (item.documents.findIndex(d => !!d.status) >= 0) item.status = 'inprogress'
+        else if (item.documents.findIndex(d => d.status !== 'notprocess') >= 0) item.status = 'inprogress'
+        else item.status = 'notprocess'
       })
     },
     async processData(data) {
