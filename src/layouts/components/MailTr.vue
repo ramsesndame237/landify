@@ -41,8 +41,7 @@
       </router-link>
     </b-td>
     <b-td class="td-form">
-      <field v-if="visible" ref="contract" :field="contractIdField" :entity="item"
-             :disabled="is_dismissed|| is_done"/>
+      <field v-if="visible" ref="contract" :field="contractIdField" :entity="item" :disabled="is_dismissed|| is_done"/>
       <router-link v-if="is_done && item.contract_id" target="_blank"
                    :to="{name: 'table-view', params: {table: 'contract',id: item.contract_id}}">
         {{ getContractName() }}
@@ -65,15 +64,16 @@
       </span>
     </b-td>
     <b-td class="td-form">
-      <field v-if="visible" :field="boardIdField" :entity="item"
-             :disabled="is_dismissed || is_done"/>
+      <field v-if="visible" :field="boardIdField" :entity="item" :disabled="is_dismissed || is_done"/>
       <router-link v-if="is_done" target="_blank"
                    :to="{name: 'table-kanban', params: {table: 'board',id: item.board_id}}">
         {{ getBoardName() }}
       </router-link>
     </b-td>
     <b-td class="td-form text-center">
-      <b-badge v-if="item.status" :variant="statusClass">{{ $t('classification~status~' + item.status) }}</b-badge>
+      <b-badge v-if="item.status && !item.document_id" :variant="statusClass">
+        {{ $t('classification~status~' + item.status) }}
+      </b-badge>
     </b-td>
     <b-td class="text-center">
       <div v-if="!is_done && !is_dismissed && (item.document_id ? item.classification_id : true)"
@@ -85,6 +85,9 @@
           <feather-icon icon="XIcon" size="24"/>
         </b-button>
       </div>
+      <b-badge v-if="(is_done||is_dismissed) && !!item.document_id" :variant="statusClass">
+        {{ $t('classification~status~' + item.status) }}
+      </b-badge>
     </b-td>
   </b-tr>
 </template>
