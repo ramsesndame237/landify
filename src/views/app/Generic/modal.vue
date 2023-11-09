@@ -65,9 +65,6 @@ export default {
     }
   },
   computed: {},
-  mounted() {
-    console.log("this is the component for the modal")
-  },
   methods: {
     openModal(create, data, title) {
       console.log({ data })

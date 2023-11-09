@@ -72,7 +72,7 @@
         {{ getBoardName() }}
       </router-link>
     </b-td>
-    <b-td class="td-form">
+    <b-td class="td-form text-center">
       <b-badge v-if="item.status" :variant="statusClass">{{ $t('classification~status~' + item.status) }}</b-badge>
     </b-td>
     <b-td class="text-center">
