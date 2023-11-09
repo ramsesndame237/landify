@@ -76,12 +76,12 @@
       <b-badge v-if="item.status" :variant="statusClass">{{ $t('classification~status~' + item.status) }}</b-badge>
     </b-td>
     <b-td class="text-center">
-      <div v-if="visible && !is_done && !is_dismissed && (item.document_id ? item.classification_id : true)"
+      <div v-if="!is_done && !is_dismissed && (item.document_id ? item.classification_id : true)"
            class="d-flex align-items-center">
         <b-button class="btn-icon" variant="flat-success" pill @click="onClassifyClick">
           <feather-icon icon="CheckIcon" size="24"/>
         </b-button>
-        <b-button class="btn-icon" variant="flat-danger" style="margin-bottom: 3px" pill @click="$emit('reject')">
+        <b-button class="btn-icon" variant="flat-danger" style="margin-bottom: 3px" pill @click="onRejectMail">
           <feather-icon icon="XIcon" size="24"/>
         </b-button>
       </div>
@@ -205,7 +205,18 @@ export default {
     this.onTicketIdChange()
   },
   methods: {
+    onRejectMail() {
+      if (!this.visible) {
+        this.$errorToast(this.$t('mail~classify~parent~first~alert'))
+        return
+      }
+      this.$emit('reject')
+    },
     onClassifyClick() {
+      if (!this.visible) {
+        this.$errorToast(this.$t('mail~classify~parent~first~alert'))
+        return
+      }
       this.$emit('classify', this)
     },
     customFormatDate(date) {

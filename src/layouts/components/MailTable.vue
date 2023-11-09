@@ -93,22 +93,18 @@
 
 <script>
 import {
-  BTable, BButton, BFormCheckbox, BTableSimple,
+  BTableSimple,
 } from 'bootstrap-vue'
 import MailTr from '@/layouts/components/MailTr'
 import Field from '@/views/app/Generic/Field'
 import moment from 'moment-business-time'
 import { getUserData } from '@/auth/utils'
-import _ from 'lodash'
 import Fuse from 'fuse.js'
 
 export default {
   components: {
     Field,
     MailTr,
-    BTable,
-    BButton,
-    BFormCheckbox,
     BTableSimple,
   },
   props: {
