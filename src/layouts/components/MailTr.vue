@@ -27,13 +27,12 @@
       </div>
     </b-td>
     <b-td class="td-form">
-        <field v-if="visible" :field="posIdField" :entity="item"
-               :disabled="is_dismissed || is_done || item.ticket_id != null"/>
-        <router-link v-if="is_done && item.pos_id" target="_blank"
-                     :to="{ name: 'table-view', params: { table: 'pos', id: item.pos_id } }">
-          {{ getPosName() }}
-        </router-link>
-      </b-td>
+      <field v-if="visible" :field="posIdField" :entity="item" :disabled="is_dismissed || is_done"/>
+      <router-link v-if="is_done && item.pos_id" target="_blank"
+                   :to="{ name: 'table-view', params: { table: 'pos', id: item.pos_id } }">
+        {{ getPosName() }}
+      </router-link>
+    </b-td>
     <b-td class="td-form">
       <field v-if="visible" ref="ticket" :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/>
       <router-link v-if="is_done" target="_blank"
@@ -43,7 +42,7 @@
     </b-td>
     <b-td class="td-form">
       <field v-if="visible" ref="contract" :field="contractIdField" :entity="item"
-             :disabled="is_dismissed|| is_done ||item.ticket_id!=null"/>
+             :disabled="is_dismissed|| is_done"/>
       <router-link v-if="is_done && item.contract_id" target="_blank"
                    :to="{name: 'table-view', params: {table: 'contract',id: item.contract_id}}">
         {{ getContractName() }}
@@ -67,11 +66,14 @@
     </b-td>
     <b-td class="td-form">
       <field v-if="visible" :field="boardIdField" :entity="item"
-             :disabled="is_dismissed || is_done || item.ticket_id!=null"/>
+             :disabled="is_dismissed || is_done"/>
       <router-link v-if="is_done" target="_blank"
                    :to="{name: 'table-kanban', params: {table: 'board',id: item.board_id}}">
         {{ getBoardName() }}
       </router-link>
+    </b-td>
+    <b-td class="td-form">
+      <b-badge v-if="item.status" :variant="statusClass">{{ $t('classification~status~' + item.status) }}</b-badge>
     </b-td>
     <b-td class="text-center">
       <div v-if="visible && !is_done && !is_dismissed && (item.document_id ? item.classification_id : true)"
@@ -83,8 +85,6 @@
           <feather-icon icon="XIcon" size="24"/>
         </b-button>
       </div>
-      <span v-if="is_done" class="text-success">Done</span>
-      <span v-if="is_dismissed" class="text-warning">Dismissed</span>
     </b-td>
   </b-tr>
 </template>
@@ -127,9 +127,9 @@ export default {
         noLabel: true,
         noFetch: true,
         /**
-        * Cette clé permet de spécifier si lorsque les options dans le champ sont trop long, au
-        * Hover du champ, on doit afficher les détails sous un tooltip
-        */
+         * Cette clé permet de spécifier si lorsque les options dans le champ sont trop long, au
+         * Hover du champ, on doit afficher les détails sous un tooltip
+         */
         optionWithTooltipDetail: true,
       },
       contractIdField: {
@@ -163,6 +163,18 @@ export default {
     }
   },
   computed: {
+    statusClass() {
+      switch (this.item.status) {
+        case 'inprogress':
+          return 'warning'
+        case 'done':
+          return 'success'
+        case 'dismiss':
+          return 'danger'
+        default:
+          return ''
+      }
+    },
     is_dismissed() {
       return this.item.document_id ? !!this.item.classification_dismissed : !!this.item.email_dismissed
     },
@@ -182,6 +194,10 @@ export default {
     },
     'item.documenttype_id': function (val) {
       this.onDocumentTypeChange()
+    },
+    'item.pos_id': function (val) {
+      if (this.item.contract_id) this.$set(this.item, 'contract_id', null)
+      if (this.item.ticket_id) this.$set(this.item, 'ticket_id', null)
     },
   },
   mounted() {
@@ -221,11 +237,9 @@ export default {
       if (val) {
         const list = this.$store.state.table.listCache.frontend_6_1_6_overview
         const el = list.find(e => e.ticket_id === val)
-        console.log('el', el.pos_name)
         if (el) {
-          this.$set(this.item, 'pos_id', el.pos_id)
-          this.$set(this.item, 'contract_id', el.contract_id)
-          this.$set(this.item, 'board_id', el.board_id)
+          if (!this.item.contract_id && el.contract_id) this.$set(this.item, 'contract_id', el.contract_id)
+          if (!this.item.board_id && el.board_id) this.$set(this.item, 'board_id', el.board_id)
         }
       }
     },
@@ -251,8 +265,6 @@ export default {
       return el?.documenttype_name
     },
     onDocumentTypeChange() {
-      console.log('documenttype change')
-      if (this.item.ticket_id) return
       const val = this.item.documenttype_id
       if (val) {
         const list = this.$store.state.table.listCache.board

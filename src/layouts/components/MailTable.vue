@@ -27,6 +27,9 @@
             Board
           </b-th>
           <b-th class="text-center">
+            Status
+          </b-th>
+          <b-th class="text-center">
             Action
           </b-th>
         </b-tr>
@@ -37,13 +40,14 @@
       <!--    </template>-->
       <template v-for="(item,idx) in items">
         <b-tbody :key="idx">
-          <mail-tr :item="item" @show-content="showMailContent(item)" @classify="($vm) => classifyNew(item, $vm, 'classify')"
-                   @reject="classifyNew(item, $vm, 'dismiss')"/>
+          <mail-tr :item="item" @show-content="showMailContent(item)"
+                   @classify="($vm) => classifyNew(item, $vm, 'classify')" @reject="classifyNew(item, $vm, 'dismiss')"/>
         </b-tbody>
         <transition :key="'c'+idx" name="slide">
           <b-tbody v-if="item.documents.length>0" v-show="item.open" :id="'collapse'+item.email_id">
             <mail-tr v-for="(child,idx) in item.documents" :key="idx" :item="child" child
-                     style="background-color: white !important;" @classify="($vm) => classifyNew(child, $vm, 'classify', item)"
+                     style="background-color: white !important;"
+                     @classify="($vm) => classifyNew(child, $vm, 'classify', item)"
                      @reject="classifyNew(child, $vm, 'dismiss', item)"/>
           </b-tbody>
         </transition>
@@ -286,7 +290,7 @@ export default {
           this.fetch(true)
         }
       }
-
+      this.processStatus(this.items)
       return undefined
     },
     async classify(item, $tr) {
@@ -532,6 +536,18 @@ export default {
     getCacheKey(payload) {
       return `${this.entity}-${JSON.stringify(payload)}`
     },
+    processStatus(items) {
+      items.forEach(item => {
+        item.documents.forEach(async document => {
+          if (document.classification_dismissed) document.status = 'dismiss'
+          if (document.ticket_created) document.status = 'done'
+        })
+
+        if (item.email_dismissed) item.status = 'dismiss'
+        else if (item.email_processed) item.status = 'done'
+        else if (item.documents.findIndex(d => !!d.status) >= 0) item.status = 'inprogress'
+      })
+    },
     async processData(data) {
       this.$emit('update:totalRows', data.total)
       data.items.forEach(el => {
@@ -568,29 +584,8 @@ export default {
             this.$set(document, 'classification_id', classification.classification_id)
           }
         })
-        // process ticket data
-        if (!item.email_subject) return
-        // const id = item.email_subject.match(/^#\d+/g)
-        // if (id) {
-        //   const ticket_id = parseInt(id[0].substr(1))
-        //   const list = this.$store.state.table.listCache.frontend_6_1_6_overview
-        //   const el = list.find(e => e.ticket_id === ticket_id)
-        //   if (el) {
-        //     if (!item.ticket_id) {
-        //       item.ticket_id = el.ticket_id
-        //       item.pos_id = el.pos_id
-        //       item.contract_id = el.contract_id
-        //     }
-        //     item.documents.forEach(document => {
-        //       if (!document.ticket_id) {
-        //         document.ticket_id = el.ticket_id
-        //         document.pos_id = el.pos_id
-        //         document.contract_id = el.contract_id
-        //       }
-        //     })
-        //   }
-        // }
       })
+      this.processStatus(items)
       this.items = items
       return this.items
     },
