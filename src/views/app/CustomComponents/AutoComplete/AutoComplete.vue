@@ -14,7 +14,7 @@
         onclick="this.querySelector('input').focus()"
       >
         <feather-icon class="flex-shrink-0" size="16" icon="SearchIcon" />
-        <div v-if="!showInput" class="text-left text-truncate">
+        <div v-if="!showInput" class="text-left text-truncate w-100">
           {{
             currentOption && getOptionValue(currentOption) === value
               ? getOptionLabel(currentOption)
@@ -119,6 +119,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    alwaysResetOnFocus: {
+      type: Boolean,
+      default: false,
+    },
     initialOption: {
       type: Object,
       default: null,
@@ -139,7 +143,7 @@ export default {
   watch: {
     inputValue(val) { this.handleInputChange(val) },
     showInput(val) {
-      if (val && this.options?.length === 0) {
+      if (val && (this.alwaysResetOnFocus || this.options?.length === 0)) {
         this.handleInputChange('')
       }
       this.setListPosition()

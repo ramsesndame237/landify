@@ -43,12 +43,12 @@
       <!--    </template>-->
       <template v-for="(item,idx) in items">
         <b-tbody :key="idx">
-          <mail-tr :item="item" @show-content="showMailContent(item)" @classify="({$vm, shouldCreateSubTicket}) => classifyNew(item, $vm, 'classify', { shouldCreateSubTicket })"
+          <mail-tr :key="`email-${item.email_id}`" :item="item" @show-content="showMailContent(item)" @classify="({$vm, shouldCreateSubTicket}) => classifyNew(item, $vm, 'classify', { shouldCreateSubTicket })"
                    @reject="classifyNew(item, $vm, 'dismiss')"/>
         </b-tbody>
         <transition :key="'c'+idx" name="slide">
           <b-tbody v-if="item.documents.length>0" v-show="item.open" :id="'collapse'+item.email_id">
-            <mail-tr v-for="(child,idx) in item.documents" :key="idx" :item="child" child
+            <mail-tr v-for="(child,idx) in item.documents" :key="`${child.document_id}-idx`" :item="child" child
                      style="background-color: white !important;" @classify="({$vm, shouldCreateSubTicket}, options) => classifyNew(child, $vm, 'classify', {parentEmail: item, shouldCreateSubTicket })"
                      @reject="classifyNew(child, $vm, 'dismiss', {parentEmail: item})"
             />
@@ -196,7 +196,7 @@ export default {
     },
     async classifyNew(item, $tr, action, options) {
       const parentEmail = options?.parentEmail
-      const create_subticket = item.ticket_id ? !!options?.shouldCreateSubTicket : undefined
+      const create_subticket = !item.ticket_id || !!options?.shouldCreateSubTicket
       if (!item.ticket_id && action !== 'dismiss') {
         if (!item.pos_id) return this.$errorToast('Please select a pos')
         // if (!item.contract_id) return this.$errorToast('Please select a contract')
@@ -279,7 +279,8 @@ export default {
             ? !(parentEmail || item).documents.map(doc => !!doc.processed || !!doc.classification_dismissed).includes(false)
             : true
         }
-        this.$successToast(action === 'dismiss' ? 'Dismiss success' : 'Ticket Created')
+        // eslint-disable-next-line no-nested-ternary
+        this.$successToast(action === 'dismiss' ? 'Dismiss success' : create_subticket ? 'Ticket Created' : 'Success')
         this.loading = false
       } catch (e) {
         if (e.response) this.$errorToast(e.response.data.detail)
