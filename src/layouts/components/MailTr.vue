@@ -28,7 +28,7 @@
     </b-td>
     <b-td class="td-form">
       <field v-if="visible" :field="posIdField" :entity="item"
-             :disabled="is_dismissed || is_done || item.ticket_id != null"/>
+             :disabled="is_dismissed || is_done"/>
       <router-link v-if="is_done && item.pos_id" target="_blank"
                    :to="{ name: 'table-view', params: { table: 'pos', id: item.pos_id } }">
         {{ getPosName() }}
@@ -65,8 +65,7 @@
       />
     </b-td>
     <b-td class="td-form">
-      <field v-if="visible" ref="contract" :field="contractIdField" :entity="item"
-             :disabled="is_dismissed|| is_done ||item.ticket_id!=null"/>
+      <field v-if="visible" ref="contract" :field="contractIdField" :entity="item" :disabled="is_dismissed|| is_done"/>
       <router-link v-if="is_done && item.contract_id" target="_blank"
                    :to="{name: 'table-view', params: {table: 'contract',id: item.contract_id}}">
         {{ getContractName() }}
@@ -89,10 +88,6 @@
       </span>
     </b-td>
     <b-td class="td-form">
-      <div v-show="false">
-        <field v-if="visible" :field="boardIdField" :entity="item"
-               :disabled="is_dismissed || is_done || item.ticket_id!=null"/>
-      </div>
       <field v-if="visible" :field="boardIdField" :entity="item"
              :disabled="!item.pos_id || (item.ticket_id && !shouldCreateSubTicket) || is_dismissed || is_done"/>
       <router-link v-if="is_done" target="_blank"
@@ -100,18 +95,24 @@
         {{ getBoardName() }}
       </router-link>
     </b-td>
+    <b-td class="td-form text-center">
+      <b-badge v-if="item.status && !item.document_id" :variant="statusClass">
+        {{ $t('classification~status~' + item.status) }}
+      </b-badge>
+    </b-td>
     <b-td class="text-center">
-      <div v-if="visible && !is_done && !is_dismissed && (item.document_id ? item.classification_id : true)"
+      <div v-if="!is_done && !is_dismissed && (item.document_id ? item.classification_id : true)"
            class="d-flex align-items-center">
         <b-button class="btn-icon" variant="flat-success" pill @click="onClassifyClick">
           <feather-icon icon="CheckIcon" size="24"/>
         </b-button>
-        <b-button class="btn-icon" variant="flat-danger" style="margin-bottom: 3px" pill @click="$emit('reject')">
+        <b-button class="btn-icon" variant="flat-danger" style="margin-bottom: 3px" pill @click="onRejectMail">
           <feather-icon icon="XIcon" size="24"/>
         </b-button>
       </div>
-      <span v-if="is_done" class="text-success">Done</span>
-      <span v-if="is_dismissed" class="text-warning">Dismissed</span>
+      <b-badge v-if="(is_done||is_dismissed) && !!item.document_id" :variant="statusClass">
+        {{ $t('classification~status~' + item.status) }}
+      </b-badge>
     </b-td>
   </b-tr>
 </template>
@@ -160,9 +161,9 @@ export default {
         noLabel: true,
         noFetch: true,
         /**
-        * Cette clé permet de spécifier si lorsque les options dans le champ sont trop long, au
-        * Hover du champ, on doit afficher les détails sous un tooltip
-        */
+         * Cette clé permet de spécifier si lorsque les options dans le champ sont trop long, au
+         * Hover du champ, on doit afficher les détails sous un tooltip
+         */
         optionWithTooltipDetail: true,
       },
       contractIdField: {
@@ -196,6 +197,18 @@ export default {
     }
   },
   computed: {
+    statusClass() {
+      switch (this.item.status) {
+        case 'inprogress':
+          return 'warning'
+        case 'done':
+          return 'success'
+        case 'dismiss':
+          return 'danger'
+        default:
+          return ''
+      }
+    },
     is_dismissed() {
       return this.item.document_id ? !!this.item.classification_dismissed : !!this.item.email_dismissed
     },
@@ -216,13 +229,28 @@ export default {
     'item.documenttype_id': function (val) {
       this.onDocumentTypeChange()
     },
+    'item.pos_id': function (val) {
+      if (this.item.contract_id) this.$set(this.item, 'contract_id', null)
+      if (this.item.ticket_id) this.$set(this.item, 'ticket_id', null)
+    },
   },
   mounted() {
     this.onDocumentTypeChange()
     this.onTicketIdChange()
   },
   methods: {
+    onRejectMail() {
+      if (!this.visible) {
+        this.$errorToast(this.$t('mail~classify~parent~first~alert'))
+        return
+      }
+      this.$emit('reject')
+    },
     onClassifyClick() {
+      if (!this.visible) {
+        this.$errorToast(this.$t('mail~classify~parent~first~alert'))
+        return
+      }
       this.$emit('classify', { $vm: this, shouldCreateSubTicket: this.shouldCreateSubTicket })
     },
     customFormatDate(date) {
@@ -249,12 +277,15 @@ export default {
       this.item.open = !this.item.open
       // el.hidden = !el.hidden
     },
-    onTicketIdChange(val) {
-      console.log({ val })
-      this.$set(this.item, 'contract_id', val?.contract_id || null)
-      this.$set(this.item, 'board_id', val?.board_id || null)
-      if (!val) {
-        this.shouldCreateSubTicket = false
+    onTicketIdChange() {
+      const val = this.item.ticket_id
+      if (val) {
+        const list = this.$store.state.table.listCache.frontend_6_1_6_overview
+        const el = list.find(e => e.ticket_id === val)
+        if (el) {
+          if (!this.item.contract_id && el.contract_id) this.$set(this.item, 'contract_id', el.contract_id)
+          if (!this.item.board_id && el.board_id) this.$set(this.item, 'board_id', el.board_id)
+        }
       }
     },
     getTicketName() {
@@ -279,8 +310,6 @@ export default {
       return el?.documenttype_name
     },
     onDocumentTypeChange() {
-      console.log('documenttype change')
-      if (this.item.ticket_id) return
       const val = this.item.documenttype_id
       if (val) {
         const list = this.$store.state.table.listCache.board

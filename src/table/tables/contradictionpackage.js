@@ -1,6 +1,6 @@
 export default {
   customPage: () => import('@/views/app/Page/ContradictionPackage.vue'),
-  createModal: false,
+  createModal: 'otherPage',
   fields: [
     { key: 'contradictionpackage_id', auto: true },
     { key: 'contradictionpackage_name' },

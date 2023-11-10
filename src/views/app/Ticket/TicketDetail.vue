@@ -47,6 +47,17 @@
             </div>
             <b-card-actions :title="$t('headline~ticket~information')" action-collapse>
               <table class="mt-2 mt-xl-0 w-100">
+                <tr v-if="!isTicket">
+                  <th class="pb-50 font-weight-bold">
+                    {{ $t('attribute.ticket_name_group') }}
+                  </th>
+                  <td class="pb-50">
+                    <router-link v-if="entity.ticket_id_group"
+                                 :to="{name:'table-view',params: {table:'ticket',id: entity.ticket_id_group, entity: {}, columns:[], teams: []}}">
+                      {{ entity.ticket_name_group }}
+                    </router-link>
+                  </td>
+                </tr>
                 <tr>
                   <th class="pb-50 font-weight-bold">
                     {{ $t('attribute.board_name') }}
@@ -215,7 +226,7 @@
                       <b-th>{{ $t('attribute.email_received_datetime') }}</b-th>
                       <b-th>{{ $t('attribute.email_from') }}</b-th>
                       <b-th>{{ $t('attribute.email_subject') }}</b-th>
-                      <b-th>{{ $t('attribute.documents') }}</b-th>
+                      <b-th>{{ $t('attribute.documentModule') }}</b-th>
                     </b-tr>
                   </b-thead>
                   <b-tbody>
@@ -245,11 +256,16 @@
             </b-card-actions>
           </b-col>
           <b-col lg="12">
+            <div v-if="showButton.all">
+              <b-button variant="primary" @click="createDocument">
+                {{ $t('button~newdocument') }}
+              </b-button>
+            </div>
             <DocumentsWidgetView v-if="activeTabItem && activeTabItem.id==='4'" :documents="documents"
                                  :ticket_id="entity.ticket_id"/>
 
             <!--            <b-row>-->
-            <!--              <b-col v-for="(document,i) in documents" :key="i" cols="6">-->
+            <!--              <b-col v-for="(document,i) in document" :key="i" cols="6">-->
             <!--                <b-overlay :show="document.loading">-->
             <!--                  <b-card>-->
             <!--                    <template #header>-->
@@ -305,11 +321,7 @@
             <!--                </b-overlay>-->
             <!--              </b-col>-->
             <!--            </b-row>-->
-            <!--            <div v-if="showButton.all">-->
-            <!--              <b-button variant="primary" @click="createDocument">-->
-            <!--                {{ $t('button~newdocument') }}-->
-            <!--              </b-button>-->
-            <!--            </div>-->
+
 
             <generic-modal ref="documentModal" table="document" :definition="documentDef"
                            table-definition-key="document"
@@ -320,9 +332,17 @@
             <add-document-to-contract ref="documentContractModal"/>
             <add-document-to-pos ref="documentPosModal"/>
           </b-col>
-          <b-col v-if="activeTabItem && activeTabItem.id ==='5'" lg="12">
+          <b-col v-if="activeTabItem && activeTabItem.id ==='5' && isTicket" lg="12">
             <b-card :title="$t('headline~ticket~subtasks')">
-              We are still working on this design...</b-card>
+              <b-card-text class="text-right">
+                <b-button v-if="$can('create', table)" variant="primary" @click="createSubTicket">
+                  {{ $t('headline~ticket~newsubtask') }}
+                </b-button>
+              </b-card-text>
+              <SubticketTable :subtickets="subTickets" :team-users="[]" :loading="loading" />
+            </b-card>
+            <generic-modal ref="modal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
+                           :title="$t('headline~ticket~newsubtask')" />
           </b-col>
         </b-row>
       </div>
@@ -356,10 +376,12 @@ import { mapGetters } from 'vuex'
 import TabComponent from '@/components/TabComponent.vue'
 import DocumentsWidgetView from '@/views/app/Ticket/widgets/DocumentsWidgetView.vue'
 import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.js'
+import SubticketTable from '@/views/app/CustomComponents/WP6/SubticketTable.vue'
 
 export default {
   name: 'TicketDetail',
   components: {
+    SubticketTable,
     DocumentsWidgetView,
     TabComponent,
     AddDocumentToContract,
@@ -386,29 +408,6 @@ export default {
       loading: false,
       activeTabItem: null,
       emails: [],
-      tabTitle: [
-        {
-          id: '2',
-          title: 'Timeline',
-        },
-        {
-          id: '5',
-          title: this.$t('headline~ticket~subtasks'),
-        },
-        {
-          id: '4',
-          title: 'Documents',
-        },
-        {
-          id: '3',
-          title: 'Messages and Emails',
-        },
-        {
-          id: '1',
-          title: 'Information',
-        },
-
-      ],
       loadingEmail: false,
       contractDocument: {},
       noteToInternal: true,
@@ -416,14 +415,44 @@ export default {
     }
   },
   computed: {
+    tabTitle() {
+      return [
+        {
+          id: '2',
+          title: 'Timeline',
+          show: true,
+        },
+        {
+          id: '5',
+          title: this.$t('headline~ticket~subtasks'),
+          show: this.isTicket,
+        },
+        {
+          id: '4',
+          title: 'Documents',
+          show: true,
+        },
+        {
+          id: '3',
+          title: 'Messages and Emails',
+          show: true,
+        },
+        {
+          id: '1',
+          title: 'Information',
+          show: true,
+        },
+
+      ]
+    },
     invoiceTicket() {
       return true
     },
     isTicket() {
-      return this.entity.ticket_id_group === null
+      return this.entity?.ticket_id_group === null
     },
     firstColumn() {
-      return this.entity.columns[0]
+      return this.entity?.columns[0]
     },
     showButton() {
       const { team_type } = this.firstColumn
@@ -454,10 +483,10 @@ export default {
   async mounted() {
     this.loading = true
     try {
-      if (!this.entity || !this.entity.columns) {
+      if (!this.entity || !this.entity?.columns) {
         await this.loadSingleTicket(false)
         this.entity = this.tickets[0]
-        await this.loadStages(this.entity.board_id)
+        await this.loadStages(this.entity?.board_id)
       } else {
         this.columns = this.$route.params.columns
         this.teams = this.$route.params.teams
@@ -489,31 +518,31 @@ export default {
     formatDate,
     async addToPos(document) {
       if (document.loading) return
-      this.$refs.documentPosModal.openModal(document, this.entity.pos_id)
+      this.$refs.documentPosModal.openModal(document, this.entity?.pos_id)
     },
     addToContract(document) {
       this.contractDocument.document_id = document.document_id
-      this.$refs.documentContractModal.openModal(document, this.entity.contract_id)
+      this.$refs.documentContractModal.openModal(document, this.entity?.contract_id)
     },
     canStamp(document) {
-      if (!this.entity || !this.entity.columns) return false
+      if (!this.entity || !this.entity?.columns) return false
       if (document.document_mime_type !== 'application/pdf') return false
-      return this.columns.find(c => c.column_id === this.entity.columns[0].column_id).column_has_stamp
+      return this.columns.find(c => c.column_id === this.entity?.columns[0].column_id).column_has_stamp
     },
     canMoveBack() {
       if (!this.entity) return false
-      if (this.entity.ticket_closed) return false
-      if (!this.entity.columns[1]) return false
-      if (this.entity.columns[1].rank_order > this.entity.columns[0].rank_order) return false
-      const column_name = this.entity.columns[1].column_name
-      return this.config.accepts(null, { dataset: { status: column_name } }, { dataset: { status: this.entity.column_name } }, true)
+      if (this.entity?.ticket_closed) return false
+      if (!this.entity?.columns[1]) return false
+      if (this.entity?.columns[1].rank_order > this.entity?.columns[0].rank_order) return false
+      const column_name = this.entity?.columns[1].column_name
+      return this.config.accepts(null, { dataset: { status: column_name } }, { dataset: { status: this.entity?.column_name } }, true)
     },
     canMoveToNext() {
       if (!this.entity) return false
-      if (this.entity.ticket_closed) return false
-      const colIdx = this.columns.findIndex(c => c.column_name === this.entity.column_name)
+      if (this.entity?.ticket_closed) return false
+      const colIdx = this.columns.findIndex(c => c.column_name === this.entity?.column_name)
       if (colIdx === this.columns.length - 1) return false
-      return this.config.accepts(null, { dataset: { status: this.columns[colIdx + 1].column_name } }, { dataset: { status: this.entity.column_name } })
+      return this.config.accepts(null, { dataset: { status: this.columns[colIdx + 1].column_name } }, { dataset: { status: this.entity?.column_name } })
     },
     async moveToNext() {
       const result = await this.moveToNextColumn(this.entity)
@@ -535,14 +564,14 @@ export default {
       return getDocumentLink(document)
     },
     createDocument() {
-      this.$refs.documentModal.openModal(true, { ticket_id: this.entity.ticket_id })
+      this.$refs.documentModal.openModal(true, { ticket_id: this.entity?.ticket_id })
     },
     createInvoice() {
       this.$router.push({
         name: 'table-form',
         params: {
           table: 'invoice',
-          entity: { ticket_id: this.entity.ticket_id },
+          entity: { ticket_id: this.entity?.ticket_id },
         },
       })
     },
@@ -585,7 +614,7 @@ export default {
         entity: 'document_ticket_rel',
         data: data.map(doc => ({
           document_id: doc.document_id,
-          ticket_id: this.entity.ticket_id,
+          ticket_id: this.entity?.ticket_id,
         })),
       })
         .finally(() => {
@@ -595,7 +624,7 @@ export default {
     async fetchDocuments() {
       const documents = (await this.$http.get('/tickets/documents', {
         params: {
-          ticket_id: this.entity.ticket_id,
+          ticket_id: this.entity?.ticket_id,
           size: 100_000,
         },
       })).data.data
@@ -609,7 +638,7 @@ export default {
       try {
         const results = (await this.$http.get('/tickets/emails', {
           params: {
-            ticket_id: this.entity.ticket_id,
+            ticket_id: this.entity?.ticket_id,
             size: 100_000,
           },
         })).data.data

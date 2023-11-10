@@ -6,15 +6,16 @@ export default {
   entityEndpoint: '/contracts',
   fetchWithEntity: true,
   formComponent: () => import('@/views/app/FormComponent/ContractForm.vue'),
-  createModal: false,
+  createModal: 'otherPage',
   // createComponent: () => import('@/views/app/CreateComponent/ContractForm/ContractFormNew.vue'),
   fields: [
     { key: 'contract_id', auto: true },
-    { key: 'contract_name', size: 40 },
+    { key: 'contract_name', size: 40, cols: 6 },
     {
       key: 'contracttype_id',
-      type: 'list',
+      type: 'custom_list',
       size: 40,
+      cols: 6,
       list: 'contracttype',
       listLabel: 'contracttype_name',
       hideOnIndex: true,
@@ -22,8 +23,9 @@ export default {
     },
     {
       key: 'customergroup_id',
-      type: 'list',
+      type: 'custom_list',
       size: 40,
+      cols: 6,
       list: 'customergroup',
       listLabel: 'customergroup_name',
       send: false,
@@ -32,8 +34,9 @@ export default {
     },
     {
       key: 'company_id',
-      type: 'list',
+      type: 'custom_list',
       size: 40,
+      cols: 6,
       list: 'frontend_2_2_3_1',
       listLabel: 'company_name',
       filter_key: 'customergroup_id',
@@ -42,44 +45,74 @@ export default {
       hideOnUpdate: true,
     },
     {
-      key: 'location_id',
-      type: 'list',
-      size: 40,
-      list: 'frontend_3_1_3_7',
-      listLabel: 'location_name',
-      relationEntity: 'contract_location_rel',
-      // filter_key: 'pos_id',
-      hideOnIndex: true,
-      hideOnUpdate: true,
-    },
-    {
       key: 'pos_id',
-      type: 'list',
+      type: 'custom_list',
       size: 40,
+      cols: 6,
       list: 'pos',
       listLabel: 'pos_name',
       hideOnIndex: true,
       hideOnUpdate: true,
     },
     {
-      key: 'contracttype_name', hideOnCreate: true, disabled: true, required: false,
+      key: 'location_id',
+      size: 40,
+      cols: 6,
+      listLabel: 'location_name',
+      disabled: true,
+      // relationEntity: 'contract_location_rel',
+      filter_key: 'pos_id',
+      hideOnIndex: true,
+      hideOnUpdate: true,
     },
     {
-      key: 'customergroup_name', hideOnIndex: true, hideOnCreate: true, disabled: true, required: false,
+      key: 'contracttype_name',
+      cols: 6,
+      hideOnCreate: true,
+      disabled: true,
+      required: false,
     },
     {
-      key: 'company_name', hideOnIndex: true, hideOnCreate: true, disabled: true, required: false,
+      key: 'customergroup_name',
+      cols: 6,
+      hideOnIndex: true,
+      hideOnCreate: true,
+      disabled: true,
+      required: false,
     },
     {
-      key: 'location_name', hideOnIndex: true, hideOnCreate: true, disabled: true, required: false,
+      key: 'company_name',
+      cols: 6,
+      hideOnIndex: true,
+      hideOnCreate: true,
+      disabled: true,
+      required: false,
     },
     {
-      key: 'pos_name', hideOnIndex: true, hideOnCreate: true, disabled: true, required: false,
+      key: 'pos_name',
+      hideOnIndex: true,
+      cols: 6,
+      hideOnCreate: true,
+      disabled: true,
+      required: false,
     },
-    { key: 'location_name', hideOnForm: true },
+    {
+      key: 'location_name',
+      hideOnIndex: true,
+      cols: 6,
+      hideOnCreate: true,
+      disabled: true,
+      required: false,
+    },
+    {
+      key: 'location_name', hideOnForm: true, cols: 6,
+    },
+
     {
       key: 'owner_name',
-      hideOnForm: true,
+      // hideOnForm: true,
+      cols:6,
+      category: 'patner',
       formatter: (value, key, item) => {
         const array = item.owners
         const ownersName = array.length > 0 ? array.map(obj => obj.owner_name) : []
@@ -90,7 +123,9 @@ export default {
     },
     {
       key: 'manager_name',
-      hideOnForm: true,
+      // hideOnForm: true,
+      category: 'patner',
+      cols:6,
       formatter: (value, key, item) => {
         const array = item.managers
         const managerName = array.length > 0 ? array.map(obj => obj.manager_name) : []
@@ -98,6 +133,15 @@ export default {
 
         return result || '-'
       },
+    },
+    {
+      key: 'are_manager',
+      listLabel: 'Are the owner and the manager the same ?',
+      type: 'boolean',
+      category: 'patner',
+      swicth: true,
+      cols: 12,
+      inline: true,
     },
     {
       key: 'company_name',
@@ -123,6 +167,7 @@ export default {
       hideOnUpdate: false,
       hideOnCreate: true,
     },
+
     {
       key: 'contract_resiliation',
       hideOnForm: true,

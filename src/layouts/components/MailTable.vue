@@ -30,6 +30,9 @@
             Board
           </b-th>
           <b-th class="text-center">
+            Status
+          </b-th>
+          <b-th class="text-center">
             Action
           </b-th>
         </b-tr>
@@ -47,7 +50,8 @@
           <b-tbody v-if="item.documents.length>0" v-show="item.open" :id="'collapse'+item.email_id">
             <mail-tr v-for="(child,idx) in item.documents" :key="idx" :item="child" child
                      style="background-color: white !important;" @classify="({$vm, shouldCreateSubTicket}, options) => classifyNew(child, $vm, 'classify', {parentEmail: item, shouldCreateSubTicket })"
-                     @reject="classifyNew(child, $vm, 'dismiss', {parentEmail: item})"/>
+                     @reject="classifyNew(child, $vm, 'dismiss', {parentEmail: item})"
+            />
           </b-tbody>
         </transition>
       </template>
@@ -92,22 +96,18 @@
 
 <script>
 import {
-  BTable, BButton, BFormCheckbox, BTableSimple,
+  BTableSimple,
 } from 'bootstrap-vue'
 import MailTr from '@/layouts/components/MailTr'
 import Field from '@/views/app/Generic/Field'
 import moment from 'moment-business-time'
 import { getUserData } from '@/auth/utils'
-import _ from 'lodash'
 import Fuse from 'fuse.js'
 
 export default {
   components: {
     Field,
     MailTr,
-    BTable,
-    BButton,
-    BFormCheckbox,
     BTableSimple,
   },
   props: {
@@ -149,12 +149,12 @@ export default {
         if (this.filterValue === 1) {
           if (email.email_dismissed) return false
           if (email.ticket_id_created) return false
-          // if (email.documents.length > 0 && email.documents.every(d => d.ticket_created || d.classification_dismissed) && (!email.email_dismissed && !email.ticket_id_created)) return false
+          // if (email.document.length > 0 && email.document.every(d => d.ticket_created || d.classification_dismissed) && (!email.email_dismissed && !email.ticket_id_created)) return false
           return true
         }
         if (email.email_dismissed) return true
         if (email.ticket_id_created) return true
-        // if (email.documents.every(d => d.ticket_created || d.classification_dismissed)) return true
+        // if (email.document.every(d => d.ticket_created || d.classification_dismissed)) return true
         return false
       })
       if (this.search && prefiltered[0]) {
@@ -292,7 +292,7 @@ export default {
           this.fetch(true)
         }
       }
-
+      this.processStatus(this.items)
       return undefined
     },
     async classify(item, $tr) {
@@ -538,6 +538,20 @@ export default {
     getCacheKey(payload) {
       return `${this.entity}-${JSON.stringify(payload)}`
     },
+    processStatus(items) {
+      items.forEach(item => {
+        item.documents.forEach(async document => {
+          if (document.classification_dismissed) document.status = 'dismiss'
+          else if (document.ticket_created) document.status = 'done'
+          else document.status = 'notprocess'
+        })
+
+        if (item.email_dismissed) item.status = 'dismiss'
+        else if (item.email_processed) item.status = 'done'
+        else if (item.documents.findIndex(d => d.status !== 'notprocess') >= 0) item.status = 'inprogress'
+        else item.status = 'notprocess'
+      })
+    },
     async processData(data) {
       this.$emit('update:totalRows', data.total)
       data.items.forEach(el => {
@@ -574,29 +588,8 @@ export default {
             this.$set(document, 'classification_id', classification.classification_id)
           }
         })
-        // process ticket data
-        if (!item.email_subject) return
-        const id = item.email_subject.match(/^#\d+/g)
-        if (id) {
-          const ticket_id = parseInt(id[0].substr(1))
-          const list = this.$store.state.table.listCache.frontend_6_1_6_overview
-          const el = list.find(e => e.ticket_id === ticket_id)
-          if (el) {
-            if (!item.ticket_id) {
-              item.ticket_id = el.ticket_id
-              item.pos_id = el.pos_id
-              item.contract_id = el.contract_id
-            }
-            item.documents.forEach(document => {
-              if (!document.ticket_id) {
-                document.ticket_id = el.ticket_id
-                document.pos_id = el.pos_id
-                document.contract_id = el.contract_id
-              }
-            })
-          }
-        }
       })
+      this.processStatus(items)
       this.items = items
       return this.items
     },

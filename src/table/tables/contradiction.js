@@ -1,6 +1,6 @@
 export default {
   customPage: () => import('@/views/app/Page/Contradiction/Index.vue'),
-  createModal: false,
+  createModal: 'otherPage',
   formComponent: () => import('@/views/app/FormComponent/ContradictionForm.vue'),
   fields: [
     { key: 'contradiction_id', auto: true },

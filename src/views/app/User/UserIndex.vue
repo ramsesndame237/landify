@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <div v-if="isUserAdmin" class="row">
+    <div v-if="$isUserAdmin" class="row">
       <b-col v-for="(stat,index) in usersStatistics" :key="index" :sm="stat.cols.sm" :lg="stat.cols.lg">
         <b-overlay :show="loading">
           <b-card>
@@ -18,7 +18,7 @@
               </div>
               <div class="">
                 <b-avatar :variant="stat.avatarVariant">
-                  <feather-icon :icon="stat.icon" size="20" />
+                  <feather-icon :icon="stat.icon" size="20"/>
                 </b-avatar>
               </div>
             </div>
@@ -26,9 +26,9 @@
         </b-overlay>
       </b-col>
     </div>
-    <b-card v-if="isUserAdmin" title="Search Filter">
+    <b-card v-if="$isUserAdmin" title="Search Filter">
       <InlineFilter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
-                    :with-actions="false" @filter="filter" />
+                    :with-actions="false" @filter="filter"/>
     </b-card>
     <b-card body-class="p-0">
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"
@@ -52,20 +52,32 @@
     <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table"
                    :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
                    @reload-table="$refs.table.reload()"/>
+    <SidebarModalComponent
+      ref="sidebarComponent"
+      :title="`headline~${table}~new`"
+      :definition="definition"
+      :options="definition.options || null"
+    >
+      <div slot="customHeader" class="header-customer mb-3 d-flex align-items-center justify-content-center bg-white  ">
+        <span>
+          {{ $t(`headline~${table}~new`) }}
+        </span>
+      </div>
+    </SidebarModalComponent>
   </div>
 </template>
 <script>
 import InlineFilter from '@/views/app/Generic/InlineFilter.vue'
 import TablePagination from '@/layouts/components/TablePagination.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
-import { mapGetters } from 'vuex'
+import SidebarModalComponent from '@/components/SidebarModalComponent.vue'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
 
 export default ({
   name: 'UserIndex',
   components: {
-    InlineFilter, Datatable, TablePagination, GenericModal,
+    InlineFilter, Datatable, TablePagination, GenericModal, SidebarModalComponent,
   },
   props: ['definition'],
   data() {
@@ -90,7 +102,7 @@ export default ({
   },
   computed: {
     useModalToCreate() {
-      return this.definition.createModal !== false
+      return this.definition.createModal === 'modal'
     },
     usersStatistics() {
       return [
@@ -129,7 +141,6 @@ export default ({
         },
       ]
     },
-    ...mapGetters('user', ['isUserAdmin', 'isUserExtern']),
   },
   mounted() {
     this.getUsersStatistics()
@@ -161,13 +172,17 @@ export default ({
       this.$refs.table.filter(data)
     },
     onNewElement() {
-      if (this.useModalToCreate) this.$refs.modal.openModal(true, {})
-      else {
-        this.$router.push({
-          name: 'table-form',
-          params: { table: this.table },
-        })
-      }
+      // if (this.useModalToCreate) this.$refs.modal.openModal(true, {})
+      // else {
+      //   this.$router.push({
+      //     name: 'table-form',
+      //     params: { table: this.table },
+      //   })
+      // }
+      this.definition.createModal === 'sidebar' ? this.$refs.sidebarComponent.openSidebarComponent() : this.useModalToCreate ? this.$refs.modal.openModal(true, {}) : this.$router.push({
+        name: 'table-form',
+        params: { table: this.table },
+      })
     },
     async getUsersStatistics() {
       this.loading = true
@@ -184,8 +199,19 @@ export default ({
       }
     },
     canReadItem() {
-      return !this.isUserExtern
+      return !this.$isUserExtern
     },
   },
 })
 </script>
+<style lang="scss">
+    .header-customer {
+      height: 5.859375vh;
+      box-shadow: rgba(0, 0, 0, 0.04) 0px 3px 5px;
+      span{
+        font-size:1.389vw;
+        font-weight: 700;
+      }
+    }
+
+</style>
