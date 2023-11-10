@@ -47,6 +47,7 @@
             :url="`/tickets/autocomplete?pos_id=${item.pos_id || ''}`"
             :disabled="is_dismissed || is_done || !item.pos_id"
             :initial-option="currentTicket"
+            :elements-to-listen-on="tableEl ? [tableEl] : undefined"
             always-reset-on-focus
           />
         </div>
@@ -138,6 +139,10 @@ export default {
   props: {
     item: {},
     child: Boolean,
+    tableEl: {
+      validator: () => true,
+      default: null,
+    },
   },
   data() {
     return {

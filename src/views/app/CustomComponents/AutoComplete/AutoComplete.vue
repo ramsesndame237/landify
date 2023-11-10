@@ -127,6 +127,10 @@ export default {
       type: Object,
       default: null,
     },
+    elementsToListenOn: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -151,8 +155,12 @@ export default {
   },
   created() {
     window.addEventListener('resize', this.onWindowResize)
+    window.addEventListener('scroll', this.setListPosition)
     window.addEventListener('keydown', this.onEscapePressed)
     this.currentOption = this.initialOption || null
+    if (this.elementsToListenOn) {
+      this.elementsToListenOn.map(el => el.addEventListener('scroll', this.setListPosition))
+    }
   },
   mounted() {
     this.setListPosition()
@@ -161,6 +169,10 @@ export default {
     clearTimeout(this.timeoutId)
     window.removeEventListener('resize', this.onWindowResize)
     window.removeEventListener('keydown', this.onEscapePressed)
+    window.removeEventListener('scroll', this.setListPosition)
+    if (this.elementsToListenOn) {
+      this.elementsToListenOn.map(el => el.removeEventListener('scroll', this.setListPosition))
+    }
   },
   methods: {
     onOptionSelected(option) {

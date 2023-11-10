@@ -43,12 +43,12 @@
       <!--    </template>-->
       <template v-for="(item,idx) in items">
         <b-tbody :key="idx">
-          <mail-tr :key="`email-${item.email_id}`" :item="item" @show-content="showMailContent(item)" @classify="({$vm, shouldCreateSubTicket}) => classifyNew(item, $vm, 'classify', { shouldCreateSubTicket })"
-                   @reject="classifyNew(item, $vm, 'dismiss')"/>
+          <mail-tr :key="`email-${item.email_id}`" :table-el="$refs.table.$el" :item="item" @show-content="showMailContent(item)" @classify="({$vm, shouldCreateSubTicket}) => classifyNew(item, $vm, 'classify', { shouldCreateSubTicket })"
+                   @reject="classifyNew(item, $vm, 'dismiss')" />
         </b-tbody>
         <transition :key="'c'+idx" name="slide">
           <b-tbody v-if="item.documents.length>0" v-show="item.open" :id="'collapse'+item.email_id">
-            <mail-tr v-for="(child,idx) in item.documents" :key="`${child.document_id}-idx`" :item="child" child
+            <mail-tr v-for="(child,idx) in item.documents" :key="`${child.document_id}-idx`" :table-el="$refs.table.$el" :item="child" child
                      style="background-color: white !important;" @classify="({$vm, shouldCreateSubTicket}, options) => classifyNew(child, $vm, 'classify', {parentEmail: item, shouldCreateSubTicket })"
                      @reject="classifyNew(child, $vm, 'dismiss', {parentEmail: item})"
             />
