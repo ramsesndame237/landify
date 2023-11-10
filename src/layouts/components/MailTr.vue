@@ -9,36 +9,60 @@
     </b-td>
     <b-td @click="toggle">
       <span class="text-truncate">
-      {{ child ? '' : customFormatDate(item.email_received_datetime) }}
+        {{ child ? '' : customFormatDate(item.email_received_datetime) }}
       </span>
     </b-td>
     <b-td @click="toggle">
       <span class="d-inline-block text-truncate" style="max-width: 130px" :title="child ? '' : item.email_from">
-      {{ child ? '' : item.email_from }}
+        {{ child ? '' : item.email_from }}
       </span>
     </b-td>
     <b-td>
       <div class="d-flex align-items-center subject-content">
         <span class="d-inline-block text-truncate" style="max-width: 150px" :title="child ? '' : item.email_subject">
-        {{ child ? '' : item.email_subject }}
-      </span>
+          {{ child ? '' : item.email_subject }}
+        </span>
         <feather-icon v-if="!child" class="text-success eye-icon" icon="EyeIcon" size="24"
                       @click="$emit('show-content')"/>
       </div>
     </b-td>
     <b-td class="td-form">
-      <field v-if="visible" :field="posIdField" :entity="item" :disabled="is_dismissed || is_done"/>
+      <field v-if="visible" :field="posIdField" :entity="item"
+             :disabled="is_dismissed || is_done"/>
       <router-link v-if="is_done && item.pos_id" target="_blank"
                    :to="{ name: 'table-view', params: { table: 'pos', id: item.pos_id } }">
         {{ getPosName() }}
       </router-link>
     </b-td>
     <b-td class="td-form">
-      <field v-if="visible" ref="ticket" :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/>
+      <div v-if="visible" class="d-flex align-items-center" style="gap: 8px; transform: translateY(-6px);">
+        <div style="width: 300px;">
+          <auto-complete
+            :get-option-value="opt => opt.ticket_id || ''"
+            :on-change="opt => {
+              currentTicket = opt
+            }"
+            :get-option-label="opt => opt.ticket_name || ''"
+            :value.sync="item.ticket_id"
+            :url="`/tickets/autocomplete?pos_id=${item.pos_id || ''}`"
+            :disabled="is_dismissed || is_done || !item.pos_id"
+            :initial-option="currentTicket"
+          />
+        </div>
+      </div>
+      <!-- <field v-if="visible" ref="ticket" :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/> -->
       <router-link v-if="is_done" target="_blank"
                    :to="{name: 'table-view', params: {table: 'ticket',id: item.ticket_id_created}}">
         {{ item.ticket_id_created + ' - ' + getTicketName() }}
       </router-link>
+    </b-td>
+    <b-td>
+      <b-form-checkbox
+        v-if="visible"
+        v-model="shouldCreateSubTicket"
+        style="transform: translateY(-6px)"
+        :disabled="!item.ticket_id || is_dismissed || is_done"
+      />
     </b-td>
     <b-td class="td-form">
       <field v-if="visible" ref="contract" :field="contractIdField" :entity="item" :disabled="is_dismissed|| is_done"/>
@@ -64,7 +88,8 @@
       </span>
     </b-td>
     <b-td class="td-form">
-      <field v-if="visible" :field="boardIdField" :entity="item" :disabled="is_dismissed || is_done"/>
+      <field v-if="visible" :field="boardIdField" :entity="item"
+             :disabled="!item.pos_id || (item.ticket_id && !shouldCreateSubTicket) || is_dismissed || is_done"/>
       <router-link v-if="is_done" target="_blank"
                    :to="{name: 'table-kanban', params: {table: 'board',id: item.board_id}}">
         {{ getBoardName() }}
@@ -97,10 +122,14 @@ import Field from '@/views/app/Generic/Field'
 import { getDocumentLink, getDateFormat } from '@/libs/utils'
 import { VBToggle } from 'bootstrap-vue'
 import moment from 'moment'
+import AutoComplete from '@/views/app/CustomComponents/AutoComplete/AutoComplete.vue'
 
 export default {
   name: 'MailTr',
-  components: { Field },
+  components: {
+    Field,
+    AutoComplete,
+  },
   directives: {
     'b-toggle': VBToggle,
   },
@@ -110,6 +139,8 @@ export default {
   },
   data() {
     return {
+      currentTicket: null,
+      shouldCreateSubTicket: false,
       ticketIdField: {
         key: 'ticket_id',
         type: 'list',
@@ -192,8 +223,8 @@ export default {
     },
   },
   watch: {
-    'item.ticket_id': function (val) {
-      this.onTicketIdChange()
+    currentTicket(val) {
+      this.onTicketIdChange(val)
     },
     'item.documenttype_id': function (val) {
       this.onDocumentTypeChange()
@@ -220,7 +251,7 @@ export default {
         this.$errorToast(this.$t('mail~classify~parent~first~alert'))
         return
       }
-      this.$emit('classify', this)
+      this.$emit('classify', { $vm: this, shouldCreateSubTicket: this.shouldCreateSubTicket })
     },
     customFormatDate(date) {
       if (!date) return ''
