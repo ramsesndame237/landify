@@ -256,7 +256,7 @@
             </b-card-actions>
           </b-col>
           <b-col lg="12">
-            <div v-if="showButton.all">
+            <div v-if="showButton.all && activeTabItem.id==='4'">
               <b-button variant="primary" @click="createDocument">
                 {{ $t('button~newdocument') }}
               </b-button>
