@@ -44,7 +44,7 @@
             }"
             :get-option-label="opt => opt.ticket_name || ''"
             :value.sync="item.ticket_id"
-            :url="`/tickets/autocomplete?pos_id=${item.pos_id || ''}`"
+            :url="(keyword) => `/tickets/autocomplete?pos_id=${item.pos_id || ''}&keyword=${keyword || ''}`"
             :disabled="is_dismissed || is_done || !item.pos_id"
             :initial-option="currentTicket"
             :elements-to-listen-on="tableEl ? [tableEl] : undefined"

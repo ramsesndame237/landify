@@ -90,8 +90,8 @@ export default {
   },
   props: {
     url: {
-      type: String,
-      required: true,
+      type: Function,
+      default: () => '',
     },
     onChange: {
       type: Function,
@@ -195,7 +195,7 @@ export default {
       this.timeoutId = setTimeout(async () => {
         try {
           this.loading = true
-          const { data } = await this.$http.get(this.url, {
+          const { data } = await this.$http.get(this.url(this.inputValue), {
             params: {
               page: 1,
               per_page: 10,
