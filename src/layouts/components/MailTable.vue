@@ -16,6 +16,9 @@
             Ticket Id
           </b-th>
           <b-th class="text-center">
+             New ticket?
+          </b-th>
+          <b-th class="text-center">
             Contract Id
           </b-th>
           <b-th>Attachments</b-th>
@@ -37,14 +40,14 @@
       <!--    </template>-->
       <template v-for="(item,idx) in items">
         <b-tbody :key="idx">
-          <mail-tr :item="item" @show-content="showMailContent(item)" @classify="($vm) => classifyNew(item, $vm, 'classify')"
+          <mail-tr :item="item" @show-content="showMailContent(item)" @classify="({$vm, shouldCreateSubTicket}) => classifyNew(item, $vm, 'classify', { shouldCreateSubTicket })"
                    @reject="classifyNew(item, $vm, 'dismiss')"/>
         </b-tbody>
         <transition :key="'c'+idx" name="slide">
           <b-tbody v-if="item.documents.length>0" v-show="item.open" :id="'collapse'+item.email_id">
             <mail-tr v-for="(child,idx) in item.documents" :key="idx" :item="child" child
-                     style="background-color: white !important;" @classify="($vm) => classifyNew(child, $vm, 'classify', item)"
-                     @reject="classifyNew(child, $vm, 'dismiss', item)"/>
+                     style="background-color: white !important;" @classify="({$vm, shouldCreateSubTicket}, options) => classifyNew(child, $vm, 'classify', {parentEmail: item, shouldCreateSubTicket })"
+                     @reject="classifyNew(child, $vm, 'dismiss', {parentEmail: item})"/>
           </b-tbody>
         </transition>
       </template>
@@ -191,7 +194,9 @@ export default {
         return true
       })
     },
-    async classifyNew(item, $tr, action, parentEmail) {
+    async classifyNew(item, $tr, action, options) {
+      const parentEmail = options?.parentEmail
+      const create_subticket = item.ticket_id ? !!options?.shouldCreateSubTicket : undefined
       if (!item.ticket_id && action !== 'dismiss') {
         if (!item.pos_id) return this.$errorToast('Please select a pos')
         // if (!item.contract_id) return this.$errorToast('Please select a contract')
@@ -234,6 +239,7 @@ export default {
           documenttype_id: item.documenttype_id,
 
           action,
+          create_subticket,
         }
 
         const payload = {}
