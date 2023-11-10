@@ -47,6 +47,7 @@
             :url="`/tickets/autocomplete?pos_id=${item.pos_id || ''}`"
             :disabled="is_dismissed || is_done || !item.pos_id"
             :initial-option="currentTicket"
+            always-reset-on-focus
           />
         </div>
       </div>
@@ -59,13 +60,14 @@
     <b-td>
       <b-form-checkbox
         v-if="visible"
+        :key="`checkbox-new-ticket-for-item-${item.email_id || item.document_id}`"
         v-model="shouldCreateSubTicket"
         style="transform: translateY(-6px)"
         :disabled="!item.ticket_id || is_dismissed || is_done"
       />
     </b-td>
     <b-td class="td-form">
-      <field v-if="visible" ref="contract" :field="contractIdField" :entity="item" :disabled="is_dismissed|| is_done"/>
+      <field v-if="visible" ref="contract" :field="contractIdField" :entity="item" :disabled="item.ticket_id || is_dismissed|| is_done"/>
       <router-link v-if="is_done && item.contract_id" target="_blank"
                    :to="{name: 'table-view', params: {table: 'contract',id: item.contract_id}}">
         {{ getContractName() }}
@@ -277,15 +279,11 @@ export default {
       this.item.open = !this.item.open
       // el.hidden = !el.hidden
     },
-    onTicketIdChange() {
-      const val = this.item.ticket_id
-      if (val) {
-        const list = this.$store.state.table.listCache.frontend_6_1_6_overview
-        const el = list.find(e => e.ticket_id === val)
-        if (el) {
-          if (!this.item.contract_id && el.contract_id) this.$set(this.item, 'contract_id', el.contract_id)
-          if (!this.item.board_id && el.board_id) this.$set(this.item, 'board_id', el.board_id)
-        }
+    onTicketIdChange(val) {
+      this.$set(this.item, 'contract_id', val?.contract_id || null)
+      this.$set(this.item, 'board_id', val?.board_id || null)
+      if (!val) {
+        this.shouldCreateSubTicket = false
       }
     },
     getTicketName() {
