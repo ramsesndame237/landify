@@ -21,7 +21,7 @@
           <b-th class="text-center">
             Contract Id
           </b-th>
-          <b-th>Attachments</b-th>
+          <!-- <b-th>Attachments</b-th> -->
           <b-th>File Name</b-th>
           <b-th class="text-center">
             DocumentType

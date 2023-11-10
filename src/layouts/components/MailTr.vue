@@ -19,6 +19,7 @@
     </b-td>
     <b-td>
       <div class="d-flex align-items-center subject-content">
+        <feather-icon v-if="item.documents && item.documents.length" icon="PaperclipIcon" class="mr-50" />
         <span class="d-inline-block text-truncate" style="max-width: 150px" :title="child ? '' : item.email_subject">
           {{ child ? '' : item.email_subject }}
         </span>
@@ -66,6 +67,12 @@
         style="transform: translateY(-6px)"
         :disabled="!item.ticket_id || is_dismissed || is_done"
       />
+      <b-form-checkbox
+        v-else
+        :checked="!!item.create_subticket"
+        style="transform: translateY(-6px)"
+        disabled
+      />
     </b-td>
     <b-td class="td-form">
       <field v-if="visible" ref="contract" :field="contractIdField" :entity="item" :disabled="item.ticket_id || is_dismissed|| is_done"/>
@@ -74,10 +81,11 @@
         {{ getContractName() }}
       </router-link>
     </b-td>
-    <b-td>
+    <!-- <b-td>
+      <feather-icon v-if="item.documents && item.documents.length" icon="PaperclipIcon" />
       <b-form-checkbox v-if="item.documents && item.documents.length" :checked="1" disabled :value="1"
                        :unchecked-value="0"/>
-    </b-td>
+    </b-td> -->
     <b-td>
       <b-link v-if="item.document_id" class="m-auto" variant="danger" target="_blank" :href="getDocumentLink(item)">
         {{ item.document_name }}
@@ -100,7 +108,7 @@
     </b-td>
     <b-td class="td-form text-center">
       <b-badge v-if="item.status && !item.document_id" :variant="statusClass">
-        {{ $t('classification~status~' + item.status) }}
+        {{ $t('classification~status~' + (item.email_id ? getMailStatus(item.status) :item.status)) }}
       </b-badge>
     </b-td>
     <b-td class="text-center">
@@ -114,7 +122,7 @@
         </b-button>
       </div>
       <b-badge v-if="(is_done||is_dismissed) && !!item.document_id" :variant="statusClass">
-        {{ $t('classification~status~' + item.status) }}
+        {{ $t('classification~status~' + (item.document_id ? item.status : getMailStatus(item.status))) }}
       </b-badge>
     </b-td>
   </b-tr>
@@ -126,12 +134,14 @@ import { getDocumentLink, getDateFormat } from '@/libs/utils'
 import { VBToggle } from 'bootstrap-vue'
 import moment from 'moment'
 import AutoComplete from '@/views/app/CustomComponents/AutoComplete/AutoComplete.vue'
+import FeatherIcon from '@/@core/components/feather-icon/FeatherIcon.vue'
 
 export default {
   name: 'MailTr',
   components: {
     Field,
     AutoComplete,
+    FeatherIcon,
   },
   directives: {
     'b-toggle': VBToggle,
@@ -246,6 +256,10 @@ export default {
     this.onTicketIdChange()
   },
   methods: {
+    getMailStatus(status) {
+      console.log((status === 'dismiss' || status === 'done') ? 'processed' : status)
+      return (status === 'dismiss' || status === 'done') ? 'processed' : status
+    },
     onRejectMail() {
       if (!this.visible) {
         this.$errorToast(this.$t('mail~classify~parent~first~alert'))
@@ -303,9 +317,10 @@ export default {
       return this.item.contract_name || ''
     },
     getBoardName() {
-      const list = this.$store.state.table.listCache.board
-      const el = list.find(e => e.board_id === this.item.board_id)
-      return el?.board_name
+      // const list = this.$store.state.table.listCache.board
+      // const el = list.find(e => e.board_id === this.item.board_id)
+      // return el?.board_name
+      return this.item.board_name || ''
     },
     getDocumentTypeName() {
       const list = this.$store.state.table.listCache.documenttype
