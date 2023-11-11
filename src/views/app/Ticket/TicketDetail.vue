@@ -256,7 +256,7 @@
             </b-card-actions>
           </b-col>
           <b-col lg="12">
-            <div v-if="showButton.all && activeTabItem.id==='4'">
+            <div v-if="showButton.all && activeTabItem && activeTabItem.id ==='4'">
               <b-button variant="primary" @click="createDocument">
                 {{ $t('button~newdocument') }}
               </b-button>
@@ -501,17 +501,6 @@ export default {
     }
   },
   methods: {
-    async submitSubticket(vm) {
-      const data = { ...vm.entity }
-
-      try {
-        const response = await this.$http.post('/tickets/subticket', data)
-        await this.fetchSubTickets()
-        return response
-      } catch (error) {
-        console.log(error)
-      }
-    },
     getActiveItemData(item) {
       this.activeTabItem = item
     },

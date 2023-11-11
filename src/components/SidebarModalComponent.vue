@@ -57,7 +57,7 @@ export default {
 <template>
   <div>
     <b-sidebar
-      :id="options.id || 'sidebarId'"
+      :id="(options && options.id) || 'sidebarId'"
       ref="sidebarRef"
       v-model="openSidebar"
       :title="$t(title || '')"
