@@ -14,7 +14,7 @@
           <generic-filter ref="filter" vertical :table="table" :definition="definition" @filter="filter"/>
           <b-form-checkbox v-model="advanced" switch title="Advanced Mode"/>
           <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
-          <b-button v-b-tooltip.hover :title="showSubTickets ? 'Hide Sub-tickets' : 'Show Sub-tickets' " :variant="showSubTickets ? 'primary' : ''" class="mx-1 btn-icon" @click="showSubTickets = !showSubTickets">
+          <b-button v-b-tooltip.hover :title="showSubTickets ? 'Hide Subtasks' : 'Show Subtasks' " :variant="showSubTickets ? 'primary' : ''" class="mx-1 btn-icon" @click="showSubTickets = !showSubTickets">
             <icon icon="mdi:subtasks" width="16" />
           </b-button>
           <b-button v-if="$can('create', table)" variant="primary" class="mr-1" block @click="createTicket()">
@@ -63,7 +63,7 @@
       </kanban-board>
     </b-overlay>
     <generic-modal ref="modal" :table="table" :definition="definition" :table-definition-key="table"
-                   title="Create a new Ticket" @reload-table="onNewTicket"/>
+                  :title="$t('headline~ticket~newticket')" @reload-table="onNewTicket"/>
     <assign-user-modal ref="assign" @reload="loadBoardTickets()"/>
   </div>
 </template>
