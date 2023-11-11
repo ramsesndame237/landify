@@ -39,7 +39,7 @@
                           @click="updateTicket">
                   {{ $t('button~edit') }}
                 </b-button>
-                <b-button v-if="showButton.all" variant="primary" class="ml-2" @click="toggleTicket(entity)">
+                <b-button v-if="showButton.all" variant="primary" class="ml-2" @click="(e)=>toggleTicket(e,entity)">
                   {{ $t('button~ticket~' + (entity.ticket_closed ? 'reopen' : 'close')) }}
                 </b-button>
                 <assign-user-modal ref="assign" @reload="loadSingleTicket"/>
