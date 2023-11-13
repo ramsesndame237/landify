@@ -91,7 +91,35 @@ export default {
       }
       return true
     },
-    async toggleTicket(e,ticket) {
+    async closeTicket(ticket, force = false) {
+      try {
+        await this.$http.put(`/tickets/${ticket.ticket_id}/close-ticket`, { force_closed: force })
+      } catch (e) {
+        if (e.response && e.response.status === 412) {
+          if (!force) {
+            const result = await this.$swal({
+              title: 'Ticket has sub tickets that are openned?',
+              text: 'Do you want to close all sub tickets on this ticket ?',
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'Yes',
+              customClass: {
+                confirmButton: 'btn btn-primary',
+                cancelButton: 'btn btn-outline-danger ml-1',
+              },
+              buttonsStyling: false,
+            })
+            if (!result.value) return
+            await this.closeTicket(ticket, true)
+          }
+        }
+        throw e
+      }
+    },
+    async openTicket(ticket) {
+      await this.$http.put(`/tickets/${ticket.ticket_id}/open-ticket`, {})
+    },
+    async toggleTicket(e, ticket) {
       e.stopPropagation()
       const result = await this.$swal({
         title: 'Are you sure?',
@@ -106,13 +134,17 @@ export default {
         buttonsStyling: false,
       })
       if (!result.value) return
-      const updated = (await this.$api({
-        action: 'update',
-        entity: 'ticket',
-        data: [{ ticket_id: ticket.ticket_id, ticket_closed: ticket.ticket_closed ? 0 : 1 }],
-      })).data.data.data[0][0]
-      ticket.ticket_closed = updated.ticket_closed
-      this.$successToast(ticket.ticket_closed ? 'The ticket is closed' : 'The ticket is open')
+      try {
+        if (ticket.ticket_closed) {
+          await this.openTicket(ticket)
+        } else {
+          await this.closeTicket(ticket, false)
+        }
+        ticket.ticket_closed = !ticket.ticket_closed
+        this.$successToast(ticket.ticket_closed ? 'The ticket is closed' : 'The ticket is open')
+      } catch (error) {
+        this.$errorToast(error.message || 'Unknown error')
+      }
     },
     loadTickets(filterData) {
       return this.$http.get('/tickets/list', {
