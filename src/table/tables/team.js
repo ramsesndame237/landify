@@ -87,7 +87,9 @@ export default {
       /**
        * Cette clé renseigne les éléments de pagination personalisés
        */
-      customPagination: [{ size: 100_000 }],
+      customPagination: {
+        data: [{ size: 100_000 }],
+      },
       visible: entity => entity.team_type === 'extern_client' && entity.team_for_all_customer === 0,
     },
     {
