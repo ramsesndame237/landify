@@ -45,14 +45,14 @@
                 <assign-user-modal ref="assign" @reload="loadSingleTicket"/>
               </div>
             </div>
-            <b-card-actions :title="$t('headline~ticket~information')" action-collapse>
+            <b-card-actions v-if="entity" :title="$t('headline~ticket~information')" action-collapse>
               <table class="mt-2 mt-xl-0 w-100">
                 <tr v-if="!isTicket">
                   <th class="pb-50 font-weight-bold">
                     {{ $t('attribute.ticket_name_group') }}
                   </th>
                   <td class="pb-50">
-                    <router-link v-if="entity.ticket_id_group"
+                    <router-link v-if="entity && entity.ticket_id_group"
                                  :to="{name:'table-view',params: {table:'ticket',id: entity.ticket_id_group, entity: {}, columns:[], teams: []}}">
                       {{ entity.ticket_name_group }}
                     </router-link>
@@ -63,7 +63,7 @@
                     {{ $t('attribute.board_name') }}
                   </th>
                   <td class="pb-50">
-                    <router-link v-if="entity.board_id"
+                    <router-link v-if="entity && entity.board_id"
                                  :to="{name:'table-kanban',params: {table:'board',id: entity.board_id}}">
                       {{ entity.board_name }}
                     </router-link>
@@ -82,7 +82,7 @@
                     {{ $t('attribute.customergroup_name') }}
                   </th>
                   <td class="pb-50">
-                    <router-link v-if="entity.customergroup_id"
+                    <router-link v-if="entity && entity.customergroup_id"
                                  :to="{name:'table-view',params: {table: 'customergroup', id: entity.customergroup_id}}">
                       {{ entity.customergroup_name }}
                     </router-link>
@@ -93,7 +93,7 @@
                     {{ $t('attribute.company_name') }}
                   </th>
                   <td class="pb-50">
-                    <router-link v-if="entity.company_id"
+                    <router-link v-if="entity && entity.company_id"
                                  :to="{name:'table-view',params: {table: 'company', id: entity.company_id}}">
                       {{ entity.company_name }}
                     </router-link>
@@ -104,7 +104,7 @@
                     {{ $t('attribute.pos_name') }}
                   </th>
                   <td class="pb-50">
-                    <router-link v-if="entity.pos_id"
+                    <router-link v-if="entity && entity.pos_id"
                                  :to="{name:'table-view',params: {table: 'pos', id: entity.pos_id}}">
                       {{ entity.pos_name }}
                     </router-link>
@@ -115,7 +115,7 @@
                     {{ $t('attribute.contract_name') }}
                   </th>
                   <td class="pb-50">
-                    <router-link v-if="entity.contract_id"
+                    <router-link v-if="entity && entity.contract_id"
                                  :to="{name:'table-view',params: {table: 'contract', id: entity.contract_id}}">
                       {{ entity.contract_name }}
                     </router-link>
@@ -126,7 +126,7 @@
                     {{ $t('attribute.invoice_number') }}
                   </th>
                   <td class="pb-50">
-                    <router-link v-if="entity.invoice_id"
+                    <router-link v-if="entity && entity.invoice_id"
                                  :to="{name:'table-view',params: {table: 'invoice', id: entity.invoice_id}}">
                       {{ entity.invoice_number }}
                     </router-link>
