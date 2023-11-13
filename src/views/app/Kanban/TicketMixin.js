@@ -94,6 +94,8 @@ export default {
     async closeTicket(ticket, force = false) {
       try {
         await this.$http.put(`/tickets/${ticket.ticket_id}/close-ticket`, { force_closed: force })
+        ticket.ticket_closed = 1
+        this.$successToast('The ticket is closed')
       } catch (e) {
         if (e.response && e.response.status === 412) {
           if (!force) {
@@ -111,6 +113,7 @@ export default {
             })
             if (!result.value) return
             await this.closeTicket(ticket, true)
+            return
           }
         }
         throw e
@@ -118,6 +121,8 @@ export default {
     },
     async openTicket(ticket) {
       await this.$http.put(`/tickets/${ticket.ticket_id}/open-ticket`, {})
+      ticket.ticket_closed = 0
+      this.$successToast('The ticket is open')
     },
     async toggleTicket(e, ticket) {
       e.stopPropagation()
@@ -140,8 +145,6 @@ export default {
         } else {
           await this.closeTicket(ticket, false)
         }
-        ticket.ticket_closed = !ticket.ticket_closed
-        this.$successToast(ticket.ticket_closed ? 'The ticket is closed' : 'The ticket is open')
       } catch (error) {
         this.$errorToast(error.message || 'Unknown error')
       }
