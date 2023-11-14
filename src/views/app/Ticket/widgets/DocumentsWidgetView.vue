@@ -55,7 +55,6 @@ export default {
       })
     },
     onViewDocument(document) {
-      console.log("this is the document", document)
       const stamp = document.document_already_stamp !== 0
       if (stamp) return getStampedDocumentLink(document)
       getStampedDocumentPreviewLink(document)
