@@ -8,35 +8,41 @@
       {{ child ? '' : item.email_id }}
     </b-td>
     <b-td @click="toggle">
-      {{ child ? '' : formatDate(item.email_received_datetime,true) }}
+      <span class="text-truncate">
+      {{ child ? '' : customFormatDate(item.email_received_datetime) }}
+      </span>
     </b-td>
     <b-td @click="toggle">
+      <span class="d-inline-block text-truncate" style="max-width: 130px" :title="child ? '' : item.email_from">
       {{ child ? '' : item.email_from }}
-    </b-td>
-    <b-td @click="toggle">
-      {{ child ? '' : item.email_to }}
+      </span>
     </b-td>
     <b-td>
-      {{ child ? '' : item.email_subject }}
-      <feather-icon v-if="!child" class="text-success" icon="EyeIcon" size="24" @click="$emit('show-content')"/>
+      <div class="d-flex align-items-center subject-content">
+        <span class="d-inline-block text-truncate" style="max-width: 150px" :title="child ? '' : item.email_subject">
+        {{ child ? '' : item.email_subject }}
+      </span>
+        <feather-icon v-if="!child" class="text-success eye-icon" icon="EyeIcon" size="24"
+                      @click="$emit('show-content')"/>
+      </div>
     </b-td>
     <b-td class="td-form">
-      <field v-if="visible" :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/>
+        <field v-if="visible" :field="posIdField" :entity="item"
+               :disabled="is_dismissed || is_done || item.ticket_id != null"/>
+        <router-link v-if="is_done && item.pos_id" target="_blank"
+                     :to="{ name: 'table-view', params: { table: 'pos', id: item.pos_id } }">
+          {{ getPosName() }}
+        </router-link>
+      </b-td>
+    <b-td class="td-form">
+      <field v-if="visible" ref="ticket" :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/>
       <router-link v-if="is_done" target="_blank"
                    :to="{name: 'table-view', params: {table: 'ticket',id: item.ticket_id_created}}">
         {{ item.ticket_id_created + ' - ' + getTicketName() }}
       </router-link>
     </b-td>
     <b-td class="td-form">
-      <field v-if="visible" :field="posIdField" :entity="item"
-             :disabled="is_dismissed || is_done || item.ticket_id!=null"/>
-      <router-link v-if="is_done && item.pos_id" target="_blank"
-                   :to="{name: 'table-view', params: {table: 'pos',id: item.pos_id}}">
-        {{ getPosName() }}
-      </router-link>
-    </b-td>
-    <b-td class="td-form">
-      <field v-if="visible" :field="contractIdField" :entity="item"
+      <field v-if="visible" ref="contract" :field="contractIdField" :entity="item"
              :disabled="is_dismissed|| is_done ||item.ticket_id!=null"/>
       <router-link v-if="is_done && item.contract_id" target="_blank"
                    :to="{name: 'table-view', params: {table: 'contract',id: item.contract_id}}">
@@ -70,7 +76,7 @@
     <b-td class="text-center">
       <div v-if="visible && !is_done && !is_dismissed && (item.document_id ? item.classification_id : true)"
            class="d-flex align-items-center">
-        <b-button class="btn-icon" variant="flat-success" pill @click="$emit('classify')">
+        <b-button class="btn-icon" variant="flat-success" pill @click="onClassifyClick">
           <feather-icon icon="CheckIcon" size="24"/>
         </b-button>
         <b-button class="btn-icon" variant="flat-danger" style="margin-bottom: 3px" pill @click="$emit('reject')">
@@ -85,8 +91,9 @@
 
 <script>
 import Field from '@/views/app/Generic/Field'
-import { getDocumentLink, formatDate } from '@/libs/utils'
+import { getDocumentLink, getDateFormat } from '@/libs/utils'
 import { VBToggle } from 'bootstrap-vue'
+import moment from 'moment'
 
 export default {
   name: 'MailTr',
@@ -106,8 +113,10 @@ export default {
         list: 'frontend_6_1_6_overview',
         listLabel: item => `${item.ticket_id} - ${item.ticket_name}`,
         noLabel: true,
-        noFetch: true,
         required: false,
+        filter_key: 'pos_id',
+        noCache: true,
+        optionWithTooltipDetail: true,
       },
       posIdField: {
         key: 'pos_id',
@@ -117,6 +126,11 @@ export default {
         listLabel: 'pos_name',
         noLabel: true,
         noFetch: true,
+        /**
+        * Cette clé permet de spécifier si lorsque les options dans le champ sont trop long, au
+        * Hover du champ, on doit afficher les détails sous un tooltip
+        */
+        optionWithTooltipDetail: true,
       },
       contractIdField: {
         key: 'contract_id',
@@ -126,7 +140,8 @@ export default {
         listLabel: 'contract_name',
         filter_key: 'pos_id',
         noLabel: true,
-        noFetch: true,
+        noCache: true,
+        optionWithTooltipDetail: true,
       },
       boardIdField: {
         key: 'board_id',
@@ -135,6 +150,7 @@ export default {
         listLabel: 'board_name',
         noLabel: true,
         noFetch: true,
+        optionWithTooltipDetail: true,
       },
       documenttypeIdField: {
         key: 'documenttype_id',
@@ -172,7 +188,21 @@ export default {
     this.onTicketIdChange()
   },
   methods: {
-    formatDate,
+    onClassifyClick() {
+      this.$emit('classify', this)
+    },
+    customFormatDate(date) {
+      if (!date) return ''
+      const mDate = moment(date)
+      const now = moment()
+      let format = getDateFormat(true)
+      if (mDate.isSame(now, 'day')) {
+        format = 'HH:mm'
+      } else if (!mDate.isSame(now, 'isoWeek')) {
+        format = getDateFormat(false)
+      }
+      return mDate.format(format)
+    },
     display() {
       console.log(this.item)
     },
@@ -199,9 +229,7 @@ export default {
       }
     },
     getTicketName() {
-      const list = this.$store.state.table.listCache.frontend_6_1_6_overview
-      const el = list.find(e => e.ticket_id === this.item.ticket_id_created)
-      return el?.ticket_name
+      return this.item.ticket_name_created || ''
     },
     getPosName() {
       const list = this.$store.state.table.listCache.frontend_2_1_3_8
@@ -209,9 +237,7 @@ export default {
       return el?.pos_name
     },
     getContractName() {
-      const list = this.$store.state.table.listCache.frontend_4_2_1_contract_selector
-      const el = list.find(e => e.contract_id === this.item.contract_id)
-      return el?.contract_name
+      return this.item.contract_name || ''
     },
     getBoardName() {
       const list = this.$store.state.table.listCache.board
@@ -247,5 +273,13 @@ export default {
   padding-left: 4px !important;
   padding-right: 4px !important;
   min-width: 250px;
+}
+
+.eye-icon {
+  opacity: 0;
+}
+
+.subject-content:hover .eye-icon {
+  opacity: 1;
 }
 </style>
