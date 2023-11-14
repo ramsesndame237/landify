@@ -23,8 +23,6 @@ export default {
   perPage: 100000, // Si cette entité à un nombre d'éléments fixe par page différent de celui par default (10)
   fields: [
     { key: 'company_id', auto: true },
-    { key: 'company_name' },
-    { key: 'company_shortname' },
     {
       key: 'customergroup_id',
       hideOnIndex: true,
@@ -32,12 +30,16 @@ export default {
       list: 'customergroup',
       listLabel: 'customergroup_name',
       withPopup: true,
+      cols:12,
       relationEntity: 'customergroup_company_rel',
     },
+    { key: 'company_name', cols: 6 },
+    { key: 'company_shortname', cols: 6 },
     { key: 'customergroup_name', sortable: true, hideOnForm: true },
     {
       key: 'address_id',
       type: 'list',
+      category: 'adress',
       list: 'address',
       listLabel: 'address_street',
       withNew: true,
@@ -54,6 +56,7 @@ export default {
       alwaysNew: true,
       hideOnIndex: true,
       onlyForm: true,
+      category: 'contact',
     },
     {
       key: 'companydetails_id',
@@ -63,11 +66,13 @@ export default {
       withNew: true,
       alwaysNew: true,
       hideOnIndex: true,
+      cols:6,
       onlyForm: true,
     },
     {
       key: 'create_contactperson',
       type: 'boolean',
+      category: 'patner',
       hideOnUpdate: true,
       hideOnIndex: true,
       change: (entity, vm) => {
