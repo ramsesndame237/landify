@@ -538,7 +538,6 @@ export default {
       if (date.isAfter(column.ticket_deadline_offset_yellow)) return 'warning'
       return 'success'
     },
-    getDocumentLink,
     getLink(document) {
       if (document.document_already_stamp) return getStampedDocumentLink(document)
       return getDocumentLink(document)

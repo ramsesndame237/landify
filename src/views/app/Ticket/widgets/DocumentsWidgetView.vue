@@ -2,6 +2,9 @@
 import DataTable from '@/views/app/CustomComponents/DataTable/DataTable.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
 import Table from '@/table'
+import {getDocumentLink, getStampedDocumentLink, getStampedDocumentPreviewLink} from "@/libs/utils";
+import EditPageMixin from "@/views/app/Generic/EditPageMixin";
+import TicketMixin from "@/views/app/Kanban/TicketMixin";
 
 export default {
   name: 'DocumentsWidgetView',
@@ -9,6 +12,7 @@ export default {
     GenericModal,
     DataTable,
   },
+  mixins: [EditPageMixin, TicketMixin],
   props: {
     documents: Array,
     ticket_id: Number,
@@ -38,16 +42,26 @@ export default {
   methods: {
     createDocument() {
       console.log('this this the ticket id ', this.ticket_id)
-      this.$refs.documentModal.openModal(true, { ticket_id: this.ticket_id })
+      this.$refs.documentModal.openModal(true, {ticket_id: this.ticket_id})
     },
     deleteDocument() {
       console.log('this is the delete ')
     },
     stampDocument(document) {
       console.log('this is the document', document)
-      this.$router.push({ name: 'sign-document', params: { id: document.document_id, ticket_id: this.ticket_id, entity: document } })
+      this.$router.push({
+        name: 'sign-document',
+        params: {id: document.document_id, ticket_id: this.ticket_id, entity: document}
+      })
     },
-  },
+    onViewDocument(document) {
+      console.log("this is the document", document)
+      const stamp = document.document_already_stamp !== 0
+      if (stamp) return getStampedDocumentLink(document)
+      getStampedDocumentPreviewLink(document)
+      console.log("this is the mpa", getStampedDocumentPreviewLink(document))
+    }
+  }
 }
 </script>
 <template>
@@ -72,7 +86,8 @@ export default {
       </div>
       <section>
         <DataTable v-if="ticket_id" :columns="columDataDocument" :url="`/tickets/documents?ticket_id=${ticket_id}`"
-                   :on-delete-click="deleteDocument " hide-top-bar="true" :resolve-data="data =>data.data"
+                   :on-delete-click="deleteDocument" :on-details-click="onViewDocument" hide-top-bar="true"
+                   :resolve-data="data =>data.data"
                    :custom-actions="[{icon:'FeatherIcon',onClick:stampDocument, label:'Stamp'}]"/>
       </section>
 
