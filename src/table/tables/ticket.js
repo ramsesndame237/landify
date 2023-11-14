@@ -102,6 +102,10 @@ export default {
       list: 'customergroup',
       listLabel: 'customergroup_name',
       required: false,
+      noFetchOnInit: true,
+      customPagination: {
+        per_page: 15,
+      },
     },
     {
       key: 'company_id',

@@ -6,6 +6,7 @@
                     :placeholder="$t('attribute.general_automaticid')"/>
       <validation-provider v-else #default="{ errors, validate }" :rules="rules" :name="field.key"
                            :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message&& tableDefinition.attribute_regexp_failure_message[field.key]}">
+
         <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
         <div v-else-if="field.type==='html'" class="message-editor">
@@ -20,18 +21,31 @@
         </div>
         <div v-else-if="field.type==='list'"
              :class="(field.withNew || field.withPopup || field.ids || field.withRoundedNew) ? 'd-flex': ''">
-          <v-select v-model="entity[field.key]" :dropdown-should-open="true" :disabled="selectDisabled"
+          <v-select v-model="entity[field.key]" :dropdown-should-open="dropdownShouldOpen" :disabled="selectDisabled"
                     :class="{'error': errors.length > 0, 'multiple_select': field.multiple }"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
                     :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
                     :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
-                    :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
-                    :clearable="field.clearable != null ? field.clearable : true" @input="onChange">
+                    :reduce="i => i[field.tableKey||field.key]"
+                    :clearable="field.clearable != null ? field.clearable : true" :filterable="false" @input="onChange"
+                    @open="onListOpen" @close="onListClose" @search="onSearch"
+          >
             <template v-if="field.optionWithTooltipDetail" #option="option">
               <span v-b-tooltip.hover :title="getOptionLabel(option)">{{ getOptionLabel(option) }}</span>
             </template>
             <template v-if="field.optionWithTooltipDetail" #selected-option="option">
               <span v-b-tooltip.hover.dh10 :title="getOptionLabel(option)">{{ getOptionLabel(option) }}</span>
+            </template>
+
+            <template #list-footer>
+              <li v-show="hasNext" ref="load" class="loader">
+                Loading more options...
+              </li>
+            </template>
+            <template #spinner>
+              <div v-show="loading" class="spinner ml5">
+                <icon icon="fontisto:spinner" width="23"/>
+              </div>
             </template>
           </v-select>
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
@@ -309,9 +323,20 @@ export default {
       disablePopupButton: false,
       isDisabled: false,
       nonCachedItems: [],
+      listObserver: null,
+      hasNext: false,
+      query: '',
+      tempData: [],
+      requestPayload: {
+        page: 1,
+        per_page: 100_000,
+      },
     }
   },
   computed: {
+    per_page() {
+      return this.field.customPagination?.per_page || this.requestPayload.per_page
+    },
     list() {
       return this.field.noCache ? this.nonCachedItems : this.$store.getters['table/listCache'](this.field.entityList || this.field.list)
     },
@@ -329,7 +354,6 @@ export default {
     },
     listItems() {
       if (this.field.filter && typeof this.field.filter === 'function') {
-        console.log('this is the list', this.list)
         return this.list.filter(item => this.field.filter(item, this))
       }
       if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
@@ -406,7 +430,13 @@ export default {
   },
   async created() {
     if ((this.field.type === 'list' || this.field.type === 'custom_list') && ((!this.field.filter_key || !!this.entity[this.field.filter_key]) || this.field.noFetchOnChange) && !this.field.onlyForm) {
-      await this.fetchList()
+      /**
+       * @param notFetchOnInit Est une clé dans le fichier de configuration qui permet de spécifier si on doit faire un
+       * chargement initial des données ou pas, lors du rendu du composant
+       */
+      if (!this.field.noFetchOnInit) {
+        await this.fetchList()
+      }
     } else if (this.field.type === 'boolean') {
       // set false as default value
       if (this.entity[this.field.key] == null) {
@@ -420,6 +450,10 @@ export default {
     this.$nextTick(() => {
       this.initializeValue()
     })
+    // Ici on créé un observer pour le champs de type list
+    if (this.field.type === 'list') {
+      this.listObserver = new IntersectionObserver(this.listObserverCallBack)
+    }
 
     if (this.field.type && this.field.type === 'html') {
       this.initEditor()
@@ -491,6 +525,37 @@ export default {
     }
   },
   methods: {
+    dropdownShouldOpen(vueSelectInstance) {
+      const { noDrop, open, mutableLoading } = vueSelectInstance
+      return noDrop ? false : open && !mutableLoading
+    },
+    async onSearch(query, loading) {
+      if (query.length >= 2 && (query.length - this.query.length) % 2 === 0) {
+        loading(true)
+        this.requestPayload.page = 1
+        await this.fetchList(true, query)
+        loading(false)
+      }
+    },
+    async onListOpen() {
+      if (this.field.type === 'list' && this.hasNext) {
+        await this.$nextTick()
+        this.listObserver.observe(this.$refs.load)
+      }
+    },
+    onListClose() {
+      this.listObserver.disconnect()
+    },
+    async listObserverCallBack([{ isIntersecting, target }]) {
+      if (isIntersecting) {
+        const ul = target.offsetParent
+        const scrollTop = target.offsetParent.scrollTop
+        this.requestPayload.page += 1
+        await this.fetchList(true)
+        await this.$nextTick()
+        ul.scrollTop = scrollTop
+      }
+    },
     getOptionLabel(option) {
       if (typeof this.field.listLabel === 'function') {
         return this.field.listLabel(option)
@@ -754,18 +819,17 @@ export default {
       }
       return accumulator
     },
-    async fetchList(force) {
+    async fetchList(force, query = null) {
       if (this.field.noFetch) return
       if (this.list.length === 0 || force) this.loading = true
       try {
         let { list } = this.field
-        console.log('this is the field list debug', list)
         if (list === 'address') {
           list = this.subDefinition.entity
           await this.$store.dispatch('table/fetchTableDefinition', 'address')
           await this.$store.dispatch('table/fetchTableDefinition', 'city')
         }
-        const payload = { entity: this.field.entityList || list }
+        let payload = { entity: this.field.entityList || list }
         if (this.field.entityCustomEndPoint) payload.customEnpoint = this.field.entityCustomEndPoint
         if (this.field.onlyForm && this.entity[this.field.key]) {
           payload.data = [{ [this.field.key]: this.entity[this.field.key] }]
@@ -787,9 +851,33 @@ export default {
           }
         }
         if (this.field.customPagination) {
-          payload.data.push(...this.field.customPagination)
+          if (this.field.customPagination.data && Array.isArray(this.field.customPagination.data)) {
+            if (payload?.data) {
+              payload.data.push(...this.field.customPagination.data)
+            } else {
+              payload.data = [...this.field.customPagination.data]
+            }
+          }
         }
-        this.nonCachedItems = await this.$store.dispatch('table/fetchList', payload)
+
+        payload = {
+          ...payload,
+          ...this.requestPayload,
+          per_page: this.per_page,
+          ...(query && { keyword: query }),
+          getWholeResponse: true,
+        }
+
+        const response = await this.$store.dispatch('table/fetchList', payload)
+        if (this.field.entityCustomEndPoint) {
+          this.nonCachedItems = response.data
+          this.hasNext = response.current_page < response.pages
+        } else {
+          const { links, data } = response
+          this.nonCachedItems = data
+          const { pagination } = links
+          this.hasNext = pagination.current_page < pagination.last_page
+        }
         if (this.field.entityList) {
           await this.$store.dispatch('table/fetchTableDefinition', list)
         }
@@ -924,5 +1012,13 @@ export default {
     stroke: $primary;
   }
 
+}
+.loader {
+  text-align: center;
+  color: #bbbbbb;
+  padding: .5rem;
+}
+.ml5 {
+  margin-left: .5rem;
 }
 </style>
