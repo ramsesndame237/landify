@@ -84,7 +84,7 @@ export default {
 </template>
 
 <style lang="scss">
-@import "variables";
+@import "@/assets/scss/variables/variables";
 
 .search-container {
   display: flex;
