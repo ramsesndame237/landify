@@ -1,6 +1,6 @@
 <script>
 
-import {getDocumentLinkPreviewWithId} from "@/libs/utils";
+import {getDocumentLink, getDocumentLinkPreviewWithId, getDocumentLinkWithId} from "@/libs/utils";
 import Table from "@/table";
 
 export default {
@@ -22,9 +22,16 @@ export default {
     openModal() {
       this.$refs.previewDocumentModalRef.show()
     },
+    downloadDocument(){
+        var link = document.createElement("a");
+        link.setAttribute('download', name);
+        link.href = getDocumentLinkWithId(this.document_id);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    }
   },
   mounted() {
-    console.log("this is the image preview", getDocumentLinkPreviewWithId(this.document_id))
     this.document_name = getDocumentLinkPreviewWithId(this.document_id)
   }
 
@@ -39,7 +46,7 @@ export default {
           {{ name }}
         </h2>
         <feather-icon v-b-tooltip.hover title="Download" icon="DownloadCloudIcon" size="25"
-                      class="cursor-pointer mx-2"/>
+                      class="cursor-pointer mx-2" @click="downloadDocument" />
         <feather-icon v-b-tooltip.hover title="Stamp" icon="FeatherIcon" size="25" class="cursor-pointer"/>
       </div>
     </div>
