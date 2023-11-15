@@ -9,50 +9,83 @@
     </b-td>
     <b-td @click="toggle">
       <span class="text-truncate">
-      {{ child ? '' : customFormatDate(item.email_received_datetime) }}
+        {{ child ? '' : customFormatDate(item.email_received_datetime) }}
       </span>
     </b-td>
     <b-td @click="toggle">
       <span class="d-inline-block text-truncate" style="max-width: 130px" :title="child ? '' : item.email_from">
-      {{ child ? '' : item.email_from }}
+        {{ child ? '' : item.email_from }}
       </span>
     </b-td>
     <b-td>
       <div class="d-flex align-items-center subject-content">
+        <feather-icon v-if="item.documents && item.documents.length" icon="PaperclipIcon" class="mr-50" />
         <span class="d-inline-block text-truncate" style="max-width: 150px" :title="child ? '' : item.email_subject">
-        {{ child ? '' : item.email_subject }}
-      </span>
+          {{ child ? '' : item.email_subject }}
+        </span>
         <feather-icon v-if="!child" class="text-success eye-icon" icon="EyeIcon" size="24"
                       @click="$emit('show-content')"/>
       </div>
     </b-td>
     <b-td class="td-form">
-        <field v-if="visible" :field="posIdField" :entity="item"
-               :disabled="is_dismissed || is_done || item.ticket_id != null"/>
-        <router-link v-if="is_done && item.pos_id" target="_blank"
-                     :to="{ name: 'table-view', params: { table: 'pos', id: item.pos_id } }">
-          {{ getPosName() }}
-        </router-link>
-      </b-td>
+      <field v-if="visible" :field="posIdField" :entity="item"
+             :disabled="is_dismissed || is_done"/>
+      <router-link v-if="is_done && item.pos_id" target="_blank"
+                   :to="{ name: 'table-view', params: { table: 'pos', id: item.pos_id } }">
+        {{ getPosName() }}
+      </router-link>
+    </b-td>
     <b-td class="td-form">
-      <field v-if="visible" ref="ticket" :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/>
+      <div v-if="visible" class="d-flex align-items-center" style="gap: 8px; transform: translateY(-6px);">
+        <div style="width: 300px;">
+          <auto-complete
+            :get-option-value="opt => opt.ticket_id || ''"
+            :on-change="opt => {
+              currentTicket = opt
+            }"
+            :get-option-label="opt => opt.ticket_name || ''"
+            :value.sync="item.ticket_id"
+            :url="(keyword) => `/tickets/autocomplete?pos_id=${item.pos_id || ''}&keyword=${keyword || ''}`"
+            :disabled="is_dismissed || is_done || !item.pos_id"
+            :initial-option="currentTicket"
+            :elements-to-listen-on="tableEl ? [tableEl] : undefined"
+            always-reset-on-focus
+          />
+        </div>
+      </div>
+      <!-- <field v-if="visible" ref="ticket" :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/> -->
       <router-link v-if="is_done" target="_blank"
                    :to="{name: 'table-view', params: {table: 'ticket',id: item.ticket_id_created}}">
         {{ item.ticket_id_created + ' - ' + getTicketName() }}
       </router-link>
     </b-td>
+    <b-td>
+      <b-form-checkbox
+        v-if="visible"
+        :key="`checkbox-new-ticket-for-item-${item.email_id || item.document_id}`"
+        v-model="shouldCreateSubTicket"
+        style="transform: translateY(-6px)"
+        :disabled="!item.ticket_id || is_dismissed || is_done"
+      />
+      <b-form-checkbox
+        v-else
+        :checked="!!item.create_subticket"
+        style="transform: translateY(-6px)"
+        disabled
+      />
+    </b-td>
     <b-td class="td-form">
-      <field v-if="visible" ref="contract" :field="contractIdField" :entity="item"
-             :disabled="is_dismissed|| is_done ||item.ticket_id!=null"/>
+      <field v-if="visible" ref="contract" :field="contractIdField" :entity="item" :disabled="item.ticket_id || is_dismissed|| is_done"/>
       <router-link v-if="is_done && item.contract_id" target="_blank"
                    :to="{name: 'table-view', params: {table: 'contract',id: item.contract_id}}">
         {{ getContractName() }}
       </router-link>
     </b-td>
-    <b-td>
+    <!-- <b-td>
+      <feather-icon v-if="item.documents && item.documents.length" icon="PaperclipIcon" />
       <b-form-checkbox v-if="item.documents && item.documents.length" :checked="1" disabled :value="1"
                        :unchecked-value="0"/>
-    </b-td>
+    </b-td> -->
     <b-td>
       <b-link v-if="item.document_id" class="m-auto" variant="danger" target="_blank" :href="getDocumentLink(item)">
         {{ item.document_name }}
@@ -67,24 +100,30 @@
     </b-td>
     <b-td class="td-form">
       <field v-if="visible" :field="boardIdField" :entity="item"
-             :disabled="is_dismissed || is_done || item.ticket_id!=null"/>
+             :disabled="!item.pos_id || (item.ticket_id && !shouldCreateSubTicket) || is_dismissed || is_done"/>
       <router-link v-if="is_done" target="_blank"
                    :to="{name: 'table-kanban', params: {table: 'board',id: item.board_id}}">
         {{ getBoardName() }}
       </router-link>
     </b-td>
+    <b-td class="td-form text-center">
+      <b-badge v-if="item.status && !item.document_id" :variant="statusClass">
+        {{ $t('classification~status~' + (item.email_id ? getMailStatus(item.status) :item.status)) }}
+      </b-badge>
+    </b-td>
     <b-td class="text-center">
-      <div v-if="visible && !is_done && !is_dismissed && (item.document_id ? item.classification_id : true)"
+      <div v-if="!is_done && !is_dismissed && (item.document_id ? item.classification_id : true)"
            class="d-flex align-items-center">
         <b-button class="btn-icon" variant="flat-success" pill @click="onClassifyClick">
           <feather-icon icon="CheckIcon" size="24"/>
         </b-button>
-        <b-button class="btn-icon" variant="flat-danger" style="margin-bottom: 3px" pill @click="$emit('reject')">
+        <b-button class="btn-icon" variant="flat-danger" style="margin-bottom: 3px" pill @click="onRejectMail">
           <feather-icon icon="XIcon" size="24"/>
         </b-button>
       </div>
-      <span v-if="is_done" class="text-success">Done</span>
-      <span v-if="is_dismissed" class="text-warning">Dismissed</span>
+      <b-badge v-if="(is_done||is_dismissed) && !!item.document_id" :variant="statusClass">
+        {{ $t('classification~status~' + (item.document_id ? item.status : getMailStatus(item.status))) }}
+      </b-badge>
     </b-td>
   </b-tr>
 </template>
@@ -94,19 +133,31 @@ import Field from '@/views/app/Generic/Field'
 import { getDocumentLink, getDateFormat } from '@/libs/utils'
 import { VBToggle } from 'bootstrap-vue'
 import moment from 'moment'
+import AutoComplete from '@/views/app/CustomComponents/AutoComplete/AutoComplete.vue'
+import FeatherIcon from '@/@core/components/feather-icon/FeatherIcon.vue'
 
 export default {
   name: 'MailTr',
-  components: { Field },
+  components: {
+    Field,
+    AutoComplete,
+    FeatherIcon,
+  },
   directives: {
     'b-toggle': VBToggle,
   },
   props: {
     item: {},
     child: Boolean,
+    tableEl: {
+      validator: () => true,
+      default: null,
+    },
   },
   data() {
     return {
+      currentTicket: null,
+      shouldCreateSubTicket: false,
       ticketIdField: {
         key: 'ticket_id',
         type: 'list',
@@ -127,9 +178,9 @@ export default {
         noLabel: true,
         noFetch: true,
         /**
-        * Cette clé permet de spécifier si lorsque les options dans le champ sont trop long, au
-        * Hover du champ, on doit afficher les détails sous un tooltip
-        */
+         * Cette clé permet de spécifier si lorsque les options dans le champ sont trop long, au
+         * Hover du champ, on doit afficher les détails sous un tooltip
+         */
         optionWithTooltipDetail: true,
       },
       contractIdField: {
@@ -163,11 +214,24 @@ export default {
     }
   },
   computed: {
+    statusClass() {
+      switch (this.item.status) {
+        case 'inprogress':
+          return 'warning'
+        case 'done':
+          return 'success'
+        case 'dismiss':
+          return 'danger'
+        default:
+          return ''
+      }
+    },
     is_dismissed() {
       return this.item.document_id ? !!this.item.classification_dismissed : !!this.item.email_dismissed
     },
     is_done() {
-      return this.item.document_id ? !!this.item.ticket_created : !!this.item.ticket_id_created
+      return this.item.document_id ? !!this.item.ticket_created : (this.item?.email_processed && !this.item?.email_dismissed)
+      // return this.item.document_id ? !!this.item.ticket_created : !!this.item?.ticket_id_created
     },
     visible() {
       return this.item.document_id
@@ -176,11 +240,15 @@ export default {
     },
   },
   watch: {
-    'item.ticket_id': function (val) {
-      this.onTicketIdChange()
+    currentTicket(val) {
+      this.onTicketIdChange(val)
     },
     'item.documenttype_id': function (val) {
       this.onDocumentTypeChange()
+    },
+    'item.pos_id': function (val) {
+      if (this.item.contract_id) this.$set(this.item, 'contract_id', null)
+      if (this.item.ticket_id) this.$set(this.item, 'ticket_id', null)
     },
   },
   mounted() {
@@ -188,8 +256,23 @@ export default {
     this.onTicketIdChange()
   },
   methods: {
+    getMailStatus(status) {
+      console.log((status === 'dismiss' || status === 'done') ? 'processed' : status)
+      return (status === 'dismiss' || status === 'done') ? 'processed' : status
+    },
+    onRejectMail() {
+      if (!this.visible) {
+        this.$errorToast(this.$t('mail~classify~parent~first~alert'))
+        return
+      }
+      this.$emit('reject')
+    },
     onClassifyClick() {
-      this.$emit('classify', this)
+      if (!this.visible) {
+        this.$errorToast(this.$t('mail~classify~parent~first~alert'))
+        return
+      }
+      this.$emit('classify', { $vm: this, shouldCreateSubTicket: this.shouldCreateSubTicket })
     },
     customFormatDate(date) {
       if (!date) return ''
@@ -215,17 +298,11 @@ export default {
       this.item.open = !this.item.open
       // el.hidden = !el.hidden
     },
-    onTicketIdChange() {
-      const val = this.item.ticket_id
-      if (val) {
-        const list = this.$store.state.table.listCache.frontend_6_1_6_overview
-        const el = list.find(e => e.ticket_id === val)
-        console.log('el', el.pos_name)
-        if (el) {
-          this.$set(this.item, 'pos_id', el.pos_id)
-          this.$set(this.item, 'contract_id', el.contract_id)
-          this.$set(this.item, 'board_id', el.board_id)
-        }
+    onTicketIdChange(val) {
+      this.$set(this.item, 'contract_id', val?.contract_id || null)
+      this.$set(this.item, 'board_id', val?.board_id || null)
+      if (!val) {
+        this.shouldCreateSubTicket = false
       }
     },
     getTicketName() {
@@ -240,9 +317,10 @@ export default {
       return this.item.contract_name || ''
     },
     getBoardName() {
-      const list = this.$store.state.table.listCache.board
-      const el = list.find(e => e.board_id === this.item.board_id)
-      return el?.board_name
+      // const list = this.$store.state.table.listCache.board
+      // const el = list.find(e => e.board_id === this.item.board_id)
+      // return el?.board_name
+      return this.item.board_name || ''
     },
     getDocumentTypeName() {
       const list = this.$store.state.table.listCache.documenttype
@@ -250,8 +328,6 @@ export default {
       return el?.documenttype_name
     },
     onDocumentTypeChange() {
-      console.log('documenttype change')
-      if (this.item.ticket_id) return
       const val = this.item.documenttype_id
       if (val) {
         const list = this.$store.state.table.listCache.board

@@ -16,15 +16,21 @@
             Ticket Id
           </b-th>
           <b-th class="text-center">
+             New ticket?
+          </b-th>
+          <b-th class="text-center">
             Contract Id
           </b-th>
-          <b-th>Attachments</b-th>
+          <!-- <b-th>Attachments</b-th> -->
           <b-th>File Name</b-th>
           <b-th class="text-center">
             DocumentType
           </b-th>
           <b-th class="text-center">
             Board
+          </b-th>
+          <b-th class="text-center">
+            Status
           </b-th>
           <b-th class="text-center">
             Action
@@ -37,14 +43,15 @@
       <!--    </template>-->
       <template v-for="(item,idx) in items">
         <b-tbody :key="idx">
-          <mail-tr :item="item" @show-content="showMailContent(item)" @classify="($vm) => classify(item, $vm)"
-                   @reject="reject(item)"/>
+          <mail-tr :key="`email-${item.email_id}`" :table-el="$refs.table.$el" :item="item" @show-content="showMailContent(item)" @classify="({$vm, shouldCreateSubTicket}) => classifyNew(item, $vm, 'classify', { shouldCreateSubTicket })"
+                   @reject="classifyNew(item, $vm, 'dismiss')" />
         </b-tbody>
         <transition :key="'c'+idx" name="slide">
           <b-tbody v-if="item.documents.length>0" v-show="item.open" :id="'collapse'+item.email_id">
-            <mail-tr v-for="(child,idx) in item.documents" :key="idx" :item="child" child
-                     style="background-color: white !important;" @classify="($vm) => classify(child, $vm)"
-                     @reject="reject(child)"/>
+            <mail-tr v-for="(child,idx) in item.documents" :key="`${child.document_id}-idx`" :table-el="$refs.table.$el" :item="child" child
+                     style="background-color: white !important;" @classify="({$vm, shouldCreateSubTicket}, options) => classifyNew(child, $vm, 'classify', {parentEmail: item, shouldCreateSubTicket })"
+                     @reject="classifyNew(child, $vm, 'dismiss', {parentEmail: item})"
+            />
           </b-tbody>
         </transition>
       </template>
@@ -89,22 +96,18 @@
 
 <script>
 import {
-  BTable, BButton, BFormCheckbox, BTableSimple,
+  BTableSimple,
 } from 'bootstrap-vue'
 import MailTr from '@/layouts/components/MailTr'
 import Field from '@/views/app/Generic/Field'
 import moment from 'moment-business-time'
 import { getUserData } from '@/auth/utils'
-import _ from 'lodash'
 import Fuse from 'fuse.js'
 
 export default {
   components: {
     Field,
     MailTr,
-    BTable,
-    BButton,
-    BFormCheckbox,
     BTableSimple,
   },
   props: {
@@ -116,6 +119,7 @@ export default {
   },
   data() {
     return {
+      api: process.env.VUE_APP_BASE_URL,
       loading: false,
       sortBy: 'email_received_datetime',
       sortDesc: 'DESC',
@@ -145,12 +149,12 @@ export default {
         if (this.filterValue === 1) {
           if (email.email_dismissed) return false
           if (email.ticket_id_created) return false
-          // if (email.documents.length > 0 && email.documents.every(d => d.ticket_created || d.classification_dismissed) && (!email.email_dismissed && !email.ticket_id_created)) return false
+          // if (email.document.length > 0 && email.document.every(d => d.ticket_created || d.classification_dismissed) && (!email.email_dismissed && !email.ticket_id_created)) return false
           return true
         }
         if (email.email_dismissed) return true
         if (email.ticket_id_created) return true
-        // if (email.documents.every(d => d.ticket_created || d.classification_dismissed)) return true
+        // if (email.document.every(d => d.ticket_created || d.classification_dismissed)) return true
         return false
       })
       if (this.search && prefiltered[0]) {
@@ -189,6 +193,108 @@ export default {
         } else if (!document.ticket_created && !document.classification_dismissed) return false
         return true
       })
+    },
+    async classifyNew(item, $tr, action, options) {
+      const parentEmail = options?.parentEmail
+      const create_subticket = !item.ticket_id || !!options?.shouldCreateSubTicket
+      if (!item.ticket_id && action !== 'dismiss') {
+        if (!item.pos_id) return this.$errorToast('Please select a pos')
+        // if (!item.contract_id) return this.$errorToast('Please select a contract')
+        if (!item.board_id) return this.$errorToast('Please select a board')
+      }
+      try {
+        this.loading = true
+        // get first column of selected board
+        const column = (await this.$api({
+          entity: 'frontend_column_list',
+          action: 'read-rich',
+          order_by: 'rank_order',
+          order_dir: 'ASC',
+          data: [{ board_id: item.board_id }],
+        })).data.data.data[0]
+
+        const now = moment()
+        // const user = getUserData()
+        const deadline = now.clone().addWorkingTime(column.default_deadline_period || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
+        const deadline_yellow = now.clone().addWorkingTime(column.default_deadline_yellow || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
+        const deadline_red = now.clone().addWorkingTime(column.default_deadline_red || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
+
+        const _payload = {
+          pos_id: item.pos_id,
+
+          board_id: item.board_id,
+
+          // column_id: column.column_id,
+          ticket_move_time_in: now.format('YYYY-MM-DD HH:mm:ss'),
+          ticket_deadline_offset: deadline,
+          ticket_deadline_offset_yellow: deadline_yellow,
+          ticket_deadline_offset_red: deadline_red,
+
+          ticket_id_group: item.ticket_id,
+
+          email_id: item.email_id,
+
+          contract_id: item.contract_id,
+          document_id: item.document_id,
+          documenttype_id: item.documenttype_id,
+
+          action,
+          create_subticket,
+        }
+
+        const payload = {}
+        Object.keys(_payload).forEach(key => {
+          if (typeof _payload[key] !== typeof undefined) {
+            payload[key] = _payload[key]
+          }
+        })
+
+        const { data } = await this.$http.put('/tickets/classification', payload)
+        const ticket_id = data.ticket_id
+        const master_ticket_id = item.ticket_id || ticket_id
+        this.fetch()
+        if (item.document_id) {
+          this.$set(
+            item,
+            action === 'dismiss'
+              ? 'classification_dismissed'
+              : 'ticket_created',
+            true,
+          )
+        }
+        if (item.document_id) this.$set(item, 'processed', true)
+        this.$set(
+          item,
+          action === 'dismiss'
+            ? 'email_dismissed'
+            : 'ticket_id_created',
+          action === 'dismiss' ? true : master_ticket_id,
+        )
+        if (item.ticket_id) this.$set(item, 'subticket_id_created', ticket_id)
+
+        // Make the mail proceed if it should be
+        const currentEmail = (parentEmail || item)
+        if (currentEmail) {
+          currentEmail.email_processed = currentEmail.documents?.length > 0
+            ? !(parentEmail || item).documents.map(doc => !!doc.processed || !!doc.classification_dismissed).includes(false)
+            : true
+        }
+        // eslint-disable-next-line no-nested-ternary
+        this.$successToast(action === 'dismiss' ? 'Dismiss success' : create_subticket ? 'Ticket Created' : 'Success')
+        this.loading = false
+      } catch (e) {
+        if (e.response) this.$errorToast(e.response.data.detail)
+        else this.$errorToast(e.message)
+      } finally {
+        this.loading = false
+        const isEmailHasBeenClassified = !!(parentEmail || item)?.email_processed
+
+        if (isEmailHasBeenClassified) {
+          this.fetch(true)
+        }
+      }
+      this.processStatus(this.items)
+      return undefined
     },
     async classify(item, $tr) {
       if (!item.ticket_id) {
@@ -397,7 +503,7 @@ export default {
       if (this.loading) return
       await this.fetch()
     },
-    async fetch() {
+    async fetch(ignoreLoading) {
       const payload = {
         // order_by: this.sortBy,
         // order_dir: this.sortDesc ? 'DESC' : 'ASC',
@@ -415,7 +521,7 @@ export default {
       //   this.loading = false
       //   return this.processData(fromCache)
       // }
-      if (this.loading) return
+      if (this.loading && !ignoreLoading) return
       this.loading = true
 
       const promises = [this.$http.get('/emails', { params: payload })]
@@ -432,6 +538,20 @@ export default {
     },
     getCacheKey(payload) {
       return `${this.entity}-${JSON.stringify(payload)}`
+    },
+    processStatus(items) {
+      items.forEach(item => {
+        item.documents.forEach(async document => {
+          if (document.classification_dismissed) document.status = 'dismiss'
+          else if (document.ticket_created) document.status = 'done'
+          else document.status = 'notprocess'
+        })
+
+        if (item.email_dismissed) item.status = 'dismiss'
+        else if (item.email_processed) item.status = 'done'
+        else if (item.documents.findIndex(d => d.status !== 'notprocess') >= 0) item.status = 'inprogress'
+        else item.status = 'notprocess'
+      })
     },
     async processData(data) {
       this.$emit('update:totalRows', data.total)
@@ -469,29 +589,8 @@ export default {
             this.$set(document, 'classification_id', classification.classification_id)
           }
         })
-        // process ticket data
-        if (!item.email_subject) return
-        const id = item.email_subject.match(/^#\d+/g)
-        if (id) {
-          const ticket_id = parseInt(id[0].substr(1))
-          const list = this.$store.state.table.listCache.frontend_6_1_6_overview
-          const el = list.find(e => e.ticket_id === ticket_id)
-          if (el) {
-            if (!item.ticket_id) {
-              item.ticket_id = el.ticket_id
-              item.pos_id = el.pos_id
-              item.contract_id = el.contract_id
-            }
-            item.documents.forEach(document => {
-              if (!document.ticket_id) {
-                document.ticket_id = el.ticket_id
-                document.pos_id = el.pos_id
-                document.contract_id = el.contract_id
-              }
-            })
-          }
-        }
       })
+      this.processStatus(items)
       this.items = items
       return this.items
     },

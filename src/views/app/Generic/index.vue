@@ -22,22 +22,34 @@
                  :default-sort-column="initialSortBy||definition.defaultSortField" :default-sort-desc="initialSortDesc"
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
-                 :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint" :filter-items="definition.filter"/>
+                 :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"
+                 :filter-items="definition.filter" :custom-request="definition.customRequest"/>
+      <!--      <DataTable :key="table" :columns="getHeadersDataTable" :url="definition.entityEndpoint || definition.entity"-->
+      <!--                 hide-top-bar="true" :resolve-data="data =>data.data.data || data.data || data.items" :custom-actions="definition.custom_actions"-->
+      <!--                 :hidde-filter-bar="true"/>-->
     </b-card>
-    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table"
-                   :definition="definition" with-continue :table-definition-key="table" :title="`headline~${table}~new`"
+    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"
+                   with-continue :table-definition-key="table" :title="`headline~${table}~new`"
                    @reload-table="$refs.table.reload()"/>
+    <SidebarModalComponent ref="sidebarComponent" :title="`headline~${table}~new`" :definition="definition"
+                           :options="definition.options || null" :table-definition-key="table" :table="table">
+      <div slot="customHeader" class="header-customer mb-3 d-flex align-items-center justify-content-center ">
+        <span>
+          {{ $t(`headline~${table}~new`) }}
+        </span>
+      </div>
+    </SidebarModalComponent>
   </div>
 </template>
 
 <script>
 
-import {
-  BCard,
-} from 'bootstrap-vue'
+import { BCard } from 'bootstrap-vue'
 import TablePagination from '@/layouts/components/TablePagination.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
 import { mapGetters } from 'vuex'
+import SidebarModalComponent from '@/components/SidebarModalComponent.vue'
+import DataTable from '@/views/app/CustomComponents/DataTable/DataTable.vue'
 import Tables from '../../../table'
 import GenericFilter from './Filter.vue'
 import InlineFilter from './InlineFilter.vue'
@@ -46,6 +58,8 @@ const Datatable = () => import('@/layouts/components/DataTables.vue')
 
 export default {
   components: {
+    DataTable,
+    SidebarModalComponent,
     GenericFilter,
     GenericModal,
     TablePagination,
@@ -78,6 +92,23 @@ export default {
     useModalToCreate() {
       return this.definition.createModal !== false
     },
+    getHeadersDataTable() {
+      const columnData = []
+      this.definition.fields.filter(x => !x.hideOnTable).forEach(element => {
+        const definitionData = {
+          id: `${element.key}`,
+          key: `${element.key}`,
+          component: element.component,
+          header: {
+            name: this.$t(`attribute.${element.key}`),
+          },
+        }
+        columnData.push(definitionData)
+        console.log(element)
+      })
+
+      return columnData
+    },
     ...mapGetters('user', ['isUserExternClient']),
   },
   beforeDestroy() {
@@ -103,7 +134,6 @@ export default {
       return count
     },
     filter(data) {
-      console.log('on filter', data)
       this.currentPage = 1
       this.$refs.table.filter(data)
     },
@@ -114,7 +144,8 @@ export default {
       this.$refs.modal.openModal(false, entity, `headline~${this.definition.entityForm || this.definition.entity}~detail`)
     },
     onNewElement() {
-      if (this.useModalToCreate) this.$refs.modal.openModal(true, {})
+      if (this.definition.createModal === 'sidebar') this.$refs.sidebarComponent.openSidebarComponent()
+      else if (this.useModalToCreate) this.$refs.modal.openModal(true, {})
       else {
         this.$router.push({
           name: 'table-form',

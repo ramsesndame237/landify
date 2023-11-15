@@ -10,7 +10,7 @@
           <date-picker v-model="date" v-bind="datePickerOptions" style="margin-bottom: -0.5rem;" class=" w-100" @change="datePickerHandler"/>
           <field class="ml-sm-1 w-100"
                  :field="{ key: 'company_id', type: 'custom-select', required: false, items: filteredCompanies, clearable: false}"
-                 :entity="entity" :disabled="(isUserExternClientNotDirector || isUserInternAndNotAdmin) && team_is_customer" />
+                 :entity="entity" />
           <field class=" mx-sm-1 w-100"
                  :field="{ key: 'team_id', type: 'custom-select', required: false, items: filteredTeams, clearable: false}"
                  :entity="entity" :disabled="entity.company_id === -1" />
@@ -143,7 +143,7 @@ export default {
   mounted() {
     this.resetDatePicker()
     setTimeout(() => {
-      if (this.initData && this.entity?.company_id) {
+      if (Object.keys(this.initData).length > 0 && this.initData.company_id !== undefined && this.entity?.company_id) {
         this.entity.company_id = this.initData?.company_id
         if (this.isTeamExistInList(this.initData?.team_id)) {
           this.entity.team_id = this.initData?.team_id

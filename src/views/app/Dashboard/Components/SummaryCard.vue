@@ -19,7 +19,7 @@
         </div>
 
         <b-row class="align-items-center">
-          <b-col sm="9" class="center-col">
+          <b-col sm="8" class="center-col">
             <!--          <b-card-text>-->
             <!--            Value:-->
             <!--            <span style="font-size: 18px; font-weight: 600" :style="{ color: color }" class="value"> {{ value }}</span>-->
@@ -30,8 +30,8 @@
               <h6>{{ percent }}%</h6>
             </div>
           </b-col>
-          <b-col sm="3" class="text-center">
-            <span class="font-weight-bolder display-4" :style="{color: color}">{{ number }}</span>
+          <b-col sm="4" class="text-center">
+            <span class="font-weight-bolder" :style="{color: color, fontSize:'2vw'}">{{ number }}</span>
           </b-col>
         </b-row>
       </b-card>

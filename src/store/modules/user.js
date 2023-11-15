@@ -6,6 +6,7 @@ export default {
     user: getUserData(),
   },
   getters: {
+    user: state => state.user,
     usertype: state => state.user?.usertype,
     userRoles: state => state.user?.roles,
     /**

@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build && npm run post:build",
+    "post:build": "node build/post-build.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
     "@fullcalendar/list": "5.x",
     "@fullcalendar/timegrid": "5.x",
     "@fullcalendar/vue": "5.x",
+    "@iconify/vue2": "^2.1.0",
     "@johmun/vue-tags-input": "^2.1.0",
     "@sentry/tracing": "^7.52.1",
     "@sentry/vue": "^7.52.1",
@@ -37,6 +39,7 @@
     "echarts": "5.2.1",
     "font-awesome": "^4.7.0",
     "fuse.js": "^6.6.2",
+    "json-server": "^0.17.4",
     "jsonwebtoken": "8.5.1",
     "leaflet": "1.6.0",
     "lodash": "^4.17",
@@ -63,6 +66,7 @@
     "vue-feather-icons": "5.1.0",
     "vue-flatpickr-component": "8.1.6",
     "vue-form-wizard": "0.8.4",
+    "vue-fragment": "^1.6.0",
     "vue-good-table": "2.21.0",
     "vue-i18n": "8.22.2",
     "vue-kanban": "^1.8.0",
@@ -70,7 +74,7 @@
     "vue-prism-component": "1.1.1",
     "vue-ripple-directive": "2.0.1",
     "vue-router": "3.4.9",
-    "vue-select": "3.11.2",
+    "vue-select": "^3.20.2",
     "vue-slider-component": "3.2.11",
     "vue-sweetalert2": "4.1.1",
     "vue-toastification": "1.7.11",
@@ -78,6 +82,7 @@
     "vue-tree-halower": "1.8.3",
     "vue2-datepicker": "^3.11.1",
     "vue2-leaflet": "2.5.2",
+    "vue2-teleport": "^1.0.1",
     "vuedraggable": "2.24.3",
     "vuex": "3.6.0",
     "xlsx": "^0.18.5"
@@ -95,7 +100,6 @@
     "eslint": "6.8.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-vue": "6.2.2",
-    "git-describe": "^4.1.1",
     "postcss-rtl": "1.7.3",
     "sass": "1.32.*",
     "sass-loader": "^10.1.0",

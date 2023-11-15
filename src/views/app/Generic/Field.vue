@@ -6,6 +6,7 @@
                     :placeholder="$t('attribute.general_automaticid')"/>
       <validation-provider v-else #default="{ errors, validate }" :rules="rules" :name="field.key"
                            :custom-messages="{'regex':tableDefinition && tableDefinition.attribute_regexp_failure_message&& tableDefinition.attribute_regexp_failure_message[field.key]}">
+
         <b-form-textarea v-if="field.type==='textarea'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :placeholder="field.key"/>
         <div v-else-if="field.type==='html'" class="message-editor">
@@ -18,17 +19,43 @@
                     :editor="editor" :config="{}"
           /> -->
         </div>
-        <div v-else-if="field.type==='list'" :class="(field.withNew || field.withPopup || field.ids) ? 'd-flex': ''">
-          <v-select v-model="entity[field.key]" :dropdown-should-open="true" :disabled="selectDisabled"
+        <div v-else-if="field.type==='list'"
+             :class="(field.withNew || field.withPopup || field.ids || field.withRoundedNew) ? 'd-flex': ''">
+          <v-select v-model="entity[field.key]" :dropdown-should-open="dropdownShouldOpen" :disabled="selectDisabled"
                     :class="{'error': errors.length > 0, 'multiple_select': field.multiple }"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
                     :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
                     :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
-                    :loading="loading" :reduce="i => i[field.tableKey||field.key]" :filter="fuseSearch"
-                    :clearable="field.clearable != null ? field.clearable : true" @input="onChange"/>
+                    :reduce="i => i[field.tableKey||field.key]"
+                    :clearable="field.clearable != null ? field.clearable : true" :filterable="false" @input="onChange"
+                    @open="onListOpen" @close="onListClose" @search="onSearch"
+          >
+            <template v-if="field.optionWithTooltipDetail" #option="option">
+              <span v-b-tooltip.hover :title="getOptionLabel(option)">{{ getOptionLabel(option) }}</span>
+            </template>
+            <template v-if="field.optionWithTooltipDetail" #selected-option="option">
+              <span v-b-tooltip.hover.dh10 :title="getOptionLabel(option)">{{ getOptionLabel(option) }}</span>
+            </template>
+
+            <template #list-footer>
+              <li v-show="hasNext" ref="load" class="loader">
+                Loading more options...
+              </li>
+            </template>
+            <template #spinner>
+              <div v-show="loading" class="spinner ml5">
+                <icon icon="fontisto:spinner" width="23"/>
+              </div>
+            </template>
+          </v-select>
           <b-button v-if="field.withNew && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     @click="showNewForm">New
           </b-button>
+          <div v-if="field.withRoundedNew && !field.alwaysNew && !disabled"
+               class="ml-2 text-nowrap d-flex align-items-center justify-content-center custom_rounded_button cursor-pointer "
+               @click="showNewForm">
+            <feather-icon icon="PlusIcon"/>
+          </div>
           <b-button v-if="field.withPopup && !field.alwaysNew && !disabled" class="ml-2 text-nowrap" variant="info"
                     :disabled="disablePopupButton" @click="showNewPopupForm">New
           </b-button>
@@ -38,16 +65,34 @@
             {{ showAll ? 'Show Created' : 'Show All' }}
           </b-button>
         </div>
+        <div v-else-if="field.type ==='custom_list'">
+          <AutoCompleteInput
+            :options="listItems"
+            :key-label="field.listLabel || ''"
+            :key_value="field.key || ''"
+            icon_open="ChevronUpIcon"
+            icon_close="ChevronDownIcon"
+          />
+        </div>
+        <div v-else-if="field.type === 'list_select'">
+          <SelectedButtonList v-if="field.options.length > 0" :key-object="field.key" :label-string="field.listLabel"
+                              :options="field.options" :classes="[field.listButtonClass]"
+                              @selectedOptions="SelectedButtonOptions"/>
+          <span v-else>
+            No teams available for the company you previous selected
+          </span>
+        </div>
         <div v-else-if="field.type==='yesno' || field.type==='custom-select'">
           <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
-                    :multiple="field.multiple" :placeholder="field.key" :clearable="field.clearable != null ? field.clearable : true"
+                    :multiple="field.multiple" :placeholder="field.key"
+                    :clearable="field.clearable != null ? field.clearable : true"
                     :options="field.type==='yesno'?yesNoOptions: customSelectOptions" transition="" label="label"
                     class="w-100" :reduce="i => i.value"/>
         </div>
         <div v-else-if="field.type==='checkbox'">
           <b-form-checkbox-group v-model="entity[field.key]" :disabled="disabled"
                                  :state="errors.length > 0 ? false:null" :placeholder="field.key" text-field="label"
-                                 :options="field.items"/>
+                                 :options="field.items" />
         </div>
         <div v-else-if="field.type==='file'">
           <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
@@ -106,7 +151,7 @@
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
                     class="form-control"/>
         <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
-                         :state="errors.length > 0 ? false:null" :placeholder="field.key" :value="1"
+                         :state="errors.length > 0 ? false:null" :value="1"
                          :unchecked-value="0" style="margin-top: 5px"/>
         <b-input-group v-else class="w-100">
           <b-input-group-prepend v-if="field.unit && field.unit_key && field.isUnitOnLeft" class="w-20 bg-input">
@@ -194,6 +239,8 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 import CustomDatePicker from '@/views/app/Generic/CustomDatePicker.vue'
 import { getUserData } from '@/auth/utils'
 import { mapGetters } from 'vuex'
+import SelectedButtonList from '@/components/SelectedButtonList.vue'
+import AutoCompleteInput from '@/components/AutoCompleteInput.vue'
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -206,6 +253,8 @@ function isTrue(val) {
 export default {
   name: 'Field',
   components: {
+    AutoCompleteInput,
+    SelectedButtonList,
     CustomDatePicker,
     ckeditor: CKEditor.component,
     BFormInput,
@@ -254,8 +303,14 @@ export default {
         },
       },
       yesNoOptions: [
-        { value: 1, label: 'Yes' },
-        { value: 0, label: 'No' },
+        {
+          value: 1,
+          label: 'Yes',
+        },
+        {
+          value: 0,
+          label: 'No',
+        },
       ],
       files: [],
       unitOptions: [],
@@ -267,11 +322,23 @@ export default {
       editorInstance: null,
       disablePopupButton: false,
       isDisabled: false,
+      nonCachedItems: [],
+      listObserver: null,
+      hasNext: false,
+      query: '',
+      tempData: [],
+      requestPayload: {
+        page: 1,
+        per_page: 100_000,
+      },
     }
   },
   computed: {
+    per_page() {
+      return this.field.customPagination?.per_page || this.requestPayload.per_page
+    },
     list() {
-      return this.$store.getters['table/listCache'](this.field.entityList || this.field.list)
+      return this.field.noCache ? this.nonCachedItems : this.$store.getters['table/listCache'](this.field.entityList || this.field.list)
     },
     passwordToggleIcon() {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
@@ -323,10 +390,10 @@ export default {
       return this.newValue === this.entity[this.field.key]
     },
     selectedValue() {
-      return this.field.type === 'list' ? this.list.find(e => e[this.field.key] === this.entity[this.field.key]) : this.entity[this.field.key]
+      return (this.field.type === 'list' || this.field.type === 'custom_list') ? this.list.find(e => e[this.field.key] === this.entity[this.field.key]) : this.entity[this.field.key]
     },
     selectedValues() {
-      return this.field.type === 'list' ? this.list.filter(e => this.entity[this.field.key]?.indexOf(e[this.field.key]) >= 0) : []
+      return (this.field.type === 'list' || this.field.type === 'custom_list') ? this.list.filter(e => this.entity[this.field.key]?.indexOf(e[this.field.key]) >= 0) : []
     },
     ...mapGetters('user', ['isUserExternClient', 'isUserExternPartner']),
 
@@ -345,13 +412,31 @@ export default {
       if (this.editorInstance) {
         if (newValue) {
           this.editorInstance.hide()
-        } else this.editorInstance.show()
+        } else {
+          this.editorInstance.show()
+        }
       }
+    },
+    listItems: {
+      handler(newValue) {
+        if (this.field.withOptionAll) {
+          newValue.unshift({ [this.field.listLabel]: 'All', [this.field.tableKey || this.field.key]: -1 })
+          this.$set(this.entity, (this.field.tableKey || this.field.key), this.entity[this.field.tableKey || this.field.key] || -1)
+        }
+        return newValue
+      },
+      deep: true,
     },
   },
   async created() {
-    if (this.field.type === 'list' && ((!this.field.filter_key || !!this.entity[this.field.filter_key]) || this.field.noFetchOnChange) && !this.field.onlyForm) {
-      await this.fetchList()
+    if ((this.field.type === 'list' || this.field.type === 'custom_list') && ((!this.field.filter_key || !!this.entity[this.field.filter_key]) || this.field.noFetchOnChange) && !this.field.onlyForm) {
+      /**
+       * @param notFetchOnInit Est une clé dans le fichier de configuration qui permet de spécifier si on doit faire un
+       * chargement initial des données ou pas, lors du rendu du composant
+       */
+      if (!this.field.noFetchOnInit) {
+        await this.fetchList()
+      }
     } else if (this.field.type === 'boolean') {
       // set false as default value
       if (this.entity[this.field.key] == null) {
@@ -365,6 +450,10 @@ export default {
     this.$nextTick(() => {
       this.initializeValue()
     })
+    // Ici on créé un observer pour le champs de type list
+    if (this.field.type === 'list') {
+      this.listObserver = new IntersectionObserver(this.listObserverCallBack)
+    }
 
     if (this.field.type && this.field.type === 'html') {
       this.initEditor()
@@ -385,7 +474,10 @@ export default {
     } else if (this.field.value != null) {
       this.$set(this.entity, this.field.key, this.field.value)
     }
-    this.$watch(`entity.${this.field.key}`, () => {
+    this.$watch(`entity.${this.field.key}`, (newValue, oldValue) => {
+      if (this.field.handleFieldChange && typeof this.field.handleFieldChange === 'function') {
+        this.field.handleFieldChange(newValue, oldValue, this.entity, this)
+      }
       this.onChange()
     })
     if (this.field.filter_key && !this.field.noFetchOnChange) {
@@ -409,16 +501,21 @@ export default {
 
     if (this.field.unit) {
       this.unitOptions = this.field.unit(this)
-      this.entity[this.field.unit_key] = this.unitOptions[0][this.field.unit_value_key]
+      this.entity[this.field.unit_key] = this.entity[this.field.unit_key] || this.unitOptions[0][this.field.unit_value_key]
     }
 
-    if (this.field.type === 'custom-select' && typeof this.field.items === 'function') {
-      this.customSelectOptions = await this.field.items(this)
-    } else {
-      this.customSelectOptions = this.field.items
-      this.$watch('field.items', value => {
-        this.customSelectOptions = value
-      })
+    if (this.field.type === 'custom-select') {
+      if (typeof this.field.items === 'function') {
+        this.customSelectOptions = await this.field.items(this)
+        this.$watch('entity', async () => {
+          this.customSelectOptions = await this.field.items(this)
+        }, { deep: true })
+      } else {
+        this.customSelectOptions = this.field.items
+        this.$watch('field.items', value => {
+          this.customSelectOptions = value
+        })
+      }
     }
   },
 
@@ -428,6 +525,43 @@ export default {
     }
   },
   methods: {
+    dropdownShouldOpen(vueSelectInstance) {
+      const { noDrop, open, mutableLoading } = vueSelectInstance
+      return noDrop ? false : open && !mutableLoading
+    },
+    async onSearch(query, loading) {
+      if (query.length >= 2 && (query.length - this.query.length) % 2 === 0) {
+        loading(true)
+        this.requestPayload.page = 1
+        await this.fetchList(true, query)
+        loading(false)
+      }
+    },
+    async onListOpen() {
+      if (this.field.type === 'list' && this.hasNext) {
+        await this.$nextTick()
+        this.listObserver.observe(this.$refs.load)
+      }
+    },
+    onListClose() {
+      this.listObserver.disconnect()
+    },
+    async listObserverCallBack([{ isIntersecting, target }]) {
+      if (isIntersecting) {
+        const ul = target.offsetParent
+        const scrollTop = target.offsetParent.scrollTop
+        this.requestPayload.page += 1
+        await this.fetchList(true)
+        await this.$nextTick()
+        ul.scrollTop = scrollTop
+      }
+    },
+    getOptionLabel(option) {
+      if (typeof this.field.listLabel === 'function') {
+        return this.field.listLabel(option)
+      }
+      return option[(typeof this.field.listLabel === 'string') ? this.field.listLabel : null]
+    },
     initializeValue() {
       const user = getUserData()
       if (this.isUserExternClient) {
@@ -443,7 +577,7 @@ export default {
         }
       }
       if (this.isUserExternPartner) {
-          if (this.field.key === 'partnergroup_id') {
+        if (this.field.key === 'partnergroup_id') {
           const partnergroup_id = user.partnergroup?.partnergroup_id
           if (!this.entity.partnergroup_id && partnergroup_id) {
             this.$set(this.entity, 'partnergroup_id', partnergroup_id)
@@ -453,6 +587,10 @@ export default {
           }
         }
       }
+    },
+    SelectedButtonOptions(value, keyValue) {
+      console.log('this is the value', value, keyValue)
+      if (keyValue) this.entity[keyValue] = value
     },
     initEditor() {
       // Initialisation de TinyMCE
@@ -578,6 +716,7 @@ export default {
           this.waitPassword = false
         })
     },
+
     doCopy() {
       if (this.entity[this.field.key]) {
         try {
@@ -610,7 +749,7 @@ export default {
     },
     async getRelationValue() {
       console.log('get relation value')
-      if (this.field.type === 'list') {
+      if (this.field.type === 'list' || this.field.type === 'custom_list') {
         if (this.entity[this.field.key] == null) {
           const primaryKey = this.getPrimaryKey(this.definition)
           await this.$api({
@@ -634,12 +773,14 @@ export default {
             })
         }
         if (this.field.alwaysNew) {
-          this.getFormFields(this.subDefinition).forEach(field => {
-            if (this.entity[field.key]) this.subEntity[field.key] = this.entity[field.key]
-          })
-          this.getSubFields().forEach(field => {
-            field.getRelationValue()
-          })
+          this.getFormFields(this.subDefinition)
+            .forEach(field => {
+              if (this.entity[field.key]) this.subEntity[field.key] = this.entity[field.key]
+            })
+          this.getSubFields()
+            .forEach(field => {
+              field.getRelationValue()
+            })
         }
       }
     },
@@ -649,7 +790,8 @@ export default {
         shouldSort: true,
       })
       return search.length
-        ? fuse.search(search).map(({ item }) => item)
+        ? fuse.search(search)
+          .map(({ item }) => item)
         : fuse.list
     },
     getSubFields() {
@@ -677,7 +819,7 @@ export default {
       }
       return accumulator
     },
-    async fetchList(force) {
+    async fetchList(force, query = null) {
       if (this.field.noFetch) return
       if (this.list.length === 0 || force) this.loading = true
       try {
@@ -687,7 +829,7 @@ export default {
           await this.$store.dispatch('table/fetchTableDefinition', 'address')
           await this.$store.dispatch('table/fetchTableDefinition', 'city')
         }
-        const payload = { entity: this.field.entityList || list }
+        let payload = { entity: this.field.entityList || list }
         if (this.field.entityCustomEndPoint) payload.customEnpoint = this.field.entityCustomEndPoint
         if (this.field.onlyForm && this.entity[this.field.key]) {
           payload.data = [{ [this.field.key]: this.entity[this.field.key] }]
@@ -697,14 +839,45 @@ export default {
           if (value && ![null, -1, undefined].includes(value)) {
             if (Array.isArray(value)) {
               if (value.length > 0) {
-                payload.data = value.map(v => ({ [this.field.filter_key]: v }))
+                if (this.field.entityCustomEndPoint) {
+                  payload.data = [{ [this.field.filter_key]: value }]
+                } else {
+                  payload.data = value.map(v => ({ [this.field.filter_key]: v }))
+                }
               }
             } else {
               payload.data = [{ [this.field.filter_key]: this.entity[this.field.filter_key] }]
             }
           }
         }
-        await this.$store.dispatch('table/fetchList', payload)
+        if (this.field.customPagination) {
+          if (this.field.customPagination.data && Array.isArray(this.field.customPagination.data)) {
+            if (payload?.data) {
+              payload.data.push(...this.field.customPagination.data)
+            } else {
+              payload.data = [...this.field.customPagination.data]
+            }
+          }
+        }
+
+        payload = {
+          ...payload,
+          ...this.requestPayload,
+          per_page: this.per_page,
+          ...(query && { keyword: query }),
+          getWholeResponse: true,
+        }
+
+        const response = await this.$store.dispatch('table/fetchList', payload)
+        if (this.field.entityCustomEndPoint) {
+          this.nonCachedItems = response.data
+          this.hasNext = response.current_page < response.pages
+        } else {
+          const { links, data } = response
+          this.nonCachedItems = data
+          const { pagination } = links
+          this.hasNext = pagination.current_page < pagination.last_page
+        }
         if (this.field.entityList) {
           await this.$store.dispatch('table/fetchTableDefinition', list)
         }
@@ -786,6 +959,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/assets/scss/variables/variables';
 
 .emoji_container {
   position: relative;
@@ -825,5 +999,26 @@ export default {
 .bg-input {
   background-color: #e9ecef;
   color: #495057
+}
+
+.custom_rounded_button {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #eee;
+
+  svg {
+    fill: $primary;
+    stroke: $primary;
+  }
+
+}
+.loader {
+  text-align: center;
+  color: #bbbbbb;
+  padding: .5rem;
+}
+.ml5 {
+  margin-left: .5rem;
 }
 </style>

@@ -41,6 +41,12 @@ const router = new VueRouter({
       },
     },
     {
+      path:'/app/preview/document/:name',
+      name:'previewDocument',
+      component:()=>import('@/views/app/Ticket/widgets/PreviewDocumentWidget.vue'),
+      props:true
+    },
+    {
       path: '/app/dashboard/ticket',
       name: 'ticketDashboard',
       component: () => import('@/views/app/Dashboard/TicketDashboard.vue'),
