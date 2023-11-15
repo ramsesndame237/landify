@@ -1,8 +1,11 @@
+import router from "@/router";
+
 export default {
   entity: 'frontend_3_3_1',
   primaryKey: 'location_id',
   createModal: 'sidebar',
   formComponent: () => import('@/views/app/FormComponent/LocationForm.vue'),
+  custom_actions:[{icon:'EditIcon',onClick:location =>router.push({ name: 'table-view', params: { table: 'location', id: location.location_id, entity: 'location', ids: location.location_id }, query: { edit: 'true' } }), label:'Edit'},{icon:'EyeIcon',onClick:location =>  router.push({ name: 'table-view', params: { table: 'board', id: location.location_id, entity: 'board', ids: location.location_id }, query: { edit: 'false' } }), label:'Details'}],
   options: {
     id: 'siderbar_location',
     shadow: true,
@@ -15,16 +18,15 @@ export default {
   fields: [
     {
       key: 'locationtype_id',
-      type: 'custom_list',
+      type: 'list',
       list: 'locationtype',
       listLabel: 'locationtype_name',
       sortable: true,
       hideOnIndex: true,
-      hideOnTable:true,
       cols: 12,
     },
 
-    { key: 'location_id', auto: true, size: 'sm', hideOnTable:true },
+    { key: 'location_id', auto: true, size: 'sm', hideOnIndex:true },
     { key: 'location_name', cols: 12 },
     {
       key: 'location_objectdescription', type: 'textarea', hideOnIndex: true, required: false, cols: 12,
@@ -35,13 +37,13 @@ export default {
     // {
     //   key: 'location_start_date', type: 'date', hideOnIndex: true, required: false,
     // },
-    { key: 'owner_name', cols: 12, type:'custom_list',list: 'patner' },
+    { key: 'owner_name', cols: 12, type:'list',list: 'patner' },
     // { key: 'manager_name', cols: 12 },
     // { key: 'locationtype_name', cols: 12 },
     {
       key: 'country_id',
       cols: 12,
-      type: 'custom_list',
+      type: 'list',
       label: 'Country',
       list: 'countrytype',
       listLabel: 'country_name',
@@ -73,7 +75,7 @@ export default {
       primaryKey: 'contract_id',
       entity: 'frontend_3_2_3_1',
       entityForm: 'contract_area_unit_usagetype_rel',
-      entityView: 'contract',
+      entityView: 'location',
       fields: [
         { key: 'contract_name', hideOnForm: true },
         { key: 'company_name', hideOnForm: true },

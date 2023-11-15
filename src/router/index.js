@@ -72,6 +72,12 @@ const router = new VueRouter({
       },
     },
     {
+      path:'/app/preview/document/:document_id/:name',
+      name:'previewDocument',
+      component:()=>import('@/views/app/Ticket/widgets/PreviewDocumentWidget.vue'),
+      props:true
+    },
+    {
       path: '/app/table/:table/view/:id',
       name: 'table-view',
       component: () => import('@/views/app/Generic/KeyFix/Edit.vue'),

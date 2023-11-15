@@ -123,7 +123,7 @@
                           <b-th>Assigned To</b-th>
                         </b-tr>
                       </b-thead>
-                      <b-tbody >
+                      <b-tbody>
                         <subticket-tr
                           v-for="(subticket, index) in subTickets"
                           :key="index"

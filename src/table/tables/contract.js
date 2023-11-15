@@ -1,5 +1,6 @@
 import { getContractCriteriaFields } from '@/table/utils'
 import _ from 'lodash'
+import router from "@/router";
 
 export default {
   // entity: 'frontend_3_4_1_1',
@@ -166,6 +167,8 @@ export default {
       filter_key: 'company_id',
       hideOnUpdate: false,
       hideOnCreate: true,
+      hideOnIndex: true
+
     },
 
     {
@@ -272,8 +275,8 @@ export default {
       category: 'date',
       hideOnCreate: true,
     },
-    { key: 'contract_sum_allarea_rentalspace', hideOnForm: true },
-    { key: 'contract_sum_allarea_allocationspace', hideOnForm: true },
+    { key: 'contract_sum_allarea_rentalspace', hideOnForm: true, hideOnIndex: true,},
+    { key: 'contract_sum_allarea_allocationspace', hideOnForm: true,hideOnIndex: true, },
 
     { key: 'contract_count_area', hideOnForm: true },
     {

@@ -12,7 +12,7 @@ export default {
       sortable: false,
       type: 'button',
       hideOnForm: true,
-      hideOnTable:true,
+      hideOnIndex:false,
       btnLabel: 'Kanban',
       component:KanbanButton,
       getRoute:board => ({ name: 'table-kanban', params: { id: board.board_id, table: 'board' } }),
