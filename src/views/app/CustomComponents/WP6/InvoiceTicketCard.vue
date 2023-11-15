@@ -197,7 +197,6 @@ import FloatingActionButton from '@/components/FloatingActionButton.vue'
 import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin'
 import SubticketTr from '@/views/app/Ticket/Subticket/SubticketTr.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
-import { title } from '@core/utils/filter'
 
 export default {
   name: 'InvoiceTicketCard',
