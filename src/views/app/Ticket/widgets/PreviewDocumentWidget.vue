@@ -1,22 +1,31 @@
 <script>
 
+import {getDocumentLinkPreviewWithId} from "@/libs/utils";
+import Table from "@/table";
+
 export default {
   name: "PreviewDocumentWidget",
-  props: ['name'],
+  props: ['document_id','name'],
   data() {
     return {
-      document_name: null
+      document_name: null,
+      documentDef: Table.document,
+    }
+  },
+
+  computed:{
+    get_link_document(){
+      return  getDocumentLinkPreviewWithId(this.document_id)
     }
   },
   methods: {
     openModal() {
-
       this.$refs.previewDocumentModalRef.show()
     },
   },
   mounted() {
-    this.document_name = this.getDocumentLinkPreview(name)
-    console.log("this is the image preview", this.document_name)
+    console.log("this is the image preview", getDocumentLinkPreviewWithId(this.document_id))
+    this.document_name = getDocumentLinkPreviewWithId(this.document_id)
   }
 
 }
@@ -33,7 +42,9 @@ export default {
                       class="cursor-pointer mx-2"/>
         <feather-icon v-b-tooltip.hover title="Stamp" icon="FeatherIcon" size="25" class="cursor-pointer"/>
       </div>
-
+    </div>
+    <div class="document_body_preview">
+      <iframe style="height: 90vh;width: 100%" :src="get_link_document" ></iframe>
     </div>
   </div>
 </template>
@@ -46,6 +57,9 @@ export default {
   background: $primary;
   color: #fff;
 }
-
+.document_body_preview{
+  width: 100%;
+  height: calc(100vh-80px);
+}
 
 </style>

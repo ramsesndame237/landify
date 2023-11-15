@@ -2,7 +2,12 @@
 import DataTable from '@/views/app/CustomComponents/DataTable/DataTable.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
 import Table from '@/table'
-import {getDocumentLink, getStampedDocumentLink, getStampedDocumentPreviewLink} from "@/libs/utils";
+import {
+  getDocumentLink,
+  getDocumentLinkPreview,
+  getStampedDocumentLink,
+  getStampedDocumentPreviewLink
+} from "@/libs/utils";
 import EditPageMixin from "@/views/app/Generic/EditPageMixin";
 import TicketMixin from "@/views/app/Kanban/TicketMixin";
 
@@ -36,6 +41,13 @@ export default {
             name: 'document name',
           },
         },
+        {
+          id: 'document_status',
+          key: 'document_status',
+          header: {
+            name: 'status',
+          },
+        }
       ],
     }
   },
@@ -55,10 +67,12 @@ export default {
       })
     },
     onViewDocument(document) {
-      const stamp = document.document_already_stamp !== 0
+      this.$router.push({path:'/app/preview/document/' +document.document_id + '/' + document.document_name,params:{document:document}})
+      const stamp = document.document_already_stamp !== 0 ? true : false
       if (stamp) return getStampedDocumentLink(document)
-      getStampedDocumentPreviewLink(document)
-      console.log("this is the mpa", getStampedDocumentPreviewLink(document))
+      getDocumentLinkPreview(document)
+
+
     }
   }
 }
