@@ -5,7 +5,7 @@ export default {
   entity: 'frontend_6_1_4',
   entityEndpoint: '/tickets/kanban/user',
   defaultSortField: 'board_id',
-  custom_actions:[{icon:'EditIcon',onClick:board =>router.push({ name: 'table-view', params: { table: 'board', id: board.board_id, entity: 'board', ids: board.board_id }, query: { edit: 'true' } }), label:'Edit'},{icon:'EyeIcon',onClick:board =>  router.push({ name: 'table-view', params: { table: 'board', id: board.board_id, entity: 'board', ids: board.board_id }, query: { edit: 'false' } }), label:'Details'},{icon:'DatabaseIcon',label:'Kaban', onClick: board => router.push({ name: 'table-kanban', params: { id: board.board_id, table: 'board' } })}],
+  custom_actions:[{icon:'FeatherIcon',onClick:null, label:'Stamp'},{icon:'EyeIcon',onClick:null, label:'Preview'},{icon:'DatabaseIcon',label:'Kaban', onClick: board => router.push({ name: 'table-kanban', params: { id: board.board_id, table: 'board' } })}],
   fields: [
     {
       key: 'board_button',

@@ -97,24 +97,48 @@ export default {
     setListData(context, payload) {
       context.commit('setListCache', payload)
     },
-    fetchList(context, { entity, data, customEnpoint = null }) {
+    /**
+     * @param context : Context de l'action, contenant les getters, le state et les autres actions
+     * @param entity
+     * @param data
+     * @param customEnpoint
+     * @param page Le numéro de la page
+     * @param per_page Nombre d'élément voulu pour cette requête
+     * @param keyword Représente les termes de la recherche, dans le cas ou on effectue une recherche
+     * @param getWholeResponse  Permet de déterminer si on doit renvoyer l'oject réponse en lui-même ou juste les data de la réponse,
+     * car certain traitement sont effectué dans la fonction appellante.
+     * @returns {*|*[]}
+     */
+    fetchList(context, {
+      entity, data, customEnpoint = null, page = null,
+      per_page = null, keyword = null, getWholeResponse = false,
+    }) {
+      const setStore = serverData => {
+        if (!keyword) {
+          const cacheData = context.getters.listCache(entity)
+          Vue.set(context.state.listCache, entity, [...cacheData, ...serverData])
+        } else {
+          Vue.set(context.state.listCache, entity, serverData)
+        }
+      }
       if (customEnpoint) {
         data = [
+          { page: page || 1 },
+          { per_page: per_page || 100000 },
+          { keyword: keyword || '' },
           ...(data || [{}]),
-          { page: 1 },
-          { per_page: 100000 },
           { order: 'desc' },
         ]
         const requestQuery = data.map(i => Object.keys(i).map(e => `${e}=${i[e]}`).join('&')).join('&')
         return http.get(`${customEnpoint}?${requestQuery}`)
           .then(({ data: respData }) => {
-            Vue.set(context.state.listCache, entity, respData.data)
+            setStore(respData.data)
             context.commit('setDefinition', { data: respData, table: entity })
-            return respData.data
+            return getWholeResponse ? respData : respData.data
           })
       }
       if (entity === 'document') {
-        console.warn('Fetch of documents is disabled')
+        console.warn('Fetch of document is disabled')
         return []
       }
       return api({
@@ -122,18 +146,18 @@ export default {
         entity,
         order_by: '',
         order_dir: 'DESC',
-        per_page: 100000,
+        per_page: per_page || 100000,
         from: 0,
-        current_page: 1,
+        current_page: page || 1,
         filter: {},
         ...(data ? { data } : {}),
-        filter_all: '',
+        ...(keyword && { filter_all: keyword }),
         lang: window.$vue ? window.$vue.$i18n.locale : 'en',
       })
         .then(({ data: respData }) => {
-          Vue.set(context.state.listCache, entity, respData.data.data)
+          setStore(respData.data.data)
           context.commit('setDefinition', { data: respData, table: entity })
-          return respData.data.data
+          return getWholeResponse ? respData.data : respData.data.data
         })
     },
   },

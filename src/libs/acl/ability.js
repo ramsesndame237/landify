@@ -49,7 +49,7 @@ export const defineRules = () => {
       if (configs.length > 0) {
         const menuConfig = configs.find(config => config.config_key === 'menu')
         if (menuConfig) {
-          const configValues = JSON.parse(menuConfig.config_val)
+          const configValues = Array.isArray(menuConfig.config_val) ? menuConfig.config_val : JSON.parse(menuConfig.config_val)
 
           // Je boucle sur les données reçues pour faire le traitement
           configValues.forEach(access => {

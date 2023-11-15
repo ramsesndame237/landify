@@ -7,38 +7,35 @@ export default {
   entityEndpoint: '/contracts',
   fetchWithEntity: true,
   formComponent: () => import('@/views/app/FormComponent/ContractForm.vue'),
-  createModal: 'modal',
-  custom_actions:[{icon:'EditIcon',onClick:contract =>router.push({ name: 'table-view', params: { table: 'contract', id: contract.contract_id, entity: 'contract', ids: contract.contract_id }, query: { edit: 'true' } }), label:'Edit'},{icon:'EyeIcon',onClick:contract =>  router.push({ name: 'table-view', params: { table: 'board', id: contract.contract_id, entity: 'board', ids: contract.contract_id }, query: { edit: 'false' } }), label:'Details'}],
-
+  createModal: 'otherPage',
   // createComponent: () => import('@/views/app/CreateComponent/ContractForm/ContractFormNew.vue'),
   fields: [
-    { key: 'contract_id', auto: true, hideOnIndex:true },
+    { key: 'contract_id', auto: true },
     { key: 'contract_name', size: 40, cols: 6 },
     {
       key: 'contracttype_id',
-      type: 'list',
+      type: 'custom_list',
       size: 40,
       cols: 6,
       list: 'contracttype',
       listLabel: 'contracttype_name',
       hideOnIndex: true,
-      hideOnUpdate: true
-
+      hideOnUpdate: true,
     },
     {
       key: 'customergroup_id',
-      type: 'list',
+      type: 'custom_list',
       size: 40,
       cols: 6,
       list: 'customergroup',
       listLabel: 'customergroup_name',
       send: false,
-      hideOnUpdate: true,
       hideOnIndex: true,
+      hideOnUpdate: true,
     },
     {
       key: 'company_id',
-      type: 'list',
+      type: 'custom_list',
       size: 40,
       cols: 6,
       list: 'frontend_2_2_3_1',
@@ -50,7 +47,7 @@ export default {
     },
     {
       key: 'pos_id',
-      type: 'list',
+      type: 'custom_list',
       size: 40,
       cols: 6,
       list: 'pos',
@@ -150,12 +147,10 @@ export default {
     {
       key: 'company_name',
       hideOnForm: true,
-      hideOnIndex: true,
     },
     {
       key: 'pos_name',
       hideOnForm: true,
-      hideOnIndex: true,
       formatter: (value, key, item) => {
         const array = item.pos
         const posName = array.length > 0 ? array.map(obj => obj.pos_name) : []
@@ -283,7 +278,7 @@ export default {
     { key: 'contract_sum_allarea_rentalspace', hideOnForm: true, hideOnIndex: true,},
     { key: 'contract_sum_allarea_allocationspace', hideOnForm: true,hideOnIndex: true, },
 
-    { key: 'contract_count_area', hideOnForm: true,hideOnIndex: true,},
+    { key: 'contract_count_area', hideOnForm: true },
     {
       key: 'currency_id',
       type: 'list',

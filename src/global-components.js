@@ -15,6 +15,7 @@ import {
   BCollapse,
   BTd,
   BTbody,
+  BTfoot,
   BRow,
   BCol,
   BInputGroup,
@@ -25,11 +26,16 @@ import {
   BFormCheckboxGroup,
   BDropdown, BDropdownItem,
   BAvatarGroup, BAvatar, BCardTitle, BCardGroup, BCardText, BTabs, BTab, BBadge, BListGroup, BListGroupItem, BForm,
-  BTable, BPagination, BAlert,
+  BTable, BPagination, BAlert, BSidebar, BProgress, BProgressBar,
 } from 'bootstrap-vue'
 import { BCardActions } from '@core/components/b-card-actions'
+import { Icon } from '@iconify/vue2'
 
+Vue.component('icon', Icon)
 Vue.component(FeatherIcon.name, FeatherIcon)
+Vue.component('b-sidebar', BSidebar)
+Vue.component('b-progress', BProgress)
+Vue.component('b-progress-bar', BProgressBar)
 Vue.component('b-avatar-group', BAvatarGroup)
 Vue.component('b-badge', BBadge)
 Vue.component('b-card-group', BCardGroup)
@@ -60,6 +66,7 @@ Vue.component('b-th', BTh)
 Vue.component('b-td', BTd)
 Vue.component('b-tr', BTr)
 Vue.component('b-tbody', BTbody)
+Vue.component('b-tfoot', BTfoot)
 Vue.component('b-row', BRow)
 Vue.component('b-col', BCol)
 Vue.component('b-input-group', BInputGroup)

@@ -3,7 +3,7 @@
     <validation-observer ref="form" v-slot="{ passes }">
       <b-form @submit.prevent="passes(handleOk)">
         <b-row>
-          <b-col v-for="(field, index) in definition.filters" :key="index" cols="12" :md="isVertical ? 12 : 4">
+          <b-col v-for="(field, index) in definition.filters" :key="index" :cols="field.cols || 12" :md="isVertical ? 12 : field.cols ? field.cols : 4">
             <field ref="fields" :entity="data" :field="field" />
           </b-col>
         </b-row>
