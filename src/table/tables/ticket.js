@@ -8,6 +8,11 @@ export default {
   entity: 'frontend_6_1_6_overview',
   entityEndpoint: '/tickets/list',
   defaultSortField: 'ticket_creation_time',
+  /**
+   * truncateBy : Représente la valeur en rem à appliquer sur tous les champs d'un tableau
+   * @example truncateBy: 20 Va fixer le max-width des champs à 20 rem
+   */
+  truncateBy: 20,
   fields: [
     { key: 'ticket_id', auto: true },
     // { key: 'ticket_deadline', type: 'date', time: true },
