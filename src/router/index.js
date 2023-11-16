@@ -41,10 +41,10 @@ const router = new VueRouter({
       },
     },
     {
-      path:'/app/preview/document/:name',
+      path:'/app/preview/document',
       name:'previewDocument',
       component:()=>import('@/views/app/Ticket/widgets/PreviewDocumentWidget.vue'),
-      props:true
+      // props:true
     },
     {
       path: '/app/dashboard/ticket',

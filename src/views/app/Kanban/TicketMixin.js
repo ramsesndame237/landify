@@ -165,6 +165,7 @@ export default {
               'ticket_id',
               'ticket_last_change_time',
               'ticket_name',
+              'column_has_stamp',
               'team_type',
               'ticket_closed',
               'ticket_progress', 'ticket_id_group', 'ticket_name_group',

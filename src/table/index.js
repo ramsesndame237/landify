@@ -671,6 +671,7 @@ export default {
   // endregion
   document: {
     entity: 'frontend_document_list',
+    previewComponent:() =>import('@/views/app/Ticket/widgets/PreviewDocumentWidget.vue'),
     fields: [
       { key: 'document_id', hideOnForm: true, auto: true },
       { key: 'document_name', hideOnForm: true },
@@ -678,6 +679,9 @@ export default {
       { key: 'documenttype_name', hideOnForm: true },
       {
         key: 'documenttype_id', type: 'list', list: 'documenttype', listLabel: 'documenttype_name', hideOnIndex: true,
+      },
+      {
+        key: 'documenttype_name', listLabel: 'documenttype_name', hideOnIndex: true,hideOnCreate:true
       },
       {
         key: 'files', hideOnIndex: true, type: 'file', rules: { size: 100000 }, hideOnUpdate: true,
@@ -714,6 +718,7 @@ export default {
             type: 'list',
             list: 'documentcontracttype',
             listLabel: 'documentcontracttype_name',
+            disableOnUpdate: true,
           },
           { key: 'documentcontracttype_name', hideOnForm: true },
           { key: 'documentcontracttype_description', type: 'textarea', hideOnForm: true },

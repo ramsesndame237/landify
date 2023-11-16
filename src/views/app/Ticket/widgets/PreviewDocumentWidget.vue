@@ -1,11 +1,16 @@
 <script>
 
-import {getDocumentLink, getDocumentLinkPreviewWithId, getDocumentLinkWithId} from "@/libs/utils";
+import {
+  getDocumentLink,
+  getDocumentLinkPreviewWithId,
+  getDocumentLinkWithId,
+  getStampedDocumentPreviewLink
+} from "@/libs/utils";
 import Table from "@/table";
+import {mapGetters} from "vuex";
 
 export default {
   name: "PreviewDocumentWidget",
-  props: ['document_id','name'],
   data() {
     return {
       document_name: null,
@@ -15,7 +20,7 @@ export default {
 
   computed:{
     get_link_document(){
-      return  getDocumentLinkPreviewWithId(this.document_id)
+      return this.$store.state.document.previewDocument.document.document_already_stamp ? getStampedDocumentPreviewLink(this.$store.state.document.previewDocument.document) :getDocumentLinkPreviewWithId(this.$store.state.document.previewDocument.document.document_id)
     }
   },
   methods: {
@@ -24,15 +29,22 @@ export default {
     },
     downloadDocument(){
         var link = document.createElement("a");
-        link.setAttribute('download', name);
-        link.href = getDocumentLinkWithId(this.document_id);
+        link.setAttribute('download', this.$store.state.document.previewDocument.document.document_name);
+        link.href = getDocumentLinkWithId(this.$store.state.document.previewDocument.document.document_id);
         document.body.appendChild(link);
         link.click();
         link.remove();
-    }
+    },
+    stampDocument() {
+      this.$router.push({
+        name: 'sign-document',
+        params: {id: this.$store.state.document.previewDocument.document.document_id, ticket_id: this.$store.state.document.previewDocument.ticket_id, entity: document}
+      })
+    },
   },
   mounted() {
-    this.document_name = getDocumentLinkPreviewWithId(this.document_id)
+    console.log("this is the data ", this.$store.state.document.previewDocument.document.document_id)
+    this.document_name = getDocumentLinkPreviewWithId(this.$store.state.document.previewDocument.document.document_id)
   }
 
 }
@@ -43,11 +55,11 @@ export default {
     <div class="header-preview-page d-flex justify-content-center align-items-center">
       <div class="header_title d-flex">
         <h2 class="font-weight-bold text-white">
-          {{ name }}
+          {{$store.state.document.previewDocument.document.document_name}}
         </h2>
         <feather-icon v-b-tooltip.hover title="Download" icon="DownloadCloudIcon" size="25"
                       class="cursor-pointer mx-2" @click="downloadDocument" />
-        <feather-icon v-b-tooltip.hover title="Stamp" icon="FeatherIcon" size="25" class="cursor-pointer"/>
+        <feather-icon v-if="$store.state.document.previewDocument.col_stamp && !$store.state.document.previewDocument.document.document_already_stamp" v-b-tooltip.hover title="Stamp" icon="FeatherIcon" @click="stampDocument" size="25" class="cursor-pointer"/>
       </div>
     </div>
     <div class="document_body_preview">

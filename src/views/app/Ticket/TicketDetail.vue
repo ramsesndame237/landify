@@ -262,7 +262,7 @@
               </b-button>
             </div>
             <DocumentsWidgetView v-if="activeTabItem && activeTabItem.id==='4'" :documents="documents"
-                                 :ticket_id="entity.ticket_id"/>
+                                 :ticket_id="entity.ticket_id" :column_has_stamp="entity.column_has_stamp === 1 ? true:false"/>
 
             <!--            <b-row>-->
             <!--              <b-col v-for="(document,i) in document" :key="i" cols="6">-->
@@ -485,6 +485,7 @@ export default {
     try {
       if (!this.entity || !this.entity?.columns) {
         await this.loadSingleTicket(false)
+        console.log("this is sjtejjej",this.tickets[0])
         this.entity = this.tickets[0]
         await this.loadStages(this.entity?.board_id)
       } else {

@@ -7,10 +7,13 @@ export default {
     documents: [],
     documenttype: [],
     subdocumenttype: [],
-    previewDocument:""
+    previewDocument:null
   },
   getters: {
-    getAllDocumentType: (state) => state.documenttype
+    getAllDocumentType: (state) => state.documenttype,
+    getPreviewDocument:(state)=>{
+      console.log("this is the getAlldocument create", state.previewDocument.document)
+    }
   },
   mutations: {
     SET_TYPE_DOCUMENT: (state, documentTypes) => {
@@ -19,6 +22,9 @@ export default {
       //   state.documenttype.push(element.toRaw())
       // })
       state.documenttype = JSON.parse(JSON.stringify(documentTypes))
+    },
+    SET_PREVIEW_DOCUMENT:(state,doc)=>{
+      state.previewDocument = JSON.parse(JSON.stringify(doc))
     }
   },
   actions: {
@@ -30,8 +36,10 @@ export default {
       }).catch(error => {
         console.log(error)
       })
-
     },
+    async createDocumentPreview({commit},data){
+      await commit('document/SET_PREVIEW_DOCUMENT',JSON.parse(JSON.stringify(data)),{root:true})
+    }
 
   },
 
