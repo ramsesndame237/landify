@@ -22,7 +22,7 @@
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
                  :primary-key-column="definition.primaryKey" :entity-endpoint="definition.entityEndpoint"
-                 :initial-filter="initialFilterData"/>
+                 :initial-filter="initialFilterData" :truncate-by="definition.truncateBy || null" />
     </b-card>
     <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"
                    with-continue :table-definition-key="table" :title="`headline~${table}~new`"
