@@ -448,7 +448,7 @@ export default {
     invoiceTicket() {
       return true
     },
-    isTicket() {
+     isTicket() {
       return this.entity?.ticket_id_group === null
     },
     firstColumn() {
