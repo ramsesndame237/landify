@@ -39,20 +39,31 @@
                           @click="updateTicket">
                   {{ $t('button~edit') }}
                 </b-button>
-                <b-button v-if="showButton.all" variant="primary" class="ml-2" @click="toggleTicket(entity)">
+                <b-button v-if="showButton.all" variant="primary" class="ml-2" @click="(e)=>toggleTicket(e,entity)">
                   {{ $t('button~ticket~' + (entity.ticket_closed ? 'reopen' : 'close')) }}
                 </b-button>
                 <assign-user-modal ref="assign" @reload="loadSingleTicket"/>
               </div>
             </div>
-            <b-card-actions :title="$t('headline~ticket~information')" action-collapse>
+            <b-card-actions v-if="entity" :title="$t('headline~ticket~information')" action-collapse>
               <table class="mt-2 mt-xl-0 w-100">
+                <tr v-if="!isTicket">
+                  <th class="pb-50 font-weight-bold">
+                    {{ $t('attribute.ticket_name_group') }}
+                  </th>
+                  <td class="pb-50">
+                    <router-link v-if="entity && entity.ticket_id_group"
+                                 :to="{name:'table-view',params: {table:'ticket',id: entity.ticket_id_group, entity: {}, columns:[], teams: []}}">
+                      {{ entity.ticket_name_group }}
+                    </router-link>
+                  </td>
+                </tr>
                 <tr>
                   <th class="pb-50 font-weight-bold">
                     {{ $t('attribute.board_name') }}
                   </th>
                   <td class="pb-50">
-                    <router-link v-if="entity.board_id"
+                    <router-link v-if="entity && entity.board_id"
                                  :to="{name:'table-kanban',params: {table:'board',id: entity.board_id}}">
                       {{ entity.board_name }}
                     </router-link>
@@ -71,7 +82,7 @@
                     {{ $t('attribute.customergroup_name') }}
                   </th>
                   <td class="pb-50">
-                    <router-link v-if="entity.customergroup_id"
+                    <router-link v-if="entity && entity.customergroup_id"
                                  :to="{name:'table-view',params: {table: 'customergroup', id: entity.customergroup_id}}">
                       {{ entity.customergroup_name }}
                     </router-link>
@@ -82,7 +93,7 @@
                     {{ $t('attribute.company_name') }}
                   </th>
                   <td class="pb-50">
-                    <router-link v-if="entity.company_id"
+                    <router-link v-if="entity && entity.company_id"
                                  :to="{name:'table-view',params: {table: 'company', id: entity.company_id}}">
                       {{ entity.company_name }}
                     </router-link>
@@ -93,7 +104,7 @@
                     {{ $t('attribute.pos_name') }}
                   </th>
                   <td class="pb-50">
-                    <router-link v-if="entity.pos_id"
+                    <router-link v-if="entity && entity.pos_id"
                                  :to="{name:'table-view',params: {table: 'pos', id: entity.pos_id}}">
                       {{ entity.pos_name }}
                     </router-link>
@@ -104,7 +115,7 @@
                     {{ $t('attribute.contract_name') }}
                   </th>
                   <td class="pb-50">
-                    <router-link v-if="entity.contract_id"
+                    <router-link v-if="entity && entity.contract_id"
                                  :to="{name:'table-view',params: {table: 'contract', id: entity.contract_id}}">
                       {{ entity.contract_name }}
                     </router-link>
@@ -115,7 +126,7 @@
                     {{ $t('attribute.invoice_number') }}
                   </th>
                   <td class="pb-50">
-                    <router-link v-if="entity.invoice_id"
+                    <router-link v-if="entity && entity.invoice_id"
                                  :to="{name:'table-view',params: {table: 'invoice', id: entity.invoice_id}}">
                       {{ entity.invoice_number }}
                     </router-link>
@@ -158,7 +169,7 @@
                     {{ $t('attribute.user_email') }}
                   </th>
                   <td class="pb-50">
-                    {{ entity.columns[0].user_email }}
+                    {{ entity.columns[0].user_email_assigned }}
                   </td>
                 </tr>
                 <tr>
@@ -166,7 +177,7 @@
                     {{ $t('attribute.ticket_deadline_yellow') }}
                   </th>
                   <td class="pb-50">
-                    {{ entity.ticket_deadline_yellow }}
+                    {{ formatDate(entity.ticket_deadline_yellow, true) }}
                   </td>
                 </tr>
                 <tr>
@@ -174,23 +185,25 @@
                     {{ $t('attribute.ticket_deadline_red') }}
                   </th>
                   <td class="pb-50">
-                    {{ entity.ticket_deadline_red }}
+                    {{ formatDate(entity.ticket_deadline_red, true) }}
                   </td>
                 </tr>
               </table>
             </b-card-actions>
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <h2>{{ $t('headline~ticket~subtasks') }}</h2>
-              <b-button v-if="!entity.ticket_closed && showButton.all" variant="primary" @click="createSubTicket">
-                {{ $t('button~newsubtask') }}
-              </b-button>
+            <div v-if="false" class="">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2>{{ $t('headline~ticket~subtasks') }}</h2>
+                <b-button v-if="!entity.ticket_closed && showButton.all" variant="primary" @click="createSubTicket">
+                  {{ $t('button~newsubtask') }}
+                </b-button>
+              </div>
+              <generic-modal ref="modal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
+                             :title="$t('headline~ticket~newsubtask')" @reload-table="onNewTicket"/>
+              <sub-ticket-card v-for="(ticket,idx) in subTickets" :key="idx" :ticket="ticket"/>
+              <p v-if="subTickets.length===0" class="text-center">
+                {{ $t('headline~ticket~nosubticket') }}
+              </p>
             </div>
-            <generic-modal ref="modal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
-                           :title="$t('headline~ticket~newsubtask')" @reload-table="onNewTicket"/>
-            <sub-ticket-card v-for="(ticket,idx) in subTickets" :key="idx" :ticket="ticket"/>
-            <p v-if="subTickets.length===0" class="text-center">
-              {{ $t('headline~ticket~nosubticket') }}
-            </p>
             <email-modal ref="emailModal" @reload="fetchEmail"/>
           </b-col>
           <b-col v-if="entity.columns &&activeTabItem && activeTabItem.id ==='2'">
@@ -213,7 +226,7 @@
                       <b-th>{{ $t('attribute.email_received_datetime') }}</b-th>
                       <b-th>{{ $t('attribute.email_from') }}</b-th>
                       <b-th>{{ $t('attribute.email_subject') }}</b-th>
-                      <b-th>{{ $t('attribute.documents') }}</b-th>
+                      <b-th>{{ $t('attribute.documentModule') }}</b-th>
                     </b-tr>
                   </b-thead>
                   <b-tbody>
@@ -243,11 +256,16 @@
             </b-card-actions>
           </b-col>
           <b-col lg="12">
+            <div v-if="showButton.all && activeTabItem && activeTabItem.id ==='4'">
+              <b-button variant="primary" @click="createDocument">
+                {{ $t('button~newdocument') }}
+              </b-button>
+            </div>
             <DocumentsWidgetView v-if="activeTabItem && activeTabItem.id==='4'" :documents="documents"
                                  :ticket_id="entity.ticket_id"/>
 
             <!--            <b-row>-->
-            <!--              <b-col v-for="(document,i) in documents" :key="i" cols="6">-->
+            <!--              <b-col v-for="(document,i) in document" :key="i" cols="6">-->
             <!--                <b-overlay :show="document.loading">-->
             <!--                  <b-card>-->
             <!--                    <template #header>-->
@@ -303,11 +321,6 @@
             <!--                </b-overlay>-->
             <!--              </b-col>-->
             <!--            </b-row>-->
-            <!--            <div v-if="showButton.all">-->
-            <!--              <b-button variant="primary" @click="createDocument">-->
-            <!--                {{ $t('button~newdocument') }}-->
-            <!--              </b-button>-->
-            <!--            </div>-->
 
 
             <generic-modal ref="documentModal" table="document" :definition="documentDef"
@@ -387,24 +400,6 @@ export default {
   },
   mixins: [EditPageMixin, TicketMixin, SubTicketMixin],
   data() {
-    const subTicketDef = JSON.parse(JSON.stringify(Table.ticket))
-    let index = subTicketDef.fields.findIndex(f => f.key === 'column_id')
-    subTicketDef.fields.splice(index, 1)
-    index = subTicketDef.fields.findIndex(f => f.key === 'pos_id')
-    subTicketDef.fields.splice(index, 1)
-    index = subTicketDef.fields.findIndex(f => f.key === 'contract_id')
-    subTicketDef.fields.splice(index, 1)
-    // ticketDef.fields.push({
-    //   key: 'ticket_id_group',
-    //   type: 'list',
-    //   list: 'ticket',
-    //   listLabel: 'ticket_name',
-    //   relationEntity: 'ticket_ticket_rel',
-    //   tableKey: 'ticket_id',
-    //   // visible: () => false,
-    // })
-
-    subTicketDef.submit = this.submitSubticket
     return {
       ticketDef: Table.ticket,
       documentDef: Table.document,
@@ -413,25 +408,6 @@ export default {
       loading: false,
       activeTabItem: null,
       emails: [],
-      // tabTitle: [
-      //   {
-      //     id: '2',
-      //     title: 'Timeline',
-      //   },
-      //   {
-      //     id: '4',
-      //     title: 'Documents',
-      //   },
-      //   {
-      //     id: '3',
-      //     title: 'Messages and Emails',
-      //   },
-      //   {
-      //     id: '1',
-      //     title: 'Information',
-      //   }
-
-      // ],
       loadingEmail: false,
       contractDocument: {},
       noteToInternal: true,
@@ -472,35 +448,7 @@ export default {
     invoiceTicket() {
       return true
     },
-    firstColumn() {
-      return this.entity.columns[0]
-    },
-    showButton() {
-      const { team_type } = this.firstColumn
-      const typeOfButton = {
-        all: true,
-        assign: true,
-        confirm: true,
-      }
-
-      if (!this.isUserExtern) return { ...typeOfButton }
-
-      if (team_type === 'intern') {
-        this.noteToInternal = false
-        typeOfButton.all = false
-        typeOfButton.assign = false
-        typeOfButton.confirm = false
-      } else {
-        this.noteToEveryOne = false
-        typeOfButton.all = false
-        typeOfButton.assign = true
-        typeOfButton.confirm = true
-      }
-
-      return { ...typeOfButton }
-    },
-    ...mapGetters('user', ['isUserExtern']),
-    isTicket() {
+     isTicket() {
       return this.entity?.ticket_id_group === null
     },
     firstColumn() {
@@ -556,20 +504,6 @@ export default {
     getActiveItemData(item) {
       this.activeTabItem = item
     },
-    async submitSubticket(vm) {
-      const data = { ...vm.entity }
-
-      try {
-        const response = await this.$http.post('/tickets/subticket', data)
-        await this.fetchSubTickets()
-        return response
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    getActiveItemData(item) {
-      this.activeTabItem = item
-    },
     formatDate,
     async addToPos(document) {
       if (document.loading) return
@@ -613,14 +547,10 @@ export default {
       if (date.isAfter(column.ticket_deadline_offset_yellow)) return 'warning'
       return 'success'
     },
+    getDocumentLink,
     getLink(document) {
       if (document.document_already_stamp) return getStampedDocumentLink(document)
       return getDocumentLink(document)
-    },
-    createSubTicket() {
-      this.$refs.modal.openModal(true, {
-        ticket_id_group: parseInt(this.entityId),
-      })
     },
     createDocument() {
       this.$refs.documentModal.openModal(true, { ticket_id: this.entity?.ticket_id })
@@ -631,10 +561,6 @@ export default {
         params: {
           table: 'invoice',
           entity: { ticket_id: this.entity?.ticket_id },
-        },
-        params: {
-          table: 'invoice',
-          entity: { ticket_id: this.entity.ticket_id }
         },
       })
     },
@@ -684,17 +610,6 @@ export default {
             this.fetchDocuments()
           })
     },
-    async fetchSubTickets() {
-      // load subtickets
-      try {
-        const response = await this.$http.get('/tickets/sub-tickets', {
-          params: { ticket_id: this.entity.ticket_id },
-        })
-        this.subTickets = response.data.data
-      } catch (error) {
-        console.log({ error })
-      }
-    },
     async fetchDocuments() {
       const documents = (await this.$http.get('/tickets/documents', {
         params: {
@@ -718,7 +633,7 @@ export default {
         })).data.data
         if (!results.length) return
         this.emails = Object.values(_.groupBy(results, 'email_id'))
-          .map(r => _.pick(r[0], ['email_id', 'email_from', 'email_received_datetime', 'email_to', 'email_cc', 'email_subject', 'email_body', 'documents']))
+            .map(r => _.pick(r[0], ['email_id', 'email_from', 'email_received_datetime', 'email_to', 'email_cc', 'email_subject', 'email_body', 'documents']))
       } finally {
         this.loadingEmail = false
       }
