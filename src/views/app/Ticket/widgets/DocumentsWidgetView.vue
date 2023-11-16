@@ -66,6 +66,9 @@ export default {
         params: {id: document.document_id, ticket_id: this.ticket_id, entity: document}
       })
     },
+    editDocument(document){
+      console.log("this is the document to édit",document)
+    },
     onViewDocument(document) {
       this.$router.push({path:'/app/preview/document/' +document.document_id + '/' + document.document_name,params:{document:document}})
       const stamp = document.document_already_stamp !== 0 ? true : false
@@ -101,7 +104,7 @@ export default {
         <DataTable v-if="ticket_id" :columns="columDataDocument" :url="`/tickets/documents?ticket_id=${ticket_id}`"
                    :on-delete-click="deleteDocument" :on-details-click="onViewDocument" hide-top-bar="true"
                    :resolve-data="data =>data.data"
-                   :custom-actions="[{icon:'FeatherIcon',onClick:stampDocument, label:'Stamp'}]"/>
+                   :custom-actions="[{icon:'EditIcon',onClick:editDocument, label:'Edit'}]"/>
       </section>
 
     </div>
