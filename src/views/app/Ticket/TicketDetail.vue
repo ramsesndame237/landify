@@ -413,25 +413,25 @@ export default {
       loading: false,
       activeTabItem: null,
       emails: [],
-      tabTitle: [
-        {
-          id: '2',
-          title: 'Timeline',
-        },
-        {
-          id: '4',
-          title: 'Documents',
-        },
-        {
-          id: '3',
-          title: 'Messages and Emails',
-        },
-        {
-          id: '1',
-          title: 'Information',
-        }
+      // tabTitle: [
+      //   {
+      //     id: '2',
+      //     title: 'Timeline',
+      //   },
+      //   {
+      //     id: '4',
+      //     title: 'Documents',
+      //   },
+      //   {
+      //     id: '3',
+      //     title: 'Messages and Emails',
+      //   },
+      //   {
+      //     id: '1',
+      //     title: 'Information',
+      //   }
 
-      ],
+      // ],
       loadingEmail: false,
       contractDocument: {},
       noteToInternal: true,
