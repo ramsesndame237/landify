@@ -28,7 +28,7 @@
           <component :is="data.field.component" :items="items || provider" :row-data="data" :data="data.field.props"
                      @reload="reload"/>
         </div>
-        <span v-else>
+        <span v-else :class="{'text-truncate' : !!truncateBy}" :style="truncateStyle" :v-b-tooltip="!!truncateBy" :title="data.value">
           <b-badge v-if="data.field.withBadge" :variant="data.field.setVariant(data)">{{ data.value }}</b-badge>
           <template v-else-if="data.field.translateValue">{{ $t(data.value) }}</template>
           <template v-else>{{ data.value }}</template>
@@ -148,6 +148,11 @@ export default {
     canReadItem: { type: Function, required: false, default: () => true }, // si un item du tableau est consultable
     canDeleteItem: { type: Function, required: false }, // si un item du tableau est supprimable
     customRequest: { type: Object, required: false }, // un object qui contient des données pour personnaliser les requêtes vers le back dans les relations
+    /**
+     * truncateBy : Représente la valeur en rem à appliquer sur tous les champs d'un tableau
+     * @example truncateBy: 20 Va fixer le max-width des champs à 20 rem
+     */
+    truncateBy: { type: Number, required: false }, // un object qui contient des données pour personnaliser les requêtes vers le back dans les relations
   },
   data() {
     return {
@@ -165,6 +170,9 @@ export default {
     }
   },
   computed: {
+    truncateStyle() {
+      return this.truncateBy ? { maxWidth: `${this.truncateBy}rem`, display: 'block' } : {}
+    },
     primaryKey() {
       return this.primaryKeyColumn || this.fields.find(f => f.auto)?.key || `${this.entity}_id`
     },
