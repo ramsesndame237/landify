@@ -12,7 +12,7 @@ export default {
   mounted() {
     const allElements = document.querySelectorAll('.tab_container li')
     if (allElements) {
-      allElements[3].click()
+      allElements?.[3]?.click?.()
     }
   },
   methods: {

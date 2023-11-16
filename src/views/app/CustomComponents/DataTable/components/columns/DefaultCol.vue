@@ -1,13 +1,12 @@
 <template>
   <span
-    class="d-inline-block text-truncate w-100"
-    :title="value"
-    :class="{'font-weight-bold': bold}"
+      class="d-inline-block text-truncate w-100"
+      :title="value"
+      :class="{'font-weight-bold': bold}"
   >
     {{ value }}
   </span>
 </template>
-
 <script>
 export default {
   name: 'DefaultCol',
@@ -31,11 +30,14 @@ export default {
   },
   computed: {
     value() {
-      let finalValue = '';
-      (this.col?.key?.split('.') || []).forEach(key => {
-        finalValue = this.data?.[key]
-        console.log({ data: this.data, key })
-      })
+      let finalValue = ''
+      if (!this.col?.getValue) {
+        (this.col?.key?.split('.') || []).forEach(key => {
+          finalValue = this.data?.[key]
+        })
+      } else {
+        finalValue = this.col.getValue(this.data)
+      }
       return finalValue
     },
   },
