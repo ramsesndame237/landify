@@ -92,48 +92,49 @@ export default {
     <validation-observer ref="form" v-slot="{ passes }">
       <b-row>
         <b-col>
-          <b-form-group
-            id="fieldset-1"
-            label="Typ (Dokumentsart)"
-            label-for="input-1"
-            :invalid-feedback="invalidFeedback"
-            :state="state"
-          >
-            <AutoCompleteInput
-              :options="documenttype"
-              key_value="documenttype_id"
-              key-label="documenttype_name"
-              icon_open="ChevronUpIcon"
-              icon_close="ChevronDownIcon"
-            />
-          </b-form-group>
-          <b-form-group
-            id="fieldset-1"
-            label="Typ (Dokumentstyp)"
-            label-for="input-1"
-            :invalid-feedback="invalidFeedback"
-            :state="state"
-          >
-            <AutoCompleteInput
-              :options="subdocumenttype"
-              key_value="documenttype_id"
-              key-label="documenttype_name"
-              icon_open="ChevronUpIcon"
-              icon_close="ChevronDownIcon"
-              :disable="documentData.documenttype_id === ''"
-            />
-          </b-form-group>
-          <b-form-group
-            id="fieldset-1"
-            label="Choose the subtype"
-            label-for="input-1"
-            :invalid-feedback="invalidFeedback"
-            :state="state"
-          >
-            <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
-                         drop-placeholder="Drop file here..." required
-                         :file-name-formatter="formatFileInputNames" @change="updateFilesData($event, validate)"/>
-          </b-form-group>
+<!--          <b-form-group-->
+<!--            id="fieldset-1"-->
+<!--            label="Typ (Dokumentsart)"-->
+<!--            label-for="input-1"-->
+<!--            :invalid-feedback="invalidFeedback"-->
+<!--            :state="state"-->
+<!--          >-->
+<!--            <AutoCompleteInput-->
+<!--              :options="documenttype"-->
+<!--              key_value="documenttype_id"-->
+<!--              key-label="documenttype_name"-->
+<!--              icon_open="ChevronUpIcon"-->
+<!--              icon_close="ChevronDownIcon"-->
+<!--            />-->
+<!--          </b-form-group>-->
+<!--          <b-form-group-->
+<!--            id="fieldset-1"-->
+<!--            label="Typ (Dokumentstyp)"-->
+<!--            label-for="input-1"-->
+<!--            :invalid-feedback="invalidFeedback"-->
+<!--            :state="state"-->
+<!--          >-->
+<!--            <AutoCompleteInput-->
+<!--              :options="subdocumenttype"-->
+<!--              key_value="documenttype_id"-->
+<!--              key-label="documenttype_name"-->
+<!--              icon_open="ChevronUpIcon"-->
+<!--              icon_close="ChevronDownIcon"-->
+<!--              :disable="documentData.documenttype_id === ''"-->
+<!--            />-->
+<!--          </b-form-group>-->
+<!--          <b-form-group-->
+<!--            id="fieldset-1"-->
+<!--            label="Choose the subtype"-->
+<!--            label-for="input-1"-->
+<!--            :invalid-feedback="invalidFeedback"-->
+<!--            :state="state"-->
+<!--          >-->
+<!--            <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."-->
+<!--                         drop-placeholder="Drop file here..." required-->
+<!--                         :file-name-formatter="formatFileInputNames" @change="updateFilesData($event, validate)"/>-->
+<!--          </b-form-group>-->
+
         </b-col>
       </b-row>
     </validation-observer>

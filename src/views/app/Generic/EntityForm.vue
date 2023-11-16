@@ -2,6 +2,7 @@
   <b-overlay :show="loading">
     <validation-observer ref="form" v-slot="{ passes }">
       <b-form autocomplete="off" @submit.prevent="passes(emitSubmit)">
+
         <component :is="definition.fieldComponent" v-if="definition.fieldComponent" ref="fieldComponent"
                    :entity="entity" :create="create" :table-definition="tableDefinition" :definition="definition"
                    :disabled="disabled" :form-fields="formFields"/>

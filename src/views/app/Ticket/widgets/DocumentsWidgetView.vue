@@ -2,14 +2,10 @@
 import DataTable from '@/views/app/CustomComponents/DataTable/DataTable.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
 import Table from '@/table'
-import {
-  getDocumentLink,
-  getDocumentLinkPreview,
-  getStampedDocumentLink,
-  getStampedDocumentPreviewLink
-} from "@/libs/utils";
+import {getDocumentLinkPreview, getStampedDocumentLink} from "@/libs/utils";
 import EditPageMixin from "@/views/app/Generic/EditPageMixin";
 import TicketMixin from "@/views/app/Kanban/TicketMixin";
+import {mapMutations} from "vuex";
 
 export default {
   name: 'DocumentsWidgetView',
@@ -21,10 +17,12 @@ export default {
   props: {
     documents: Array,
     ticket_id: Number,
+    column_has_stamp:Boolean,
   },
   data() {
     return {
       documentDef: Table.document,
+      initialState:{},
       columDataDocument: [
         {
           id: 'document_entry_time',
@@ -44,6 +42,7 @@ export default {
         {
           id: 'document_status',
           key: 'document_status',
+          getValue: doc => (doc?.document_already_stamp ? 'Stamped' : 'Not stamp'),
           header: {
             name: 'status',
           },
@@ -66,14 +65,30 @@ export default {
         params: {id: document.document_id, ticket_id: this.ticket_id, entity: document}
       })
     },
+    editDocument(document) {
+      console.log("this is the document", document)
+      this.definition.fields.filter((doc) =>!doc.hideOnForm && (this.create || !doc.hideOnUpdate) && (!this.create || !doc.hideOnCreate)).map((document_modified,k) =>{
+        document_modified.document_name = document.document_name
+        document_modified.documenttype_id = document.documenttype_id
+      })
+      let regex = new RegExp(/\.[^/.]+$/)
+      this.$refs.documentModal.openModal(false, {ticket_id: this.ticket_id,documenttype_name:document.document_name.replace(regex,""),documenttype_id:document.documenttype_id,documenttype_extension:document.document_name.split('.').pop()})
+    },
     onViewDocument(document) {
-      this.$router.push({path:'/app/preview/document/' +document.document_id + '/' + document.document_name,params:{document:document}})
-      const stamp = document.document_already_stamp !== 0 ? true : false
+      this.$router.push({
+        path: '/app/preview/document',
+        params: {document: document,ticket_id:this.ticket_id}
+      })
+      this.$store.dispatch('document/createDocumentPreview',{document: document,ticket_id:this.ticket_id,col_stamp:this.column_has_stamp})
+      const stamp = document.document_already_stamp
       if (stamp) return getStampedDocumentLink(document)
       getDocumentLinkPreview(document)
 
 
     }
+  },
+  mounted() {
+    console.log("this is the cols statuts",this.column_has_stamp)
   }
 }
 </script>
@@ -101,13 +116,17 @@ export default {
         <DataTable v-if="ticket_id" :columns="columDataDocument" :url="`/tickets/documents?ticket_id=${ticket_id}`"
                    :on-delete-click="deleteDocument" :on-details-click="onViewDocument" hide-top-bar="true"
                    :resolve-data="data =>data.data"
-                   :custom-actions="[{icon:'FeatherIcon',onClick:stampDocument, label:'Stamp'}]"/>
+                   :custom-actions="[{icon:'EditIcon',onClick:editDocument, label:'Edit'}]"/>
       </section>
 
     </div>
+
     <generic-modal ref="documentModal" :fetch-data="false" table="document" :definition="documentDef"
                    table-definition-key="document" title="Update the document"
                    @reload-table="onDocumentUpdate"/>
+<!--    <AddOrUpdateDocumentsTicket-->
+<!--    :initial-state="initialState"-->
+<!--    />-->
   </div>
 </template>
 

@@ -51,6 +51,7 @@ export default {
         {
           key: 'documenttype_id', type: 'list', list: 'documenttype', listLabel: 'documenttype_name',
         },
+
         { key: 'documenttype_name', hideOnForm: true },
       ],
     },
