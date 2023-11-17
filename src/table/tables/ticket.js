@@ -17,7 +17,7 @@ export default {
     { key: 'ticket_id', auto: true },
     // { key: 'ticket_deadline', type: 'date', time: true },
     { key: 'ticket_name' },
-    { key: 'column_has_stamp',hideOnForm: true },
+    { key: 'column_has_stamp', hideOnForm: true },
     {
       key: 'ticket_deadline_yellow', type: 'date', time: true, hideOnIndex: true,
     },
