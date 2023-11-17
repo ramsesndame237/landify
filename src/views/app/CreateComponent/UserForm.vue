@@ -23,29 +23,29 @@ export default {
       this.$parent.removeBody(true)
     }
     await this.$http.get('/users/select')
-      .then(resp => {
-        const data = resp.data
-        const definition = { ...Table.user }
-        // add data for select fields in store
-        let index = definition.fields.findIndex(f => f.key === 'usertype_id') // usertype_id field
-        this.$store.dispatch('table/setListData', { entity: definition.fields[index].list, data: data?.usertype })
+        .then(resp => {
+          const data = resp.data
+          const definition = { ...Table.user }
+          // add data for select fields in store
+          let index = definition.fields.findIndex(f => f.key === 'usertype_id') // usertype_id field
+          this.$store.dispatch('table/setListData', { entity: definition.fields[index].list, data: data?.usertype })
 
-        index = definition.fields.findIndex(f => f.key === 'function_id') // function_id field
-        this.$store.dispatch('table/setListData', { entity: definition.fields[index].list, data: data?.function })
+          index = definition.fields.findIndex(f => f.key === 'function_id') // function_id field
+          this.$store.dispatch('table/setListData', { entity: definition.fields[index].list, data: data?.function })
 
-        // index = definition.fields.findIndex(f => f.key === 'user_functions') // user_functions field
-        // this.$store.dispatch('table/setListData', { entity: definition.fields[index].list, data: data?.function })
+          // index = definition.fields.findIndex(f => f.key === 'user_functions') // user_functions field
+          // this.$store.dispatch('table/setListData', { entity: definition.fields[index].list, data: data?.function })
 
-        index = definition.fields.findIndex(f => f.key === 'customergroup_id') // customer_group field
-        this.$store.dispatch('table/setListData', { entity: definition.fields[index].list, data: data?.customergroup })
+          index = definition.fields.findIndex(f => f.key === 'customergroup_id') // customer_group field
+          this.$store.dispatch('table/setListData', { entity: definition.fields[index].list, data: data?.customergroup })
 
-        index = definition.fields.findIndex(f => f.key === 'partnergroup_id') // partner group field
-        this.$store.dispatch('table/setListData', { entity: definition.fields[index].list, data: data?.partnergroup })
-      })
-      .catch(e => {
-        console.error(e)
-        this.$errorToast(e.response ? e.response.data?.detail : 'Unknow Error')
-      })
+          index = definition.fields.findIndex(f => f.key === 'partnergroup_id') // partner group field
+          this.$store.dispatch('table/setListData', { entity: definition.fields[index].list, data: data?.partnergroup })
+        })
+        .catch(e => {
+          console.error(e)
+          this.$errorToast(e.response ? e.response.data?.detail : 'Unknow Error')
+        })
   },
 
   methods: {
