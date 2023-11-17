@@ -789,8 +789,15 @@ export default {
       }
     },
     fuseSearch(options, search) {
+      const keys = [this.field.key]
+      if (typeof this.field.listLabel === 'string') {
+        keys.push(this.field.listLabel)
+      } else {
+        // try to guess name field
+        keys.push(this.field.key.replace('_id', '_name'))
+      }
       const fuse = new Fuse(options, {
-        keys: this.list[0] ? Object.keys(this.list[0]) : [],
+        keys,
         shouldSort: true,
         threshold: 0.1,
       })
@@ -849,13 +856,13 @@ export default {
             if (Array.isArray(value)) {
               if (value.length > 0) {
                 if (this.field.entityCustomEndPoint) {
-                  payload.data = [{ [this.field.filter_key]: value }]
+                  payload.data = [{ [this.field.filter_key]: value, ...this.field.customFilter }]
                 } else {
-                  payload.data = value.map(v => ({ [this.field.filter_key]: v }))
+                  payload.data = value.map(v => ({ [this.field.filter_key]: v, ...this.field.customFilter }))
                 }
               }
             } else {
-              payload.data = [{ [this.field.filter_key]: this.entity[this.field.filter_key] }]
+              payload.data = [{ [this.field.filter_key]: this.entity[this.field.filter_key], ...this.field.customFilter }]
             }
           }
         }

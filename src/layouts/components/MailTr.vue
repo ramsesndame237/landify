@@ -117,14 +117,12 @@ import Field from '@/views/app/Generic/Field'
 import { getDocumentLink, getDateFormat } from '@/libs/utils'
 import { VBToggle } from 'bootstrap-vue'
 import moment from 'moment'
-import AutoComplete from '@/views/app/CustomComponents/AutoComplete/AutoComplete.vue'
 import FeatherIcon from '@/@core/components/feather-icon/FeatherIcon.vue'
 
 export default {
   name: 'MailTr',
   components: {
     Field,
-    AutoComplete,
     FeatherIcon,
   },
   directives: {
@@ -153,6 +151,9 @@ export default {
         noCache: true,
         customPagination: {
           per_page: 15,
+        },
+        customFilter: {
+          ticket_closed: 0,
         },
         // optionWithTooltipDetail: true,
       },
@@ -184,7 +185,7 @@ export default {
         filter_key: 'pos_id',
         noLabel: true,
         noCache: true,
-        optionWithTooltipDetail: true,
+        // optionWithTooltipDetail: true,
       },
       boardIdField: {
         key: 'board_id',
@@ -193,7 +194,7 @@ export default {
         listLabel: 'board_name',
         noLabel: true,
         noFetch: true,
-        optionWithTooltipDetail: true,
+        // optionWithTooltipDetail: true,
       },
       documenttypeIdField: {
         key: 'documenttype_id',
