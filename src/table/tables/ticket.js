@@ -6,7 +6,7 @@ export default {
   fieldComponent: () => import('@/views/app/CreateComponent/TicketForm.vue'),
   create: false,
   entity: 'frontend_6_1_6_overview',
-  entityEndpoint: '/tickets/list',
+  entityEndpoint: '/tickets/slims',
   defaultSortField: 'ticket_creation_time',
   /**
    * truncateBy : Représente la valeur en rem à appliquer sur tous les champs d'un tableau
@@ -17,7 +17,7 @@ export default {
     { key: 'ticket_id', auto: true },
     // { key: 'ticket_deadline', type: 'date', time: true },
     { key: 'ticket_name' },
-    { key: 'column_has_stamp',hideOnForm: true },
+    // { key: 'column_has_stamp',hideOnForm: true },
     {
       key: 'ticket_deadline_yellow', type: 'date', time: true, hideOnIndex: true,
     },
@@ -48,32 +48,32 @@ export default {
         return TICKETS_DEADLINE_STATUS[value]
       },
     },
-    {
-      key: 'team_name',
-      listLabel: 'pos_name',
-      hideOnForm: true,
-    },
+    // {
+    //   key: 'team_name',
+    //   listLabel: 'pos_name',
+    //   hideOnForm: true,
+    // },
     { key: 'board_name', hideOnForm: true },
     { key: 'column_name', hideOnForm: true },
 
     { key: 'priority_name', hideOnForm: true },
-    { key: 'pos_name', hideOnForm: true },
+    // { key: 'pos_name', hideOnForm: true },
     {
       key: 'ticket_closed',
       label: 'Status',
       hideOnForm: true,
       formatter: val => window.$vue.$t(val ? 'header~board~status~closed' : 'header~board~status~open'),
     },
-    { key: 'ticket_description', type: 'textarea', required: false },
-    {
-      key: 'pos_id',
-      listLabel: 'pos_name',
-      type: 'list',
-      list: 'frontend_2_1_3_8',
-      filter_key: 'company_id',
-      relationEntity: 'ticket_pos_rel',
-      hideOnIndex: true,
-    },
+    // { key: 'ticket_description', type: 'textarea', required: false },
+    // {
+    //   key: 'pos_id',
+    //   listLabel: 'pos_name',
+    //   type: 'list',
+    //   list: 'frontend_2_1_3_8',
+    //   filter_key: 'company_id',
+    //   relationEntity: 'ticket_pos_rel',
+    //   hideOnIndex: true,
+    // },
     {
       key: 'contract_id',
       listLabel: 'contract_name',
