@@ -13,7 +13,7 @@ export default {
   formComponent: () => import('@/views/app/CreateComponent/UserForm.vue'),
   customIndex: () => import('@/views/app/User/UserIndex.vue'),
   customPage: () => import('@/views/app/User/UserDetail.vue'),
-  createModal: 'sidebar',
+  createModal: 'modal',
   options: {
     id: 'siderbar_user',
     shadow: true,
