@@ -111,7 +111,7 @@ export default {
      * @returns {*|*[]}
      */
     fetchList(context, {
-      entity, data, customEnpoint = null, page = null,
+      entity, data, customEnpoint = null, page = null, uniqueKey = null,
       per_page = null, keyword = null, getWholeResponse = false, append = false,
     }) {
       const setStore = serverData => {
@@ -156,6 +156,10 @@ export default {
         lang: window.$vue ? window.$vue.$i18n.locale : 'en',
       })
         .then(({ data: respData }) => {
+          if (uniqueKey) {
+            // eliminate duplicates
+            respData.data.data = _.uniqBy(respData.data.data, uniqueKey)
+          }
           setStore(respData.data.data)
           context.commit('setDefinition', { data: respData, table: entity })
           return getWholeResponse ? respData.data : respData.data.data

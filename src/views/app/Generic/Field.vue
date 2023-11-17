@@ -552,12 +552,12 @@ export default {
     async listObserverCallBack([{ isIntersecting, target }]) {
       console.log(isIntersecting, target)
       if (isIntersecting) {
-        const ul = target.offsetParent
-        const scrollTop = target.offsetParent.scrollTop
+        // const ul = target.offsetParent
+        // const scrollTop = target.offsetParent.scrollTop
         this.requestPayload.page += 1
         await this.fetchList(true, this.query)
         await this.$nextTick()
-        ul.scrollTop = scrollTop
+        // ul.scrollTop = scrollTop
       }
     },
     getOptionLabel(option) {
@@ -875,6 +875,7 @@ export default {
           per_page: this.per_page,
           ...(query && { keyword: query }),
           getWholeResponse: true,
+          uniqueKey: this.field.key,
         }
 
         const response = await this.$store.dispatch('table/fetchList', payload)
