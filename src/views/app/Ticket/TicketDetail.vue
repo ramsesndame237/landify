@@ -5,7 +5,7 @@
       <div v-if="entity && entity.columns">
 
         <b-row>
-          <b-col v-if="activeTabItem && activeTabItem.id ==='1'" lg="12">
+          <b-col v-show="activeTabItem && activeTabItem.id ==='1'" lg="12">
             <div class="d-flex justify-content-between align-items-center mb-1">
               <div>
                 <h4 class="mb-0 font-weight-bolder">
@@ -482,10 +482,11 @@ export default {
   },
   async mounted() {
     this.loading = true
+    console.log('Refs ===> ', this.$refs)
     try {
       if (!this.entity || !this.entity?.columns) {
         await this.loadSingleTicket(false)
-        console.log("this is sjtejjej",this.tickets[0])
+        // console.log("this is sjtejjej",this.tickets[0])
         this.entity = this.tickets[0]
         await this.loadStages(this.entity?.board_id)
       } else {

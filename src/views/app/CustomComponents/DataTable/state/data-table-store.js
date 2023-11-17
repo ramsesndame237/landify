@@ -208,6 +208,7 @@ export async function listData({
     } catch (e) {
     if (e?.code !== 'ERR_CANCELED') {
       dataTableStore.pagination.isLoading = false
+      console.log({e})
       toastError()
       throw e
     }
@@ -280,10 +281,10 @@ export function handleConfirm({
     showLoaderOnConfirm: true,
     preConfirm: () => http[method || 'post'](url, body)
       .then(response => {
-        if (![200, 201].includes(response.status)) {
-          throw new Error(response.statusText)
-        }
-        return response.json()
+        // if (![200, 201].includes(response?.status)) {
+        //   throw new Error(response?.statusText)
+        // }
+        return response?.json()
       })
       .catch(error => {
         swal.showValidationMessage(
