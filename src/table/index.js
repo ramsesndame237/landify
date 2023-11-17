@@ -640,12 +640,20 @@ export default {
   defaultvalue: {
     fields: [
       { key: 'default_value_id', auto: true },
-      { key: 'default_deadline_period', type: 'number' },
-      { key: 'default_deadline_yellow', type: 'number' },
-      { key: 'default_deadline_red', type: 'number' },
-      { key: 'default_prediction_value', type: 'number' },
-      { key: 'default_prediction_info' },
-      { key: 'default_deadline_info' },
+      {
+        key: 'default_deadline_period', type: 'number', default: 24, required: true,
+      },
+      {
+        key: 'default_deadline_yellow', type: 'number', default: 24, required: true,
+      },
+      {
+        key: 'default_deadline_red', type: 'number', default: 24, required: true,
+      },
+      {
+        key: 'default_prediction_value', type: 'number', default: 24, required: true,
+      },
+      { key: 'default_prediction_info', default: 24, required: true },
+      { key: 'default_deadline_info', default: 24, required: true },
     ],
   },
   trackrecord: {
@@ -671,7 +679,7 @@ export default {
   // endregion
   document: {
     entity: 'frontend_document_list',
-    previewComponent:() =>import('@/views/app/Ticket/widgets/PreviewDocumentWidget.vue'),
+    previewComponent: () => import('@/views/app/Ticket/widgets/PreviewDocumentWidget.vue'),
     fields: [
       { key: 'document_id', hideOnForm: true, auto: true },
       { key: 'document_name', hideOnForm: true },
@@ -681,7 +689,7 @@ export default {
         key: 'documenttype_id', type: 'list', list: 'documenttype', listLabel: 'documenttype_name', hideOnIndex: true,
       },
       {
-        key: 'documenttype_name', listLabel: 'documenttype_name', hideOnIndex: true,hideOnCreate:true
+        key: 'documenttype_name', listLabel: 'documenttype_name', hideOnIndex: true, hideOnCreate: true,
       },
       {
         key: 'files', hideOnIndex: true, type: 'file', rules: { size: 100000 }, hideOnUpdate: true,
