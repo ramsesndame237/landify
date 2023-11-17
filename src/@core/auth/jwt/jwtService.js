@@ -42,7 +42,7 @@ export default class JwtService {
     )
 
     // Add request/response interceptor
-    this.axiosIns.interceptors.response.use(
+    this.axiosIns.interceptors.response?.use(
       response => response,
       error => {
         // const { config, response: { status } } = error
@@ -50,16 +50,16 @@ export default class JwtService {
         const originalRequest = config
         const { $vue } = window
         // if (status === 401) {
-        if (response.status === 403) {
-          if (error.response.data?.detail) {
-            $vue.$errorToast($vue.$t((error.response.data?.detail)))
+        if (response?.status === 403) {
+          if (error.response?.data?.detail) {
+            $vue.$errorToast($vue.$t((error.response?.data?.detail)))
           } else {
             $vue.$errorToast($vue.$t('general.unauthorized'))
           }
-        } else if (response.status === 503) {
+        } else if (response?.status === 503) {
           $vue.$errorToast($vue.$t('general.server_down'))
         }
-        if (response && response.status === 401 && ['/auth/refresh/token'].indexOf(config.url) === -1) {
+        if (response && response?.status === 401 && ['/auth/refresh/token'].indexOf(config.url) === -1) {
           if (!this.isAlreadyFetchingAccessToken) {
             this.isAlreadyFetchingAccessToken = true
             this.refreshToken().then(r => {
@@ -85,7 +85,7 @@ export default class JwtService {
                 reject(new Error('Invalid refresh token'))
                 return
               }
-              // Make sure to assign accessToken according to your response.
+              // Make sure to assign accessToken according to your response?.
               // Check: https://pixinvent.ticksy.com/ticket/2413870
               // Change Role header
               originalRequest.headers.Authorization = `${accessToken}`
