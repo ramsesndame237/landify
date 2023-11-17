@@ -49,50 +49,52 @@ export default class JwtService {
         const { config, response } = error
         const originalRequest = config
         const { $vue } = window
-        // if (status === 401) {
-        if (response.status === 403) {
-          if (error.response.data?.detail) {
-            $vue.$errorToast($vue.$t((error.response.data?.detail)))
-          } else {
-            $vue.$errorToast($vue.$t('general.unauthorized'))
+        console.log(error)
+        if (response) {
+          if (response.status === 403) {
+            if (error.response.data?.detail) {
+              $vue.$errorToast($vue.$t((error.response.data?.detail)))
+            } else {
+              $vue.$errorToast($vue.$t('general.unauthorized'))
+            }
+          } else if (response.status === 503) {
+            $vue.$errorToast($vue.$t('general.server_down'))
           }
-        } else if (response.status === 503) {
-          $vue.$errorToast($vue.$t('general.server_down'))
-        }
-        if (response && response.status === 401 && ['/auth/refresh/token'].indexOf(config.url) === -1) {
-          if (!this.isAlreadyFetchingAccessToken) {
-            this.isAlreadyFetchingAccessToken = true
-            this.refreshToken().then(r => {
-              // Update accessToken in localStorage
-              this.setToken(r.data.user_token)
-              this.setRefreshToken(r.data.user_refresh_token)
-              this.onAccessTokenFetched(r.data.user_token)
-            }).catch(e => {
-              console.error(e)
-              // just push to login
-              this.logout()
-                .then(() => {
-                  this.onAccessTokenFetched('')
-                  return window.$vue.$router.push({ name: 'login' })
-                })
-            }).finally(() => {
-              this.isAlreadyFetchingAccessToken = false
+          if (response.status === 401 && ['/auth/refresh/token'].indexOf(config.url) === -1) {
+            if (!this.isAlreadyFetchingAccessToken) {
+              this.isAlreadyFetchingAccessToken = true
+              this.refreshToken().then(r => {
+                // Update accessToken in localStorage
+                this.setToken(r.data.user_token)
+                this.setRefreshToken(r.data.user_refresh_token)
+                this.onAccessTokenFetched(r.data.user_token)
+              }).catch(e => {
+                console.error(e)
+                // just push to login
+                this.logout()
+                  .then(() => {
+                    this.onAccessTokenFetched('')
+                    return window.$vue.$router.push({ name: 'login' })
+                  })
+              }).finally(() => {
+                this.isAlreadyFetchingAccessToken = false
+              })
+            }
+            const retryOriginalRequest = new Promise((resolve, reject) => {
+              this.addSubscriber(accessToken => {
+                if (!accessToken) {
+                  reject(new Error('Invalid refresh token'))
+                  return
+                }
+                // Make sure to assign accessToken according to your response.
+                // Check: https://pixinvent.ticksy.com/ticket/2413870
+                // Change Role header
+                originalRequest.headers.Authorization = `${accessToken}`
+                resolve(this.axiosIns(originalRequest))
+              })
             })
+            return retryOriginalRequest
           }
-          const retryOriginalRequest = new Promise((resolve, reject) => {
-            this.addSubscriber(accessToken => {
-              if (!accessToken) {
-                reject(new Error('Invalid refresh token'))
-                return
-              }
-              // Make sure to assign accessToken according to your response.
-              // Check: https://pixinvent.ticksy.com/ticket/2413870
-              // Change Role header
-              originalRequest.headers.Authorization = `${accessToken}`
-              resolve(this.axiosIns(originalRequest))
-            })
-          })
-          return retryOriginalRequest
         }
         return Promise.reject(error)
       },

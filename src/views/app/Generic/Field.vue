@@ -26,15 +26,15 @@
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
                     :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
                     :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
-                    :reduce="i => i[field.tableKey||field.key]"
-                    :clearable="field.clearable != null ? field.clearable : true" :filterable="false" @input="onChange"
-                    @open="onListOpen" @close="onListClose" @search="onSearch"
-          >
+                    :reduce="i => i[field.tableKey||field.key]" :clear-search-on-blur="()=> false"
+                    :clearable="field.clearable != null ? field.clearable : true" :filterable="!field.customPagination"
+                    @input="onChange" @open="onListOpen" @close="onListClose" @search="onSearch">
             <template v-if="field.optionWithTooltipDetail" #option="option">
               <span v-b-tooltip.hover :title="getOptionLabel(option)">{{ getOptionLabel(option) }}</span>
             </template>
             <template v-if="field.optionWithTooltipDetail" #selected-option="option">
-              <span v-b-tooltip.hover.dh10 :title="getOptionLabel(option)">{{ getOptionLabel(option) }}</span>
+              <span v-b-tooltip.hover.dh10 :title="getOptionLabel(option)"
+                    @click.native="fixForMore">{{ getOptionLabel(option) }}</span>
             </template>
 
             <template #list-footer>
@@ -66,13 +66,8 @@
           </b-button>
         </div>
         <div v-else-if="field.type ==='custom_list'">
-          <AutoCompleteInput
-            :options="listItems"
-            :key-label="field.listLabel || ''"
-            :key_value="field.key || ''"
-            icon_open="ChevronUpIcon"
-            icon_close="ChevronDownIcon"
-          />
+          <AutoCompleteInput :options="listItems" :key-label="field.listLabel || ''" :key_value="field.key || ''"
+                             icon_open="ChevronUpIcon" icon_close="ChevronDownIcon"/>
         </div>
         <div v-else-if="field.type === 'list_select'">
           <SelectedButtonList v-if="field.options.length > 0" :key-object="field.key" :label-string="field.listLabel"
@@ -92,7 +87,7 @@
         <div v-else-if="field.type==='checkbox'">
           <b-form-checkbox-group v-model="entity[field.key]" :disabled="disabled"
                                  :state="errors.length > 0 ? false:null" :placeholder="field.key" text-field="label"
-                                 :options="field.items" />
+                                 :options="field.items"/>
         </div>
         <div v-else-if="field.type==='file'">
           <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
@@ -103,8 +98,8 @@
               <div>
                 <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50"/>
                 <span class="text-muted font-weight-bolder align-text-top">{{
-                  file.name
-                }}</span>
+                    file.name
+                  }}</span>
                 <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
               </div>
               <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index, validate)"/>
@@ -151,8 +146,8 @@
                     :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
                     class="form-control"/>
         <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
-                         :state="errors.length > 0 ? false:null" :value="1"
-                         :unchecked-value="0" style="margin-top: 5px"/>
+                         :state="errors.length > 0 ? false:null" :value="1" :unchecked-value="0"
+                         style="margin-top: 5px"/>
         <b-input-group v-else class="w-100">
           <b-input-group-prepend v-if="field.unit && field.unit_key && field.isUnitOnLeft" class="w-20 bg-input">
             <validation-provider #default="{ errors }" :vid="field.unit_key" rules="required" :name="field.unit_key">
@@ -241,6 +236,7 @@ import { getUserData } from '@/auth/utils'
 import { mapGetters } from 'vuex'
 import SelectedButtonList from '@/components/SelectedButtonList.vue'
 import AutoCompleteInput from '@/components/AutoCompleteInput.vue'
+import _ from "lodash";
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -481,8 +477,8 @@ export default {
       this.onChange()
     })
     if (this.field.filter_key && !this.field.noFetchOnChange) {
-      this.$watch(`entity.${this.field.filter_key}`, () => {
-        this.fetchList(true)
+      this.$watch(`entity.${this.field.filter_key}`, val => {
+        if (val) this.fetchList(true)
       })
     }
     if (this.field.type === 'smiley') {
@@ -517,6 +513,10 @@ export default {
         })
       }
     }
+
+    this._debounceSearch = _.debounce(async () => {
+      await this.fetchList(true, this.query)
+    }, 500)
   },
 
   beforeDestroy() {
@@ -530,28 +530,32 @@ export default {
       return noDrop ? false : open && !mutableLoading
     },
     async onSearch(query, loading) {
-      if (query.length >= 2 && (query.length - this.query.length) % 2 === 0) {
+      if (query.length >= 2) {
         loading(true)
         this.requestPayload.page = 1
-        await this.fetchList(true, query)
+        this.query = query
+        await this._debounceSearch()
         loading(false)
       }
     },
     async onListOpen() {
-      if (this.field.type === 'list' && this.hasNext) {
+      if (this.field.type === 'list') {
         await this.$nextTick()
+        console.log(this.listObserver, this.$refs.load)
         this.listObserver.observe(this.$refs.load)
       }
     },
     onListClose() {
+      console.log('disconnect')
       this.listObserver.disconnect()
     },
     async listObserverCallBack([{ isIntersecting, target }]) {
+      console.log(isIntersecting, target)
       if (isIntersecting) {
         const ul = target.offsetParent
         const scrollTop = target.offsetParent.scrollTop
         this.requestPayload.page += 1
-        await this.fetchList(true)
+        await this.fetchList(true, this.query)
         await this.$nextTick()
         ul.scrollTop = scrollTop
       }
@@ -788,6 +792,7 @@ export default {
       const fuse = new Fuse(options, {
         keys: this.list[0] ? Object.keys(this.list[0]) : [],
         shouldSort: true,
+        threshold: 0.1,
       })
       return search.length
         ? fuse.search(search)
@@ -818,6 +823,10 @@ export default {
         return accumulator
       }
       return accumulator
+    },
+    fixForMore() {
+      if (this.loading) return
+      this.fetchList(true, this.query)
     },
     async fetchList(force, query = null) {
       if (this.field.noFetch) return
@@ -869,15 +878,23 @@ export default {
         }
 
         const response = await this.$store.dispatch('table/fetchList', payload)
+        let newData = []
         if (this.field.entityCustomEndPoint) {
-          this.nonCachedItems = response.data
+          newData = response.data
           this.hasNext = response.current_page < response.pages
         } else {
           const { links, data } = response
-          this.nonCachedItems = data
+          newData = data
           const { pagination } = links
           this.hasNext = pagination.current_page < pagination.last_page
         }
+
+        if (payload.page > 1) {
+          this.nonCachedItems.push(...newData)
+        } else {
+          this.nonCachedItems = newData
+        }
+
         if (this.field.entityList) {
           await this.$store.dispatch('table/fetchTableDefinition', list)
         }
@@ -1013,11 +1030,13 @@ export default {
   }
 
 }
+
 .loader {
   text-align: center;
   color: #bbbbbb;
   padding: .5rem;
 }
+
 .ml5 {
   margin-left: .5rem;
 }

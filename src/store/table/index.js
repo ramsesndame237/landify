@@ -107,14 +107,15 @@ export default {
      * @param keyword Représente les termes de la recherche, dans le cas ou on effectue une recherche
      * @param getWholeResponse  Permet de déterminer si on doit renvoyer l'oject réponse en lui-même ou juste les data de la réponse,
      * car certain traitement sont effectué dans la fonction appellante.
+     * @param append
      * @returns {*|*[]}
      */
     fetchList(context, {
       entity, data, customEnpoint = null, page = null,
-      per_page = null, keyword = null, getWholeResponse = false,
+      per_page = null, keyword = null, getWholeResponse = false, append = false,
     }) {
       const setStore = serverData => {
-        if (!keyword) {
+        if (append) {
           const cacheData = context.getters.listCache(entity)
           Vue.set(context.state.listCache, entity, [...cacheData, ...serverData])
         } else {

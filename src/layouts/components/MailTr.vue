@@ -19,7 +19,7 @@
     </b-td>
     <b-td>
       <div class="d-flex align-items-center subject-content">
-        <feather-icon v-if="item.documents && item.documents.length" icon="PaperclipIcon" class="mr-50" />
+        <feather-icon v-if="item.documents && item.documents.length" icon="PaperclipIcon" class="mr-50"/>
         <span class="d-inline-block text-truncate" style="max-width: 150px" :title="child ? '' : item.email_subject">
           {{ child ? '' : item.email_subject }}
         </span>
@@ -28,54 +28,38 @@
       </div>
     </b-td>
     <b-td class="td-form">
-      <field v-if="visible" :field="posIdField" :entity="item"
-             :disabled="is_dismissed || is_done"/>
+      <field v-if="visible" :field="posIdField" :entity="item" :disabled="is_dismissed || is_done"/>
       <router-link v-if="is_done && item.pos_id" target="_blank"
                    :to="{ name: 'table-view', params: { table: 'pos', id: item.pos_id } }">
         {{ getPosName() }}
       </router-link>
     </b-td>
     <b-td class="td-form">
-      <div v-if="visible" class="d-flex align-items-center" style="gap: 8px; transform: translateY(-6px);">
-        <div style="width: 300px;">
-          <auto-complete
-            :get-option-value="opt => opt.ticket_id || ''"
-            :on-change="opt => {
-              currentTicket = opt
-            }"
-            :get-option-label="opt => opt.ticket_name || ''"
-            :value.sync="item.ticket_id"
-            :url="(keyword) => `/tickets/autocomplete?pos_id=${item.pos_id || ''}&keyword=${keyword || ''}`"
-            :disabled="is_dismissed || is_done || !item.pos_id"
-            :initial-option="currentTicket"
-            :elements-to-listen-on="tableEl ? [tableEl] : undefined"
-            always-reset-on-focus
-          />
-        </div>
-      </div>
-      <!-- <field v-if="visible" ref="ticket" :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/> -->
+      <!--      <div v-if="visible" class="d-flex align-items-center" style="gap: 8px; transform: translateY(-6px);">-->
+      <!--        <div style="width: 300px;">-->
+      <!--          <auto-complete :get-option-value="opt => opt.ticket_id || ''" :on-change="opt => {-->
+      <!--              currentTicket = opt-->
+      <!--            }" :get-option-label="opt => opt.ticket_name || ''" :value.sync="item.ticket_id"-->
+      <!--                         :url="(keyword) => `/tickets/autocomplete?pos_id=${item.pos_id || ''}&keyword=${keyword || ''}`"-->
+      <!--                         :disabled="is_dismissed || is_done || !item.pos_id" :initial-option="currentTicket"-->
+      <!--                         :elements-to-listen-on="tableEl ? [tableEl] : undefined" always-reset-on-focus/>-->
+      <!--        </div>-->
+      <!--      </div>-->
+      <field v-if="visible" ref="ticket" :field="ticketIdField" :entity="item" :disabled="is_dismissed || is_done"/>
       <router-link v-if="is_done" target="_blank"
                    :to="{name: 'table-view', params: {table: 'ticket',id: item.ticket_id_created}}">
         {{ item.ticket_id_created + ' - ' + getTicketName() }}
       </router-link>
     </b-td>
     <b-td>
-      <b-form-checkbox
-        v-if="visible"
-        :key="`checkbox-new-ticket-for-item-${item.email_id || item.document_id}`"
-        v-model="shouldCreateSubTicket"
-        style="transform: translateY(-6px)"
-        :disabled="!item.ticket_id || is_dismissed || is_done"
-      />
-      <b-form-checkbox
-        v-else
-        :checked="!!item.create_subticket"
-        style="transform: translateY(-6px)"
-        disabled
-      />
+      <b-form-checkbox v-if="visible" :key="`checkbox-new-ticket-for-item-${item.email_id || item.document_id}`"
+                       v-model="shouldCreateSubTicket" style="transform: translateY(-6px)"
+                       :disabled="!item.ticket_id || is_dismissed || is_done"/>
+      <b-form-checkbox v-else :checked="!!item.create_subticket" style="transform: translateY(-6px)" disabled/>
     </b-td>
     <b-td class="td-form">
-      <field v-if="visible" ref="contract" :field="contractIdField" :entity="item" :disabled="item.ticket_id || is_dismissed|| is_done"/>
+      <field v-if="visible" ref="contract" :field="contractIdField" :entity="item"
+             :disabled="item.ticket_id || is_dismissed|| is_done"/>
       <router-link v-if="is_done && item.contract_id" target="_blank"
                    :to="{name: 'table-view', params: {table: 'contract',id: item.contract_id}}">
         {{ getContractName() }}
@@ -108,7 +92,7 @@
     </b-td>
     <b-td class="td-form text-center">
       <b-badge v-if="item.status && !item.document_id" :variant="statusClass">
-        {{ $t('classification~status~' + (item.email_id ? getMailStatus(item.status) :item.status)) }}
+        {{ $t('classification~status~' + (item.email_id ? getMailStatus(item.status) : item.status)) }}
       </b-badge>
     </b-td>
     <b-td class="text-center">
@@ -167,7 +151,10 @@ export default {
         required: false,
         filter_key: 'pos_id',
         noCache: true,
-        optionWithTooltipDetail: true,
+        customPagination: {
+          per_page: 15,
+        },
+        // optionWithTooltipDetail: true,
       },
       posIdField: {
         key: 'pos_id',
@@ -176,12 +163,17 @@ export default {
         list: 'frontend_2_1_3_8',
         listLabel: 'pos_name',
         noLabel: true,
-        noFetch: true,
+        noCache: true,
+        noFetchOnInit: true,
+        customPagination: {
+          per_page: 15,
+        },
+        // noFetch: true,
         /**
          * Cette clé permet de spécifier si lorsque les options dans le champ sont trop long, au
          * Hover du champ, on doit afficher les détails sous un tooltip
          */
-        optionWithTooltipDetail: true,
+        // optionWithTooltipDetail: true,
       },
       contractIdField: {
         key: 'contract_id',
