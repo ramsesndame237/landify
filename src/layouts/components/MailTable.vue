@@ -199,7 +199,7 @@ export default {
       const create_subticket = !item.ticket_id || !!options?.shouldCreateSubTicket
       if (!item.ticket_id && action !== 'dismiss') {
         if (!item.pos_id) return this.$errorToast('Please select a pos')
-        // if (!item.contract_id) return this.$errorToast('Please select a contract')
+        if (!item.contract_id) return this.$errorToast('Please select a contract')
         if (!item.board_id) return this.$errorToast('Please select a board')
       }
       try {
@@ -487,7 +487,7 @@ export default {
       try {
         const { data } = await this.$http.get('/emails/filters/data')
         // await this.$store.dispatch('table/setListData', { entity: 'frontend_6_1_6_overview', data: data.ticket })
-        await this.$store.dispatch('table/setListData', { entity: 'frontend_2_1_3_8', data: data.pos })
+        // await this.$store.dispatch('table/setListData', { entity: 'frontend_2_1_3_8', data: data.pos })
         // await this.$store.dispatch('table/setListData', {
         //   entity: 'frontend_4_2_1_contract_selector',
         //   data: data.contract,
