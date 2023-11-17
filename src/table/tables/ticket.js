@@ -1,3 +1,5 @@
+import { union } from 'lodash'
+
 export default {
   customIndex: () => import('@/views/app/Ticket/TicketList.vue'),
   customPage: () => import('@/views/app/Ticket/TicketDetail.vue'),
@@ -6,10 +8,16 @@ export default {
   entity: 'frontend_6_1_6_overview',
   entityEndpoint: '/tickets/list',
   defaultSortField: 'ticket_creation_time',
+  /**
+   * truncateBy : Représente la valeur en rem à appliquer sur tous les champs d'un tableau
+   * @example truncateBy: 20 Va fixer le max-width des champs à 20 rem
+   */
+  truncateBy: 20,
   fields: [
     { key: 'ticket_id', auto: true },
     // { key: 'ticket_deadline', type: 'date', time: true },
     { key: 'ticket_name' },
+    { key: 'column_has_stamp',hideOnForm: true },
     {
       key: 'ticket_deadline_yellow', type: 'date', time: true, hideOnIndex: true,
     },
@@ -46,6 +54,7 @@ export default {
       hideOnForm: true,
     },
     { key: 'board_name', hideOnForm: true },
+    { key: 'column_name', hideOnForm: true },
 
     { key: 'priority_name', hideOnForm: true },
     { key: 'pos_name', hideOnForm: true },
@@ -99,6 +108,10 @@ export default {
       list: 'customergroup',
       listLabel: 'customergroup_name',
       required: false,
+      noFetchOnInit: true,
+      customPagination: {
+        per_page: 15,
+      },
     },
     {
       key: 'company_id',
@@ -107,6 +120,18 @@ export default {
       listLabel: 'company_name',
       filter_key: 'customergroup_id',
       required: false,
+      // filter: (company, vm) => {
+      //   const isUserExternClientNotDirector = vm.$store.getters['user/isUserExternClientNotDirector']
+      //
+      //   if (isUserExternClientNotDirector) {
+      //     const { company: userCompany } = vm.$store.getters['user/user']
+      //     // vm.isDisabled = true
+      //     vm.$set(vm.entity, 'company_id', userCompany.company_id)
+      //     // return userCompany.company_id === company.company_id
+      //   }
+      //
+      //   return true
+      // },
     },
     {
       key: 'pos_id',
@@ -149,9 +174,30 @@ export default {
       key: 'team_id',
       label: 'Team',
       type: 'list',
+      list: 'teams',
       entityCustomEndPoint: '/teams',
       required: false,
       listLabel: 'team_name',
+      withOptionAll: true,
+      clearable: false,
+      filter: (team, vm) => {
+        const { team_id } = vm.$store.getters['user/user']
+        const isUserExternClientNotDirector = vm.$store.getters['user/isUserExternClientNotDirector']
+
+        const teams = vm.$store.getters['table/listCache']('teams')
+
+        const seyboldTeams = teams.filter(t => t.team_is_customer === 0)
+
+        if (isUserExternClientNotDirector) {
+          vm.$set(vm.entity, 'team_id', -1)
+          return union(seyboldTeams.map(t => t.team_id), team_id).includes(team.team_id)
+        }
+        if (vm.entity.team_id === undefined) {
+          vm.$set(vm.entity, 'team_id', -1)
+        }
+
+        return true
+      },
     },
     {
       key: 'user_id',
@@ -161,17 +207,40 @@ export default {
       list: 'user_team_grp',
       listLabel: 'user_email',
       required: false,
+      withOptionAll: true,
+      clearable: false,
+      filter: (user, vm) => {
+        const { user_id } = vm.$store.getters['user/user']
+        const isUserExternClientNotDirector = vm.$store.getters['user/isUserExternClientNotDirector']
 
+        if (isUserExternClientNotDirector) {
+          return user.user_id === user_id
+        }
+        if (vm.entity.user_id === undefined) {
+          vm.$set(vm.entity, 'user_id', -1)
+        }
+
+        return true
+      },
+      change: (entity, vm) => {
+        if (entity.team_id === -1) {
+          vm.isDisabled = true
+          vm.$set(entity, 'user_id', -1)
+        } else {
+          vm.isDisabled = false
+        }
+      },
     },
     {
       key: 'ticket_deadline_status',
       label: 'Deadline Status',
       type: 'custom-select',
       required: false,
+      clearable: false,
       items: [
         {
           label: 'All',
-          value: null,
+          value: -1,
         },
         {
           label: 'Before deadline',
@@ -186,16 +255,22 @@ export default {
           value: 'over_due_red',
         },
       ],
+      change: (entity, vm) => {
+        if (entity.ticket_deadline_status === undefined) {
+          vm.$set(vm.entity, 'ticket_deadline_status', -1)
+        }
+      },
     },
     {
       key: 'tickets',
       label: 'Tickets type',
       type: 'custom-select',
       required: false,
+      clearable: false,
       items: [
         {
           label: 'All',
-          value: null,
+          value: -1,
         },
         {
           label: 'Seybolds',
@@ -206,6 +281,11 @@ export default {
           value: 'customers',
         },
       ],
+      change: (entity, vm) => {
+        if (entity.tickets === undefined) {
+          vm.$set(vm.entity, 'tickets', -1)
+        }
+      },
     },
     {
       key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', required: false,

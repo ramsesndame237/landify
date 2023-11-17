@@ -3,11 +3,6 @@ import MenuProfileMatrix from '@/views/app/MenuProfile/MenuProfileMatrix.vue'
 
 export default {
   components: { MenuProfileMatrix },
-  data() {
-    return {
-      age: 5,
-    }
-  },
 }
 </script>
 

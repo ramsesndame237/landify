@@ -1,15 +1,21 @@
+import KanbanButton from "@/views/app/CustomComponents/DataTable/components/generics/KanbanButton.vue";
+import router from '@/router'
+
 export default {
   entity: 'frontend_6_1_4',
   entityEndpoint: '/tickets/kanban/user',
   defaultSortField: 'board_id',
+  custom_actions:[{icon:'FeatherIcon',onClick:null, label:'Stamp'},{icon:'EyeIcon',onClick:null, label:'Preview'},{icon:'DatabaseIcon',label:'Kaban', onClick: board => router.push({ name: 'table-kanban', params: { id: board.board_id, table: 'board' } })}],
   fields: [
     {
       key: 'board_button',
       sortable: false,
       type: 'button',
       hideOnForm: true,
+      hideOnIndex:false,
       btnLabel: 'Kanban',
-      getRoute: board => ({ name: 'table-kanban', params: { id: board.board_id, table: 'board' } }),
+      component:KanbanButton,
+      getRoute:board => ({ name: 'table-kanban', params: { id: board.board_id, table: 'board' } }),
     },
     { key: 'board_id', auto: true },
     { key: 'board_name' },
@@ -45,6 +51,7 @@ export default {
         {
           key: 'documenttype_id', type: 'list', list: 'documenttype', listLabel: 'documenttype_name',
         },
+
         { key: 'documenttype_name', hideOnForm: true },
       ],
     },

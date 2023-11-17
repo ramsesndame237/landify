@@ -63,6 +63,7 @@ export default {
         { text: 'All mails', value: null },
         { text: 'Not processed', value: 0 },
         { text: 'Processed', value: 1 },
+        { text: 'In Progress', value: 2 },
       ],
     }
   },

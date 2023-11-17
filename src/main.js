@@ -1,5 +1,7 @@
 import Vue from 'vue'
-import { ToastPlugin, ModalPlugin, VBTogglePlugin } from 'bootstrap-vue'
+import {
+  ToastPlugin, ModalPlugin, VBTogglePlugin, VBTooltipPlugin,
+} from 'bootstrap-vue'
 import VueCompositionAPI from '@vue/composition-api'
 import i18n from '@/libs/i18n'
 
@@ -26,12 +28,14 @@ import moment from 'moment'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-
+import { Plugin } from 'vue-fragment'
 // Vee validate
 Vue.component('validation-provider', ValidationProvider)
 Vue.component('validation-observer', ValidationObserver)
 
 Vue.use(vueKanban)
+// Vue Fragment
+Vue.use(Plugin)
 extend('email', email)
 extend('size', {
   ...size,
@@ -57,6 +61,8 @@ extend('max_value', {
   ...maxValue,
   message: (_, values) => i18n.t('validations.messages.max_value', values),
 })
+// Vue Fragment
+Vue.use(Plugin)
 extend('date_after', {
   params: ['attribute'],
   validate: (value, { attribute }) => value >= attribute,
@@ -84,6 +90,7 @@ extend('lower', {
 Vue.use(ToastPlugin)
 Vue.use(ModalPlugin)
 Vue.use(VBTogglePlugin)
+Vue.use(VBTooltipPlugin)
 
 // Composition API
 Vue.use(VueCompositionAPI)
@@ -127,6 +134,7 @@ if (process.env.VUE_APP_SENTRY_DNS) {
     // replaysOnErrorSampleRate: 1.0,
   })
 }
+
 async function init() {
   try {
     let data = localStorage.getItem('app-data')
@@ -152,6 +160,9 @@ async function init() {
     router,
     store,
     i18n,
+    data() {
+      return { hash: '{{POST_BUILD_ENTERS_HASH_HERE}}' }
+    },
     render: h => h(App),
   }).$mount('#app')
 }

@@ -4,8 +4,41 @@ NOTE:
 ------
 PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
 WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
-@import '@core/scss/vue/libs/vue-select.scss';
-@import '@core/scss/vue/libs/vue-flatpicker.scss';
+@import '@core/scss/vue/libs/vue-select';
+@import '@core/scss/vue/libs/vue-flatpicker';
+
+:root {
+  --header-with-breadcrumb-height: 190px;
+}
+
+.clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+:root {
+  --header-with-breadcrumb-height: 190px;
+}
+
+.clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+}
+
+:root {
+  --header-with-breadcrumb-height: 190px;
+}
+
+.clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+}
 
 .nav.nav-pills .nav-item {
   background: #F0f0f0;
@@ -73,9 +106,9 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 // tables
 
 table[aria-busy="true"] .b-table-empty-row {
-  display: none;
-}
+  display: none;}
 
 .b-table-empty-row  div {
   text-align: center;
 }
+

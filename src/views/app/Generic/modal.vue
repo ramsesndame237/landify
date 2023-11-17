@@ -67,6 +67,7 @@ export default {
   computed: {},
   methods: {
     openModal(create, data, title) {
+      console.log({ data })
       this.initialData = data
       this.forceTitle = title
       this.create = create

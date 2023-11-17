@@ -18,7 +18,7 @@ export default {
   },
   computed: {
     isExpectedFromDateNotArrived() {
-      const { contractdeadline_expected_from } = this.rowData.item
+      const { contractdeadline_expected_from } = this.deadline
       return moment().isBefore(moment(contractdeadline_expected_from))
     },
     /*
@@ -26,10 +26,10 @@ export default {
     * afin d'être retiré en premier s'il le faut
      */
     isRecentAddedDeadline() {
-      const itemExpectedFrom = this.deadline.contractdeadline_expected_from
+      const { contractdeadline_expected_from } = this.deadline
       const itemsExpectedFromDates = this.items.map(item => moment(item.contractdeadline_expected_from))
 
-      return moment.max(itemsExpectedFromDates).isSame(itemExpectedFrom)
+      return moment.max(itemsExpectedFromDates).isSame(contractdeadline_expected_from)
     },
     deadline() {
       return this.rowData.item

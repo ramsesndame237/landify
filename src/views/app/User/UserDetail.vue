@@ -110,7 +110,7 @@
                         <b-list-group-item class="d-flex align-items-center font-weight-bolder font-medium-1">
                           Function :
                           <span class="ml-1 font-weight-normal text-capitalize">
-                            <b-badge v-for="func in userFunctions" :key="func.function_id" class="mr-1" variant="info">{{ func.function_name }}</b-badge>
+                            <b-badge v-for="func in userFunctions.filter(f => f.function_id === user.function_id)" :key="func.function_id" class="mr-1" variant="info">{{ func.function_name }}</b-badge>
                           </span>
                         </b-list-group-item>
                         <b-list-group-item class="d-flex align-items-center font-weight-bolder font-medium-1">
