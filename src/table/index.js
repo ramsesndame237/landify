@@ -703,7 +703,7 @@ export default {
         listLabel: 'documenttype_name',
         noCache: true,
         hideOnIndex: true,
-        filter: data => data.parent_documenttype_id == null,
+        filter: (data, field) => data.parent_documenttype_id == null && field.list?.some(dtype => dtype.parent_documenttype_id === data?.documenttype_id),
       },
       {
         key: 'documenttype_id',
@@ -714,7 +714,7 @@ export default {
         listLabel: 'documenttype_name',
         noFetch: true,
         hideOnIndex: true,
-        filter: data => data.parent_documenttype_id != null,
+        filter: (data, field) => data.parent_documenttype_id === field.entity?.documenttype_id,
       },
       {
         key: 'document_name',
