@@ -679,17 +679,48 @@ export default {
   // endregion
   document: {
     entity: 'frontend_document_list',
+    customRequest: {
+      method: 'put',
+      endpoint: '/documents/update',
+      formatBody: body => {
+        if (body) {
+          body.document_name += body.document_extension
+        }
+        return body
+      },
+      passBodyToQuery: true,
+    },
     previewComponent: () => import('@/views/app/Ticket/widgets/PreviewDocumentWidget.vue'),
     fields: [
-      { key: 'document_id', hideOnForm: true, auto: true },
+      { key: 'document_id', auto: true, disabled: true },
       { key: 'document_name', hideOnForm: true },
       { key: 'document_mime_type', hideOnForm: true },
       { key: 'documenttype_name', hideOnForm: true },
       {
-        key: 'documenttype_id', type: 'list', list: 'documenttype', listLabel: 'documenttype_name', hideOnIndex: true,
+        key: 'documenttype_id',
+        type: 'list',
+        list: 'documenttype',
+        listLabel: 'documenttype_name',
+        noCache: true,
+        hideOnIndex: true,
+        filter: (data, field) => data.parent_documenttype_id == null && field.list?.some(dtype => dtype.parent_documenttype_id === data?.documenttype_id),
       },
       {
-        key: 'documenttype_name', listLabel: 'documenttype_name', hideOnIndex: true, hideOnCreate: true,
+        key: 'documenttype_id',
+        entityKey: 'subdocumenttype_id',
+        type: 'list',
+        list: 'documenttype',
+        label: 'Sub document type',
+        listLabel: 'documenttype_name',
+        noFetch: true,
+        hideOnIndex: true,
+        filter: (data, field) => data.parent_documenttype_id === field.entity?.documenttype_id,
+      },
+      {
+        key: 'document_name',
+        listLabel: 'documenttype_name',
+        hideOnIndex: true,
+        hideOnCreate: true,
       },
       {
         key: 'files', hideOnIndex: true, type: 'file', rules: { size: 100000 }, hideOnUpdate: true,

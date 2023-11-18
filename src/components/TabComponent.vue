@@ -3,6 +3,10 @@ export default {
   name: 'TabComponent',
   props: {
     tabTitle: Array,
+    activeTabItem: {
+      type: Object,
+      required: true,
+    },
   },
   computed: {
     visibleTabs() {
@@ -10,30 +14,30 @@ export default {
     },
   },
   mounted() {
-    const allElements = document.querySelectorAll('.tab_container li')
-    if (allElements) {
-      allElements?.[3]?.click?.()
-    }
+    // const allElements = document.querySelectorAll('.tab_container li')
+    // if (allElements) {
+    //   allElements?.[3]?.click?.()
+    // }
   },
   methods: {
     activeOrDiseableItemsNavigation(event, item) {
-      const allElements = document.querySelectorAll('.tab_container li')
-      if (allElements) {
-        allElements.forEach(element => {
-          element.classList.remove('active')
-        })
-        event.target.classList.add('active')
-        this.$emit('selected-item', item)
-      }
+      // const allElements = document.querySelectorAll('.tab_container li')
+      // if (allElements) {
+      //   allElements.forEach(element => {
+      //     element.classList.remove('active')
+      //   })
+      //   event.target.classList.add('active')
+      this.$emit('selected-item', item)
     },
   },
 }
+
 </script>
 
 <template>
   <div class="tab_container">
     <ul>
-      <li v-for="(item,index) in visibleTabs" :key="index" class="list-item" @click="(event) =>activeOrDiseableItemsNavigation(event, item)">
+      <li v-for="(item,index) in visibleTabs" :key="index" class="list-item" :class="{active: activeTabItem && activeTabItem.id === item.id}" @click="(event) =>activeOrDiseableItemsNavigation(event, item)">
         {{ item.title }}
       </li>
     </ul>
@@ -55,7 +59,7 @@ export default {
 .tab_container {
   width: 100%;
   min-width: 400px;
-  margin: 0 auto 68px;
+  margin: 0 auto 16px;
   border-bottom: 4px solid $primary;
   overflow: hidden;
   transition: border 250ms ease;

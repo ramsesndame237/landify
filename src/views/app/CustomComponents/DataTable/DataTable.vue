@@ -1,6 +1,5 @@
 <template>
   <div class="data-table">
-    {{data}}
     <table-filters
       v-if="!hiddeFilterBar"
       :filters="filters"

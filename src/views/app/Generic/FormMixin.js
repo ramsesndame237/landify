@@ -201,7 +201,7 @@ export default {
           return this.saveEntity(entityData, original,
             this.getFormFields(subDefinition), formField.getSubFields(), field.list, subDefinition, this.getPrimaryKey(subDefinition), create)
             .then(async data => {
-              if (data.noupdate) return data.entity
+              if (data?.noupdate) return data.entity
               let id
               if (data.data.data) {
                 // if the response is from alexander api
@@ -232,8 +232,21 @@ export default {
             }
           }
           if (table === 'document') {
+            if (definition.customRequest) {
+              const payload = definition.customRequest.formatBody ? definition.customRequest.formatBody(entity) : entity
+              const body = !definition.customRequest.passBodyToQuery ? payload : {}
+              const params = definition.customRequest.passBodyToQuery ? payload : {}
+              const method = definition.customRequest.method || 'put'
+              return this.$http({
+                url: definition.customRequest.endpoint,
+                params,
+                body,
+                method,
+              }).then(({ data }) => data)
+            }
+
             const formData = new FormData()
-            const files = fieldComponents.find(f => f.field.key === 'files').getFiles()
+            const files = fieldComponents.find(f => f.field.key === 'files')?.getFiles() || []
             for (let i = 0; i < files.length; i++) {
               formData.append('files', files[i])
             }
@@ -354,7 +367,7 @@ export default {
             .then(async data => {
               let result
               // if no update on the model, just send initial entity
-              if (data.noupdate) result = data.entity
+              if (data?.noupdate) result = data.entity
               else if (data.data.data) {
                 // if the response is from alexander api
                 result = data.data.data[0][0]

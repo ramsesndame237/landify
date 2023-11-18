@@ -21,7 +21,7 @@
         </div>
         <div v-else-if="field.type==='list'"
              :class="(field.withNew || field.withPopup || field.ids || field.withRoundedNew) ? 'd-flex': ''">
-          <v-select v-model="entity[field.key]" :dropdown-should-open="dropdownShouldOpen" :disabled="selectDisabled"
+          <v-select v-model="entity[field.entityKey || field.key]" :dropdown-should-open="dropdownShouldOpen" :disabled="selectDisabled"
                     :class="{'error': errors.length > 0, 'multiple_select': field.multiple }"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
                     :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
@@ -334,7 +334,8 @@ export default {
       return this.field.customPagination?.per_page || this.requestPayload.per_page
     },
     list() {
-      return this.field.noCache ? this.nonCachedItems : this.$store.getters['table/listCache'](this.field.entityList || this.field.list)
+      const list = this.field.noCache ? this.nonCachedItems : this.$store.getters['table/listCache'](this.field.entityList || this.field.list)
+      return this.field.formatList?.(list) || list
     },
     passwordToggleIcon() {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
