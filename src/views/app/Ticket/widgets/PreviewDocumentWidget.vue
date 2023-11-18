@@ -8,8 +8,10 @@ import {
 } from "@/libs/utils";
 import Table from "@/table";
 import {mapGetters} from "vuex";
+import FeatherIcon from '@/@core/components/feather-icon/FeatherIcon.vue';
 
 export default {
+  components: { FeatherIcon },
   name: "PreviewDocumentWidget",
   data() {
     return {
@@ -52,19 +54,30 @@ export default {
 
 <template>
   <div>
-    <div class="header-preview-page d-flex justify-content-center align-items-center">
-      <div class="header_title d-flex">
-        <h2 class="font-weight-bold text-white">
-          {{$store.state.document.previewDocument.document.document_name}}
-        </h2>
-        <feather-icon v-b-tooltip.hover title="Download" icon="DownloadCloudIcon" size="25"
-                      class="cursor-pointer mx-2" @click="downloadDocument" />
-        <feather-icon v-if="$store.state.document.previewDocument.col_stamp && !$store.state.document.previewDocument.document.document_already_stamp" v-b-tooltip.hover title="Stamp" icon="FeatherIcon" @click="stampDocument" size="25" class="cursor-pointer"/>
+    <div v-if="$route.query.ticket_id">
+      <div class="header-preview-page d-flex justify-content-center align-items-center">
+        <div class="header_title d-flex justify-content-between w-100 px-4">
+          <router-link :to="`/app/table/ticket/view/${$route.query.ticket_id}`">
+            <b-button variant="dark">
+              <feather-icon icon="ArrowLeftIcon" />
+            </b-button>
+          </router-link>
+          <div class="d-flex">
+            <h2 class="font-weight-bold text-white">
+              {{$store.state.document.previewDocument.document.document_name}}
+            </h2>
+            <feather-icon v-b-tooltip.hover title="Download" icon="DownloadCloudIcon" size="25"
+                          class="cursor-pointer mx-2" @click="downloadDocument" />
+            <feather-icon v-if="$store.state.document.previewDocument.col_stamp && !$store.state.document.previewDocument.document.document_already_stamp" v-b-tooltip.hover title="Stamp" icon="FeatherIcon" @click="stampDocument" size="25" class="cursor-pointer"/>
+          </div>
+          <div />
+        </div>
+      </div>
+      <div class="document_body_preview">
+        <iframe style="height: 90vh;width: 100%" :src="get_link_document" ></iframe>
       </div>
     </div>
-    <div class="document_body_preview">
-      <iframe style="height: 90vh;width: 100%" :src="get_link_document" ></iframe>
-    </div>
+    <p v-else>Ticket id needed</p>
   </div>
 </template>
 

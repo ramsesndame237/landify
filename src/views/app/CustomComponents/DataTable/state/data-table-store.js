@@ -203,7 +203,7 @@ export async function listData({
     dataTableStore.pagination.total = data?.total || dataTableStore.pagination.total
     dataTableStore.pagination.page = data?.page || dataTableStore.pagination.page
     dataTableStore.pagination.size = data?.size || data?.per_page || dataTableStore.pagination.size
-    dataTableStore.pagination.pages = data?.pages || data?.pages || Math.ceil(dataTableStore.pagination.total/dataTableStore.pagination.size)
+    dataTableStore.pagination.pages = data?.pages || Math.ceil(dataTableStore.pagination.total/dataTableStore.pagination.size)
     dataTableStore.pagination.isLoading = false
     } catch (e) {
     if (e?.code !== 'ERR_CANCELED') {

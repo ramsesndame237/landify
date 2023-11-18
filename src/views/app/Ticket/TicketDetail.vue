@@ -1,6 +1,6 @@
 <template>
   <div class="global-container">
-    <TabComponent :tab-title="tabTitle" @selected-item="getActiveItemData"/>
+    <TabComponent :active-tab-item="activeTabItem" :tab-title="tabTitle" @selected-item="getActiveItemData"/>
     <b-overlay :show="loading">
       <div v-if="entity && entity.columns">
 
@@ -256,11 +256,11 @@
             </b-card-actions>
           </b-col>
           <b-col lg="12">
-            <div v-if="showButton.all && activeTabItem && activeTabItem.id ==='4'">
+            <!-- <div v-if="showButton.all && activeTabItem && activeTabItem.id ==='4'">
               <b-button variant="primary" @click="createDocument">
                 {{ $t('button~newdocument') }}
               </b-button>
-            </div>
+            </div> -->
             <DocumentsWidgetView v-if="activeTabItem && activeTabItem.id==='4'" :documents="documents"
                                  :ticket_id="entity.ticket_id" :column_has_stamp="entity.column_has_stamp === 1 ? true:false"/>
 
@@ -406,7 +406,7 @@ export default {
       subTickets: [],
       documents: [],
       loading: false,
-      activeTabItem: null,
+      activeTabItem: { id: '1' },
       emails: [],
       loadingEmail: false,
       contractDocument: {},
@@ -482,11 +482,9 @@ export default {
   },
   async mounted() {
     this.loading = true
-    console.log('Refs ===> ', this.$refs)
     try {
       if (!this.entity || !this.entity?.columns) {
         await this.loadSingleTicket(false)
-        // console.log("this is sjtejjej",this.tickets[0])
         this.entity = this.tickets[0]
         await this.loadStages(this.entity?.board_id)
       } else {
