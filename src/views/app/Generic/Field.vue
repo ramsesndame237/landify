@@ -424,6 +424,11 @@ export default {
       },
       deep: true,
     },
+    hasNext(newValue, oldValue) {
+      if (oldValue === false && newValue === true) {
+        this.listObserver.observe(this.$refs.load)
+      }
+    },
   },
   async created() {
     if ((this.field.type === 'list' || this.field.type === 'custom_list') && ((!this.field.filter_key || !!this.entity[this.field.filter_key]) || this.field.noFetchOnChange) && !this.field.onlyForm) {
@@ -540,25 +545,22 @@ export default {
       }
     },
     async onListOpen() {
-      if (this.field.type === 'list') {
+      if (this.field.type === 'list' && this.hasNext) {
         await this.$nextTick()
-        console.log(this.listObserver, this.$refs.load)
         this.listObserver.observe(this.$refs.load)
       }
     },
     onListClose() {
-      console.log('disconnect')
       this.listObserver.disconnect()
     },
     async listObserverCallBack([{ isIntersecting, target }]) {
-      console.log(isIntersecting, target)
       if (isIntersecting) {
-        // const ul = target.offsetParent
-        // const scrollTop = target.offsetParent.scrollTop
+        const ul = target.offsetParent
+        const scrollTop = target.offsetParent.scrollTop
         this.requestPayload.page += 1
         await this.fetchList(true, this.query)
         await this.$nextTick()
-        // ul.scrollTop = scrollTop
+        ul.scrollTop = scrollTop
       }
     },
     getOptionLabel(option) {
