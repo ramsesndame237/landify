@@ -17,7 +17,7 @@ export default {
     { key: 'ticket_id', auto: true },
     // { key: 'ticket_deadline', type: 'date', time: true },
     { key: 'ticket_name' },
-    // { key: 'column_has_stamp',hideOnForm: true },
+    { key: 'column_has_stamp', hideOnForm: true, type: 'boolean' },
     {
       key: 'ticket_deadline_yellow', type: 'date', time: true, hideOnIndex: true,
     },
@@ -87,7 +87,6 @@ export default {
     {
       key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', hideOnIndex: true,
     },
-
     // { key: 'column_name', hideOnForm: true },
     {
       key: 'ticket_creation_time', type: 'date', time: true, hideOnForm: true,
