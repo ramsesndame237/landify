@@ -283,6 +283,7 @@ export default {
     columns: {
       type: Array,
       required: true,
+      default: () => [],
     },
     data: {
       type: Array,
