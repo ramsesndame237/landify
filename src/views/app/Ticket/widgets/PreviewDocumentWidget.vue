@@ -9,9 +9,10 @@ import {
 import Table from "@/table";
 import {mapGetters} from "vuex";
 import FeatherIcon from '@/@core/components/feather-icon/FeatherIcon.vue';
+import { BTooltip } from 'bootstrap-vue';
 
 export default {
-  components: { FeatherIcon },
+  components: { FeatherIcon, BTooltip },
   name: "PreviewDocumentWidget",
   data() {
     return {
@@ -62,13 +63,20 @@ export default {
               <feather-icon icon="ArrowLeftIcon" />
             </b-button>
           </router-link>
-          <div class="d-flex">
+          <div class="d-flex align-items-center">
             <h2 class="font-weight-bold text-white">
               {{$store.state.document.previewDocument.document.document_name}}
             </h2>
             <feather-icon v-b-tooltip.hover title="Download" icon="DownloadCloudIcon" size="25"
                           class="cursor-pointer mx-2" @click="downloadDocument" />
             <feather-icon v-if="$store.state.document.previewDocument.col_stamp && !$store.state.document.previewDocument.document.document_already_stamp" v-b-tooltip.hover title="Stamp" icon="FeatherIcon" @click="stampDocument" size="25" class="cursor-pointer"/>
+            <fragment v-else-if="!$store.state.document.previewDocument.col_stamp">
+              <b-badge id="cannot-stamp" variant="warning">
+                Unable to be stamped <feather-icon icon="InfoIcon" />
+              </b-badge>
+              <b-tooltip target="cannot-stamp" triggers="hover">This document is linked to a ticket that is in a column that has the stamp disabled</b-tooltip>
+            </fragment>
+
           </div>
           <div />
         </div>
