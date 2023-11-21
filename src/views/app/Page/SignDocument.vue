@@ -22,7 +22,6 @@
           />
         </div>
         <div class="d-flex align-items-center">
-
           <b-button v-if="!jcropActive" size="sm" variant="primary" class="mr-1" @click="initCropper()">
             Insert
           </b-button>

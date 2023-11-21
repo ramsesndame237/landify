@@ -8,7 +8,7 @@ export const getYearFormDateString = date => date?.split('-')[0]
 export const getDocumentLink = document => `${axios.defaults.baseURL || process.env.VUE_APP_DOCUMENT_URL || 'https://api.dev-zelos.de'}/document/download/${document.document_id}`
 export const getDocumentLinkWithId = document_id => `${axios.defaults.baseURL || process.env.VUE_APP_DOCUMENT_URL || 'https://api.dev-zelos.de'}/document/download/${document_id}`
 
-export const getSignImageLink = document => `${'https://api.dev-zelos.de' ||axios.defaults.baseURL || process.env.VUE_APP_DOCUMENT_URL}/documents-sign/image/${document.document_id}`
+export const getSignImageLink = document => `${'https://api.dev-zelos.de' || axios.defaults.baseURL || process.env.VUE_APP_DOCUMENT_URL}/documents-sign/image/${document.document_id}`
 
 export const getStampedDocumentLink = document => `${axios.defaults.baseURL || process.env.VUE_APP_DOCUMENT_URL}/document/download/stamp/${document.document_id}`
 export const getStampedDocumentPreviewLink = document => `${axios.defaults.baseURL || process.env.VUE_APP_DOCUMENT_URL || 'https://api.dev-zelos.de'}/documents/preview/stamp/${document.document_id}`
@@ -41,4 +41,20 @@ export const formatDateForHistory = date => {
     format = 'HH:mm'
   }
   return mDate.format(format)
+}
+
+export function cloneCanvas(oldCanvas) {
+  // create a new canvas
+  const newCanvas = document.createElement('canvas')
+  const context = newCanvas.getContext('2d')
+
+  // set dimensions
+  newCanvas.width = oldCanvas.width
+  newCanvas.height = oldCanvas.height
+
+  // apply the old canvas to the new one
+  context.drawImage(oldCanvas, 0, 0)
+
+  // return the new canvas
+  return newCanvas
 }
