@@ -21,7 +21,7 @@ export default {
   },
   data() {
     return {
-      documentDef: Table.document,
+      isCreate: true,
       initialState: {},
       columDataDocument: [
         {
@@ -50,8 +50,14 @@ export default {
       ],
     }
   },
+  computed: {
+    documentDef() {
+      return this.isCreate ? { ...Table.document, customRequest: Table.document.customRequestCreate } : Table.document
+    },
+  },
   methods: {
     createDocument() {
+      this.isCreate = true
       console.log('this this the ticket id ', this.ticket_id)
       this.$refs.documentModal.openModal(true, { ticket_id: this.ticket_id })
     },
@@ -66,6 +72,7 @@ export default {
       })
     },
     editDocument(document) {
+      this.isCreate = false
       this.definition.fields.filter(doc => !doc.hideOnForm && (this.create || !doc.hideOnUpdate) && (!this.create || !doc.hideOnCreate)).map((document_modified, k) => {
         document_modified.document_name = document.document_name
         document_modified.documenttype_id = document.documenttype_id
@@ -80,7 +87,7 @@ export default {
         if (wordsArr.length <= 1) {
           document_name = document.document_name
         } else {
-          document_name = wordsArr.filter((_, i) => i !== wordsArr.length - 1).join('')
+          document_name = wordsArr.filter((_, i) => i !== wordsArr.length - 1).join('.')
           document_extension = `.${wordsArr[wordsArr.length - 1]}`
         }
       }
@@ -136,7 +143,7 @@ export default {
       </div>
       <section>
         <DataTable ref="dataTableRef" :columns="columDataDocument" :url="`/tickets/documents?ticket_id=${ticket_id}`"
-                   :on-delete-click="deleteDocument" :on-details-click="onViewDocument" hide-top-bar="true"
+                   :on-details-click="onViewDocument" hide-top-bar="true"
                    :resolve-data="data =>data.data"
                    :custom-actions="[{icon:'EditIcon',onClick:editDocument, label:'Edit'}]"/>
       </section>

@@ -682,6 +682,7 @@ export default {
     customRequest: {
       method: 'put',
       endpoint: '/documents/update',
+      isUpdate: true,
       formatBody: body => {
         if (body) {
           body.document_name += body.document_extension
@@ -689,6 +690,10 @@ export default {
         return body
       },
       passBodyToQuery: true,
+    },
+    // This overrides `customRequest` in the DocumentWidget Component
+    customRequestCreate: {
+      isUpdate: false,
     },
     previewComponent: () => import('@/views/app/Ticket/widgets/PreviewDocumentWidget.vue'),
     fields: [
@@ -701,6 +706,7 @@ export default {
         type: 'list',
         list: 'documenttype',
         listLabel: 'documenttype_name',
+        placeholder: 'Not specified',
         noCache: true,
         hideOnIndex: true,
         filter: (data, field) => data.parent_documenttype_id == null && field.list?.some(dtype => dtype.parent_documenttype_id === data?.documenttype_id),
@@ -712,6 +718,7 @@ export default {
         list: 'documenttype',
         label: 'Sub document type',
         listLabel: 'documenttype_name',
+        placeholder: 'Not specified',
         noFetch: true,
         hideOnIndex: true,
         filter: (data, field) => data.parent_documenttype_id === field.entity?.documenttype_id,
@@ -723,7 +730,12 @@ export default {
         hideOnCreate: true,
       },
       {
-        key: 'files', hideOnIndex: true, type: 'file', rules: { size: 100000 }, hideOnUpdate: true,
+        key: 'files',
+        hideOnIndex: true,
+        type: 'file',
+        rules: { size: 100000 },
+        hideOnUpdate: true,
+        multiple: false,
       },
       {
         key: 'download',

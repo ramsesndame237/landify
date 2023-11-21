@@ -406,7 +406,7 @@ export default {
       subTickets: [],
       documents: [],
       loading: false,
-      activeTabItem: { id: '1' },
+      activeTabItem: null,
       emails: [],
       loadingEmail: false,
       contractDocument: {},
@@ -481,6 +481,9 @@ export default {
     ...mapGetters('user', ['isUserExtern']),
   },
   async mounted() {
+
+    this.activeTabItem = this.tabTitle.find(tab => tab.id === this.$route.query.tab) || this.tabTitle.find(tab => tab.id === '1')
+
     this.loading = true
     try {
       if (!this.entity || !this.entity?.columns) {

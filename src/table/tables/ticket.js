@@ -6,7 +6,7 @@ export default {
   fieldComponent: () => import('@/views/app/CreateComponent/TicketForm.vue'),
   create: false,
   entity: 'frontend_6_1_6_overview',
-  entityEndpoint: '/tickets/list',
+  entityEndpoint: '/tickets/slims',
   defaultSortField: 'ticket_creation_time',
   /**
    * truncateBy : Représente la valeur en rem à appliquer sur tous les champs d'un tableau
@@ -17,7 +17,7 @@ export default {
     { key: 'ticket_id', auto: true },
     // { key: 'ticket_deadline', type: 'date', time: true },
     { key: 'ticket_name' },
-    // { key: 'column_has_stamp',hideOnForm: true },
+    { key: 'column_has_stamp', hideOnForm: true, type: 'boolean' },
     {
       key: 'ticket_deadline_yellow', type: 'date', time: true, hideOnIndex: true,
     },
@@ -87,7 +87,6 @@ export default {
     {
       key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', hideOnIndex: true,
     },
-
     // { key: 'column_name', hideOnForm: true },
     {
       key: 'ticket_creation_time', type: 'date', time: true, hideOnForm: true,
