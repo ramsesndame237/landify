@@ -6,7 +6,7 @@ export default {
   fieldComponent: () => import('@/views/app/CreateComponent/TicketForm.vue'),
   create: false,
   entity: 'frontend_6_1_6_overview',
-  entityEndpoint: '/tickets/list',
+  entityEndpoint: '/tickets/slims',
   defaultSortField: 'ticket_creation_time',
   /**
    * truncateBy : Représente la valeur en rem à appliquer sur tous les champs d'un tableau

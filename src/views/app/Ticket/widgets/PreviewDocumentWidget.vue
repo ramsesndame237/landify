@@ -64,9 +64,9 @@ export default {
     entity() {
       return this.$store.state.document.previewDocument?.document
     },
-  },
-  canBeStamped() {
-    return this.$store.state.document.previewDocument.col_stamp && !this.$store.state.document.previewDocument.document.document_already_stamp
+    canBeStamped() {
+      return this.$store.state.document.previewDocument.col_stamp && !this.$store.state.document.previewDocument.document.document_already_stamp
+    },
   },
   watch: {
     page(newVal, oldVal) {

@@ -191,7 +191,7 @@ export default {
         ...filteredEntity,
       }
       try {
-        const response = await this.$http.get('/statistics/dashboard/ticket', {
+        const response = await this.$http.get('/statistics/dashboard/ticket/new', {
           params: payload,
         })
 
