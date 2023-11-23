@@ -1,10 +1,10 @@
 <template>
   <span
-      class="d-inline-block text-truncate w-100"
-      :title="value"
-      :class="{'font-weight-bold': bold}"
+    class="d-inline-block text-truncate w-100"
+    :title="value"
+    :class="{'font-weight-bold': bold}"
   >
-    {{ value }}
+    {{ value ? value : '--/--' }}
   </span>
 </template>
 <script>
