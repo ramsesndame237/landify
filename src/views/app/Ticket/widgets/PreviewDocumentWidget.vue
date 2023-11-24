@@ -11,6 +11,7 @@ import {
 } from '@/libs/utils'
 import Table from '@/table'
 import { BPagination } from 'bootstrap-vue'
+import GenericModal from '@/views/app/Generic/modal'
 
 class SvgWidget extends Jcrop.Widget {
   init() {
@@ -25,6 +26,7 @@ export default {
   name: 'PreviewDocumentWidget',
   components: {
     BPagination,
+    GenericModal,
   },
   data() {
     return {
@@ -35,7 +37,7 @@ export default {
       src: '',
       width: 0,
       height: 0,
-      loading: false,
+      loading: true,
       isStampPreview: false,
       isPreviewModalOpen: false,
       page: 1,
@@ -66,6 +68,9 @@ export default {
     },
     canBeStamped() {
       return this.$store.state.document.previewDocument.col_stamp && !this.$store.state.document.previewDocument.document.document_already_stamp
+    },
+    isDocStamped() {
+      return this.$store.state.document.previewDocument.document.document_already_stamp
     },
   },
   watch: {
@@ -104,9 +109,9 @@ export default {
       })
     },
     async preChargeStamp() {
-      if (this.$store.state.document.previewDocument.document.document_already_stamp) {
-        return
-      }
+      // if (this.$store.state.document.previewDocument.document.document_already_stamp) {
+      //   return
+      // }
       this.loading = true
       try {
         this.positions = (await this.$api({
@@ -158,6 +163,7 @@ export default {
       }
     },
     initCropper(pos) {
+      this.jcropActive = true
       if (this.jcrop) {
         this.jcrop.active.animate(Jcrop.Rect.from(pos), 20, 'inOutCirc')
           .then(() => {
@@ -188,7 +194,8 @@ export default {
     downloadDocument() {
       const link = document.createElement('a')
       link.setAttribute('download', this.$store.state.document.previewDocument.document.document_name)
-      link.href = getDocumentLinkWithId(this.$store.state.document.previewDocument.document.document_id)
+      // link.href = getDocumentLinkWithId(this.$store.state.document.previewDocument.document.document_id)
+      link.href = getStampedDocumentLink(this.$store.state.document.previewDocument.document)
       document.body.appendChild(link)
       link.click()
       link.remove()
@@ -206,7 +213,7 @@ export default {
       }
     },
     async openStampDocument() {
-      this.jcropActive = true
+      this.isPreview = true
       this.initCropper()
       await this.loadImage()
     },
@@ -254,6 +261,7 @@ export default {
       let update = false
       try {
         // to delete
+        console.log({positions: this.positions})
         let data = this.positions.filter(p => p.delete).map(p => ({ document_stamp_id: p.document_stamp_id }))
         if (data.length) {
           await this.$api({
@@ -296,6 +304,8 @@ export default {
           this.jcropActive = false
           this.isStampPreview = false
           this.isPreviewModalOpen = false
+          this.isPreview = false
+          await this.preChargeStamp()
         }
       } catch (e) {
         console.error(e)
@@ -330,9 +340,16 @@ export default {
             (this.activeStamp.document_stamp_position_y * canvas.height) / 100, (this.activeStamp.document_stamp_width * canvas.width) / 100,
             (this.activeStamp.document_stamp_height * canvas.height) / 100])
         } else if (this.jcrop) {
-          // this.destroyJcrop()
+          this.destroyJcrop()
+          this.jcrop = null
+          this.jcropActive = false
         }
       })
+    },
+    onInformationSaved(entity) {
+      this.information = entity
+      this.loadImage()
+      if (this.jcropActive) this.loadPage(this.page)
     },
     * sequenceGenerator(minVal, maxVal) {
       let currVal = minVal
@@ -349,7 +366,7 @@ export default {
     <div v-if="$route.query.ticket_id" class="position-relative shadow-lg" style="z-index: 0;">
       <div class="bg-light py-50 rounded-top d-flex justify-content-center align-items-center">
         <div class="header_title d-flex justify-content-between w-100 px-2">
-          <router-link v-if="!jcropActive" :to="`/app/table/ticket/view/${$route.query.ticket_id}?tab=4`" class="mr-1">
+          <router-link v-if="!isPreview" :to="`/app/table/ticket/view/${$route.query.ticket_id}?tab=4`" class="mr-1">
             <b-button v-b-tooltip.hover title="Back to documents" variant="outline-dark" size="sm" class="p-0" style="width: 24px; height: 24px;">
               <feather-icon icon="ArrowLeftIcon" />
             </b-button>
@@ -362,7 +379,7 @@ export default {
             size="sm"
             class="p-0 mr-1"
             style="width: 24px; height: 24px;"
-            @click="closeStampDocument"
+            @click="isPreview = false"
           >
             <feather-icon icon="XIcon" />
           </b-button>
@@ -385,12 +402,12 @@ export default {
               </b-badge>
             </div>
             <div class="d-flex align-items-center text-white" style="gap: 8px">
-              <fragment v-if="!jcropActive">
+              <fragment v-if="!isPreview">
                 <b-button variant="light" size="sm" @click="downloadDocument">
                   <feather-icon icon="DownloadCloudIcon"/> Download
                 </b-button>
-                <b-button v-if="canBeStamped" variant="dark" size="sm" @click="openStampDocument">
-                  <feather-icon icon="FeatherIcon"/> Stamp
+                <b-button variant="dark" size="sm" @click="openStampDocument">
+                  <feather-icon icon="FeatherIcon"/> {{ isDocStamped ? 'Edit stamp' : 'Stamp' }}
                 </b-button>
               </fragment>
               <fragment v-else>
@@ -412,6 +429,15 @@ export default {
                 <b-button v-if="isStampPreview" variant="light" size="sm" @click="showPreviewModal">
                   <feather-icon icon="EyeIcon"/> Preview in modal
                 </b-button>
+                <b-button variant="warning" size="sm" @click="$refs.modal.openModal(!information,{document_id: entity.document_id, ...information})">
+                  <feather-icon icon="Edit2Icon"/> Edit stamp
+                </b-button>
+                <b-button v-if="jcropActive" variant="danger" size="sm" @click="removeCropper">
+                  <feather-icon icon="Trash2Icon"/> Remove stamp
+                </b-button>
+                <b-button v-else variant="success" size="sm" @click="openStampDocument">
+                  <feather-icon icon="Trash2Icon"/> Insert stamp
+                </b-button>
                 <b-button variant="primary" size="sm" @click="savePositions">
                   <feather-icon icon="SaveIcon"/> Save
                 </b-button>
@@ -421,7 +447,7 @@ export default {
         </div>
       </div>
       <div id="document-wrapper" class="d-flex justify-content-center bg-dark border border-secondary" :class="{ isStampPreview }">
-        <div v-show="!jcropActive" class="document_body_preview">
+        <div v-show="!isPreview" class="document_body_preview">
           <iframe
             ref="iframeDocPreview"
             style="height: 100%; width: 100%; border: 0"
@@ -429,10 +455,13 @@ export default {
             :src="get_link_document"
           />
         </div>
-        <div id="target" ref="target" :class="jcropActive ? 'd-inline-block' : 'd-none'" class="position-relative mx-auto">
+        <div id="target" ref="target" :class="isPreview ? 'd-inline-block' : 'd-none'" class="position-relative mx-auto">
           <canvas id="canvas" width="500" height="500"/>
         </div>
       </div>
+      <generic-modal ref="modal" table="document_stamp_information" :definition="document_stamp_information_def"
+                     :fetch-data="false" table-definition-key="document_stamp_information"
+                     :title="$t('headline~stamp~set_informations')" @reload-table="onInformationSaved"/>
     </div>
     <p v-else>
       Ticket id needed
