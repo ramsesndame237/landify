@@ -12,6 +12,7 @@ import {
 import Table from '@/table'
 import { BPagination } from 'bootstrap-vue'
 import GenericModal from '@/views/app/Generic/modal'
+import TicketMixin from '@/views/app/Kanban/TicketMixin'
 
 class SvgWidget extends Jcrop.Widget {
   init() {
@@ -28,12 +29,15 @@ export default {
     BPagination,
     GenericModal,
   },
+  mixins: [TicketMixin],
   data() {
     return {
       document_name: null,
       documentDef: Table.document,
       jcropActive: false,
       positions: [],
+      timeoutToClear: null,
+      ticket: null,
       src: '',
       width: 0,
       height: 0,
@@ -72,6 +76,9 @@ export default {
     isDocStamped() {
       return this.$store.state.document.previewDocument.document.document_already_stamp
     },
+    isColHasStamp() {
+      return this.$store.state.document.previewDocument.col_stamp
+    },
   },
   watch: {
     page(newVal, oldVal) {
@@ -82,17 +89,44 @@ export default {
     },
   },
   async mounted() {
-    console.log('this is the data ', this.$store.state.document.previewDocument.document.document_id)
-    this.document_name = getDocumentLinkPreviewWithId(this.$store.state.document.previewDocument.document.document_id)
-    if (!this.entity.document_id) {
-      this.entity = await this.$store.dispatch('table/fetchSingleItem', {
-        entity: 'frontend_document_list',
-        primaryKey: 'document_id',
-        id: this.$route.params.id,
-      })
+    this.loading = true
+    try {
+      if (!this.$route.query.document_id || !this.$route.query.ticket_id) return
+      await this.loadTickets({ ticket_id: this.$route.query.ticket_id })
+      this.ticket = this.tickets[0]
+      if (!this.ticket) return
+      let document = this.$store.state?.document?.previewDocument?.document
+      if (!document) {
+        document = await this.$store.dispatch('table/fetchSingleItem', {
+          entity: 'frontend_document_list',
+          primaryKey: 'document_id',
+          id: this.$route.query.document_id || '',
+        })
+        this.$store.dispatch('document/createDocumentPreview',
+          {
+            document,
+            ticket_id: this.ticket.ticket_id,
+            col_stamp: this.ticket.column_has_stamp,
+          })
+      }
+      if (!document) return
+      console.log('this is the data ', this.$store.state.document.previewDocument.document.document_id)
+      this.document_name = getDocumentLinkPreviewWithId(this.$store.state.document.previewDocument.document.document_id)
+      if (!this.entity.document_id) {
+        this.entity = await this.$store.dispatch('table/fetchSingleItem', {
+          entity: 'frontend_document_list',
+          primaryKey: 'document_id',
+          id: this.$route.params.id,
+        })
+      }
+      await this.loadImage()
+      this.preChargeStamp()
+    } finally {
+      this.loading = false
     }
-    await this.loadImage()
-    this.preChargeStamp()
+  },
+  destroyed() {
+    clearTimeout(this.timeoutToClear)
   },
   methods: {
     getSignImageLink,
@@ -192,13 +226,7 @@ export default {
       }
     },
     downloadDocument() {
-      const link = document.createElement('a')
-      link.setAttribute('download', this.$store.state.document.previewDocument.document.document_name)
-      // link.href = getDocumentLinkWithId(this.$store.state.document.previewDocument.document.document_id)
-      link.href = getStampedDocumentLink(this.$store.state.document.previewDocument.document)
-      document.body.appendChild(link)
-      link.click()
-      link.remove()
+      window.open(this.isDocStamped ? getStampedDocumentLink(this.$store.state.document.previewDocument.document) : getDocumentLink(this.$store.state.document.previewDocument.document), '_blank')
     },
     async loadImage() {
       try {
@@ -261,7 +289,7 @@ export default {
       let update = false
       try {
         // to delete
-        console.log({positions: this.positions})
+        console.log({ positions: this.positions })
         let data = this.positions.filter(p => p.delete).map(p => ({ document_stamp_id: p.document_stamp_id }))
         if (data.length) {
           await this.$api({
@@ -346,10 +374,28 @@ export default {
         }
       })
     },
-    onInformationSaved(entity) {
+    async onInformationSaved(entity) {
       this.information = entity
       this.loadImage()
-      if (this.jcropActive) this.loadPage(this.page)
+      clearTimeout(this.timeoutToClear)
+      this.destroyJcrop()
+      this.jcrop = null
+      this.jcropActive = false
+      this.loading = true
+      this.timeoutToClear = setTimeout(() => {
+        const canvas = document.getElementById('canvas')
+        if (canvas) {
+          this.initCropper([(this.activeStamp.document_stamp_position_x * canvas.width) / 100,
+            (this.activeStamp.document_stamp_position_y * canvas.height) / 100, (this.activeStamp.document_stamp_width * canvas.width) / 100,
+            (this.activeStamp.document_stamp_height * canvas.height) / 100])
+        } else {
+          this.initCropper()
+        }
+        this.loading = false
+      }, 1000)
+      // if (this.jcropActive) {
+      //   this.loadPage(this.page)
+      // }
     },
     * sequenceGenerator(minVal, maxVal) {
       let currVal = minVal
@@ -362,7 +408,7 @@ export default {
 </script>
 
 <template>
-  <b-overlay :show="loading">
+  <b-overlay :show="isPreview && loading">
     <div v-if="$route.query.ticket_id" class="position-relative shadow-lg" style="z-index: 0;">
       <div class="bg-light py-50 rounded-top d-flex justify-content-center align-items-center">
         <div class="header_title d-flex justify-content-between w-100 px-2">
@@ -406,8 +452,8 @@ export default {
                 <b-button variant="light" size="sm" @click="downloadDocument">
                   <feather-icon icon="DownloadCloudIcon"/> Download
                 </b-button>
-                <b-button variant="dark" size="sm" @click="openStampDocument">
-                  <feather-icon icon="FeatherIcon"/> {{ isDocStamped ? 'Edit stamp' : 'Stamp' }}
+                <b-button v-if="isColHasStamp" variant="dark" size="sm" @click="openStampDocument">
+                  <feather-icon icon="FeatherIcon"/> {{ isDocStamped ? 'Update stamp' : 'Stamp' }}
                 </b-button>
               </fragment>
               <fragment v-else>
@@ -436,7 +482,7 @@ export default {
                   <feather-icon icon="Trash2Icon"/> Remove stamp
                 </b-button>
                 <b-button v-else variant="success" size="sm" @click="openStampDocument">
-                  <feather-icon icon="Trash2Icon"/> Insert stamp
+                  <feather-icon icon="PlusIcon"/> Insert stamp
                 </b-button>
                 <b-button variant="primary" size="sm" @click="savePositions">
                   <feather-icon icon="SaveIcon"/> Save
