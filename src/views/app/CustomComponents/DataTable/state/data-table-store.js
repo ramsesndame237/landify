@@ -175,11 +175,13 @@ export async function listData({
   url,
   toastError,
   resolveData,
+  params,
 }) {
   const _payload = {
     size: dataTableStore.pagination.size === 0 ? 1000000 : dataTableStore.pagination.size,
     page: dataTableStore.pagination.page,
     query: dataTableStore.pagination.search,
+    keyword: dataTableStore.pagination.search,
     lang: dataTableStore.pagination.lang,
     order: dataTableStore.pagination.order,
     order_field: dataTableStore.pagination.orderField,
@@ -198,7 +200,7 @@ export async function listData({
   dataTableStore.requests.controller = new AbortController()
   try {
     dataTableStore.pagination.isLoading = true
-    const { data } = await api[String(dataTableStore.pagination.method || 'get').toLowerCase()](url, { params: payload, signal: dataTableStore.requests.controller.signal })
+    const { data } = await api[String(dataTableStore.pagination.method || 'get').toLowerCase()](url, { params: {...payload, ...(params || {})}, signal: dataTableStore.requests.controller.signal })
     dataTableStore.rows.list = resolveData(data)
     dataTableStore.pagination.total = data?.total || dataTableStore.pagination.total
     dataTableStore.pagination.page = data?.page || dataTableStore.pagination.page

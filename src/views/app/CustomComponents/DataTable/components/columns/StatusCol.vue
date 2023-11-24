@@ -1,27 +1,36 @@
 <template>
   <div class="d-flex align-items-center justify-content w-100">
-    <b-badge variant="warning text-truncate" style="min-width: 50px;">
-      <img :src="timerIcon" alt="timer">
-      Preclassified
+    <b-badge :variant="col.variant && col.variant({data, col})" class="text-truncate" style="min-width: 50px;">
+      {{ col.getValue ? $t(col.getValue({data, col})) : $t(value) }}
     </b-badge>
-    <feather-icon
-      class="ml-50 text-secondary"
-      icon="ChevronRightIcon"
-      size="18"
-      style="flex-shrink: 0;"
-    />
   </div>
 </template>
 
 <script>
-import timerIcon from '@/assets/images/icons/timer.svg'
-
 export default {
   name: 'StatusCol',
-  data() {
-    return {
-      timerIcon,
-    }
+  props: {
+    col: {
+      type: Object,
+      required: true,
+    },
+    data: {
+      type: Object,
+      required: true,
+    },
+    index: {
+      type: Number,
+      required: true,
+    },
+  },
+  computed: {
+    value() {
+      let finalValue = '';
+      (this.col?.key?.split('.') || []).forEach(key => {
+        finalValue = this.data?.[key]
+      })
+      return finalValue
+    },
   },
 }
 </script>
