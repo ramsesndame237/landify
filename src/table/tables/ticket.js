@@ -19,10 +19,10 @@ export default {
     { key: 'ticket_name' },
     // { key: 'column_has_stamp', hideOnForm: true, type: 'boolean' },
     {
-      key: 'ticket_deadline_yellow', type: 'date', time: true, hideOnIndex: true,
+      key: 'ticket_deadline_yellow', type: 'date', time: true, hideOnIndex: true, minDate: 'today',
     },
     {
-      key: 'ticket_deadline_red', type: 'date', time: true, hideOnIndex: true,
+      key: 'ticket_deadline_red', type: 'date', time: true, hideOnIndex: true, minDate: 'today',
     },
     {
       key: 'ticket_deadline_status',
