@@ -8,6 +8,7 @@
       :refresh="getData"
       :delete-url="deleteBulkUrl"
       :actions="moreTableActions"
+      :bar-actions="barActions"
     />
     <slot
       :tableStore="tableStore"
@@ -91,6 +92,12 @@
                       </div>
                       <date-col
                         v-else-if="col.type === 'date'"
+                        :col="col"
+                        :data="row"
+                        :index="j"
+                      />
+                      <status-col
+                        v-else-if="col.type === 'status'"
                         :col="col"
                         :data="row"
                         :index="j"
@@ -245,6 +252,7 @@ import {
 } from './state/data-table-store'
 import NoData from '../NoData/NoData.vue'
 import { toastError } from './utils'
+import StatusCol from './components/columns/StatusCol.vue'
 
 const tableStore = useTableStore()
 
@@ -262,6 +270,7 @@ export default {
     DateCol,
     BTooltip,
     NoData,
+    StatusCol,
   },
   props: {
     method: {
@@ -283,6 +292,7 @@ export default {
     columns: {
       type: Array,
       required: true,
+      default: () => [],
     },
     data: {
       type: Array,
@@ -292,9 +302,9 @@ export default {
       type: Array,
       default: () => [],
     },
-    hiddeFilterBar:{
-      type:Boolean,
-      default:false
+    hiddeFilterBar: {
+      type: Boolean,
+      default: false,
     },
     withCheckbox: {
       type: Boolean,
@@ -348,6 +358,14 @@ export default {
       type: Array,
       default: () => [],
     },
+    barActions: {
+      type: Array,
+      default: () => [],
+    },
+    includeInQuery: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return {
@@ -368,6 +386,9 @@ export default {
       if (tableStore.rows.rowToShow && this.detailsOnSidebar) {
         this.sidebarVisible = !!val
       }
+    },
+    includeInQuery() {
+      if (this.url) this.getData()
     },
   },
   created() {
@@ -442,7 +463,7 @@ export default {
         },
       ))
     }
-    if (this.tabs && this.tabs.items) {
+    if (this.tabs?.items) {
       this.$watch(
         'tableStore.tabs.activeTabIndex',
         val => {
@@ -453,7 +474,7 @@ export default {
     }
     Object.keys(tableStore.pagination)
       .filter(key => !['isLoading'].includes(key))
-      .map(key => this.$watch(
+      .forEach(key => this.$watch(
         `tableStore.pagination.${key}`,
         () => this.getData(),
       ))
@@ -463,7 +484,7 @@ export default {
   },
   methods: {
     toggleRowSelection,
-    getData() {
+    getData(params) {
       if (this.url) {
         listData({
           api: this.$http,
@@ -471,6 +492,7 @@ export default {
           resolveData: data => this.resolveData?.(data),
           extra: this.filters,
           toastError: () => toastError(this.$toast),
+          params: { ...(this.includeInQuery || {}), ...(params || {}) },
         })
       }
     },

@@ -133,6 +133,26 @@
               :extra-filters-values="tableStore.pagination.filtersValues"
             />
           </div>
+          <b-button
+            v-for="(action, index) in (barActions || [])"
+            :key="`table-bar-action-${index}-${action.key || ''}-${action.label || ''}`"
+            class="p-50 btn-outline mx-50"
+            variant="dark"
+            @click="action.onClick"
+          >
+            <div
+              class="d-flex align-items-center"
+              style="gap: 16px;"
+              :title="$tc(action.label)"
+            >
+              <feather-icon
+                v-if="action.icon"
+                size="16"
+                :icon="action.icon"
+              />
+              <span v-if="action.label" class="text-truncate block" style="max-width: 180px">{{ $tc(action.label) }}</span>
+            </div>
+          </b-button>
           <div
             v-if="actions && actions.length > 0"
             class="ml-1"
@@ -213,6 +233,10 @@ export default {
       default: () => [],
     },
     actions: {
+      type: Array,
+      default: () => [],
+    },
+    barActions: {
       type: Array,
       default: () => [],
     },

@@ -24,7 +24,7 @@
           <v-select v-model="entity[field.entityKey || field.key]" :dropdown-should-open="dropdownShouldOpen" :disabled="selectDisabled"
                     :class="{'error': errors.length > 0, 'multiple_select': field.multiple }"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
-                    :placeholder="field.key" :multiple="field.multiple" :options="listItems" transition=""
+                    :placeholder="field.placeholder || field.key" :multiple="field.multiple" :options="listItems" transition=""
                     :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
                     :reduce="i => i[field.tableKey||field.key]" :clear-search-on-blur="()=> false"
                     :clearable="field.clearable != null ? field.clearable : true" :filterable="!field.customPagination"
@@ -98,8 +98,8 @@
               <div>
                 <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50"/>
                 <span class="text-muted font-weight-bolder align-text-top">{{
-                    file.name
-                  }}</span>
+                  file.name
+                }}</span>
                 <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
               </div>
               <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index, validate)"/>
@@ -236,7 +236,7 @@ import { getUserData } from '@/auth/utils'
 import { mapGetters } from 'vuex'
 import SelectedButtonList from '@/components/SelectedButtonList.vue'
 import AutoCompleteInput from '@/components/AutoCompleteInput.vue'
-import _ from "lodash";
+import _ from 'lodash'
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -294,6 +294,7 @@ export default {
         locale: {
           firstDayOfWeek: 1,
         },
+        minDate: this.field.minDate,
         onReady(selectedDates, dateStr, instance) {
           instance.isOpen = true
         },
@@ -424,6 +425,11 @@ export default {
       },
       deep: true,
     },
+    hasNext(newValue, oldValue) {
+      if (oldValue === false && newValue === true) {
+        this.listObserver.observe(this.$refs.load)
+      }
+    },
   },
   async created() {
     if ((this.field.type === 'list' || this.field.type === 'custom_list') && ((!this.field.filter_key || !!this.entity[this.field.filter_key]) || this.field.noFetchOnChange) && !this.field.onlyForm) {
@@ -540,25 +546,22 @@ export default {
       }
     },
     async onListOpen() {
-      if (this.field.type === 'list') {
+      if (this.field.type === 'list' && this.hasNext) {
         await this.$nextTick()
-        console.log(this.listObserver, this.$refs.load)
         this.listObserver.observe(this.$refs.load)
       }
     },
     onListClose() {
-      console.log('disconnect')
       this.listObserver.disconnect()
     },
     async listObserverCallBack([{ isIntersecting, target }]) {
-      console.log(isIntersecting, target)
       if (isIntersecting) {
-        // const ul = target.offsetParent
-        // const scrollTop = target.offsetParent.scrollTop
+        const ul = target.offsetParent
+        const scrollTop = target.offsetParent.scrollTop
         this.requestPayload.page += 1
         await this.fetchList(true, this.query)
         await this.$nextTick()
-        // ul.scrollTop = scrollTop
+        ul.scrollTop = scrollTop
       }
     },
     getOptionLabel(option) {

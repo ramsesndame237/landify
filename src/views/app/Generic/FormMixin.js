@@ -232,7 +232,7 @@ export default {
             }
           }
           if (table === 'document') {
-            if (definition.customRequest) {
+            if (definition.customRequest && definition.customRequest.isUpdate) {
               const payload = definition.customRequest.formatBody ? definition.customRequest.formatBody(entity) : entity
               const body = !definition.customRequest.passBodyToQuery ? payload : {}
               const params = definition.customRequest.passBodyToQuery ? payload : {}
@@ -240,31 +240,32 @@ export default {
               return this.$http({
                 url: definition.customRequest.endpoint,
                 params,
-                body,
+                data: body,
                 method,
               }).then(({ data }) => data)
             }
 
             const formData = new FormData()
             const files = fieldComponents.find(f => f.field.key === 'files')?.getFiles() || []
+
             for (let i = 0; i < files.length; i++) {
               formData.append('files', files[i])
             }
-            return this.$http.post('/document/uploadfiles', formData, { headers: { 'content-type': 'form-data' } })
-              .then(({ data }) => {
-                const created = data.data.filter(d => d.status === 'created')
-                if (created.length > 0) {
-                  this.$api({
-                    action: 'create',
-                    entity: 'document_documenttype_rel',
-                    data: created.map(row => ({
-                      documenttype_id: entity.documenttype_id,
-                      document_id: row.document_id,
-                    })),
-                  })
-                }
-                return data
-              })
+            // formData.append('files', files)
+
+            return this.$http({
+              url: '/documents/uploadfiles/ticket',
+              params: {
+                ticket_id: this.$route.params.id,
+                ...entity,
+              },
+              data: formData,
+              method: 'post',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'multipart/form-data',
+              },
+            }).then(({ data }) => data)
           }
           // format entity
           const formatedEntity = this.formatEntity(entity, formFields)
