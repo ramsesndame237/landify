@@ -90,9 +90,10 @@
                                  :options="field.items"/>
         </div>
         <div v-else-if="field.type==='file'">
+          {{ field.accept }}
           <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
                        drop-placeholder="Drop file here..." :multiple="field.multiple" required
-                       :file-name-formatter="formatFileInputNames" @change="updateFilesData($event, validate)"/>
+                       :file-name-formatter="formatFileInputNames" @change="updateFilesData($event, validate)" :accept="field.accepted"/>
           <div class="d-flex flex-column mt-2">
             <div v-for="(file, index) in files" :key="index" class="d-flex justify-content-between mb-1">
               <div>
