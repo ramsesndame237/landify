@@ -28,7 +28,7 @@
       </div>
     </b-td>
     <b-td class="td-form">
-      <field v-if="visible" :field="posIdField" :entity="item" :disabled="is_dismissed || is_done"/>
+      <field v-if="visible" :field="posIdField" :entity="item" :disabled="item.ticket_id || is_dismissed || is_done"/>
       <router-link v-if="is_done && item.pos_id" target="_blank"
                    :to="{ name: 'table-view', params: { table: 'pos', id: item.pos_id } }">
         {{ getPosName() }}
@@ -60,7 +60,7 @@
     <b-td class="td-form">
       <field v-if="visible" ref="contract" :field="contractIdField" :entity="item"
              :disabled="item.ticket_id || is_dismissed|| is_done"/>
-      <router-link v-if="is_done && item.contract_id" target="_blank"
+      <router-link v-if="is_done" target="_blank"
                    :to="{name: 'table-view', params: {table: 'contract',id: item.contract_id}}">
         {{ getContractName() }}
       </router-link>
@@ -233,14 +233,14 @@ export default {
     },
   },
   watch: {
-    currentTicket(val) {
+    'item.ticket_id': function (val) {
       this.onTicketIdChange(val)
     },
     'item.documenttype_id': function (val) {
       this.onDocumentTypeChange()
     },
     'item.pos_id': function (val) {
-      if (this.item.contract_id) this.$set(this.item, 'contract_id', null)
+      // if (this.item.contract_id) this.$set(this.item, 'contract_id', null)
       if (this.item.ticket_id) this.$set(this.item, 'ticket_id', null)
     },
   },
@@ -292,10 +292,14 @@ export default {
       // el.hidden = !el.hidden
     },
     onTicketIdChange(val) {
-      this.$set(this.item, 'contract_id', val?.contract_id || null)
-      this.$set(this.item, 'board_id', val?.board_id || null)
-      if (!val) {
-        this.shouldCreateSubTicket = false
+      if (!this.is_done) {
+        const ticketList = this.$store.state.table.listCache.frontend_6_1_6_overview
+        const selectedTicket = ticketList?.find(ticket => ticket.ticket_id === val)
+        this.$set(this.item, 'contract_id', selectedTicket?.contract_id || null)
+        this.$set(this.item, 'board_id', selectedTicket?.board_id || null)
+        if (!val) {
+          this.shouldCreateSubTicket = false
+        }
       }
     },
     getTicketName() {
@@ -303,11 +307,11 @@ export default {
     },
     getPosName() {
       const list = this.$store.state.table.listCache.frontend_2_1_3_8
-      const el = list.find(e => e.pos_id === this.item.pos_id)
-      return el?.pos_name
+      const el = list?.find(e => e.pos_id === this.item.pos_id)
+      return el?.pos_name || this.item?.pos_name
     },
     getContractName() {
-      return this.item.contract_name || ''
+      return this.item?.contract_name || ''
     },
     getBoardName() {
       // const list = this.$store.state.table.listCache.board
@@ -317,20 +321,22 @@ export default {
     },
     getDocumentTypeName() {
       const list = this.$store.state.table.listCache.documenttype
-      const el = list.find(e => e.documenttype_id === this.item.documenttype_id)
-      return el?.documenttype_name
+      const el = list?.find(e => e.documenttype_id === this.item.documenttype_id)
+      return el?.documenttype_name || this.item?.documenttype_name || ''
     },
     onDocumentTypeChange() {
-      const val = this.item.documenttype_id
-      if (val) {
-        const list = this.$store.state.table.listCache.board
-        if (!list) return
-        const el = list.find(e => e.documenttype_id === val)
-        if (el) {
-          this.$set(this.item, 'board_id', el.board_id)
+      if (!this.is_done) {
+        const val = this.item.documenttype_id
+        if (val) {
+          const list = this.$store.state.table.listCache.board
+          if (!list) return
+          const el = list?.find(e => e.documenttype_id === val)
+          if (el) {
+            this.$set(this.item, 'board_id', el.board_id)
+          }
+        } else {
+          this.$set(this.item, 'board_id', null)
         }
-      } else {
-        this.$set(this.item, 'board_id', null)
       }
     },
   },

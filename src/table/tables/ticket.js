@@ -8,6 +8,7 @@ export default {
   entity: 'frontend_6_1_6_overview',
   entityEndpoint: '/tickets/slims',
   defaultSortField: 'ticket_creation_time',
+  newEndpointCreate: '/tickets',
   /**
    * truncateBy : Représente la valeur en rem à appliquer sur tous les champs d'un tableau
    * @example truncateBy: 20 Va fixer le max-width des champs à 20 rem
