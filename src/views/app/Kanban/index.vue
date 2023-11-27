@@ -214,7 +214,7 @@ export default {
       })
     },
     async onNewTicket(ticket) {
-      await this.moveToColumn(ticket, this.columns[0])
+      // await this.moveToColumn(ticket, this.columns[0])
       this.loadBoardTickets()
     },
   },

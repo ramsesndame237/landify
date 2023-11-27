@@ -343,9 +343,18 @@ export default {
             return Promise.reject(new Error('Invalid Form'))
           }
           this.loading = true
+          if (this.definition.newEndpointCreate) {
+            return this.$http.post(this.definition.newEndpointCreate, this.entity).then(async result => {
+              await this.afterSaveHook()
+              this.$successToast('Ok')
+              // navigate to view page or reload table
+              this.originalEntity = merge(this.originalEntity, result)
+              return result
+            })
+          }
           if (this.definition.submit) {
             return this.definition.submit(this, this.entity, this.create)
-              .then(resp => {
+              .then(async resp => {
                 if (resp) {
                   this.originalEntity = merge(this.originalEntity, resp.data)
                   this.$successToast(this.create ? 'Entity Created' : 'Entity Updated')
