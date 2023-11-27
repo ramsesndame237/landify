@@ -33,7 +33,7 @@
                    @reload-table="$refs.table.reload()"/>
     <SidebarModalComponent ref="sidebarComponent" :title="`headline~${table}~new`" :definition="definition"
                            :options="definition.options || null" :table-definition-key="table" :table="table">
-      <div slot="customHeader" class="header-customer mb-3 d-flex align-items-center justify-content-center ">
+      <div slot="customHeader" class="header-customer mb-3 d-flex align-items-center justify-content-center">
         <span>
           {{ $t(`headline~${table}~new`) }}
         </span>
@@ -104,7 +104,6 @@ export default {
           },
         }
         columnData.push(definitionData)
-        console.log(element)
       })
 
       return columnData
