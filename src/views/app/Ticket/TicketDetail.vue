@@ -378,6 +378,11 @@ import DocumentsWidgetView from '@/views/app/Ticket/widgets/DocumentsWidgetView.
 import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.js'
 import SubticketTable from '@/views/app/CustomComponents/WP6/SubticketTable.vue'
 
+const ticketDef = {
+  ...Table.ticket,
+  isUpdate: true,
+}
+
 export default {
   name: 'TicketDetail',
   components: {
@@ -401,7 +406,7 @@ export default {
   mixins: [EditPageMixin, TicketMixin, SubTicketMixin],
   data() {
     return {
-      ticketDef: Table.ticket,
+      ticketDef,
       documentDef: Table.document,
       subTickets: [],
       documents: [],

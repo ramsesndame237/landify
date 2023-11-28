@@ -13,7 +13,7 @@
         class="d-block mr-50 rounded-pill px-50"
         :style="{color: data.priority_color, border: '1px solid', borderColor: data.priority_color}"
       >{{ data.priority_emoji }} {{ data.priority_name }}</span>
-      <span class="d-block text-truncate">{{ moment(data.ticket_creation_time).format("ll") }}</span>
+      <span class="d-block text-truncate">{{ moment(data.ticket_creation_time).format("llll") }}</span>
     </div>
   </div>
 </template>

@@ -202,7 +202,8 @@ export default {
         list: 'documenttype',
         listLabel: 'documenttype_name',
         noLabel: true,
-        noFetch: true,
+        // FIXME: preload this list
+        noFetch: false,
       },
     }
   },
