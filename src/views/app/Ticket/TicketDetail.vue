@@ -174,6 +174,14 @@
                 </tr>
                 <tr>
                   <th class="pb-50 font-weight-bold">
+                    {{ $t('attribute.ticket_creation_time') }}
+                  </th>
+                  <td class="pb-50">
+                    {{ formatDate(entity.ticket_creation_time, true) }}
+                  </td>
+                </tr>
+                <tr>
+                  <th class="pb-50 font-weight-bold">
                     {{ $t('attribute.ticket_deadline_yellow') }}
                   </th>
                   <td class="pb-50">
@@ -322,7 +330,6 @@
             <!--              </b-col>-->
             <!--            </b-row>-->
 
-
             <generic-modal ref="documentModal" table="document" :definition="documentDef"
                            table-definition-key="document"
                            :title="$t('headline~document~new')" @reload-table="onNewDocuments"/>
@@ -448,7 +455,7 @@ export default {
     invoiceTicket() {
       return true
     },
-     isTicket() {
+    isTicket() {
       return this.entity?.ticket_id_group === null
     },
     firstColumn() {
@@ -481,7 +488,6 @@ export default {
     ...mapGetters('user', ['isUserExtern']),
   },
   async mounted() {
-
     this.activeTabItem = this.tabTitle.find(tab => tab.id === this.$route.query.tab) || this.tabTitle.find(tab => tab.id === '1')
 
     this.loading = true
@@ -609,9 +615,9 @@ export default {
           ticket_id: this.entity?.ticket_id,
         })),
       })
-          .finally(() => {
-            this.fetchDocuments()
-          })
+        .finally(() => {
+          this.fetchDocuments()
+        })
     },
     async fetchDocuments() {
       const documents = (await this.$http.get('/tickets/documents', {
@@ -636,7 +642,7 @@ export default {
         })).data.data
         if (!results.length) return
         this.emails = Object.values(_.groupBy(results, 'email_id'))
-            .map(r => _.pick(r[0], ['email_id', 'email_from', 'email_received_datetime', 'email_to', 'email_cc', 'email_subject', 'email_body', 'documents']))
+          .map(r => _.pick(r[0], ['email_id', 'email_from', 'email_received_datetime', 'email_to', 'email_cc', 'email_subject', 'email_body', 'documents']))
       } finally {
         this.loadingEmail = false
       }
