@@ -113,6 +113,12 @@ export default {
           component: TicketNameCol,
         },
         {
+          key: 'ticket_description',
+          header: {
+            name: 'ticket_description',
+          },
+        },
+        {
           key: 'board_name',
           header: {
             name: 'board_name',
