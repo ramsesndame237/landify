@@ -24,7 +24,7 @@
           <v-select v-model="entity[field.entityKey || field.key]" :dropdown-should-open="dropdownShouldOpen" :disabled="selectDisabled"
                     :class="{'error': errors.length > 0, 'multiple_select': field.multiple }"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
-                    :placeholder="$t(`${field.placeholder}`) || field.key" :multiple="field.multiple" :options="listItems" transition=""
+                    :placeholder="field.placeholder ? $t(`${field.placeholder}`) : field.key" :multiple="field.multiple" :options="listItems" transition=""
                     :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
                     :reduce="i => i[field.tableKey||field.key]" :clear-search-on-blur="()=> false"
                     :clearable="field.clearable != null ? field.clearable : true" :filterable="!field.customPagination"
