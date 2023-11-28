@@ -163,8 +163,10 @@ export default {
         type: 'list',
         list: 'frontend_2_1_3_8',
         listLabel: 'pos_name',
+        entityCustomEndPoint: '/pos',
         noLabel: true,
         noCache: true,
+        placeholder: 'pos~name~custom_placeholder',
         noFetchOnInit: true,
         customPagination: {
           per_page: 15,
