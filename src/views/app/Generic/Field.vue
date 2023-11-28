@@ -24,7 +24,7 @@
           <v-select v-model="entity[field.entityKey || field.key]" :dropdown-should-open="dropdownShouldOpen" :disabled="selectDisabled"
                     :class="{'error': errors.length > 0, 'multiple_select': field.multiple }"
                     :get-option-label="(typeof field.listLabel === 'function') ? field.listLabel : (defaultLabelFunction[field.key]||(option=> option[field.listLabel]))"
-                    :placeholder="field.placeholder || field.key" :multiple="field.multiple" :options="listItems" transition=""
+                    :placeholder="$t(`${field.placeholder}`) || field.key" :multiple="field.multiple" :options="listItems" transition=""
                     :label="(typeof field.listLabel === 'string') ? field.listLabel: null" class="w-100"
                     :reduce="i => i[field.tableKey||field.key]" :clear-search-on-blur="()=> false"
                     :clearable="field.clearable != null ? field.clearable : true" :filterable="!field.customPagination"
@@ -93,7 +93,7 @@
           {{ field.accept }}
           <b-form-file ref="file" type="file" placeholder="Choose a file or drop it here..."
                        drop-placeholder="Drop file here..." :multiple="field.multiple" required
-                       :file-name-formatter="formatFileInputNames" @change="updateFilesData($event, validate)" :accept="field.accepted"/>
+                       :file-name-formatter="formatFileInputNames" :accept="field.accepted" @change="updateFilesData($event, validate)"/>
           <div class="d-flex flex-column mt-2">
             <div v-for="(file, index) in files" :key="index" class="d-flex justify-content-between mb-1">
               <div>
