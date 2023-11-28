@@ -40,6 +40,22 @@ export default {
           },
         },
         {
+          id: 'documenttype_id',
+          key: 'documenttype_id',
+          getValue: doc => (doc?.documenttype?.documenttype_name),
+          header: {
+            name: 'documenttype_id',
+          },
+        },
+        {
+          id: 'subdocumenttype_id',
+          key: 'subdocumenttype_id',
+          getValue: doc => (doc?.subdocumenttype?.documenttype_name),
+          header: {
+            name: 'subdocumenttype_id',
+          },
+        },
+        {
           id: 'document_status',
           key: 'document_status',
           getValue: doc => (doc?.document_already_stamp ? 'Stamped' : 'Not stamp'),
