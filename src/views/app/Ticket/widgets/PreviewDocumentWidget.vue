@@ -409,7 +409,6 @@ export default {
 
 <template>
   <b-overlay :show="isPreview && loading">
-    {{isPreview}}
     <div v-if="$route.query.ticket_id" class="position-relative shadow-lg" style="z-index: 0;">
       <div class="bg-light py-50 rounded-top d-flex justify-content-center align-items-center">
         <div class="header_title d-flex justify-content-between w-100 px-2">
