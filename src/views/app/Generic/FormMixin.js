@@ -343,14 +343,27 @@ export default {
             return Promise.reject(new Error('Invalid Form'))
           }
           this.loading = true
-          if (this.definition.newEndpointCreate) {
-            return this.$http.post(this.definition.newEndpointCreate, this.entity).then(async result => {
-              await this.afterSaveHook()
+          if (this.definition.newEndpointCreate || this.definition.newEndpointUpdate) {
+            const method = this.definition.isUpdate ? 'put' : 'post'
+            const endpoint = this.definition.isUpdate ? this.definition.newEndpointUpdate : this.definition.newEndpointCreate
+            return this.$http[method](endpoint, this.entity).then(async result => {
               this.$successToast('Ok')
               // navigate to view page or reload table
               this.originalEntity = merge(this.originalEntity, result)
               return result
             })
+              .catch(err => {
+                let message = err.message
+                if (err.response && err.response.data) {
+                  message = err.response.data.detail
+                }
+                this.$errorToast(message)
+                return Promise.reject(err)
+              })
+              .finally(async () => {
+                await this.afterSaveHook()
+                this.loading = false
+              })
           }
           if (this.definition.submit) {
             return this.definition.submit(this, this.entity, this.create)

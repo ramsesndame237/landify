@@ -146,7 +146,7 @@ export default {
       // if (this.$store.state.document.previewDocument.document.document_already_stamp) {
       //   return
       // }
-      this.loading = true
+      this.loading = false
       try {
         this.positions = (await this.$api({
           entity: 'document_stamp',
@@ -409,6 +409,7 @@ export default {
 
 <template>
   <b-overlay :show="isPreview && loading">
+    {{isPreview}}
     <div v-if="$route.query.ticket_id" class="position-relative shadow-lg" style="z-index: 0;">
       <div class="bg-light py-50 rounded-top d-flex justify-content-center align-items-center">
         <div class="header_title d-flex justify-content-between w-100 px-2">
@@ -448,15 +449,15 @@ export default {
               </b-badge>
             </div>
             <div class="d-flex align-items-center text-white" style="gap: 8px">
-              <fragment v-if="!isPreview">
+              <template v-if="!isPreview">
                 <b-button variant="light" size="sm" @click="downloadDocument">
                   <feather-icon icon="DownloadCloudIcon"/> Download
                 </b-button>
                 <b-button v-if="isColHasStamp" variant="dark" size="sm" @click="openStampDocument">
                   <feather-icon icon="FeatherIcon"/> {{ isDocStamped ? 'Update stamp' : 'Stamp' }}
                 </b-button>
-              </fragment>
-              <fragment v-else>
+              </template>
+              <template v-else>
                 <b-pagination
                   v-if="pdf"
                   v-model="page"
@@ -487,7 +488,7 @@ export default {
                 <b-button variant="primary" size="sm" @click="savePositions">
                   <feather-icon icon="SaveIcon"/> Save
                 </b-button>
-              </fragment>
+              </template>
             </div>
           </div>
         </div>

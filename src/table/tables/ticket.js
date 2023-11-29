@@ -9,6 +9,7 @@ export default {
   entityEndpoint: '/tickets/slims',
   defaultSortField: 'ticket_creation_time',
   newEndpointCreate: '/tickets',
+  newEndpointUpdate: '/tickets/update',
   /**
    * truncateBy : Représente la valeur en rem à appliquer sur tous les champs d'un tableau
    * @example truncateBy: 20 Va fixer le max-width des champs à 20 rem
@@ -65,7 +66,7 @@ export default {
       hideOnForm: true,
       formatter: val => window.$vue.$t(val ? 'header~board~status~closed' : 'header~board~status~open'),
     },
-    // { key: 'ticket_description', type: 'textarea', required: false },
+    { key: 'ticket_description', type: 'textarea', required: false },
     {
       key: 'pos_id',
       listLabel: 'pos_name',
