@@ -20,8 +20,7 @@ export default {
     },
     onCancel() {
       this.isEditing = !this.isEditing
-      this.isEditing = false
-      this.columnPriorityComponent.isEditing = false
+      this.columnPriorityComponent.cancelEdition()
     },
     async onSave() {
       this.loading = true
