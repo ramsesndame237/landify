@@ -144,13 +144,14 @@ export default {
         key: 'ticket_id',
         type: 'list',
         list: 'frontend_6_1_6_overview',
+        entityCustomEndPoint: '/tickets/slims',
         listLabel: item => `${item.ticket_id} - ${item.ticket_name}`,
         noLabel: true,
         required: false,
         filter_key: 'pos_id',
         noCache: true,
         customPagination: {
-          per_page: 15,
+          data: [{ size: 15 }],
         },
         customFilter: {
           ticket_closed: 0,
