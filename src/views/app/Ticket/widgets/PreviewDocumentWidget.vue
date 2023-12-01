@@ -32,6 +32,7 @@ export default {
   mixins: [TicketMixin],
   data() {
     return {
+      mountedLoading: false,
       document_name: null,
       documentDef: Table.document,
       jcropActive: false,
@@ -68,16 +69,19 @@ export default {
       return this.positions.find(p => p.document_stamp_page === this.page && !p.delete)
     },
     entity() {
-      return this.$store.state.document.previewDocument?.document
+      return this.$store.state.document?.previewDocument?.document
     },
     canBeStamped() {
-      return this.$store.state.document.previewDocument.col_stamp && !this.$store.state.document.previewDocument.document.document_already_stamp
+      return this.$store.state.document?.previewDocument?.col_stamp && !this.$store.state.document?.previewDocument?.document?.document_already_stamp
     },
     isDocStamped() {
-      return this.$store.state.document.previewDocument.document.document_already_stamp
+      return this.$store.state.document?.previewDocument?.document?.document_already_stamp
     },
     isColHasStamp() {
-      return this.$store.state.document.previewDocument.col_stamp
+      return this.$store.state.document?.previewDocument?.col_stamp
+    },
+    ticketId() {
+      return this.$store.state.document?.previewDocument?.document?.ticket_id
     },
   },
   watch: {
@@ -89,28 +93,35 @@ export default {
     },
   },
   async mounted() {
+    this.$store.dispatch('document/createDocumentPreview', null)
     this.loading = true
+    this.mountedLoading = true
     try {
-      if (!this.$route.query.document_id || !this.$route.query.ticket_id) return
-      await this.loadTickets({ ticket_id: this.$route.query.ticket_id })
-      this.ticket = this.tickets[0]
-      if (!this.ticket) return
-      let document = this.$store.state?.document?.previewDocument?.document
-      if (!document) {
-        document = await this.$store.dispatch('table/fetchSingleItem', {
-          entity: 'frontend_document_list',
-          primaryKey: 'document_id',
-          id: this.$route.query.document_id || '',
-        })
-        this.$store.dispatch('document/createDocumentPreview',
-          {
-            document,
-            ticket_id: this.ticket.ticket_id,
-            col_stamp: this.ticket.column_has_stamp,
-          })
+      if (!this.$route.query.document_id) {
+        this.$router.push('/')
+        return
       }
-      if (!document) return
-      console.log('this is the data ', this.$store.state.document.previewDocument.document.document_id)
+      const document = await this.$store.dispatch('table/fetchSingleItem', {
+        entity: 'frontend_document_list',
+        primaryKey: 'document_id',
+        id: this.$route.query.document_id || '',
+      })
+      if (!document) {
+        this.$errorToast('Error while loading the document')
+        return
+      }
+      await this.loadTickets({ ticket_id: document.ticket_id })
+      this.ticket = this.tickets[0]
+      if (!this.ticket) {
+        this.$errorToast('Error while loading the ticket')
+        return
+      }
+      this.$store.dispatch('document/createDocumentPreview',
+        {
+          document,
+          ticket_id: this.ticket.ticket_id,
+          col_stamp: this.ticket.column_has_stamp,
+        })
       this.document_name = getDocumentLinkPreviewWithId(this.$store.state.document.previewDocument.document.document_id)
       if (!this.entity.document_id) {
         this.entity = await this.$store.dispatch('table/fetchSingleItem', {
@@ -123,10 +134,11 @@ export default {
       this.preChargeStamp()
     } finally {
       this.loading = false
+      this.mountedLoading = false
     }
   },
   destroyed() {
-    clearTimeout(this.timeoutToClear)
+    this.removeCropper()
   },
   methods: {
     getSignImageLink,
@@ -375,16 +387,14 @@ export default {
       })
     },
     async onInformationSaved(entity) {
-      this.information = entity
-      this.loadImage()
-      clearTimeout(this.timeoutToClear)
-      this.destroyJcrop()
-      this.jcrop = null
-      this.jcropActive = false
-      this.loading = true
-      this.timeoutToClear = setTimeout(() => {
+      try {
+        this.information = entity
+        this.loading = true
+        await this.savePosition(this.page)
+        await this.loadImage()
+        this.removeCropper()
         const canvas = document.getElementById('canvas')
-        if (canvas) {
+        if (canvas && this.activeStamp) {
           this.initCropper([(this.activeStamp.document_stamp_position_x * canvas.width) / 100,
             (this.activeStamp.document_stamp_position_y * canvas.height) / 100, (this.activeStamp.document_stamp_width * canvas.width) / 100,
             (this.activeStamp.document_stamp_height * canvas.height) / 100])
@@ -392,7 +402,11 @@ export default {
           this.initCropper()
         }
         this.loading = false
-      }, 1000)
+      } catch (e) {
+        console.log({e})
+      } finally {
+        this.loading = false
+      }
       // if (this.jcropActive) {
       //   this.loadPage(this.page)
       // }
@@ -408,112 +422,119 @@ export default {
 </script>
 
 <template>
-  <b-overlay :show="isPreview && loading">
-    <div v-if="$route.query.ticket_id" class="position-relative shadow-lg" style="z-index: 0;">
-      <div class="bg-light py-50 rounded-top d-flex justify-content-center align-items-center">
-        <div class="header_title d-flex justify-content-between w-100 px-2">
-          <router-link v-if="!isPreview" :to="`/app/table/ticket/view/${$route.query.ticket_id}?tab=4`" class="mr-1">
-            <b-button v-b-tooltip.hover title="Back to documents" variant="outline-dark" size="sm" class="p-0" style="width: 24px; height: 24px;">
-              <feather-icon icon="ArrowLeftIcon" />
+  <div class="h-100">
+    <div v-if="mountedLoading" class="d-flex flex-column justify-content-center align-items-center p-4 text-center">
+      <p>Loading document, please wait...</p>
+      <b-spinner class="mt-1" />
+    </div>
+    <b-overlay v-show="!mountedLoading" :show="loading">
+      <template #overlay />
+      <div v-if="ticketId" class="position-relative shadow-lg" style="z-index: 0;">
+        <div class="bg-light py-50 rounded-top d-flex justify-content-center align-items-center">
+          <div class="header_title d-flex justify-content-between w-100 px-2">
+            <router-link v-if="!isPreview" :to="`/app/table/ticket/view/${ticketId}?tab=4`" class="mr-1">
+              <b-button v-b-tooltip.hover title="Back to documents" variant="outline-dark" size="sm" class="p-0" style="width: 24px; height: 24px;">
+                <feather-icon icon="ArrowLeftIcon" />
+              </b-button>
+            </router-link>
+            <b-button
+              v-else
+              v-b-tooltip.hover
+              title="Close stamp"
+              variant="outline-dark"
+              size="sm"
+              class="p-0 mr-1"
+              style="width: 24px; height: 24px;"
+              @click="isPreview = false"
+            >
+              <feather-icon icon="XIcon" />
             </b-button>
-          </router-link>
-          <b-button
-            v-else
-            v-b-tooltip.hover
-            title="Close stamp"
-            variant="outline-dark"
-            size="sm"
-            class="p-0 mr-1"
-            style="width: 24px; height: 24px;"
-            @click="isPreview = false"
-          >
-            <feather-icon icon="XIcon" />
-          </b-button>
-          <div class="d-flex align-items-center justify-content-between flex-grow-1">
-            <div class="d-flex align-items-center">
-              <h5 class="d-inline-block font-weight-bold m-0 mr-50 text-truncate">
-                {{ $store.state.document.previewDocument.document.document_name }}
-              </h5>
-              <b-badge
-                v-if="!$store.state.document.previewDocument.col_stamp"
-                v-b-tooltip.hover
-                title="This document is linked to a ticket that is in a column that has the stamp disabled" variant="warning"
-              >
-                Unable to be stamped <feather-icon icon="InfoIcon" />
-              </b-badge>
-              <b-badge
-                v-else-if="$store.state.document.previewDocument.document.document_already_stamp" variant="success"
-              >
-                Stamped <feather-icon icon="CheckIcon" />
-              </b-badge>
-            </div>
-            <div class="d-flex align-items-center text-white" style="gap: 8px">
-              <template v-if="!isPreview">
-                <b-button variant="light" size="sm" @click="downloadDocument">
-                  <feather-icon icon="DownloadCloudIcon"/> Download
-                </b-button>
-                <b-button v-if="isColHasStamp" variant="dark" size="sm" @click="openStampDocument">
-                  <feather-icon icon="FeatherIcon"/> {{ isDocStamped ? 'Update stamp' : 'Stamp' }}
-                </b-button>
-              </template>
-              <template v-else>
-                <b-pagination
-                  v-if="pdf"
-                  v-model="page"
-                  :total-rows="pages"
-                  :per-page="1"
-                  align="center"
-                  class="my-0"
-                  first-number
-                  last-number
-                  prev-class="prev-item"
-                  next-class="next-item"
-                />
-                <b-button variant="light" size="sm" @click="isStampPreview = !isStampPreview">
-                  <feather-icon :icon=" isStampPreview ? 'EyeOffIcon' : 'EyeIcon'"/> {{ isStampPreview ? "Close preview" : "Preview" }}
-                </b-button>
-                <b-button v-if="isStampPreview" variant="light" size="sm" @click="showPreviewModal">
-                  <feather-icon icon="EyeIcon"/> Preview in modal
-                </b-button>
-                <b-button variant="warning" size="sm" @click="$refs.modal.openModal(!information,{document_id: entity.document_id, ...information})">
-                  <feather-icon icon="Edit2Icon"/> Edit stamp
-                </b-button>
-                <b-button v-if="jcropActive" variant="danger" size="sm" @click="removeCropper">
-                  <feather-icon icon="Trash2Icon"/> Remove stamp
-                </b-button>
-                <b-button v-else variant="success" size="sm" @click="openStampDocument">
-                  <feather-icon icon="PlusIcon"/> Insert stamp
-                </b-button>
-                <b-button variant="primary" size="sm" @click="savePositions">
-                  <feather-icon icon="SaveIcon"/> Save
-                </b-button>
-              </template>
+            <div class="d-flex align-items-center justify-content-between flex-grow-1">
+              <div class="d-flex align-items-center">
+                <h5 class="d-inline-block font-weight-bold m-0 mr-50 text-truncate">
+                  {{ $store.state.document.previewDocument.document.document_name }}
+                </h5>
+                <b-badge
+                  v-if="!$store.state.document.previewDocument.col_stamp"
+                  v-b-tooltip.hover
+                  title="This document is linked to a ticket that is in a column that has the stamp disabled" variant="warning"
+                >
+                  Unable to be stamped <feather-icon icon="InfoIcon" />
+                </b-badge>
+                <b-badge
+                  v-else-if="$store.state.document.previewDocument.document.document_already_stamp" variant="success"
+                >
+                  Stamped <feather-icon icon="CheckIcon" />
+                </b-badge>
+              </div>
+              <div class="d-flex align-items-center text-white" style="gap: 8px">
+                <template v-if="!isPreview">
+                  <b-button variant="light" size="sm" @click="downloadDocument">
+                    <feather-icon icon="DownloadCloudIcon"/> Download
+                  </b-button>
+                  <b-button v-if="isColHasStamp" variant="dark" size="sm" @click="openStampDocument">
+                    <feather-icon icon="FeatherIcon"/> {{ isDocStamped ? 'Update stamp' : 'Stamp' }}
+                  </b-button>
+                </template>
+                <template v-else>
+                  <b-pagination
+                    v-if="pdf"
+                    v-model="page"
+                    :total-rows="pages"
+                    :per-page="1"
+                    align="center"
+                    class="my-0"
+                    first-number
+                    last-number
+                    prev-class="prev-item"
+                    next-class="next-item"
+                  />
+                  <b-button variant="light" size="sm" @click="isStampPreview = !isStampPreview">
+                    <feather-icon :icon=" isStampPreview ? 'EyeOffIcon' : 'EyeIcon'"/> {{ isStampPreview ? "Close preview" : "Preview" }}
+                  </b-button>
+                  <b-button v-if="isStampPreview" variant="light" size="sm" @click="showPreviewModal">
+                    <feather-icon icon="EyeIcon"/> Preview in modal
+                  </b-button>
+                  <b-button variant="warning" size="sm" @click="$refs.modal.openModal(!information,{document_id: entity.document_id, ...information})">
+                    <feather-icon icon="Edit2Icon"/> Edit stamp
+                  </b-button>
+                  <b-button v-if="jcropActive" variant="danger" size="sm" @click="removeCropper">
+                    <feather-icon icon="Trash2Icon"/> Remove stamp
+                  </b-button>
+                  <b-button v-else variant="success" size="sm" @click="openStampDocument">
+                    <feather-icon icon="PlusIcon"/> Insert stamp
+                  </b-button>
+                  <b-button variant="primary" size="sm" @click="savePositions">
+                    <feather-icon icon="SaveIcon"/> Save
+                  </b-button>
+                </template>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div id="document-wrapper" class="d-flex justify-content-center bg-dark border border-secondary" :class="{ isStampPreview }">
-        <div v-show="!isPreview" class="document_body_preview">
-          <iframe
-            ref="iframeDocPreview"
-            style="height: 100%; width: 100%; border: 0"
-            title="Preview"
-            :src="get_link_document"
-          />
+        <div id="document-wrapper" class="d-flex justify-content-center bg-dark border border-secondary" :class="{ isStampPreview }">
+          <div v-show="!isPreview" class="document_body_preview">
+            <iframe
+              ref="iframeDocPreview"
+              style="height: 100%; width: 100%; border: 0"
+              title="Preview"
+              :src="get_link_document"
+            />
+          </div>
+          <div id="target" ref="target" :class="isPreview ? 'd-inline-block' : 'd-none'" class="position-relative mx-auto">
+            <canvas id="canvas" width="500" height="500"/>
+          </div>
         </div>
-        <div id="target" ref="target" :class="isPreview ? 'd-inline-block' : 'd-none'" class="position-relative mx-auto">
-          <canvas id="canvas" width="500" height="500"/>
-        </div>
+        <generic-modal ref="modal" table="document_stamp_information" :definition="document_stamp_information_def"
+                      :fetch-data="false" table-definition-key="document_stamp_information"
+                      :title="$t('headline~stamp~set_informations')" @reload-table="onInformationSaved"/>
       </div>
-      <generic-modal ref="modal" table="document_stamp_information" :definition="document_stamp_information_def"
-                     :fetch-data="false" table-definition-key="document_stamp_information"
-                     :title="$t('headline~stamp~set_informations')" @reload-table="onInformationSaved"/>
-    </div>
-    <p v-else>
-      Ticket id needed
-    </p>
-    <div v-show="isPreviewModalOpen" id="preview-modal-wrapper" class="isStampPreview" @click="closeStampDocumentPreview" />
-  </b-overlay>
+      <p v-else>
+        Ticket id needed
+      </p>
+      <div v-show="isPreviewModalOpen" id="preview-modal-wrapper" class="isStampPreview" @click="closeStampDocumentPreview" />
+    </b-overlay>
+  </div>
 </template>
 
 <style lang="scss">
