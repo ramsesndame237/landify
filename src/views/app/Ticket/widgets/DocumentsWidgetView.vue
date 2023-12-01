@@ -119,7 +119,7 @@ export default {
     },
     onViewDocument(document) {
       this.$router.push({
-        path: `/app/preview/document?ticket_id=${this.ticket_id || ''}&document_id=${document?.document_id || ''}`,
+        path: `/app/preview/document?document_id=${document?.document_id || ''}`,
         params: { document, ticket_id: this.ticket_id },
       })
       this.$store.dispatch('document/createDocumentPreview',
