@@ -167,7 +167,7 @@ export default {
               'ticket_name',
               'column_has_stamp',
               'team_type',
-              'ticket_closed',
+              'ticket_closed', 'ticket_deadline_status', 'priority_deadline_value',
               'ticket_progress', 'ticket_id_group', 'ticket_name_group',
               'priority_id', 'priority_name', 'priority_color', 'priority_smiley',
               'invoice_id', 'invoice_number',
