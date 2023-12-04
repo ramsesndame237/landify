@@ -629,9 +629,9 @@ export default {
       { key: 'column_description', type: 'textarea' },
       { key: 'column_is_qualitygate', type: 'boolean' },
       { key: 'column_has_stamp', type: 'boolean' },
-      {
-        key: 'default_value_id', type: 'list', list: 'defaultvalue', alwaysNew: true, onlyForm: true,
-      },
+      // {
+      //   key: 'default_value_id', type: 'list', list: 'defaultvalue', alwaysNew: true, onlyForm: true,
+      // },
       {
         key: 'team_id', type: 'list', list: 'team', listLabel: 'team_name', required: false,
       },
