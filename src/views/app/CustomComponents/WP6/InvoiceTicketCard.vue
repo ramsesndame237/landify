@@ -14,20 +14,6 @@
       <h4 class="font-weight-bolder text-truncate mb-0 ml-1" style="color: #ccc; font-size: 15px"
           :title="ticket.ticket_name">
         {{ ticket.ticket_name }}</h4>
-      <!--      <b-dropdown variant="link-" toggle-class="p-0" right no-caret class="ml-auto">-->
-      <!--        <template v-slot:button-content>-->
-      <!--          <feather-icon icon="MoreHorizontalIcon"/>-->
-      <!--        </template>-->
-      <!--        <b-dropdown-item @click="$emit('moredetails')">-->
-      <!--          {{ $t('button~moredetails') }}-->
-      <!--        </b-dropdown-item>-->
-      <!--        <b-dropdown-item @click="$emit('assign')">-->
-      <!--          {{ $t('button~assignto') }}-->
-      <!--        </b-dropdown-item>-->
-      <!--        <b-dropdown-item @click="toggleTicket(ticket)">-->
-      <!--          {{ $t(ticket.ticket_closed ? 'button~ticket~reopen' : 'button~ticket~close') }}-->
-      <!--        </b-dropdown-item>-->
-      <!--      </b-dropdown>-->
     </div>
     <p class="text-truncate" :title="ticket.ticket_description">
       {{ ticket.ticket_description }}
@@ -50,10 +36,9 @@
       <span :class="deadlineColor?('text-'+deadlineColor):''">{{ deadlineForHuman }}</span>
       <b-icon-calendar-date :class="'ml-auto '+ (deadlineColor?('text-'+deadlineColor):'')"/>
     </div>
-    <div v-if="false" class="d-flex">
-      <strong class="mr-1">{{ $t('attribute.ticket_deadline_offset') | title }}:</strong>
-      <span :class="columnDeadlineColor?('text-'+columnDeadlineColor):''">{{ columnDeadlineForHuman }}</span>
-      <b-icon-calendar-date :class="'ml-auto '+ (columnDeadlineColor?('text-'+columnDeadlineColor):'')"/>
+    <div class="d-flex">
+      <strong class="mr-1">{{ $t('ticket~deadline~status') | title }}:</strong>
+      <span :class="deadlineColor ? ('text-' + deadlineColor) : ''">{{ deadlineStatus }}</span>
     </div>
     <div class="d-flex justify-content-between mt-2 align-items-center" >
       <template v-if="false">
@@ -181,14 +166,8 @@ import {
   BAvatarGroup,
   BAvatar,
   BButton,
-  BIconPaperclip,
-  BProgress,
-  BIconCheck,
-  BIconClockFill,
   BIconCalendarDate,
-  BDropdown, BDropdownItem,
 } from 'bootstrap-vue'
-import CustomHorizontalProgress from '@/views/app/CustomComponents/CustomHorizontalProgress'
 import moment from 'moment'
 import { mapGetters } from 'vuex'
 import TicketMixin from '@/views/app/Kanban/TicketMixin'
@@ -197,6 +176,7 @@ import FloatingActionButton from '@/components/FloatingActionButton.vue'
 import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin'
 import SubticketTr from '@/views/app/Ticket/Subticket/SubticketTr.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
+import bussinessMoment from 'moment-business-time'
 
 export default {
   name: 'InvoiceTicketCard',
@@ -204,17 +184,10 @@ export default {
     GenericModal,
     SubticketTr,
     FloatingActionButton,
-    BIconPaperclip,
     BAvatar,
     BAvatarGroup,
     BButton,
-    BProgress,
-    BIconCheck,
-    BIconClockFill,
     BIconCalendarDate,
-    BDropdown,
-    BDropdownItem,
-    CustomHorizontalProgress,
   },
   filters: {
     format(val) {
@@ -237,6 +210,7 @@ export default {
       itemOver: null,
       topFloatElement: 0,
       leftFloatElement: 0,
+      deadlineColor: '',
       subticketsForm: [],
       entity: {
       },
@@ -263,21 +237,19 @@ export default {
       }
       return 'None'
     },
-    deadlineColor() {
-      if (this.now.isAfter(this.deadline_red)) return 'danger'
-      if (this.now.isAfter(this.deadline_yellow)) return 'warning'
-      return 'success'
-    },
-    columnDeadlineColor() {
-      if (this.now.isAfter(this.column_deadline_red)) return 'danger'
-      if (this.now.isAfter(this.column_deadline_yellow)) return 'warning'
-      return 'success'
-    },
     deadlineForHuman() {
-      return this.deadline_yellow.from(this.now)
+      return formatDate(this.deadline_yellow)
     },
-    columnDeadlineForHuman() {
-      return this.column_deadline_yellow.from(this.now)
+    deadlineStatus() {
+      const ticketState = this.getDeadlineStatus(this.ticket)
+      this.computeDeadlineColor(ticketState)
+      if (ticketState <= 45) {
+        return 'On Time'
+      }
+      if (ticketState > 45 && ticketState <= 85) {
+        return 'Due Soon'
+      }
+      return 'Overdue'
     },
     isTicket() {
       return this.ticket.ticket_id_group === null
@@ -294,6 +266,22 @@ export default {
     },
   },
   methods: {
+    computeDeadlineColor(ticketState) {
+      if (ticketState <= 45) {
+        this.deadlineColor = 'success'
+      } else if (ticketState > 45 && ticketState <= 85) {
+        this.deadlineColor = 'warning'
+      } else { this.deadlineColor = 'danger' }
+    },
+    getDeadlineStatus(ticket) {
+      const { ticket_creation_time, priority_deadline_value } = ticket
+      const elapseHourFromTicketCreationDate = bussinessMoment()
+        .workingDiff(moment(ticket_creation_time), 'hours', true)
+
+      const defaultDeadlineValue = priority_deadline_value || 48
+
+      return (elapseHourFromTicketCreationDate * 100) / defaultDeadlineValue
+    },
     formatDate,
     onmouseAction(event, value) {
       this.leftFloatElement = event.clientX

@@ -1,29 +1,27 @@
 <template>
-  <b-overlay :show="loading">
-    <b-table-simple striped responsive :busy="loading">
-      <template #table-busy>
-        <div class="text-center text-danger">
-          <b-spinner class="align-middle"/>
-          <strong class="ml-1">{{ $t('table~message~loading') }}</strong>
-        </div>
-      </template>
-      <b-thead>
-        <b-th>{{ $t('attribute.' + labelKey) }}</b-th>
-        <b-th v-for="(priority, index) in priorities" :key="index">
-          {{ priority }}
-        </b-th>
-      </b-thead>
-      <b-tbody>
-        <b-tr v-for="(row,i) in rows" :key="i">
-          <b-td>{{ row.column[labelKey] }}</b-td>
-          <b-td v-for="(priority, idx) in row.priorities" :key="idx">
-            <b-form-input v-if="isEditing" v-model="priority.onEditValue" size="sm" type="number" />
-            <span v-else>{{ `${priority.priority_deadline_value} h` }}</span>
-          </b-td>
-        </b-tr>
-      </b-tbody>
-    </b-table-simple>
-  </b-overlay>
+  <b-table-simple striped responsive :busy.sync="loading">
+    <template #table-busy>
+      <div class="text-center text-danger">
+        <b-spinner class="align-middle"/>
+        <strong class="ml-1">{{ $t('table~message~loading') }}</strong>
+      </div>
+    </template>
+    <b-thead>
+      <b-th>{{ $t('attribute.' + labelKey) }}</b-th>
+      <b-th v-for="(priority, index) in priorities" :key="index">
+        {{ priority }}
+      </b-th>
+    </b-thead>
+    <b-tbody>
+      <b-tr v-for="(row,i) in rows" :key="i">
+        <b-td>{{ row.column[labelKey] }}</b-td>
+        <b-td v-for="(priority, idx) in row.priorities" :key="idx">
+          <b-form-input v-if="isEditing" v-model="priority.onEditValue" size="sm" type="number" />
+          <span v-else>{{ `${priority.priority_deadline_value} h` }}</span>
+        </b-td>
+      </b-tr>
+    </b-tbody>
+  </b-table-simple>
 </template>
 
 <script>
@@ -85,15 +83,15 @@ export default {
         })),
       }
 
+      this.loading = true
       try {
-        this.loading = true
         const response = await this.$http.put('/boards/priority-deadline-value-columns-board', payload)
         this.rows = response.data
         this.isEditing = !this.isEditing
-        this.$successToast('success~operation~alert')
+        this.$successToast(this.$t('success~operation~alert'))
       } catch (error) {
         console.log({ error })
-        this.$errorToast('error~operation~alert')
+        this.$errorToast(this.$t('error~operation~alert'))
       } finally {
         this.loading = false
       }

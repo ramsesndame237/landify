@@ -56,7 +56,7 @@ export default {
       ],
     },
     {
-      title: 'Priority',
+      title: 'headline~columnpriority~tab',
       create: false,
       delete: false,
       search: false,
