@@ -28,8 +28,7 @@
       ref="dataTable"
       url="/tickets/slims"
       :columns="cols"
-      :on-update-click="(row) => row.ticket_id && $router.push(`/app/table/ticket/view/${row.ticket_id}?edit=true`)"
-      :on-details-click="(row) => row.ticket_id && $router.push(`/app/table/ticket/view/${row.ticket_id}`)"
+      :on-row-click="(row) => row.ticket_id && $router.push(`/app/table/ticket/view/${row.ticket_id}`)"
       :include-in-query="currentFilterData"
       :bar-actions="[
         {
