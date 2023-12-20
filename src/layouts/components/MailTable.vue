@@ -16,7 +16,7 @@
             Ticket Id
           </b-th>
           <b-th class="text-center">
-             New ticket?
+            Create new subticket ?
           </b-th>
           <b-th class="text-center">
             Contract Id
