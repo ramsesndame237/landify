@@ -28,7 +28,7 @@
       </div>
     </b-td>
     <b-td class="td-form">
-      <field v-if="visible" :field="posIdField" :entity="item" :disabled="item.ticket_id || is_dismissed || is_done"/>
+      <field v-if="visible" :field="posIdField" :entity="item" :disabled="!!item.ticket_id || is_dismissed || is_done"/>
       <router-link v-if="is_done && item.pos_id" target="_blank"
                    :to="{ name: 'table-view', params: { table: 'pos', id: item.pos_id } }">
         {{ getPosName() }}
@@ -54,12 +54,12 @@
     <b-td>
       <b-form-checkbox v-if="visible" :key="`checkbox-new-ticket-for-item-${item.email_id || item.document_id}`"
                        v-model="shouldCreateSubTicket" style="transform: translateY(-6px)"
-                       :disabled="!item.ticket_id || is_dismissed || is_done"/>
+                       :disabled="!!item.ticket_id || is_dismissed || is_done"/>
       <b-form-checkbox v-else :checked="!!item.create_subticket" style="transform: translateY(-6px)" disabled/>
     </b-td>
     <b-td class="td-form">
       <field v-if="visible" ref="contract" :field="contractIdField" :entity="item"
-             :disabled="item.ticket_id || is_dismissed|| is_done"/>
+             :disabled="!!item.ticket_id || is_dismissed|| is_done"/>
       <router-link v-if="is_done" target="_blank"
                    :to="{name: 'table-view', params: {table: 'contract',id: item.contract_id}}">
         {{ getContractName() }}
@@ -155,6 +155,11 @@ export default {
         },
         customFilter: {
           ticket_closed: 0,
+        },
+        handleFieldChange: (newValue, oldValue, entity, vm) => {
+          const { ticket_contract_id, board_id } = vm.selectedValue
+          vm.$set(entity, 'contract_id', ticket_contract_id)
+          vm.$set(entity, 'board_id', board_id)
         },
         // optionWithTooltipDetail: true,
       },
@@ -334,11 +339,9 @@ export default {
           const list = this.$store.state.table.listCache.board
           if (!list) return
           const el = list?.find(e => e.documenttype_id === val)
-          if (el) {
+          if (el && this.item.board_id === null) {
             this.$set(this.item, 'board_id', el.board_id)
           }
-        } else {
-          this.$set(this.item, 'board_id', null)
         }
       }
     },
