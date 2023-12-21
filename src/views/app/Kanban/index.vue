@@ -208,6 +208,7 @@ export default {
       const deadline_red = now.clone().addWorkingTime(column.default_deadline_red, 'hours').format('YYYY-MM-DD HH:mm:ss')
       this.$refs.modal.openModal(true, {
         column_id: column.column_id,
+        board_id: column.board_id,
         ticket_deadline_yellow: deadline_yellow,
         ticket_deadline_red: deadline_red,
         ticket_planned_treatment_week: 'KW42',
