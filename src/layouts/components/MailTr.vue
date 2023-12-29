@@ -54,7 +54,7 @@
     <b-td>
       <b-form-checkbox v-if="visible" :key="`checkbox-new-ticket-for-item-${item.email_id || item.document_id}`"
                        v-model="shouldCreateSubTicket" style="transform: translateY(-6px)"
-                       :disabled="!!item.ticket_id || is_dismissed || is_done"/>
+                       :disabled="!item.ticket_id || is_dismissed || is_done"/>
       <b-form-checkbox v-else :checked="!!item.create_subticket" style="transform: translateY(-6px)" disabled/>
     </b-td>
     <b-td class="td-form">
