@@ -31,17 +31,17 @@ export default {
     {
       key: 'recurringpayment_sum_per_month',
       hideOnIndex: true,
-      visible: visibleByRecurringPaymentType([1, 3, 4, 5, 6, 7]),
+      visible: visibleByRecurringPaymentType([1, 3, 2, 5, 6, 7]),
     },
     {
       key: 'recurringpayment_condition_percentage',
       hideOnIndex: true,
-      visible: visibleByRecurringPaymentType([2, 5]),
+      visible: visibleByRecurringPaymentType([4, 5]),
     },
     {
       key: 'recurringpayment_percentage',
       hideOnIndex: true,
-      visible: visibleByRecurringPaymentType([2]),
+      visible: visibleByRecurringPaymentType([4]),
     },
     { key: 'recurringpayment_begin_date', type: 'date', hideOnIndex: true },
     { key: 'recurringpayment_end_date', type: 'date', hideOnIndex: true },
