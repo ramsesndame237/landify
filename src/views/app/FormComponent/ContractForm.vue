@@ -111,7 +111,7 @@ export default {
                   <b-button href="#" :disabled="tabIndex === 0" variant="primary" @click="tabIndex--">
                     Previous
                   </b-button>
-                  <b-button v-if="tabIndex < 2" href="#" variant="primary" @click="tabIndex++">
+                  <b-button v-if="tabIndex < 3" href="#" variant="primary" @click="tabIndex++">
                     Next
                   </b-button>
                 </div>

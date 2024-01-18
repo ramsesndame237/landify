@@ -14,7 +14,7 @@ export default {
     { key: 'contract_name', size: 40, cols: 6 },
     {
       key: 'contracttype_id',
-      type: 'list',
+      type: 'custom_list',
       size: 40,
       cols: 6,
       list: 'contracttype',
@@ -24,7 +24,7 @@ export default {
     },
     {
       key: 'customergroup_id',
-      type: 'list',
+      type: 'custom_list',
       size: 40,
       cols: 6,
       list: 'customergroup',
@@ -35,7 +35,7 @@ export default {
     },
     {
       key: 'company_id',
-      type: 'list',
+      type: 'custom_list',
       size: 40,
       cols: 6,
       list: 'frontend_2_2_3_1',
@@ -47,27 +47,21 @@ export default {
     },
     {
       key: 'pos_id',
-      type: 'list',
+      type: 'custom_list',
       size: 40,
       cols: 6,
       list: 'pos',
-      entityCustomEndPoint: '/pos',
       listLabel: 'pos_name',
       hideOnIndex: true,
       hideOnUpdate: true,
-      handleFieldChange: (newValue, oldValue, entity, vm) => {
-        const { selectedValue } = vm
-        vm.$set(entity, 'location_id', selectedValue.location_id)
-      },
     },
     {
       key: 'location_id',
       size: 40,
       cols: 6,
       listLabel: 'location_name',
-      type: 'list',
-      list: 'frontend_3_1_3_7',
-      relationEntity: 'contract_location_rel',
+      disabled: true,
+      // relationEntity: 'contract_location_rel',
       filter_key: 'pos_id',
       hideOnIndex: true,
       hideOnUpdate: true,
@@ -171,7 +165,7 @@ export default {
       list: 'frontend_2_1_3_8',
       listLabel: 'pos_name',
       filter_key: 'company_id',
-      hideOnUpdate: false,
+      hideOnUpdate: true,
       hideOnCreate: true,
       hideOnIndex: true,
 
@@ -435,7 +429,7 @@ export default {
       entityView: 'partnercompany',
       fields: [
         // { key: 'area_id' },
-        { key: 'location_id' },
+        // { key: 'location_id' },
         // { key: 'partnercompany_id' },
         { key: 'partnercompany_name' },
         { key: 'partnercompany_shortname' },
@@ -777,7 +771,7 @@ export default {
       }
 
       if (data.pos.length > 0) {
-        data.pos_id = data.pos[0].pos_id
+        data.pos_id = data?.pos_id ?? data.pos[0].pos_id
         data.pos_name = data.pos[0].pos_name
       }
 

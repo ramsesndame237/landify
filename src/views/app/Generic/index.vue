@@ -28,9 +28,9 @@
       <!--                 hide-top-bar="true" :resolve-data="data =>data.data.data || data.data || data.items" :custom-actions="definition.custom_actions"-->
       <!--                 :hidde-filter-bar="true"/>-->
     </b-card>
-    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"
+    <generic-modal v-if="definition.useModalGeneric || definition.useModalGeneric === undefined" ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"
                    with-continue :table-definition-key="table" :title="`headline~${table}~new`"
-                   @reload-table="$refs.table.reload()"/>
+                   @reload-table="$refs.table.reload()" />
     <SidebarModalComponent ref="sidebarComponent" :title="`headline~${table}~new`" :definition="definition"
                            :options="definition.options || null" :table-definition-key="table" :table="table">
       <div slot="customHeader" class="header-customer mb-3 d-flex align-items-center justify-content-center">
@@ -124,6 +124,9 @@ export default {
       },
     })
   },
+  mounted() {
+    console.log('this is the entity definition', this.definition)
+  },
   methods: {
     getFilterCount() {
       const obj = this.$refs.filter ? this.$refs.filter.getFinalData() : this.initialFilterData
@@ -143,8 +146,14 @@ export default {
       this.$refs.modal.openModal(false, entity, `headline~${this.definition.entityForm || this.definition.entity}~detail`)
     },
     onNewElement() {
+      console.log('this is the value of the create modal', this.definition.createModal)
       if (this.definition.createModal === 'sidebar') this.$refs.sidebarComponent.openSidebarComponent()
-      else if (this.useModalToCreate) this.$refs.modal.openModal(true, {})
+      else if (this.definition.createModal === 'otherPage') {
+        this.$router.push({
+          name: 'table-form',
+          params: { table: this.table },
+        })
+      } else if (this.useModalToCreate) this.$refs.modal.openModal(true, {})
       else {
         this.$router.push({
           name: 'table-form',
