@@ -1,6 +1,6 @@
 import { getContractCriteriaFields } from '@/table/utils'
 import _ from 'lodash'
-import router from "@/router";
+import router from '@/router'
 
 export default {
   // entity: 'frontend_3_4_1_1',
@@ -14,7 +14,7 @@ export default {
     { key: 'contract_name', size: 40, cols: 6 },
     {
       key: 'contracttype_id',
-      type: 'custom_list',
+      type: 'list',
       size: 40,
       cols: 6,
       list: 'contracttype',
@@ -24,7 +24,7 @@ export default {
     },
     {
       key: 'customergroup_id',
-      type: 'custom_list',
+      type: 'list',
       size: 40,
       cols: 6,
       list: 'customergroup',
@@ -35,7 +35,7 @@ export default {
     },
     {
       key: 'company_id',
-      type: 'custom_list',
+      type: 'list',
       size: 40,
       cols: 6,
       list: 'frontend_2_2_3_1',
@@ -47,21 +47,27 @@ export default {
     },
     {
       key: 'pos_id',
-      type: 'custom_list',
+      type: 'list',
       size: 40,
       cols: 6,
       list: 'pos',
+      entityCustomEndPoint: '/pos',
       listLabel: 'pos_name',
       hideOnIndex: true,
       hideOnUpdate: true,
+      handleFieldChange: (newValue, oldValue, entity, vm) => {
+        const { selectedValue } = vm
+        vm.$set(entity, 'location_id', selectedValue.location_id)
+      },
     },
     {
       key: 'location_id',
       size: 40,
       cols: 6,
       listLabel: 'location_name',
-      disabled: true,
-      // relationEntity: 'contract_location_rel',
+      type: 'list',
+      list: 'frontend_3_1_3_7',
+      relationEntity: 'contract_location_rel',
       filter_key: 'pos_id',
       hideOnIndex: true,
       hideOnUpdate: true,
@@ -112,7 +118,7 @@ export default {
     {
       key: 'owner_name',
       // hideOnForm: true,
-      cols:6,
+      cols: 6,
       category: 'patner',
       formatter: (value, key, item) => {
         const array = item.owners
@@ -126,7 +132,7 @@ export default {
       key: 'manager_name',
       // hideOnForm: true,
       category: 'patner',
-      cols:6,
+      cols: 6,
       formatter: (value, key, item) => {
         const array = item.managers
         const managerName = array.length > 0 ? array.map(obj => obj.manager_name) : []
@@ -167,7 +173,7 @@ export default {
       filter_key: 'company_id',
       hideOnUpdate: false,
       hideOnCreate: true,
-      hideOnIndex: true
+      hideOnIndex: true,
 
     },
 
@@ -275,8 +281,8 @@ export default {
       category: 'date',
       hideOnCreate: true,
     },
-    { key: 'contract_sum_allarea_rentalspace', hideOnForm: true, hideOnIndex: true,},
-    { key: 'contract_sum_allarea_allocationspace', hideOnForm: true,hideOnIndex: true, },
+    { key: 'contract_sum_allarea_rentalspace', hideOnForm: true, hideOnIndex: true },
+    { key: 'contract_sum_allarea_allocationspace', hideOnForm: true, hideOnIndex: true },
 
     { key: 'contract_count_area', hideOnForm: true },
     {
@@ -429,7 +435,7 @@ export default {
       entityView: 'partnercompany',
       fields: [
         // { key: 'area_id' },
-        // { key: 'location_id' },
+        { key: 'location_id' },
         // { key: 'partnercompany_id' },
         { key: 'partnercompany_name' },
         { key: 'partnercompany_shortname' },
