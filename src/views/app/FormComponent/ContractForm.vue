@@ -29,8 +29,8 @@ export default {
         },
         {
           icon: 'UserIcon',
-          title: 'Patner details',
-          subtitle: 'Patner of contract',
+          title: 'Partner details',
+          subtitle: 'Partner of contract',
           content: this.formFields.filter(field => field.category === 'patner'),
           errors: 0,
         },
@@ -77,16 +77,16 @@ export default {
     <b-overlay :show="loading">
       <validation-observer ref="form" v-slot="{ passes }" slim>
         <b-form autocomplete="off" @submit.prevent="passes(emitSubmit)">
-          <b-tabs ref="contract_tabs" v-model="tabIndex"  vertical card nav-wrapper-class="col-4 text-left tabs_wrapper" >
-            <b-tab  v-for="(tab,idx) in tabsData" :key="idx" title-item-class="mb-3">
+          <b-tabs ref="contract_tabs" v-model="tabIndex" vertical card nav-wrapper-class="col-4 text-left tabs_wrapper" >
+            <b-tab v-for="(tab,idx) in tabsData" :key="idx" title-item-class="mb-3">
               <template #title>
                 <div class="row card_tabs_container" >
-                  <feather-icon  style="transition: ease-in-out .3s" :size="tabIndex === idx ? '50' :'40'" color="primary" :icon="tab.icon" :class="['mr-1', tabIndex === idx ? 'btn-primary rounded-sm p-1' : '' ]" />
+                  <feather-icon style="transition: ease-in-out .3s" :size="tabIndex === idx ? '50' :'40'" color="primary" :icon="tab.icon" :class="['mr-1', tabIndex === idx ? 'btn-primary rounded-sm p-1' : '' ]" />
                   <div class="">
-                    <h5 :class="['font-weight-bolder',tabIndex === idx ?  'text-primary' : '']"  style="transition: ease-in-out .3s">
+                    <h5 :class="['font-weight-bolder',tabIndex === idx ? 'text-primary' : '']" style="transition: ease-in-out .3s">
                       {{ tab.title }}
                     </h5>
-                    <p  style="transition: ease-in-out .3s" :class="['mb-0',tabIndex=== idx ?  'text-primary' : '']">
+                    <p style="transition: ease-in-out .3s" :class="['mb-0',tabIndex=== idx ? 'text-primary' : '']">
                       {{ tab.subtitle }}
                     </p>
                   </div>
@@ -111,7 +111,7 @@ export default {
                   <b-button href="#" :disabled="tabIndex === 0" variant="primary" @click="tabIndex--">
                     Previous
                   </b-button>
-                  <b-button v-if="tabIndex < 2" href="#" variant="primary" @click="tabIndex++">
+                  <b-button v-if="tabIndex < 3" href="#" variant="primary" @click="tabIndex++">
                     Next
                   </b-button>
                 </div>
@@ -157,6 +157,5 @@ export default {
     align-items: center;
   }
 }
-
 
 </style>

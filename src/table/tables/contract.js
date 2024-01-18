@@ -1,6 +1,6 @@
 import { getContractCriteriaFields } from '@/table/utils'
 import _ from 'lodash'
-import router from "@/router";
+import router from '@/router'
 
 export default {
   // entity: 'frontend_3_4_1_1',
@@ -112,7 +112,7 @@ export default {
     {
       key: 'owner_name',
       // hideOnForm: true,
-      cols:6,
+      cols: 6,
       category: 'patner',
       formatter: (value, key, item) => {
         const array = item.owners
@@ -126,7 +126,7 @@ export default {
       key: 'manager_name',
       // hideOnForm: true,
       category: 'patner',
-      cols:6,
+      cols: 6,
       formatter: (value, key, item) => {
         const array = item.managers
         const managerName = array.length > 0 ? array.map(obj => obj.manager_name) : []
@@ -165,9 +165,9 @@ export default {
       list: 'frontend_2_1_3_8',
       listLabel: 'pos_name',
       filter_key: 'company_id',
-      hideOnUpdate: false,
+      hideOnUpdate: true,
       hideOnCreate: true,
-      hideOnIndex: true
+      hideOnIndex: true,
 
     },
 
@@ -275,8 +275,8 @@ export default {
       category: 'date',
       hideOnCreate: true,
     },
-    { key: 'contract_sum_allarea_rentalspace', hideOnForm: true, hideOnIndex: true,},
-    { key: 'contract_sum_allarea_allocationspace', hideOnForm: true,hideOnIndex: true, },
+    { key: 'contract_sum_allarea_rentalspace', hideOnForm: true, hideOnIndex: true },
+    { key: 'contract_sum_allarea_allocationspace', hideOnForm: true, hideOnIndex: true },
 
     { key: 'contract_count_area', hideOnForm: true },
     {
@@ -771,7 +771,7 @@ export default {
       }
 
       if (data.pos.length > 0) {
-        data.pos_id = data.pos[0].pos_id
+        data.pos_id = data?.pos_id ?? data.pos[0].pos_id
         data.pos_name = data.pos[0].pos_name
       }
 
