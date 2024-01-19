@@ -334,11 +334,13 @@ export default {
     let response
 
     try {
-      response = await vm.$http.post('/companies/', dataForServer)
+      const isUpdate = window.location.href?.split('?')[1]?.split('edit=')[1]?.split('&')[0] === 'true'
+      console.log({ hello: new URLSearchParams().entries() })
+      response = await vm.$http[isUpdate ? 'put' : 'post']('/companies/', dataForServer)
 
       console.log('Response from company creation', { response })
     } catch (err) {
-      vm.$errorToast('Error while creating the company')
+      vm.$errorToast('Error while saving the company')
       throw err
     }
 
