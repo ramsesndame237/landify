@@ -3,6 +3,7 @@ import { getUserData } from '@/auth/utils'
 export default {
   entityEndpoint: '/companies',
   primaryKey: 'company_id',
+  // createModal: 'otherPage',
   formComponent: () => import('@/views/app/CreateComponent/CompanyForm.vue'),
   /**
    * Cette fonction permettra d'effectuer un filtre sur l'entité de manière globale
@@ -29,90 +30,96 @@ export default {
       type: 'list',
       list: 'customergroup',
       listLabel: 'customergroup_name',
-      withPopup: true,
-      cols:12,
+      // withPopup: true,
+      cols: 12,
       relationEntity: 'customergroup_company_rel',
     },
     { key: 'company_name', cols: 6 },
     { key: 'company_shortname', cols: 6 },
-    { key: 'customergroup_name', sortable: true, hideOnForm: true },
-    {
-      key: 'address_id',
-      type: 'list',
-      category: 'adress',
-      list: 'address',
-      listLabel: 'address_street',
-      withNew: true,
-      alwaysNew: true,
-      onlyForm: true,
-      hideOnIndex: true,
-    },
-    {
-      key: 'contactdetails_id',
-      type: 'list',
-      list: 'contactdetails',
-      listLabel: 'contactdetails_email',
-      withNew: true,
-      alwaysNew: true,
-      hideOnIndex: true,
-      onlyForm: true,
-      category: 'contact',
-    },
-    {
-      key: 'companydetails_id',
-      type: 'list',
-      list: 'companydetails',
-      listLabel: 'companydetails_salestaxno',
-      withNew: true,
-      alwaysNew: true,
-      hideOnIndex: true,
-      cols:6,
-      onlyForm: true,
-    },
-    {
-      key: 'create_contactperson',
-      type: 'boolean',
-      category: 'patner',
-      hideOnUpdate: true,
-      hideOnIndex: true,
-      change: (entity, vm) => {
-        console.log('entity', entity)
-        if (entity.create_contactperson === 1) {
-          const companyAddressField = vm.$parent.$children[3]
-          const companyCityField = companyAddressField.getSubFields()[3]
+    // { key: 'customergroup_name', sortable: true, hideOnForm: true },
+    // {
+    //   key: 'address_id',
+    //   type: 'list',
+    //   category: 'adress',
+    //   list: 'address',
+    //   listLabel: 'address_street',
+    //   withNew: true,
+    //   alwaysNew: true,
+    //   onlyForm: true,
+    //   hideOnIndex: true,
+    // },
+    // {
+    //   key: 'contactdetails_id',
+    //   type: 'list',
+    //   list: 'contactdetails',
+    //   listLabel: 'contactdetails_email',
+    //   withNew: true,
+    //   alwaysNew: true,
+    //   hideOnIndex: true,
+    //   onlyForm: true,
+    //   category: 'contact',
+    // },
+    // {
+    //   key: 'companydetails_id',
+    //   type: 'list',
+    //   list: 'companydetails',
+    //   listLabel: 'companydetails_salestaxno',
+    //   withNew: true,
+    //   alwaysNew: true,
+    //   hideOnIndex: true,
+    //   cols: 12,
+    //   onlyForm: true,
+    //   category: 'price',
+    // },
+    // {
+    //   key: 'create_contactperson',
+    //   type: 'boolean',
+    //   category: 'contact',
+    //   hideOnUpdate: true,
+    //   hideOnIndex: true,
+    //   change: (entity, vm) => {
+    //     console.log('entity', entity)
+    //     if (entity.create_contactperson === 1) {
+    //       console.log('ici vm', vm)
+    //       const companyAddressField = vm.$parent.$children[3]
+    //       const companyCityField = companyAddressField.getSubFields()[3]
 
-          const contactPersonAddressField = vm.$parent.$children[7].$children[0].$children[7]
-          const contactPersonCityField = contactPersonAddressField.getSubFields()[3]
+    //       const contactPersonAddressField = vm.$parent.$children[7].$children[0].$children[7]
+    //       const contactPersonCityField = contactPersonAddressField.getSubFields()[3]
 
-          Object.keys(companyAddressField.subEntity).forEach(key => {
-            contactPersonAddressField.$set(contactPersonAddressField.subEntity, key, companyAddressField.subEntity[key])
-          })
+    //       Object.keys(companyAddressField.subEntity).forEach(key => {
+    //         contactPersonAddressField.$set(contactPersonAddressField.subEntity, key, companyAddressField.subEntity[key])
+    //       })
 
-          Object.keys(companyCityField.subEntity).forEach(key => {
-            contactPersonCityField.$set(contactPersonCityField.subEntity, key, companyCityField.subEntity[key])
-          })
-        }
-      },
-    },
-    {
-      key: 'contactperson_id',
-      type: 'list',
-      list: 'contactperson',
-      listLabel: 'contactperson_name',
-      withNew: true,
-      alwaysNew: true,
-      hideOnIndex: true,
-      onlyForm: true,
-      visible: entity => entity.create_contactperson === 1,
-    },
+    //       Object.keys(companyCityField.subEntity).forEach(key => {
+    //         contactPersonCityField.$set(contactPersonCityField.subEntity, key, companyCityField.subEntity[key])
+    //       })
+    //     }
+    //   },
+    //   hideOnForm: true,
+    // },
+    // // {
+    // //   key: 'contactperson_id',
+    // //   type: 'list',
+    // //   list: 'contactperson',
+    // //   listLabel: 'contactperson_name',
+    // //   withNew: true,
+    // //   alwaysNew: true,
+    // //   hideOnIndex: true,
+    // //   onlyForm: true,
+    // //   visible: entity => entity.create_contactperson === 1,
+    // // },
 
-    { key: 'city_name', sortable: true, hideOnForm: true },
-    { key: 'contactdetails_phone', sortable: true, hideOnForm: true },
-    { key: 'contactdetails_email', sortable: true, hideOnForm: true },
-    {
-      key: 'contactpersons_count', sortable: true, hideOnForm: true,
-    },
+    // { key: 'city_name', sortable: true, hideOnForm: true },
+    // { key: 'contactdetails_phone', sortable: true, hideOnForm: true },
+    // { key: 'contactdetails_email', sortable: true, hideOnForm: true },
+    // {
+    //   key: 'contactpersons_count', sortable: true, hideOnForm: true,
+    // },
   ],
+  default: {
+    company_template_coverletter_subject: 'Un Template de teste',
+  },
   relations: [
     {
       title: 'ticket',
@@ -308,4 +315,33 @@ export default {
     },
   ],
   note: 'frontend_0_8_11',
+  async submit(vm, entity) {
+    // const fieldsComponent = vm.getFieldComponents()
+    // const addressField = fieldsComponent.find(f => f.field.key === 'address_id')
+    // const companydetails = fieldsComponent.find(f => f.field.key === 'companydetails_id')
+    // const contactdetails = fieldsComponent.find(f => f.field.key === 'contactdetails_id')
+    // const cityField = addressField.getSubFields().find(f => f.field.key === 'city_id')
+
+    const dataForServer = {
+      ...entity,
+      // contactdetail: contactdetails.subEntity,
+      // companydetail: companydetails.subEntity,
+      // address: {
+      //   ...addressField.subEntity,
+      //   city: cityField.subEntity,
+      // },
+    }
+    let response
+
+    try {
+      response = await vm.$http.post('/companies/', dataForServer)
+
+      console.log('Response from company creation', { response })
+    } catch (err) {
+      vm.$errorToast('Error while creating the company')
+      throw err
+    }
+
+    return response
+  },
 }
