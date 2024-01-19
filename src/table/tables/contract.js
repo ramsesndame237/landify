@@ -171,7 +171,7 @@ export default {
       list: 'frontend_2_1_3_8',
       listLabel: 'pos_name',
       filter_key: 'company_id',
-      hideOnUpdate: false,
+      hideOnUpdate: true,
       hideOnCreate: true,
       hideOnIndex: true,
 
