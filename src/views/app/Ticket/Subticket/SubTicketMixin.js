@@ -18,6 +18,7 @@ export default {
       index = subTicketDef.fields.findIndex(f => f.key === 'contract_id')
       subTicketDef.fields.splice(index, 1)
       subTicketDef.submit = this.submitSubticket
+      subTicketDef.newEndpointCreate = '/tickets/subticket'
 
       return subTicketDef
     },
