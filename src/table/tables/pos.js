@@ -4,7 +4,7 @@ import { getUserData } from '@/auth/utils'
 export default {
   entity: 'frontend_3_1_1',
   primaryKey: 'pos_id',
-  createModal: 'sidebar',
+  createModal: 'modal',
   entityEndpoint: '/pos',
   filter: (item, vm) => {
     const user = getUserData()
@@ -40,7 +40,7 @@ export default {
     },
     {
       key: 'company_id',
-      type: 'custom_list',
+      type: 'list',
       list: 'company',
       cols: 12,
       listLabel: 'company_name',
