@@ -3,10 +3,11 @@ FROM node:14-alpine as build-stage
 RUN apk add --no-cache git
 WORKDIR /app
 COPY package*.json ./
-RUN yarn install
 COPY yarn.lock ./
+RUN yarn
+COPY . .
 #RUN eslint .
-RUN yarn run build
+RUN npm run build
 
 # production stage
 FROM nginx:stable-alpine as production-stage
