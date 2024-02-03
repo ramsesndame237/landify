@@ -5,11 +5,16 @@ import { mapGetters } from 'vuex'
 
 export default {
   data() {
-    const TICKET_PRIORITY = {
-      1: { label: 'Critical', key: 'critical', priorityMaxExecuteTime: 8 },
-      2: { label: 'High', key: 'high', priorityMaxExecuteTime: 24 },
-      3: { label: 'Normal', key: 'normal', priorityMaxExecuteTime: 48 },
-      4: { label: 'Low', key: 'low', priorityMaxExecuteTime: 72 },
+    const TICKET_DEADLINE_STATUS = {
+      before_deadline: {
+        text: this.$t('headline~dashboard~subframe~open_tickets_intime'), color: 'success',
+      },
+      critical_yellow: {
+        text: this.$t('headline~dashboard~subframe~open_tickets_afteryellow'), color: 'warning',
+      },
+      over_due_red: {
+        text: this.$t('headline~dashboard~subframe~open_tickets_afterred'), color: 'danger',
+      },
     }
     return {
       columns: [],
@@ -38,7 +43,7 @@ export default {
           return false
         },
       },
-      TICKET_PRIORITY,
+      TICKET_DEADLINE_STATUS,
     }
   },
   computed: {
@@ -167,14 +172,14 @@ export default {
               'ticket_name',
               'column_has_stamp',
               'team_type',
-              'ticket_closed', 'ticket_deadline_status', 'priority_deadline_value',
+              'ticket_closed', 'ticket_deadline_status', 'priority_deadline_value', 'ticket_deadline', 'ticket_priority_deadline_value',
               'ticket_progress', 'ticket_id_group', 'ticket_name_group',
               'priority_id', 'priority_name', 'priority_color', 'priority_smiley',
               'invoice_id', 'invoice_number',
               'contract_name', 'contract_id', 'company_name', 'company_id', 'pos_id', 'pos_name',
               'customergroup_id', 'customergroup_name', 'ticket_subticket_count', 'ticket_subticket_closed_count',
             ])
-            obj.columns = _.orderBy(r, 'ticket_move_time_in', 'desc').map(i => _.pick(i, ['ticket_id', 'column_id', 'column_name', 'rank_order', 'user_email_assigned', 'user_id', 'user_email', 'user_id_assigned', 'team_name', 'team_id', 'team_type', 'ticket_move_time_in', 'ticket_move_time_out', 'ticket_deadline_offset', 'ticket_deadline_offset_yellow', 'ticket_deadline_offset_red']))
+            obj.columns = _.orderBy(r, 'ticket_move_time_in', 'desc').map(i => _.pick(i, ['ticket_id', 'column_id', 'board_id', 'column_name', 'rank_order', 'user_email_assigned', 'user_id', 'user_email', 'user_id_assigned', 'team_name', 'team_id', 'team_type', 'ticket_move_time_in', 'ticket_move_time_out', 'ticket_deadline_offset', 'ticket_deadline_offset_yellow', 'ticket_deadline_offset_red']))
             obj.column_name = obj.columns[0].column_name
             return obj
           })
@@ -205,6 +210,45 @@ export default {
         })
     },
     async moveToColumn(ticket, column) {
+      this.isMovingTicket = true
+      try {
+        const previousColumn = ticket?.columns?.[0]
+
+        if (!previousColumn) {
+          throw new Error('Unknown error')
+        }
+
+        const payload = {
+          previous_column_id: previousColumn.column_id,
+          next_column_id: column.column_id,
+          board_id: column.board_id,
+          ticket_id: ticket.ticket_id,
+        }
+
+        const { data: updatedTicket } = await this.$http.post('/tickets/change-ticket-column', payload)
+
+        Object.keys(ticket).forEach(key => {
+          if (key in updatedTicket) {
+            ticket[key] = updatedTicket[key]
+          }
+        })
+
+        if (!ticket.columns) ticket.columns = []
+        ticket.columns.unshift(column)
+      } catch (e) {
+        this.$refs.kanbanRef.drake.cancel(true)
+        if (this.sourceModel && this.targetModel && this.movingNode) {
+          const elCopy = this.movingNode.cloneNode(true)
+
+          this.movingNode.remove()
+          this.sourceModel.prepend(elCopy)
+        }
+        this.$errorToast('Error while moving the ticket')
+      } finally {
+        this.isMovingTicket = false
+      }
+    },
+    async moveToColumnOld(ticket, column) {
       const now = moment()
       const user = getUserData()
       const deadline = now.clone().addWorkingTime(column.default_deadline_period || 0, 'hours').format('YYYY-MM-DD HH:mm:ss')
