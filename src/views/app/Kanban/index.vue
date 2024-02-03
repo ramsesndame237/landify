@@ -14,8 +14,10 @@
           <generic-filter ref="filter" vertical :table="table" :definition="definition" @filter="filter"/>
           <b-form-checkbox v-model="advanced" switch title="Advanced Mode"/>
           <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
-          <b-button v-b-tooltip.hover :title="showSubTickets ? 'Hide Subtasks' : 'Show Subtasks' " :variant="showSubTickets ? 'primary' : ''" class="mx-1 btn-icon" @click="showSubTickets = !showSubTickets">
-            <icon icon="mdi:subtasks" width="16" />
+          <b-button v-b-tooltip.hover :title="showSubTickets ? 'Hide Subtasks' : 'Show Subtasks' "
+                    :variant="showSubTickets ? 'primary' : ''" class="mx-1 btn-icon"
+                    @click="showSubTickets = !showSubTickets">
+            <icon icon="mdi:subtasks" width="16"/>
           </b-button>
           <b-button v-if="$can('create', table)" variant="primary" class="mr-1" block @click="createTicket()">
             {{ $t('button~newticket') }}
@@ -26,15 +28,15 @@
     </b-card>
     <div v-if="loading">
       <b-row>
-        <b-col lg="3" md="3" sm="2" v-for="(item,index) in 4">
+        <b-col v-for="(item,index) in 4" lg="3" md="3" sm="2">
           <div class="kanban-container">
             <div class="header-kaban">
-                <b-skeleton animation="wave" type="input"></b-skeleton>
+              <b-skeleton animation="wave" type="input"/>
             </div>
             <div class="body-kanban">
               <b-card>
                 <div v-for="(item,index) in 2" :class="[index ===1 ? 'mt-3' :'']">
-                  <b-skeleton-img  no-aspect height="250px"></b-skeleton-img>
+                  <b-skeleton-img no-aspect height="250px"/>
                 </div>
               </b-card>
 
@@ -43,10 +45,16 @@
         </b-col>
       </b-row>
     </div>
-    <kanban-board v-else :blocks="visibleTickets" :stages="stages" :config="config" status-prop="column_name"
+    <kanban-board v-show="!loading" ref="kanbanRef" :class="{ movingTicket: isMovingTicket }" :blocks="visibleTickets" :stages="stages" :config="config" status-prop="column_name"
                   id-prop="ticket_id" @update-block="updateBlock">
       <div v-for="stage in stages" :key="stage" :slot="stage"
            class="w-100 d-flex justify-content-between align-items-center">
+        <!-- <b-badge @click="()=>{
+          if(getColumnPendingData(stage) > 0){
+            $router.push({path:'/app/dashboard/issue/board/' + $route.params.id})
+          }
+        }" v-b-tooltip.hover title="Number of pending issues ticket" class="cursor-pointer" variant="warning">
+          {{ getColumnPendingData(stage) }}<span class="sr-only cursor-pointer">tickets</span></b-badge> -->
         <h2 :title="getColumnTitle(stage)">
           {{ stage }}
         </h2>
@@ -54,22 +62,30 @@
           <feather-icon v-if="isQualityGate(stage)" class="text-primary" icon="StarIcon"/>
         </div>
 
-        </div>
-        <div v-for="ticket in visibleTickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
-          <invoice-ticket-card v-if="ticket.ticket_id_group === null || showSubTickets" :advanced="advanced" :ticket="ticket" :team-users="teams.filter(team => team.team_id === ticket.columns[0].team_id)"
-                               @moredetails="$router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
-                               @assign="$refs.assign.openModal(ticket, userIdsOfTeam(ticket.columns[0].team_id))" @subticket-updated="loadBoardTickets" />
-        </div>
-      </kanban-board>
-    </b-overlay>
+      </div>
+      <div v-for="ticket in visibleTickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
+        <invoice-ticket-card v-if="ticket.ticket_id_group === null || showSubTickets" :advanced="advanced"
+                             :ticket="ticket"
+                             :team-users="teams.filter(team => team.team_id === ticket.columns[0].team_id)"
+                             @moredetails="$router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
+                             @assign="$refs.assign.openModal(ticket, userIdsOfTeam(ticket.columns[0].team_id))"
+                             @subticket-updated="loadBoardTickets"/>
+      </div>
+    </kanban-board>
     <generic-modal ref="modal" :table="table" :definition="definition" :table-definition-key="table"
-                  :title="$t('headline~ticket~newticket')" @reload-table="onNewTicket"/>
+                   :title="$t('headline~ticket~newticket')" @reload-table="onNewTicket"/>
     <assign-user-modal ref="assign" @reload="loadBoardTickets()"/>
+
+    <!-- <AlertErrorModal :show-error-box="showErrorBox" :ticket-value="ticketValue" ref="alertModal" @openReasonModal="$refs.errorModal.openModal()"/>
+    <ReasonErrorModal :loading-save-error="loadingSaveError"
+                      :ticket="{ticketName:ticketName,previousColumnName:previousColumnName,columnName:columnName}"
+                      @saveError="saveError" ref="errorModal" @comment="updateComment"/> -->
+
   </div>
 </template>
 <script>
 import {
-  BAvatarGroup, BAvatar, BButton, BCard, BFormInput, BFormSelect, BFormCheckbox,BSkeleton,BSkeletonImg
+  BButton, BCard, BFormInput, BFormSelect, BFormCheckbox, BSkeleton, BSkeletonImg, BFormTextarea,
 } from 'bootstrap-vue'
 // eslint-disable-next-line import/extensions
 import GenericModal from '@/views/app/Generic/modal'
@@ -77,7 +93,6 @@ import Table from '@/table'
 import InvoiceTicketCard from '@/views/app/CustomComponents/WP6/InvoiceTicketCard'
 import moment from 'moment-business-time'
 import {getUserData} from '@/auth/utils'
-import _ from 'lodash'
 import GenericFilter from '@/views/app/Generic/Filter'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal'
 import Fuse from 'fuse.js'
@@ -96,14 +111,36 @@ export default {
     BCard,
     BFormInput,
     BSkeleton,
-    BSkeletonImg
+    BSkeletonImg,
+    BFormTextarea
   },
   mixins: [TicketMixin],
   data() {
     return {
       table: 'ticket',
+      rollbackTickets: [],
+
+      sourceModel: null,
+      targetModel: null,
+      movingNode: null,
+
+      isMovingTicket: false,
+
       advanced: true,
+      showErrorBox: false,
+      ticketValue: null,
       search: '',
+      dismissSecs: 10,
+      dismissCountDown: 0,
+      ticketName: '',
+      columnName: '',
+      previousColumnName: '',
+      filterId: null,
+      urlApi: '/tickets/change-ticket-column',
+      boardIssueUrl: '/tickets/statistics/timing/board/',
+      comment: '',
+      loadingSaveError: false,
+      errorData: null,
       filterOptions: [
         {
           text: this.$t('header~board~status~open'), value: 0,
@@ -160,14 +197,67 @@ export default {
   },
   mounted() {
     this.loading = true
+    this.fetchIssueBoardData()
+    this.$refs.kanbanRef.drake.on('drop', (el, target, source) => {
+      this.sourceModel = source
+      this.targetModel = target
+      this.movingNode = el
+    })
     try {
       this.loadStages(this.board_id)
       this.loadBoardTickets(null, false)
+
     } finally {
       // this.loading = false
     }
   },
   methods: {
+    async fetchIssueBoardData() {
+      console.log("this is the fetch the issue data board ")
+      await this.$http.get(this.boardIssueUrl + this.$route.params.id).then((response) => {
+        console.log("this is the data of the issues board", response.data)
+        this.errorData = response.data
+      }).catch((error) => this.$errorToast('and error occured'))
+
+    },
+    updateComment(value){
+      console.log("this is the value", value)
+      this.comment = value
+    },
+    getColumnPendingData(stage) {
+      let numberOfPendingTicket = 0
+
+      const dataFind = this.errorData.find((issue) => issue.column_name === stage)
+      if (dataFind) {
+        numberOfPendingTicket = dataFind.column_stats.pending
+      }
+      return numberOfPendingTicket
+
+    },
+    async saveError() {
+      this.loadingSaveError = true
+      const server_send_data = {
+        previous_column_id: this.tickets.find(ticket => ticket.ticket_id === Number(this.filterId)).columns?.[0].column_id,
+        error_column_id: this.tickets.find(ticket => ticket.ticket_id === Number(this.filterId)).columns?.[1].column_id,
+        switch_action: "previous",
+        comment: this.comment,
+        board_id: this.$route.params.id,
+        error_board_id: this.$route.params.id,
+        ticket_id: this.tickets.find(ticket => ticket.ticket_id === Number(this.filterId)).ticket_id
+      }
+      await this.$http.post(this.urlApi, server_send_data).then((response) => {
+        this.$successToast('The error is successfuly send')
+        this.$refs.errorModal.hide()
+        this.comment = ''
+      }).catch((error) => this.$errorToast('And error occured')).finally(() => {
+        this.$refs.errorModal.hide()
+        this.loadingSaveError = false
+      })
+    },
+    showAlert() {
+      this.showErrorBox = true
+      // this.$refs.alertModal.openModal()
+    },
     async loadBoardTickets(data, loader = true) {
       if (loader) this.loading = true
       try {
@@ -197,7 +287,16 @@ export default {
       })
     },
     updateBlock(id, status) {
-      console.log(id, status, 'move')
+      const destinationColumn = this.tickets.find(ticket => ticket.ticket_id === Number(id)).columns?.[0]
+      const recepientColumn = this.columns.find(column => column.column_name === status)
+      this.ticketName = this.tickets.find(ticket => ticket.ticket_id === Number(id)).ticket_name
+      this.columnName = status
+      this.previousColumnName = destinationColumn.column_name
+      this.filterId = id
+      if (destinationColumn.rank_order > recepientColumn.rank_order) {
+        this.showAlert()
+        this.ticketValue = this.tickets.find(ticket => ticket.ticket_id === Number(id))
+      }
       this.moveToColumn(this.tickets.find(t => t.ticket_id === Number(id)), this.columns.find(c => c.column_name === status))
       // this.blocks.find(b => b.id === Number(id)).status = status;
     },
@@ -229,6 +328,10 @@ $on-hold: #FB7D44;
 $in-progress: #2A92BF;
 $needs-review: #F4CE46;
 $approved: #00B961;
+
+.alert {
+  background: $on-hold !important;
+}
 
 ul {
   list-style-type: none;
@@ -414,5 +517,10 @@ ul {
       font-weight: 600;
     }
   }
+}
+
+.movingTicket {
+  opacity: 0.5;
+  pointer-events: none;
 }
 </style>

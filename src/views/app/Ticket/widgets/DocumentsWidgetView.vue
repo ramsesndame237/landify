@@ -2,7 +2,7 @@
 import DataTable from '@/views/app/CustomComponents/DataTable/DataTable.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
 import Table from '@/table'
-import { getDocumentLinkPreview, getStampedDocumentLink } from '@/libs/utils'
+import { getDocumentLink, getDocumentLinkPreview, getStampedDocumentLink } from '@/libs/utils'
 import EditPageMixin from '@/views/app/Generic/EditPageMixin'
 import TicketMixin from '@/views/app/Kanban/TicketMixin'
 import { mapMutations } from 'vuex'
@@ -21,6 +21,8 @@ export default {
   },
   data() {
     return {
+      previewModalOpen: false,
+      currentDoc: null,
       isCreate: true,
       initialState: {},
       columDataDocument: [
@@ -71,7 +73,24 @@ export default {
       return this.isCreate ? { ...Table.document, customRequest: Table.document.customRequestCreate } : Table.document
     },
   },
+  watch: {
+    currentDoc(val) {
+      this.previewModalOpen = !!val
+    },
+    previewModalOpen(val) {
+      if (!val) {
+        this.currentDoc = null
+      }
+    },
+  },
   methods: {
+    previewDocument(document) {
+      this.currentDoc = document
+    },
+    getDocumentLinkPreview,
+    downloadDocument() {
+      window.open(getDocumentLink(this.currentDoc))
+    },
     createDocument() {
       this.isCreate = true
       console.log('this this the ticket id ', this.ticket_id)
@@ -117,7 +136,7 @@ export default {
         document_extension,
       })
     },
-    onViewDocument(document) {
+    onStampClicked(document) {
       this.$router.push({
         path: `/app/preview/document?document_id=${document?.document_id || ''}`,
         params: { document, ticket_id: this.ticket_id },
@@ -159,12 +178,40 @@ export default {
       </div>
       <section>
         <DataTable ref="dataTableRef" :columns="columDataDocument" :url="`/tickets/documents?ticket_id=${ticket_id}`"
-                   :on-details-click="onViewDocument" hide-top-bar="true"
+                   :on-details-click="previewDocument" hide-top-bar="true"
+                   :on-update-click="editDocument"
                    :resolve-data="data =>data.data"
-                   :custom-actions="[{icon:'EditIcon',onClick:editDocument, label:'Edit'}]"/>
+                   :custom-actions="$can('read', '/app/preview/document') ? [{icon:'FeatherIcon',onClick:onStampClicked, label:'Stamp'}] : []"/>
       </section>
 
     </div>
+
+    <b-modal v-model="previewModalOpen" size="xl" hide-footer>
+      <template #modal-header>
+        <div class="d-flex justify-content-between align-items-center flex-grow-1">
+          <h4 class="d-inline-block mr-1 mb-0">
+            Document preview
+          </h4>
+          <div>
+            <b-button variant="dark" class="mr-2" size="sm" @click="downloadDocument">
+              <feather-icon icon="ArrowDownIcon" />
+              Download
+            </b-button>
+            <b-button variant="light" size="sm" @click="previewModalOpen=false">
+              <feather-icon icon="XIcon" />
+            </b-button>
+          </div>
+        </div>
+      </template>
+      <iframe
+        v-if="currentDoc"
+        id="document-preview-iframe"
+        title="Preview"
+        :src="getDocumentLinkPreview(currentDoc)"
+        width="100%"
+        style="border: 0; height: 90vh;"
+      />
+    </b-modal>
 
     <generic-modal ref="documentModal" :fetch-data="false" table="document" :definition="documentDef"
                    table-definition-key="document" title="Update the document"
@@ -192,6 +239,10 @@ export default {
       border: 1px solid $primary;
     }
   }
+}
+
+.modal-body {
+  padding: 0;
 }
 
 </style>

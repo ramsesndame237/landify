@@ -163,13 +163,13 @@ export default {
         this.positions = (await this.$api({
           entity: 'document_stamp',
           action: 'read-rich',
-          data: [{ document_id: this.entity.document_id }],
+          data: [{document_id: this.entity.document_id}],
         })).data.data.data
 
         this.information = (await this.$api({
           entity: 'document_stamp_information',
           action: 'read-rich',
-          data: [{ document_id: this.entity.document_id }],
+          data: [{document_id: this.entity.document_id}],
         })).data.data.data[0]
 
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@3.6.172/build/pdf.worker.min.js'
@@ -222,7 +222,7 @@ export default {
         widgetConstructor: SvgWidget,
       })
       const rect = Jcrop.Rect.from(pos || [0, 0, this.width, this.height])
-      this.jcrop.newWidget(rect, { src: this.src })
+      this.jcrop.newWidget(rect, {src: this.src})
     },
     removeCropper() {
       this.jcropActive = false
@@ -242,9 +242,9 @@ export default {
     },
     async loadImage() {
       try {
-        const resp = await this.$http.get(this.getSignImageLink(this.entity), { responseType: 'arraybuffer' })
+        const resp = await this.$http.get(this.getSignImageLink(this.entity), {responseType: 'arraybuffer'})
         this.src = `data:${resp.headers['content-type']};base64,${Buffer.from(resp.data).toString('base64')}`
-        const { w, h } = await this.getImageDimensions()
+        const {w, h} = await this.getImageDimensions()
         this.width = w
         this.height = h
       } catch (e) {
@@ -267,7 +267,11 @@ export default {
     prevStamp() {
       this.$router.push({
         name: 'sign-document',
-        params: { id: this.$store.state.document.previewDocument.document.document_id, ticket_id: this.$store.state.document.previewDocument.ticket_id, entity: document },
+        params: {
+          id: this.$store.state.document.previewDocument.document.document_id,
+          ticket_id: this.$store.state.document.previewDocument.ticket_id,
+          entity: document
+        },
       })
     },
     savePosition(page) {
@@ -301,8 +305,8 @@ export default {
       let update = false
       try {
         // to delete
-        console.log({ positions: this.positions })
-        let data = this.positions.filter(p => p.delete).map(p => ({ document_stamp_id: p.document_stamp_id }))
+        console.log({positions: this.positions})
+        let data = this.positions.filter(p => p.delete).map(p => ({document_stamp_id: p.document_stamp_id}))
         if (data.length) {
           await this.$api({
             action: 'delete',
@@ -357,10 +361,10 @@ export default {
     async loadPage(number) {
       const page = await this.pdf.getPage(number)
       let scale = 1
-      let viewport = page.getViewport({ scale })
+      let viewport = page.getViewport({scale})
       // Full width
       scale = this.$el.clientWidth / viewport.width
-      viewport = page.getViewport({ scale })
+      viewport = page.getViewport({scale})
 
       //
       // Prepare canvas using PDF page dimensions
@@ -373,7 +377,7 @@ export default {
       //
       // Render PDF page into canvas context
       //
-      const task = page.render({ canvasContext: context, viewport })
+      const task = page.render({canvasContext: context, viewport})
       task.promise.then(() => {
         if (this.activeStamp) {
           this.initCropper([(this.activeStamp.document_stamp_position_x * canvas.width) / 100,
@@ -425,16 +429,17 @@ export default {
   <div class="h-100">
     <div v-if="mountedLoading" class="d-flex flex-column justify-content-center align-items-center p-4 text-center">
       <p>Loading document, please wait...</p>
-      <b-spinner class="mt-1" />
+      <b-spinner class="mt-1"/>
     </div>
     <b-overlay v-show="!mountedLoading" :show="loading">
-      <template #overlay />
+      <template #overlay/>
       <div v-if="ticketId" class="position-relative shadow-lg" style="z-index: 0;">
         <div class="bg-light py-50 rounded-top d-flex justify-content-center align-items-center">
           <div class="header_title d-flex justify-content-between w-100 px-2">
             <router-link v-if="!isPreview" :to="`/app/table/ticket/view/${ticketId}?tab=4`" class="mr-1">
-              <b-button v-b-tooltip.hover title="Back to documents" variant="outline-dark" size="sm" class="p-0" style="width: 24px; height: 24px;">
-                <feather-icon icon="ArrowLeftIcon" />
+              <b-button v-b-tooltip.hover title="Back to documents" variant="outline-dark" size="sm" class="p-0"
+                        style="width: 24px; height: 24px;">
+                <feather-icon icon="ArrowLeftIcon"/>
               </b-button>
             </router-link>
             <b-button
@@ -447,7 +452,7 @@ export default {
               style="width: 24px; height: 24px;"
               @click="isPreview = false"
             >
-              <feather-icon icon="XIcon" />
+              <feather-icon icon="XIcon"/>
             </b-button>
             <div class="d-flex align-items-center justify-content-between flex-grow-1">
               <div class="d-flex align-items-center">
@@ -457,23 +462,28 @@ export default {
                 <b-badge
                   v-if="!$store.state.document.previewDocument.col_stamp"
                   v-b-tooltip.hover
-                  title="This document is linked to a ticket that is in a column that has the stamp disabled" variant="warning"
+                  title="This document is linked to a ticket that is in a column that has the stamp disabled"
+                  variant="warning"
                 >
-                  Unable to be stamped <feather-icon icon="InfoIcon" />
+                  Unable to be stamped
+                  <feather-icon icon="InfoIcon"/>
                 </b-badge>
                 <b-badge
                   v-else-if="$store.state.document.previewDocument.document.document_already_stamp" variant="success"
                 >
-                  Stamped <feather-icon icon="CheckIcon" />
+                  Stamped
+                  <feather-icon icon="CheckIcon"/>
                 </b-badge>
               </div>
               <div class="d-flex align-items-center text-white" style="gap: 8px">
                 <template v-if="!isPreview">
                   <b-button variant="light" size="sm" @click="downloadDocument">
-                    <feather-icon icon="DownloadCloudIcon"/> Download
+                    <feather-icon icon="DownloadCloudIcon"/>
+                    Download
                   </b-button>
                   <b-button v-if="isColHasStamp" variant="dark" size="sm" @click="openStampDocument">
-                    <feather-icon icon="FeatherIcon"/> {{ isDocStamped ? 'Update stamp' : 'Stamp' }}
+                    <feather-icon icon="FeatherIcon"/>
+                    {{ isDocStamped ? 'Update stamp' : 'Stamp' }}
                   </b-button>
                 </template>
                 <template v-else>
@@ -490,29 +500,37 @@ export default {
                     next-class="next-item"
                   />
                   <b-button variant="light" size="sm" @click="isStampPreview = !isStampPreview">
-                    <feather-icon :icon=" isStampPreview ? 'EyeOffIcon' : 'EyeIcon'"/> {{ isStampPreview ? "Close preview" : "Preview" }}
+                    <feather-icon :icon=" isStampPreview ? 'EyeOffIcon' : 'EyeIcon'"/>
+                    {{ isStampPreview ? "Close preview" : "Preview" }}
                   </b-button>
                   <b-button v-if="isStampPreview" variant="light" size="sm" @click="showPreviewModal">
-                    <feather-icon icon="EyeIcon"/> Preview in modal
+                    <feather-icon icon="EyeIcon"/>
+                    Preview in modal
                   </b-button>
-                  <b-button variant="warning" size="sm" @click="$refs.modal.openModal(!information,{document_id: entity.document_id, ...information})">
-                    <feather-icon icon="Edit2Icon"/> Edit stamp
+                  <b-button variant="warning" size="sm"
+                            @click="$refs.modal.openModal(!information,{document_id: entity.document_id, ...information})">
+                    <feather-icon icon="Edit2Icon"/>
+                    Edit stamp
                   </b-button>
                   <b-button v-if="jcropActive" variant="danger" size="sm" @click="removeCropper">
-                    <feather-icon icon="Trash2Icon"/> Remove stamp
+                    <feather-icon icon="Trash2Icon"/>
+                    Remove stamp
                   </b-button>
                   <b-button v-else variant="success" size="sm" @click="openStampDocument">
-                    <feather-icon icon="PlusIcon"/> Insert stamp
+                    <feather-icon icon="PlusIcon"/>
+                    Insert stamp
                   </b-button>
                   <b-button variant="primary" size="sm" @click="savePositions">
-                    <feather-icon icon="SaveIcon"/> Save
+                    <feather-icon icon="SaveIcon"/>
+                    Save
                   </b-button>
                 </template>
               </div>
             </div>
           </div>
         </div>
-        <div id="document-wrapper" class="d-flex justify-content-center bg-dark border border-secondary" :class="{ isStampPreview }">
+        <div id="document-wrapper" class="d-flex justify-content-center bg-dark border border-secondary"
+             :class="{ isStampPreview }">
           <div v-show="!isPreview" class="document_body_preview">
             <iframe
               ref="iframeDocPreview"
@@ -521,18 +539,20 @@ export default {
               :src="get_link_document"
             />
           </div>
-          <div id="target" ref="target" :class="isPreview ? 'd-inline-block' : 'd-none'" class="position-relative mx-auto">
+          <div id="target" ref="target" :class="isPreview ? 'd-inline-block' : 'd-none'"
+               class="position-relative mx-auto">
             <canvas id="canvas" width="500" height="500"/>
           </div>
         </div>
         <generic-modal ref="modal" table="document_stamp_information" :definition="document_stamp_information_def"
-                      :fetch-data="false" table-definition-key="document_stamp_information"
-                      :title="$t('headline~stamp~set_informations')" @reload-table="onInformationSaved"/>
+                       :fetch-data="false" table-definition-key="document_stamp_information"
+                       :title="$t('headline~stamp~set_informations')" @reload-table="onInformationSaved"/>
       </div>
       <p v-else>
         Ticket id needed
       </p>
-      <div v-show="isPreviewModalOpen" id="preview-modal-wrapper" class="isStampPreview" @click="closeStampDocumentPreview" />
+      <div v-show="isPreviewModalOpen" id="preview-modal-wrapper" class="isStampPreview"
+           @click="closeStampDocumentPreview"/>
     </b-overlay>
   </div>
 </template>
@@ -545,7 +565,8 @@ export default {
   background: $primary;
   color: #fff;
 }
-.document_body_preview{
+
+.document_body_preview {
   width: 100%;
   height: calc(100vh - 80px);
 }
@@ -553,12 +574,14 @@ export default {
 .isStampPreview {
   .jcrop-shade {
     pointer-events: none;
-    opacity: 0!important;
+    opacity: 0 !important;
   }
+
   .jcrop-handle {
     pointer-events: none;
     opacity: 0;
   }
+
   .jcrop-widget, .jcrop-widget.active {
     pointer-events: none;
     opacity: 1;
@@ -578,6 +601,7 @@ export default {
   background-color: #0004;
   z-index: 999;
   overflow-y: auto;
+
   & > div:first-child {
     position: absolute;
     top: -50%;
