@@ -75,7 +75,6 @@
     <generic-modal ref="modal" :table="table" :definition="definition" :table-definition-key="table"
                    :title="$t('headline~ticket~newticket')" @reload-table="onNewTicket"/>
     <assign-user-modal ref="assign" @reload="loadBoardTickets()"/>
-
     <!-- <AlertErrorModal :show-error-box="showErrorBox" :ticket-value="ticketValue" ref="alertModal" @openReasonModal="$refs.errorModal.openModal()"/>
     <ReasonErrorModal :loading-save-error="loadingSaveError"
                       :ticket="{ticketName:ticketName,previousColumnName:previousColumnName,columnName:columnName}"
