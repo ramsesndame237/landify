@@ -2,11 +2,11 @@ name: CI to GHCR
 
 on:
   push:
-    branches: [ staging, develop, master ]
+    branches: [ staging, develop, preprod, master, test ]
     
 env:
   REGISTRY: registry.gitlab.com
-  IMAGE_NAME: kevmaxsarl/digital-suxess-ag/zelos/frontend
+  IMAGE_NAME: kevmaxsarl/zelos/frontend
   
 jobs:
 
