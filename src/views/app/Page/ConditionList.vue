@@ -84,6 +84,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import { formatDate } from '@/libs/utils'
 import DeadlineMixin from '@/views/app/Contracts/Relations/Deadlines/DeadlineMixin'
+import { getUserData } from '@/auth/utils'
 import rates from './rates.json'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
@@ -123,6 +124,8 @@ export default {
   },
   computed: {
     definition() {
+      const user = getUserData()
+
       return {
         title: 'headline~contractlist~condition',
         entity: 'frontend_contractlist_criteria',
@@ -250,6 +253,10 @@ export default {
             list: 'frontend_2_2_3_1',
             listLabel: 'company_name',
             filter_key: 'customergroup_id',
+            disabled: this.$isUserExtern,
+            ...(this.$isUserExtern ? {
+              default: user?.company?.company_id,
+            } : {}),
           },
           {
             key: 'pos_id',
