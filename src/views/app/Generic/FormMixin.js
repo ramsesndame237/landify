@@ -220,6 +220,12 @@ export default {
         }))
     },
     saveEntity(entity, originalEntity, formFields, fieldComponents, table, definition, primaryKey, create) {
+      if (this.definition?.beforeSubmit) {
+        const success = this.definition.beforeSubmit(this, entity, create) !== false
+        if (!success) {
+          throw new Error()
+        }
+      }
       const action = create ? 'create' : 'update'
       return this.createNewEntities(fieldComponents, formFields, entity, originalEntity)
         .then(async () => {
@@ -323,6 +329,10 @@ export default {
         if (field.send === false) {
           delete formatedEntity[field.key]
         }
+
+        if (field.unit && field.transformBeforeSend && typeof field.transformBeforeSend === 'function') {
+          formatedEntity[field.key] = field.transformBeforeSend(entity, this)
+        }
       })
 
       return formatedEntity
@@ -331,6 +341,7 @@ export default {
       this.$emit('after-save')
     },
     getFieldComponents() {
+      console.log({ fields: this.$refs.fields })
       if (this.definition.fieldComponent) {
         return this.$refs.fieldComponent.$children.filter(c => c.$options.name === 'Field')
       }
@@ -342,11 +353,14 @@ export default {
           if (!success) {
             return Promise.reject(new Error('Invalid Form'))
           }
+          const isBeforeSubmitSuccess = this.definition.beforeSubmit?.(this, this.entity, this.create) !== false
+          if (!isBeforeSubmitSuccess) return Promise.reject(new Error('Invalid Form'))
           this.loading = true
           if (this.definition.newEndpointCreate || this.definition.newEndpointUpdate) {
             const method = this.definition.isUpdate ? 'put' : 'post'
             const endpoint = this.definition.isUpdate ? this.definition.newEndpointUpdate : this.definition.newEndpointCreate
-            return this.$http[method](endpoint, this.entity).then(async result => {
+            const formattedEntity = this.formatEntity(this.entity, this.formFields)
+            return this.$http[method](endpoint, formattedEntity).then(async result => {
               this.$successToast('Ok')
               // navigate to view page or reload table
               this.originalEntity = merge(this.originalEntity, result)
@@ -365,6 +379,7 @@ export default {
                 this.loading = false
               })
           }
+
           if (this.definition.submit) {
             return this.definition.submit(this, this.entity, this.create)
               .then(async resp => {
@@ -495,7 +510,7 @@ export default {
         } catch (e) {
           console.error(e)
         }
-        if (!entity) {
+        if (!entity && this.entityId !== 0) {
           this.$errorToast(`The entity with the id "${this.entityId}" doesnt exists`)
         } else {
           this.setData(entity)
