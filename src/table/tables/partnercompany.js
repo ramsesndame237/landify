@@ -1,7 +1,37 @@
+import {
+  comercialRegistryNoRegex,
+  isValidIBANNumber,
+  taxRegex,
+  websiteRegex,
+} from '@/libs/utils'
+
 export default {
   entity: 'frontend_2_5_1',
   primaryKey: 'partnercompany_id',
   formComponent: () => import('@/views/app/FormComponent/PartnerCompanyForm.vue'),
+  beforeSubmit: (_this, entity) => {
+    let isValid = true
+    if (!Array.isArray(_this.bank_data_infos) || _this.bank_data_infos?.length === 0) {
+      isValid = false
+      _this.$errorToast('Add 01 IBAN at least')
+      throw new Error('Add 01 IBAN at least')
+    }
+    _this.bank_data_infos.forEach(info => {
+      if (!isValidIBANNumber(info.bankdata_iban)) {
+        isValid = false
+        _this.$errorToast('All IBANs must be valid')
+        throw new Error('All IBANs must be valid')
+      }
+      if (String(info?.bankdata_iban_id || '').length !== 4) {
+        isValid = false
+        _this.$errorToast('All IBAN IDs length must be 4')
+        throw new Error('All IBAN IDs length must be 4')
+      }
+    })
+    entity.bank_data_infos = _this.bank_data_infos
+
+    return isValid
+  },
   fields: [
     { key: 'partnercompany_id', auto: true },
     {
@@ -17,6 +47,19 @@ export default {
       send: false,
     },
     {
+      key: 'partnercompany_role',
+      // label: 'Role',
+      type: 'custom-select',
+      hideOnIndex: true,
+      required: false,
+      items: [
+        { value: 'Manager_Owner', label: 'Owner / Manager' },
+        { value: 'Manager', label: 'Manager' },
+        { value: 'Owner', label: 'Owner' },
+      ],
+      send: false,
+    },
+    {
       key: 'partnergroup_id',
       type: 'list',
       list: 'partnergroup',
@@ -25,8 +68,17 @@ export default {
       filter_key: 'partnergroup_is_internal',
       noFetchOnChange: true,
     },
+    {
+      key: 'bankdata_iban',
+      hideOnIndex: true,
+    },
+    {
+      key: 'bankdata_iban_id',
+      type: 'number',
+      hideOnIndex: true,
+    },
     { key: 'partnercompany_name' },
-    // { key: 'partnercompany_shortname' },
+    { key: 'partnercompany_shortname' },
     { key: 'partnergroup_name', hideOnForm: true },
     { key: 'city_name', hideOnForm: true },
     { key: 'contactdetails_email', hideOnForm: true },
@@ -62,14 +114,22 @@ export default {
       alwaysNew: true,
       onlyForm: true,
     },
+    // {
+    //   key: 'partnercompany_type',
+    //   type: 'checkbox',
+    //   items: [
+    //     { label: 'Option A', value: 0 },
+    //     { label: 'Option B', value: 1 },
+    //     { label: 'Option C', value: 3 },
+    //   ],
+    // },
     {
-      key: 'partnercompany_type',
-      type: 'checkbox',
-      items: [
-        { label: 'Option A', value: 0 },
-        { label: 'Option B', value: 1 },
-        { label: 'Option C', value: 3 },
-      ],
+      key: 'partnertype_id',
+      type: 'list',
+      list: 'partnertype',
+      listLabel: 'partnertype_name',
+      hideOnIndex: true,
+      noFetchOnChange: true,
     },
   ],
   relations: [
@@ -223,4 +283,58 @@ export default {
     },
   ],
   note: 'frontend_0_8_4',
+  async submit(vm, entity, create) {
+    try {
+      if (Array.isArray(entity?.bank_data_infos)) {
+        entity.bank_data_infos.forEach(info => {
+          info.bankdata_iban = String(info.bankdata_iban ?? '').replace(/\s/g, '')
+        })
+      }
+
+      const fieldsComponent = vm.getFieldComponents()
+      const addressField = fieldsComponent.find(f => f.field.key === 'address_id')
+      const companydetails = fieldsComponent.find(f => f.field.key === 'companydetails_id')
+
+      if (!taxRegex.exec(companydetails?.subEntity.companydetails_salestaxno)) {
+        throw Error(vm.$t('errors~invalid~salestaxno'))
+      }
+      if (!comercialRegistryNoRegex.exec(companydetails?.subEntity.companydetails_commercialregisterno)) {
+        throw Error(vm.$t('errors~invalid~commercialregisterno'))
+      }
+      if (!websiteRegex.exec(companydetails?.subEntity.companydetails_website)) {
+        throw Error(vm.$t('errors~invalid~website'))
+      }
+
+      const contactdetails = fieldsComponent.find(f => f.field.key === 'contactdetails_id')
+      const cityField = addressField?.getSubFields().find(f => f.field.key === 'city_id')
+
+      const method = create ? 'post' : 'put'
+
+      const dataForServer = {
+        ...entity,
+        contactdetail: contactdetails?.subEntity,
+        companydetail: companydetails?.subEntity,
+        address: {
+          ...(addressField?.subEntity || {}),
+          city: cityField?.subEntity,
+        },
+      }
+
+      dataForServer.partnergroup = {
+        partnergroup_id: dataForServer.partnergroup_id,
+        // partnergroup_is_internal: dataForServer.partnergroup_is_internal,
+      }
+      delete dataForServer.partnergroup_id
+      delete dataForServer.partnergroup_is_internal
+
+      if (dataForServer.address?.city?.state) {
+        dataForServer.address.city.city_state = dataForServer.address.city.state
+        delete dataForServer.address.city.state
+      }
+
+      await vm.$http[method]('/partners/new', dataForServer)
+    } catch (error) {
+      throw Error(error.message ?? vm.$t('errors~unexpected~error~ocurred'))
+    }
+  },
 }

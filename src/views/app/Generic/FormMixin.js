@@ -220,8 +220,9 @@ export default {
         }))
     },
     saveEntity(entity, originalEntity, formFields, fieldComponents, table, definition, primaryKey, create) {
+      console.log({ s: this.definition })
       if (this.definition?.beforeSubmit) {
-        const success = this.definition.beforeSubmit(this, entity, create) !== false
+        const success = this.definition.beforeSubmit(this, entity)
         if (!success) {
           throw new Error()
         }
@@ -341,7 +342,6 @@ export default {
       this.$emit('after-save')
     },
     getFieldComponents() {
-      console.log({ fields: this.$refs.fields })
       if (this.definition.fieldComponent) {
         return this.$refs.fieldComponent.$children.filter(c => c.$options.name === 'Field')
       }
@@ -353,8 +353,7 @@ export default {
           if (!success) {
             return Promise.reject(new Error('Invalid Form'))
           }
-          const isBeforeSubmitSuccess = this.definition.beforeSubmit?.(this, this.entity, this.create) !== false
-          if (!isBeforeSubmitSuccess) return Promise.reject(new Error('Invalid Form'))
+          if (this.definition.beforeSubmit && this.definition.beforeSubmit(this, this.entity, this.create) === false) throw new Error()
           this.loading = true
           if (this.definition.newEndpointCreate || this.definition.newEndpointUpdate) {
             const method = this.definition.isUpdate ? 'put' : 'post'

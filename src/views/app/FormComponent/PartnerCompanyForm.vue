@@ -16,21 +16,21 @@
             'address_id',
           ]
         " :key="field_id" cols="12" :md="cols">
-          <p
+          <strong
             v-if="['contactdetails_id', 'companydetails_id', 'address_id'].includes(field_id)"
-            class="ml-1 text-capitalize"
+            class="text-capitalize"
           >
             {{ field_id.replace(/(details)?_id$/, '') }}
-          </p>
+          </strong>
           <field ref="fields" :disabled="loading" :create="create" :inline="inline"
                  :entity="entity" :table-definition="tableDefinition" :field="getField(field_id)"
           />
         </b-col>
         <b-col cols="12" :md="cols" class="p-50 mb-50">
           <div class="d-flex align-items-center justify-content-between px-1">
-            <p>
+            <strong>
               Card informations
-            </p>
+            </strong>
             <b-button size="sm" variant="info" @click="addIban()">
               <feather-icon icon="PlusIcon" /> New IBAN
             </b-button>
@@ -164,8 +164,8 @@ export default {
     return {
       bank_data_infos: (this.entity?.bank_data_infos || []).length === 0 ? [
         {
-          iban: '',
-          iban_id: '',
+          bankdata_iban: '',
+          bankdata_iban_id: '',
         },
       ] : this.entity.bank_data_infos,
     }
@@ -175,8 +175,8 @@ export default {
       this.bank_data_infos = [
         ...this.bank_data_infos,
         {
-          iban: '',
-          iban_id: '',
+          bankdata_iban: '',
+          bankdata_iban_id: '',
         },
       ]
     },
