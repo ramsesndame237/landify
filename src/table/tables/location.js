@@ -37,6 +37,27 @@ export default {
       alwaysNew: true,
     },
   ],
+  filters: [
+    {
+      key: 'customergroup_id',
+      type: 'list',
+      list: 'customergroup',
+      listLabel: 'customergroup_name',
+      send: false,
+      hideOnIndex: true,
+      hideOnUpdate: true,
+    },
+    {
+      key: 'company_id',
+      type: 'list',
+      list: 'company',
+      cols: 12,
+      listLabel: 'company_name',
+      hideOnIndex: true,
+      relationEntity: 'company_pos_rel',
+      filter_key: 'customergroup_id',
+    },
+  ],
   relations: [
     {
       title: 'Areas',

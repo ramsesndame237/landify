@@ -9,13 +9,28 @@
         <div class="d-flex align-items-center flex-wrap flex-sm-nowrap w-100 dashboard_style">
           <date-picker v-model="date" v-bind="datePickerOptions" style="margin-bottom: -0.5rem;" class=" w-100" @change="datePickerHandler"/>
           <field class="ml-sm-1 w-100"
-                 :field="{ key: 'company_id', type: 'custom-select', required: false, items: filteredCompanies, clearable: false}"
+                 :field="{
+                    key: 'customergroup_id',
+                    type: 'list',
+                    required: true,
+                    list: 'customergroup',
+                    listLabel: 'customergroup_name',
+                  }"
+                 :entity="entity" />
+          <field class="ml-sm-1 w-100"
+                 :field="{
+                    key: 'company_id',
+                    type: 'list',
+                    required: true,
+                    list: 'company',
+                    listLabel: 'company_name',
+                  }"
                  :entity="entity" />
           <field class=" mx-sm-1 w-100"
-                 :field="{ key: 'team_id', type: 'custom-select', required: false, items: filteredTeams, clearable: false}"
+                 :field="{ key: 'team_id', type: 'custom-select', required: false, items: filteredTeams}"
                  :entity="entity" :disabled="entity.company_id === -1" />
           <field class="w-100"
-                 :field="{ key: 'user_id', type: 'custom-select', items: usersData, required: false, clearable: false }"
+                 :field="{ key: 'user_id', type: 'custom-select', items: usersData, required: false }"
                  :entity="entity" :disabled="entity.company_id === -1" />
         </div>
       </div>

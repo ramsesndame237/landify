@@ -1,6 +1,31 @@
 <template>
   <div class="">
     <b-row>
+      <b-col/>
+      <b-col>
+        <b-row>
+          <field class="col-6"
+                   :field="{
+                      key: 'customergroup_id',
+                      type: 'list',
+                      required: true,
+                      list: 'customergroup',
+                      listLabel: 'customergroup_name',
+                    }"
+                   :entity="entity" />
+            <field class="col-6"
+                   :field="{
+                      key: 'company_id',
+                      type: 'list',
+                      required: true,
+                      list: 'company',
+                      listLabel: 'company_name',
+                    }"
+                   :entity="entity" />
+        </b-row>
+      </b-col>
+    </b-row>
+    <b-row>
       <b-col v-for="(ticket,index) in ticketsData" :key="index" :md="ticket.cols.md" :xl="ticket.cols.xl">
         <b-overlay :show="loading">
           <ticket-card :key="index" :style="{backgroundColor: ticket.color}" :loading="loading" v-bind="ticket"/>
@@ -60,6 +85,7 @@ import CustomHorizontalProgress from '@/views/app/CustomComponents/CustomHorizon
 import {
   BRow, BCard, BCol, BCardBody, BCardSubTitle,
 } from 'bootstrap-vue'
+import Field from '../Generic/Field.vue'
 
 export default {
   name: 'BackOffice',
@@ -73,9 +99,11 @@ export default {
     VueApexCharts,
     BCardBody,
     CustomHorizontalProgress,
+    Field,
   },
   data() {
     return {
+      entity: {},
       pieChart: {
         series: [14, 12, 16, 24],
         chartOptions: {
@@ -228,17 +256,23 @@ export default {
       ]
     },
   },
+  watch: {
+    'entity.customergroup_id': function () {
+      this.getDashboardTicketStatistics()
+    },
+    'entity.company_id': function () {
+      this.getDashboardTicketStatistics()
+    },
+  },
   mounted() {
     this.getDashboardTicketStatistics()
   },
   methods: {
     async getDashboardTicketStatistics() {
       this.loading = true
-      const payload = {
-      }
       try {
         const response = await this.$http.get('/statistics/dashboard', {
-          params: payload,
+          params: this.entity,
         })
 
         const { data } = response
