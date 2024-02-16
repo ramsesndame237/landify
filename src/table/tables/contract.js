@@ -307,6 +307,7 @@ export default {
     },
 
   ],
+  filter_vertical: true,
   filters: [
     {
       key: 'customergroup_id',
