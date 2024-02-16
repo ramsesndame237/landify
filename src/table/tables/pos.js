@@ -340,6 +340,50 @@ export default {
         { key: 'documenttype_name', hideOnForm: true },
       ],
     },
+    {
+      customRequest: {
+        endpoint: '/pos',
+        relationKey: 'area_ids',
+        entityKey: 'pos_id',
+      },
+      primaryKey: 'email_id',
+      entityEndpoint: '/emails/list-emails-receivents',
+      entity: 'frontend_3_1_3_1',
+      entityForm: 'area_pos_rel',
+      entityView: 'Email',
+      update: false,
+      delete: false,
+      create: false,
+      onViewElement: () => {
+        console.log('click on view')
+      },
+      fields: [
+        {
+          key: 'email_received_datetime',
+          sortable: true,
+          type: 'list',
+          list: 'area',
+          listLabel: 'area_name',
+          disableOnUpdate: true,
+        },
+        { key: 'email_from', hideOnForm: true },
+        { key: 'email_subject', hideOnForm: true },
+        // { key: 'location_id', hideOnForm: true },
+        // {
+        //   key: 'location_name',
+        //   hideOnForm: true,
+        // },
+        // {
+        //   key: 'areatype_name',
+        //   hideOnForm: true,
+        // },
+        // {
+        //   key: 'area_last_change_time', hideOnForm: true, type: 'date', time: true,
+        // }, {
+        //   key: 'area_space_value', hideOnForm: true,
+        // },
+      ],
+    },
   ],
   default: {
     pos_internal_id: '56',
