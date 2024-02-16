@@ -16,6 +16,7 @@
             <field class="col-6"
                    :field="{
                       key: 'company_id',
+                      filter_key: 'customergroup_id',
                       type: 'list',
                       required: true,
                       list: 'company',

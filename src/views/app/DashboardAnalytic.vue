@@ -20,6 +20,7 @@
           <field class="ml-sm-1 w-100"
                  :field="{
                     key: 'company_id',
+                    filter_key: 'customergroup_id',
                     type: 'list',
                     required: true,
                     list: 'company',

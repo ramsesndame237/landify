@@ -3,6 +3,7 @@ import { getUserData } from '@/auth/utils'
 export default {
   entity: 'frontend_3_2_1',
   primaryKey: 'area_id',
+  entityEndpoint: '/areas',
   updateComponent: () => import('@/views/app/UpdateComponent/AreaForm'),
   filter: (item, vm) => {
     const user = getUserData()
@@ -60,23 +61,21 @@ export default {
       key: 'area_usagetype_valid_to_date', type: 'date', hideOnIndex: true, required: false, category: 'date',
     },
   ],
+  filter_vertical: true,
   filters: [
     {
       key: 'customergroup_id',
       type: 'list',
       list: 'customergroup',
       listLabel: 'customergroup_name',
-      send: false,
-      hideOnIndex: true,
-      hideOnUpdate: true,
+      // send: false,
     },
     {
       key: 'company_id',
       type: 'list',
       list: 'company',
-      cols: 12,
       listLabel: 'company_name',
-      hideOnIndex: true,
+      required: false,
       relationEntity: 'company_pos_rel',
       filter_key: 'customergroup_id',
     },

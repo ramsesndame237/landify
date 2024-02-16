@@ -113,7 +113,7 @@ export default {
       perPage: payload?.perPage || 10,
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
-      initialFilterData: payload?.filter,
+      initialFilterData: this.definition?.initialFilterValues ?? payload?.filter,
       initialSortBy: payload?.sortBy,
       initialSortDesc: payload?.sortDesc ?? true,
       items: [],
@@ -253,10 +253,6 @@ export default {
             list: 'frontend_2_2_3_1',
             listLabel: 'company_name',
             filter_key: 'customergroup_id',
-            disabled: this.$isUserExtern,
-            ...(this.$isUserExtern ? {
-              default: user?.company?.company_id,
-            } : {}),
           },
           {
             key: 'pos_id',
@@ -307,6 +303,20 @@ export default {
     table() {
       this.reset()
     },
+  },
+  created() {
+    if (this.definition.filters) {
+      (this.definition.filters ?? []).forEach(filter => {
+        this.$watch(
+          `data.${filter.key}`,
+          () => {
+            (this.definition.filters ?? []).filter(_filter => _filter.filter_key === filter.key).map(_filter => {
+              this.$set(this.data, _filter.key, null)
+            })
+          },
+        )
+      })
+    }
   },
   methods: {
     async filter() {

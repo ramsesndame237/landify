@@ -1,5 +1,6 @@
 export default {
   entity: 'frontend_3_5_1',
+  entityEndpoint: '/areas/serviceobjects/list',
   fields: [
     { key: 'serviceobject_id', auto: true },
     { key: 'serviceobject_name' },
@@ -20,25 +21,23 @@ export default {
     { key: 'contract_name', hideOnForm: true },
     { key: 'contract_last_change_time', hideOnForm: true },
   ],
+  filter_vertical: true,
   filters: [
     {
       key: 'customergroup_id',
       type: 'list',
       list: 'customergroup',
       listLabel: 'customergroup_name',
-      send: false,
-      hideOnIndex: true,
-      hideOnUpdate: true,
+      required: false,
     },
     {
       key: 'company_id',
       type: 'list',
       list: 'company',
-      cols: 12,
       listLabel: 'company_name',
-      hideOnIndex: true,
       relationEntity: 'company_pos_rel',
       filter_key: 'customergroup_id',
+      required: false,
     },
   ],
   relations: [
