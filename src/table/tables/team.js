@@ -1,7 +1,7 @@
 export default {
-  entityEndpoint: 'teams',
+  entityEndpoint: '/teams',
   customRequest: {
-    endpoint: 'teams',
+    endpoint: '/teams',
     relationKey: 'team_ids',
     method: 'delete',
   },
