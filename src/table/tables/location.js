@@ -1,5 +1,5 @@
 export default {
-  entity: 'frontend_3_3_1',
+  entityEndpoint: '/locations',
   primaryKey: 'location_id',
   fields: [
     { key: 'location_id', auto: true },
