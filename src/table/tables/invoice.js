@@ -78,7 +78,6 @@ export default {
       type: 'list',
       list: 'frontend_3_1_3_7',
       relationEntity: 'contract_location_rel',
-      // entityCustomEndPoint: '/locations',
       filter_key: 'pos_id',
       required: false,
     },
@@ -102,14 +101,6 @@ export default {
     {
       key: 'invoice_contract_year',
       type: 'number',
-      required: false,
-    },
-    {
-      key: 'invoice_id',
-      type: 'list',
-      list: 'invoice',
-      listLabel: 'invoice_name',
-      filter_key: 'company_id',
       required: false,
     },
   ],
