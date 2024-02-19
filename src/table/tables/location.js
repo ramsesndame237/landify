@@ -1,5 +1,6 @@
 export default {
   entityEndpoint: '/locations',
+  newEndpointCreate: '/locations',
   primaryKey: 'location_id',
   fields: [
     { key: 'location_id', auto: true },
