@@ -52,8 +52,6 @@ export default {
         }
         const menu_role = entity.role_is_internal === 0
         const filteredMenu = menu_role ? [{ label: 'Menu Extern', value: 'Menu Extern', menu_is_internal: false }] : menus.filter(menu => (menu.value === menu_role))
-        console.log(entity.role_is_internal)
-        console.log(menu_role)
         return menu_role ? filteredMenu : filteredMenu.map(menu => ({ label: menu.name, value: menu.name, menu_is_internal: menu.value }))
       },
     },
