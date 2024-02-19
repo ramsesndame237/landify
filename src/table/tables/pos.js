@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import { getUserData } from '@/auth/utils'
+import Vue from 'vue'
+import emailModal from '@/views/app/Ticket/EmailModal.vue'
 
 export default {
   entity: 'frontend_3_1_1',
@@ -359,8 +361,15 @@ export default {
       update: false,
       delete: false,
       create: false,
-      onViewElement: () => {
-        console.log('click on view')
+      onViewElement: element => {
+        const EmailModal = Vue.extend(emailModal)
+        const emailModalInstance = new EmailModal({
+          i18n: window.$vue.$i18n,
+          router: window.$vue.$i18n,
+          store: window.$vue.$store,
+        })
+        emailModalInstance.$mount()
+        emailModalInstance.show(true, element)
       },
       fields: [
         {

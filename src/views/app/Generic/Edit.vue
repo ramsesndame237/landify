@@ -47,7 +47,7 @@
         :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
         ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="create"
         :is-relation="false" :disabled="view" :inline="false" :cols="6" :initial-data="entity" :entity-id="entityId"
-        @loaded="formLoaded=true" />
+        @loaded="formLoaded=true"/>
     </b-card>
 
     <template v-if="table==='invoice' && $refs.tabs">
@@ -68,7 +68,8 @@
                          :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
                          :entity-view="relation.entityView" :with-view="relation.view!==false" :fields="relation.fields"
                          :on-edit-element="editElement" :with-edit="relation.update!==false"
-                         :with-delete="relation.delete!==false" :custom-request="relation.customRequest" :entity-endpoint="relation.entityEndpoint" />
+                         :with-delete="relation.delete!==false" :custom-request="relation.customRequest"
+                         :entity-endpoint="relation.entityEndpoint" :on-view-element="relation.onViewElement"/>
             <generic-modal :cache-key="relation.entity+'-'" title="Test" :table="relation.entityForm || relation.entity"
                            :definition="relation" is-relation
                            :table-definition-key="relation.entityForm || relation.entity"
@@ -196,7 +197,7 @@ export default {
         this.$router.replace({
           name: this.$route.name,
           params: this.$route.params,
-          query: { tab: val },
+          query: {tab: val},
         })
       }
     })
@@ -225,31 +226,31 @@ export default {
       return this.visibleRelations[this.$refs.tabs.currentTab]?.search !== false
     },
     deleteSelected() {
-      const { tabs } = this.$refs
+      const {tabs} = this.$refs
       tabs.tabs[tabs.currentTab].$children[0].deleteSelected()
     },
     newElement() {
-      const { tabs } = this.$refs
+      const {tabs} = this.$refs
       const route = this.visibleRelations[tabs.currentTab].newRoute
       if (route) {
-        this.$router.push({ name: route.name, params: { id: this.entityId, table: route.params.table } })
+        this.$router.push({name: route.name, params: {id: this.entityId, table: route.params.table}})
       } else {
-        console.log('Ici tabs', { tabs })
+        console.log('Ici tabs', {tabs})
         const def = this.definition.relations[tabs.currentTab]
-        tabs.tabs[tabs.currentTab].$children[1].openModal(true, { [this.primaryKey]: this.entityId }, `headline~${def.entityForm || def.title}~new`)
+        tabs.tabs[tabs.currentTab].$children[1].openModal(true, {[this.primaryKey]: this.entityId}, `headline~${def.entityForm || def.title}~new`)
       }
     },
     editElement(entity) {
-      const { tabs } = this.$refs
+      const {tabs} = this.$refs
       const def = this.definition.relations[tabs.currentTab]
       tabs.tabs[tabs.currentTab].$children[1].openModal(false, entity, `headline~${def.entityForm || def.title}~detail`)
     },
     reloadRelatedTable() {
-      const { tabs } = this.$refs
+      const {tabs} = this.$refs
       tabs.tabs[tabs.currentTab].$children[0].reload()
     },
     getCurrentTable() {
-      const { tabs } = this.$refs
+      const {tabs} = this.$refs
       return tabs.tabs[tabs.currentTab].$children[0]
     },
   },
