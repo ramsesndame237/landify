@@ -254,6 +254,8 @@ export default {
   },
   methods: {
     onViewClick(data) {
+      console.log('data: ', data)
+      console.log('data: ', this.onViewElement)
       if (this.onViewElement) {
         this.onViewElement(this.currentItems[data.index])
         return
