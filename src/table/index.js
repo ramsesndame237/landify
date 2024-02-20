@@ -112,6 +112,7 @@ export default {
         type: 'list',
         list: 'customergroup',
         listLabel: 'customergroup_name',
+        required: false,
       },
       {
         key: 'company_id',
@@ -120,6 +121,7 @@ export default {
         listLabel: 'company_name',
         relationEntity: 'company_pos_rel',
         filter_key: 'customergroup_id',
+        required: false,
       },
     ],
     fields: [
