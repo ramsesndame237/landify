@@ -120,6 +120,16 @@ export default {
   default: {
     company_template_coverletter_subject: 'Un Template de teste',
   },
+  filter_vertical: true,
+  filters: [
+    {
+      key: 'customergroup_id',
+      type: 'list',
+      required: true,
+      list: 'customergroup',
+      listLabel: 'customergroup_name',
+    },
+  ],
   relations: [
     {
       title: 'ticket',

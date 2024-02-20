@@ -108,6 +108,10 @@ export default {
     BFormCheckbox,
   },
   props: {
+    initialFilterData: {
+      type: Object,
+      default: () => ({}),
+    },
     entity: { type: String, required: true },
     entityList: { type: String },
     entityForm: { type: String, required: false },
@@ -250,6 +254,8 @@ export default {
   },
   methods: {
     onViewClick(data) {
+      console.log('data: ', data)
+      console.log('data: ', this.onViewElement)
       if (this.onViewElement) {
         this.onViewElement(this.currentItems[data.index])
         return
@@ -311,7 +317,8 @@ export default {
       // retrieve form specific endpoint
       if (this.entityEndpoint) {
         const filterData = {
-          ...this.filterData,
+          ...(this.initialFilterData ?? {}),
+          ...(this.filterData || {}),
           keyword: filter,
           page: currentPage,
           size: payload.per_page,
@@ -376,9 +383,9 @@ export default {
         const datas = data.data
         if (this.filterItems && typeof this.filterItems === 'function') {
           this.currentItems = datas.filter(item => this.filterItems(item, this))
-          if (this.isUserExternClient) {
-            this.$emit('update:totalRows', this.currentItems.length)
-          }
+          // if (this.isUserExternClient) {
+          //   this.$emit('update:totalRows', this.currentItems.length)
+          // }
         } else {
           this.currentItems = datas
         }
@@ -394,9 +401,9 @@ export default {
 
       if (this.filterItems && typeof this.filterItems === 'function') {
         this.currentItems = datas.filter(item => this.filterItems(item, this))
-        if (this.isUserExternClient) {
-          this.$emit('update:totalRows', this.currentItems.length)
-        }
+        // if (this.isUserExternClient) {
+        //   this.$emit('update:totalRows', this.currentItems.length)
+        // }
       } else {
         this.currentItems = datas
       }

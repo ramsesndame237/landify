@@ -23,7 +23,7 @@
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
                  :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"
-                 :filter-items="definition.filter" :custom-request="definition.customRequest"/>
+                 :filter-items="definition.filter" :custom-request="definition.customRequest" :initial-filter-data="initialFilterData" />
       <!--      <DataTable :key="table" :columns="getHeadersDataTable" :url="definition.entityEndpoint || definition.entity"-->
       <!--                 hide-top-bar="true" :resolve-data="data =>data.data.data || data.data || data.items" :custom-actions="definition.custom_actions"-->
       <!--                 :hidde-filter-bar="true"/>-->
@@ -50,6 +50,7 @@ import GenericModal from '@/views/app/Generic/modal.vue'
 import { mapGetters } from 'vuex'
 import SidebarModalComponent from '@/components/SidebarModalComponent.vue'
 import DataTable from '@/views/app/CustomComponents/DataTable/DataTable.vue'
+import { getUserData } from '@/auth/utils'
 import Tables from '../../../table'
 import GenericFilter from './Filter.vue'
 import InlineFilter from './InlineFilter.vue'
@@ -71,16 +72,29 @@ export default {
     const payload = this.$store.getters['table/tableData'](this.$route.params.table)
     const table = this.$route.params.table
     const definition = Tables[table]
-    let defaultPage = null
-    if (this.isUserExternClient) {
-      defaultPage = definition.perPage
+    const defaultPage = null
+    // if (this.isUserExternClient) {
+    //   defaultPage = definition.perPage
+    // }
+
+    const user = getUserData()
+    const customergroup_id = user?.customergroup?.customergroup_id
+
+    const hasCustomerGroupIdInFilters = definition.filters?.find(filter => filter.key === 'customergroup_id')
+
+    const filterValues = {
+      ...(definition.initialFilterValues ? definition.initialFilterValues?.(this) : hasCustomerGroupIdInFilters ? { customergroup_id } : {}),
+      ...(payload?.filter ?? {}),
     }
+
+    const hasFilters = Object.keys(filterValues || {}).length > 0
+
     return {
       search: payload?.search || '',
       perPage: payload?.perPage || defaultPage || 10,
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
-      initialFilterData: payload?.filter,
+      initialFilterData: this.$isUserAdmin ? payload?.filter : hasFilters ? filterValues : payload?.filter,
       initialSortBy: payload?.sortBy,
       initialSortDesc: payload?.sortDesc ?? true,
       table,
