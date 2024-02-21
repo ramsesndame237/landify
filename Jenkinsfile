@@ -20,7 +20,7 @@ pipeline {
                     echo 'Copy env file for the current branch'       
                     sh "cp ${env.BRANCH_NAME}.env .env"
 
-                    slackSend(message: "${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)\nBuild commencé", channel: "zelos-teams")
+                    slackSend(message: "${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)\nBuild commencé", channel: "zelos-sfm-dev")
                     if (env.BRANCH_NAME == 'master') {
                         app = docker.build("registry.gitlab.com/kevmaxsarl/zelos/frontend:latest")
                     } else if (env.BRANCH_NAME == 'main') {
@@ -57,10 +57,10 @@ pipeline {
     
     post {
         success {
-            slackSend(color: "good", message: "${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)\nBuild effectué avec succès", channel: "zelos-teams")
+            slackSend(color: "good", message: "${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)\nBuild effectué avec succès", channel: "zelos-sfm-dev")
         }
         failure {
-            slackSend(failOnError:true, message:"${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)\nÉchec de build", channel: "zelos-teams")
+            slackSend(failOnError:true, message:"${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)\nÉchec de build", channel: "zelos-sfm-dev")
         }
     }
 

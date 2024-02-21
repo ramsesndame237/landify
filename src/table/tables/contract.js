@@ -307,6 +307,7 @@ export default {
     },
 
   ],
+  filter_vertical: true,
   filters: [
     {
       key: 'customergroup_id',
@@ -463,7 +464,7 @@ export default {
           onlyForm: true,
           alwaysNew: true,
           defaultEntity: { documenttype_id: 1 },
-          disabled: ['documenttype_id'],
+          // disabled: ['documenttype_id'],
         },
         { key: 'document_name', hideOnForm: true },
         { key: 'documenttype_name', hideOnForm: true },

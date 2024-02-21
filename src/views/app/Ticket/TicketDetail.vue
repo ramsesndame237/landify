@@ -533,10 +533,11 @@ export default {
       return this.columns.find(c => c.column_id === this.entity?.columns[0].column_id).column_has_stamp
     },
     canMoveBack() {
-      if (!this.entity) return false
-      if (this.entity?.ticket_closed) return false
+      console.log("this ticket entity",this.entity)
+      // if (!this.entity) return false
+      // if (this.entity?.ticket_closed) return false
       if (!this.entity?.columns[1]) return false
-      if (this.entity?.columns[1].rank_order > this.entity?.columns[0].rank_order) return false
+      // if (this.entity?.columns[1].rank_order > this.entity?.columns[0].rank_order) return false
       const column_name = this.entity?.columns[1].column_name
       return this.config.accepts(null, { dataset: { status: column_name } }, { dataset: { status: this.entity?.column_name } }, true)
     },
