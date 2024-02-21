@@ -714,8 +714,9 @@ export default {
       (this.getSubFields() || []).forEach(sub => sub.reset())
     },
     async getRandomPassword() {
+      const accessToken = localStorage.getItem('accessToken').split(" ")[1]
       this.waitPassword = true
-      await this.$http.get('/users/generate/password')
+      await this.$http.get(`/users/generate/password/?Authorization=${accessToken}`)
         .then(resp => {
           this.randomPassword = resp.data.password
           this.waitPassword = false
