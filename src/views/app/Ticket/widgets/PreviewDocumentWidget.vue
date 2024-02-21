@@ -303,6 +303,7 @@ export default {
       this.loading = true
       this.savePosition(this.page)
       let update = false
+      const accessToken = localStorage.getItem('accessToken').split(" ")[1]
       try {
         // to delete
         console.log({positions: this.positions})
@@ -341,7 +342,7 @@ export default {
         }
         if (!update) this.$errorToast('There is no changes')
         else {
-          (await this.$http.get(`/documents-sign/stamp/${this.entity.document_id}`))
+          (await this.$http.get(`/documents-sign/stamp/${this.entity.document_id}?Authorization=${accessToken}`))
           this.$refs.iframeDocPreview.src = this.get_link_document
           this.$successToast('Positions saved')
           this.$store.state.document.previewDocument.document.document_already_stamp = true

@@ -14,9 +14,10 @@ export default {
       change: (entity, vm) => {
         let cityState
         if (entity.city_zip) {
+          const accessToken = localStorage.getItem('accessToken').split(" ")[1]
           const debounced = _.debounce(
             () => vm.$http
-              .get(`/users/state/${entity.city_zip}`)
+              .get(`/users/state/${entity.city_zip}?Authorization=${accessToken}`)
               .then(async resp => {
                 if (resp.data?.state) cityState = resp.data.state
               }),
