@@ -308,6 +308,8 @@ export default {
       const contactdetails = fieldsComponent.find(f => f.field.key === 'contactdetails_id')
       const cityField = addressField?.getSubFields().find(f => f.field.key === 'city_id')
 
+      const { state, ...cityObj } = cityField?.subEntity || {}
+
       const method = create ? 'post' : 'put'
 
       const dataForServer = {
@@ -316,7 +318,10 @@ export default {
         companydetail: companydetails?.subEntity,
         address: {
           ...(addressField?.subEntity || {}),
-          city: cityField?.subEntity,
+          city: {
+            ...cityObj,
+            city_state: state,
+          },
         },
       }
 
@@ -326,11 +331,6 @@ export default {
       }
       delete dataForServer.partnergroup_id
       delete dataForServer.partnergroup_is_internal
-
-      if (dataForServer.address?.city?.state) {
-        dataForServer.address.city.city_state = dataForServer.address.city.state
-        delete dataForServer.address.city.state
-      }
 
       await vm.$http[method]('/partners/new', dataForServer)
     } catch (error) {
