@@ -735,7 +735,7 @@ export default {
         type: 'file',
         rules: { size: 100000 },
         hideOnUpdate: true,
-        accepted:".pdf",
+        accepted: '.pdf',
         multiple: false,
       },
       {

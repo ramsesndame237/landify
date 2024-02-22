@@ -453,7 +453,59 @@ export default {
       primaryKey: 'document_id',
       entity: 'frontend_3_4_3_1_bottom',
       entityForm: 'document_contract_documentcontracttype_rel',
+      formComponent: () => import('@/views/app/FormComponent/ContractDocumentForm.vue'),
       entityView: 'document',
+      submit: async (vm, entity, create) => {
+        try {
+          if (!create) {
+            return await vm.$http({
+              url: '/documents/update',
+              method: 'put',
+              params: {
+                ...entity,
+                document_name: Math.random().toString(20),
+              },
+            })
+          }
+
+          const formData = new FormData()
+          const files = vm.$refs.fields.find(f => f.field.key === 'files')?.getFiles() || []
+
+          const payload = {
+            contract_id: entity.contract_id,
+            documentsobjects: [],
+          }
+
+          for (let i = 0; i < files.length; i++) {
+            formData.append('files', files[i])
+          }
+
+          const { data } = await vm.$http({
+            url: '/documents/uploadfiles',
+            data: formData,
+            method: 'post',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+
+          data.data.map(file => {
+            payload.documentsobjects.push(
+              {
+                document_id: file.document_id,
+                subdocumenttype_id: entity.subdocumenttype_id,
+                documenttype_id: entity.documenttype_id,
+                documentcontracttype_id: entity.documentcontracttype_id,
+              },
+            )
+          })
+
+          await vm.$http.post('/contracts/step/7', payload)
+        } catch (e) {
+          throw new Error('The document save failed')
+        }
+      },
       fields: [
         {
           key: 'document_id',
@@ -462,15 +514,15 @@ export default {
           list: 'document',
           onlyForm: true,
           alwaysNew: true,
-          defaultEntity: { documenttype_id: 1 },
-          disabled: ['documenttype_id'],
+          // defaultEntity: { documenttype_id: 1 },
+          // disabled: ['documenttype_id'],
         },
         { key: 'document_name', hideOnForm: true },
         { key: 'documenttype_name', hideOnForm: true },
         { key: 'document_entry_time', hideOnForm: true },
         { key: 'documentcontracttype_name', hideOnForm: true },
         {
-          key: 'documentcontracttype_id',
+          key: 'subdocumenttype_id',
           type: 'list',
           list: 'documentcontracttype',
           listLabel: 'documentcontracttype_name',

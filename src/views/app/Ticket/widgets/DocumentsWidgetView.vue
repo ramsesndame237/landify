@@ -241,8 +241,4 @@ export default {
   }
 }
 
-.modal-body {
-  padding: 0;
-}
-
 </style>
