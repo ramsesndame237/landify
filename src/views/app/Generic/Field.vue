@@ -714,7 +714,7 @@ export default {
       (this.getSubFields() || []).forEach(sub => sub.reset())
     },
     async getRandomPassword() {
-      const accessToken = localStorage.getItem('accessToken').split(" ")[1]
+      const accessToken = localStorage.getItem('accessToken').split(' ')[1]
       this.waitPassword = true
       await this.$http.get(`/users/generate/password/?Authorization=${accessToken}`)
         .then(resp => {
@@ -852,7 +852,7 @@ export default {
           await this.$store.dispatch('table/fetchTableDefinition', 'city')
         }
         let payload = { entity: this.field.entityList || list }
-        if (this.field.entityCustomEndPoint) payload.customEnpoint = this.field.entityCustomEndPoint
+        if (this.field.entityCustomEndPoint) payload.customEnpoint = typeof this.field.entityCustomEndPoint === 'string' ? this.field.entityCustomEndPoint : this.field.entityCustomEndPoint(this)
         if (this.field.onlyForm && this.entity[this.field.key]) {
           payload.data = [{ [this.field.key]: this.entity[this.field.key] }]
         }
