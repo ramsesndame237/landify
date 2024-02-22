@@ -887,7 +887,8 @@ export default {
       if (data.action_ende_soll === null) {
         data.action_ende_soll = ''
       }
-      vm.entity = data;
+      console.log('vm: ', vm)
+      vm.setData(data)
       return data
     }
   },
