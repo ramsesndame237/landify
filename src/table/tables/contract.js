@@ -619,6 +619,7 @@ export default {
       entity: 'frontend_3_4_3_3',
       entityForm: 'contract_recurringpayment_rel',
       entityView: 'recurringpayment',
+      formComponent: () => import('@/views/app/FormComponent/RecurringPaymentContractForm.vue'),
       fields: [
         {
           key: 'recurringpayment_id',

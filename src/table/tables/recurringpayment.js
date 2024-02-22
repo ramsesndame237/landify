@@ -3,7 +3,7 @@ function visibleByRecurringPaymentType(indexes) {
     const list = vm.$store.state.table.listCache.recurringpaymenttype
     if (!list) return false
     const selected = list.find(i => i.recurringpaymenttype_id === entity.recurringpaymenttype_id)
-    return selected ? indexes.indexOf(parseInt(selected.recurringpaymenttype_name.split('-')[0])) >= 0 : false
+    return selected ? indexes.indexOf(parseInt(entity.recurringpaymenttype_id)) >= 0 : false
   }
 }
 export default {
@@ -19,6 +19,7 @@ export default {
       listLabel: 'contract_name',
       hideOnIndex: true,
       relationEntity: 'contract_recurringpayment_rel',
+      entityKey: 'contract_id',
     },
     {
       key: 'partnercompany_id',
@@ -33,6 +34,7 @@ export default {
       key: 'bankdata_id',
       type: 'list',
       list: 'company',
+      useWholeResponse: true,
       entityCustomEndPoint: vm => `/partners/${vm.entity.partnercompany_id}/bankdata`,
       listLabel: 'bankdata_name',
       filter_key: 'partnercompany_id',
@@ -43,23 +45,24 @@ export default {
       type: 'list',
       list: 'recurringpaymenttype',
       listLabel: 'recurringpaymenttype_name',
+      orderByField: 'recurringpaymenttype_name',
       hideOnIndex: true,
     },
     { key: 'recurringpaymenttype_name', hideOnForm: true },
     {
       key: 'recurringpayment_sum_per_month',
       hideOnIndex: true,
-      visible: visibleByRecurringPaymentType([1, 3, 2, 5, 6, 7]),
+      visible: visibleByRecurringPaymentType([1, 3, 5, 6, 7, 8, 9]),
     },
     {
       key: 'recurringpayment_condition_percentage',
       hideOnIndex: true,
-      visible: visibleByRecurringPaymentType([4, 5]),
+      visible: visibleByRecurringPaymentType([4]),
     },
     {
       key: 'recurringpayment_percentage',
       hideOnIndex: true,
-      visible: visibleByRecurringPaymentType([4]),
+      visible: visibleByRecurringPaymentType([2, 4, 5]),
     },
     { key: 'recurringpayment_begin_date', type: 'date', hideOnIndex: true },
     { key: 'recurringpayment_end_date', type: 'date', hideOnIndex: true },
