@@ -458,14 +458,18 @@ export default {
       submit: async (vm, entity, create) => {
         try {
           if (!create) {
-            return await vm.$http({
+            await vm.$http({
               url: '/documents/update',
               method: 'put',
               params: {
-                ...entity,
-                document_name: Math.random().toString(20),
+                document_id: entity.document_id,
+                documenttype_id: entity.documenttype_id,
+                subdocumenttype_id: entity.subdocumenttype_id,
+                document_name: entity.document_name,
               },
             })
+            vm.$successToast('Document has been updated successfully')
+            return null
           }
 
           const formData = new FormData()
@@ -502,6 +506,8 @@ export default {
           })
 
           await vm.$http.post('/contracts/step/7', payload)
+          vm.$successToast('Document has been created successfully')
+          return null
         } catch (e) {
           throw new Error('The document save failed')
         }

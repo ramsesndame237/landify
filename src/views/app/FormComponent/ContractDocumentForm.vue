@@ -63,7 +63,7 @@ export default {
         <b-col v-for="(field,index) in contractDocumentsFields" :key="index" cols="12"
                :md="field.cols || cols"
         >
-          <field v-if="(!create && !field.hideOnUpdate)" ref="fields" :disabled="disabled || field.disabled || (!create && field.disableOnUpdate)"
+          <field v-if="create || (!create && !field.hideOnUpdate)" ref="fields" :disabled="disabled || field.disabled || (!create && field.disableOnUpdate)"
                  :create="create"
                  :inline="inline" :entity="entity" :table-definition="tableDefinition" :field="field"
           />
