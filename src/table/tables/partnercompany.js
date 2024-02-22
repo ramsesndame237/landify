@@ -327,7 +327,6 @@ export default {
 
       dataForServer.partnergroup = {
         partnergroup_id: dataForServer.partnergroup_id,
-        // partnergroup_is_internal: dataForServer.partnergroup_is_internal,
       }
       delete dataForServer.partnergroup_id
       delete dataForServer.partnergroup_is_internal
