@@ -280,6 +280,14 @@ export default {
             disabled: true,
           },
           { key: 'date', type: 'date', default: moment().format('YYYY-MM-DD') },
+          {
+            key: 'contactperson_id',
+            required: false,
+            type: 'list',
+            list: 'contactperson',
+            listLabel: 'contactperson_firstname',
+            send: false,
+          },
         ],
         create: false,
         update: false,
@@ -323,7 +331,7 @@ export default {
       const valid = await this.$refs.form.validate()
       if (!valid) return
       this.loading = true
-      const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
+      const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id', 'contactperson_id']).omitBy(_.isNil).value()
       filter.per_page = 100000
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
