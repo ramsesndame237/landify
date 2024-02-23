@@ -469,7 +469,7 @@ export default {
     },
   },
   mounted() {
-    this.getActions()
+    this.getActions(true)
   },
   methods: {
     async getActions(refresh = false) {
