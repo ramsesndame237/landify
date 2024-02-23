@@ -3,6 +3,9 @@ import VueRouter from 'vue-router'
 import { canNavigate } from '@/libs/acl/routeProtection'
 import jwt from '@/auth/jwt/useJwt'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
+import { parseJwt } from "@/views/app/CustomComponents/DataTable/utils";
+import axiosIns from "@/libs/axios";
+import BrowserId from "browser-id";
 
 Vue.use(VueRouter)
 
@@ -41,10 +44,40 @@ const router = new VueRouter({
       },
     },
     {
-      path:'/app/preview/document',
-      name:'previewDocument',
-      component:()=>import('@/views/app/Ticket/widgets/PreviewDocumentWidget.vue'),
+      path: '/app/preview/document',
+      name: 'previewDocument',
+      component: () => import('@/views/app/Ticket/widgets/PreviewDocumentWidget.vue'),
       // props:true
+    },
+    {
+      path: '/app/dashboard/board',
+      name: 'board-dashboard',
+      component: () => import('@/views/app/DashboardBoard/DashboardBoard.vue'),
+      meta: {
+        pageTitle: 'headline~dashboard~board',
+        breadcrumb: [
+          {
+            text: 'headline~dashboard~board',
+            active: true,
+          },
+        ],
+        resource: 'dashboard',
+      },
+    },
+    {
+      path: '/app/dashboard/issue/board/:id',
+      name: 'board-dashboard',
+      component: () => import('@/views/app/Kanban/DashboardErrorBoard.vue'),
+      meta: {
+        pageTitle: 'Dashboard of issue',
+        breadcrumb: [
+          {
+            text: 'Board issue',
+            active: true,
+          },
+        ],
+        resource: 'dashboard',
+      },
     },
     {
       path: '/app/dashboard/ticket',
@@ -62,6 +95,20 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/app/ticketissue',
+      name: 'ticketissue',
+      component: () => import('@/views/app/Ticket/TicketListIssue.vue'),
+      meta: {
+        pageTitle: 'headline~dashboard~ticket',
+        breadcrumb: [
+          {
+            text: 'menu~ticketlistissue',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
       path: '/app/table/:table',
       name: 'table',
       component: () => import('@/views/app/Generic/KeyFix/Index.vue'),
@@ -72,10 +119,10 @@ const router = new VueRouter({
       },
     },
     {
-      path:'/app/preview/document/:document_id/:name',
-      name:'previewDocument',
-      component:()=>import('@/views/app/Ticket/widgets/PreviewDocumentWidget.vue'),
-      props:true
+      path: '/app/preview/document/:document_id/:name',
+      name: 'previewDocument',
+      component: () => import('@/views/app/Ticket/widgets/PreviewDocumentWidget.vue'),
+      props: true
     },
     {
       path: '/app/table/:table/view/:id',
@@ -213,6 +260,23 @@ const router = new VueRouter({
       path: '/app/incoming-mails',
       name: 'incoming-mails',
       component: () => import('@/views/app/Page/IncomingMails.vue'),
+      meta: {
+        action: 'menu~classification',
+        resource: 'menu',
+        pageTitle: 'Email Listing and Processing',
+        breadcrumb: [
+          {
+            text: 'Incoming Mails',
+            active: true,
+          },
+        ],
+      },
+    },
+
+    {
+      path: '/app/incoming-mails/v2',
+      name: 'incoming-mails-v2',
+      component: () => import('@/views/app/Page/IncomingMailsList/Index.vue'),
       meta: {
         action: 'menu~classification',
         resource: 'menu',
@@ -390,6 +454,22 @@ router.afterEach(() => {
   if (appLoading) {
     appLoading.style.display = 'none'
   }
+})
+router.beforeEach((to, from, next) => {
+  const currentToken = localStorage.getItem('accessToken')
+  const currentRefreshToken = localStorage.getItem('refreshToken')
+  const TIME_LIMIT_EXPIRIED= 20 * 60 *1000
+  if(parseJwt(currentToken).iat + TIME_LIMIT_EXPIRIED <= Math.round(Date.now() / 1000)){
+    axiosIns.post('/auth/refresh/token',{
+      user_browser_hash: BrowserId(),
+      user_refresh_token: currentRefreshToken,
+    }).then((response)=>{
+      localStorage.setItem('accessToken', response.data.user_token)
+      localStorage.setItem('refreshToken', response.data.user_refresh_token)
+    }).catch((error)=> console.error(error))
+  }
+
+  return next()
 })
 
 export default router
