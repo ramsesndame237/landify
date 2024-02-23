@@ -84,6 +84,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import { formatDate } from '@/libs/utils'
 import DeadlineMixin from '@/views/app/Contracts/Relations/Deadlines/DeadlineMixin'
+import { getUserData } from '@/auth/utils'
 import rates from './rates.json'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
@@ -112,7 +113,7 @@ export default {
       perPage: payload?.perPage || 10,
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
-      initialFilterData: payload?.filter,
+      initialFilterData: this.definition?.initialFilterValues ?? payload?.filter,
       initialSortBy: payload?.sortBy,
       initialSortDesc: payload?.sortDesc ?? true,
       items: [],
@@ -123,6 +124,8 @@ export default {
   },
   computed: {
     definition() {
+      const user = getUserData()
+
       return {
         title: 'headline~contractlist~condition',
         entity: 'frontend_contractlist_criteria',
@@ -277,6 +280,14 @@ export default {
             disabled: true,
           },
           { key: 'date', type: 'date', default: moment().format('YYYY-MM-DD') },
+          {
+            key: 'contactperson_id',
+            required: false,
+            type: 'list',
+            list: 'contactperson',
+            listLabel: 'contactperson_firstname',
+            send: false,
+          },
         ],
         create: false,
         update: false,
@@ -301,12 +312,26 @@ export default {
       this.reset()
     },
   },
+  created() {
+    if (this.definition.filters) {
+      (this.definition.filters ?? []).forEach(filter => {
+        this.$watch(
+          `data.${filter.key}`,
+          () => {
+            (this.definition.filters ?? []).filter(_filter => _filter.filter_key === filter.key).map(_filter => {
+              this.$set(this.data, _filter.key, null)
+            })
+          },
+        )
+      })
+    }
+  },
   methods: {
     async filter() {
       const valid = await this.$refs.form.validate()
       if (!valid) return
       this.loading = true
-      const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
+      const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id', 'contactperson_id']).omitBy(_.isNil).value()
       filter.per_page = 100000
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')

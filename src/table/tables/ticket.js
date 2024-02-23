@@ -109,7 +109,7 @@ export default {
       list: 'customergroup',
       listLabel: 'customergroup_name',
       required: false,
-      noFetchOnInit: true,
+      noFetchOnInit: false,
       customPagination: {
         per_page: 15,
       },
