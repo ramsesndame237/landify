@@ -23,14 +23,17 @@
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
                  :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"
-                 :filter-items="definition.filter" :custom-request="definition.customRequest" :initial-filter-data="initialFilterData" />
+                 :no-cache="definition.noCache"
+                 :filter-items="definition.filter" :custom-request="definition.customRequest"
+                 :initial-filter-data="initialFilterData"/>
       <!--      <DataTable :key="table" :columns="getHeadersDataTable" :url="definition.entityEndpoint || definition.entity"-->
       <!--                 hide-top-bar="true" :resolve-data="data =>data.data.data || data.data || data.items" :custom-actions="definition.custom_actions"-->
       <!--                 :hidde-filter-bar="true"/>-->
     </b-card>
-    <generic-modal v-if="definition.useModalGeneric || definition.useModalGeneric === undefined" ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"
+    <generic-modal v-if="definition.useModalGeneric || definition.useModalGeneric === undefined" ref="modal"
+                   :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"
                    with-continue :table-definition-key="table" :title="`headline~${table}~new`"
-                   @reload-table="$refs.table.reload()" />
+                   @reload-table="$refs.table.reload()"/>
     <SidebarModalComponent ref="sidebarComponent" :title="`headline~${table}~new`" :definition="definition"
                            :options="definition.options || null" :table-definition-key="table" :table="table">
       <div slot="customHeader" class="header-customer mb-3 d-flex align-items-center justify-content-center">
@@ -44,13 +47,13 @@
 
 <script>
 
-import { BCard } from 'bootstrap-vue'
+import {BCard} from 'bootstrap-vue'
 import TablePagination from '@/layouts/components/TablePagination.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
-import { mapGetters } from 'vuex'
+import {mapGetters} from 'vuex'
 import SidebarModalComponent from '@/components/SidebarModalComponent.vue'
 import DataTable from '@/views/app/CustomComponents/DataTable/DataTable.vue'
-import { getUserData } from '@/auth/utils'
+import {getUserData} from '@/auth/utils'
 import Tables from '../../../table'
 import GenericFilter from './Filter.vue'
 import InlineFilter from './InlineFilter.vue'
@@ -83,7 +86,7 @@ export default {
     const hasCustomerGroupIdInFilters = definition.filters?.find(filter => filter.key === 'customergroup_id')
 
     const filterValues = {
-      ...(definition.initialFilterValues ? definition.initialFilterValues?.(this) : hasCustomerGroupIdInFilters ? { customergroup_id } : {}),
+      ...(definition.initialFilterValues ? definition.initialFilterValues?.(this) : hasCustomerGroupIdInFilters ? {customergroup_id} : {}),
       ...(payload?.filter ?? {}),
     }
 
@@ -132,13 +135,14 @@ export default {
         currentPage: this.currentPage,
         perPage: this.perPage,
         totalRows: this.totalRows,
-        filter: { ...this.$refs.filter.data },
+        filter: {...this.$refs.filter.data},
         sortBy: this.$refs.table.sortBy,
         sortDesc: this.$refs.table.sortDesc,
       },
     })
   },
   mounted() {
+    console.log("definition: ", this.definition.noCache)
     console.log('this is the entity definition', this.definition)
   },
   methods: {
@@ -165,13 +169,13 @@ export default {
       else if (this.definition.createModal === 'otherPage') {
         this.$router.push({
           name: 'table-form',
-          params: { table: this.table },
+          params: {table: this.table},
         })
       } else if (this.useModalToCreate) this.$refs.modal.openModal(true, {})
       else {
         this.$router.push({
           name: 'table-form',
-          params: { table: this.table },
+          params: {table: this.table},
         })
       }
     },
