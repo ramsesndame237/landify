@@ -125,7 +125,7 @@ export default {
     definition() {
       return {
         title: 'headline~contractlist~condition',
-        entity: 'frontend_contractlist_criteria',
+        entityEndpoint: '/contracts/conditionList',
         fields: [
           { key: 'contract_name', stickyColumn: false, variant: 'light' },
           { key: 'contracttype_name' },
