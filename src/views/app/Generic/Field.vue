@@ -898,8 +898,9 @@ export default {
         const response = await this.$store.dispatch('table/fetchList', payload)
         let newData = []
         if (this.field.entityCustomEndPoint) {
-          newData = response.data
+          newData = this.field.useWholeResponse ? response : response.data
           this.hasNext = response.current_page < response.pages
+          console.log({ response }, this.field.useWholeResponse, this.hasNext)
         } else {
           const { links, data } = response
           newData = data

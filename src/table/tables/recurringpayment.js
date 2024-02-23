@@ -8,6 +8,33 @@ function visibleByRecurringPaymentType(indexes) {
 }
 export default {
   entity: 'frontend_3_9_1',
+  formComponent: () => import('@/views/app/FormComponent/RecurringPaymentContractForm.vue'),
+  submit: async (vm, entity, create) => {
+    console.log({ entity })
+    const payload = {
+      contract_id: 0,
+      recurringpayments: [
+        {
+          recurringpaymenttype_id: 0,
+          recurringpayment_id: 0,
+          recurringpayment_name: 'string',
+          recurringpayment_sum_per_month: 0,
+          recurringpayment_condition_percentage: 0,
+          recurringpayment_percentage: 0,
+          recurringpayment_begin_date: '2024-02-23',
+          recurringpayment_end_date: '2024-02-23',
+          recurringpayment_description: 'string',
+          recurringpayment_condition_comment: '',
+          maturitytype_id: 0,
+          recurringpayment_maturity_date: '2024-02-23',
+          recurringpayment_maturity_daily_range: 0,
+          recurringpayment_maturity_monthly_range: 0,
+          recurringpayment_value_deposit: 0,
+          indexclause_id: 0,
+        },
+      ],
+    }
+  },
   fields: [
     { key: 'recurringpayment_id', auto: true },
     { key: 'recurringpayment_name' },
@@ -32,13 +59,30 @@ export default {
     },
     {
       key: 'bankdata_id',
+      entityKey: 'partnercompany_bankdata_id',
       type: 'list',
       list: 'company',
       useWholeResponse: true,
       entityCustomEndPoint: vm => `/partners/${vm.entity.partnercompany_id}/bankdata`,
-      listLabel: 'bankdata_name',
+      listLabel: 'iban_id',
       filter_key: 'partnercompany_id',
+      filter: () => true,
       hideOnIndex: true,
+      noCache: true,
+    },
+    {
+      key: 'id',
+      entityKey: 'tax_rate_id',
+      label: 'Tax rate',
+      type: 'list',
+      list: 'tax_rate',
+      useWholeResponse: true,
+      entityCustomEndPoint: '/contracts/tax-rates',
+      listLabel: 'code',
+      filter_key: 'contract_id',
+      filter: () => true,
+      hideOnIndex: true,
+      noCache: true,
     },
     {
       key: 'recurringpaymenttype_id',
@@ -52,12 +96,12 @@ export default {
     {
       key: 'recurringpayment_sum_per_month',
       hideOnIndex: true,
-      visible: visibleByRecurringPaymentType([1, 3, 5, 6, 7, 8, 9]),
+      visible: visibleByRecurringPaymentType([1, 3, 6, 7, 8, 9, 10]),
     },
     {
       key: 'recurringpayment_condition_percentage',
       hideOnIndex: true,
-      visible: visibleByRecurringPaymentType([4]),
+      visible: visibleByRecurringPaymentType([]),
     },
     {
       key: 'recurringpayment_percentage',

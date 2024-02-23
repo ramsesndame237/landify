@@ -4,11 +4,33 @@ import formMixin from '@/views/app/Generic/FormMixin'
 export default {
   name: 'RecurringPaymentContractForm',
   mixins: [formMixin],
-  mounted() {
-    const subEntity = this.$refs.fields[0]?.subEntity
-    if (subEntity && this.$route.params.id) {
-      this.$refs.fields[0].$set(subEntity, 'contract_id', Number(this.$route.params.id))
+  data() {
+    return {
+      contract: null,
+      loading: false,
     }
+  },
+  mounted() {
+    this.getContract().then(() => {
+      const firstField = this.$refs.fields[0] // recurringpayment_id
+      const subEntity = firstField?.subEntity
+      if (subEntity && this.$route.params.id) {
+        console.log({ contract: this.contract })
+        firstField.$set(subEntity, 'contract_id', Number(this.$route.params.id))
+      }
+    })
+  },
+  methods: {
+    async getContract() {
+      this.loading = true
+      await this.$http.get(`/contracts/${this.$route.params.id}`).then(({ data }) => {
+        this.contract = data
+      }).catch(e => {
+        this.$errorToast('Error while loading recurring payment')
+      }).finally(() => {
+        this.loading = false
+      })
+    },
   },
 }
 </script>
