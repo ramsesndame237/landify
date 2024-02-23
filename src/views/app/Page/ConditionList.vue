@@ -16,10 +16,11 @@
         </b-form>
       </validation-observer>
       <div class="text-right">
-        <b-button variant="success" :disabled="loading || items.length === 0" @click="download">
+        <b-button variant="success" :disabled="loadingDonwload" @click="download">
+          <b-spinner v-if="loadingDonwload" class="mr-1" small/>
           {{ $t('button~download') }}
         </b-button>
-        <b-button variant="info" class="ml-1" :disabled="loading" @click="reset">
+        <b-button variant="info" class="ml-1" :disabled="loading || loadingDonwload" @click="reset">
           {{ $t('button~reset') }}
         </b-button>
         <b-button variant="primary" :disabled="loading" class="ml-1" @click="filter">
@@ -118,6 +119,7 @@ export default {
       items: [],
       data: {},
       loading: false,
+      loadingDonwload: false,
       eurCurrency: false,
     }
   },
@@ -596,9 +598,28 @@ export default {
       this.$refs.form.reset()
       this.items = []
     },
-    download() {
-      const filename = `${this.$t(`menu~${this.table === 'conditions' ? 'contractcondition' : 'contractdeadline'}`)}-Export_${moment().format('DD_MM_YYYY')}.csv`
-      this.$refs.table.downloadCsv(filename)
+    async download() {
+      const valid = await this.$refs.form.validate()
+      if (!valid) return
+      this.loadingDonwload = true
+      const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
+      filter.per_page = 100000
+      // generate the request query string
+      const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
+      try {
+        const filename = `${this.$t(`menu~${this.table === 'conditions' ? 'contractcondition' : 'contractdeadline'}`)}-Export_${moment().format('DD_MM_YYYY')}.xlsx`
+        const masterData = (await this.$http.get(`/contracts/conditionList/export?${requestQuery}`, {
+          responseType: 'blob',
+        })).data
+        const link = document.createElement('a')
+        link.setAttribute('href', URL.createObjectURL(masterData))
+        link.setAttribute('download', filename)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      } finally {
+        this.loadingDonwload = false
+      }
     },
   },
 }
