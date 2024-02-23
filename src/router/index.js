@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import { canNavigate } from '@/libs/acl/routeProtection'
 import jwt from '@/auth/jwt/useJwt'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
-import { parseJwt } from "@/views/app/CustomComponents/DataTable/utils";
+import { checkAndverficationJwt, parseJwt } from "@/views/app/CustomComponents/DataTable/utils";
 import BrowserId from 'browser-id'
 import axiosIns from "@/libs/axios";
 
@@ -406,6 +406,7 @@ router.beforeEach((to, from, next) => {
       localStorage.setItem('accessToken', response.data.user_token)
       localStorage.setItem('refreshToken', response.data.user_refresh_token)
     }).catch((error) => console.error(error))
+
   }
 
   return next()
