@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import { canNavigate } from '@/libs/acl/routeProtection'
 import jwt from '@/auth/jwt/useJwt'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
+import { parseJwt } from "@/views/app/CustomComponents/DataTable/utils";
 
 Vue.use(VueRouter)
 
