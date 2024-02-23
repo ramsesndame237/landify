@@ -490,6 +490,7 @@ export default {
       search: false,
       create: false,
       delete: false,
+      noCache: true,
       defaultSortField: 'contractaction_id',
       fields: [
         {
