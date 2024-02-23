@@ -495,7 +495,7 @@ export default {
         } catch (e) {
           console.error(e)
         }
-        if (!entity) {
+        if (!entity && this.entityId !== 0) {
           this.$errorToast(`The entity with the id "${this.entityId}" doesnt exists`)
         } else {
           this.setData(entity)
