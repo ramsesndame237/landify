@@ -4,6 +4,7 @@ import { canNavigate } from '@/libs/acl/routeProtection'
 import jwt from '@/auth/jwt/useJwt'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 import { parseJwt } from "@/views/app/CustomComponents/DataTable/utils";
+import BrowserId from 'browser-id'
 
 Vue.use(VueRouter)
 
