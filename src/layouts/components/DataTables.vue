@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <b-table ref="table" sticky-header striped hover responsive :busy.sync="loading" :per-page="perPage"
-             :current-page="currentPage" :items="provider" :fields="allFields" :sort-by.sync="sortBy"
+             :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
              :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" show-empty @row-clicked="onRowClicked">
       <template #table-busy>
         <div class="text-center text-danger">
@@ -250,7 +250,7 @@ export default {
       this.selectAll()
     },
     items() {
-      this.currentItems = this.items
+      // this.currentItems = this.items
     },
     filterData() {
       this.$refs.table.refresh()

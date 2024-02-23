@@ -331,6 +331,7 @@ export default {
       title: 'headline~document~tab',
       primaryKey: 'document_id',
       entityForm: 'document_pos_rel',
+      entityEndpoint: '/documents/pos',
       entity: 'frontend_3_1_3_8',
       fields: [
         {
