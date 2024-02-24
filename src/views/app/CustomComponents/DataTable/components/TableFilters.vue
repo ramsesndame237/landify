@@ -282,9 +282,9 @@ export default {
       }
     },
   },
-   mounted() {
-    this.tableStore.pagination.search = ' '
-  }
+  //  mounted() {
+  //   this.tableStore.pagination.search = ' '
+  // }
 }
 </script>
 
