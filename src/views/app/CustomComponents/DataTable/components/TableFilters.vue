@@ -269,6 +269,9 @@ export default {
       this.$emit('update:search', val)
     },
   },
+  mounted() {
+    this.tableStore.pagination.search = ''
+  },
   methods: {
     toggleColumn,
     showDeleteConfirm() {
@@ -282,9 +285,6 @@ export default {
       }
     },
   },
-   mounted() {
-    this.tableStore.pagination.search = ' '
-  }
 }
 </script>
 
