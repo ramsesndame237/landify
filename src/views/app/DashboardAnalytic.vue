@@ -38,9 +38,10 @@
       </div>
     </div>
     <b-row>
-      <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~update~tickets~numbers')" color="#008000"
-                    :percent="(total_update_ticket*100/total_open_tickets).toFixed(0)" :number="before_deadline"
-                    variant="dark" cols="4" @click.native="show(dashboard_filter.BEFORE_DEADLINE)"/>
+      <summary-card :loading="loading" :hide-percentage="true"
+                    :title="$t('headline~dashboard~subframe~update~tickets~numbers')" color="#008000"
+                    :number="total_update_ticket"
+                    variant="dark" cols="4" @click.native="show('Update_ticket')"/>
       <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~open_tickets_intime')" color="#008000"
                     :percent="(before_deadline*100/total_open_tickets).toFixed(0)" :number="before_deadline"
                     variant="dark" cols="4" @click.native="show(dashboard_filter.BEFORE_DEADLINE)"/>
@@ -237,8 +238,25 @@ export default {
       await this.fetchDashboardStatistics()
     },
     show(status) {
+      if(status === 'Update_ticket'){
+        return this.$router.push({
+          name:'updateTicket',
+          params: {
+            dashboardData: {
+              ticket_deadline_status: status,
+              start_date: this.date[0],
+              end_date: this.date[1],
+              team_id: this.entity.team_id,
+              user_id: this.entity.user_id,
+              tickets: this.entity.tickets,
+              company_id: this.entity.company_id,
+              customergroup_id: this.getCustomerGroupId(this.entity.company_id),
+            },
+          },
+        })
+      }
       this.$router.push({
-        name: 'table',
+        name:'table',
         params: {
           table: 'ticket',
           dashboardData: {
