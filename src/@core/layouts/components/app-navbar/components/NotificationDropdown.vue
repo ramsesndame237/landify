@@ -36,9 +36,11 @@
         :key="index"
         class="relative cursor-pointer"
       >
-        <b-avatar v-b-tooltip.hover :title="notification.read === 0 ? 'Mark as read':'Mark as unread'" class="position-absolute position-right-0 position-top-2" size="md"
-                  @click.native="markedNotificationAsRead(notification.notification_id)">
-          <feather-icon size="10" :icon="notification.read === 0 ?  'MailIcon' : 'MailOpenIcon'"
+        <b-avatar v-b-tooltip.hover :title="notification.read === 0 ? 'Mark as read':'Mark as unread'"
+                  :class="['position-absolute position-right-0 position-top-2',notification.read === 0 ? 'bg-primary':'']"
+                  size="md"
+                  @click.native="markedNotificationAsRead(notification.id)">
+          <feather-icon size="10" :icon="notification.read === 0 ?  'MailIcon' : 'BookOpenIcon'"
                         class="position-absolute"/>
         </b-avatar>
         <b-media>
@@ -119,21 +121,22 @@ export default {
       })
     },
     markedNotificationAsRead(id_notification) {
-      alert(id_notification)
-      if(id_notification){
-       return  this.$http.post('/notifications', {"notification_id": id_notificatioin}).then((response) => {
+      if (id_notification) {
+        return this.$http.post('/notifications', {"notification_id": id_notification}).then((response) => {
           console.log("thios is the response of the mark read notification", response)
+          this.$successToast(response.data.message)
         }).catch((error) => {
           console.error(error)
         })
       }
 
-      this.$http.post('/notifications',{"notification_id":this.notifications.map(notif => notif.notification_id)}).then((response)=>{
-        console.log("this is the responsive",response)
-      }).catch((error)=>{
-        console.error("this is th error ",error)
+      this.$http.post('/notifications', {"notification_id": ''}).then((response) => {
+        console.log("this isht response", response)
+        this.$successToast(response.data.message)
+      }).catch((error) => {
+        console.error(error)
       })
-
+      this.getAllNotification()
     },
     getAllNotification() {
       this.loadingNotificaton = true

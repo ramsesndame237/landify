@@ -72,7 +72,8 @@
                 v-bind="col.props"
                 class="position-relative"
               >
-                <div>
+                <div >
+                  <b-spinner v-if="j === 0 && row.read === 'NOT_READ'" variant="primary" small type="grow" class="position-absolute" style="left: 5px"></b-spinner>
                   <div
                     :class="`td-first-div${
                       (buttons.concat(moreActions).length > 0 && !col.hideActions)

@@ -15,7 +15,7 @@ export default {
   },
   mixins: [EditPageMixin, TicketMixin],
   props: {
-    documents: Array,
+    // documents: Array,
     ticket_id: Number,
     column_has_stamp: Boolean,
   },
@@ -24,6 +24,7 @@ export default {
       previewModalOpen: false,
       currentDoc: null,
       isCreate: true,
+      documents:[],
       initialState: {},
       columDataDocument: [
         {
@@ -91,6 +92,18 @@ export default {
     downloadDocument() {
       window.open(getDocumentLink(this.currentDoc))
     },
+    async fetchDocuments() {
+      const documents = (await this.$http.get('/tickets/documents', {
+        params: {
+          ticket_id: this.ticket_id,
+          size: 100_000,
+        },
+      })).data.data
+      documents.forEach(document => {
+        document.loading = false
+      })
+      this.documents = documents
+    },
     createDocument() {
       this.isCreate = true
       console.log('this this the ticket id ', this.ticket_id)
@@ -152,6 +165,9 @@ export default {
       getDocumentLinkPreview(document)
     },
   },
+  // mounted() {
+  //   this.fetchDocuments()
+  // }
 }
 </script>
 <template>

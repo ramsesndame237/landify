@@ -129,6 +129,13 @@ export default {
       ticket.ticket_closed = 0
       this.$successToast('The ticket is open')
     },
+    async makedAsRead(id) {
+      this.$http.put(`/tickets/mark-status?ticket_id=${id}`).then((response) => {
+        console.log("this is the response",response)
+      }).catch((error) => {
+        console.error(error)
+      })
+    },
     async toggleTicket(e, ticket) {
       e.stopPropagation()
       const result = await this.$swal({
