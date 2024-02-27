@@ -251,6 +251,7 @@ export default {
               tickets: this.entity.tickets,
               company_id: this.entity.company_id,
               customergroup_id: this.getCustomerGroupId(this.entity.company_id),
+              ticket_update_type:''
             },
           },
         })

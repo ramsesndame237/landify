@@ -263,6 +263,40 @@ export default {
       },
     },
     {
+      key: 'ticket_update_type',
+      label: 'Update type',
+      type: 'custom-select',
+      required: false,
+      clearable: false,
+      items: [
+        {
+          label: 'All',
+          value: -1,
+        },
+        {
+          label: 'New file',
+          value: 'NEW_FILE',
+        },
+        {
+          label: 'New email',
+          value: 'NEW_EMAIL',
+        },
+        {
+          label: 'New ticket',
+          value: 'NEW_TICKET',
+        },
+        {
+          label: 'New moved',
+          value: 'MOVED_TICKET',
+        },
+      ],
+      change: (entity, vm) => {
+        if (entity.ticket_deadline_status === undefined) {
+          vm.$set(vm.entity, 'ticket_deadline_status', -1)
+        }
+      },
+    },
+    {
       key: 'tickets',
       label: 'Tickets type',
       type: 'custom-select',

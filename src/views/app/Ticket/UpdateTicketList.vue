@@ -8,7 +8,6 @@
       url="/tickets/slims?status=update_ticket"
       :columns="cols"
       :on-row-click="(row) => row.ticket_id && $router.push(`/app/table/ticket/view/${row.ticket_id}`)"
-      :include-in-query="currentFilterData"
       :bar-actions="[
         {
           icon: 'FilterIcon',
@@ -16,9 +15,9 @@
         }
       ]"
     />
-    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"
-                   with-continue :table-definition-key="table" :title="`headline~${table}~new`"
-                   @reload-table="$refs.table.reload()"/>
+<!--    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"-->
+<!--                   with-continue :table-definition-key="table" :title="`headline~${table}~new`"-->
+<!--                   @reload-table="$refs.dataTable.fetchFn()"/>-->
   </div>
 </template>
 
@@ -65,6 +64,7 @@ export default {
           tickets: data.tickets,
           company_id: data.company_id,
           customergroup_id: data.customergroup_id,
+          ticket_update_type:data.ticket_update_type
         },
       }
       payload.filter = _.omitBy(payload.filter, _.isNil)
@@ -155,7 +155,6 @@ export default {
   watch: {
     filterValue: {
       handler() {
-        console.log('filter value change')
         this.allFilter()
       },
     },
