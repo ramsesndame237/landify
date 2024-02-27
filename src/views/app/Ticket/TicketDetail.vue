@@ -1,6 +1,6 @@
 <template>
   <div class="global-container">
-    <TabComponent :active-tab-item="activeTabItem" :tab-title="tabTitle" @selected-item="getActiveItemData"/>
+    <TabComponent :active-tab-item="activeTabItem" :tab-title="tabDetailsTicket" @selected-item="getActiveItemData"/>
     <b-overlay :show="loading">
       <div v-if="entity && entity.columns">
 
@@ -28,6 +28,7 @@
                           @click="$refs.assign.openModal(entity, userIdsOfTeam(entity.columns[0].team_id))">
                   {{ $t('button~assignto') }}
                 </b-button>
+
                 <b-button v-if="canMoveBack()" class="ml-2" variant="primary" @click="moveBack">
                   {{ $t('button~moveback') }}
                 </b-button>
@@ -35,12 +36,19 @@
                           variant="primary" @click="moveToNext">
                   {{ $t('button~movetonextcolumn') }}
                 </b-button>
+<!--                <b-button v-if="canMoveToNext() && (showButton.all || showButton.confirm)" class="ml-2"-->
+<!--                          variant="primary" @click="moveToNext">-->
+<!--                  Move to another board-->
+<!--                </b-button>-->
                 <b-button v-if="!entity.ticket_closed & showButton.all" variant="primary" class="ml-2"
                           @click="updateTicket">
                   {{ $t('button~edit') }}
                 </b-button>
                 <b-button v-if="showButton.all" variant="primary" class="ml-2" @click="(e)=>toggleTicket(e,entity)">
                   {{ $t('button~ticket~' + (entity.ticket_closed ? 'reopen' : 'close')) }}
+                </b-button>
+                <b-button variant="primary" class="ml-2" @click="(e)=>makedAsRead(entity.ticket_id)">
+                  {{ entity.read === 'NOT_READ' ? 'Mark as read' : 'Mark as unread' }}
                 </b-button>
                 <assign-user-modal ref="assign" @reload="loadSingleTicket"/>
               </div>
@@ -264,72 +272,9 @@
             </b-card-actions>
           </b-col>
           <b-col lg="12">
-            <!-- <div v-if="showButton.all && activeTabItem && activeTabItem.id ==='4'">
-              <b-button variant="primary" @click="createDocument">
-                {{ $t('button~newdocument') }}
-              </b-button>
-            </div> -->
-            <DocumentsWidgetView v-if="activeTabItem && activeTabItem.id==='4'" :documents="documents"
-                                 :ticket_id="entity.ticket_id" :column_has_stamp="entity.column_has_stamp === 1 ? true:false"/>
-
-            <!--            <b-row>-->
-            <!--              <b-col v-for="(document,i) in document" :key="i" cols="6">-->
-            <!--                <b-overlay :show="document.loading">-->
-            <!--                  <b-card>-->
-            <!--                    <template #header>-->
-            <!--                      <div class=" w-100 d-flex justify-content-between">-->
-            <!--                        <h5-->
-            <!--                          class="document-header"-->
-            <!--                          :title="document.document_name + (document.document_already_stamp ? '(Stamped)' : '') + ' - ' + (document.document_type_name || '')"-->
-            <!--                        >-->
-            <!--                          {{-->
-            <!--                            document.document_name + (document.document_already_stamp ? '(Stamped)' : '') + ' - ' + (document.document_type_name || '')-->
-            <!--                          }}-->
-            <!--                        </h5>-->
-            <!--                        &lt;!&ndash;                    <b-link variant="danger" target="_blank" :href="getLink(document)">&ndash;&gt;-->
-            <!--                        &lt;!&ndash;                      <feather-icon icon="EyeIcon"/>&ndash;&gt;-->
-            <!--                        &lt;!&ndash;                    </b-link>&ndash;&gt;-->
-            <!--                        <b-dropdown variant="link-" toggle-class="p-0" right no-caret class="ml-auto document-header-dropdown">-->
-            <!--                          <template v-slot:button-content>-->
-            <!--                            <feather-icon icon="MoreHorizontalIcon"/>-->
-            <!--                          </template>-->
-            <!--                          <b-dropdown-item target="_blank" :href="getLink(document)">-->
-            <!--                            {{ $t('button~view') }}-->
-            <!--                          </b-dropdown-item>-->
-            <!--                          <b-dropdown-item @click="$refs.documentModal.openModal(false, document)">-->
-            <!--                            {{ $t('button~edit') }}-->
-            <!--                          </b-dropdown-item>-->
-            <!--                          <b-dropdown-item v-if="!document.pos_id && !document.contract_id" @click="addToPos(document)">-->
-            <!--                            {{ $t('button~document~addtopos') }}-->
-            <!--                          </b-dropdown-item>-->
-            <!--                          <b-dropdown-item v-if="!document.pos_id && !document.contract_id"-->
-            <!--                                           @click="addToContract(document)">-->
-            <!--                            {{ $t('button~document~addtocontract') }}-->
-            <!--                          </b-dropdown-item>-->
-            <!--                        </b-dropdown>-->
-            <!--                      </div>-->
-            <!--                    </template>-->
-            <!--                    <b-card-text>-->
-            <!--                      <h5 class="font-weight-bolder" style="color: black">-->
-            <!--                        {{-->
-            <!--                          document.document_mime_type + (document.pos_id ? ' (POS)' : (document.contract_id ? ' (Contract)' : ''))-->
-            <!--                        }}-->
-            <!--                      </h5>-->
-            <!--                    </b-card-text>-->
-            <!--                    <b-card-text>-->
-            <!--                      <div class="w-100 d-flex flex-column justify-content-between">-->
-            <!--                        <h6>{{ formatDate(document.document_entry_time, true) }}</h6>-->
-            <!--                        <b-link v-if="canStamp(document)"-->
-            <!--                                :to="{name:'sign-document', params: {id: document.document_id,ticket_id: entity.ticket_id, entity: document}}"-->
-            <!--                                class="ml-2">Stamp-->
-            <!--                        </b-link>-->
-            <!--                      </div>-->
-            <!--                    </b-card-text>-->
-            <!--                  </b-card>-->
-            <!--                </b-overlay>-->
-            <!--              </b-col>-->
-            <!--            </b-row>-->
-
+            <DocumentsWidgetView v-if="activeTabItem && activeTabItem.id==='4'"
+                                 :ticket_id="entity.ticket_id"
+                                 :column_has_stamp="entity.column_has_stamp === 1 ? true:false"/>
             <generic-modal ref="documentModal" table="document" :definition="documentDef"
                            table-definition-key="document"
                            :title="$t('headline~document~new')" @reload-table="onNewDocuments"/>
@@ -346,10 +291,10 @@
                   {{ $t('headline~ticket~newsubtask') }}
                 </b-button>
               </b-card-text>
-              <SubticketTable :subtickets="subTickets" :team-users="[]" :loading="loading" />
+              <SubticketTable :subtickets="subTickets" :team-users="[]" :loading="loading"/>
             </b-card>
             <generic-modal ref="modal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
-                           :title="$t('headline~ticket~newsubtask')" />
+                           :title="$t('headline~ticket~newsubtask')"/>
           </b-col>
         </b-row>
       </div>
@@ -358,11 +303,7 @@
 </template>
 
 <script>
-import {
-  BButton,
-  BCol,
-  BRow,
-} from 'bootstrap-vue'
+import {BButton, BCol, BRow,} from 'bootstrap-vue'
 import EditPageMixin from '@/views/app/Generic/EditPageMixin'
 import Table from '@/table'
 import GenericModal from '@/views/app/Generic/modal.vue'
@@ -371,15 +312,15 @@ import AppTimeline from '@core/components/app-timeline/AppTimeline.vue'
 import AppTimelineItem from '@core/components/app-timeline/AppTimelineItem.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import TicketMixin from '@/views/app/Kanban/TicketMixin'
-import { formatDate, getDocumentLink, getStampedDocumentLink } from '@/libs/utils'
+import {formatDate, getDocumentLink, getStampedDocumentLink} from '@/libs/utils'
 import moment from 'moment'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
 import Notes from '@/views/app/Generic/Notes.vue'
-import _, { uniqBy } from 'lodash'
+import _ from 'lodash'
 import EmailModal from '@/views/app/Ticket/EmailModal.vue'
 import AddDocumentToContract from '@/views/app/Ticket/AddDocumentToContract.vue'
 import AddDocumentToPos from '@/views/app/Ticket/AddDocumentToPos.vue'
-import { mapGetters } from 'vuex'
+import {mapGetters} from 'vuex'
 import TabComponent from '@/components/TabComponent.vue'
 import DocumentsWidgetView from '@/views/app/Ticket/widgets/DocumentsWidgetView.vue'
 import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.js'
@@ -417,6 +358,7 @@ export default {
       documentDef: Table.document,
       subTickets: [],
       documents: [],
+      tabDetailsTicket: [],
       loading: false,
       activeTabItem: null,
       emails: [],
@@ -424,6 +366,7 @@ export default {
       contractDocument: {},
       noteToInternal: true,
       noteToEveryOne: true,
+      ticketToMove:null
     }
   },
   computed: {
@@ -433,26 +376,31 @@ export default {
           id: '2',
           title: 'Timeline',
           show: true,
+          count: 0
         },
         {
           id: '5',
           title: this.$t('headline~ticket~subtasks'),
           show: this.isTicket,
+          count: 0
         },
         {
           id: '4',
           title: 'Documents',
           show: true,
+          count: 0
         },
         {
           id: '3',
           title: 'Messages and Emails',
           show: true,
+          count: 0
         },
         {
           id: '1',
           title: 'Information',
           show: true,
+          count: 0
         },
 
       ]
@@ -467,14 +415,14 @@ export default {
       return this.entity?.columns[0]
     },
     showButton() {
-      const { team_type } = this.firstColumn
+      const {team_type} = this.firstColumn
       const typeOfButton = {
         all: true,
         assign: true,
         confirm: true,
       }
 
-      if (!this.isUserExtern) return { ...typeOfButton }
+      if (!this.isUserExtern) return {...typeOfButton}
 
       if (team_type === 'intern') {
         this.noteToInternal = false
@@ -488,12 +436,19 @@ export default {
         typeOfButton.confirm = true
       }
 
-      return { ...typeOfButton }
+      return {...typeOfButton}
     },
     ...mapGetters('user', ['isUserExtern']),
   },
+  watch: {
+    async activeTabItem(value) {
+      if (value.id === '3') {
+        await this.fetchEmail()
+      }
+    }
+  },
   async mounted() {
-    this.activeTabItem = this.tabTitle.find(tab => tab.id === this.$route.query.tab) || this.tabTitle.find(tab => tab.id === '1')
+    await this.getTicketDetails()
 
     this.loading = true
     try {
@@ -508,8 +463,10 @@ export default {
       if (this.isTicket) {
         await this.fetchSubTickets()
       }
-      await this.fetchDocuments()
-      await this.fetchEmail()
+      // await this.fetchDocuments()
+      // await this.fetchEmail()
+
+      this.activeTabItem = this.tabTitle.find(tab => tab.id === this.$route.query.tab) || this.tabTitle.find(tab => tab.id === '1')
     } finally {
       this.loading = false
     }
@@ -517,6 +474,37 @@ export default {
   methods: {
     getActiveItemData(item) {
       this.activeTabItem = item
+    },
+    updateCounter(ticket_update_type, count) {
+      console.log("this is the table",this.tabTitle)
+
+      const index = this.tabTitle.findIndex(item => {
+        if (ticket_update_type === 'NEW_FILE' && item.id === '4') {
+          return true;
+        } else if (ticket_update_type === 'NEW_MAIL' && item.id === '3') {
+          return true;
+        }
+        return false;
+      });
+
+      if (index !== -1) {
+        this.tabTitle[index].count += count;
+      }
+      this.tabDetailsTicket = this.tabTitle
+    },
+    getTicketDetails() {
+      this.$http.get(`/tickets/update-stats?ticket_id=${this.$route.params.id}`).then((response) => {
+        let ticketStat = response.data || []
+        if(ticketStat.length > 0){
+         return ticketStat.forEach(item => {
+            this.updateCounter(item.ticket_update_type, item.count);
+          })
+        }
+        this.tabDetailsTicket = this.tabTitle
+
+      }).catch((error) => {
+        console.error(error)
+      })
     },
     formatDate,
     async addToPos(document) {
@@ -533,20 +521,20 @@ export default {
       return this.columns.find(c => c.column_id === this.entity?.columns[0].column_id).column_has_stamp
     },
     canMoveBack() {
-      console.log("this ticket entity",this.entity)
+      console.log("this ticket entity", this.entity)
       // if (!this.entity) return false
       // if (this.entity?.ticket_closed) return false
       if (!this.entity?.columns[1]) return false
       // if (this.entity?.columns[1].rank_order > this.entity?.columns[0].rank_order) return false
       const column_name = this.entity?.columns[1].column_name
-      return this.config.accepts(null, { dataset: { status: column_name } }, { dataset: { status: this.entity?.column_name } }, true)
+      return this.config.accepts(null, {dataset: {status: column_name}}, {dataset: {status: this.entity?.column_name}}, true)
     },
     canMoveToNext() {
       if (!this.entity) return false
       if (this.entity?.ticket_closed) return false
       const colIdx = this.columns.findIndex(c => c.column_name === this.entity?.column_name)
       if (colIdx === this.columns.length - 1) return false
-      return this.config.accepts(null, { dataset: { status: this.columns[colIdx + 1].column_name } }, { dataset: { status: this.entity?.column_name } })
+      return this.config.accepts(null, {dataset: {status: this.columns[colIdx + 1].column_name}}, {dataset: {status: this.entity?.column_name}})
     },
     async moveToNext() {
       const result = await this.moveToNextColumn(this.entity)
@@ -568,14 +556,14 @@ export default {
       return getDocumentLink(document)
     },
     createDocument() {
-      this.$refs.documentModal.openModal(true, { ticket_id: this.entity?.ticket_id })
+      this.$refs.documentModal.openModal(true, {ticket_id: this.entity?.ticket_id})
     },
     createInvoice() {
       this.$router.push({
         name: 'table-form',
         params: {
           table: 'invoice',
-          entity: { ticket_id: this.entity?.ticket_id },
+          entity: {ticket_id: this.entity?.ticket_id},
         },
       })
     },
@@ -656,7 +644,7 @@ export default {
     async loadSingleTicket(loader = true) {
       if (loader) this.loading = true
       try {
-        await this.loadTickets({ ticket_id: this.$route.params.id })
+        await this.loadTickets({ticket_id: this.$route.params.id})
         this.entity = this.tickets[0]
       } finally {
         if (loader) this.loading = false

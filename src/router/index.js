@@ -75,6 +75,21 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/app/update_ticket',
+      name: 'updateTicket',
+      component: () => import('@/views/app/Ticket/UpdateTicketList.vue'),
+      meta: {
+        pageTitle: '',
+        breadcrumb: [
+          {
+            text: 'menu~ticketlistupdate',
+            active: true,
+          },
+        ],
+        action: 'read',
+      },
+    },
+    {
       path: '/app/preview/document/:document_id/:name',
       name: 'previewDocument',
       component: () => import('@/views/app/Ticket/widgets/PreviewDocumentWidget.vue'),
