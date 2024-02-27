@@ -636,6 +636,7 @@ export default {
         const masterData = (await this.$http.get(`/contracts/conditionList/export?${requestQuery}`, {
           responseType: 'blob',
         })).data
+        console.log('masterData: ', masterData)
         const link = document.createElement('a')
         link.setAttribute('href', URL.createObjectURL(masterData))
         link.setAttribute('download', filename)

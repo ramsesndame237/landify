@@ -366,25 +366,25 @@ export default {
     async download() {
       const valid = await this.$refs.form.validate()
       if (!valid) return
-      this.loadingDownload = true
+      this.loadingDonwload = true
       const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
       filter.per_page = 100000
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
-        const filename = `${this.$t(`menu~payment_lists`)}-Export_${moment().format('DD_MM_YYYY')}.xlsx`
+        const filename = `${this.$t(`menu~${this.table === 'conditions' ? 'contractcondition' : 'contractdeadline'}`)}-Export_${moment().format('DD_MM_YYYY')}.xlsx`
         const masterData = (await this.$http.post(`/contracts/payment-list/export?${requestQuery}`, {
           responseType: 'blob',
         })).data
         console.log('masterData: ', masterData)
         const link = document.createElement('a')
-        link.setAttribute('href', window.URL.createObjectURL(masterData))
+        link.setAttribute('href', URL.createObjectURL(masterData))
         link.setAttribute('download', filename)
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
       } finally {
-        this.loadingDownload = false
+        this.loadingDonwload = false
       }
     },
   },
