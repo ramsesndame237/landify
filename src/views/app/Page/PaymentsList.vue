@@ -376,10 +376,9 @@ export default {
         const masterData = (await this.$http.post(`/contracts/payment-list/export?${requestQuery}`, {
           responseType: 'blob',
         })).data
-
         console.log('masterData: ', masterData)
         const link = document.createElement('a')
-        link.setAttribute('href', URL.createObjectURL(masterData))
+        link.setAttribute('href', window.URL.createObjectURL(masterData))
         link.setAttribute('download', filename)
         document.body.appendChild(link)
         link.click()
