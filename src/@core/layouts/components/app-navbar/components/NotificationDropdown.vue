@@ -35,14 +35,25 @@
         v-for="(notification,index) in notifications"
         :key="index"
         class="relative cursor-pointer"
+        @mouseenter="notificationAction = notification.id"
       >
-        <b-avatar v-b-tooltip.hover :title="notification.read === 0 ? 'Mark as read':'Mark as unread'"
-                  :class="['position-absolute position-right-0 position-top-2',notification.read === 0 ? 'bg-primary':'']"
-                  size="md"
-                  @click.native="markedNotificationAsRead(notification.id)">
-          <feather-icon size="10" :icon="notification.read === 0 ?  'MailIcon' : 'BookOpenIcon'"
-                        class="position-absolute"/>
-        </b-avatar>
+        <div v-if="notification.id === notificationAction" class="position-absolute position-right-0 position-top-2 d-flex ">
+            <b-avatar v-b-tooltip.hover :title="notification.read === 0 ? 'Mark as read':'Mark as unread'"
+                      :class="['mx-2',notification.read === 0 ? 'bg-primary':'']"
+                      size="sm"
+                      @click.native="markedNotificationAsRead(notification.id)">
+              <feather-icon size="10" :icon="notification.read === 0 ?  'MailIcon' : 'BookOpenIcon'"
+                            class="position-absolute"/>
+            </b-avatar>
+            <b-avatar v-b-tooltip.hover title="delete notification"
+                      :class="[notification.read === 0 ? 'bg-primary':'']"
+                      size="sm"
+                      @click.native="deleteNotification(notification.id)">
+              <feather-icon size="10" icon="TrashIcon"
+                            class="position-absolute"/>
+            </b-avatar>
+
+        </div>
         <b-media>
           <p class="media-heading text-ellipsis overflow-hidden" style="max-height: 80px">
             <span class="font-weight-bolder">
@@ -94,6 +105,7 @@ export default {
     return {
       notifications: [],
       newNotification: 0,
+      notificationAction:null,
       intervalId: null,
       current_lang: 'en',
       loadingNotificaton: false,
@@ -120,11 +132,23 @@ export default {
         console.error(error.messages)
       })
     },
+    deleteNotification(id_notification){
+      this.$http.delete('/notifications',{
+        data:{"notification_id": id_notification}
+      } ).then((response)=>{
+        this.$successToast(response.data.message || 'delete success')
+        this.getAllNotification()
+        this.getNumberUnreadedNotification()
+      }).catch((error)=>{
+        console.error(error)
+      })
+    },
     markedNotificationAsRead(id_notification) {
       if (id_notification) {
         return this.$http.post('/notifications', {"notification_id": id_notification}).then((response) => {
           console.log("thios is the response of the mark read notification", response)
           this.$successToast(response.data.message)
+          this.getAllNotification()
         }).catch((error) => {
           console.error(error)
         })
