@@ -1,6 +1,6 @@
 <template>
   <b-nav-item-dropdown
-    class="dropdown-notification mr-25"
+    class="dropdown-notification mr-25 "
     menu-class="dropdown-menu-media"
     right
   >
@@ -28,23 +28,30 @@
         </b-badge>
       </div>
     </li>
-
-    <div  class="scrollable-container media-list scroll-area overflow-y-scroll overflow-x-scroll">
+    <b-spinner label="Spinning" class="m-2 text-primary" size="lg" v-if="loadingNotificaton"></b-spinner>
+    <div class="scrollable-container media-list scroll-area overflow-y-scroll overflow-x-scroll"
+         v-if="!loadingNotificaton">
       <div
         v-for="(notification,index) in notifications"
         :key="index"
         class="relative cursor-pointer"
       >
-
-        <feather-icon icon="MailIcon" class="position-absolute"/>
-
+        <b-avatar v-b-tooltip.hover :title="notification.read === 0 ? 'Mark as read':'Mark as unread'" class="position-absolute position-right-0 position-top-2" size="md"
+                  @click.native="markedNotificationAsRead(notification.notification_id)">
+          <feather-icon size="10" :icon="notification.read === 0 ?  'MailIcon' : 'MailOpenIcon'"
+                        class="position-absolute"/>
+        </b-avatar>
         <b-media>
-          <p class="media-heading">
+          <p class="media-heading text-ellipsis overflow-hidden" style="max-height: 80px">
             <span class="font-weight-bolder">
-              {{ current_lang == 'en' ?  notification.payload_json.title.en: current_lang ==='de' ? notification.payload_json.title.de : current_lang === 'fr' ? notification.payload_json.title.fr : notification.payload_json.title.en  }}
+              {{
+                current_lang == 'en' ? notification.payload_json.title.en : current_lang === 'de' ? notification.payload_json.title.de : current_lang === 'fr' ? notification.payload_json.title.fr : notification.payload_json.title.en
+              }}
             </span>
           </p>
-          <small class="notification-text">{{ urrent_lang == 'en' ?  notification.payload_json.content.en: current_lang ==='de' ? notification.payload_json.content.de : current_lang === 'fr' ? notification.payload_json.content.fr : notification.payload_json.title.en }}</small>
+          <small class="notification-text text-ellipsis overflow-hidden  " style="max-height:100px;">{{
+              urrent_lang == 'en' ? notification.payload_json.content.en : current_lang === 'de' ? notification.payload_json.content.de : current_lang === 'fr' ? notification.payload_json.content.fr : notification.payload_json.content.en
+            }}</small>
         </b-media>
       </div>
     </div>
@@ -55,6 +62,7 @@
         v-ripple.400="'rgba(255, 255, 255, 0.15)'"
         variant="primary"
         block
+        @click="() => markedNotificationAsRead(undefined) "
       >Read all notifications
       </b-button>
     </li>
@@ -85,7 +93,8 @@ export default {
       notifications: [],
       newNotification: 0,
       intervalId: null,
-      current_lang:'en',
+      current_lang: 'en',
+      loadingNotificaton: false,
       perfectScrollbarSettings: {
         maxScrollbarLength: 60,
         wheelPropagation: false,
@@ -109,10 +118,30 @@ export default {
         console.error(error.messages)
       })
     },
+    markedNotificationAsRead(id_notification) {
+      alert(id_notification)
+      if(id_notification){
+       return  this.$http.post('/notifications', {"notification_id": id_notificatioin}).then((response) => {
+          console.log("thios is the response of the mark read notification", response)
+        }).catch((error) => {
+          console.error(error)
+        })
+      }
+
+      this.$http.post('/notifications',{"notification_id":this.notifications.map(notif => notif.notification_id)}).then((response)=>{
+        console.log("this is the responsive",response)
+      }).catch((error)=>{
+        console.error("this is th error ",error)
+      })
+
+    },
     getAllNotification() {
+      this.loadingNotificaton = true
       this.$http.get('/notifications').then((response) => {
         this.notifications = response.data
+        this.loadingNotificaton = false
       }).catch((error) => {
+        this.loadingNotificaton = false
         console.error(error.messages)
       })
     },
@@ -125,7 +154,7 @@ export default {
       })
     },
     notoficationFetchLogic(delay) {
-      console.log("this is the delay",delay)
+      console.log("this is the delay", delay)
       this.intervalId = setInterval(() => {
         this.getNumberUnreadedNotification()
         // this.getUnReadedNotification()
