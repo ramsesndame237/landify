@@ -6,7 +6,7 @@
   >
     <template #button-content>
       <feather-icon
-        badge="6"
+        :badge="newNotification"
         badge-classes="bg-danger"
         class="text-body"
         icon="BellIcon"
@@ -15,7 +15,7 @@
     </template>
 
     <!-- Header -->
-    <li class="dropdown-menu-header">
+    <li class="dropdown-menu-header" v-if="newNotification > 0">
       <div class="dropdown-header d-flex">
         <h4 class="notification-title mb-0 mr-auto">
           Notifications
@@ -24,90 +24,45 @@
           pill
           variant="light-primary"
         >
-          6 New
+          {{ newNotification }} New
         </b-badge>
       </div>
     </li>
 
-    <!-- Notifications -->
-    <vue-perfect-scrollbar
-      v-once
-      :settings="perfectScrollbarSettings"
-      class="scrollable-container media-list scroll-area"
-      tagname="li"
-    >
-      <!-- Account Notification -->
-      <b-link
-        v-for="notification in notifications"
-        :key="notification.subtitle"
+    <div  class="scrollable-container media-list scroll-area overflow-y-scroll overflow-x-scroll">
+      <div
+        v-for="(notification,index) in notifications"
+        :key="index"
+        class="relative cursor-pointer"
       >
+
+        <feather-icon icon="MailIcon" class="position-absolute"/>
+
         <b-media>
-          <template #aside>
-            <b-avatar
-              size="32"
-              :src="notification.avatar"
-              :text="notification.avatar"
-              :variant="notification.type"
-            />
-          </template>
           <p class="media-heading">
             <span class="font-weight-bolder">
-              {{ notification.title }}
+              {{ current_lang == 'en' ?  notification.payload_json.title.en: current_lang ==='de' ? notification.payload_json.title.de : current_lang === 'fr' ? notification.payload_json.title.fr : notification.payload_json.title.en  }}
             </span>
           </p>
-          <small class="notification-text">{{ notification.subtitle }}</small>
+          <small class="notification-text">{{ urrent_lang == 'en' ?  notification.payload_json.content.en: current_lang ==='de' ? notification.payload_json.content.de : current_lang === 'fr' ? notification.payload_json.content.fr : notification.payload_json.title.en }}</small>
         </b-media>
-      </b-link>
-
-      <!-- System Notification Toggler -->
-      <div class="media d-flex align-items-center">
-        <h6 class="font-weight-bolder mr-auto mb-0">
-          System Notifications
-        </h6>
-        <b-form-checkbox
-          :checked="true"
-          switch
-        />
       </div>
-
-      <!-- System Notifications -->
-      <b-link
-        v-for="notification in systemNotifications"
-        :key="notification.subtitle"
-      >
-        <b-media>
-          <template #aside>
-            <b-avatar
-              size="32"
-              :variant="notification.type"
-            >
-              <feather-icon :icon="notification.icon" />
-            </b-avatar>
-          </template>
-          <p class="media-heading">
-            <span class="font-weight-bolder">
-              {{ notification.title }}
-            </span>
-          </p>
-          <small class="notification-text">{{ notification.subtitle }}</small>
-        </b-media>
-      </b-link>
-    </vue-perfect-scrollbar>
+    </div>
 
     <!-- Cart Footer -->
-    <li class="dropdown-menu-footer"><b-button
-      v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-      variant="primary"
-      block
-    >Read all notifications</b-button>
+    <li class="dropdown-menu-footer">
+      <b-button
+        v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+        variant="primary"
+        block
+      >Read all notifications
+      </b-button>
     </li>
   </b-nav-item-dropdown>
 </template>
 
 <script>
-import {
-  BNavItemDropdown, BBadge, BMedia, BLink, BAvatar, BButton, BFormCheckbox,
-} from 'bootstrap-vue'
+import {BAvatar, BBadge, BButton, BFormCheckbox, BLink, BMedia, BNavItemDropdown,} from 'bootstrap-vue'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import Ripple from 'vue-ripple-directive'
 
@@ -125,62 +80,67 @@ export default {
   directives: {
     Ripple,
   },
-  setup() {
-    /* eslint-disable global-require */
-    const notifications = [
-      {
-        title: 'Congratulation Sam 🎉',
-        avatar: require('@/assets/images/avatars/6-small.png'),
-        subtitle: 'Won the monthly best seller badge',
-        type: 'light-success',
-      },
-      {
-        title: 'New message received',
-        avatar: require('@/assets/images/avatars/9-small.png'),
-        subtitle: 'You have 10 unread messages',
-        type: 'light-info',
-      },
-      {
-        title: 'Revised Order 👋',
-        avatar: 'MD',
-        subtitle: 'MD Inc. order updated',
-        type: 'light-danger',
-      },
-    ]
-    /* eslint-disable global-require */
-
-    const systemNotifications = [
-      {
-        title: 'Server down',
-        subtitle: 'USA Server is down due to hight CPU usage',
-        type: 'light-danger',
-        icon: 'XIcon',
-      },
-      {
-        title: 'Sales report generated',
-        subtitle: 'Last month sales report generated',
-        type: 'light-success',
-        icon: 'CheckIcon',
-      },
-      {
-        title: 'High memory usage',
-        subtitle: 'BLR Server using high memory',
-        type: 'light-warning',
-        icon: 'AlertTriangleIcon',
-      },
-    ]
-
-    const perfectScrollbarSettings = {
-      maxScrollbarLength: 60,
-      wheelPropagation: false,
-    }
-
+  data: () => {
     return {
-      notifications,
-      systemNotifications,
-      perfectScrollbarSettings,
+      notifications: [],
+      newNotification: 0,
+      intervalId: null,
+      current_lang:'en',
+      perfectScrollbarSettings: {
+        maxScrollbarLength: 60,
+        wheelPropagation: false,
+      }
+
     }
   },
+  created() {
+    this.current_lang = localStorage.getItem('current-lang')
+    this.getNumberUnreadedNotification()
+    this.getAllNotification()
+  },
+  beforeDestroy() {
+    this.clearInterval()
+  },
+  methods: {
+    getNumberUnreadedNotification() {
+      this.$http.get('/notifications/unread/count').then((response) => {
+        this.newNotification = response.data
+      }).catch((error) => {
+        console.error(error.messages)
+      })
+    },
+    getAllNotification() {
+      this.$http.get('/notifications').then((response) => {
+        this.notifications = response.data
+      }).catch((error) => {
+        console.error(error.messages)
+      })
+    },
+    getUnReadedNotification() {
+      this.$http.get('/notifications/unread').then((response) => {
+        console.log("this is the response", response)
+        this.notifications = response.data
+      }).catch((error) => {
+        console.error(error.messages)
+      })
+    },
+    notoficationFetchLogic(delay) {
+      console.log("this is the delay",delay)
+      this.intervalId = setInterval(() => {
+        this.getNumberUnreadedNotification()
+        // this.getUnReadedNotification()
+        this.getAllNotification()
+      }, delay)
+    },
+    clearInterval() {
+      clearInterval(this.intervalId)
+    }
+  },
+  mounted() {
+    // this.notoficationFetchLogic(50000)
+
+  }
+
 }
 </script>
 
