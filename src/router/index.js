@@ -3,6 +3,9 @@ import VueRouter from 'vue-router'
 import { canNavigate } from '@/libs/acl/routeProtection'
 import jwt from '@/auth/jwt/useJwt'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
+import { checkAndverficationJwt, parseJwt } from "@/views/app/CustomComponents/DataTable/utils";
+import BrowserId from 'browser-id'
+import axiosIns from "@/libs/axios";
 
 Vue.use(VueRouter)
 
@@ -399,6 +402,23 @@ router.afterEach(() => {
   if (appLoading) {
     appLoading.style.display = 'none'
   }
+})
+router.beforeEach((to, from, next) => {
+  const currentToken = localStorage.getItem('accessToken')
+  const currentRefreshToken = localStorage.getItem('refreshToken')
+  const TIME_LIMIT_EXPIRIED = 20 * 60 * 1000
+  if ( currentToken && parseJwt(currentToken)?.iat + TIME_LIMIT_EXPIRIED <= Math.round(Date.now() / 1000)) {
+    axiosIns.post('/auth/refresh/token', {
+      user_browser_hash: BrowserId(),
+      user_refresh_token: currentRefreshToken,
+    }).then((response) => {
+      localStorage.setItem('accessToken', response.data.user_token)
+      localStorage.setItem('refreshToken', response.data.user_refresh_token)
+    }).catch((error) => console.error(error))
+
+  }
+
+  return next()
 })
 
 export default router

@@ -5,7 +5,7 @@
         <h3 class="text-uppercase">
           {{ title }} </h3>
       </div>
-      <div class="w-50">
+      <div style="width: 70%;">
         <div class="d-flex align-items-center flex-wrap flex-sm-nowrap w-100 dashboard_style">
           <date-picker v-model="date" v-bind="datePickerOptions" style="margin-bottom: -0.5rem;" class=" w-100" @change="datePickerHandler"/>
           <field class="ml-sm-1 w-100"
