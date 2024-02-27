@@ -183,6 +183,13 @@ export default {
         })
       }
     },
+    setSubEntity(fieldKey, data, $this) {
+      const field = ($this || this).$refs.fields.find(f => f.field.key === fieldKey)
+      console.log(fieldKey, $this, ($this || this).$refs.fields.map(f => f.field.key))
+      if (field) {
+        ($this || this).$set(field, 'subEntity', data)
+      }
+    },
     createNewEntities(fieldComponents, formFields, entity, originalEntity) {
       if (!Array.isArray(fieldComponents)) return Promise.resolve()
       return Promise.all(formFields.filter(field => {

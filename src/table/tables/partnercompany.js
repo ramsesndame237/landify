@@ -13,19 +13,19 @@ export default {
     let isValid = true
     if (!Array.isArray(_this.bank_data_infos) || _this.bank_data_infos?.length === 0) {
       isValid = false
-      _this.$errorToast('Add 01 IBAN at least')
-      throw new Error('Add 01 IBAN at least')
+      _this.$errorToast(_this.$t('error~add~iban~at~least'))
+      throw new Error(_this.$t('error~add~iban~at~least'))
     }
     _this.bank_data_infos.forEach(info => {
       if (!isValidIBANNumber(info.bankdata_iban)) {
         isValid = false
-        _this.$errorToast('All IBANs must be valid')
-        throw new Error('All IBANs must be valid')
+        _this.$errorToast('error~all~ibans~must~be~valid')
+        throw new Error(_this.$t('error~all~ibans~must~be~valid'))
       }
       if (String(info?.bankdata_iban_id || '').length !== 4) {
         isValid = false
-        _this.$errorToast('All IBAN IDs length must be 4')
-        throw new Error('All IBAN IDs length must be 4')
+        _this.$errorToast(_this.$t('error~all~iban~ids~length~must~be~four'))
+        throw new Error(_this.$t('error~all~iban~ids~length~must~be~four'))
       }
     })
     entity.bank_data_infos = _this.bank_data_infos
@@ -333,7 +333,8 @@ export default {
 
       await vm.$http[method]('/partners/new', dataForServer)
     } catch (error) {
-      throw Error(error.message ?? vm.$t('errors~unexpected~error~ocurred'))
+      console.log({ error })
+      throw Error(error?.response?.data?.detail ?? vm.$t('errors~unexpected~error~ocurred'))
     }
   },
 }

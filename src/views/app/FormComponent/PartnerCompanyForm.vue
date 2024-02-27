@@ -20,7 +20,7 @@
             v-if="['contactdetails_id', 'companydetails_id', 'address_id'].includes(field_id)"
             class="text-capitalize"
           >
-            {{ field_id.replace(/(details)?_id$/, '') }}
+            {{ $t(`attribute.${field_id}`).replace(/\s?id/gi, '') }}
           </strong>
           <field ref="fields" :disabled="loading" :create="create" :inline="inline"
                  :entity="entity" :table-definition="tableDefinition" :field="getField(field_id)"
@@ -29,10 +29,10 @@
         <b-col cols="12" :md="cols" class="p-50 mb-50">
           <div class="d-flex align-items-center justify-content-between px-1">
             <strong>
-              Card informations
+              {{ $t('attribute.card~informations') }}
             </strong>
             <b-button size="sm" variant="info" @click="addIban()">
-              <feather-icon icon="PlusIcon" /> New IBAN
+              <feather-icon icon="PlusIcon" /> {{ $t('labels~new~iban') }}
             </b-button>
           </div>
           <b-col>
@@ -55,100 +55,6 @@
             </b-col>
           </b-col>
         </b-col>
-        <!-- <b-col cols="12" :md="cols">
-          <field ref="fields" :disabled="loading" :create="create" :inline="false"
-                 :entity="entity" :table-definition="tableDefinition" :field="getField('address_id')"
-          >
-
-            <template #default="{subFormFields, subTableDefinition, subEntity}">
-              <b-row>
-                <b-col cols="12">
-                  <b-form-group :label="$t('attribute.address_street') + '/' + $t('attribute.address_house_number')"
-                                label-cols-md="4">
-                    <div class="d-flex">
-                      <field style="flex-grow: 1; margin-right: 20px;" :inline="false" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                             :field="getAddressFields(subFormFields).find(f=> f.key==='address_street')"/>
-                      <field style="width: 100px;" :inline="false" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                             :field="getAddressFields(subFormFields).find(f=> f.key==='address_house_number')"/>
-                    </div>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-
-              <b-row>
-                <b-col col="12" :md="cols">
-                  <field :inline="false" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                         :field="getAddressFields(subFormFields).find(f=> f.key==='city_id')"
-                  >
-                    <template #default="{subFormFields, subTableDefinition, subEntity}">
-                      <b-row>
-                        <b-col cols="12">
-                          <b-form-group :label="$t('attribute.city_zip') + '/' + $t('attribute.city_name')"
-                                        label-cols-md="4">
-                            <div class="d-flex">
-                              <field style="margin-right: 20px; width: 120px" :inline="false" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                                     :field="getCityFields(subFormFields).find(f=> f.key==='city_zip')"/>
-                              <field style="flex-grow: 1;" :inline="false" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                                     :field="getCityFields(subFormFields).find(f=> f.key==='city_name')"/>
-                            </div>
-                          </b-form-group>
-                        </b-col>
-                      </b-row>
-                    </template>
-
-                  </field>
-                </b-col>
-              </b-row>
-
-            </template>
-
-          </field>
-        </b-col> -->
-
-        <!-- <b-col cols="12" :md="cols">
-          <field ref="fields" :disabled="loading" :create="create" :inline="inline"
-                 :entity="entity" :table-definition="tableDefinition" :field="getField('contactdetails_id')"
-          >
-
-            <template #default="{subFormFields, subTableDefinition, subEntity}">
-              <b-row >
-                <b-col cols="12" :md="cols">
-                  <field :inline="inline" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                         :field="subFormFields.find(f=> f.key==='contactdetails_email')"
-                  />
-                </b-col>
-                <b-col cols="12" :md="cols">
-                  <field :inline="inline" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                         :field="subFormFields.find(f=> f.key==='contactdetails_phone')"
-                  />
-                </b-col>
-                <b-col cols="12" :md="cols">
-                  <field :inline="inline" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                         :field="subFormFields.find(f=> f.key==='contactdetails_fax')"
-                  />
-                </b-col>
-              </b-row>
-            </template>
-
-          </field>
-        </b-col> -->
-
-        <!-- <b-col cols="12" :md="cols">
-          <field ref="fields" :disabled="loading" :create="create" :inline="inline"
-                 :entity="entity" :table-definition="tableDefinition" :field="getField('companydetails_id')"
-          >
-            <template #default="{subFormFields, subTableDefinition, subEntity}">
-              <b-row >
-                <b-col cols="12" :md="cols">
-                  <field :inline="inline" :disabled="disabled" :entity="subEntity" :table-definition="subTableDefinition"
-                         :field="subFormFields.find(f=> f.key==='companydetails_website')"
-                  />
-                </b-col>
-              </b-row>
-            </template>
-          </field>
-
-        </b-col> -->
       </b-row>
     </b-form>
   </validation-observer>
@@ -162,12 +68,46 @@ export default {
   mixins: [FormMixin],
   data() {
     return {
-      bank_data_infos: (this.entity?.bank_data_infos || []).length === 0 ? [
+      partner_company: {},
+      bank_data_infos: (this.entity?.bankdatas || []).length === 0 ? [
         {
           bankdata_iban: '',
           bankdata_iban_id: '',
         },
       ] : this.entity.bank_data_infos,
+    }
+  },
+  watch: {
+    partner_company(data) {
+      this.setSubEntity('companydetails_id', data?.companydetails)
+      this.setSubEntity('contactdetails_id', data?.contactdetails)
+      this.setSubEntity('partnergroup_id', data?.partnergroup)
+      this.setSubEntity('address_id', data?.address)
+
+      const addressField = this.$refs.fields.find(f => f.field.key === 'address_id')
+
+      if (addressField) {
+        addressField.setSubEntity('city_id', {
+          ...(data?.address?.city || {}),
+        }, addressField)
+      }
+
+      if (data?.bank_data_infos?.length > 0) {
+        this.bank_data_infos = data?.bankdatas
+      }
+    },
+  },
+  async mounted() {
+    const partner_id = this.$route.params.id
+    if (!partner_id) {
+      return
+    }
+    try {
+      const url = `/partners/${partner_id}/partner?partner_id=${partner_id}`
+      const { data } = await this.$http.get(url)
+      this.partner_company = data
+    } catch (error) {
+      this.$errorToast(this.$t('error~partner~company~load'))
     }
   },
   methods: {
@@ -210,7 +150,3 @@ export default {
 }
 
 </script>
-
-<style scoped>
-
-</style>
