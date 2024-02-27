@@ -71,6 +71,12 @@ export default [
         resource: 'menu',
         route: { name: 'deadline-list' },
       },
+      {
+        title: key('contractpaymentslist'),
+        action: 'menu~contractpaymentslist',
+        resource: 'menu',
+        route: { name: 'payments-list' },
+      },
       // {
       //   title: key('payment'),
       //   action: 'menu~payment',

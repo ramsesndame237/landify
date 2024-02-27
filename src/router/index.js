@@ -41,9 +41,9 @@ const router = new VueRouter({
       },
     },
     {
-      path:'/app/preview/document',
-      name:'previewDocument',
-      component:()=>import('@/views/app/Ticket/widgets/PreviewDocumentWidget.vue'),
+      path: '/app/preview/document',
+      name: 'previewDocument',
+      component: () => import('@/views/app/Ticket/widgets/PreviewDocumentWidget.vue'),
       // props:true
     },
     {
@@ -72,10 +72,10 @@ const router = new VueRouter({
       },
     },
     {
-      path:'/app/preview/document/:document_id/:name',
-      name:'previewDocument',
-      component:()=>import('@/views/app/Ticket/widgets/PreviewDocumentWidget.vue'),
-      props:true
+      path: '/app/preview/document/:document_id/:name',
+      name: 'previewDocument',
+      component: () => import('@/views/app/Ticket/widgets/PreviewDocumentWidget.vue'),
+      props: true
     },
     {
       path: '/app/table/:table/view/:id',
@@ -135,6 +135,15 @@ const router = new VueRouter({
       // table parameter is just to fix menu
       path: '/app/table/:table/import/:invoice',
       component: () => import('@/views/app/InvoicePositionImport.vue'),
+    },
+    {
+      name: 'payments-list',
+      path: '/app/payments-list',
+      component: () => import('@/views/app/Page/PaymentsList.vue'),
+      meta: {
+        action: 'menu~contractpaymentslist',
+        resource: 'menu',
+      },
     },
     {
       name: 'condition-list',
