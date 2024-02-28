@@ -16,11 +16,11 @@
         </b-form>
       </validation-observer>
       <div class="text-right">
-        <b-button variant="success" :disabled="loadingDonwload" @click="download">
-          <b-spinner v-if="loadingDonwload" class="mr-1" small/>
+        <b-button variant="success" :disabled="loadingDownload" @click="download">
+          <b-spinner v-if="loadingDownload" class="mr-1" small/>
           {{ $t('button~download') }}
         </b-button>
-        <b-button variant="info" class="ml-1" :disabled="loading || loadingDonwload" @click="reset">
+        <b-button variant="info" class="ml-1" :disabled="loading || loadingDownload" @click="reset">
           {{ $t('button~reset') }}
         </b-button>
         <b-button variant="primary" :disabled="loading" class="ml-1" @click="filter">
@@ -31,15 +31,17 @@
     </b-card-actions>
 
     <b-card>
-      <!-- <div v-if="table==='conditions'" class="mb-1">
+      <div v-if="table==='payments_list'" class="mb-1">
+        <!--        <b-form-input debounce="500" id="filterInput" v-model="search" type="search" class="w-auto"-->
+        <!--                      placeholder="Search.."/>-->
         <b-form-group label="Currency" label-cols="auto">
           <b-form-checkbox v-model="eurCurrency" name="check-button" switch inline>
             {{ eurCurrency ? 'EUR' : 'Local' }}
           </b-form-checkbox>
         </b-form-group>
-      </div> -->
+      </div>
       <Datatable :key="table" ref="table" :selectable="false" :search="search" primary-key-column="contract_id"
-                 entity="contract" :with-delete="false" :with-edit="false" :with-nested="table === 'deadlines'" :sub-fields="definition.subFields"
+                 entity="contract" :with-delete="false" :with-edit="false" :with-nested="table === 'deadlines'"
                  :fields="definition.fields" :items="items" sub-fields-data-key="deadlines" :with-actions="false"
       />
     </b-card>
@@ -81,9 +83,9 @@ import BCardActions from '@core/components/b-card-actions/BCardActions'
 import Field from '@/views/app/Generic/Field'
 import _ from 'lodash'
 import moment from 'moment'
-import { formatDate } from '@/libs/utils'
+import {formatDate} from '@/libs/utils'
 import DeadlineMixin from '@/views/app/Contracts/Relations/Deadlines/DeadlineMixin'
-import { getUserData } from '@/auth/utils'
+import {getUserData} from '@/auth/utils'
 import rates from './rates.json'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
@@ -118,7 +120,7 @@ export default {
       items: [],
       data: {},
       loading: false,
-      loadingDonwload: false,
+      loadingDownload: false,
       eurCurrency: false,
     }
   },
@@ -128,70 +130,91 @@ export default {
 
       return {
         title: 'headline~contractlist~condition',
-        entityEndpoint: '/contracts/conditionList',
+        entity: 'frontend_contractlist_criteria',
         fields: [
-          { key: 'contract_name', stickyColumn: false, variant: 'light' },
-          { key: 'contracttype_name' },
-          { key: 'pos_name' },
-          { key: 'country_short' },
-          { key: 'attribute.retail_space' },
-          {
-            key: 'contract_of_status',
-          },
-          ...(this.table === 'deadlines' ? [{ key: 'term_type'}] : []),
-          { key: 'contract_begin_date', default: moment().format('DD/MM/YYYY') },
-          { key: 'contract_end_date' },
-          ...(this.table === 'deadlines' ? [
-            { key: 'next_possible_end_of_contract' },
-            { key: 'last_possible_end_of_contract'},
-            // { key: 'available_options' },
-            // { key: 'total_options' },
-            { key: 'next_action', default: moment().format('DD/MM/YYYY') },
-            { key: 'action_begin', default: moment().format('DD/MM/YYYY') },
-            { key: 'action_ende_soll' },
-            { key: 'action_ende_final' },
-            {
-              key: 'planned_termination' },
-            {
-              key: 'planned_special_termination',
-            },
-          ] : []),
-          { key: 'max_contract_end_date', hideOnIndex: true },
-          ...(this.table === 'conditions' ? [
-            { key: 'total_rental_space' },
-            'retail_space',
-            { key: 'currency_name' },
-            { key: 'base_rent_per_area_amount' },
-            { key: 'rent_per_month' },
-            { key: 'advertising_per_month' },
-            { key: 'ancillary_cost_per_month' },
-            { key: 'heating_ancillary_cost_per_month' },
-            'index_adjustment_lease',
-            'index_adjustment_rate_in_percent',
-            'staggered_minimum_rent',
-            'turnover_rent',
-            'securities_related_to_contract', 'negotiator'] : []),
+          {"key": "company_code", "stickyColumn": false, "variant": "light"},
+          {"key": "document_date"},
+          {"key": "bookingh_date"},
+          {"key": "g_l_account"},
+          {"key": "recurringpaymentcategory_name"},
+          {"key": "booking_text"},
+          {"key": "partnercompany_bank_type"},
+          {"key": "partnercompany_iban"},
+          {"key": "contract_type"},
+          {"key": "pos_branchnumber"},
+          {"key": "object_identification"},
+          {"key": "pca"},
+          {"key": "location_name"},
+          {"key": "creditor"},
+          {"key": "partnercompany_iban_id"},
+          {"key": "debitor"},
+          {"key": "partner_name"},
+          {"key": "payment_object"},
+          {"key": "recurringpaymenttype_name"},
+          {"key": "payment_term_basis"},
+          {"key": "tax_code"},
+          {"key": "net_amount"},
+          {"key": "percentage"},
+          {"key": "net_paid_amount"},
+          {"key": "tax_amount"},
+          {"key": "gross_amount"},
+          {"key": "currency"},
+          {"key": "payment_from"},
+          {"key": "payment_to"},
+          {"key": "daily_range"},
+          {"key": "payment_block"},
+          {"key": "gp"},
+          {"key": "monthly_range"},
+          {"key": "remark"},
+          {"key": "change_report"},
+          {"key": "contract_status"},
+          {"key": "contract_end_date"}
         ],
-        subFields: [
-          {
-            key: 'contractdeadline_type'
-          },
-          { key: 'contractdeadline_acting_by' },
-          {
-            key: 'contractdeadline_available_options'
-          },
-          { key: 'contractdeadline_options', label: 'Nbr of Options' },
-          {
-            key: 'extension'
-          },
-          {
-            key: 'contractdeadline_notice_period'},
-          {
-            key: 'contractdeadline_status',
-            hideOnForm: true,
-            label: 'Status',
-          },
-        ],
+        // subFields: [
+        //   {
+        //     key: 'contractdeadline_type',
+        //     formatter: value => this.typeFormatter(value),
+        //   },
+        //   {key: 'contractdeadline_acting_by', label: 'Acting By'},
+        //   {
+        //     key: 'contractdeadline_available_options',
+        //     label: 'Available options',
+        //     hideOnForm: true,
+        //     formatter: (value, key, item) => {
+        //       const {contractdeadline_options, contractdeadline_option_position, contractdeadline_status} = item
+        //       if (contractdeadline_status === 'resiliated') {
+        //         return 0
+        //       }
+        //       return contractdeadline_options - contractdeadline_option_position
+        //     },
+        //   },
+        //   {key: 'contractdeadline_options', label: 'Nbr of Options'},
+        //   {
+        //     key: 'extension',
+        //     label: 'Extension(unit)',
+        //     formatter: (value, key, item) => {
+        //       const {contractdeadline_extension_value, contractdeadline_extension_unit, contractdeadline_type} = item
+        //       if (['resiliation', 'special_resiliation'].includes(contractdeadline_type)) return '--'
+        //       return `${contractdeadline_extension_value}  ${contractdeadline_extension_unit}`
+        //     },
+        //   },
+        //   {
+        //     key: 'contractdeadline_notice_period',
+        //     label: 'Notice period',
+        //     hideOnForm: true,
+        //     send: false,
+        //     formatter: (value, key, item) => {
+        //       const {contractdeadline_notice_period_value, contractdeadline_notice_period_unit} = item
+        //       return `${contractdeadline_notice_period_value}  ${contractdeadline_notice_period_unit}`
+        //     },
+        //   },
+        //   {
+        //     key: 'contractdeadline_status',
+        //     hideOnForm: true,
+        //     label: 'Status',
+        //     formatter: value => this.statusDeadlineFormatter(value),
+        //   },
+        // ],
         filter_vertical: true,
         filters: [
           {
@@ -212,7 +235,7 @@ export default {
           },
           {
             key: 'pos_id',
-            required: true,
+            required: false,
             type: 'list',
             list: 'frontend_2_1_3_8',
             listLabel: 'pos_name',
@@ -229,25 +252,13 @@ export default {
           },
           {
             key: 'country_id',
-            required: true,
+            required: false,
             type: 'list',
             list: 'country',
             listLabel: 'country_name',
             disabled: true,
           },
-<<<<<<< 2c9c6c6f43eff71c500e11e949dfa7c0bb308e0e
-          { key: 'date', default: moment().format('DD/MM/YYYY') },
-=======
-          { key: 'date', type: 'date', default: moment().format('YYYY-MM-DD') },
-          {
-            key: 'contactperson_id',
-            required: false,
-            type: 'list',
-            list: 'contactperson',
-            listLabel: 'contactperson_firstname',
-            send: false,
-          },
->>>>>>> 9fdad87fe104c67a272b95aa45ad52a890741393
+          {key: 'date', type: 'date', default: moment().format('YYYY-MM-DD')},
         ],
         create: false,
         update: false,
@@ -291,24 +302,16 @@ export default {
       const valid = await this.$refs.form.validate()
       if (!valid) return
       this.loading = true
-      const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id', 'contactperson_id']).omitBy(_.isNil).value()
+      const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
       filter.per_page = 100000
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
-        const date = moment(this.data.date, 'DD/MM/YYYY')
-        const masterData = (await this.$http.get(`/contracts/conditionList/new?${requestQuery}`)).data.data
-        const contracts = masterData;
-        // const begin_date = moment('DD/MM/YYYY')
-       // const end_date = moment('DD/MM/YYYY')
-          // .filter(r => {
-          //   const begin_date = moment(r.contract_begin_date, 'DD/MM/YYYY')
-          //   const end_date = moment(r.contract_end_date, 'DD/MM/YYYY')
-          //   return begin_date.isBefore(end_date, 'day') && date.isSameOrAfter(begin_date, 'day') && date.isSameOrBefore(end_date, 'day')
-          // });
+        const date = moment(this.data.date, 'YYYY-MM-DD')
+        const masterData = (await this.$http.get(`/contracts/payment-list/data?${requestQuery}`)).data.data
 
-        this.items = contracts
-        if (this.table === 'conditions') this.updateCurrencyValues()
+        this.items = masterData;
+
       } finally {
         this.loading = false
       }
@@ -363,14 +366,14 @@ export default {
     async download() {
       const valid = await this.$refs.form.validate()
       if (!valid) return
-      this.loadingDonwload = true
+      this.loadingDownload = true
       const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
       filter.per_page = 100000
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
         const filename = `${this.$t(`menu~${this.table === 'conditions' ? 'contractcondition' : 'contractdeadline'}`)}-Export_${moment().format('DD_MM_YYYY')}.xlsx`
-        const masterData = (await this.$http.get(`/contracts/conditionList/export?${requestQuery}`, {
+        const masterData = (await this.$http.post(`/contracts/payment-list/export?${requestQuery}`, {}, {
           responseType: 'blob',
         })).data
         console.log('masterData: ', masterData)
@@ -381,7 +384,7 @@ export default {
         link.click()
         document.body.removeChild(link)
       } finally {
-        this.loadingDonwload = false
+        this.loadingDownload = false
       }
     },
   },

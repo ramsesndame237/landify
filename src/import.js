@@ -52,7 +52,6 @@ async function importPartnercompany(a, data) {
           partnergroup_description: 'Description Here'
         }]
       })
-      
       // We Cannot create a partner company without its group
       // so if we have an error in the creation, we have an error
       if (partnergroup.data.data.data[0].length === 0) {
@@ -190,7 +189,7 @@ async function importCompany(a, data) {
         }]
       })
 
-      
+
       // We Cannot create a partner company without its group
       // so if we have an error in the creation, we have an error
       if (customergroup.data.data.data[0].length === 0) {
@@ -347,7 +346,7 @@ async function importContactPerson(a, data) {
     rapport.Imported++
     let success = true
 
-    
+
       // Create contact person
       const contactperson = await a.$api({
         entity: 'contactperson',
@@ -359,7 +358,7 @@ async function importContactPerson(a, data) {
           contactperson_function,
         }]
       })
-  
+
       // Exit if error
       if (contactperson.data.data.data[0].length === 0) {
         pushErrors(contactperson, e, i + 1)
