@@ -499,7 +499,7 @@ export default {
       if (!this.tableDefinition) {
         await this.loadDefinition()
       }
-      if (this.create) return
+      if (this.create || this.ignoreFieldsFillOnUpdate) return
       if (!this.isRelation && this.fetchData) {
         this.loading = true
         let entity = null

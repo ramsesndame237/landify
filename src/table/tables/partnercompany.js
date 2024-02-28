@@ -78,7 +78,7 @@ export default {
       hideOnIndex: true,
     },
     { key: 'partnercompany_name' },
-    { key: 'partnercompany_shortname' },
+    { key: 'partnercompany_shortname', maxLength: 10 },
     { key: 'partnergroup_name', hideOnForm: true },
     { key: 'city_name', hideOnForm: true },
     { key: 'contactdetails_email', hideOnForm: true },
@@ -296,13 +296,13 @@ export default {
       const companydetails = fieldsComponent.find(f => f.field.key === 'companydetails_id')
 
       if (!taxRegex.exec(companydetails?.subEntity.companydetails_salestaxno)) {
-        throw Error(vm.$t('errors~invalid~salestaxno'))
+        throw Error('errors~invalid~salestaxno')
       }
       if (!comercialRegistryNoRegex.exec(companydetails?.subEntity.companydetails_commercialregisterno)) {
-        throw Error(vm.$t('errors~invalid~commercialregisterno'))
+        throw Error('errors~invalid~commercialregisterno')
       }
       if (!websiteRegex.exec(companydetails?.subEntity.companydetails_website)) {
-        throw Error(vm.$t('errors~invalid~website'))
+        throw Error('errors~invalid~website')
       }
 
       const contactdetails = fieldsComponent.find(f => f.field.key === 'contactdetails_id')
@@ -333,8 +333,10 @@ export default {
 
       await vm.$http[method]('/partners/new', dataForServer)
     } catch (error) {
-      console.log({ error })
-      throw Error(error?.response?.data?.detail ?? vm.$t('errors~unexpected~error~ocurred'))
+      throw Error(error?.response?.data?.detail
+        ?? vm.$t(String(error.message)?.startsWith('errors~')
+          ? vm.$t(error.message)
+          : 'errors~unexpected~error~ocurred'))
     }
   },
 }

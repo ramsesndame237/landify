@@ -68,6 +68,7 @@ export default {
   data() {
     return {
       partner_company: {},
+      ignoreFieldsFillOnUpdate: true,
       bank_data_infos: (this.entity?.bankdatas || []).length === 0 ? [
         {
           bankdata_iban: '',
@@ -76,8 +77,26 @@ export default {
       ] : this.entity.bank_data_infos,
     }
   },
-  watch: {
-    partner_company(data) {
+  async mounted() {
+    const partner_id = this.$route.params.id
+    if (!partner_id) {
+      return
+    }
+    try {
+      const url = `/partners/${partner_id}/partner?partner_id=${partner_id}`
+      const { data } = await this.$http.get(url)
+      this.entity = {
+        ...data,
+        partnertype_id: data?.partnertype?.partnertype_id,
+        partnergroup_id: data?.partnergroup?.partnergroup_id,
+      }
+      this.fillFields(data)
+    } catch (error) {
+      this.$errorToast(this.$t('error~partner~company~load'))
+    }
+  },
+  methods: {
+    fillFields(data) {
       this.setSubEntity('companydetails_id', data?.companydetails)
       this.setSubEntity('contactdetails_id', data?.contactdetails)
       this.setSubEntity('partnergroup_id', data?.partnergroup)
@@ -86,14 +105,13 @@ export default {
 
       const addressField = this.$refs.fields.find(f => f.field.key === 'address_id')
 
-      console.log({ addressField })
-
       if (addressField) {
         const cityField = addressField.$refs.fields.find(f => f.field.key === 'city_id')
         const cityObjValues = {
-          ...(data?.address?.city || {}),
-          country_id: data?.address?.city?.country?.country_id,
-          state: data?.address?.city?.city_state,
+          ...(data?.address || {}),
+          state: data?.address?.address_city_state,
+          city_zip: data?.address?.address_city_zip_code,
+          city_name: data?.address?.address_city_name,
         }
         if (cityField) {
           cityField.subEntity = cityObjValues
@@ -107,21 +125,6 @@ export default {
         }))
       }
     },
-  },
-  async mounted() {
-    const partner_id = this.$route.params.id
-    if (!partner_id) {
-      return
-    }
-    try {
-      const url = `/partners/${partner_id}/partner?partner_id=${partner_id}`
-      const { data } = await this.$http.get(url)
-      this.partner_company = data
-    } catch (error) {
-      this.$errorToast(this.$t('error~partner~company~load'))
-    }
-  },
-  methods: {
     addIban() {
       this.bank_data_infos = [
         ...this.bank_data_infos,
