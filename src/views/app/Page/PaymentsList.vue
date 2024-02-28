@@ -133,8 +133,8 @@ export default {
         entity: 'frontend_contractlist_criteria',
         fields: [
           {"key": "company_code", "stickyColumn": false, "variant": "light"},
-          {"key": "document_date", "type": "date"},
-          {"key": "bookingh_date", "type": "date"},
+          {"key": "document_date"},
+          {"key": "bookingh_date"},
           {"key": "g_l_account"},
           {"key": "recurringpaymentcategory_name"},
           {"key": "booking_text"},
@@ -151,7 +151,7 @@ export default {
           {"key": "partner_name"},
           {"key": "payment_object"},
           {"key": "recurringpaymenttype_name"},
-          {"key": "payment_term_basis", "type": "date"},
+          {"key": "payment_term_basis"},
           {"key": "tax_code"},
           {"key": "net_amount"},
           {"key": "percentage"},
@@ -159,8 +159,8 @@ export default {
           {"key": "tax_amount"},
           {"key": "gross_amount"},
           {"key": "currency"},
-          {"key": "payment_from", "type": "date"},
-          {"key": "payment_to", "type": "date"},
+          {"key": "payment_from"},
+          {"key": "payment_to"},
           {"key": "daily_range"},
           {"key": "payment_block"},
           {"key": "gp"},
@@ -168,7 +168,7 @@ export default {
           {"key": "remark"},
           {"key": "change_report"},
           {"key": "contract_status"},
-          {"key": "contract_end_date", "type": "date"}
+          {"key": "contract_end_date"}
         ],
         // subFields: [
         //   {
@@ -310,7 +310,7 @@ export default {
         const date = moment(this.data.date, 'YYYY-MM-DD')
         const masterData = (await this.$http.get(`/contracts/payment-list/data?${requestQuery}`)).data.data
 
-        this.items = masterData
+        this.items = masterData;
 
       } finally {
         this.loading = false
@@ -366,14 +366,14 @@ export default {
     async download() {
       const valid = await this.$refs.form.validate()
       if (!valid) return
-      this.loadingDonwload = true
+      this.loadingDownload = true
       const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
       filter.per_page = 100000
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
         const filename = `${this.$t(`menu~${this.table === 'conditions' ? 'contractcondition' : 'contractdeadline'}`)}-Export_${moment().format('DD_MM_YYYY')}.xlsx`
-        const masterData = (await this.$http.post(`/contracts/payment-list/export?${requestQuery}`, {
+        const masterData = (await this.$http.post(`/contracts/payment-list/export?${requestQuery}`, {}, {
           responseType: 'blob',
         })).data
         console.log('masterData: ', masterData)
@@ -384,7 +384,7 @@ export default {
         link.click()
         document.body.removeChild(link)
       } finally {
-        this.loadingDonwload = false
+        this.loadingDownload = false
       }
     },
   },
