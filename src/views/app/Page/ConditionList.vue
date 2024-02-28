@@ -134,29 +134,19 @@ export default {
             key: 'contract_of_status',
           },
           ...(this.table === 'deadlines' ? [{ key: 'term_type'}] : []),
-          { key: 'contract_begin_date', type: 'date' },
-          { key: 'contract_end_date', type: 'date' },
+          { key: 'contract_begin_date', default: moment().format('DD/MM/YYYY') },
+          { key: 'contract_end_date' },
           ...(this.table === 'deadlines' ? [
-            { key: 'next_possible_end_of_contract', type: 'date' },
-            { key: 'last_possible_end_of_contract', type: 'date' },
+            { key: 'next_possible_end_of_contract' },
+            { key: 'last_possible_end_of_contract'},
             // { key: 'available_options' },
             // { key: 'total_options' },
-            { key: 'next_action' },
-            { key: 'action_begin', type: 'date' },
-            { key: 'action_ende_soll', type: 'date' },
-            { key: 'action_ende_final', type: 'date' },
+            { key: 'next_action', default: moment().format('DD/MM/YYYY') },
+            { key: 'action_begin', default: moment().format('DD/MM/YYYY') },
+            { key: 'action_ende_soll' },
+            { key: 'action_ende_final' },
             {
-              key: 'planned_termination',
-              formatter: (value, key, item) => {
-                const { resiliation_acting_by, resiliation_date } = item
-
-                if (resiliation_date === null) {
-                  return this.$t(value)
-                }
-
-                return `${formatDate(resiliation_date)} ${this.$t('text~by')} ${resiliation_acting_by}`
-              },
-            },
+              key: 'planned_termination' },
             {
               key: 'planned_special_termination',
             },
@@ -181,28 +171,16 @@ export default {
           {
             key: 'contractdeadline_type'
           },
-          { key: 'contractdeadline_acting_by', label: 'Acting By' },
+          { key: 'contractdeadline_acting_by' },
           {
-            key: 'contractdeadline_available_options',
-            label: 'Available options',
-            hideOnForm: true,
+            key: 'contractdeadline_available_options'
           },
           { key: 'contractdeadline_options', label: 'Nbr of Options' },
           {
-            key: 'extension',
-            label: 'Extension(unit)',
-            formatter: (value, key, item) => {
-              const { contractdeadline_extension_value, contractdeadline_extension_unit, contractdeadline_type } = item
-              if (['resiliation', 'special_resiliation'].includes(contractdeadline_type)) return '--'
-              return `${contractdeadline_extension_value}  ${contractdeadline_extension_unit}`
-            },
+            key: 'extension'
           },
           {
-            key: 'contractdeadline_notice_period',
-            label: '',
-            hideOnForm: true,
-            send: false,
-          },
+            key: 'contractdeadline_notice_period'},
           {
             key: 'contractdeadline_status',
             hideOnForm: true,
@@ -213,7 +191,7 @@ export default {
         filters: [
           {
             key: 'customergroup_id',
-            required: false,
+            required: true,
             type: 'list',
             list: 'customergroup',
             listLabel: 'customergroup_name',
@@ -221,7 +199,7 @@ export default {
           },
           {
             key: 'company_id',
-            required: false,
+            required: true,
             type: 'list',
             list: 'frontend_2_2_3_1',
             listLabel: 'company_name',
@@ -229,7 +207,7 @@ export default {
           },
           {
             key: 'pos_id',
-            required: false,
+            required: true,
             type: 'list',
             list: 'frontend_2_1_3_8',
             listLabel: 'pos_name',
@@ -246,13 +224,13 @@ export default {
           },
           {
             key: 'country_id',
-            required: false,
+            required: true,
             type: 'list',
             list: 'country',
             listLabel: 'country_name',
             disabled: true,
           },
-          { key: 'date', type: 'date', default: moment().format('DD/MM/YYYY') },
+          { key: 'date', default: moment().format('DD/MM/YYYY') },
         ],
         create: false,
         update: false,
@@ -287,9 +265,11 @@ export default {
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
-        const date = moment(this.data.date, 'YYYY-MM-DD')
+        const date = moment(this.data.date, 'DD/MM/YYYY')
         const masterData = (await this.$http.get(`/contracts/conditionList/new?${requestQuery}`)).data.data
         const contracts = masterData;
+        // const begin_date = moment('DD/MM/YYYY')
+       // const end_date = moment('DD/MM/YYYY')
           // .filter(r => {
           //   const begin_date = moment(r.contract_begin_date, 'DD/MM/YYYY')
           //   const end_date = moment(r.contract_end_date, 'DD/MM/YYYY')
