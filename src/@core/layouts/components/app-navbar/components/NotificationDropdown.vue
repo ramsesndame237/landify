@@ -46,7 +46,7 @@
             <feather-icon size="10" :icon="notification.read === 0 ?  'MailIcon' : 'BookOpenIcon'"
                           class="position-absolute"/>
           </b-avatar>
-          <b-avatar v-b-tooltip.hover title="delete notification"
+          <b-avatar v-b-tooltip.hover title="Delete notification"
                     :class="[notification.read === 0 ? 'bg-primary':'']"
                     size="sm"
                     @click.native="deleteNotification(notification.id)">

@@ -342,7 +342,7 @@ import { formatDate, getDocumentLink, getStampedDocumentLink } from '@/libs/util
 import moment from 'moment'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
 import Notes from '@/views/app/Generic/Notes.vue'
-import _ from 'lodash'
+import _, {parseInt} from 'lodash'
 import EmailModal from '@/views/app/Ticket/EmailModal.vue'
 import AddDocumentToContract from '@/views/app/Ticket/AddDocumentToContract.vue'
 import AddDocumentToPos from '@/views/app/Ticket/AddDocumentToPos.vue'
@@ -617,8 +617,9 @@ export default {
     },
     async moveTicketToAnotherBoard() {
       this.loading = true
-      this.$http.post('tickets/change-ticket-board', { new_board_id: this.boardSelect, new_column_id: this.coloumnSelect.value, ticket_id: this.$route.params.id }).then(response => {
+      this.$http.post('tickets/change-ticket-board', { new_board_id: this.boardSelect, new_column_id: this.coloumnSelect.value, ticket_id: parseInt(this.$route.params.id) }).then(response => {
         console.log("this is the response", response)
+        this.$refs.moveModal.hide()
       }).catch(error => {
         console.error(error)
       }).finally(()=>this.loading =false)
