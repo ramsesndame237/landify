@@ -168,6 +168,7 @@ export default {
               'ticket_deadline_yellow',
               'ticket_description',
               'ticket_id',
+              'read',
               'ticket_last_change_time',
               'ticket_name',
               'column_has_stamp',
@@ -179,7 +180,7 @@ export default {
               'contract_name', 'contract_id', 'company_name', 'company_id', 'pos_id', 'pos_name',
               'customergroup_id', 'customergroup_name', 'ticket_subticket_count', 'ticket_subticket_closed_count',
             ])
-            obj.columns = _.orderBy(r, 'ticket_move_time_in', 'desc').map(i => _.pick(i, ['ticket_id', 'column_id', 'board_id', 'column_name', 'rank_order', 'user_email_assigned', 'user_id', 'user_email', 'user_id_assigned', 'team_name', 'team_id', 'team_type', 'ticket_move_time_in', 'ticket_move_time_out', 'ticket_deadline_offset', 'ticket_deadline_offset_yellow', 'ticket_deadline_offset_red']))
+            obj.columns = _.orderBy(r, 'ticket_move_time_in', 'desc').map(i => _.pick(i, ['ticket_id', 'column_id', 'board_id', 'column_name', 'rank_order', 'user_email_assigned', 'user_id', 'user_email', 'user_id_assigned', 'team_name','read', 'team_id', 'team_type', 'ticket_move_time_in', 'ticket_move_time_out', 'ticket_deadline_offset', 'ticket_deadline_offset_yellow', 'ticket_deadline_offset_red']))
             obj.column_name = obj.columns[0].column_name
             return obj
           })
