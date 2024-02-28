@@ -235,9 +235,6 @@ export default {
             listLabel: 'country_name',
             disabled: true,
           },
-<<<<<<< 2c9c6c6f43eff71c500e11e949dfa7c0bb308e0e
-          { key: 'date', default: moment().format('DD/MM/YYYY') },
-=======
           { key: 'date', type: 'date', default: moment().format('YYYY-MM-DD') },
           {
             key: 'contactperson_id',
@@ -247,7 +244,6 @@ export default {
             listLabel: 'contactperson_firstname',
             send: false,
           },
->>>>>>> 9fdad87fe104c67a272b95aa45ad52a890741393
         ],
         create: false,
         update: false,
