@@ -300,7 +300,7 @@
         </b-row>
       </div>
     </b-overlay>
-    <b-modal id="moveModal" ref="moveModal" centered hide-footer>
+    <b-modal id="moveModal" ref="moveModal" centered hide-footer :title="'Move ticket' + ' ' + entity.ticket_name + ' '+ 'into another board'  ">
       <div class="p-3">
         <v-select
           v-model="boardSelect"
