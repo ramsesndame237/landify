@@ -15,9 +15,9 @@
         }
       ]"
     />
-<!--    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"-->
-<!--                   with-continue :table-definition-key="table" :title="`headline~${table}~new`"-->
-<!--                   @reload-table="$refs.dataTable.fetchFn()"/>-->
+    <!--    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"-->
+    <!--                   with-continue :table-definition-key="table" :title="`headline~${table}~new`"-->
+    <!--                   @reload-table="$refs.dataTable.fetchFn()"/>-->
   </div>
 </template>
 

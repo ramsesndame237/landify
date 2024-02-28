@@ -36,10 +36,11 @@
                           variant="primary" @click="moveToNext">
                   {{ $t('button~movetonextcolumn') }}
                 </b-button>
-<!--                <b-button v-if="canMoveToNext() && (showButton.all || showButton.confirm)" class="ml-2"-->
-<!--                          variant="primary" @click="moveToNext">-->
-<!--                  Move to another board-->
-<!--                </b-button>-->
+                <b-button v-if="canMoveToNext() && (showButton.all || showButton.confirm)" v-b-modal.moveModal
+                          class="ml-2"
+                          variant="primary">
+                  Move to another board
+                </b-button>
                 <b-button v-if="!entity.ticket_closed & showButton.all" variant="primary" class="ml-2"
                           @click="updateTicket">
                   {{ $t('button~edit') }}
@@ -299,11 +300,36 @@
         </b-row>
       </div>
     </b-overlay>
+    <b-modal id="moveModal" ref="moveModal" centered hide-footer :title="'Move ticket' + ' ' + entity.ticket_name + ' '+ 'into another board'  ">
+      <div class="p-3">
+        <v-select
+          v-model="boardSelect"
+          class="mb-2"
+          :options="board"
+          :reduce="option => option.value"
+        />
+        <v-select
+          v-model="coloumnSelect"
+          :options="columnsBoard"
+          :disabled="boardSelect === ''"
+        />
+      </div>
+      <div class="w-100 d-flex p-2 ">
+        <b-button class="flex-grow-1 mr-2" @click="$refs.moveModal.hide()">
+          Cancel
+        </b-button>
+        <b-button variant="primary" class="flex-grow-1 align-items-center d-flex justify-content-center" @click="moveTicketToAnotherBoard">
+          <b-spinner v-if="loading" />
+          Move
+        </b-button>
+      </div>
+
+    </b-modal>
   </div>
 </template>
 
 <script>
-import {BButton, BCol, BRow,} from 'bootstrap-vue'
+import { BButton, BCol, BRow } from 'bootstrap-vue'
 import EditPageMixin from '@/views/app/Generic/EditPageMixin'
 import Table from '@/table'
 import GenericModal from '@/views/app/Generic/modal.vue'
@@ -312,19 +338,20 @@ import AppTimeline from '@core/components/app-timeline/AppTimeline.vue'
 import AppTimelineItem from '@core/components/app-timeline/AppTimelineItem.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import TicketMixin from '@/views/app/Kanban/TicketMixin'
-import {formatDate, getDocumentLink, getStampedDocumentLink} from '@/libs/utils'
+import { formatDate, getDocumentLink, getStampedDocumentLink } from '@/libs/utils'
 import moment from 'moment'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
 import Notes from '@/views/app/Generic/Notes.vue'
-import _ from 'lodash'
+import _, {parseInt} from 'lodash'
 import EmailModal from '@/views/app/Ticket/EmailModal.vue'
 import AddDocumentToContract from '@/views/app/Ticket/AddDocumentToContract.vue'
 import AddDocumentToPos from '@/views/app/Ticket/AddDocumentToPos.vue'
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 import TabComponent from '@/components/TabComponent.vue'
 import DocumentsWidgetView from '@/views/app/Ticket/widgets/DocumentsWidgetView.vue'
 import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.js'
 import SubticketTable from '@/views/app/CustomComponents/WP6/SubticketTable.vue'
+import vSelect from 'vue-select'
 
 const ticketDef = {
   ...Table.ticket,
@@ -340,6 +367,7 @@ export default {
     AddDocumentToContract,
     AddDocumentToPos,
     EmailModal,
+    vSelect,
     Notes,
     AssignUserModal,
     BCardActions,
@@ -366,9 +394,14 @@ export default {
       contractDocument: {},
       noteToInternal: true,
       noteToEveryOne: true,
-      ticketToMove:null
+      ticketToMove: null,
+      board: [],
+      columnsBoard: [],
+      boardSelect: '',
+      coloumnSelect: '',
     }
   },
+
   computed: {
     tabTitle() {
       return [
@@ -376,31 +409,31 @@ export default {
           id: '2',
           title: 'Timeline',
           show: true,
-          count: 0
+          count: 0,
         },
         {
           id: '5',
           title: this.$t('headline~ticket~subtasks'),
           show: this.isTicket,
-          count: 0
+          count: 0,
         },
         {
           id: '4',
           title: 'Documents',
           show: true,
-          count: 0
+          count: 0,
         },
         {
           id: '3',
           title: 'Messages and Emails',
           show: true,
-          count: 0
+          count: 0,
         },
         {
           id: '1',
           title: 'Information',
           show: true,
-          count: 0
+          count: 0,
         },
 
       ]
@@ -409,20 +442,21 @@ export default {
       return true
     },
     isTicket() {
-      return this.entity?.ticket_id_group === null
+      return this.entity?.ticket_id_group === null || this.entity?.ticket_id_group === undefined
     },
     firstColumn() {
       return this.entity?.columns[0]
     },
+
     showButton() {
-      const {team_type} = this.firstColumn
+      const { team_type } = this.firstColumn
       const typeOfButton = {
         all: true,
         assign: true,
         confirm: true,
       }
 
-      if (!this.isUserExtern) return {...typeOfButton}
+      if (!this.isUserExtern) return { ...typeOfButton }
 
       if (team_type === 'intern') {
         this.noteToInternal = false
@@ -436,7 +470,7 @@ export default {
         typeOfButton.confirm = true
       }
 
-      return {...typeOfButton}
+      return { ...typeOfButton }
     },
     ...mapGetters('user', ['isUserExtern']),
   },
@@ -445,11 +479,17 @@ export default {
       if (value.id === '3') {
         await this.fetchEmail()
       }
-    }
+    },
+    boardSelect(value) {
+      this.coloumnSelect = ''
+      if (value !== '') return this.getColumnBoard(value)
+    },
+  },
+  created() {
+    this.fetchBoardData()
   },
   async mounted() {
     await this.getTicketDetails()
-
     this.loading = true
     try {
       if (!this.entity || !this.entity?.columns) {
@@ -475,34 +515,39 @@ export default {
     getActiveItemData(item) {
       this.activeTabItem = item
     },
+    getColumnBoard(board_id) {
+      this.$http.get(`/boards/columns/${board_id}`).then(response => {
+        this.columnsBoard = response.data.map(column => ({ value: column.column_id, label: column.column_name }))
+      }).catch(error => {
+        console.error(error)
+      })
+    },
     updateCounter(ticket_update_type, count) {
-      console.log("this is the table",this.tabTitle)
-
       const index = this.tabTitle.findIndex(item => {
         if (ticket_update_type === 'NEW_FILE' && item.id === '4') {
-          return true;
-        } else if (ticket_update_type === 'NEW_MAIL' && item.id === '3') {
-          return true;
+          return true
+        } if (ticket_update_type === 'NEW_EMAIL' && item.id === '3') {
+          return true
         }
-        return false;
-      });
+        return false
+      })
 
       if (index !== -1) {
-        this.tabTitle[index].count += count;
+        this.tabTitle[index].count += count
       }
       this.tabDetailsTicket = this.tabTitle
     },
     getTicketDetails() {
-      this.$http.get(`/tickets/update-stats?ticket_id=${this.$route.params.id}`).then((response) => {
-        let ticketStat = response.data || []
-        if(ticketStat.length > 0){
-         return ticketStat.forEach(item => {
-            this.updateCounter(item.ticket_update_type, item.count);
+      this.$http.get(`/tickets/update-stats?ticket_id=${this.$route.params.id}`).then(response => {
+        const ticketStat = response.data || []
+        if (ticketStat.length > 0) {
+          return ticketStat.forEach(item => {
+            this.updateCounter(item.ticket_update_type, item.count)
           })
         }
+        console.log('this is the data', this.isTicket)
         this.tabDetailsTicket = this.tabTitle
-
-      }).catch((error) => {
+      }).catch(error => {
         console.error(error)
       })
     },
@@ -521,20 +566,19 @@ export default {
       return this.columns.find(c => c.column_id === this.entity?.columns[0].column_id).column_has_stamp
     },
     canMoveBack() {
-      console.log("this ticket entity", this.entity)
-      // if (!this.entity) return false
-      // if (this.entity?.ticket_closed) return false
+      if (!this.entity) return false
+      if (this.entity?.ticket_closed) return false
       if (!this.entity?.columns[1]) return false
-      // if (this.entity?.columns[1].rank_order > this.entity?.columns[0].rank_order) return false
+      if (this.entity?.columns[1].rank_order > this.entity?.columns[0].rank_order) return false
       const column_name = this.entity?.columns[1].column_name
-      return this.config.accepts(null, {dataset: {status: column_name}}, {dataset: {status: this.entity?.column_name}}, true)
+      return this.config.accepts(null, { dataset: { status: column_name } }, { dataset: { status: this.entity?.column_name } }, true)
     },
     canMoveToNext() {
       if (!this.entity) return false
       if (this.entity?.ticket_closed) return false
       const colIdx = this.columns.findIndex(c => c.column_name === this.entity?.column_name)
       if (colIdx === this.columns.length - 1) return false
-      return this.config.accepts(null, {dataset: {status: this.columns[colIdx + 1].column_name}}, {dataset: {status: this.entity?.column_name}})
+      return this.config.accepts(null, { dataset: { status: this.columns[colIdx + 1].column_name } }, { dataset: { status: this.entity?.column_name } })
     },
     async moveToNext() {
       const result = await this.moveToNextColumn(this.entity)
@@ -556,20 +600,29 @@ export default {
       return getDocumentLink(document)
     },
     createDocument() {
-      this.$refs.documentModal.openModal(true, {ticket_id: this.entity?.ticket_id})
+      this.$refs.documentModal.openModal(true, { ticket_id: this.entity?.ticket_id })
     },
     createInvoice() {
       this.$router.push({
         name: 'table-form',
         params: {
           table: 'invoice',
-          entity: {ticket_id: this.entity?.ticket_id},
+          entity: { ticket_id: this.entity?.ticket_id },
         },
       })
     },
     updateTicket() {
       const model = _.pick(this.entity, ['ticket_id', 'company_id', 'pos_id', 'contract_id', 'ticket_name', 'ticket_description', 'priority_id', 'ticket_deadline_red', 'ticket_deadline_yellow', 'ticket_deadline'])
       this.$refs.ticketModal.openModal(false, model)
+    },
+    async moveTicketToAnotherBoard() {
+      this.loading = true
+      this.$http.post('tickets/change-ticket-board', { new_board_id: this.boardSelect, new_column_id: this.coloumnSelect.value, ticket_id: parseInt(this.$route.params.id) }).then(response => {
+        console.log("this is the response", response)
+        this.$refs.moveModal.hide()
+      }).catch(error => {
+        console.error(error)
+      }).finally(()=>this.loading =false)
     },
     async onNewTicket(ticket) {
       // Save subticket relation
@@ -613,6 +666,14 @@ export default {
           this.fetchDocuments()
         })
     },
+    async fetchBoardData() {
+      this.$http.get('/tickets/kanban/user').then(response => {
+        console.log('this is the ticket')
+        this.board = response.data.data?.map(item => ({ value: item.board_id, label: item.board_name }))
+      }).catch(error => {
+        console.error('this is the error', error)
+      })
+    },
     async fetchDocuments() {
       const documents = (await this.$http.get('/tickets/documents', {
         params: {
@@ -644,7 +705,7 @@ export default {
     async loadSingleTicket(loader = true) {
       if (loader) this.loading = true
       try {
-        await this.loadTickets({ticket_id: this.$route.params.id})
+        await this.loadTickets({ ticket_id: this.$route.params.id })
         this.entity = this.tickets[0]
       } finally {
         if (loader) this.loading = false

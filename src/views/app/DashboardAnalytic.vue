@@ -238,9 +238,9 @@ export default {
       await this.fetchDashboardStatistics()
     },
     show(status) {
-      if(status === 'Update_ticket'){
+      if (status === 'Update_ticket') {
         return this.$router.push({
-          name:'updateTicket',
+          name: 'updateTicket',
           params: {
             dashboardData: {
               ticket_deadline_status: status,
@@ -251,13 +251,13 @@ export default {
               tickets: this.entity.tickets,
               company_id: this.entity.company_id,
               customergroup_id: this.getCustomerGroupId(this.entity.company_id),
-              ticket_update_type:''
+              ticket_update_type: ''
             },
           },
         })
       }
       this.$router.push({
-        name:'table',
+        name: 'table',
         params: {
           table: 'ticket',
           dashboardData: {

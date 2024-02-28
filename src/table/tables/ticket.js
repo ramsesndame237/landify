@@ -19,7 +19,6 @@ export default {
     { key: 'ticket_id', auto: true },
     // { key: 'ticket_deadline', type: 'date', time: true },
     { key: 'ticket_name' },
-    { key: 'read' },
     // { key: 'column_has_stamp', hideOnForm: true, type: 'boolean' },
     {
       key: 'ticket_deadline_yellow', type: 'date', time: true, hideOnIndex: true, minDate: 'today',
@@ -110,7 +109,7 @@ export default {
       list: 'customergroup',
       listLabel: 'customergroup_name',
       required: false,
-      noFetchOnInit: false,
+      noFetchOnInit: true,
       customPagination: {
         per_page: 15,
       },
@@ -285,10 +284,6 @@ export default {
         {
           label: 'New ticket',
           value: 'NEW_TICKET',
-        },
-        {
-          label: 'New moved',
-          value: 'MOVED_TICKET',
         },
       ],
       change: (entity, vm) => {
