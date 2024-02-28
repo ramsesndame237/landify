@@ -65,6 +65,7 @@
           :on-edit-element="editAction"
           :can-update-item="canUpdateItem"
           :can-delete-item="canDeleteItem"
+          :no-cache="true"
           @table-refreshed="getActions"
           @delete-items="deleteAction"
         />
@@ -468,7 +469,7 @@ export default {
     },
   },
   mounted() {
-    this.getActions()
+    this.getActions(true)
   },
   methods: {
     async getActions(refresh = false) {

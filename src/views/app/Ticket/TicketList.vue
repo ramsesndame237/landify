@@ -156,6 +156,10 @@ export default {
           text: this.$t('header~board~status~notassigned'),
           value: 'not_assigned',
         },
+        {
+          text: this.$t('header~board~status~update~ticket'),
+          value: 'update_ticket',
+        },
       ],
       filterValue: payload?.filter?.status || null,
       user: getUserData(),

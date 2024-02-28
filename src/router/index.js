@@ -155,6 +155,15 @@ const router = new VueRouter({
       component: () => import('@/views/app/InvoicePositionImport.vue'),
     },
     {
+      name: 'payments-list',
+      path: '/app/payments-list',
+      component: () => import('@/views/app/Page/PaymentsList.vue'),
+      meta: {
+        action: 'menu~contractpaymentslist',
+        resource: 'menu',
+      },
+    },
+    {
       name: 'condition-list',
       path: '/app/condition-list',
       component: () => import('@/views/app/Page/ConditionList.vue'),

@@ -9,14 +9,15 @@
 <script>
 
 // This will be populated in `beforeCreate` hook
-import { $themeColors, $themeBreakpoints, $themeConfig } from '@themeConfig'
-import { provideToast } from 'vue-toastification/composition'
-import { watch } from '@vue/composition-api'
+import {$themeBreakpoints, $themeColors, $themeConfig} from '@themeConfig'
+import {provideToast} from 'vue-toastification/composition'
+import {onMounted, watch} from '@vue/composition-api'
 import useAppConfig from '@core/app-config/useAppConfig'
 
-import { useWindowSize, useCssVar } from '@vueuse/core'
+import {useCssVar, useWindowSize} from '@vueuse/core'
 
 import store from '@/store'
+import {checkAndverficationJwt} from "@/views/app/CustomComponents/DataTable/utils";
 
 const LayoutVertical = () => import('@/layouts/vertical/LayoutVertical.vue')
 const LayoutHorizontal = () => import('@/layouts/horizontal/LayoutHorizontal.vue')
@@ -58,11 +59,11 @@ export default {
     }
 
     // Set RTL
-    const { isRTL } = $themeConfig.layout
+    const {isRTL} = $themeConfig.layout
     document.documentElement.setAttribute('dir', isRTL ? 'rtl' : 'ltr')
   },
   setup() {
-    const { skin, skinClasses } = useAppConfig()
+    const {skin, skinClasses} = useAppConfig()
 
     // If skin is dark when initialized => Add class to body
     if (skin.value === 'dark') document.body.classList.add('dark-layout')
@@ -78,10 +79,15 @@ export default {
       timeout: 3000,
       transition: 'Vue-Toastification__fade',
     })
+    onMounted(() => {
+      setInterval(() => {
+        checkAndverficationJwt()
+      }, 10 * 60 * 1000)
+    })
 
     // Set Window Width in store
     store.commit('app/UPDATE_WINDOW_WIDTH', window.innerWidth)
-    const { width: windowWidth } = useWindowSize()
+    const {width: windowWidth} = useWindowSize()
     watch(windowWidth, val => {
       store.commit('app/UPDATE_WINDOW_WIDTH', val)
     })

@@ -14,7 +14,7 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? `/${process.env.PUBLIC_PATH}` : '/',
   lintOnSave: false,
   devServer: {
-    proxy: 'https://api.dev-zelos.de',
+    proxy: 'https://api.preprod.seybold-fm.com',
   },
   css: {
     loaderOptions: {
