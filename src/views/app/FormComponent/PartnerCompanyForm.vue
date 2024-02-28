@@ -9,7 +9,6 @@
             'partnergroup_id',
             'partnercompany_name',
             'partnercompany_shortname',
-            'partnercompany_role',
             'partnertype_id',
             'contactdetails_id',
             'companydetails_id',
@@ -83,17 +82,29 @@ export default {
       this.setSubEntity('contactdetails_id', data?.contactdetails)
       this.setSubEntity('partnergroup_id', data?.partnergroup)
       this.setSubEntity('address_id', data?.address)
+      this.entity.partnergroup_is_internal = data?.partnergroup?.partnergroup_is_internal
 
       const addressField = this.$refs.fields.find(f => f.field.key === 'address_id')
 
+      console.log({ addressField })
+
       if (addressField) {
-        addressField.setSubEntity('city_id', {
+        const cityField = addressField.$refs.fields.find(f => f.field.key === 'city_id')
+        const cityObjValues = {
           ...(data?.address?.city || {}),
-        }, addressField)
+          country_id: data?.address?.city?.country?.country_id,
+          state: data?.address?.city?.city_state,
+        }
+        if (cityField) {
+          cityField.subEntity = cityObjValues
+        }
       }
 
-      if (data?.bank_data_infos?.length > 0) {
-        this.bank_data_infos = data?.bankdatas
+      if (data?.bankdatas?.length > 0) {
+        this.bank_data_infos = data?.bankdatas.map(b => ({
+          bankdata_iban_id: b.iban_id,
+          bankdata_iban: b.bankdata_iban,
+        }))
       }
     },
   },

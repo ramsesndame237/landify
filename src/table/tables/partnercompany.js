@@ -46,19 +46,19 @@ export default {
       ],
       send: false,
     },
-    {
-      key: 'partnercompany_role',
-      // label: 'Role',
-      type: 'custom-select',
-      hideOnIndex: true,
-      required: false,
-      items: [
-        { value: 'Manager_Owner', label: 'Owner / Manager' },
-        { value: 'Manager', label: 'Manager' },
-        { value: 'Owner', label: 'Owner' },
-      ],
-      send: false,
-    },
+    // {
+    //   key: 'partnercompany_role',
+    //   // label: 'Role',
+    //   type: 'hidden',
+    //   hideOnIndex: true,
+    //   required: false,
+    //   items: [
+    //     { value: 'Manager_Owner', label: 'Owner / Manager' },
+    //     { value: 'Manager', label: 'Manager' },
+    //     { value: 'Owner', label: 'Owner' },
+    //   ],
+    //   send: false,
+    // },
     {
       key: 'partnergroup_id',
       type: 'list',
