@@ -71,18 +71,19 @@
     </div>
 
     <!-- Cart Footer -->
-    <li class="dropdown-menu-footer">
+    <li class="dropdown-menu-footer d-flex">
       <b-button
+        class="mx-1"
         v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-        variant="primary"
-        block
+        variant="warning"
+
         @click="() => markedNotificationAsRead(undefined) "
       >Read all notifications
       </b-button>
       <b-button
         v-ripple.400="'rgba(255, 255, 255, 0.15)'"
         variant="primary"
-        block
+
         @click="() => deleteNotification(undefined) "
       >Delete all notifications
       </b-button>
