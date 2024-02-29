@@ -8,6 +8,7 @@
       url="/tickets/slims?type_of_ticket=update_ticket"
       :columns="cols"
       :on-row-click="(row) => row.ticket_id && $router.push(`/app/table/ticket/view/${row.ticket_id}`)"
+      :include-in-query="currentFilterData"
       :bar-actions="[
         {
           icon: 'FilterIcon',
@@ -78,7 +79,8 @@ export default {
       }
     }
 
-    console.log('initial payload', payload)
+    console.log("this is the filter",currFilters)
+
     return {
       cols: [
         {
@@ -187,19 +189,18 @@ export default {
       return count
     },
     allFilter(value) {
-      console.log("this is the value", value)
       // const _payload = { ...this.$refs.filter.getFinalData(), status: this.filterValue }
       const _payload = { ...value}
-      console.log("this is the payload", _payload)
       const payload = {}
       Object.keys(_payload).forEach(key => {
         if (_payload[key] && _payload[key] !== -1) {
           payload[key] = _payload[key]
         }
       })
+
+      console.log("this i sht payload",currentFilterData)
       this.$refs.dataTable.getData(payload)
       this.currentFilterData = payload
-      console.log("this i sht payload",payload)
     },
     filter(obj) {
       console.log(obj, 'filter')
