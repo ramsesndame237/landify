@@ -40,7 +40,7 @@
       >
         <div v-if="notification.id === notificationAction"
              class="position-absolute position-right-0 position-top-2 d-flex ">
-          <b-avatar v-if="notification.read === 0" v-b-tooltip.hover title="'Mark as read'"
+          <b-avatar v-if="notification.read === 0" v-b-tooltip.hover :title="$t('translate~key~mark~read')"
                     :class="['mx-2',notification.read === 0 ? 'bg-primary':'']"
                     size="sm"
                     @click.native="markedNotificationAsRead(notification.id)">
@@ -72,21 +72,21 @@
     </div>
 
     <!-- Cart Footer -->
-    <li class="dropdown-menu-footer d-flex">
+    <li class="dropdown-menu-footer d-flex overflow-hidden">
       <b-button
         class="mx-1"
         v-ripple.400="'rgba(255, 255, 255, 0.15)'"
         variant="warning"
 
         @click="() => markedNotificationAsRead(undefined) "
-      >Read all notifications
+      >{{ $t('translate~key~read~all~notification') }}
       </b-button>
       <b-button
         v-ripple.400="'rgba(255, 255, 255, 0.15)'"
         variant="primary"
 
         @click="() => deleteNotification(undefined) "
-      >Delete all notifications
+      >${{$t('translate~key~delete~all~notification')}}
       </b-button>
     </li>
   </b-nav-item-dropdown>

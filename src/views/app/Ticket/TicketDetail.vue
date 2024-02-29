@@ -50,7 +50,7 @@
                 </b-button>
                 <b-button variant="primary" class="ml-2" @click="(e)=>makedAsRead(entity.ticket_id)">
                   <b-spinner v-if="loadingRead" small ></b-spinner>
-                  {{ entity.read === 'NOT_READ' ? 'Mark as read' : 'Mark as unread' }}
+                  {{ entity.read === 'NOT_READ' ? $t('translate~key~mark~read') : $t('translate~key~mark~unread') }}
                 </b-button>
                 <assign-user-modal ref="assign" @reload="loadSingleTicket"/>
               </div>
