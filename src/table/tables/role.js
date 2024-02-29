@@ -50,8 +50,9 @@ export default {
             })
           }
         }
-        const filteredMenu = menus.filter(menu => menu.menu_is_internal === entity.role_is_internal)
-        return filteredMenu.map(menu => ({ label: menu.name, value: menu.name, menu_is_internal: menu.menu_is_internal }))
+        const menu_role = entity.role_is_internal === 0
+        const filteredMenu = menu_role ? [{ label: 'Menu Extern', value: 'Menu Extern', menu_is_internal: false }] : menus.filter(menu => (menu.value === menu_role))
+        return menu_role ? filteredMenu : filteredMenu.map(menu => ({ label: menu.name, value: menu.name, menu_is_internal: menu.value }))
       },
     },
     {
@@ -135,7 +136,9 @@ export default {
         { key: 'tablegroup_name', hideOnForm: true },
         { key: 'tablegroup_description', hideOnForm: true },
       ],
+
     },
+
     // {
     //   title: 'Tables',
     //   primaryKey: 'table_name',
