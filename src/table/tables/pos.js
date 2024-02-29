@@ -363,7 +363,7 @@ export default {
                 document_name: documentDetails.document_name,
               },
             })
-            vm.$successToast('Document has been updated successfully')
+            vm.$successToast(vm.$t('success~document~saved'))
             return null
           }
 
@@ -394,7 +394,7 @@ export default {
           }
 
           await vm.$http.post('/documents/pos', payload)
-          vm.$successToast(vm.$t('success~document~created'))
+          vm.$successToast(vm.$t('success~document~saved'))
           return null
         } catch (e) {
           throw new Error(typeof e?.response?.data?.detail === 'string' ? e?.response?.data?.detail : vm.$t('errors~unexpected~error~occurred'))
