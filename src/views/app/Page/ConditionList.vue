@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <b-card-actions :title="$t('general~filter')" action-collapse>
@@ -382,4 +381,4 @@ export default {
 .first-bloc img {
   margin-right: 4px;
 }
-
+</style>
