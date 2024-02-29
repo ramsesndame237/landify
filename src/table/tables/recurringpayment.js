@@ -9,32 +9,6 @@ function visibleByRecurringPaymentType(indexes) {
 export default {
   entity: 'frontend_3_9_1',
   formComponent: () => import('@/views/app/FormComponent/RecurringPaymentContractForm.vue'),
-  submit: async (vm, entity, create) => {
-    console.log({ entity })
-    const payload = {
-      contract_id: 0,
-      recurringpayments: [
-        {
-          recurringpaymenttype_id: 0,
-          recurringpayment_id: 0,
-          recurringpayment_name: 'string',
-          recurringpayment_sum_per_month: 0,
-          recurringpayment_condition_percentage: 0,
-          recurringpayment_percentage: 0,
-          recurringpayment_begin_date: '2024-02-23',
-          recurringpayment_end_date: '2024-02-23',
-          recurringpayment_description: 'string',
-          recurringpayment_condition_comment: '',
-          maturitytype_id: 0,
-          recurringpayment_maturity_date: '2024-02-23',
-          recurringpayment_maturity_daily_range: 0,
-          recurringpayment_maturity_monthly_range: 0,
-          recurringpayment_value_deposit: 0,
-          indexclause_id: 0,
-        },
-      ],
-    }
-  },
   fields: [
     { key: 'recurringpayment_id', auto: true },
     { key: 'recurringpayment_name' },
@@ -177,5 +151,23 @@ export default {
   ],
   default: {
     recurringpayment_condition_comment: '',
+  },
+
+  async submit(vm, entity, create) {
+    try {
+      const recurringpayment = { ...entity }
+      delete recurringpayment.contract_id
+
+      const payload = create ? {
+        contract_id: entity.contract_id,
+        recurringpayments: [
+          recurringpayment,
+        ],
+      } : recurringpayment
+      await vm.$http[create ? 'post' : 'put']('/contracts/step/2', payload)
+      vm.$successToast('success~recurring~payment~saved~successfully')
+    } catch (error) {
+      throw new Error(typeof error?.response?.detail === 'string' ? error.response.detail : vm.$t('errors~unexpected~error~ocurred'))
+    }
   },
 }

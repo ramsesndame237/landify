@@ -24,14 +24,15 @@ export const defineRules = () => {
   const rules = [{ subject: 'Auth', action: 'read' }]
   if (!userData) return rules
   const tablegroups = userData.tablegroups
-  const users_tablegroups = userData.users_tablegroups
+  const users_tablegroups = userData.users_tablegroups || []
   rules.push({ action: 'read', subject: 'dashboard' })
+  const userRoles = userData.roles || []
   //
   try {
-    if (userData.roles.find(r => r.role_name === 'Administratoren')) {
+    if (userRoles?.find(r => r.role_name === 'Administratoren')) {
       rules.push({ action: 'manage', subject: 'all' })
     }
-    userData.roles.forEach(role => {
+    userRoles.forEach(role => {
       const { tablegroups: roleTableGroups } = role
 
       if (roleTableGroups.length > 0) {

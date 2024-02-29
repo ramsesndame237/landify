@@ -620,7 +620,7 @@ export default {
       entityForm: 'contract_recurringpayment_rel',
       entityView: 'recurringpayment',
       formComponent: () => import('@/views/app/FormComponent/RecurringPaymentContractForm.vue'),
-      submit: async vm => {
+      submit: async (vm, _, create) => {
         try {
           const fieldsComponent = vm.getFieldComponents()
           const recurringPaymentDetails = fieldsComponent.find(f => f.field.key === 'recurringpayment_id')?.subEntity ?? {}
@@ -628,16 +628,17 @@ export default {
           const recurringpayment = { ...recurringPaymentDetails }
           delete recurringpayment.contract_id
 
-          const payload = {
+          const payload = create ? {
             contract_id: recurringPaymentDetails.contract_id,
             recurringpayments: [
               recurringpayment,
             ],
-          }
-          await vm.$http.post('/contracts/step/2', payload)
-          vm.$successToast('Recurring payment saved')
+          } : recurringpayment
+
+          await vm.$http[create ? 'post' : 'put']('/contracts/step/2', payload)
+          vm.$successToast('success~recurring~payment~saved~successfully')
         } catch (error) {
-          throw new Error(typeof error?.response?.detail === 'string' ? error.response.detail : 'Error while saving the recurring payment')
+          throw new Error(typeof error?.response?.detail === 'string' ? error.response.detail : vm.$t('errors~unexpected~error~ocurred'))
         }
       },
       fields: [
