@@ -207,7 +207,7 @@ export default {
           },
           {
             key: 'pos_id',
-            required: true,
+            required: false,
             type: 'list',
             list: 'frontend_2_1_3_8',
             listLabel: 'pos_name',
@@ -224,7 +224,7 @@ export default {
           },
           {
             key: 'country_id',
-            required: true,
+            required: false,
             type: 'list',
             list: 'country',
             listLabel: 'country_name',
