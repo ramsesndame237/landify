@@ -239,16 +239,6 @@ export default {
 
           { key: 'date', default: moment().format('DD/MM/YYYY') },
 
-          { key: 'date', type: 'date', default: moment().format('YYYY-MM-DD') },
-          {
-            key: 'contactperson_id',
-            required: false,
-            type: 'list',
-            list: 'contactperson',
-            listLabel: 'contactperson_firstname',
-            send: false,
-          },
-
         ],
         create: false,
         update: false,
