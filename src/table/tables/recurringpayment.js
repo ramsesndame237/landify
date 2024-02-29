@@ -125,6 +125,24 @@ export default {
     { key: 'maturitytype_name', hideOnForm: true },
     { key: 'indexclause_name', hideOnForm: true },
   ],
+  // filter_vertical: true,
+  // filters: [
+  //   {
+  //     key: 'customergroup_id',
+  //     type: 'list',
+  //     list: 'customergroup',
+  //     listLabel: 'customergroup_name',
+  //     required: false,
+  //   },
+  //   {
+  //     key: 'company_id',
+  //     type: 'list',
+  //     list: 'company',
+  //     listLabel: 'company_name',
+  //     filter_key: 'customergroup_id',
+  //     required: false,
+  //   },
+  // ],
   relations: [
     {
       title: 'Index Clause',
