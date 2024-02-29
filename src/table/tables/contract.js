@@ -521,11 +521,7 @@ export default {
           list: 'document',
           onlyForm: true,
           alwaysNew: true,
-<<<<<<< 9d9c4b02b2e3d161148761eb223982dff2e7c881
           // defaultEntity: { documenttype_id: 1 },
-=======
-          defaultEntity: { documenttype_id: 1 },
->>>>>>> 4a93902bd13298283bc4f07af1aa36e0748d84e7
           // disabled: ['documenttype_id'],
         },
         { key: 'document_name', hideOnForm: true },
