@@ -35,11 +35,12 @@
         v-for="(notification,index) in notifications"
         :key="index"
         class="relative cursor-pointer"
+        @click="$router.push(`/app/table/ticket/view/${notification.payload_json.ticket_id}`)"
         @mouseenter="notificationAction = notification.id"
       >
         <div v-if="notification.id === notificationAction"
              class="position-absolute position-right-0 position-top-2 d-flex ">
-          <b-avatar v-b-tooltip.hover :title="notification.read === 0 ? 'Mark as read':'Mark as unread'"
+          <b-avatar v-if="notification.read === 0" v-b-tooltip.hover title="'Mark as read'"
                     :class="['mx-2',notification.read === 0 ? 'bg-primary':'']"
                     size="sm"
                     @click.native="markedNotificationAsRead(notification.id)">
@@ -142,8 +143,8 @@ export default {
       })
     },
     deleteNotification(id_notification) {
-      if(id_notification){
-       return  this.$http.delete('/notifications', {
+      if (id_notification) {
+        return this.$http.delete('/notifications', {
           data: {"notification_id": id_notification}
         }).then((response) => {
           this.$successToast(response.data.message || 'delete success')
@@ -154,7 +155,7 @@ export default {
         })
       }
       this.$http.delete('/notifications', {
-        data:{"notification_id": 'ALL'}
+        data: {"notification_id": 'ALL'}
       }).then((response) => {
         console.log("this isht response", response)
         this.$successToast(response.data.message)
@@ -215,7 +216,9 @@ export default {
     }
   },
   mounted() {
-    // this.notoficationFetchLogic(50000)
+    setInterval(() => {
+      this.getNumberUnreadedNotification()
+    }, 10000)
 
   }
 

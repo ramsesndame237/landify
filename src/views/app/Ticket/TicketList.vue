@@ -207,11 +207,12 @@ export default {
       if (count === 0) return null
       return count
     },
-    allFilter() {
+    allFilter(value) {
       // this.$nextTick(() => {
       //   this.filter({ ...this.$refs.filter.getFinalData(), status: this.filterValue })
       // })
-      const _payload = { ...this.$refs.filter.getFinalData(), status: this.filterValue }
+      // const _payload = { ...this.$refs.filter.getFinalData(), status: this.filterValue }
+      const _payload = { ...value}
       const payload = {}
       Object.keys(_payload).forEach(key => {
         if (_payload[key] && _payload[key] !== -1) {

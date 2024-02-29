@@ -5,7 +5,7 @@
 
     <data-table
       ref="dataTable"
-      url="/tickets/slims?status=update_ticket"
+      url="/tickets/slims?type_of_ticket=update_ticket"
       :columns="cols"
       :on-row-click="(row) => row.ticket_id && $router.push(`/app/table/ticket/view/${row.ticket_id}`)"
       :bar-actions="[
@@ -60,11 +60,12 @@ export default {
           ticket_deadline_status: data.ticket_deadline_status,
           team_id: data.team_id,
           user_id: data.user_id,
-          status: 'update_ticket',
+          status: 'opened',
+          type_of_ticket: 'update_ticket',
           tickets: data.tickets,
           company_id: data.company_id,
           customergroup_id: data.customergroup_id,
-          ticket_update_type:data.ticket_update_type
+          ticket_update_type: data.ticket_update_type,
         },
       }
       payload.filter = _.omitBy(payload.filter, _.isNil)
@@ -137,7 +138,7 @@ export default {
         },
         {
           text: this.$t('header~board~status~update~ticket'),
-          value: 'update_ticket',
+          value: 'opened',
         },
       ],
       filterValue: payload?.filter?.status || null,
@@ -185,8 +186,11 @@ export default {
       if (count === 0) return null
       return count
     },
-    allFilter() {
-      const _payload = { ...this.$refs.filter.getFinalData(), status: this.filterValue }
+    allFilter(value) {
+      console.log("this is the value", value)
+      // const _payload = { ...this.$refs.filter.getFinalData(), status: this.filterValue }
+      const _payload = { ...value}
+      console.log("this is the payload", _payload)
       const payload = {}
       Object.keys(_payload).forEach(key => {
         if (_payload[key] && _payload[key] !== -1) {
@@ -195,6 +199,7 @@ export default {
       })
       this.$refs.dataTable.getData(payload)
       this.currentFilterData = payload
+      console.log("this i sht payload",payload)
     },
     filter(obj) {
       console.log(obj, 'filter')

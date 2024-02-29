@@ -293,6 +293,48 @@ export default {
       },
     },
     {
+      key: 'status',
+      label: 'Status',
+      type: 'custom-select',
+      required: false,
+      clearable: false,
+      items: [
+        {
+          label: 'All',
+          value: -1,
+        },
+        {
+          label: 'Not assigned',
+          value: 'not_assigned',
+        },
+        {
+          label: 'Open',
+          value: 'opened',
+        },
+        {
+          label: 'Close',
+          value: 'closed',
+        },
+        {
+          label: 'My tickets',
+          value: 'my_tickets',
+        },
+        {
+          label: 'Done',
+          value: 'done',
+        },
+        // {
+        //   label: 'Updated ticket',
+        //   value: 'update_ticket',
+        // },
+      ],
+      change: (entity, vm) => {
+        if (entity.ticket_deadline_status === undefined) {
+          vm.$set(vm.entity, 'ticket_deadline_status', -1)
+        }
+      },
+    },
+    {
       key: 'tickets',
       label: 'Tickets type',
       type: 'custom-select',
