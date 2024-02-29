@@ -490,12 +490,12 @@ export default {
       this.coloumnSelect = ''
       if (value !== '') return this.getColumnBoard(value)
     },
-    async updateMove(value) {
-      if (value === 'move') {
-        await this.loadSingleTicket()
-        this.updateMove = ''
-      }
-    },
+    // async updateMove(value) {
+    //   if (value === 'move') {
+    //     await this.loadSingleTicket()
+    //     this.updateMove = ''
+    //   }
+    // },
   },
   created() {
     this.fetchBoardData()
