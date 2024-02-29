@@ -6,7 +6,7 @@ import axios from 'axios'
 const axiosIns = axios.create({
   // You can add your headers here
   // ================================
-  // baseURL: "http://192.168.1.25:8000"
+  // baseURL: "http://192.168.1.29:8000",
   baseURL: process.env.VUE_APP_BASE_URL,
   timeout: 120000,
   // headers: {'X-Custom-Header': 'foobar'}
@@ -16,7 +16,7 @@ const axiosFileIns = axios.create({
   // You can add your headers here
   // ================================
   baseURL: process.env.VUE_APP_BASE_URL,
-  // baseURL: "http://192.168.1.25:8000" || process.env.VUE_APP_BASE_URL ,
+  // baseURL: "http://192.168.1.29:8000",
   timeout: 600000,
   headers: { 'Content-Type': 'multipart/form-data', Authorization: 'Bearer johndoe@example.com' },
 })

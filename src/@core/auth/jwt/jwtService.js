@@ -5,6 +5,7 @@ import { initialAbility } from '@/libs/acl/config'
 import store from '@/store'
 import BrowserId from 'browser-id'
 import jwtDefaultConfig from './jwtDefaultConfig'
+import { checkAndverficationJwt } from "@/views/app/CustomComponents/DataTable/utils";
 
 export default class JwtService {
   // Will be used by this service for making API calls
@@ -45,6 +46,10 @@ export default class JwtService {
     this.axiosIns.interceptors.response.use(
       response => response,
       error => {
+        setInterval(() => {
+          checkAndverficationJwt()
+        }, 10 * 60 * 1000)
+
         // const { config, response: { status } } = error
         const { config, response } = error
         const originalRequest = config
