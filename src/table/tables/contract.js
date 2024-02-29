@@ -506,10 +506,10 @@ export default {
           })
 
           await vm.$http.post('/contracts/step/7', payload)
-          vm.$successToast('Document has been created successfully')
+          vm.$successToast(vm.$t('success~document~created'))
           return null
         } catch (e) {
-          throw new Error('The document save failed')
+          throw new Error(typeof e?.response?.data?.detail === 'string' ? e?.response?.data?.detail : vm.$t('errors~unexpected~error~occurred'))
         }
       },
       fields: [
