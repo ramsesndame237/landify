@@ -62,7 +62,6 @@ export default {
           team_id: data.team_id,
           user_id: data.user_id,
           status: 'opened',
-          type_of_ticket: 'update_ticket',
           tickets: data.tickets,
           company_id: data.company_id,
           customergroup_id: data.customergroup_id,
