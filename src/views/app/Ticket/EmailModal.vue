@@ -3,7 +3,7 @@
     ref="mailContent"
     title="Mail Content"
     size="lg"
-    :ok-title="view ? $t('button~close') : $t('button~email~send')"
+    :ok-title="view ? this.$t('button~close') : this.$t('button~email~send')"
     :ok-only="view"
     :busy="loading"
     @ok="submit"
@@ -11,42 +11,42 @@
     <b-overlay :show="loading">
       <b-row>
         <b-col v-if="view" cols="6">
-          <field :field="{ key: 'email_id', auto: true }" :entity="item" disabled />
+          <field :field="{ key: 'email_id', auto: true }" :entity="item" disabled/>
         </b-col>
         <b-col v-if="view" cols="6">
-          <field :field="{ key: 'email_received_datetime' }" :entity="item" disabled />
+          <field :field="{ key: 'email_received_datetime' }" :entity="item" disabled/>
         </b-col>
         <b-col cols="12">
-          <field :field="{ key: 'email_from' }" :entity="item" disabled />
+          <field :field="{ key: 'email_from' }" :entity="item" disabled/>
         </b-col>
         <b-col cols="12">
-          <field v-if="view" :field="{ key: 'email_to' }" :entity="item" disabled />
-          <b-form-group v-else :label="$t('attribute.email_to')">
+          <field v-if="view" :field="{ key: 'email_to' }" :entity="item" disabled/>
+          <b-form-group v-else :label="this.$t('attribute.email_to')">
             <vue-tags-input
               v-model="tag"
               :tags="tags"
               :validation="validation"
               :autocomplete-items="filteredItems(tag)"
-              :placeholder="$t('attribute.email_to')"
+              :placeholder="this.$t('attribute.email_to')"
               @tags-changed="(newTags) => (tags = newTags)"
             />
           </b-form-group>
         </b-col>
         <b-col cols="12">
-          <field v-if="view" :field="{ key: 'email_cc' }" :entity="item" disabled />
-          <b-form-group v-else :label="$t('attribute.email_cc')">
+          <field v-if="view" :field="{ key: 'email_cc' }" :entity="item" disabled/>
+          <b-form-group v-else :label="this.$t('attribute.email_cc')">
             <vue-tags-input
               v-model="tag_cc"
               :tags="tags_cc"
               :validation="validation"
               :autocomplete-items="filteredItems(tag_cc)"
-              :placeholder="$t('attribute.email_cc')"
+              :placeholder="this.$t('attribute.email_cc')"
               @tags-changed="(newTags) => (tags_cc = newTags)"
             />
           </b-form-group>
         </b-col>
         <b-col cols="12">
-          <field :field="{ key: 'email_subject' }" :entity="item" :disabled="view" />
+          <field :field="{ key: 'email_subject' }" :entity="item" :disabled="view"/>
         </b-col>
         <b-col cols="12">
           <field
@@ -73,7 +73,7 @@
               :href="getDocumentLink(document)"
               @click="clickOnFile(document)"
             >
-              <b-img :src="getFileThumbnail(document.document_mime_type)" width="16px" class="mr-50" />
+              <b-img :src="getFileThumbnail(document.document_mime_type)" width="16px" class="mr-50"/>
               <span class="font-weight-bolder align-text-top">
                 {{ document.document_name }}
               </span>
@@ -86,15 +86,15 @@
 </template>
 
 <script>
-import { BImg } from 'bootstrap-vue'
+import {BImg} from 'bootstrap-vue'
 import Field from '@/views/app/Generic/Field.vue'
-import { getDocumentLink } from '@/libs/utils'
+import {getDocumentLink} from '@/libs/utils'
 import VueTagsInput from '@johmun/vue-tags-input'
-import { email } from 'vee-validate/dist/rules'
+import {email} from 'vee-validate/dist/rules'
 
 export default {
   name: 'EmailModal',
-  components: { Field, VueTagsInput, BImg },
+  components: {Field, VueTagsInput, BImg},
   data() {
     return {
       item: {},
@@ -127,7 +127,7 @@ export default {
       }
       if (
         fileType
-          === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         || fileType === 'application/vnd.ms-excel'
         || fileType === 'application/vnd.oasis.opendocument.spreadsheet'
       ) {
@@ -150,7 +150,7 @@ export default {
       if (view) {
         this.item = item
       } else {
-        this.item = { email_from: 'zelos@seybold-fm.com' }
+        this.item = {email_from: 'zelos@seybold-fm.com'}
       }
       this.view = view
       this.$refs.mailContent.show()
@@ -167,8 +167,8 @@ export default {
           for (let i = 0; i < attachments.length; i++) {
             formData.append('files', attachments[i])
           }
-          const { data } = await this.$http.post('/document/uploadfiles', formData, {
-            headers: { 'content-type': 'form-data' },
+          const {data} = await this.$http.post('/document/uploadfiles', formData, {
+            headers: {'content-type': 'form-data'},
           })
           console.log(data)
           this.item.attachments = data.data.map(d => d.document_id)

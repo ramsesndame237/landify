@@ -1,35 +1,13 @@
 <template>
   <div>
-    <!-- <b-card body-class="p-0">
-      <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"
-                        :on-new-element="definition.create ===false ? null : onNewElement" :total-rows="totalRows"
-                        :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
-                        :actions="definition.actions" @action="(a)=>$refs.table.onAction(a)"
-                        @filter="$refs.filter.openModal()">
-        <b-button size="sm" variant="primary" class="mr-1 btn-icon" @click="$refs.filter.openModal()">
-          <feather-icon icon="FilterIcon" :badge="getFilterCount()"/>
-        </b-button>
-        <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions" class="mr-2"/>
-      </table-pagination> -->
-      <generic-filter ref="filter" vertical :table="table" :definition="definition" :initial-data="initialFilterData"
-                      @filter="allFilter" @reset="reset"/>
-    <!-- </b-card> -->
+    <generic-filter ref="filter" vertical :table="table" :definition="definition" :initial-data="initialFilterData"
+                    @filter="allFilter" @reset="reset"/>
 
-    <!-- <b-card>
-      <Datatables :key="table" ref="table" :search="search" :entity="table" :entity-list="definition.entity"
-                  :with-delete="definition.delete !== false" :with-edit="definition.update !== false"
-                  :default-sort-column="initialSortBy||definition.defaultSortField" :default-sort-desc="initialSortDesc"
-                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
-                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
-                  :primary-key-column="definition.primaryKey" :entity-endpoint="definition.entityEndpoint"
-                  :initial-filter="initialFilterData" :truncate-by="definition.truncateBy || null" />
-    </b-card> -->
     <data-table
       ref="dataTable"
-      url="/tickets/slims"
+      url="/tickets/slims?status=update_ticket"
       :columns="cols"
       :on-row-click="(row) => row.ticket_id && $router.push(`/app/table/ticket/view/${row.ticket_id}`)"
-      :include-in-query="currentFilterData"
       :bar-actions="[
         {
           icon: 'FilterIcon',
@@ -37,9 +15,9 @@
         }
       ]"
     />
-    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"
-                   with-continue :table-definition-key="table" :title="`headline~${table}~new`"
-                   @reload-table="$refs.table.reload()"/>
+    <!--    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"-->
+    <!--                   with-continue :table-definition-key="table" :title="`headline~${table}~new`"-->
+    <!--                   @reload-table="$refs.dataTable.fetchFn()"/>-->
   </div>
 </template>
 
@@ -82,10 +60,11 @@ export default {
           ticket_deadline_status: data.ticket_deadline_status,
           team_id: data.team_id,
           user_id: data.user_id,
-          status: 'opened',
+          status: 'update_ticket',
           tickets: data.tickets,
           company_id: data.company_id,
           customergroup_id: data.customergroup_id,
+          ticket_update_type:data.ticket_update_type
         },
       }
       payload.filter = _.omitBy(payload.filter, _.isNil)
@@ -176,7 +155,6 @@ export default {
   watch: {
     filterValue: {
       handler() {
-        console.log('filter value change')
         this.allFilter()
       },
     },
@@ -208,9 +186,6 @@ export default {
       return count
     },
     allFilter() {
-      // this.$nextTick(() => {
-      //   this.filter({ ...this.$refs.filter.getFinalData(), status: this.filterValue })
-      // })
       const _payload = { ...this.$refs.filter.getFinalData(), status: this.filterValue }
       const payload = {}
       Object.keys(_payload).forEach(key => {
@@ -224,9 +199,9 @@ export default {
     filter(obj) {
       console.log(obj, 'filter')
       this.currentPage = 1
-      setTimeout(() => {
-        this.$refs.table.filter(obj)
-      }, 500)
+      // setTimeout(() => {
+      //   console.log("this is the refs", this.$refs)
+      // }, 500)
     },
     reset() {
       this.initialFilterData = {}
