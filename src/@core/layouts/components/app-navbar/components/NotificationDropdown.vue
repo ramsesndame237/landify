@@ -36,7 +36,10 @@
               v-for="(notification,index) in notifications"
               :key="index"
               class="relative cursor-pointer"
-              @click="$router.push(`/app/table/ticket/view/${notification.payload_json.ticket_id}`)"
+              @click="()=>{
+                $router.push(`/app/table/ticket/view/${notification.payload_json.ticket_id}`)
+                this.$refs.notificationNav.hide()
+              }"
               @mouseenter="notificationAction = notification.id"
             >
               <div v-if="notification.id === notificationAction"
@@ -91,7 +94,7 @@
               variant="primary"
 
               @click="() => deleteNotification(undefined) "
-            >${{ $t('translate~key~delete~all~notification') }}
+            >{{ $t('translate~key~delete~all~notification') }}
             </b-button>
           </li>
         </b-nav-item-dropdown>
@@ -154,10 +157,11 @@ export default {
       if (id_notification) {
         return this.$http.delete('/notifications', {
           data: {"notification_id": id_notification}
-        }).then((response) => {
+        }).then(async (response) => {
           this.$successToast(response.data.message || 'delete success')
-          this.getAllNotification()
           this.getNumberUnreadedNotification()
+          this.$refs.notificationNav.hide()
+          await this.getAllNotification()
         }).catch((error) => {
           console.error(error)
         })
@@ -175,7 +179,6 @@ export default {
     markedNotificationAsRead(id_notification) {
       if (id_notification) {
         return this.$http.post('/notifications', {"notification_id": id_notification}).then((response) => {
-          console.log("thios is the response of the mark read notification", response)
           this.$successToast(response.data.message)
           this.getAllNotification()
           this.getNumberUnreadedNotification()
@@ -212,7 +215,6 @@ export default {
       })
     },
     notoficationFetchLogic(delay) {
-      console.log("this is the delay", delay)
       this.intervalId = setInterval(() => {
         this.getNumberUnreadedNotification()
         // this.getUnReadedNotification()
