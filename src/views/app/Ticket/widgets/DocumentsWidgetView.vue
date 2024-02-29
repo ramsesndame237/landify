@@ -222,7 +222,7 @@ export default {
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "@/assets/scss/variables/variables";
 
 .search-container {
