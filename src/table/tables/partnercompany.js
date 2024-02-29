@@ -132,6 +132,15 @@ export default {
       noFetchOnChange: true,
     },
   ],
+  filter_vertical: true,
+  filters: [
+    {
+      key: 'partnercompany_id',
+      type: 'list',
+      list: 'partnercompany',
+      listLabel: 'partnercompany_name',
+    },
+  ],
   relations: [
     {
       title: 'ticket',

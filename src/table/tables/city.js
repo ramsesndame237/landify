@@ -14,9 +14,10 @@ export default {
       change: (entity, vm) => {
         let cityState
         if (entity.city_zip) {
+          const accessToken = localStorage.getItem('accessToken').split(" ")[1]
           const debounced = _.debounce(
             () => vm.$http
-              .get(`/users/state/${entity.city_zip}`)
+              .get(`/users/state/${entity.city_zip}?Authorization=${accessToken}`)
               .then(async resp => {
                 if (resp.data?.state) cityState = resp.data.state
               }),
@@ -31,6 +32,27 @@ export default {
     { key: 'country_short', sortable: true, hideOnForm: true },
     {
       key: 'country_id', hideOnIndex: true, type: 'list', list: 'country', listLabel: 'country_name',
+    },
+  ],
+  filters: [
+    {
+      key: 'customergroup_id',
+      type: 'list',
+      list: 'customergroup',
+      listLabel: 'customergroup_name',
+      send: false,
+      hideOnIndex: true,
+      hideOnUpdate: true,
+    },
+    {
+      key: 'company_id',
+      type: 'list',
+      list: 'company',
+      cols: 12,
+      listLabel: 'company_name',
+      hideOnIndex: true,
+      relationEntity: 'company_pos_rel',
+      filter_key: 'customergroup_id',
     },
   ],
   fieldComponent: () => import('@/views/app/FormComponent/CityForm.vue'),
