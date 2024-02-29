@@ -323,10 +323,10 @@ export default {
           label: 'Done',
           value: 'done',
         },
-        {
-          label: 'Updated ticket',
-          value: 'update_ticket',
-        },
+        // {
+        //   label: 'Updated ticket',
+        //   value: 'update_ticket',
+        // },
       ],
       change: (entity, vm) => {
         if (entity.ticket_deadline_status === undefined) {
