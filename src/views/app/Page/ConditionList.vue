@@ -236,7 +236,6 @@ export default {
             listLabel: 'country_name',
             disabled: true,
           },
-
           { key: 'date', default: moment().format('DD/MM/YYYY') },
 
         ],
