@@ -5,14 +5,15 @@
         <div class="d-flex justify-content-between my-2">
           <b-card-text class="mb-0">
             <b-button variant="primary" size="sm" @click="isOptionsVisible = false">
-              <feather-icon icon="ArrowLeftIcon" class="mr-50" />
+              <feather-icon icon="ArrowLeftIcon" class="mr-50"/>
               Back
             </b-button>
           </b-card-text>
           <b-card-text class="d-flex align-items-center">
-            <b-button v-b-toggle.available-options class="my-1" size="sm" variant="info" @click="collapseVisible = !collapseVisible">
+            <b-button v-b-toggle.available-options class="my-1" size="sm" variant="info"
+                      @click="collapseVisible = !collapseVisible">
               See Available Options
-              <feather-icon :icon="collapseVisible ? 'ChevronsDownIcon' : 'ChevronsUpIcon'" />
+              <feather-icon :icon="collapseVisible ? 'ChevronsDownIcon' : 'ChevronsUpIcon'"/>
             </b-button>
           </b-card-text>
         </div>
@@ -74,7 +75,7 @@
             viewed all Options
           </b-button>
         </b-card-text>
-        <DeadlinesTools ref="modal" force-title="Edit Action" :is-button-showed="false" />
+        <DeadlinesTools ref="modal" force-title="Edit Action" :is-button-showed="false"/>
       </b-overlay>
     </template>
   </div>
@@ -88,14 +89,14 @@ import DeadlineComments from '@/views/app/Contracts/Relations/Deadlines/Deadline
 
 export default {
   name: 'DeadlineTable',
-  components: { DeadlinesTools, DataTables },
-  props: { relation: Object, entityId: {} },
+  components: {DeadlinesTools, DataTables},
+  props: {relation: Object, entityId: {}},
   data() {
     return {
       acting_by: [
-        { label: ' Mieter & Vermieter', value: 'mieter_vermieter' },
-        { label: 'Mieter', value: 'mieter' },
-        { label: 'Vermieter', value: 'vermieter' },
+        {label: ' Mieter & Vermieter', value: 'mieter_vermieter'},
+        {label: 'Mieter', value: 'mieter'},
+        {label: 'Vermieter', value: 'vermieter'},
       ],
       deadlineFields: [
         {
@@ -104,7 +105,7 @@ export default {
           send: false,
           label: 'Action',
           formatter: (value, key, item) => {
-            const { contractdeadline_option_position } = item
+            const {contractdeadline_option_position} = item
             return contractdeadline_option_position !== 1 ? `then ${this.types[value]}` : this.types[value]
           },
         },
@@ -129,7 +130,7 @@ export default {
           type: 'number',
           label: 'To Activate',
           formatter: (value, key, item) => {
-            const { contractdeadline_unlimitted_option, contractdeadline_type } = item
+            const {contractdeadline_unlimitted_option, contractdeadline_type} = item
             if (contractdeadline_unlimitted_option === 1 && ['automatic_extension'].includes(contractdeadline_type)) return '\u{221E}'
             return (!value ? '--' : value)
           },
@@ -161,17 +162,17 @@ export default {
         {
           key: 'contractaction_extension_value', type: 'number', label: 'Extension value', hideOnIndex: true,
         },
-        { key: 'contractaction_extension_unit', label: 'Extension unit', hideOnIndex: true },
-        { key: 'contractdeadline_notice_period_value', type: 'number', hideOnIndex: true },
+        {key: 'contractaction_extension_unit', label: 'Extension unit', hideOnIndex: true},
+        {key: 'contractdeadline_notice_period_value', type: 'number', hideOnIndex: true},
         {
           key: 'contractdeadline_notice_period_unit',
           hideOnIndex: true,
           type: 'custom-select',
           items: [
-            { label: 'Day', value: 'day' },
-            { label: 'Week', value: 'week' },
-            { label: 'Month', value: 'month' },
-            { label: 'Year', value: 'year' },
+            {label: 'Day', value: 'day'},
+            {label: 'Week', value: 'week'},
+            {label: 'Month', value: 'month'},
+            {label: 'Year', value: 'year'},
           ],
         },
         {
@@ -180,7 +181,7 @@ export default {
           hideOnForm: true,
           send: false,
           formatter: (value, key, item) => {
-            const { contractdeadline_notice_period_value, contractdeadline_notice_period_unit } = item
+            const {contractdeadline_notice_period_value, contractdeadline_notice_period_unit} = item
             return `${contractdeadline_notice_period_value}  ${contractdeadline_notice_period_unit}`
           },
         },
@@ -206,12 +207,16 @@ export default {
           hideOnForm: true,
           send: false,
           formatter: (value, key, item) => {
-            const { contractdeadline_extension_value, contractdeadline_extension_unit } = item
+            const {contractdeadline_extension_value, contractdeadline_extension_unit} = item
             return `${contractdeadline_extension_value}  ${contractdeadline_extension_unit}`
           },
         },
         {
-          key: 'contractdeadline_resiliation_date', type: 'date', hideOnForm: true, label: 'Resiliation date', formatter: value => (!value ? '--' : value),
+          key: 'contractdeadline_resiliation_date',
+          type: 'date',
+          hideOnForm: true,
+          label: 'Resiliation date',
+          formatter: value => (!value ? '--' : value),
         },
         {
           key: 'contractdeadline_status',
@@ -233,7 +238,9 @@ export default {
           component: () => import('@/views/app/Contracts/Relations/Deadlines/ActiveDeadlineActions.vue'),
           props: {
             getDeadlines: () => this.deadlines,
-            reload: loading => { this.loadingDeadline = loading },
+            reload: loading => {
+              this.loadingDeadline = loading
+            },
             fetchDeadlines: () => this.getDeadlines(),
           },
         },
@@ -270,7 +277,7 @@ export default {
           label: 'Available options',
           hideOnForm: true,
           formatter: (value, key, item) => {
-            const { contractdeadline_options, contractdeadline_option_position, contractdeadline_status } = item
+            const {contractdeadline_options, contractdeadline_option_position, contractdeadline_status} = item
             if (contractdeadline_status === 'resiliated') {
               return 0
             }
@@ -281,9 +288,14 @@ export default {
         {
           key: 'contractaction_extension_value', type: 'number', label: 'Extension value', hideOnIndex: true,
         },
-        { key: 'contractaction_extension_unit', label: 'Extension unit', hideOnIndex: true },
+        {key: 'contractaction_extension_unit', label: 'Extension unit', hideOnIndex: true},
         {
-          key: 'contractdeadline_resiliation_date', type: 'date', hideOnForm: true, hideOnIndex: true, label: 'Resiliation date', formatter: value => (!value ? '--' : value),
+          key: 'contractdeadline_resiliation_date',
+          type: 'date',
+          hideOnForm: true,
+          hideOnIndex: true,
+          label: 'Resiliation date',
+          formatter: value => (!value ? '--' : value),
         },
         {
           key: 'contractaction_extension',
@@ -292,7 +304,7 @@ export default {
           hideOnIndex: true,
           send: false,
           formatter: (value, key, item) => {
-            const { contractdeadline_extension_value, contractdeadline_extension_unit } = item
+            const {contractdeadline_extension_value, contractdeadline_extension_unit} = item
             return `${contractdeadline_extension_value}  ${contractdeadline_extension_unit}`
           },
         },
@@ -303,16 +315,16 @@ export default {
           hideOnIndex: true,
           type: 'date',
         },
-        { key: 'contractdeadline_notice_period_value', type: 'number', hideOnIndex: true },
+        {key: 'contractdeadline_notice_period_value', type: 'number', hideOnIndex: true},
         {
           key: 'contractdeadline_notice_period_unit',
           hideOnIndex: true,
           type: 'custom-select',
           items: [
-            { label: 'Day', value: 'day' },
-            { label: 'Week', value: 'week' },
-            { label: 'Month', value: 'month' },
-            { label: 'Year', value: 'year' },
+            {label: 'Day', value: 'day'},
+            {label: 'Week', value: 'week'},
+            {label: 'Month', value: 'month'},
+            {label: 'Year', value: 'year'},
           ],
         },
         {
@@ -322,23 +334,23 @@ export default {
           hideOnIndex: true,
           send: false,
           formatter: (value, key, item) => {
-            const { contractdeadline_notice_period_value, contractdeadline_notice_period_unit } = item
+            const {contractdeadline_notice_period_value, contractdeadline_notice_period_unit} = item
             return `${contractdeadline_notice_period_value}  ${contractdeadline_notice_period_unit}`
           },
         },
         {
           key: 'contractdeadline_expected_from',
           label: 'Expected from',
-          type: 'date',
           hideOnForm: true,
           send: false,
+          formatter: value => moment(value).format("DD.MM.YYYY"),
         },
         {
           key: 'contractdeadline_expected_to',
           label: 'Expected to',
-          type: 'date',
           hideOnForm: true,
           send: false,
+          formatter: value => moment(value).format("DD.MM.YYYY"),
         },
         // {
         //   key: 'contractdeadline_notice_date',
@@ -352,7 +364,7 @@ export default {
           hideOnForm: true,
           label: 'Status',
           formatter: value => {
-            const status = { notdue: 'Not Due', deactivate: 'Deactivate', negotiation: 'In Negotiation' }
+            const status = {notdue: 'Not Due', deactivate: 'Deactivate', negotiation: 'In Negotiation'}
 
             return status[value]
           },
@@ -365,7 +377,9 @@ export default {
           component: () => import('@/views/app/Contracts/Relations/Deadlines/UnactiveDeadlinesActions.vue'),
           props: {
             getDeadlines: () => this.deadlines,
-            reload: loading => { this.loadingDeadline = loading },
+            reload: loading => {
+              this.loadingDeadline = loading
+            },
             fetchDeadlines: () => this.getDeadlines(),
           },
         },
@@ -408,10 +422,13 @@ export default {
       const activeDeadline = this.deadlines.find(deadline => deadline.contractdeadline_status === 'active')
 
       if (activeDeadline) {
-        const { contractdeadline_notice_date } = activeDeadline
+        const {contractdeadline_notice_date} = activeDeadline
 
         console.log({
-          activeDeadline, now: moment(), deadlineNoticeDate: moment(contractdeadline_notice_date), isSameOrBefore: moment(contractdeadline_notice_date).isSameOrBefore(moment()),
+          activeDeadline,
+          now: moment(),
+          deadlineNoticeDate: moment(contractdeadline_notice_date),
+          isSameOrBefore: moment(contractdeadline_notice_date).isSameOrBefore(moment()),
         })
 
         return moment(contractdeadline_notice_date).isSameOrBefore(moment())
@@ -431,17 +448,20 @@ export default {
           const activeDeadlines = this.deadlines.filter(deadline => deadline.contractdeadline_status === 'active')
 
           activeDeadlines.forEach(deadline => {
-            const { contractdeadline_option_position, contractdeadline_options, contractaction_id } = deadline
+            const {contractdeadline_option_position, contractdeadline_options, contractaction_id} = deadline
             if (activeActionsIds.includes(contractaction_id) && (contractdeadline_options - contractdeadline_option_position) <= 0) {
               finishedActions.push(contractaction_id)
-              console.log('Ici if test available = 0', { finishedActions })
+              console.log('Ici if test available = 0', {finishedActions})
             }
           })
         }
       }
 
       return _actions.filter(action => !finishedActions.includes(action.contractaction_id)).map(action => ({
-        label: this.types[action.contractaction_type], value: action.contractaction_id, type: action.contractaction_type, data: action,
+        label: this.types[action.contractaction_type],
+        value: action.contractaction_id,
+        type: action.contractaction_type,
+        data: action,
       }))
     },
     activatedDeadlines() {
@@ -454,7 +474,7 @@ export default {
 
       return _deadlines.map(deadline => {
         if (cancelledActions.includes(deadline.contractaction_id)) {
-          return { ...deadline, _rowVariant: 'danger' }
+          return {...deadline, _rowVariant: 'danger'}
         }
         return deadline
       })
@@ -482,12 +502,15 @@ export default {
               size: this.perPage,
             },
           })
-          const { data } = response.data
+          const {data} = response.data
           const sortedData = sortBy(data, ['contractaction_id'])
-          await this.$store.dispatch('table/setListData', { entity: `contract-actions-${this.entityId}`, data: sortedData })
-          console.log({ response })
+          await this.$store.dispatch('table/setListData', {
+            entity: `contract-actions-${this.entityId}`,
+            data: sortedData
+          })
+          console.log({response})
         } catch (error) {
-          console.log({ error })
+          console.log({error})
         } finally {
           this.loadingAction = false
         }
@@ -502,11 +525,14 @@ export default {
             size: this.perPage,
           },
         })
-        const { data } = response.data
+        const {data} = response.data
         const sortedData = sortBy(data, ['contractdeadline_id'])
-        await this.$store.dispatch('table/setListData', { entity: `contract-deadlines-${this.entityId}`, data: sortedData })
+        await this.$store.dispatch('table/setListData', {
+          entity: `contract-deadlines-${this.entityId}`,
+          data: sortedData
+        })
       } catch (error) {
-        console.log({ error })
+        console.log({error})
       } finally {
         this.loadingDeadline = false
       }
@@ -523,7 +549,7 @@ export default {
       this.$refs.modal.openModal(false, entity, 'Edit Action Data')
     },
     async deleteAction(data) {
-      console.log('From delete call', { data })
+      console.log('From delete call', {data})
       try {
         await this.$http.delete(`/contracts/deadline/action/${data[0].contractaction_id}`)
         this.$successToast('Action delete successfully !!!')
@@ -531,15 +557,15 @@ export default {
         await this.getDeadlines()
       } catch (error) {
         this.$errorToast(error.response.data.detail)
-        console.log({ error })
+        console.log({error})
       }
     },
     canUpdateItem(item) {
-      const { contractaction_status } = item
+      const {contractaction_status} = item
       return ['active', 'cancelled'].includes(contractaction_status)
     },
     canDeleteItem(item) {
-      const { contractaction_status } = item
+      const {contractaction_status} = item
       return ['active', 'cancelled'].includes(contractaction_status)
     },
   },

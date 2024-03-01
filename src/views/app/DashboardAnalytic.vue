@@ -243,7 +243,7 @@ export default {
           name: 'updateTicket',
           params: {
             dashboardData: {
-              ticket_deadline_status: status,
+              ...( status === 'Update_ticket'? {} :{ticket_deadline_status: status}),
               start_date: this.date[0],
               end_date: this.date[1],
               team_id: this.entity.team_id,

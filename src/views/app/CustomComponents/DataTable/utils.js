@@ -2,6 +2,7 @@
 
 import axiosIns from '@/libs/axios'
 import BrowserId from 'browser-id'
+import moment from "moment";
 
 export function toastError($toast) {
   $toast.error('Error when loading data. Reload the page can fix the issue.', {
@@ -35,3 +36,25 @@ export const checkAndverficationJwt = (time) => {
   }
 }
 export const _ = {}
+
+export const formatDate = (date)=> {
+  const dateTime = moment(date)
+    .toDate()
+    .getTime()
+  const dayBeginTime = moment()
+    .hours(0)
+    .minutes(0)
+    .seconds(0)
+    .toDate()
+    .getTime()
+  const sevenDayBeforeTime = moment()
+    .subtract(7, 'd')
+    .toDate()
+    .getTime()
+
+  // eslint-disable-next-line no-nested-ternary
+  return dateTime < sevenDayBeforeTime ? moment(date, true).format('MMM, DD')
+    : dateTime < dayBeginTime
+      ? moment(date, true).format('MMM, DD HH:mm A')
+      : moment(date).format('LT')
+}
