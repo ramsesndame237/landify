@@ -47,10 +47,6 @@ export default class JwtService {
     this.axiosIns.interceptors.response.use(
       response => response,
       error => {
-        setInterval(() => {
-          checkAndverficationJwt()
-        }, 10 * 60 * 1000)
-
         // const { config, response: { status } } = error
         setInterval(() => {
           checkAndverficationJwt()
