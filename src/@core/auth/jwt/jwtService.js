@@ -42,6 +42,7 @@ export default class JwtService {
       error => Promise.reject(error),
     )
 
+
     // Add request/response interceptor
     this.axiosIns.interceptors.response.use(
       response => response,
@@ -51,6 +52,9 @@ export default class JwtService {
         }, 10 * 60 * 1000)
 
         // const { config, response: { status } } = error
+        setInterval(() => {
+          checkAndverficationJwt()
+        }, 10 * 60 * 1000)
         const { config, response } = error
         const originalRequest = config
         const { $vue } = window

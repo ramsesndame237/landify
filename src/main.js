@@ -25,10 +25,11 @@ import '@/libs/clipboard'
 import ability from '@/libs/acl'
 import { defineRules } from '@/libs/acl/ability'
 import moment from 'moment'
+import { Plugin } from 'vue-fragment'
+import { checkAndverficationJwt } from '@/views/app/CustomComponents/DataTable/utils'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import { Plugin } from 'vue-fragment'
 // Vee validate
 Vue.component('validation-provider', ValidationProvider)
 Vue.component('validation-observer', ValidationObserver)
@@ -119,6 +120,7 @@ if (process.env.VUE_APP_SENTRY_DNS) {
       }
       return scope
     },
+
     integrations: [
       // new Sentry.BrowserTracing({
       //   // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled

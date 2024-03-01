@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import { getUserData } from '@/auth/utils'
+import Vue from 'vue'
+import emailModal from '@/views/app/Ticket/EmailModal.vue'
 
 export default {
   entity: 'frontend_3_1_1',
@@ -80,7 +82,11 @@ export default {
   ],
   filters: [
     {
-      key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name',
+      key: 'customergroup_id',
+      type: 'list',
+      list: 'customergroup',
+      listLabel: 'customergroup_name',
+      required: false,
     },
     {
       key: 'company_id',
@@ -88,6 +94,7 @@ export default {
       list: 'frontend_2_2_3_1',
       listLabel: 'company_name',
       filter_key: 'customergroup_id',
+      required: false,
     },
     {
       key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', required: false,
@@ -324,6 +331,7 @@ export default {
       title: 'headline~document~tab',
       primaryKey: 'document_id',
       entityForm: 'document_pos_rel',
+      entityEndpoint: '/documents/pos',
       entity: 'frontend_3_1_3_8',
       fields: [
         {
@@ -338,6 +346,111 @@ export default {
         { key: 'document_name', hideOnForm: true },
         { key: 'document_entry_time', hideOnForm: true },
         { key: 'documenttype_name', hideOnForm: true },
+      ],
+      submit: async (vm, entity, create) => {
+        let document_id = ''
+        const documentField = vm.$refs.fields.find(f => f.field.key === 'document_id')
+        const documentDetails = documentField.subEntity
+        try {
+          if (!create) {
+            await vm.$http({
+              url: '/documents/update',
+              method: 'put',
+              params: {
+                document_id: documentDetails.document_id,
+                documenttype_id: documentDetails.documenttype_id,
+                subdocumenttype_id: documentDetails.subdocumenttype_id,
+                document_name: documentDetails.document_name,
+              },
+            })
+            vm.$successToast(vm.$t('success~document~saved'))
+            return null
+          }
+
+          const formData = new FormData()
+          const file = documentField.$refs.fields.find(f => f.field.key === 'files')?.getFiles()?.[0] ?? null
+
+          if (file) {
+            formData.append('files', file)
+          }
+
+          const { data } = await vm.$http({
+            url: '/documents/uploadfiles',
+            data: formData,
+            method: 'post',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+
+          document_id = data?.data[0]?.document_id
+
+          const payload = {
+            pos_id: entity.pos_id,
+            document_id,
+            documenttype_id: documentDetails?.documenttype_id,
+            subdocumenttype_id: documentDetails?.subdocumenttype_id,
+          }
+
+          await vm.$http.post('/documents/pos', payload)
+          vm.$successToast(vm.$t('success~document~saved'))
+          return null
+        } catch (e) {
+          throw new Error(typeof e?.response?.data?.detail === 'string' ? e?.response?.data?.detail : vm.$t('errors~unexpected~error~occurred'))
+        }
+      },
+    },
+    {
+      customRequest: {
+        endpoint: '/pos',
+        relationKey: 'area_ids',
+        entityKey: 'pos_id',
+      },
+      title: 'Email',
+      primaryKey: 'email_id',
+      entityEndpoint: '/pos/emails',
+      entity: 'frontend_3_1_3_1',
+      entityForm: 'area_pos_rel',
+      entityView: 'Email',
+      update: false,
+      delete: false,
+      create: false,
+      onViewElement: element => {
+        const EmailModal = Vue.extend(emailModal)
+        const emailModalInstance = new EmailModal({
+          i18n: window.$vue.$i18n,
+          router: window.$vue.$i18n,
+          store: window.$vue.$store,
+        })
+        emailModalInstance.$mount()
+        emailModalInstance.show(true, element)
+      },
+      fields: [
+        {
+          key: 'email_received_datetime',
+          sortable: true,
+          type: 'list',
+          list: 'area',
+          listLabel: 'area_name',
+          disableOnUpdate: true,
+        },
+        { key: 'email_from', hideOnForm: true },
+        { key: 'email_subject', hideOnForm: true },
+        // { key: 'location_id', hideOnForm: true },
+        // {
+        //   key: 'location_name',
+        //   hideOnForm: true,
+        // },
+        // {
+        //   key: 'areatype_name',
+        //   hideOnForm: true,
+        // },
+        // {
+        //   key: 'area_last_change_time', hideOnForm: true, type: 'date', time: true,
+        // }, {
+        //   key: 'area_space_value', hideOnForm: true,
+        // },
       ],
     },
   ],

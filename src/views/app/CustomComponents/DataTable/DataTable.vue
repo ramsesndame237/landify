@@ -72,7 +72,8 @@
                 v-bind="col.props"
                 class="position-relative"
               >
-                <div>
+                <div >
+                  <b-spinner v-if="j === 0 && row.read === 'NOT_READ'" variant="primary" small type="grow" class="position-absolute" style="left: 5px"></b-spinner>
                   <div
                     :class="`td-first-div${
                       (buttons.concat(moreActions).length > 0 && !col.hideActions)
@@ -492,7 +493,7 @@ export default {
           resolveData: data => this.resolveData?.(data),
           extra: this.filters,
           toastError: () => toastError(this.$toast),
-          params: { ...(this.includeInQuery || {}), ...(params || {}) },
+          params: {...(this.includeInQuery || {}), ...(params || {})},
         })
       }
     },
@@ -505,6 +506,7 @@ export default {
 body {
   position: relative;
 }
+
 .data-table {
   .table-tr {
     position: relative;
@@ -529,12 +531,14 @@ body {
     border-color: transparent !important;
     color: var(--gray-dark) !important;
     transition: none;
+
     button {
       padding: 0;
       margin: 0 !important;
       height: 100%;
       width: 100%;
       border-radius: 999px;
+
       &:hover {
         background: inherit !important;
         border-color: transparent !important;
@@ -548,11 +552,11 @@ body {
     max-width: 260px;
   }
 
-.table-tr td:hover .show-btn {
-  width: 30px;
-  transform: translateX(-20px);
-  overflow: visible;
-}
+  .table-tr td:hover .show-btn {
+    width: 30px;
+    transform: translateX(-20px);
+    overflow: visible;
+  }
 
   .table-tr td:hover .show-btn {
     opacity: 1;
@@ -580,29 +584,29 @@ body {
     min-width: calc(100% - 106px + 53px + 28px);
   }
 
-.table-tr:hover .show-btn:hover {
-  box-shadow: 0 2px 8px #5556;
-  color: var(--white);
-}
+  .table-tr:hover .show-btn:hover {
+    box-shadow: 0 2px 8px #5556;
+    color: var(--white);
+  }
 
-.table-tr:hover .show-btn:hover:nth-child(1) {
-  background-color: var(--danger) !important;
-  color: var(--white) !important;
-}
+  .table-tr:hover .show-btn:hover:nth-child(1) {
+    background-color: var(--danger) !important;
+    color: var(--white) !important;
+  }
 
-.table-tr:hover .show-btn:hover:nth-child(2) {
-  background-color: var(--warning) !important;
-  color: var(--white) !important;
-}
+  .table-tr:hover .show-btn:hover:nth-child(2) {
+    background-color: var(--warning) !important;
+    color: var(--white) !important;
+  }
 
-.table-tr:hover .show-btn:hover:nth-child(3) {
-  background-color: var(--info) !important;
-  color: var(--white) !important;
-}
+  .table-tr:hover .show-btn:hover:nth-child(3) {
+    background-color: var(--info) !important;
+    color: var(--white) !important;
+  }
 
-.table-tr:hover .show-btn:hover:nth-child(4) {
-  background-color: var(--white) !important;
-}
+  .table-tr:hover .show-btn:hover:nth-child(4) {
+    background-color: var(--white) !important;
+  }
 }
 
 @import '@/assets/scss/overrides/tables.scss';
