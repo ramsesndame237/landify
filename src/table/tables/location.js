@@ -163,7 +163,7 @@ export default {
         ...addressField,
       })
     } else {
-      return vm.$http.put('/locations', {...entity, ...addressField})
+      return vm.$http.put('/locations', { ...entity, ...addressField, address_id: '' })
     }
   },
   validate: () => alert('validate'),
