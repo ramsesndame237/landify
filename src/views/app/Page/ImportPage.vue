@@ -99,7 +99,7 @@
           </b-tab>
           <template #tabs-end>
             <div class=" d-flex align-items-center ml-auto">
-              <template v-if="['added','changed'].indexOf(status)>=0 && getResult(currentEntity).length>0">
+              <template v-if="['added','changed','all'].includes(status) && getResult(currentEntity).length>0">
                 <b-button :disabled="loading" class="mr-1" variant="primary" @click="importData(true)">
                   Import All
                   <b-spinner v-if="loading && importAll" small/>
@@ -207,7 +207,7 @@ export default {
       },
       result: null,
       statusList: [
-        { text: 'All', value: '' },
+        { text: 'All', value: 'all' },
         { text: 'Added', value: 'added' },
         { text: 'Changed', value: 'changed' },
         { text: 'Unchanged', value: 'unchanged' },
@@ -219,7 +219,15 @@ export default {
   },
   computed: {
     currentEntity() {
+      console.log("this is the current tab", this.$refs.tabs)
       return this.entities.filter(e => !!this.result[e])[this.$refs.tabs?.currentTab]
+    }
+  },
+  watch:{
+    result(newValue){
+      if(Object.keys(newValue).length > 0){
+        this.status = 'all'
+      }
     }
   },
   mounted() {
@@ -233,7 +241,7 @@ export default {
     },
     getResult(entity) {
       if (!this.status) return this.result[entity]
-      return this.result[entity].filter(row => row.status === this.status)
+      return this.result[entity]?.filter(row => row.status === this.status) || []
     },
     getSelected(entity) {
       return this.getResult(entity).filter(row => row.__selected)
