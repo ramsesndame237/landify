@@ -27,24 +27,8 @@
     </form>
     <div v-else>
       <b-card>
-        <b-tabs ref="tabs" :disabled="loading" pills>
-          <b-tab v-for="(entity, index) in entities.filter(e => !!result[e])" :key="index" :title="titles[entity]" lazy>
-            <!--            <table v-if="result[entity]" class="my-2 table w-100">-->
-            <!--              <thead>-->
-            <!--              <tr>-->
-            <!--                <th class="pb-50 font-weight-bold">Total</th>-->
-            <!--                <th class="pb-50">{{ getCount(entity) }}</th>-->
-            <!--                <th class="pb-50 font-weight-bold">Inserted</th>-->
-            <!--                <th class="pb-50">{{ getCount(entity, 'added') }}</th>-->
-            <!--                <th class="pb-50 font-weight-bold">Updated</th>-->
-            <!--                <th class="pb-50">{{ getCount(entity, 'updated') }}</th>-->
-            <!--                <th class="pb-50 font-weight-bold">Unchanged</th>-->
-            <!--                <th class="pb-50">{{ getCount(entity, 'unchanged') }}</th>-->
-            <!--                <th class="pb-50 font-weight-bold">Failed</th>-->
-            <!--                <th class="pb-50">{{ getCount(entity, 'failed') }}</th>-->
-            <!--              </tr>-->
-            <!--              </thead>-->
-            <!--            </table>-->
+        <b-tabs ref="tabs" :disabled="loading" pills v-model="activeTab">
+          <b-tab v-for="(entity, index) in entities.filter(e => !!result[e])" :key="index" :title="titles[entity]"  >
             <b-table-simple class="table-responsive" style="max-height: 70vh">
               <b-thead>
                 <b-tr>
@@ -55,9 +39,6 @@
                   <b-th v-for="(field,i) in fields[entity]" :key="i">
                     {{ $t('attribute.' + field) }}
                   </b-th>
-                  <!--                  <b-th class="text-center">-->
-                  <!--                    Action-->
-                  <!--                  </b-th>-->
                 </b-tr>
               </b-thead>
               <b-tbody>
@@ -99,14 +80,14 @@
           </b-tab>
           <template #tabs-end>
             <div class=" d-flex align-items-center ml-auto">
-              <template v-if="['added','changed','all'].includes(status) && getResult(currentEntity).length>0">
+              <template v-if="['added','changed','all'].includes(status)">
                 <b-button :disabled="loading" class="mr-1" variant="primary" @click="importData(true)">
                   Import All
                   <b-spinner v-if="loading && importAll" small/>
                 </b-button>
-                <b-button v-if="getSelected(currentEntity).length>0" :disabled="loading" class="mr-1" variant="primary"
+                <b-button v-if="getSelected(entities[activeTab]).length>0" :disabled="loading" class="mr-1" variant="primary"
                           @click="importData()">
-                  Import selected ({{ getSelected(currentEntity).length }})
+                  Import selected ({{ getSelected(entities[activeTab]).length }})
                   <b-spinner v-if="loading && !importAll" small/>
                 </b-button>
               </template>
@@ -124,8 +105,6 @@
 /* eslint-disable */
 import { BButton, BIconArrowRepeat, BIconCheck, BTable, BCard, BTab, BTabs } from 'bootstrap-vue'
 import { BCardActions } from '@core/components/b-card-actions'
-import readXlsxFile from 'read-excel-file'
-import { importPartnercompany, importCompany } from '@/import'
 import DataTables from "@/layouts/components/DataTables";
 
 export default {
@@ -150,6 +129,7 @@ export default {
       errorsCnt: 0,
       disabled: false,
       tables: [],
+      activeTab:0,
       entities: [
         'partner_companies', 'companies', 'contact_persons', 'locations', 'pos', 'areas'
       ],
@@ -219,17 +199,10 @@ export default {
   },
   computed: {
     currentEntity() {
-      console.log("this is the current tab", this.$refs.tabs)
-      return this.entities.filter(e => !!this.result[e])[this.$refs.tabs?.currentTab]
+      return this.entities.filter(e => !!this.result[e])[this.entities[this.activeTab]]
     }
   },
-  watch:{
-    result(newValue){
-      if(Object.keys(newValue).length > 0){
-        this.status = 'all'
-      }
-    }
-  },
+
   mounted() {
     this.reset()
   },
@@ -240,7 +213,8 @@ export default {
       })
     },
     getResult(entity) {
-      if (!this.status) return this.result[entity]
+      console.log("this is the data", entity)
+      if (!this.status || this.status === 'all') return this.result[entity]
       return this.result[entity]?.filter(row => row.status === this.status) || []
     },
     getSelected(entity) {
