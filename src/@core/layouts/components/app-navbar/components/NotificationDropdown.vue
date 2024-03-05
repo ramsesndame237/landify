@@ -149,6 +149,7 @@ export default {
     getNumberUnreadedNotification() {
       this.$http.get('/notifications/unread/count').then((response) => {
         this.newNotification = response.data
+        this.getAllNotification()
       }).catch((error) => {
         console.error(error.messages)
       })
