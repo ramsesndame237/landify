@@ -1,7 +1,7 @@
 <template>
   <!--modal-->
   <b-modal id="generic-modal" ref="modal" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary" centered
-           :title="$t(forceTitle || title)" size="lg" :busy="loading" :no-close-on-backdrop="true" @ok="handleOk">
+           :title="$t(forceTitle || title)" size="lg" :busy="loading" :no-close-on-backdrop="true" @ok="handleOk" :hide-footer="this.definition.hideFooter || hideFooter" >
     <component
       :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
       ref="form" :fetch-data="fetchData" :table="table" :definition="definition" :entity-id="entityId"
@@ -36,7 +36,9 @@
 <script>
 
 import EntityForm from '@/views/app/Generic/EntityForm'
-import {BButton, BDropdown, BDropdownItem, BSpinner,} from 'bootstrap-vue'
+import {
+  BButton, BSpinner, BDropdown, BDropdownItem,
+} from 'bootstrap-vue'
 
 export default {
   name: 'GenericModal',
@@ -48,11 +50,11 @@ export default {
     cacheKey: String,
     definition: Object,
     tableDefinitionKey: String,
-    handleSubmit: Function,
     title: String,
     isRelation: Boolean,
-    withContinue: {type: Boolean, default: false},
-    fetchData: {type: Boolean, default: true},
+    hideFooter:{type:Boolean,default:false},
+    withContinue: { type: Boolean, default: false },
+    fetchData: { type: Boolean, default: true },
     entityId: String,
   },
   data() {
@@ -66,42 +68,38 @@ export default {
   computed: {},
   methods: {
     openModal(create, data, title) {
-      console.log({data})
       this.initialData = data
       this.forceTitle = title
       this.create = create
       this.$refs.modal.show()
     },
     handleOk(bvModalEvt, redirect) {
-      if (this.definition.dispatchEventAction) {
-        this.handleSubmit({...this.initialData, ...this.definition.default})
-      } else {
-        // Prevent modal from closing
-        if (bvModalEvt) bvModalEvt.preventDefault()
-        // Trigger submit handler
-        this.loading = true
-        this.$refs.form.submit()
-          .then(entity => {
-            // delete cache for entity
-            this.$store.commit('table/deleteTableCacheKeyFromPrefix', this.cacheKey)
-            if (redirect === 1) {
-              this.$refs.modal.hide()
-              this.$router.push({
-                name: 'table-view',
-                params: {table: this.table, id: entity[this.$refs.form.primaryKey]},
-              })
-            } else if (redirect === 2) {
-              this.$refs.form.reset()
-              this.$emit('reload-table')
-            } else {
-              this.$refs.modal.hide()
-              this.$emit('reload-table', entity)
-            }
-          })
-          .finally(() => this.loading = false)
-      }
+      // Prevent modal from closing
+      if (bvModalEvt) bvModalEvt.preventDefault()
+      // Trigger submit handler
+      this.loading = true
+      this.$refs.form.submit()
+        .then(entity => {
+          // delete cache for entity
+          this.$store.commit('table/deleteTableCacheKeyFromPrefix', this.cacheKey)
+          if (redirect === 1) {
+            this.$refs.modal.hide()
+            this.$router.push({
+              name: 'table-view',
+              params: {table: this.table, id: entity[this.$refs.form.primaryKey]},
+            })
+          } else if (redirect === 2) {
+            this.$refs.form.reset()
+            this.$emit('reload-table')
+          } else {
+            this.$refs.modal.hide()
+            this.$emit('reload-table', entity)
+          }
+        })
+        .finally(() => this.loading = false)
     },
   },
+
 }
 </script>
 
