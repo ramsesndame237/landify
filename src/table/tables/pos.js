@@ -342,6 +342,7 @@ export default {
           alwaysNew: true,
           onlyForm: true,
           multiple: true,
+          hideOnIndex: true,
         },
         { key: 'document_name', hideOnForm: true },
         { key: 'document_entry_time', hideOnForm: true },
