@@ -218,7 +218,6 @@ export default {
 
     },
     updateComment(value){
-      console.log("this is the value", value)
       this.comment = value
     },
     getColumnPendingData(stage) {
