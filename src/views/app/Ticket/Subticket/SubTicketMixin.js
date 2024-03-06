@@ -19,6 +19,7 @@ export default {
       subTicketDef.fields.splice(index, 1)
       subTicketDef.submit = this.submitSubticket
       subTicketDef.newEndpointCreate = '/tickets/subticket'
+      subTicketDef.dispatchEventAction = true
 
       return subTicketDef
     },
@@ -48,12 +49,13 @@ export default {
       }
     },
     async submitSubticket(vm) {
+      console.log("this is the vm", vm)
       const data = { ...vm.entity }
 
       try {
-        const response = await this.$http.post('/tickets/subticket', data)
+        // const response = await this.$http.post('/tickets/subticket', data)
         await this.fetchSubTickets()
-        return response
+        // return response
       } catch (error) {
         console.log(error)
       }

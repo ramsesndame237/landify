@@ -296,7 +296,7 @@
               <SubticketTable :subtickets="subTickets" :team-users="[]" :loading="loading"/>
             </b-card>
             <generic-modal ref="modal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
-                           :title="$t('headline~ticket~newsubtask')"/>
+                           :title="$t('headline~ticket~newsubtask')" @reload-table="fetchSubTickets()"/>
           </b-col>
         </b-row>
       </div>

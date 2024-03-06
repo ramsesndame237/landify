@@ -6,7 +6,7 @@
           <b-th>Name</b-th>
           <b-th>Board</b-th>
           <b-th>
-            Status
+            Column
           </b-th>
           <b-th>Start Date</b-th>
           <b-th>Assigned To</b-th>
