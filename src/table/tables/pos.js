@@ -259,7 +259,8 @@ export default {
     {
       title: 'headline~ticket~tab',
       primaryKey: 'ticket_id',
-      entity: 'frontend_3_1_3_4',
+      // entity: 'frontend_3_1_3_4',
+      entityEndpoint:'/tickets/list',
       entityForm: 'ticket_pos_rel',
       entityView: 'ticket',
       fields: [
