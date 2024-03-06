@@ -36,9 +36,7 @@
 <script>
 
 import EntityForm from '@/views/app/Generic/EntityForm'
-import {
-  BButton, BSpinner, BDropdown, BDropdownItem,
-} from 'bootstrap-vue'
+import {BButton, BDropdown, BDropdownItem, BSpinner,} from 'bootstrap-vue'
 
 export default {
   name: 'GenericModal',
@@ -50,10 +48,11 @@ export default {
     cacheKey: String,
     definition: Object,
     tableDefinitionKey: String,
+    handleSubmit: Function,
     title: String,
     isRelation: Boolean,
-    withContinue: { type: Boolean, default: false },
-    fetchData: { type: Boolean, default: true },
+    withContinue: {type: Boolean, default: false},
+    fetchData: {type: Boolean, default: true},
     entityId: String,
   },
   data() {
@@ -67,36 +66,40 @@ export default {
   computed: {},
   methods: {
     openModal(create, data, title) {
-      console.log({ data })
+      console.log({data})
       this.initialData = data
       this.forceTitle = title
       this.create = create
       this.$refs.modal.show()
     },
     handleOk(bvModalEvt, redirect) {
-      // Prevent modal from closing
-      if (bvModalEvt) bvModalEvt.preventDefault()
-      // Trigger submit handler
-      this.loading = true
-      this.$refs.form.submit()
-        .then(entity => {
-          // delete cache for entity
-          this.$store.commit('table/deleteTableCacheKeyFromPrefix', this.cacheKey)
-          if (redirect === 1) {
-            this.$refs.modal.hide()
-            this.$router.push({
-              name: 'table-view',
-              params: { table: this.table, id: entity[this.$refs.form.primaryKey] },
-            })
-          } else if (redirect === 2) {
-            this.$refs.form.reset()
-            this.$emit('reload-table')
-          } else {
-            this.$refs.modal.hide()
-            this.$emit('reload-table', entity)
-          }
-        })
-        .finally(() => this.loading = false)
+      if (this.definition.dispatchEventAction) {
+        this.handleSubmit({...this.initialData, ...this.definition.default})
+      } else {
+        // Prevent modal from closing
+        if (bvModalEvt) bvModalEvt.preventDefault()
+        // Trigger submit handler
+        this.loading = true
+        this.$refs.form.submit()
+          .then(entity => {
+            // delete cache for entity
+            this.$store.commit('table/deleteTableCacheKeyFromPrefix', this.cacheKey)
+            if (redirect === 1) {
+              this.$refs.modal.hide()
+              this.$router.push({
+                name: 'table-view',
+                params: {table: this.table, id: entity[this.$refs.form.primaryKey]},
+              })
+            } else if (redirect === 2) {
+              this.$refs.form.reset()
+              this.$emit('reload-table')
+            } else {
+              this.$refs.modal.hide()
+              this.$emit('reload-table', entity)
+            }
+          })
+          .finally(() => this.loading = false)
+      }
     },
   },
 }
