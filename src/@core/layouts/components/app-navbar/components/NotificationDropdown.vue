@@ -65,7 +65,7 @@
                    style="max-height: 80px">
             <span class="font-weight-bolder">
               {{
-                this.current_lang === 'en' ? notification.payload_json.title.en : this.current_lang === 'de' ? notification.payload_json.title.de : this.current_lang === 'fr' ? notification.payload_json.title.fr : notification.payload_json.title.en
+                current_lang === 'en' ? notification.payload_json.title.en : current_lang === 'de' ? notification.payload_json.title.de : current_lang === 'fr' ? notification.payload_json.title.fr : notification.payload_json.title.en
               }}
             </span>
                   <small>
@@ -73,7 +73,7 @@
                   </small>
                 </p>
                 <small class="notification-text text-ellipsis overflow-hidden  " style="max-height:100px;">{{
-                    this.current_lang === 'en' ? notification.payload_json.content.en : this.current_lang === 'de' ? notification.payload_json.content.de : this.current_lang === 'fr' ? notification.payload_json.content.fr : notification.payload_json.content.en
+                    current_lang === 'en' ? notification.payload_json.content.en : current_lang === 'de' ? notification.payload_json.content.de : current_lang === 'fr' ? notification.payload_json.content.fr : notification.payload_json.content.en
                   }}</small>
               </b-media>
             </div>
