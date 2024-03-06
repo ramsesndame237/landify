@@ -193,7 +193,7 @@ export default {
         { text: 'Unchanged', value: 'unchanged' },
         { text: 'Failed', value: 'failed' }
       ],
-      status: '',
+      status: 'all',
       importAll: false,
     }
   },
@@ -213,7 +213,6 @@ export default {
       })
     },
     getResult(entity) {
-      console.log("this is the data", entity)
       if (!this.status || this.status === 'all') return this.result[entity]
       return this.result[entity]?.filter(row => row.status === this.status) || []
     },
@@ -241,6 +240,7 @@ export default {
       this.uploadError = null
     },
     importData(all) {
+      console.log("this is the entity", this.entities[this.activeTab])
       if (this.loading) return
       this.importAll = all
       this.loading = true
@@ -248,8 +248,8 @@ export default {
       formData.append('file', this.file)
       formData.append('leaves', JSON.stringify({
         data: [{
-          leave: this.titles[this.currentEntity],
-          lines: (all ? this.getResult(this.currentEntity) : this.getSelected(this.currentEntity)).map(el => el.line)
+          leave: this.titles[this.entities[this.activeTab]],
+          lines: (all ? this.getResult(this.entities[this.activeTab]) : this.getSelected(this.entities[this.activeTab])).map(el => el.line)
         }]
       }))
       this.$http.post('/provisionings/partnercompany/save', formData, { headers: { 'content-type': 'form-data' } })
