@@ -11,7 +11,7 @@
       :bar-actions="barActions"
     >
       <template #customFilter>
-        <slot name="customTabFilter"></slot>
+        <slot name="customTabFilter"/>
       </template>
     </table-filters>
     <slot
@@ -77,7 +77,7 @@
                 class="position-relative"
               >
                 <div >
-                  <b-spinner v-if="j === 0 && row.read === 'NOT_READ'" variant="primary" small type="grow" class="position-absolute" style="left: 5px"></b-spinner>
+                  <b-spinner v-if="j === 0 && row.read === 'NOT_READ'" variant="primary" small type="grow" class="position-absolute" style="left: 5px"/>
                   <div
                     :class="`td-first-div${
                       (buttons.concat(moreActions).length > 0 && !col.hideActions)
@@ -490,7 +490,6 @@ export default {
   methods: {
     toggleRowSelection,
     getData(params) {
-      console.log("this the the includeQuery", this.includeInQuery)
       if (this.url) {
         listData({
           api: this.$http,
@@ -498,7 +497,7 @@ export default {
           resolveData: data => this.resolveData?.(data),
           extra: this.filters,
           toastError: () => toastError(this.$toast),
-          params: {...(this.includeInQuery || {}), ...(params || {})},
+          params: { ...(this.includeInQuery || {}), ...(params || {}) },
         })
       }
     },

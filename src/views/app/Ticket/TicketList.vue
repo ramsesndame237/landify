@@ -11,8 +11,8 @@
         </b-button>
         <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions" class="mr-2"/>
       </table-pagination> -->
-    <!--    <generic-filter ref="filter" vertical :table="table" :definition="definition" :initial-data="initialFilterData"-->
-    <!--                    @filter="allFilter" @reset="reset"/>-->
+    <generic-filter ref="filter" vertical :table="table" :definition="definition" :initial-data="initialFilterData"
+                    @filter="allFilter" @reset="reset"/>
     <!-- </b-card> -->
 
     <!-- <b-card>
@@ -87,7 +87,7 @@ export default {
           ticket_deadline_status: data.ticket_deadline_status,
           team_id: data.team_id,
           user_id: data.user_id,
-          ...(this.filterValue === 'all' ? {} : { status: 'opened' }),
+          status:'opened',
           tickets: data.tickets,
           company_id: data.company_id,
           customergroup_id: data.customergroup_id,
@@ -216,12 +216,7 @@ export default {
       return count
     },
     allFilter(value) {
-      console.log('this is the value', value)
-      // this.$nextTick(() => {
-      //   this.filter({ ...this.$refs.filter.getFinalData(), status: this.filterValue })
-      // })
-      // const _payload = { ...this.$refs.filter.getFinalData(), status: this.filterValue }
-      const _payload = { ...value }
+      const _payload ={ ...value}
       const payload = {}
       Object.keys(_payload).forEach(key => {
         if (_payload[key] && _payload[key] !== -1) {

@@ -128,12 +128,6 @@ export default {
         })
     },
     getFinalData() {
-      console.log("this i sht djs", Object.keys(this.data)
-        .filter(key => this.definition.filters.find(f => f.key === key && f.send !== false))
-        .reduce((obj, key) => {
-          if (this.data[key] != null) obj[key] = this.data[key]
-          return obj
-        }, {}))
       return Object.keys(this.data)
         .filter(key => this.definition.filters.find(f => f.key === key && f.send !== false))
         .reduce((obj, key) => {

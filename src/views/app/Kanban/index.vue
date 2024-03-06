@@ -217,7 +217,7 @@ export default {
       }).catch((error) => this.$errorToast('and error occured'))
 
     },
-    updateComment(value){
+    updateComment(value) {
       console.log("this is the value", value)
       this.comment = value
     },
