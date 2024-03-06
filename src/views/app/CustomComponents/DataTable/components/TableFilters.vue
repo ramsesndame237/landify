@@ -70,6 +70,10 @@
           class="d-flex align-items-center justify-content-end"
           style="column-gap: 0px; flex-wrap: wrap; row-gap: 10px;"
         >
+       <div>
+         <slot name="customFilter" style="max-width: 150px">
+         </slot>
+       </div>
           <button
             id="refresh-btn"
             class="btn p-0"

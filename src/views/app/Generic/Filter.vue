@@ -75,11 +75,11 @@ export default {
   },
   created() {
     if (this.definition.filters) {
-      (this.definition.filters ?? []).forEach(filter => {
+      (this.definition.filters ?? []).filter(x => !x.hideOnListing).forEach(filter => {
         this.$watch(
           `data.${filter.key}`,
           () => {
-            (this.definition.filters ?? []).filter(_filter => _filter.filter_key === filter.key).map(_filter => {
+            (this.definition.filters ?? []).filter(_filter => _filter.filter_key === filter.key && !_filter.hideOnListing).map(_filter => {
               this.$set(this.data, _filter.key, null)
             })
           },

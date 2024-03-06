@@ -9,7 +9,11 @@
       :delete-url="deleteBulkUrl"
       :actions="moreTableActions"
       :bar-actions="barActions"
-    />
+    >
+      <template #customFilter>
+        <slot name="customTabFilter"></slot>
+      </template>
+    </table-filters>
     <slot
       :tableStore="tableStore"
       :getData="getData"
@@ -388,9 +392,9 @@ export default {
         this.sidebarVisible = !!val
       }
     },
-    includeInQuery() {
-      if (this.url) this.getData()
-    },
+    // includeInQuery() {
+    //   if (this.url) this.getData()
+    // },
   },
   created() {
     initDataTable()
@@ -486,6 +490,7 @@ export default {
   methods: {
     toggleRowSelection,
     getData(params) {
+      console.log("this the the includeQuery", this.includeInQuery)
       if (this.url) {
         listData({
           api: this.$http,
