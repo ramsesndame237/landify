@@ -819,7 +819,6 @@ export default {
     if (create) {
       await vm.$http.post('/contracts/step/0', _.pick(entity, attributes))
     } else {
-      return vm.$http.put(`/contracts/step/0/${entity.contract_id}`, _.pick(entity, attributes))
       const response = await vm.$http.put(`/contracts/step/0/${entity.contract_id}`, _.pick(entity, attributes))
       const { data } = response
       if (data.company) {
@@ -886,7 +885,7 @@ export default {
       if (data.action_ende_soll === null) {
         data.action_ende_soll = ''
       }
-      vm.entity = data;
+      vm.setData(data)
       return data
     }
   },
