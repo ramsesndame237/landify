@@ -1,29 +1,38 @@
 <template>
   <!--modal-->
-  <b-modal id="filter-modal" ref="modal" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary" centered
-           title="Filter" :size="isVertical?'sm' : 'lg'" @ok="handleOk">
-    <validation-observer ref="form" v-slot="{ passes }">
-      <b-form @submit.prevent="passes(handleOk)">
-        <b-row>
-          <b-col v-for="(field,index) in definition.filters.filter(f => !f.hideOnForm)" :key="index" cols="12"
-                 :md="isVertical?12:4">
-            <field ref="fields" :entity="data" :field="field"/>
-          </b-col>
-        </b-row>
-      </b-form>
-    </validation-observer>
-    <template v-slot:modal-footer>
-      <b-button variant="warning" @click="$refs.modal.hide()">
-        Cancel
-      </b-button>
-      <b-button variant="info" @click="reset">
-        Reset
-      </b-button>
-      <b-button variant="primary" @click="handleOk">
-        Apply
-      </b-button>
-    </template>
-  </b-modal>
+  <div>
+    <!-- FixMe: Force set initial filter value -->
+    <b-form v-show="false">
+      <b-col v-for="(field,index) in definition.filters.filter(f => !f.hideOnForm)" :key="index" cols="12"
+             :md="isVertical?12:4">
+        <field ref="fields" :entity="data" :field="field"/>
+      </b-col>
+    </b-form>
+    <b-modal id="filter-modal" ref="modal" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary" centered
+             title="Filter" :size="isVertical?'sm' : 'lg'" @ok="handleOk">
+      <validation-observer ref="form" v-slot="{ passes }">
+        <b-form @submit.prevent="passes(handleOk)">
+          <b-row>
+            <b-col v-for="(field,index) in definition.filters.filter(f => !f.hideOnForm)" :key="index" cols="12"
+                   :md="isVertical?12:4">
+              <field ref="fields" :entity="data" :field="field"/>
+            </b-col>
+          </b-row>
+        </b-form>
+      </validation-observer>
+      <template v-slot:modal-footer>
+        <b-button variant="warning" @click="$refs.modal.hide()">
+          Cancel
+        </b-button>
+        <b-button variant="info" @click="reset">
+          Reset
+        </b-button>
+        <b-button id="applyBtn" variant="primary" @click="handleOk">
+          Apply
+        </b-button>
+      </template>
+    </b-modal>
+  </div>
 </template>
 
 <script>
@@ -32,7 +41,7 @@ import {
   BButton, BCol, BForm, BRow,
 } from 'bootstrap-vue'
 import Field from '@/views/app/Generic/Field'
-import { getUserData } from "@/auth/utils";
+import { getUserData } from '@/auth/utils'
 
 export default {
   name: 'GenericFilter',
@@ -40,6 +49,9 @@ export default {
     Field, BButton, BCol, BForm, BRow,
   },
   props: {
+    loadOnMount: {
+      type: Boolean,
+    },
     table: String,
     definition: Object,
     tableDefinitionKey: String,
@@ -60,6 +72,25 @@ export default {
     initialData(newValue) {
       this.data = newValue
     },
+  },
+  created() {
+    if (this.definition.filters) {
+      (this.definition.filters ?? []).filter(x => !x.hideOnListing).forEach(filter => {
+        this.$watch(
+          `data.${filter.key}`,
+          () => {
+            (this.definition.filters ?? []).filter(_filter => _filter.filter_key === filter.key && !_filter.hideOnListing).map(_filter => {
+              this.$set(this.data, _filter.key, null)
+            })
+          },
+        )
+      })
+    }
+  },
+  mounted() {
+    if (this.loadOnMount) {
+      this.$emit('filter', this.getFinalData())
+    }
   },
   methods: {
     openModal() {

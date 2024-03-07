@@ -105,6 +105,25 @@ export default {
   contactperson,
   payment: {
     entity: 'frontend_2_4_1',
+    filter_vertical: true,
+    filters: [
+      {
+        key: 'customergroup_id',
+        type: 'list',
+        list: 'customergroup',
+        listLabel: 'customergroup_name',
+        required: false,
+      },
+      {
+        key: 'company_id',
+        type: 'list',
+        list: 'company',
+        listLabel: 'company_name',
+        relationEntity: 'company_pos_rel',
+        filter_key: 'customergroup_id',
+        required: false,
+      },
+    ],
     fields: [
       { key: 'payment_id', auto: true },
       {
@@ -735,7 +754,7 @@ export default {
         type: 'file',
         rules: { size: 100000 },
         hideOnUpdate: true,
-        accepted:".pdf",
+        accepted: '.pdf',
         multiple: false,
       },
       {

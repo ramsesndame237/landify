@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 export default {
   entityEndpoint: '/locations',
   // newEndpointCreate: '/locations',
@@ -161,7 +163,11 @@ export default {
         ...addressField,
       })
     } else {
+<<<<<<< 6d048cf05e985db7a3f0736a121ec51c1e1b89f3
       return vm.$http.put('/locations', { ...entity, ...addressField })
+=======
+      return vm.$http.put('/locations', { ...entity, ...addressField, address_id: '' })
+>>>>>>> 7c1b798fe2efc22c16783e5c4557785049a434c3
     }
   },
   validate: () => alert('validate'),
