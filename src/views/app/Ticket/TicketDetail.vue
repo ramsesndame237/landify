@@ -346,10 +346,10 @@
                   {{ $t('headline~ticket~newsubtask') }}
                 </b-button>
               </b-card-text>
-              <SubticketTable :subtickets="subTickets" :team-users="[]" :loading="loading" />
+              <SubticketTable :subtickets="subTickets" :team-users="[]" :loading="loading" @reload="fetchSubTickets" />
             </b-card>
             <generic-modal ref="modal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
-                           :title="$t('headline~ticket~newsubtask')" />
+                           :title="$t('headline~ticket~newsubtask')" @reload-table="fetchSubTickets()" />
           </b-col>
         </b-row>
       </div>
