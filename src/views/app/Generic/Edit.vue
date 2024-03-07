@@ -63,11 +63,13 @@
             <component :is="relation.component" :relation="relation" :entity-id="entityId"/>
           </template>
           <template v-else>
+            {{relation.primaryKey}}
             <data-tables :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
                          :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
                          :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
                          :entity-view="relation.entityView" :with-view="relation.view!==false" :fields="relation.fields"
                          :on-edit-element="editElement" :with-edit="relation.update!==false"
+                         :opacity="relation.primaryKey === 'ticket_id'"
                          :with-delete="relation.delete!==false" :custom-request="relation.customRequest" :entity-endpoint="relation.entityEndpoint" />
             <generic-modal :cache-key="relation.entity+'-'" title="Test" :table="relation.entityForm || relation.entity"
                            :definition="relation" is-relation
