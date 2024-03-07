@@ -217,8 +217,7 @@ export default {
       }).catch((error) => this.$errorToast('and error occured'))
 
     },
-    updateComment(value) {
-      console.log("this is the value", value)
+    updateComment(value){
       this.comment = value
     },
     getColumnPendingData(stage) {

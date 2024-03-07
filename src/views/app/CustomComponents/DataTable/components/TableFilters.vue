@@ -45,7 +45,7 @@
           />
         </b-form-group>
         <div class="flex-shrink-0" style="min-width: 200px;">
-          <search-input :value.sync="tableStore.pagination.search" />
+          <search-input :value.sync="tableStore.pagination.search"/>
         </div>
         <div class="flex-grow-1 flex-shrink-0 ml-1">
           <transition name="fade">
@@ -59,7 +59,7 @@
               title="Delete"
               @click="showDeleteConfirm"
             >
-              <feather-icon icon="Trash2Icon" size="14" />
+              <feather-icon icon="Trash2Icon" size="14"/>
             </b-button>
           </transition>
           <b-tooltip target="table-filters-delete-btn" triggers="hover">
@@ -98,8 +98,9 @@
             >
               <template #button-content>
                 <div class="position-relative">
-                  <feather-icon icon="SlidersIcon" size="14" />
-                  <b-badge v-if="tableStore.columns.hided.length" variant="danger" class="position-absolute" style="padding: 3px 6px; top: -14px; right: -15px;">
+                  <feather-icon icon="SlidersIcon" size="14"/>
+                  <b-badge v-if="tableStore.columns.hided.length" variant="danger" class="position-absolute"
+                           style="padding: 3px 6px; top: -14px; right: -15px;">
                     {{ tableStore.columns.hided.length }}
                     <span class="sr-only">hided columns</span>
                   </b-badge>
@@ -115,7 +116,8 @@
                 @click="toggleColumn(col.key || col.id)"
               >
                 <div class="d-flex justify-content-between align-items-center">
-                  <span class="text-truncate block" style="max-width: 180px">{{ (col.header && col.header.name) || col.key || col.id }}</span>
+                  <span class="text-truncate block"
+                        style="max-width: 180px">{{ (col.header && col.header.name) || col.key || col.id }}</span>
                   <feather-icon
                     v-if="!tableStore.columns.hided.includes(col.key || col.id)"
                     size="16"
@@ -154,7 +156,9 @@
                 size="16"
                 :icon="action.icon"
               />
-              <span v-if="action.label" class="text-truncate block" style="max-width: 180px">{{ $tc(action.label) }}</span>
+              <span v-if="action.label" class="text-truncate block" style="max-width: 180px">{{
+                  $tc(action.label)
+                }}</span>
             </div>
           </b-button>
           <div
@@ -170,8 +174,9 @@
             >
               <template #button-content>
                 <div class="position-relative">
-                  <feather-icon icon="MoreVerticalIcon" size="14" />
-                  <b-badge v-if="tableStore.columns.hided.length" variant="danger" class="position-absolute" style="padding: 3px 6px; top: -14px; right: -15px;">
+                  <feather-icon icon="MoreVerticalIcon" size="14"/>
+                  <b-badge v-if="tableStore.columns.hided.length" variant="danger" class="position-absolute"
+                           style="padding: 3px 6px; top: -14px; right: -15px;">
                     {{ tableStore.columns.hided.length }}
                     <span class="sr-only">hided columns</span>
                   </b-badge>
@@ -215,9 +220,9 @@
 
 <script>
 import refreshIcon from '@/assets/images/icons/refresh.svg'
-import { BDropdownDivider, BDropdownText, BTooltip } from 'bootstrap-vue'
+import {BDropdownDivider, BDropdownText, BTooltip} from 'bootstrap-vue'
 import TableSideFilters from './TableSideFilters.vue'
-import { useTableStore, toggleColumn, handleDelete } from '../state/data-table-store'
+import {handleDelete, toggleColumn, useTableStore} from '../state/data-table-store'
 import SearchInput from './SearchInput.vue'
 
 const tableStore = useTableStore()
@@ -265,6 +270,9 @@ export default {
       extraFiltersValues: {},
     }
   },
+  created() {
+    tableStore.pagination.search = ''
+  },
   watch: {
     perPage(val) {
       this.$emit('update:per-page', val)
@@ -297,9 +305,11 @@ export default {
   margin-bottom: 0 !important;
   min-width: 135px;
 }
-.custom-card-body-padding{
+
+.custom-card-body-padding {
   margin-bottom: 16px;
 }
+
 .custom-card-body-padding .card-body {
   padding: 10px 20px;
 }
@@ -307,6 +317,7 @@ export default {
 .settings-dropdown .btn {
   padding: 7px;
 }
+
 .table-filters-toolbar {
   display: flex;
 }

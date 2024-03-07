@@ -355,20 +355,24 @@ export default {
       if (this.field.filter && typeof this.field.filter === 'function') {
         return this.list.filter(item => this.field.filter(item, this))
       }
+      let new_list = this.list
+      if (this.field.orderByField) {
+        new_list = new_list.toSorted((a, b) => a[this.field.orderByField].localeCompare(b[this.field.orderByField]))
+      }
       if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
         const val = (this.filterValue || this.entity[this.field.filter_key])
         if (this.field.filter_key && val != null) {
           console.log('filter with value', val)
-          return this.list.filter(e => {
+          return new_list.filter(e => {
             if (Array.isArray(val)) {
               return val.includes(e[this.field.filter_key])
             }
             return e[this.field.filter_key] === val
           })
         }
-        return this.list
+        return new_list
       }
-      return this.list.filter(item => this.field.ids.indexOf(item[this.field.key]) >= 0)
+      return new_list.filter(item => this.field.ids.indexOf(item[this.field.key]) >= 0)
     },
     subDefinition() {
       const definition = { ...Table[this.field.definition || this.field.list] }
@@ -714,7 +718,7 @@ export default {
       (this.getSubFields() || []).forEach(sub => sub.reset())
     },
     async getRandomPassword() {
-      const accessToken = localStorage.getItem('accessToken').split(" ")[1]
+      const accessToken = localStorage.getItem('accessToken').split(' ')[1]
       this.waitPassword = true
       await this.$http.get(`/users/generate/password/?Authorization=${accessToken}`)
         .then(resp => {
@@ -852,7 +856,7 @@ export default {
           await this.$store.dispatch('table/fetchTableDefinition', 'city')
         }
         let payload = { entity: this.field.entityList || list }
-        if (this.field.entityCustomEndPoint) payload.customEnpoint = this.field.entityCustomEndPoint
+        if (this.field.entityCustomEndPoint) payload.customEnpoint = typeof this.field.entityCustomEndPoint === 'string' ? this.field.entityCustomEndPoint : this.field.entityCustomEndPoint(this)
         if (this.field.onlyForm && this.entity[this.field.key]) {
           payload.data = [{ [this.field.key]: this.entity[this.field.key] }]
         }
@@ -894,8 +898,9 @@ export default {
         const response = await this.$store.dispatch('table/fetchList', payload)
         let newData = []
         if (this.field.entityCustomEndPoint) {
-          newData = response.data
+          newData = this.field.useWholeResponse ? response : response.data
           this.hasNext = response.current_page < response.pages
+          console.log({ response }, this.field.useWholeResponse, this.hasNext)
         } else {
           const { links, data } = response
           newData = data
