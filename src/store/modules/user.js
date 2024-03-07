@@ -106,7 +106,7 @@ export default {
      * @param roleName The name of the role
      */
     userHasRole({ state }, roleName) {
-      const roles = state.user.roles
+      const roles = state.user.roles || []
 
       if (roles.length > 0) {
         return roles.some(r => r.role_name === roleName)

@@ -3,11 +3,12 @@ function visibleByRecurringPaymentType(indexes) {
     const list = vm.$store.state.table.listCache.recurringpaymenttype
     if (!list) return false
     const selected = list.find(i => i.recurringpaymenttype_id === entity.recurringpaymenttype_id)
-    return selected ? indexes.indexOf(parseInt(selected.recurringpaymenttype_name.split('-')[0])) >= 0 : false
+    return selected ? indexes.indexOf(parseInt(entity.recurringpaymenttype_id)) >= 0 : false
   }
 }
 export default {
   entity: 'frontend_3_9_1',
+  formComponent: () => import('@/views/app/FormComponent/RecurringPaymentContractForm.vue'),
   fields: [
     { key: 'recurringpayment_id', auto: true },
     { key: 'recurringpayment_name' },
@@ -19,29 +20,67 @@ export default {
       listLabel: 'contract_name',
       hideOnIndex: true,
       relationEntity: 'contract_recurringpayment_rel',
+      entityKey: 'contract_id',
+    },
+    {
+      key: 'partnercompany_id',
+      type: 'list',
+      list: 'frontend_3_4_3_11',
+      listLabel: 'partnercompany_name',
+      tableKey: 'partnercompany_id',
+      filter_key: 'contract_id',
+      required: false,
+    },
+    {
+      key: 'bankdata_id',
+      entityKey: 'partnercompany_bankdata_id',
+      type: 'list',
+      list: 'company',
+      useWholeResponse: true,
+      entityCustomEndPoint: vm => `/partners/${vm.entity.partnercompany_id}/bankdata`,
+      listLabel: 'iban_id',
+      filter_key: 'partnercompany_id',
+      filter: () => true,
+      hideOnIndex: true,
+      noCache: true,
+    },
+    {
+      key: 'id',
+      entityKey: 'tax_rate_id',
+      label: 'Tax rate',
+      type: 'list',
+      list: 'tax_rate',
+      useWholeResponse: true,
+      entityCustomEndPoint: '/contracts/tax-rates',
+      listLabel: 'code',
+      filter_key: 'contract_id',
+      filter: () => true,
+      hideOnIndex: true,
+      noCache: true,
     },
     {
       key: 'recurringpaymenttype_id',
       type: 'list',
       list: 'recurringpaymenttype',
       listLabel: 'recurringpaymenttype_name',
+      orderByField: 'recurringpaymenttype_name',
       hideOnIndex: true,
     },
     { key: 'recurringpaymenttype_name', hideOnForm: true },
     {
       key: 'recurringpayment_sum_per_month',
       hideOnIndex: true,
-      visible: visibleByRecurringPaymentType([1, 3, 2, 5, 6, 7]),
+      visible: visibleByRecurringPaymentType([1, 3, 6, 7, 4, 8, 9, 5]),
     },
     {
       key: 'recurringpayment_condition_percentage',
       hideOnIndex: true,
-      visible: visibleByRecurringPaymentType([4, 5]),
+      visible: visibleByRecurringPaymentType([]),
     },
     {
       key: 'recurringpayment_percentage',
       hideOnIndex: true,
-      visible: visibleByRecurringPaymentType([4]),
+      visible: visibleByRecurringPaymentType([2, 10]),
     },
     { key: 'recurringpayment_begin_date', type: 'date', hideOnIndex: true },
     { key: 'recurringpayment_end_date', type: 'date', hideOnIndex: true },
@@ -130,5 +169,23 @@ export default {
   ],
   default: {
     recurringpayment_condition_comment: '',
+  },
+
+  async submit(vm, entity, create) {
+    try {
+      const recurringpayment = { ...entity }
+      delete recurringpayment.contract_id
+
+      const payload = create ? {
+        contract_id: entity.contract_id,
+        recurringpayments: [
+          recurringpayment,
+        ],
+      } : recurringpayment
+      await vm.$http[create ? 'post' : 'put']('/contracts/step/2', payload)
+      vm.$successToast('success~recurring~payment~saved~successfully')
+    } catch (error) {
+      throw new Error(typeof error?.response?.detail === 'string' ? error.response.detail : vm.$t('errors~unexpected~error~ocurred'))
+    }
   },
 }

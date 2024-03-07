@@ -35,10 +35,8 @@ export function getContractCriteriaFields() {
   return [
     {
       key: 'contract_criteria_value',
-      unit_key: 'contract_criteria_unit_id',
-      unit_label_key: 'unit_name',
-      unit_value_key: 'unit_id',
-      isUnitOnLeft: false,
+      type: 'number',
+      visible: entity => [1, 39].includes(entity.criteria_id),
     },
     {
       key: 'choice_id',
