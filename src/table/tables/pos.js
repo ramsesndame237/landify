@@ -82,11 +82,7 @@ export default {
   ],
   filters: [
     {
-      key: 'customergroup_id',
-      type: 'list',
-      list: 'customergroup',
-      listLabel: 'customergroup_name',
-      required: false,
+      key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name',
     },
     {
       key: 'company_id',
@@ -94,7 +90,6 @@ export default {
       list: 'frontend_2_2_3_1',
       listLabel: 'company_name',
       filter_key: 'customergroup_id',
-      required: false,
     },
     {
       key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', required: false,
@@ -341,6 +336,7 @@ export default {
           alwaysNew: true,
           onlyForm: true,
           multiple: true,
+          hideOnIndex: true,
         },
         { key: 'document_name', hideOnForm: true },
         { key: 'document_entry_time', hideOnForm: true },
