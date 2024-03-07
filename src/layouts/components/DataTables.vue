@@ -148,6 +148,7 @@ export default {
     search: {},
     onEditElement: {type: Function},
     onViewElement: {type: Function},
+    onDeleteElement: {type: Function},
     perPage: Number,
     currentPage: Number,
     totalRows: Number,
@@ -167,6 +168,8 @@ export default {
      * @example truncateBy: 20 Va fixer le max-width des champs à 20 rem
      */
     truncateBy: {type: Number, required: false}, // un object qui contient des données pour personnaliser les requêtes vers le back dans les relations
+  },
+  mounted() {
   },
   data() {
     return {
@@ -491,8 +494,8 @@ export default {
           }
           await this.$http({
             method: this.customRequest.method ? this.customRequest.method : 'put',
-            url: this.customRequest.endpoint,
-            data: payload,
+            url: typeof this.customRequest.endpoint === 'function' ? this.customRequest.endpoint() : this.customRequest.endpoint,
+            data: this.customRequest.payload ? this.customRequest.payload(entities) : payload,
           }).then(res => {
             this.$successToast('Delete Done.')
             this.$root.$emit('update-occured')
@@ -500,7 +503,9 @@ export default {
             this.$refs.table.refresh()
           }).catch(error => {
             console.log({error})
+          }).finally(() => {
           })
+          this.loading = false;
 
           return
         }
@@ -529,6 +534,8 @@ export default {
             console.error(e)
             this.$errorToast()
           })
+      }).finally(() => {
+        this.loading = false
       })
     },
     selectAll() {

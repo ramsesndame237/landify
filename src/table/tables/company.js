@@ -321,17 +321,21 @@ export default {
       entityForm: 'user_company_rel',
       entityView: 'tasks',
       entityEndpoint: '/contracts/tax-rates',
-      delete: false,
-      create: false,
       view: false,
+      update: false,
+      customRequest: {
+        method: 'delete',
+        endpoint: () => `/companies/${window.$vue.$route.params.id}/tax-rates`,
+        payload: entities => {
+          return entities.map(e => e.id)
+        },
+      },
       submit: async (vm, entity, create) => {
-        console.log("entity: ", entity);
-        console.log("vm: ", vm)
+        console.log('vm: ', vm)
         if (create) {
-          return vm.$http.put('/companies/', _.pick(entity, {}))
+          return vm.$http.put(`/companies/${entity.company_id}/tax-rates`, [entity.tax_rate_id])
         }
-        return vm.$http.put('/companies/', _.pick(entity, {}))
-
+        return vm.$http.put(`/companies/${window.$vue.$route.params.id}/tax-rates`, [entity.tax_rate_id])
       },
       fields: [
         {
