@@ -1,4 +1,5 @@
 import { getUserData } from '@/auth/utils'
+import _ from "lodash";
 
 export default {
   entityEndpoint: '/companies',
@@ -323,6 +324,48 @@ export default {
         },
       ],
     },
+    {
+      title: 'Tax rate',
+      primaryKey: 'user_id',
+      entity: 'frontend_2_1_3_10',
+      entityForm: 'user_company_rel',
+      entityView: 'tasks',
+      entityEndpoint: '/contracts/tax-rates',
+      view: false,
+      update: false,
+      customRequest: {
+        method: 'delete',
+        endpoint: () => `/companies/${window.$vue.$route.params.id}/tax-rates`,
+        payload: entities => {
+          return entities.map(e => e.id)
+        },
+      },
+      submit: async (vm, entity, create) => {
+        console.log('vm: ', vm)
+        if (create) {
+          return vm.$http.put(`/companies/${entity.company_id}/tax-rates`, [entity.tax_rate_id])
+        }
+        return vm.$http.put(`/companies/${window.$vue.$route.params.id}/tax-rates`, [entity.tax_rate_id])
+      },
+      fields: [
+        {
+          key: 'id',
+          entityKey: 'tax_rate_id',
+          label: 'Tax rate',
+          type: 'list',
+          list: 'tax_rate',
+          useWholeResponse: true,
+          entityCustomEndPoint: '/contracts/tax-rates',
+          listLabel: 'code',
+          filter: () => true,
+          hideOnIndex: true,
+          noCache: true,
+        },
+        { key: 'id', listLabel: 'ID', type: 'list', hideOnForm: true },
+        { key: 'code', hideOnForm: true },
+        { key: 'value', hideOnForm: true },
+      ],
+    },
   ],
   note: 'frontend_0_8_11',
   async submit(vm, entity) {
@@ -353,7 +396,6 @@ export default {
       vm.$errorToast('Error while saving the company')
       throw err
     }
-
     return response
   },
 }

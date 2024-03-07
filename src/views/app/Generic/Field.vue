@@ -99,8 +99,8 @@
               <div>
                 <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50"/>
                 <span class="text-muted font-weight-bolder align-text-top">{{
-                  file.name
-                }}</span>
+                    file.name
+                  }}</span>
                 <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
               </div>
               <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index, validate)"/>
