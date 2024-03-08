@@ -155,7 +155,7 @@ export default {
       }
     },
     loadTickets(filterData) {
-      return this.$http.get('/tickets/slims', {
+      return this.$http.get('/tickets/list', {
         params: { ...filterData, size: 1_000_000 },
       })
         .then(({ data }) => {
