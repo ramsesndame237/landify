@@ -668,7 +668,6 @@ export default {
             const status = {
               active: 'Active', unactive: 'Unactive', cancelled: 'Cancelled', pulled: 'Pulled',
             }
-
             return status[value]
           },
         },
