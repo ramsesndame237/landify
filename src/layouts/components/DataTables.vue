@@ -17,12 +17,7 @@
         <b-form-checkbox v-if="data.field.type === 'boolean'" v-model="data.value" :disabled="!data.field.editable"
                          :value="1" :unchecked-value="0"
                          @change="data.field.onChange ? data.field.onChange(data) : null"/>
-<<<<<<< 6d048cf05e985db7a3f0736a121ec51c1e1b89f3
-        <b-button v-else-if="data.field.type === 'button'"
-                  size="xs"
-=======
         <b-button v-else-if="data.field.type === 'button'" size="xs"
->>>>>>> 7c1b798fe2efc22c16783e5c4557785049a434c3
                   @click="$router.push(data.field.getRoute(data.item))">
           {{ data.field.btnLabel }}
         </b-button>
@@ -34,14 +29,7 @@
           <component :is="data.field.component" :items="items || provider" :row-data="data" :data="data.field.props"
                      @reload="reload"/>
         </div>
-<<<<<<< 6d048cf05e985db7a3f0736a121ec51c1e1b89f3
-        <span v-else
-              :class="{'text-truncate' : !!truncateBy}"
-              :style="truncateStyle"
-              :v-b-tooltip="!!truncateBy"
-=======
         <span v-else :class="{'text-truncate' : !!truncateBy}" :style="truncateStyle" :v-b-tooltip="!!truncateBy"
->>>>>>> 7c1b798fe2efc22c16783e5c4557785049a434c3
               :title="data.value">
           <b-badge v-if="data.field.withBadge" :variant="data.field.setVariant(data)">{{ data.value }}</b-badge>
           <template v-else-if="data.field.translateValue">{{ $t(data.value) }}</template>
@@ -81,15 +69,8 @@
       </template>
       <template v-if="withNested" #cell(ShowDetails)="row">
         <template v-if="(subFieldsData && subFieldsData.btnStyle === 'button')">
-<<<<<<< 6d048cf05e985db7a3f0736a121ec51c1e1b89f3
-          <b-button v-if="row.item[subFieldsDataKey] && row.item[subFieldsDataKey].length > 0"
-                    size="sm"
-                    variant="secondary"
-                    @click="showDetails(row, $event.target)">
-=======
           <b-button v-if="row.item[subFieldsDataKey] && row.item[subFieldsDataKey].length > 0" size="sm"
                     variant="secondary" @click="showDetails(row, $event.target)">
->>>>>>> 7c1b798fe2efc22c16783e5c4557785049a434c3
             {{ (subFieldsData && subFieldsData.btnText) || 'Show options' }}
           </b-button>
           <span v-else>No</span>
@@ -106,15 +87,7 @@
         </template>
       </template>
     </b-table>
-<<<<<<< 6d048cf05e985db7a3f0736a121ec51c1e1b89f3
-    <b-modal ref="modal_test"
-             ok-only
-             centered
-             scrollable
-             :size="(subFieldsData && subFieldsData.modalSize) || 'xl'"
-=======
     <b-modal ref="modal_test" ok-only centered scrollable :size="(subFieldsData && subFieldsData.modalSize) || 'xl'"
->>>>>>> 7c1b798fe2efc22c16783e5c4557785049a434c3
              :title="(subFieldsData && subFieldsData.modalTitle) || infoModal.title">
       <template v-if="subFieldsType=== 'component'">
         <component :is="subFieldsComponent" :item="infoModal.content"/>
@@ -139,14 +112,11 @@ export default {
     BFormCheckbox,
   },
   props: {
-<<<<<<< 6d048cf05e985db7a3f0736a121ec51c1e1b89f3
-=======
     initialFilterData: {
       type: Object,
       default: () => ({}),
     },
     noCache: {type: Boolean, default: false},
->>>>>>> 7c1b798fe2efc22c16783e5c4557785049a434c3
     entity: {type: String, required: true},
     entityList: {type: String},
     entityForm: {type: String, required: false},
@@ -173,10 +143,7 @@ export default {
     search: {},
     onEditElement: {type: Function},
     onViewElement: {type: Function},
-<<<<<<< 6d048cf05e985db7a3f0736a121ec51c1e1b89f3
     onDeleteElement: {type: Function},
-=======
->>>>>>> 7c1b798fe2efc22c16783e5c4557785049a434c3
     perPage: Number,
     currentPage: Number,
     totalRows: Number,
@@ -196,11 +163,8 @@ export default {
      * @example truncateBy: 20 Va fixer le max-width des champs à 20 rem
      */
     truncateBy: {type: Number, required: false}, // un object qui contient des données pour personnaliser les requêtes vers le back dans les relations
-<<<<<<< 6d048cf05e985db7a3f0736a121ec51c1e1b89f3
   },
   mounted() {
-=======
->>>>>>> 7c1b798fe2efc22c16783e5c4557785049a434c3
   },
   data() {
     return {
@@ -385,12 +349,9 @@ export default {
               items = this.processData(data)
               // set in cache
               this.$store.commit('table/setTableCache', {key: cacheKey, data})
-<<<<<<< 6d048cf05e985db7a3f0736a121ec51c1e1b89f3
             } else if (Array.isArray(data)) {
               items = this.processData({data})
               this.$store.commit('table/setTableCache', {key: cacheKey, data})
-=======
->>>>>>> 7c1b798fe2efc22c16783e5c4557785049a434c3
             } else {
               throw new Error('invalid data')
             }
@@ -539,10 +500,7 @@ export default {
             this.$refs.table.refresh()
           }).catch(error => {
             console.log({error})
-<<<<<<< 6d048cf05e985db7a3f0736a121ec51c1e1b89f3
           }).finally(() => {
-=======
->>>>>>> 7c1b798fe2efc22c16783e5c4557785049a434c3
           })
           this.loading = false;
 
