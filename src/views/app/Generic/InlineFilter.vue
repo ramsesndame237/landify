@@ -9,7 +9,7 @@
         </b-row>
       </b-form>
     </validation-observer>
-    <div class="d-flex justify-content-end" v-if="withActions">
+    <div v-if="withActions" class="d-flex justify-content-end">
       <b-button variant="info" @click="reset">
         Reset
       </b-button>
@@ -48,12 +48,29 @@ export default {
   watch: {
     data: {
       handler(newVal) {
-        if(!this.withActions) {
+        if (!this.withActions) {
           this.handleOk()
         }
       },
       deep: true,
+    },
+  },
+  created() {
+    if (this.definition.filters) {
+      (this.definition.filters ?? []).forEach(filter => {
+        this.$watch(
+          `data.${filter.key}`,
+          () => {
+            (this.definition.filters ?? []).filter(_filter => _filter.filter_key === filter.key).map(_filter => {
+              this.$set(this.data, _filter.key, null)
+            })
+          },
+        )
+      })
     }
+  },
+  mounted() {
+    this.$emit('set-initial-filter-value', this.getFinalData())
   },
   methods: {
     // Fonctions

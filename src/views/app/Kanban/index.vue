@@ -212,15 +212,12 @@ export default {
   },
   methods: {
     async fetchIssueBoardData() {
-      console.log("this is the fetch the issue data board ")
       await this.$http.get(this.boardIssueUrl + this.$route.params.id).then((response) => {
-        console.log("this is the data of the issues board", response.data)
         this.errorData = response.data
       }).catch((error) => this.$errorToast('and error occured'))
 
     },
     updateComment(value){
-      console.log("this is the value", value)
       this.comment = value
     },
     getColumnPendingData(stage) {

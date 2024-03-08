@@ -386,6 +386,22 @@ export default {
   inline_filter: true,
   filters: [
     {
+      key: 'customergroup_id',
+      type: 'list',
+      list: 'customergroup',
+      listLabel: 'customergroup_name',
+      required: false,
+    },
+    {
+      key: 'company_id',
+      type: 'list',
+      list: 'company',
+      listLabel: 'company_name',
+      relationEntity: 'company_pos_rel',
+      filter_key: 'customergroup_id',
+      required: false,
+    },
+    {
       key: 'role_id', type: 'list', list: 'role', listLabel: 'role_name', required: false,
     },
     {
@@ -396,29 +412,29 @@ export default {
   submit(vm) {
     const data = { ...vm.entity }
     return (vm.create ? vm.$http.post('/users', data) : vm.$http.put(`/users/${vm.entityId}`, omit(data, ['hollyday_representative'])))
-        .then(() => {
-          vm.$successToast(vm.create ? 'User Created' : 'User Updated')
-        })
+      .then(() => {
+        vm.$successToast(vm.create ? 'User Created' : 'User Updated')
+      })
   },
   fetch(vm) {
     return vm.$http.get(`/users/${vm.entityId}`)
-        .then(resp => {
-          const { data } = resp
-          if (data.contactperson) {
-            data.contactperson_id = data.contactperson.contactperson_id
+      .then(resp => {
+        const { data } = resp
+        if (data.contactperson) {
+          data.contactperson_id = data.contactperson.contactperson_id
+        }
+        if (data.usertype) {
+          data.usertype_id = data.usertype.usertype_id
+        }
+        if (data.company) {
+          data.company_id = data.company.company_id
+          if (data.company.customergroup) {
+            data.customergroup_id = data.company.customergroup.customergroup_id
           }
-          if (data.usertype) {
-            data.usertype_id = data.usertype.usertype_id
-          }
-          if (data.company) {
-            data.company_id = data.company.company_id
-            if (data.company.customergroup) {
-              data.customergroup_id = data.company.customergroup.customergroup_id
-            }
-            data.firmengroup_type = 1
-          }
-          if (!data.partnergroup_id) data.partnercompany_id = []
-          return data
-        })
+          data.firmengroup_type = 1
+        }
+        if (!data.partnergroup_id) data.partnercompany_id = []
+        return data
+      })
   },
 }
