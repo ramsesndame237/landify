@@ -43,7 +43,7 @@ const useUserAccess = () => {
    * @param roleName The name of the role
    */
   const userHasRole = roleName => {
-    const roles = userData.roles
+    const roles = userData.roles || []
 
     if (roles.length > 0) {
       return roles.some(r => r.role_name === roleName)

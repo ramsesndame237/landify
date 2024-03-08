@@ -1,5 +1,6 @@
 import { getContractCriteriaFields } from '@/table/utils'
 import _ from 'lodash'
+import router from '@/router'
 
 export default {
   // entity: 'frontend_3_4_1_1',
@@ -306,6 +307,7 @@ export default {
     },
 
   ],
+  filter_vertical: true,
   filters: [
     {
       key: 'customergroup_id',
@@ -452,7 +454,65 @@ export default {
       primaryKey: 'document_id',
       entity: 'frontend_3_4_3_1_bottom',
       entityForm: 'document_contract_documentcontracttype_rel',
+      formComponent: () => import('@/views/app/FormComponent/ContractDocumentForm.vue'),
       entityView: 'document',
+      submit: async (vm, entity, create) => {
+        try {
+          if (!create) {
+            await vm.$http({
+              url: '/documents/update',
+              method: 'put',
+              params: {
+                document_id: entity.document_id,
+                documenttype_id: entity.documenttype_id,
+                subdocumenttype_id: entity.subdocumenttype_id,
+                document_name: entity.document_name,
+              },
+            })
+            vm.$successToast(vm.$t('success~document~saved'))
+            return null
+          }
+
+          const formData = new FormData()
+          const files = vm.$refs.fields.find(f => f.field.key === 'files')?.getFiles() || []
+
+          const payload = {
+            contract_id: entity.contract_id,
+            documentsobjects: [],
+          }
+
+          for (let i = 0; i < files.length; i++) {
+            formData.append('files', files[i])
+          }
+
+          const { data } = await vm.$http({
+            url: '/documents/uploadfiles',
+            data: formData,
+            method: 'post',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+
+          data.data.map(file => {
+            payload.documentsobjects.push(
+              {
+                document_id: file.document_id,
+                subdocumenttype_id: entity.subdocumenttype_id,
+                documenttype_id: entity.documenttype_id,
+                documentcontracttype_id: entity.documentcontracttype_id,
+              },
+            )
+          })
+
+          await vm.$http.post('/contracts/step/7', payload)
+          vm.$successToast(vm.$t('success~document~saved'))
+          return null
+        } catch (e) {
+          throw new Error(typeof e?.response?.data?.detail === 'string' ? e?.response?.data?.detail : vm.$t('errors~unexpected~error~occurred'))
+        }
+      },
       fields: [
         {
           key: 'document_id',
@@ -461,15 +521,15 @@ export default {
           list: 'document',
           onlyForm: true,
           alwaysNew: true,
-          defaultEntity: { documenttype_id: 1 },
-          disabled: ['documenttype_id'],
+          // defaultEntity: { documenttype_id: 1 },
+          // disabled: ['documenttype_id'],
         },
         { key: 'document_name', hideOnForm: true },
         { key: 'documenttype_name', hideOnForm: true },
         { key: 'document_entry_time', hideOnForm: true },
         { key: 'documentcontracttype_name', hideOnForm: true },
         {
-          key: 'documentcontracttype_id',
+          key: 'subdocumenttype_id',
           type: 'list',
           list: 'documentcontracttype',
           listLabel: 'documentcontracttype_name',
@@ -488,6 +548,7 @@ export default {
       search: false,
       create: false,
       delete: false,
+      noCache: true,
       defaultSortField: 'contractaction_id',
       fields: [
         {
@@ -607,7 +668,6 @@ export default {
             const status = {
               active: 'Active', unactive: 'Unactive', cancelled: 'Cancelled', pulled: 'Pulled',
             }
-
             return status[value]
           },
         },
@@ -618,6 +678,28 @@ export default {
       entity: 'frontend_3_4_3_3',
       entityForm: 'contract_recurringpayment_rel',
       entityView: 'recurringpayment',
+      formComponent: () => import('@/views/app/FormComponent/RecurringPaymentContractForm.vue'),
+      submit: async (vm, _, create) => {
+        try {
+          const fieldsComponent = vm.getFieldComponents()
+          const recurringPaymentDetails = fieldsComponent.find(f => f.field.key === 'recurringpayment_id')?.subEntity ?? {}
+
+          const recurringpayment = { ...recurringPaymentDetails }
+          delete recurringpayment.contract_id
+
+          const payload = create ? {
+            contract_id: recurringPaymentDetails.contract_id,
+            recurringpayments: [
+              recurringpayment,
+            ],
+          } : recurringpayment
+
+          await vm.$http[create ? 'post' : 'put']('/contracts/step/2', payload)
+          vm.$successToast('success~recurring~payment~saved~successfully')
+        } catch (error) {
+          throw new Error(typeof error?.response?.detail === 'string' ? error.response.detail : vm.$t('errors~unexpected~error~ocurred'))
+        }
+      },
       fields: [
         {
           key: 'recurringpayment_id',
@@ -885,6 +967,7 @@ export default {
       if (data.action_ende_soll === null) {
         data.action_ende_soll = ''
       }
+      console.log('vm: ', vm)
       vm.setData(data)
       return data
     }
