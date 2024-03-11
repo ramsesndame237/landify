@@ -455,58 +455,6 @@ export default {
         // },
       ],
     },
-    {
-      customRequest: {
-        endpoint: '/pos',
-        relationKey: 'area_ids',
-        entityKey: 'pos_id',
-      },
-      title: 'Email',
-      primaryKey: 'email_id',
-      entityEndpoint: '/pos/emails',
-      entity: 'frontend_3_1_3_1',
-      entityForm: 'area_pos_rel',
-      entityView: 'Email',
-      update: false,
-      delete: false,
-      create: false,
-      onViewElement: element => {
-        const EmailModal = Vue.extend(emailModal)
-        const emailModalInstance = new EmailModal({
-          i18n: window.$vue.$i18n,
-          router: window.$vue.$i18n,
-          store: window.$vue.$store,
-        })
-        emailModalInstance.$mount()
-        emailModalInstance.show(true, element)
-      },
-      fields: [
-        {
-          key: 'email_received_datetime',
-          sortable: true,
-          type: 'list',
-          list: 'area',
-          listLabel: 'area_name',
-          disableOnUpdate: true,
-        },
-        { key: 'email_from', hideOnForm: true },
-        { key: 'email_subject', hideOnForm: true },
-        // { key: 'location_id', hideOnForm: true },
-        // {
-        //   key: 'location_name',
-        //   hideOnForm: true,
-        // },
-        // {
-        //   key: 'areatype_name',
-        //   hideOnForm: true,
-        // },
-        // {
-        //   key: 'area_last_change_time', hideOnForm: true, type: 'date', time: true,
-        // }, {
-        //   key: 'area_space_value', hideOnForm: true,
-        // },
-      ],
-    },
   ],
   default: {
     pos_internal_id: '56',
