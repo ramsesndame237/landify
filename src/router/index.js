@@ -173,6 +173,20 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/app/test',
+      name: 'test',
+      component: () => import('@/views/app/Page/test/test.vue'),
+      meta: {
+        pageTitle: 'Test',
+        breadcrumb: [
+          {
+            text: 'Test',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
       path: '/app/import',
       name: 'import',
       component: () => import('@/views/app/Page/ImportPage.vue'),

@@ -63,8 +63,14 @@
             <component :is="relation.component" :relation="relation" :entity-id="entityId"/>
           </template>
           <template v-else>
-            {{relation.primaryKey}}
-            <data-tables :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
+            <b-card v-if="relation.primaryKey === 'ticket_id'" body-class="p-0">
+              <table-pagination :per-page.sync="perPage" :show-input="true" :current-page.sync="currentPage" :entity="table"
+                                :with-filter="definition.filters && definition.filters.length > 0"
+                                :inline-filter="!definition.inline_filter" @filter="$refs.filter.openModal()"/>
+              <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
+                              @filter="filter"/>
+            </b-card>
+            <data-tables ref="table" :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
                          :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
                          :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
                          :entity-view="relation.entityView" :with-view="relation.view!==false" :fields="relation.fields"
@@ -137,9 +143,14 @@ import EntityForm from '@/views/app/Generic/EntityForm'
 import EditPageMixin from '@/views/app/Generic/EditPageMixin'
 import Notes from '@/views/app/Generic/Notes'
 import InvoiceStats from '@/views/app/CustomComponents/InvoiceStats'
+import GenericFilter from '@/views/app/Generic/Filter.vue'
+import TablePagination from '@/layouts/components/TablePagination.vue'
+import Tables from '@/table'
 
 export default {
   components: {
+    TablePagination,
+    GenericFilter,
     InvoiceStats,
     Notes,
     EntityForm,
@@ -161,6 +172,13 @@ export default {
   },
   mixins: [EditPageMixin],
   data() {
+    const payload = this.$store.getters['table/tableData'](this.$route.params.table)
+    const table = this.$route.params.table
+    const definition = Tables[table]
+    let defaultPage = null
+    if (this.isUserExternClient) {
+      defaultPage = definition.perPage
+    }
     return {
       search: '',
       currentPage: 1,
@@ -169,6 +187,7 @@ export default {
       formLoaded: false,
       noBody: false,
       showTool: true,
+      initialFilterData: payload?.filter,
     }
   },
   computed: {
@@ -209,6 +228,10 @@ export default {
     },
     onAction(action) {
       action.onClick(this.$refs.form.entity, this)
+    },
+    filter(data) {
+      this.currentPage = 1
+      this.$refs.table.filter(data)
     },
     currentTool() {
       if (!this.$refs.tabs) return false
