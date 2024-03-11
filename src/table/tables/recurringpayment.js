@@ -66,6 +66,14 @@ export default {
       orderByField: 'recurringpaymenttype_name',
       hideOnIndex: true,
     },
+    {
+      key: 'sachkonto_id',
+      type: 'list',
+      list: 'sachkonto',
+      listLabel: 'sachkonto_name',
+      orderByField: 'sachkonto_name',
+      hideOnIndex: true,
+    },
     { key: 'recurringpaymenttype_name', hideOnForm: true },
     {
       key: 'recurringpayment_sum_per_month',

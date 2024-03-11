@@ -121,7 +121,7 @@ export default {
     entityList: {type: String},
     entityForm: {type: String, required: false},
     entityView: {type: String, required: false},
-    entityEndpoint: {type: String, required: false}, // if it exist a specific route for retrieving data
+    entityEndpoint: {type: [String, Function], required: false}, // if it exist a specific route for retrieving data
     fields: {type: Array, required: true},
     primaryKeyColumn: {type: String},
     blankLink: {type: Boolean, default: false},
@@ -335,7 +335,7 @@ export default {
         const requestQuery = Object.keys(filterData)
           .filter(key => ![null, -1].includes(filterData[key]))
           .map(key => `${key}=${filterData[key]}`).join('&')
-        return this.$http.get(`${this.entityEndpoint}?${requestQuery}`)
+        return this.$http.get(`${this.entityEndpoint instanceof Function ? this.entityEndpoint(this) : this.entityEndpoint}?${requestQuery}`)
           .then(({data}) => {
             let items
             if (Array.isArray(data.data)) {
