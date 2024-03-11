@@ -41,7 +41,6 @@ export default [
     children: [
       item('board', 'ticketboard'),
       item('ticket', 'ticketlist'),
-      item('', 'test', 'test'),
       // {
       //   title: key('documentupload'),
       //   route: 'document-classification',
