@@ -40,34 +40,9 @@
       </div> -->
       <Datatable :key="table" ref="table" :selectable="false" :search="search" primary-key-column="contract_id"
                  entity="contract" :with-delete="false" :with-edit="false" :with-nested="table === 'deadlines'" :sub-fields="definition.subFields"
-                 :fields="definition.fields" :items="items" sub-fields-data-key="deadlines" :with-actions="false"
+                 :fields="definition.fields" :items="items" sub-fields-data-key="deadlines" :with-actions="true"
       />
     </b-card>
-
-    <b-row v-if="table==='conditions'">
-      <b-col lg="4" md="6">
-        <b-card v-if="items.length>0" title="Totals">
-          <table class="mt-2 mt-xl-0 w-100">
-            <tr>
-              <th class="pb-50 font-weight-bold">
-                Total Rental Space
-              </th>
-              <td class="pb-50">
-                {{ total_rental_space }}
-              </td>
-            </tr>
-            <tr>
-              <th class="pb-50 font-weight-bold">
-                Total rent per month
-              </th>
-              <td class="pb-50">
-                {{ total_rent_per_month }}
-              </td>
-            </tr>
-          </table>
-        </b-card>
-      </b-col>
-    </b-row>
 
   </div>
 </template>
@@ -132,81 +107,34 @@ export default {
         fields: [
           { key: 'contract_id' },
           { key: 'contract_name', stickyColumn: false, variant: 'light' },
-          {
-            key: 'contract_of_status',
-          },
+          { key: 'contract_of_status' },
           { key: 'contracttype_name' },
-          //{ key: 'pos_name' },
-          //{ key: 'country_short' },
-         // { key: 'attribute.retail_space' },
-
-          ...(this.table === 'deadlines' ? [{ key: 'term_type'}] : []),
-          { key: 'contract_begin_date', default: moment().format('DD/MM/YYYY') },
+          { key: 'contract_begin_date' },
           { key: 'contract_end_date' },
-          { key: 'max_contract_end_date', default: moment().format('DD/MM/YYYY') },
-          {
-            key: 'customer_name'},
-            { key: 'location_name' },
-            {key:'branch_name'},
-             { key:'customer_branch_number' },
-            { key:'country' },
-             { key: 'total_rental_space' },
-            { key:'owner_name' },
-            { key:'manager_name' },
-            { key:'retail_space' },
-            //{key:'Total_min_rent_per_m2'} ,
-             { key:'retail_space' },
-             { key: 'base_rent_per_area_amount' },
-          ...(this.table === 'deadlines' ? [
-            { key: 'next_possible_end_of_contract' },
-            { key: 'last_possible_end_of_contract'},
-            // { key: 'available_options' },
-            // { key: 'total_options' },
-            { key: 'next_action', default: moment().format('DD/MM/YYYY') },
-            { key: 'action_begin', default: moment().format('DD/MM/YYYY') },
-            { key: 'action_ende_soll' },
-            { key: 'action_ende_final' },
-            {
-              key: 'planned_termination' },
-            {
-              key: 'planned_special_termination',
-            },
-          ] : []),
-          //{ key: 'max_contract_end_date', hideOnIndex: true },
-          ...(this.table === 'conditions' ? [
-          //  { key: 'total_rental_space' },
-            'retail_space',
-            { key: 'currency_name' },
-            { key: 'base_rent_per_area_amount' },
-            { key: 'rent_per_month' },
-            { key: 'advertising_per_month' },
-            { key: 'ancillary_cost_per_month' },
-            { key: 'heating_ancillary_cost_per_month' },
-            'index_adjustment_lease',
-            'index_adjustment_rate_in_percent',
-            'staggered_minimum_rent',
-            'turnover_rent',
-            'securities_related_to_contract', 'negotiator'] : []),
-        ],
-        subFields: [
-          {
-            key: 'contractdeadline_type'
-          },
-          { key: 'contractdeadline_acting_by' },
-          {
-            key: 'contractdeadline_available_options'
-          },
-          { key: 'contractdeadline_options', label: 'Nbr of Options' },
-          {
-            key: 'extension'
-          },
-          {
-            key: 'contractdeadline_notice_period'},
-          {
-            key: 'contractdeadline_status',
-            hideOnForm: true,
-            label: 'Status',
-          },
+          { key: 'last_possible_end_of_contract' },
+          { key: 'company_name' },
+          { key: 'location_name' },
+          { key: 'pos_name' },
+          { key: 'pos_id' },
+          { key: 'country_short' },
+          { key: 'sum_umlageflache' },
+          { key: 'sum_mietflache' },
+          { key: 'owner_name' },
+          { key: 'manager_name' },
+          { key: 'verkaufsfläche' },
+          { key: 'currency_name' },
+          { key: 'total_minimum_rent_per_m2' },
+          { key: 'sum_gesamtmiete' },
+          { key: 'sum_nkpauschale' },
+          { key: 'sum_heizung_nk' },
+          { key: 'indexanpassung_miete' },
+          { key: 'indexanpassung_rate_miete' },
+          { key: 'staffelung' },
+          { key: 'sum_umsatzmiete' },
+          { key: 'mietsicherheit' },
+          { key: 'bemerkung' },
+          { key: 'fehlende_unterlagen' },
+          { key: 'negotiator' },
         ],
         filter_vertical: true,
         filters: [
@@ -297,27 +225,13 @@ export default {
       if (!valid) return
       this.loading = true
       const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id', 'contactperson_id']).omitBy(_.isNil).value()
-      filter.per_page = 100000
+      filter.size = 100000
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
-        const date = moment(this.data.date, 'DD/MM/YYYY')
-        const masterData = (await this.$http.get(`/contracts/conditionList/new?${requestQuery}`)).data.data
-        const contracts = masterData;
-        // const begin_date = moment('DD/MM/YYYY')
-       // const end_date = moment('DD/MM/YYYY')
-          // .filter(r => {
-          //   const begin_date = moment(r.contract_begin_date, 'DD/MM/YYYY')
-          //   const end_date = moment(r.contract_end_date, 'DD/MM/YYYY')
-          //   return begin_date.isBefore(end_date, 'day') && date.isSameOrAfter(begin_date, 'day') && date.isSameOrBefore(end_date, 'day')
-          // });
-        console.log(contracts)
-        this.items = contracts
-        if (this.table === 'conditions') this.updateCurrencyValues()
-
+        this.items = (await this.$http.get(`/contracts/conditionList/new?${requestQuery}`)).data.data
       } finally {
         this.loading = false
-        //this.loadingDonwload = true
       }
     },
     updateCurrencyValues() {
@@ -372,7 +286,7 @@ export default {
       if (!valid) return
       this.loadingDonwload = true
       const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
-      filter.per_page = 100000
+      filter.size = 100000
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
@@ -387,6 +301,15 @@ export default {
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
+      } catch (err) {
+        if (err.code === 'ERR_BAD_REQUEST') {
+          let error = (await err.response).data
+          error = JSON.parse(await error.text())
+
+          this.$errorToast(error.detail || 'Unknown error')
+        } else {
+          this.$errorToast('Unknown error')
+        }
       } finally {
         this.loadingDonwload = false
       }
