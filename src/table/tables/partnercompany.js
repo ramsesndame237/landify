@@ -190,7 +190,7 @@ export default {
         }
       },
     },
-    {
+    /* {
       title: 'ticket',
       primaryKey: 'ticket_id',
       entity: 'frontend_2_5_3_1_tickets',
@@ -337,7 +337,7 @@ export default {
           rules: { date_after: ['@user_partnercompany_valid_from'] },
         },
       ],
-    },
+    }, */
   ],
   note: 'frontend_0_8_4',
   async submit(vm, entity, create) {
