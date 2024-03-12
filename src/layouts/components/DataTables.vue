@@ -108,27 +108,32 @@ export default {
     BFormCheckbox,
   },
   props: {
-    entity: { type: String, required: true },
-    entityList: { type: String },
-    entityForm: { type: String, required: false },
-    entityView: { type: String, required: false },
-    entityEndpoint: { type: String, required: false }, // if it exist a specific route for retrieving data
-    fields: { type: Array, required: true },
-    primaryKeyColumn: { type: String },
-    blankLink: { type: Boolean, default: false },
-    withView: { type: Boolean, default: true },
-    withEdit: { type: Boolean, default: true },
-    withDelete: { type: Boolean, default: true },
-    canMakeDeleteCall: { type: Boolean, default: true },
-    withActions: { type: Boolean, default: true },
-    withNested: { type: Boolean, default: false }, // Ce champ indique si on doit avoir des imbrications sous les lignes de tableau
-    subFields: { type: Array, required: false }, // Ce champ donne les fields à afficher lorsqu'on veut afficher plus de détail d'une ligne
-    subFieldsDataKey: { type: String, required: false }, // Ce champ indique la clé de l'objet du tableau qui contiendra les données du sous tableau
-    subFieldsType: { type: String, required: false }, // Ce champ indique si les éléments à afficher sous le tableau est un composant ou un tableau
-    subFieldsComponent: { type: Object, required: false }, // Ce champ indique le composant pour le sous tableau
-    subFieldsData: { type: Object, required: false }, // Ce champ contient certaines configuration pour les données du subfields
-    multiSelect: { type: Boolean, default: true },
-    defaultSortColumn: { type: String, default: '' },
+    initialFilterData: {
+      type: Object,
+      default: () => ({}),
+    },
+    noCache: {type: Boolean, default: false},
+    entity: {type: String, required: true},
+    entityList: {type: String},
+    entityForm: {type: String, required: false},
+    entityView: {type: String, required: false},
+    entityEndpoint: {type: [String, Function], required: false}, // if it exist a specific route for retrieving data
+    fields: {type: Array, required: true},
+    primaryKeyColumn: {type: String},
+    blankLink: {type: Boolean, default: false},
+    withView: {type: Boolean, default: true},
+    withEdit: {type: Boolean, default: true},
+    withDelete: {type: Boolean, default: true},
+    canMakeDeleteCall: {type: Boolean, default: true},
+    withActions: {type: Boolean, default: true},
+    withNested: {type: Boolean, default: false}, // Ce champ indique si on doit avoir des imbrications sous les lignes de tableau
+    subFields: {type: Array, required: false}, // Ce champ donne les fields à afficher lorsqu'on veut afficher plus de détail d'une ligne
+    subFieldsDataKey: {type: String, required: false}, // Ce champ indique la clé de l'objet du tableau qui contiendra les données du sous tableau
+    subFieldsType: {type: String, required: false}, // Ce champ indique si les éléments à afficher sous le tableau est un composant ou un tableau
+    subFieldsComponent: {type: Object, required: false}, // Ce champ indique le composant pour le sous tableau
+    subFieldsData: {type: Object, required: false}, // Ce champ contient certaines configuration pour les données du subfields
+    multiSelect: {type: Boolean, default: true},
+    defaultSortColumn: {type: String, default: ''},
     secondKey: {},
     secondKeyValue: {},
     search: {},
@@ -325,8 +330,8 @@ export default {
         const requestQuery = Object.keys(filterData)
           .filter(key => ![null, -1].includes(filterData[key]))
           .map(key => `${key}=${filterData[key]}`).join('&')
-        return this.$http.get(`${this.entityEndpoint}?${requestQuery}`)
-          .then(({ data }) => {
+        return this.$http.get(`${this.entityEndpoint instanceof Function ? this.entityEndpoint(this) : this.entityEndpoint}?${requestQuery}`)
+          .then(({data}) => {
             let items
             if (Array.isArray(data.data)) {
               items = this.processData(data)

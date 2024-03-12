@@ -8,30 +8,7 @@ import {
 export default {
   entity: 'frontend_2_5_1',
   primaryKey: 'partnercompany_id',
-  formComponent: () => import('@/views/app/FormComponent/PartnerCompanyForm.vue'),
-  beforeSubmit: (_this, entity) => {
-    let isValid = true
-    if (!Array.isArray(_this.bank_data_infos) || _this.bank_data_infos?.length === 0) {
-      isValid = false
-      _this.$errorToast(_this.$t('error~add~iban~at~least'))
-      throw new Error(_this.$t('error~add~iban~at~least'))
-    }
-    _this.bank_data_infos.forEach(info => {
-      if (!isValidIBANNumber(info.bankdata_iban)) {
-        isValid = false
-        _this.$errorToast('error~all~ibans~must~be~valid')
-        throw new Error(_this.$t('error~all~ibans~must~be~valid'))
-      }
-      if (String(info?.bankdata_iban_id || '').length !== 4) {
-        isValid = false
-        _this.$errorToast(_this.$t('error~all~iban~ids~length~must~be~four'))
-        throw new Error(_this.$t('error~all~iban~ids~length~must~be~four'))
-      }
-    })
-    entity.bank_data_infos = _this.bank_data_infos
-
-    return isValid
-  },
+  // formComponent: () => import('@/views/app/FormComponent/PartnerCompanyForm.vue'),
   fields: [
     { key: 'partnercompany_id', auto: true },
     {
@@ -68,25 +45,7 @@ export default {
       filter_key: 'partnergroup_is_internal',
       noFetchOnChange: true,
     },
-    {
-      key: 'bankdata_iban',
-      hideOnIndex: true,
-    },
-    {
-      key: 'bankdata_iban_id',
-      type: 'number',
-      hideOnIndex: true,
-    },
-    { 
-      key: 'partnercompany_name',
-      type: 'list',
-      list: 'partnergroup',
-      listLabel: 'partnergroup_name',
-      // hideOnIndex: true,
-      required: false,
-      // filter_key: 'partnergroup_id',
-      // noFetchOnChange: true,
-    },
+    { key: 'partnercompany_name' },
     { key: 'partnercompany_shortname', maxLength: 10 },
     { key: 'partnergroup_name', hideOnForm: true },
     { key: 'city_name', hideOnForm: true },
@@ -151,6 +110,86 @@ export default {
     },
   ],
   relations: [
+    {
+      title: 'bankdata',
+      entity: 'bankdata',
+      primaryKey: 'bankdata_id',
+      entityEndpoint: vm => `/partners/${vm.$route.params.id}/bankdata`,
+      fields: [
+        {
+          key: 'bankdata_iban',
+          type: 'string',
+        },
+        {
+          key: 'iban_id',
+          type: 'number',
+        },
+        {
+          key: 'bankdata_bank_name',
+          required: false,
+        },
+      ],
+      async submit(vm, entity, create) {
+        try {
+
+          const method = create ? 'post' : 'put'
+          const url = create ? `/partners/${vm.$route.params.id}/bankdata` : `/partners/${vm.$route.params.id}/bankdata/${entity.bankdata_id}`
+
+          const dataForServer = {
+            ...entity,
+          }
+
+          await vm.$http[method](url, dataForServer)
+        } catch (error) {
+          throw Error(error?.response?.data?.detail
+            ?? vm.$t(String(error.message)?.startsWith('errors~')
+              ? vm.$t(error.message)
+              : 'errors~unexpected~error~ocurred'))
+        }
+      },
+    },
+    {
+      title: 'kreditornumber',
+      entity: 'kreditornumber',
+      primaryKey: 'kreditornumber_id',
+      entityEndpoint: vm => `/partners/${vm.$route.params.id}/kreditornumber`,
+      fields: [
+        {
+          key: 'company_id',
+          type: 'list',
+          list: 'company',
+          listLabel: 'company_name',
+          required: true,
+          hideOnUpdate: true,
+        },
+        {
+          key: 'company_name',
+          hideOnForm: true,
+        },
+        {
+          key: 'kreditornumber',
+          type: 'number',
+        },
+      ],
+      async submit(vm, entity, create) {
+        try {
+          console.log({ entity, create })
+
+          const method = create ? 'post' : 'put'
+          const url = create ? `/partners/${vm.$route.params.id}/kreditornumber` : `/partners/${vm.$route.params.id}/kreditornumber/${entity.kreditornumber_id}`
+          const dataForServer = {
+            ...entity,
+          }
+
+          await vm.$http[method](url, dataForServer)
+        } catch (error) {
+          throw Error(error?.response?.data?.detail
+            ?? vm.$t(String(error.message)?.startsWith('errors~')
+              ? vm.$t(error.message)
+              : 'errors~unexpected~error~ocurred'))
+        }
+      },
+    },
     {
       title: 'ticket',
       primaryKey: 'ticket_id',
@@ -303,11 +342,6 @@ export default {
   note: 'frontend_0_8_4',
   async submit(vm, entity, create) {
     try {
-      if (Array.isArray(entity?.bank_data_infos)) {
-        entity.bank_data_infos.forEach(info => {
-          info.bankdata_iban = String(info.bankdata_iban ?? '').replace(/\s/g, '')
-        })
-      }
 
       const fieldsComponent = vm.getFieldComponents()
       const addressField = fieldsComponent.find(f => f.field.key === 'address_id')

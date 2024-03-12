@@ -66,6 +66,14 @@ export default {
       orderByField: 'recurringpaymenttype_name',
       hideOnIndex: true,
     },
+    {
+      key: 'sachkonto_id',
+      type: 'list',
+      list: 'sachkonto',
+      listLabel: 'sachkonto_name',
+      orderByField: 'sachkonto_name',
+      hideOnIndex: true,
+    },
     { key: 'recurringpaymenttype_name', hideOnForm: true },
     {
       key: 'recurringpayment_sum_per_month',
@@ -86,6 +94,9 @@ export default {
     { key: 'recurringpayment_end_date', type: 'date', hideOnIndex: true },
     {
       key: 'recurringpayment_condition_comment', hideOnIndex: true, type: 'textarea', required: false,
+    },
+    {
+      key: 'bemerkung', hideOnIndex: true, type: 'textarea', required: false,
     },
     {
       key: 'maturitytype_id',
@@ -182,6 +193,8 @@ export default {
           recurringpayment,
         ],
       } : recurringpayment
+      console.log({ payload })
+      return;
       await vm.$http[create ? 'post' : 'put']('/contracts/step/2', payload)
       vm.$successToast('success~recurring~payment~saved~successfully')
     } catch (error) {

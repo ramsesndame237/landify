@@ -25,35 +25,6 @@
                  :entity="entity" :table-definition="tableDefinition" :field="getField(field_id)"
           />
         </b-col>
-        <b-col cols="12" :md="cols" class="p-50 mb-50">
-          <div class="d-flex align-items-center justify-content-between px-1">
-            <strong>
-              {{ $t('attribute.card~informations') }}
-            </strong>
-            <b-button size="sm" variant="info" @click="addIban()">
-              <feather-icon icon="PlusIcon" /> {{ $t('labels~new~iban') }}
-            </b-button>
-          </div>
-          <b-col>
-            <b-col v-for="(iban, i) in (bank_data_infos || [])" :key="String(i) + (iban.id || '')" class="mt-1 pt-50 rounded-lg position-relative" style="border: 1px dashed var(--gray);">
-              <b-button
-                v-if="bank_data_infos.length > 1"
-                class="position-absolute p-0"
-                variant="danger"
-                style="right: -10px; top: -10px; z-index: 2; width: 24px; height: 24px;"
-                @click="removeIban(i)"
-              >
-                <feather-icon icon="XIcon" />
-              </b-button>
-              <field ref="fields" :disabled="loading" :create="create" :inline="inline"
-                     :entity="bank_data_infos[i]" :table-definition="tableDefinition" :field="getField('bankdata_iban')"
-              />
-              <field ref="fields" :disabled="loading" :create="create" :inline="inline"
-                     :entity="bank_data_infos[i]" :table-definition="tableDefinition" :field="getField('bankdata_iban_id')"
-              />
-            </b-col>
-          </b-col>
-        </b-col>
       </b-row>
     </b-form>
   </validation-observer>

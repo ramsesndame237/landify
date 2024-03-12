@@ -35,8 +35,10 @@ export default {
       cols: 12,
       relationEntity: 'customergroup_company_rel',
     },
-    { key: 'company_name', cols: 6 },
-    { key: 'company_shortname', cols: 6 },
+    { key: 'company_name', cols: 5 },
+    { key: 'company_shortname', cols: 4 },
+    // BuchungsKreis
+    {key: 'company_buchungskreis', cols: 3, required: false},
     // { key: 'customergroup_name', sortable: true, hideOnForm: true },
     // {
     //   key: 'address_id',
