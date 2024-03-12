@@ -54,7 +54,7 @@
       <invoice-stats/>
     </template>
     <generic-filter ref="filterEdit" :table="table"
-                    :definition="definition.relations.find(x => x.entityView === visibleRelations[tabIndex].entityView)"
+                    :definition="relationEntity"
                     :initial-data="initialFilterData"
                     @filter="filter"/>
     <b-card v-if="definition.relations && formLoaded && visibleRelations.length>0 && !create ">
@@ -80,7 +80,6 @@
                          :on-edit-element="editElement" :with-edit="relation.update!==false"
                          :opacity="relation.primaryKey === 'ticket_id'"
                          :with-delete="relation.delete!==false" :custom-request="relation.customRequest"
-                         :filter-items="relation.filter"
                          :entity-endpoint="relation.entityEndpoint"/>
             <generic-modal :cache-key="relation.entity+'-'" title="Test" :table="relation.entityForm || relation.entity"
                            :definition="relation" is-relation
@@ -193,6 +192,7 @@ export default {
       noBody: false,
       showTool: true,
       initialFilterData: payload?.filter,
+      relationEntity: null,
     }
   },
   computed: {
@@ -219,10 +219,12 @@ export default {
     this.$watch('$refs.tabs.currentTab', val => {
       if (this.tabIndex !== val) {
         this.tabIndex = val
+        this.relationEntity = this.definition.relations.find(element => element.entityView === this.visibleRelations[val].entityView)
+        console.log("this is the change")
         this.$router.replace({
           name: this.$route.name,
           params: this.$route.params,
-          query: {tab: val},
+          query: { tab: val },
         })
       }
     })
@@ -235,7 +237,7 @@ export default {
       action.onClick(this.$refs.form.entity, this)
     },
     filter(data) {
-      console.log("this i sht data", data)
+      console.log('this i sht data', data)
       this.currentPage = 1
       this.$refs.table.filter(data)
     },
@@ -256,31 +258,31 @@ export default {
       return this.visibleRelations[this.$refs.tabs.currentTab]?.search !== false
     },
     deleteSelected() {
-      const {tabs} = this.$refs
+      const { tabs } = this.$refs
       tabs.tabs[tabs.currentTab].$children[0].deleteSelected()
     },
     newElement() {
-      const {tabs} = this.$refs
+      const { tabs } = this.$refs
       const route = this.visibleRelations[tabs.currentTab].newRoute
       if (route) {
-        this.$router.push({name: route.name, params: {id: this.entityId, table: route.params.table}})
+        this.$router.push({ name: route.name, params: { id: this.entityId, table: route.params.table } })
       } else {
-        console.log('Ici tabs', {tabs})
+        console.log('Ici tabs', { tabs })
         const def = this.definition.relations[tabs.currentTab]
-        tabs.tabs[tabs.currentTab].$children[1].openModal(true, {[this.primaryKey]: this.entityId}, `headline~${def.entityForm || def.title}~new`)
+        tabs.tabs[tabs.currentTab].$children[1].openModal(true, { [this.primaryKey]: this.entityId }, `headline~${def.entityForm || def.title}~new`)
       }
     },
     editElement(entity) {
-      const {tabs} = this.$refs
+      const { tabs } = this.$refs
       const def = this.definition.relations[tabs.currentTab]
       tabs.tabs[tabs.currentTab].$children[1].openModal(false, entity, `headline~${def.entityForm || def.title}~detail`)
     },
     reloadRelatedTable() {
-      const {tabs} = this.$refs
+      const { tabs } = this.$refs
       tabs.tabs[tabs.currentTab].$children[0].reload()
     },
     getCurrentTable() {
-      const {tabs} = this.$refs
+      const { tabs } = this.$refs
       return tabs.tabs[tabs.currentTab].$children[0]
     },
   },

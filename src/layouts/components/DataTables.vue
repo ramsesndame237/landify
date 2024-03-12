@@ -2,7 +2,7 @@
   <div class="">
     <b-table ref="table" sticky-header striped hover responsive :busy.sync="loading" :per-page="perPage"
              :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
-             :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" show-empty @row-clicked="onRowClicked">
+             :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" show-empty :tbody-tr-class="rowClass" @row-clicked="onRowClicked">
       <template #table-busy>
         <div class="text-center text-danger">
           <b-spinner class="align-middle"/>
@@ -17,8 +17,7 @@
         <b-form-checkbox v-if="data.field.type === 'boolean'" v-model="data.value" :disabled="!data.field.editable"
                          :value="1" :unchecked-value="0"
                          @change="data.field.onChange ? data.field.onChange(data) : null"/>
-        <b-button v-else-if="data.field.type === 'button'" size="xs"
-                  @click="$router.push(data.field.getRoute(data.item))">
+        <b-button v-else-if="data.field.type === 'button'" size="xs" @click="$router.push(data.field.getRoute(data.item))">
           {{ data.field.btnLabel }}
         </b-button>
         <a v-else-if="data.field.type === 'download'" target="_blank" :href="data.field.getLink(data.item)">
@@ -29,8 +28,7 @@
           <component :is="data.field.component" :items="items || provider" :row-data="data" :data="data.field.props"
                      @reload="reload"/>
         </div>
-        <span v-else :class="{'text-truncate' : !!truncateBy}" :style="truncateStyle" :v-b-tooltip="!!truncateBy"
-              :title="data.value">
+        <span v-else :class="{'text-truncate' : !!truncateBy}" :style="truncateStyle" :v-b-tooltip="!!truncateBy" :title="data.value">
           <b-badge v-if="data.field.withBadge" :variant="data.field.setVariant(data)">{{ data.value }}</b-badge>
           <template v-else-if="data.field.translateValue">{{ $t(data.value) }}</template>
           <template v-else>{{ data.value }}</template>
@@ -69,8 +67,7 @@
       </template>
       <template v-if="withNested" #cell(ShowDetails)="row">
         <template v-if="(subFieldsData && subFieldsData.btnStyle === 'button')">
-          <b-button v-if="row.item[subFieldsDataKey] && row.item[subFieldsDataKey].length > 0" size="sm"
-                    variant="secondary" @click="showDetails(row, $event.target)">
+          <b-button v-if="row.item[subFieldsDataKey] && row.item[subFieldsDataKey].length > 0" size="sm" variant="secondary" @click="showDetails(row, $event.target)">
             {{ (subFieldsData && subFieldsData.btnText) || 'Show options' }}
           </b-button>
           <span v-else>No</span>
@@ -87,23 +84,22 @@
         </template>
       </template>
     </b-table>
-    <b-modal ref="modal_test" ok-only centered scrollable :size="(subFieldsData && subFieldsData.modalSize) || 'xl'"
-             :title="(subFieldsData && subFieldsData.modalTitle) || infoModal.title">
+    <b-modal ref="modal_test" ok-only centered scrollable :size="(subFieldsData && subFieldsData.modalSize) || 'xl'" :title="(subFieldsData && subFieldsData.modalTitle) || infoModal.title">
       <template v-if="subFieldsType=== 'component'">
-        <component :is="subFieldsComponent" :item="infoModal.content"/>
+        <component :is="subFieldsComponent" :item="infoModal.content" />
       </template>
       <template v-else>
-        <b-table :items="infoModal.content[subFieldsDataKey]" :fields="subFields"/>
+        <b-table :items="infoModal.content[subFieldsDataKey]" :fields="subFields" />
       </template>
     </b-modal>
   </div>
 </template>
 
 <script>
-import {BButton, BFormCheckbox, BTable} from 'bootstrap-vue'
-import {formatDate, getDocumentLink} from '@/libs/utils'
+import { BButton, BFormCheckbox, BTable } from 'bootstrap-vue'
+import { formatDate, getDocumentLink } from '@/libs/utils'
 import flatten from 'lodash/flatten'
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -112,57 +108,52 @@ export default {
     BFormCheckbox,
   },
   props: {
-    initialFilterData: {
-      type: Object,
-      default: () => ({}),
-    },
-    noCache: {type: Boolean, default: false},
-    entity: {type: String, required: true},
-    entityList: {type: String},
-    entityForm: {type: String, required: false},
-    entityView: {type: String, required: false},
-    entityEndpoint: {type: [String, Function], required: false}, // if it exist a specific route for retrieving data
-    fields: {type: Array, required: true},
-    primaryKeyColumn: {type: String},
-    blankLink: {type: Boolean, default: false},
-    withView: {type: Boolean, default: true},
-    withEdit: {type: Boolean, default: true},
-    withDelete: {type: Boolean, default: true},
-    canMakeDeleteCall: {type: Boolean, default: true},
-    withActions: {type: Boolean, default: true},
-    withNested: {type: Boolean, default: false}, // Ce champ indique si on doit avoir des imbrications sous les lignes de tableau
-    subFields: {type: Array, required: false}, // Ce champ donne les fields à afficher lorsqu'on veut afficher plus de détail d'une ligne
-    subFieldsDataKey: {type: String, required: false}, // Ce champ indique la clé de l'objet du tableau qui contiendra les données du sous tableau
-    subFieldsType: {type: String, required: false}, // Ce champ indique si les éléments à afficher sous le tableau est un composant ou un tableau
-    subFieldsComponent: {type: Object, required: false}, // Ce champ indique le composant pour le sous tableau
-    subFieldsData: {type: Object, required: false}, // Ce champ contient certaines configuration pour les données du subfields
-    multiSelect: {type: Boolean, default: true},
-    defaultSortColumn: {type: String, default: ''},
+    entity: { type: String, required: true },
+    entityList: { type: String },
+    opacity: { type: Boolean, default: false },
+    entityForm: { type: String, required: false },
+    entityView: { type: String, required: false },
+    entityEndpoint: { type: String, required: false }, // if it exist a specific route for retrieving data
+    fields: { type: Array, required: true },
+    primaryKeyColumn: { type: String },
+    blankLink: { type: Boolean, default: false },
+    withView: { type: Boolean, default: true },
+    withEdit: { type: Boolean, default: true },
+    withDelete: { type: Boolean, default: true },
+    canMakeDeleteCall: { type: Boolean, default: true },
+    withActions: { type: Boolean, default: true },
+    withNested: { type: Boolean, default: false }, // Ce champ indique si on doit avoir des imbrications sous les lignes de tableau
+    subFields: { type: Array, required: false }, // Ce champ donne les fields à afficher lorsqu'on veut afficher plus de détail d'une ligne
+    subFieldsDataKey: { type: String, required: false }, // Ce champ indique la clé de l'objet du tableau qui contiendra les données du sous tableau
+    subFieldsType: { type: String, required: false }, // Ce champ indique si les éléments à afficher sous le tableau est un composant ou un tableau
+    subFieldsComponent: { type: Object, required: false }, // Ce champ indique le composant pour le sous tableau
+    subFieldsData: { type: Object, required: false }, // Ce champ contient certaines configuration pour les données du subfields
+    multiSelect: { type: Boolean, default: true },
+    defaultSortColumn: { type: String, default: '' },
     secondKey: {},
     secondKeyValue: {},
     search: {},
-    onEditElement: {type: Function},
-    onViewElement: {type: Function},
-    onDeleteElement: {type: Function},
+    onEditElement: { type: Function },
+    onViewElement: { type: Function },
     perPage: Number,
     currentPage: Number,
     totalRows: Number,
-    selectable: {type: Boolean, default: true},
-    disabled: {type: Boolean, default: false},
-    defaultSortDesc: {type: Boolean, default: false},
+    selectable: { type: Boolean, default: true },
+    disabled: { type: Boolean, default: false },
+    defaultSortDesc: { type: Boolean, default: false },
     items: Array,
     ids: Array,
     initialFilter: Object,
-    filterItems: {type: Function, required: false}, // Cette function effectue le filtre sur les données de l'entité
-    canUpdateItem: {type: Function, required: false}, // si un item du tableau est editable
-    canReadItem: {type: Function, required: false, default: () => true}, // si un item du tableau est consultable
-    canDeleteItem: {type: Function, required: false}, // si un item du tableau est supprimable
-    customRequest: {type: Object, required: false}, // un object qui contient des données pour personnaliser les requêtes vers le back dans les relations
+    filterItems: { type: Function, required: false }, // Cette function effectue le filtre sur les données de l'entité
+    canUpdateItem: { type: Function, required: false }, // si un item du tableau est editable
+    canReadItem: { type: Function, required: false, default: () => true }, // si un item du tableau est consultable
+    canDeleteItem: { type: Function, required: false }, // si un item du tableau est supprimable
+    customRequest: { type: Object, required: false }, // un object qui contient des données pour personnaliser les requêtes vers le back dans les relations
     /**
      * truncateBy : Représente la valeur en rem à appliquer sur tous les champs d'un tableau
      * @example truncateBy: 20 Va fixer le max-width des champs à 20 rem
      */
-    truncateBy: {type: Number, required: false}, // un object qui contient des données pour personnaliser les requêtes vers le back dans les relations
+    truncateBy: { type: Number, required: false }, // un object qui contient des données pour personnaliser les requêtes vers le back dans les relations
   },
   data() {
     return {
@@ -171,7 +162,7 @@ export default {
       sortDesc: this.defaultSortDesc,
       selected: false,
       currentItems: this.items || [],
-      filterData: {...this.initialFilter},
+      filterData: { ...this.initialFilter },
       infoModal: {
         id: 'info-modal',
         title: '',
@@ -181,7 +172,7 @@ export default {
   },
   computed: {
     truncateStyle() {
-      return this.truncateBy ? {maxWidth: `${this.truncateBy}rem`, display: 'block'} : {}
+      return this.truncateBy ? { maxWidth: `${this.truncateBy}rem`, display: 'block' } : {}
     },
     primaryKey() {
       return this.primaryKeyColumn || this.fields.find(f => f.auto)?.key || `${this.entity}_id`
@@ -191,19 +182,19 @@ export default {
     },
     allFields() {
       const fields = [
-        ...(this.selectable ? [{key: '__selected', thStyle: {width: '50px'}}] : []),
+        ...(this.selectable ? [{ key: '__selected', thStyle: { width: '50px' } }] : []),
         ...(this.withActions ? [{
           key: 'Actions',
           stickyColumn: true,
           tdClass: 'p-0',
           label: this.$t('attribute.general_actions'),
           variant: 'light',
-          thStyle: {width: '80px'},
+          thStyle: { width: '80px' },
         }] : []),
         ...this.fields.filter(f => !f.hideOnIndex && !f.auto).map(field => {
           let newField = field
-          if (typeof field === 'string') newField = {key: field}
-          const f = {label: this.$t(`attribute.${newField.key}`), sortable: true, ...newField}
+          if (typeof field === 'string') newField = { key: field }
+          const f = { label: this.$t(`attribute.${newField.key}`), sortable: true, ...newField }
           if (f.type === 'date') {
             f.formatter = val => formatDate(val, f.time)
           }
@@ -218,7 +209,7 @@ export default {
           tdClass: 'p-0',
           label: (this.subFieldsData && this.subFieldsData.theadText) || 'Options',
           variant: 'none',
-          thStyle: {width: '80px'},
+          thStyle: { width: '80px' },
         }
 
         if (this.subFieldsData && this.subFieldsData.insertAtIndex) {
@@ -251,7 +242,7 @@ export default {
       this.selectAll()
     },
     items() {
-      // this.currentItems = this.items
+      this.currentItems = this.items
     },
     filterData() {
       this.$refs.table.refresh()
@@ -260,8 +251,6 @@ export default {
   },
   methods: {
     onViewClick(data) {
-      console.log('data: ', data)
-      console.log('data: ', this.onViewElement)
       if (this.onViewElement) {
         this.onViewElement(this.currentItems[data.index])
         return
@@ -305,29 +294,28 @@ export default {
           this.currentItems = []
           return []
         }
-        payload.data = this.ids.map(id => (typeof id === 'object' ? id : {[this.primaryKey]: id}))
+        payload.data = this.ids.map(id => (typeof id === 'object' ? id : { [this.primaryKey]: id }))
       } else {
-        const filterData = {...this.filterData}
+        const filterData = { ...this.filterData }
         if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
         if (Object.keys(filterData).length > 0) {
           payload.data = [filterData]
         }
       }
-      const cacheKey = this.getCacheKey(payload)
       // retrieve from cache
+      const cacheKey = this.getCacheKey(payload)
       const fromCache = this.$store.getters['table/tableCache'](cacheKey)
-      if (fromCache && !this.noCache) {
+      if (fromCache) {
         return this.processData(fromCache)
       }
+
       // retrieve form specific endpoint
       if (this.entityEndpoint) {
         const filterData = {
-          ...(this.initialFilterData ?? {}),
-          ...(this.filterData || {}),
+          ...this.filterData,
           keyword: filter,
           page: currentPage,
           size: payload.per_page,
-          per_page: payload.per_page,
           order_filed: sortBy,
           order: sortDesc ? 'desc' : 'asc',
         }
@@ -337,20 +325,17 @@ export default {
         const requestQuery = Object.keys(filterData)
           .filter(key => ![null, -1].includes(filterData[key]))
           .map(key => `${key}=${filterData[key]}`).join('&')
-        return this.$http.get(`${this.entityEndpoint instanceof Function ? this.entityEndpoint(this) : this.entityEndpoint}?${requestQuery}`)
-          .then(({data}) => {
+        return this.$http.get(`${this.entityEndpoint}?${requestQuery}`)
+          .then(({ data }) => {
             let items
             if (Array.isArray(data.data)) {
               items = this.processData(data)
               // set in cache
-              this.$store.commit('table/setTableCache', {key: cacheKey, data})
+              this.$store.commit('table/setTableCache', { key: cacheKey, data })
             } else if (typeof data.data === 'object' && data.data != null) {
               items = this.processData(data)
               // set in cache
-              this.$store.commit('table/setTableCache', {key: cacheKey, data})
-            } else if (Array.isArray(data)) {
-              items = this.processData({data})
-              this.$store.commit('table/setTableCache', {key: cacheKey, data})
+              this.$store.commit('table/setTableCache', { key: cacheKey, data })
             } else {
               throw new Error('invalid data')
             }
@@ -365,11 +350,11 @@ export default {
       }
 
       return this.$api(payload)
-        .then(({data}) => {
+        .then(({ data }) => {
           console.log(data)
           const items = this.processData(data)
           // set in cache
-          this.$store.commit('table/setTableCache', {key: cacheKey, data})
+          this.$store.commit('table/setTableCache', { key: cacheKey, data })
           return items
         })
         .catch(e => {
@@ -388,13 +373,13 @@ export default {
         data.data.forEach(el => {
           el.__selected = false
         })
-        this.$store.commit('table/setDefinition', {data, table: this.table})
+        this.$store.commit('table/setDefinition', { data, table: this.table })
         const datas = data.data
         if (this.filterItems && typeof this.filterItems === 'function') {
           this.currentItems = datas.filter(item => this.filterItems(item, this))
-          // if (this.isUserExternClient) {
-          //   this.$emit('update:totalRows', this.currentItems.length)
-          // }
+          if (this.isUserExternClient) {
+            this.$emit('update:totalRows', this.currentItems.length)
+          }
         } else {
           this.currentItems = datas
         }
@@ -405,14 +390,14 @@ export default {
       data.data.data.forEach(el => {
         el.__selected = false
       })
-      this.$store.commit('table/setDefinition', {data, table: this.table})
+      this.$store.commit('table/setDefinition', { data, table: this.table })
       const datas = data.data.data
 
       if (this.filterItems && typeof this.filterItems === 'function') {
         this.currentItems = datas.filter(item => this.filterItems(item, this))
-        // if (this.isUserExternClient) {
-        //   this.$emit('update:totalRows', this.currentItems.length)
-        // }
+        if (this.isUserExternClient) {
+          this.$emit('update:totalRows', this.currentItems.length)
+        }
       } else {
         this.currentItems = datas
       }
@@ -490,15 +475,15 @@ export default {
           }
           await this.$http({
             method: this.customRequest.method ? this.customRequest.method : 'put',
-            url: typeof this.customRequest.endpoint === 'function' ? this.customRequest.endpoint() : this.customRequest.endpoint,
-            data: this.customRequest.payload ? this.customRequest.payload(entities) : payload,
+            url: this.customRequest.endpoint,
+            data: payload,
           }).then(res => {
             this.$successToast('Delete Done.')
             this.$root.$emit('update-occured')
             this.$store.commit('table/deleteTableCacheKeyFromPrefix', `${this.entity}-`)
             this.$refs.table.refresh()
           }).catch(error => {
-            console.log({error})
+            console.log({ error })
           })
 
           return
@@ -507,7 +492,7 @@ export default {
         this.$api(data).then(async resp => {
           if (entityToDelete) {
             try {
-              await this.$api({...data, entity: entityToDelete.list})
+              await this.$api({ ...data, entity: entityToDelete.list })
             } catch (e) {
               console.error(e)
             }
@@ -541,7 +526,7 @@ export default {
       this.$emit('table-refreshed')
     },
     filter(data) {
-      this.filterData = {...data}
+      this.filterData = { ...data }
       this.reload()
     },
     onSelect(index) {
@@ -556,6 +541,9 @@ export default {
     onRowClicked(record, index) {
       console.log('row clicked', record)
       this.$set(record, '__selected', !record.__selected)
+    },
+    rowClass(item) {
+      return item?.ticket_closed === 1 ? 'statusBackground' : '';
     },
     downloadCsv(filename = 'export.csv') {
       const fields = this.allFields.filter(f => (['Actions', '__selected'].indexOf(f.key) === -1))
@@ -578,3 +566,8 @@ export default {
   },
 }
 </script>
+<style>
+.statusBackground {
+  opacity: 0.3;
+}
+</style>
