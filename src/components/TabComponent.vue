@@ -39,6 +39,8 @@ export default {
     <ul>
       <li v-for="(item,index) in visibleTabs" :key="index" class="list-item" :class="{active: activeTabItem && activeTabItem.id === item.id}" @click="(event) =>activeOrDiseableItemsNavigation(event, item)">
         {{ item.title }}
+
+        <b-spinner small variant="primary" type="grow" v-if="item.count > 0"></b-spinner>
       </li>
     </ul>
   </div>

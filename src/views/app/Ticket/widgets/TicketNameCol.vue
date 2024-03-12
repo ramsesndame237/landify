@@ -1,6 +1,6 @@
 <template>
   <div class="w-100">
-    <b-badge pill :variant="variant" class="text-truncate mr-50" style="font-size: 8px; padding: 4px;">
+    <b-badge pill :variant="data.ticket_closed === 1 ? 'dark' : data.ticket_closed === 0 ? 'success' :  variant" class="text-truncate mr-50" style="font-size: 8px; padding: 4px;">
       {{ $t(status) }} - {{ $t(data.ticket_closed ? 'header~board~status~closed' : 'header~board~status~open') }}
     </b-badge>
     <div class="d-flex align-items-center justify-content">
@@ -9,10 +9,10 @@
       </strong>
     </div>
     <div class="d-flex align-items-start mt-50">
-      <span
-        class="d-block mr-50 rounded-pill px-50"
+      <b-button v-if="data.priority_name" size="sm" pill :variant="data.priority_name === 'Normal' ? 'info' : data.priority_name === 'Critical' ? 'warning': data.priority_name === 'Urgent' ? 'danger' : 'default'"
+        class="d-block mr-50 rounded-pill"
         :style="{color: data.priority_color, border: '1px solid', borderColor: data.priority_color}"
-      >{{ data.priority_emoji }} {{ data.priority_name }}</span>
+      >{{ data.priority_emoji }} {{ data.priority_name }}</b-button>
       <span class="d-block text-truncate">{{ moment(data.ticket_creation_time).format("llll") }}</span>
     </div>
   </div>

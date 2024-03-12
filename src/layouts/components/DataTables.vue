@@ -2,7 +2,7 @@
   <div class="">
     <b-table ref="table" sticky-header striped hover responsive :busy.sync="loading" :per-page="perPage"
              :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
-             :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" show-empty @row-clicked="onRowClicked">
+             :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" show-empty :tbody-tr-class="rowClass" @row-clicked="onRowClicked">
       <template #table-busy>
         <div class="text-center text-danger">
           <b-spinner class="align-middle"/>
@@ -110,6 +110,7 @@ export default {
   props: {
     entity: { type: String, required: true },
     entityList: { type: String },
+    opacity: { type: Boolean, default: false },
     entityForm: { type: String, required: false },
     entityView: { type: String, required: false },
     entityEndpoint: { type: String, required: false }, // if it exist a specific route for retrieving data
@@ -541,6 +542,9 @@ export default {
       console.log('row clicked', record)
       this.$set(record, '__selected', !record.__selected)
     },
+    rowClass(item) {
+      return item?.ticket_closed === 1 ? 'statusBackground' : '';
+    },
     downloadCsv(filename = 'export.csv') {
       const fields = this.allFields.filter(f => (['Actions', '__selected'].indexOf(f.key) === -1))
       let csvContent = `${fields.map(f => this.$t(`attribute.${f.key}`)).join(';').replaceAll('\r', '').replaceAll('\n', '')}\n${
@@ -562,3 +566,8 @@ export default {
   },
 }
 </script>
+<style>
+.statusBackground {
+  opacity: 0.3;
+}
+</style>

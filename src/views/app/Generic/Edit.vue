@@ -47,13 +47,16 @@
         :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
         ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="create"
         :is-relation="false" :disabled="view" :inline="false" :cols="6" :initial-data="entity" :entity-id="entityId"
-        @loaded="formLoaded=true" />
+        @loaded="formLoaded=true"/>
     </b-card>
 
     <template v-if="table==='invoice' && $refs.tabs">
       <invoice-stats/>
     </template>
-
+    <generic-filter ref="filterEdit" :table="table"
+                    :definition="definition.relations.find(element=> (element.entityView === 'ticket'))"
+                    :initial-data="initialFilterData"
+                    @filter="filter"/>
     <b-card v-if="definition.relations && formLoaded && visibleRelations.length>0 && !create ">
       <b-tabs ref="tabs" pills>
         <b-tab v-for="(relation, index) in visibleRelations" :key="index"
@@ -63,12 +66,21 @@
             <component :is="relation.component" :relation="relation" :entity-id="entityId"/>
           </template>
           <template v-else>
-            <data-tables :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
+            <b-card v-if="relation.primaryKey === 'ticket_id'" body-class="p-0">
+              <table-pagination :per-page.sync="perPage" :show-input="true" :current-page.sync="currentPage"
+                                :entity="table"
+                                :with-filter="definition.filters && definition.filters.length > 0"
+                                :total-rows.sync="totalRows"
+                                :inline-filter="!definition.inline_filter" @filter="$refs.filterEdit.openModal()"/>
+            </b-card>
+            <data-tables ref="table" :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
                          :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
                          :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
                          :entity-view="relation.entityView" :with-view="relation.view!==false" :fields="relation.fields"
                          :on-edit-element="editElement" :with-edit="relation.update!==false"
-                         :with-delete="relation.delete!==false" :custom-request="relation.customRequest" :entity-endpoint="relation.entityEndpoint" />
+                         :opacity="relation.primaryKey === 'ticket_id'"
+                         :with-delete="relation.delete!==false" :custom-request="relation.customRequest"
+                         :entity-endpoint="relation.entityEndpoint"/>
             <generic-modal :cache-key="relation.entity+'-'" title="Test" :table="relation.entityForm || relation.entity"
                            :definition="relation" is-relation
                            :table-definition-key="relation.entityForm || relation.entity"
@@ -115,19 +127,19 @@
 
 <script>
 import {
-  BCard,
-  BTab,
-  BTabs,
-  BRow,
-  BCol,
-  BSpinner,
-  BFormInput,
   BButton,
+  BCard,
+  BCol,
   BDropdown,
   BDropdownForm,
   BFormGroup,
+  BFormInput,
   BInputGroup,
   BInputGroupPrepend,
+  BRow,
+  BSpinner,
+  BTab,
+  BTabs,
 } from 'bootstrap-vue'
 import DataTables from '@/layouts/components/DataTables'
 import GenericModal from '@/views/app/Generic/modal'
@@ -135,9 +147,14 @@ import EntityForm from '@/views/app/Generic/EntityForm'
 import EditPageMixin from '@/views/app/Generic/EditPageMixin'
 import Notes from '@/views/app/Generic/Notes'
 import InvoiceStats from '@/views/app/CustomComponents/InvoiceStats'
+import GenericFilter from '@/views/app/Generic/Filter.vue'
+import TablePagination from '@/layouts/components/TablePagination.vue'
+import Tables from '@/table'
 
 export default {
   components: {
+    TablePagination,
+    GenericFilter,
     InvoiceStats,
     Notes,
     EntityForm,
@@ -159,6 +176,13 @@ export default {
   },
   mixins: [EditPageMixin],
   data() {
+    const payload = this.$store.getters['table/tableData'](this.$route.params.table)
+    const table = this.$route.params.table
+    const definition = Tables[table]
+    let defaultPage = null
+    if (this.isUserExternClient) {
+      defaultPage = definition.perPage
+    }
     return {
       search: '',
       currentPage: 1,
@@ -167,6 +191,8 @@ export default {
       formLoaded: false,
       noBody: false,
       showTool: true,
+      initialFilterData: payload?.filter,
+      relationEntity: null,
     }
   },
   computed: {
@@ -193,6 +219,8 @@ export default {
     this.$watch('$refs.tabs.currentTab', val => {
       if (this.tabIndex !== val) {
         this.tabIndex = val
+        this.relationEntity = this.definition.relations.find(element => element.entityView === this.visibleRelations[val].entityView)
+        console.log("this is the change")
         this.$router.replace({
           name: this.$route.name,
           params: this.$route.params,
@@ -207,6 +235,11 @@ export default {
     },
     onAction(action) {
       action.onClick(this.$refs.form.entity, this)
+    },
+    filter(data) {
+      console.log('this i sht data', data)
+      this.currentPage = 1
+      this.$refs.table.filter(data)
     },
     currentTool() {
       if (!this.$refs.tabs) return false
