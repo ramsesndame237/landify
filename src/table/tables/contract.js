@@ -434,6 +434,7 @@ export default {
     {
       entity: 'frontend_3_4_3_11',
       entityView: 'partnercompany',
+      primaryKey: 'partnercompany_id',
       fields: [
         // { key: 'area_id' },
         { key: 'location_id' },
