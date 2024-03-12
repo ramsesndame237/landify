@@ -143,6 +143,7 @@ export default {
     search: {},
     onEditElement: {type: Function},
     onViewElement: {type: Function},
+    onDeleteElement: {type: Function},
     perPage: Number,
     currentPage: Number,
     totalRows: Number,
@@ -346,6 +347,9 @@ export default {
               items = this.processData(data)
               // set in cache
               this.$store.commit('table/setTableCache', {key: cacheKey, data})
+            } else if (Array.isArray(data)) {
+              items = this.processData({data})
+              this.$store.commit('table/setTableCache', {key: cacheKey, data})
             } else {
               throw new Error('invalid data')
             }
@@ -485,8 +489,8 @@ export default {
           }
           await this.$http({
             method: this.customRequest.method ? this.customRequest.method : 'put',
-            url: this.customRequest.endpoint,
-            data: payload,
+            url: typeof this.customRequest.endpoint === 'function' ? this.customRequest.endpoint() : this.customRequest.endpoint,
+            data: this.customRequest.payload ? this.customRequest.payload(entities) : payload,
           }).then(res => {
             this.$successToast('Delete Done.')
             this.$root.$emit('update-occured')

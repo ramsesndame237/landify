@@ -352,7 +352,7 @@ export default {
       fields: [
         { key: 'id', listLabel: 'ID', type: 'list', hideOnForm: true },
         { key: 'code', hideOnForm: false, type: 'string' },
-        { key: 'value', hideOnForm: false, type: 'string' },
+        { key: 'value', hideOnForm: false, type: 'number' },
       ],
     },
   ],
