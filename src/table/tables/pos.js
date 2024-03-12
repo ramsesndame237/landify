@@ -1,7 +1,5 @@
 import _ from 'lodash'
 import { getUserData } from '@/auth/utils'
-import Vue from 'vue'
-import emailModal from '@/views/app/Ticket/EmailModal.vue'
 
 export default {
   entity: 'frontend_3_1_1',
@@ -82,11 +80,7 @@ export default {
   ],
   filters: [
     {
-      key: 'customergroup_id',
-      type: 'list',
-      list: 'customergroup',
-      listLabel: 'customergroup_name',
-      required: false,
+      key: 'customergroup_id', type: 'list', list: 'customergroup', listLabel: 'customergroup_name',
     },
     {
       key: 'company_id',
@@ -94,7 +88,6 @@ export default {
       list: 'frontend_2_2_3_1',
       listLabel: 'company_name',
       filter_key: 'customergroup_id',
-      required: false,
     },
     {
       key: 'country_id', type: 'list', list: 'country', listLabel: 'country_name', required: false,
@@ -259,7 +252,8 @@ export default {
     {
       title: 'headline~ticket~tab',
       primaryKey: 'ticket_id',
-      entity: 'frontend_3_1_3_4',
+      // entity: 'frontend_3_1_3_4',
+      entityEndpoint: '/tickets/list',
       entityForm: 'ticket_pos_rel',
       entityView: 'ticket',
       fields: [
@@ -280,6 +274,196 @@ export default {
         { key: 'ticket_move_time_in', hideOnForm: true },
         { key: 'ticket_move_time_out', hideOnForm: true },
         { key: 'ticket_deadline_offset', hideOnForm: true },
+      ],
+      filters: [
+        {
+          key: 'customergroup_id',
+          type: 'list',
+          list: 'customergroup',
+          listLabel: 'customergroup_name',
+          required: false,
+          noFetchOnInit: true,
+          customPagination: {
+            per_page: 15,
+          },
+        },
+        {
+          key: 'company_id',
+          type: 'list',
+          list: 'frontend_2_2_3_1',
+          listLabel: 'company_name',
+          filter_key: 'customergroup_id',
+          required: false,
+          // filter: (company, vm) => {
+          //   const isUserExternClientNotDirector = vm.$store.getters['user/isUserExternClientNotDirector']
+          //
+          //   if (isUserExternClientNotDirector) {
+          //     const { company: userCompany } = vm.$store.getters['user/user']
+          //     // vm.isDisabled = true
+          //     vm.$set(vm.entity, 'company_id', userCompany.company_id)
+          //     // return userCompany.company_id === company.company_id
+          //   }
+          //
+          //   return true
+          // },
+        },
+        {
+          key: 'pos_id',
+          type: 'list',
+          list: 'frontend_2_1_3_8',
+          listLabel: 'pos_name',
+          filter_key: 'company_id',
+          required: false,
+        },
+        {
+          key: 'contract_id',
+          listLabel: 'contract_name',
+          type: 'list',
+          list: 'frontend_4_2_1_contract_selector',
+          filter_key: 'pos_id',
+          required: false,
+        },
+        {
+          key: 'start_date',
+          label: 'Start Date',
+          type: 'date',
+          required: false,
+          hideOnForm: true,
+        },
+        {
+          key: 'end_date',
+          label: 'End Date',
+          type: 'date',
+          required: false,
+          hideOnForm: true,
+        },
+        {
+          key: 'filter_date',
+          label: 'Deadline Date',
+          type: 'date-picker',
+          required: false,
+          send: false,
+        },
+        {
+          key: 'team_id',
+          label: 'Team',
+          type: 'list',
+          list: 'teams',
+          entityCustomEndPoint: '/teams',
+          required: false,
+          listLabel: 'team_name',
+          withOptionAll: true,
+          clearable: false,
+          filter: (team, vm) => {
+            const { team_id } = vm.$store.getters['user/user']
+            const isUserExternClientNotDirector = vm.$store.getters['user/isUserExternClientNotDirector']
+
+            const teams = vm.$store.getters['table/listCache']('teams')
+
+            const seyboldTeams = teams.filter(t => t.team_is_customer === 0)
+
+            if (isUserExternClientNotDirector) {
+              vm.$set(vm.entity, 'team_id', -1)
+              return union(seyboldTeams.map(t => t.team_id), team_id).includes(team.team_id)
+            }
+            if (vm.entity.team_id === undefined) {
+              vm.$set(vm.entity, 'team_id', -1)
+            }
+
+            return true
+          },
+        },
+        {
+          key: 'user_id',
+          label: 'User',
+          type: 'list',
+          filter_key: 'team_id',
+          list: 'user_team_grp',
+          listLabel: 'user_email',
+          required: false,
+          withOptionAll: true,
+          clearable: false,
+          filter: (user, vm) => {
+            const { user_id } = vm.$store.getters['user/user']
+            const isUserExternClientNotDirector = vm.$store.getters['user/isUserExternClientNotDirector']
+
+            if (isUserExternClientNotDirector) {
+              return user.user_id === user_id
+            }
+            if (vm.entity.user_id === undefined) {
+              vm.$set(vm.entity, 'user_id', -1)
+            }
+
+            return true
+          },
+          change: (entity, vm) => {
+            if (entity.team_id === -1) {
+              vm.isDisabled = true
+              vm.$set(entity, 'user_id', -1)
+            } else {
+              vm.isDisabled = false
+            }
+          },
+        },
+        {
+          key: 'ticket_deadline_status',
+          label: 'Deadline Status',
+          type: 'custom-select',
+          required: false,
+          clearable: false,
+          items: [
+            {
+              label: 'All',
+              value: -1,
+            },
+            {
+              label: 'Before deadline',
+              value: 'before_deadline',
+            },
+            {
+              label: 'Before critical deadline',
+              value: 'critical_yellow',
+            },
+            {
+              label: 'After critical deadline',
+              value: 'over_due_red',
+            },
+          ],
+          change: (entity, vm) => {
+            if (entity.ticket_deadline_status === undefined) {
+              vm.$set(vm.entity, 'ticket_deadline_status', -1)
+            }
+          },
+        },
+        {
+          key: 'tickets',
+          label: 'Tickets type',
+          type: 'custom-select',
+          required: false,
+          clearable: false,
+          items: [
+            {
+              label: 'All',
+              value: -1,
+            },
+            {
+              label: 'Seybolds',
+              value: 'seybolds',
+            },
+            {
+              label: 'Customers',
+              value: 'customers',
+            },
+          ],
+          change: (entity, vm) => {
+            if (entity.tickets === undefined) {
+              vm.$set(vm.entity, 'tickets', -1)
+            }
+          },
+        },
+        {
+          key: 'priority_id', type: 'list', list: 'priority', listLabel: 'priority_name', required: false,
+        },
       ],
       newRoute: { name: 'table-form', params: { table: 'ticket' } },
       update: false,
@@ -331,7 +515,6 @@ export default {
       title: 'headline~document~tab',
       primaryKey: 'document_id',
       entityForm: 'document_pos_rel',
-      entityEndpoint: '/documents/pos',
       entity: 'frontend_3_1_3_8',
       fields: [
         {
@@ -346,58 +529,6 @@ export default {
         { key: 'document_name', hideOnForm: true },
         { key: 'document_entry_time', hideOnForm: true },
         { key: 'documenttype_name', hideOnForm: true },
-      ],
-    },
-    {
-      customRequest: {
-        endpoint: '/pos',
-        relationKey: 'area_ids',
-        entityKey: 'pos_id',
-      },
-      title: 'Email',
-      primaryKey: 'email_id',
-      entityEndpoint: '/pos/emails',
-      entity: 'frontend_3_1_3_1',
-      entityForm: 'area_pos_rel',
-      entityView: 'Email',
-      update: false,
-      delete: false,
-      create: false,
-      onViewElement: element => {
-        const EmailModal = Vue.extend(emailModal)
-        const emailModalInstance = new EmailModal({
-          i18n: window.$vue.$i18n,
-          router: window.$vue.$i18n,
-          store: window.$vue.$store,
-        })
-        emailModalInstance.$mount()
-        emailModalInstance.show(true, element)
-      },
-      fields: [
-        {
-          key: 'email_received_datetime',
-          sortable: true,
-          type: 'list',
-          list: 'area',
-          listLabel: 'area_name',
-          disableOnUpdate: true,
-        },
-        { key: 'email_from', hideOnForm: true },
-        { key: 'email_subject', hideOnForm: true },
-        // { key: 'location_id', hideOnForm: true },
-        // {
-        //   key: 'location_name',
-        //   hideOnForm: true,
-        // },
-        // {
-        //   key: 'areatype_name',
-        //   hideOnForm: true,
-        // },
-        // {
-        //   key: 'area_last_change_time', hideOnForm: true, type: 'date', time: true,
-        // }, {
-        //   key: 'area_space_value', hideOnForm: true,
-        // },
       ],
     },
   ],

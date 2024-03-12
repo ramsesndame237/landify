@@ -11,8 +11,8 @@
         </b-button>
         <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions" class="mr-2"/>
       </table-pagination> -->
-      <generic-filter ref="filter" vertical :table="table" :definition="definition" :initial-data="initialFilterData"
-                      @filter="allFilter" @reset="reset"/>
+    <generic-filter ref="filter" vertical :table="table" :definition="definition" :initial-data="initialFilterData"
+                    @filter="allFilter" @reset="reset"/>
     <!-- </b-card> -->
 
     <!-- <b-card>
@@ -26,8 +26,9 @@
     </b-card> -->
     <data-table
       ref="dataTable"
-      url="/tickets/slims"
+      :url="`/tickets/slims`"
       :columns="cols"
+      :default-params="{status:filterValue}"
       :on-row-click="(row) => row.ticket_id && $router.push(`/app/table/ticket/view/${row.ticket_id}`)"
       :include-in-query="currentFilterData"
       :bar-actions="[
@@ -36,7 +37,11 @@
           onClick: () => $refs.filter.openModal(),
         }
       ]"
-    />
+    >
+      <template #customTabFilter >
+        <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
+      </template>
+    </data-table>
     <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"
                    with-continue :table-definition-key="table" :title="`headline~${table}~new`"
                    @reload-table="$refs.table.reload()"/>
@@ -82,7 +87,7 @@ export default {
           ticket_deadline_status: data.ticket_deadline_status,
           team_id: data.team_id,
           user_id: data.user_id,
-          status: 'opened',
+          status:'opened',
           tickets: data.tickets,
           company_id: data.company_id,
           customergroup_id: data.customergroup_id,
@@ -141,12 +146,12 @@ export default {
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
       initialFilterData: payload?.filter,
-      currentFilterData: currFilters,
+      currentFilterData: Object.keys(currFilters).length === 0 ? { status: this.filterValue ?? 'opened' } : currFilters,
       initialSortBy: payload?.sortBy,
       initialSortDesc: payload?.sortDesc ?? true,
       table: this.$route.params.table,
       filterOptions: [
-        { text: this.$t('header~board~status~all'), value: null },
+        { text: this.$t('header~board~status~all'), value: 'all' },
         {
           text: this.$t('header~board~status~open'), value: 'opened',
         },
@@ -157,11 +162,15 @@ export default {
           value: 'not_assigned',
         },
         {
-          text: this.$t('header~board~status~update~ticket'),
-          value: 'update_ticket',
+          text: this.$t('Done'),
+          value: 'done',
         },
+        // {
+        //   text: this.$t('header~board~status~update~ticket'),
+        //   value: 'update_ticket',
+        // },
       ],
-      filterValue: payload?.filter?.status || null,
+      filterValue: payload?.filter?.status || 'opened',
       user: getUserData(),
     }
   },
@@ -175,9 +184,8 @@ export default {
   },
   watch: {
     filterValue: {
-      handler() {
-        console.log('filter value change')
-        this.allFilter()
+      handler(newvalue) {
+        this.allFilter(newvalue === 'update_ticket' ? { type_of_ticket: newvalue } : { status: newvalue })
       },
     },
   },
@@ -208,11 +216,7 @@ export default {
       return count
     },
     allFilter(value) {
-      // this.$nextTick(() => {
-      //   this.filter({ ...this.$refs.filter.getFinalData(), status: this.filterValue })
-      // })
-      // const _payload = { ...this.$refs.filter.getFinalData(), status: this.filterValue }
-      const _payload = { ...value}
+      const _payload ={ ...value}
       const payload = {}
       Object.keys(_payload).forEach(key => {
         if (_payload[key] && _payload[key] !== -1) {

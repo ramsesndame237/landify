@@ -75,11 +75,11 @@ export default {
   },
   created() {
     if (this.definition.filters) {
-      (this.definition.filters ?? []).forEach(filter => {
+      (this.definition.filters ?? []).filter(x => !x.hideOnListing).forEach(filter => {
         this.$watch(
           `data.${filter.key}`,
           () => {
-            (this.definition.filters ?? []).filter(_filter => _filter.filter_key === filter.key).map(_filter => {
+            (this.definition.filters ?? []).filter(_filter => _filter.filter_key === filter.key && !_filter.hideOnListing).map(_filter => {
               this.$set(this.data, _filter.key, null)
             })
           },
@@ -117,23 +117,18 @@ export default {
       // Prevent modal from closing
       bvModalEvt.preventDefault()
       // Trigger submit handler
+      console.log("this is the data modal")
       this.loading = true
       this.$refs.form.validate()
         .then(success => {
           if (!success) {
             return Promise.reject(new Error('Invalid Form'))
           }
-          this.$refs.modal.hide()
+          // this.$refs.modal.hide()
           this.$emit('filter', this.getFinalData())
         })
     },
     getFinalData() {
-      console.log("this i sht djs", Object.keys(this.data)
-        .filter(key => this.definition.filters.find(f => f.key === key && f.send !== false))
-        .reduce((obj, key) => {
-          if (this.data[key] != null) obj[key] = this.data[key]
-          return obj
-        }, {}))
       return Object.keys(this.data)
         .filter(key => this.definition.filters.find(f => f.key === key && f.send !== false))
         .reduce((obj, key) => {
