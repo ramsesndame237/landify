@@ -48,6 +48,7 @@
     "picmo": "^5.8.4",
     "portal-vue": "2.1.7",
     "prismjs": "1.27.0",
+    "pump": "^3.0.0",
     "read-excel-file": "^5.5.0",
     "swiper": "6.5.1",
     "tinymce": "^6.5.1",
