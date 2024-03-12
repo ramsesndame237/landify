@@ -54,7 +54,7 @@
       <invoice-stats/>
     </template>
     <generic-filter ref="filterEdit" :table="table"
-                    :definition="relationEntity"
+                    :definition="definition.relations.find(element=> (element.entityView === 'ticket'))"
                     :initial-data="initialFilterData"
                     @filter="filter"/>
     <b-card v-if="definition.relations && formLoaded && visibleRelations.length>0 && !create ">
