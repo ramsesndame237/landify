@@ -6,11 +6,13 @@ import Table from '@/table'
 import InvoiceTicketCard from '@/views/app/CustomComponents/WP6/InvoiceTicketCard.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
+import NoData from '@/views/app/CustomComponents/NoData/NoData.vue'
+import moment from "moment-business-time";
 
 export default {
   name: 'KabanView',
   components: {
-    AssignUserModal, GenericModal, InvoiceTicketCard, GenericFilter, KanbanViewDisplay,
+    AssignUserModal, GenericModal, InvoiceTicketCard, GenericFilter, KanbanViewDisplay, NoData,
   },
   mixins: [TicketMixin],
   data() {
@@ -59,7 +61,7 @@ export default {
       loading: true,
       initialFetch: false,
       size: 3,
-      page: 1,
+      pages: [],
     }
   },
   computed: {
@@ -72,6 +74,7 @@ export default {
       if (newValue.length !== 0 && this.initialFetch) {
         console.log('this is the new value of the column', newValue)
         newValue.forEach(element => {
+          this.pages.push({ column_id: element.column_id, page: 1 })
           this.fetchTicketOfTheColumn(element.column_id)
         })
         this.loadingTicket = newValue.map(item => ({ id: item.column_id, value: false }))
@@ -85,38 +88,65 @@ export default {
   },
   methods: {
     async handleScroll(event, value) {
-      const previousEvent = this.previousScrollEvent.find(x => x.id === value.column_id)
-      console.log("this is the previous element ", this.previousScrollEvent)
-      console.log("this is the column", value.column_id)
-      console.log("this is the previousevent", previousEvent)
-      if (previousEvent && previousEvent.value > event.target.scrollTop) {
-        console.log('you are going doing')
-        this.page += 1
+      if (event.target.scrollTop + event.target.offsetHeight >= event.target.scrollHeight) {
+        this.pages.find(elet => elet.column_id === value.column_id).page += 1
         await this.fetchTicketOfTheColumn(value.column_id)
-      } else {
-        this.previousScrollEvent.push({ id: value.column_id, value: event.target.scrollTop })
-        // this.columnData.find(column => column.column_id === value.column_id).tickets.push({
-        //   ticket_id: this.generateUuid(),
-        //   ticket_name: `ticket-${this.generateUuid()}`,
-        // })
       }
     },
-    handleDrag(event, column, ticket) {
+    async handleDrag(event, column, ticket) {
       if (event.type === 'dragend') {
-        console.log('this is the value of the colum', column)
-        console.log('this is the value of the ticket', ticket)
         if (this.dropColumn) {
           console.log('this is the column dropColumn', this.dropColumn)
+          const result = await this.$swal({
+            title: 'Are you sure?',
+            text: `This ticket ${ticket.ticket_name} will be moved to the column: ${this.dropColumn.column_name}`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            customClass: {
+              confirmButton: 'btn btn-primary',
+              cancelButton: 'btn btn-outline-danger ml-1',
+            },
+            buttonsStyling: false,
+          })
+          if (event.target.classList.contains('card_draggable')) {
+            event.target.classList.remove('card_draggable')
+          }
+          if (!result.value) return false
+          this.loading = true
+          try {
+            await this.changeTicketColumn(event, column.column_id, this.dropColumn.column_id, '', ticket)
+          } finally {
+            this.loading = false
+          }
+          return true
         }
         if (event.target.classList.contains('card_draggable')) {
           event.target.classList.remove('card_draggable')
         }
       } else {
-        console.log('the drag start', event)
         event.target.classList.add('card_draggable')
       }
       event.dataTransfer.setData('text', event.target.id)
-      event.dataTransfer.effectAllowed = 'move'
+      return event.dataTransfer.effectAllowed = 'move'
+    },
+    changeTicketColumn(event, previous_column_id, next_column_id, next_column_name, ticket) {
+      const payload = {
+        previous_column_id,
+        next_column_id,
+        board_id: this.$route.params.id || ticket.board_id,
+        ticket_id: ticket.ticket_id,
+      }
+      this.$http.post('/tickets/change-ticket-column', payload).then(response => {
+        console.log("this is the response of the changecolumn", response)
+        this.columnData.find(elet => elet.column_id === previous_column_id).tickets = this.columnData.find(elet => elet.column_id === previous_column_id).tickets.filter(elt => elt.ticket_id !== ticket.ticket_id)
+        this.columnData.find(elet => elet.column_id === next_column_id).tickets.push({ ...ticket, column_id: next_column_id, column_name: next_column_name })
+      }).catch(error => {
+        console.error(error)
+      })
+      if (event.target.classList.contains('card_draggable')) {
+        event.target.classList.remove('card_draggable')
+      }
     },
     handleDragOver(event) {
       console.log(
@@ -126,22 +156,19 @@ export default {
       // Set the dropEffect to move
       event.dataTransfer.dropEffect = 'move'
     },
-    handleDrop(event, column_id) {
-      console.log('this is the drop event', event)
-      console.log('this is the drop column', column_id)
-      this.dropColumn = column_id
+    handleDrop(event, column_id, column_name) {
+      this.dropColumn = { column_id, column_name }
     },
     fetchTicketOfTheColumn(id) {
       console.log('this i sth fetch', id)
       if (id) {
-        this.$http.get(`/tickets/slims?column_id=${id}&board_id=${this.$route.params.id}&size=${this.size}&page=${this.page}`).then(response => {
+        this.$http.get(`/tickets/slims?column_id=${id}&board_id=${this.$route.params.id}&size=${this.size}&page=${this.pages.find(pageElement => pageElement.column_id === id).page}`).then(response => {
           console.log('this is the ticket of the column', response.data.data)
           const oldticket = this.columnData.find(element => element.column_id === id).tickets
-          console.log("this is the old ticket",oldticket)
-          if(oldticket.length > 0){
-            console.log("this is the data", [...oldticket,...response.data.data])
-            this.columnData.find(column => column.column_id === id).tickets = [...oldticket,...response.data.data]
-          }else{
+          if (oldticket.length > 0) {
+            console.log('this is the data', [...oldticket, ...response.data.data])
+            this.columnData.find(column => column.column_id === id).tickets = [...oldticket, ...response.data.data]
+          } else {
             this.columnData.find(column => column.column_id === id).tickets = response.data.data
           }
           console.log('this is the column data', this.columnData)
@@ -155,6 +182,19 @@ export default {
         this.teams = response.data.data
       }).catch(error => {
         console.error(error)
+      })
+    },
+    createTicket() {
+      const now = moment()
+      const column = this.columns[0]
+      const deadline_yellow = now.clone().addWorkingTime(column.default_deadline_yellow, 'hours').format('YYYY-MM-DD HH:mm:ss')
+      const deadline_red = now.clone().addWorkingTime(column.default_deadline_red, 'hours').format('YYYY-MM-DD HH:mm:ss')
+      this.$refs.modal.openModal(true, {
+        column_id: column.column_id,
+        board_id: column.board_id,
+        ticket_deadline_yellow: deadline_yellow,
+        ticket_deadline_red: deadline_red,
+        ticket_planned_treatment_week: 'KW42',
       })
     },
     fetchColumnOfTheBoard() {
@@ -191,7 +231,7 @@ export default {
                     @click="showSubTickets = !showSubTickets">
             <icon icon="mdi:subtasks" width="16"/>
           </b-button>
-          <b-button v-if="$can('create', table)" variant="primary" class="mr-1" block>
+          <b-button v-if="$can('create', table)" variant="primary" class="mr-1" block @click="createTicket()">
             {{ $t('button~newticket') }}
           </b-button>
           <b-form-input v-model="search" debounce="500" type="search" class="w-16" placeholder="Search.."/>
@@ -199,20 +239,21 @@ export default {
       </div>
     </b-card>
     <div class="h-100">
-      <KanbanViewDisplay classes="d-flex kanbanContainer" :styles="'border:solid green'">
+      <KanbanViewDisplay classes="d-flex kanbanContainer position-relative" :styles="'border:solid green'">
+        <NoData v-if="columnData.length === 0"/>
         <b-card v-for="item in columnData" :key="item.column_id" class="columnBoardElement"
                 @scrollend.passive="(e)=>handleScroll(e,item)"
-                @drop.prevent="(event)=> handleDrop(event,item.column_id)"
+                @drop.prevent="(event)=> handleDrop(event,item.column_id,item.column_name)"
                 @dragover.prevent="(event) =>handleDragOver(event)">
           <template #header>
-            <div class="border-bottom-2 border-bottom-primary w-100">
+            <div class="border-bottom-2 border-bottom-primary  w-100">
               <h5>
                 {{ item.column_name }}
               </h5>
             </div>
           </template>
           <div v-for="ticket in item.tickets" :id="ticket.ticket_id" :key="ticket.ticket_id" draggable="true"
-               class="cursor-pointer" style="height: 250px;margin-top: 15px;"
+               class="cursor-pointer" style="height: auto;margin-top: 15px;"
                @dragend="(event)=> handleDrag(event,item,ticket)"
                @dragstart="(event)=> handleDrag(event)">
             <invoice-ticket-card v-if="ticket.ticket_id_group === null || showSubTickets" class="bg-white"
@@ -242,7 +283,7 @@ export default {
 }
 
 .columnBoardElement {
-  background: #bbbcbe;
+  background: #ecebeb;
   min-width: 450px;
   max-height: 100vh;
   margin-bottom: 15px;
