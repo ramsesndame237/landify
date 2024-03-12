@@ -10,6 +10,11 @@ export default {
       tabIndex: parseInt(this.$route.query.tab || 0),
     }
   },
+  watch:{
+    tabIndex(newValue){
+      console.log("this is the value", newValue)
+    }
+  },
   computed: {
     title() {
       if (this.create) return `headline~${this.table}~new`
@@ -109,4 +114,5 @@ export default {
       })
     },
   },
+
 }

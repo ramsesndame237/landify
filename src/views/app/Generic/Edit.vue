@@ -53,7 +53,10 @@
     <template v-if="table==='invoice' && $refs.tabs">
       <invoice-stats/>
     </template>
-
+    <generic-filter ref="filterEdit" :table="table"
+                    :definition="definition.relations.find(element=> (element.entityView === 'ticket'))"
+                    :initial-data="initialFilterData"
+                    @filter="filter"/>
     <b-card v-if="definition.relations && formLoaded && visibleRelations.length>0 && !create ">
       <b-tabs ref="tabs" pills>
         <b-tab v-for="(relation, index) in visibleRelations" :key="index"
@@ -63,23 +66,20 @@
             <component :is="relation.component" :relation="relation" :entity-id="entityId"/>
           </template>
           <template v-else>
-            <data-tables :second-key="primaryKey"
-                         :second-key-value="entityId"
-                         :current-page="currentPage"
-                         :per-page="perPage"
-                         :total-rows="totalRows"
-                         :primary-key-column="relation.primaryKey"
-                         :entity="relation.entity"
-                         :search="search"
-                         :entity-form="relation.entityForm"
-                         :entity-view="relation.entityView"
-                         :with-view="relation.view!==false"
-                         :fields="relation.fields"
-                         :on-edit-element="editElement"
-                         :with-edit="relation.update!==false"
-                         :with-delete="relation.delete!==false"
-                         :custom-request="relation.customRequest"
-                         :on-delete-element="relation.onDeleteElement"
+            <b-card v-if="relation.primaryKey === 'ticket_id'" body-class="p-0">
+              <table-pagination :per-page.sync="perPage" :show-input="true" :current-page.sync="currentPage"
+                                :entity="table"
+                                :with-filter="definition.filters && definition.filters.length > 0"
+                                :total-rows.sync="totalRows"
+                                :inline-filter="!definition.inline_filter" @filter="$refs.filterEdit.openModal()"/>
+            </b-card>
+            <data-tables ref="table" :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
+                         :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
+                         :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
+                         :entity-view="relation.entityView" :with-view="relation.view!==false" :fields="relation.fields"
+                         :on-edit-element="editElement" :with-edit="relation.update!==false"
+                         :opacity="relation.primaryKey === 'ticket_id'"
+                         :with-delete="relation.delete!==false" :custom-request="relation.customRequest"
                          :entity-endpoint="relation.entityEndpoint"/>
             <generic-modal :cache-key="relation.entity+'-'" title="Test" :table="relation.entityForm || relation.entity"
                            :definition="relation" is-relation
@@ -127,19 +127,19 @@
 
 <script>
 import {
-  BCard,
-  BTab,
-  BTabs,
-  BRow,
-  BCol,
-  BSpinner,
-  BFormInput,
   BButton,
+  BCard,
+  BCol,
   BDropdown,
   BDropdownForm,
   BFormGroup,
+  BFormInput,
   BInputGroup,
   BInputGroupPrepend,
+  BRow,
+  BSpinner,
+  BTab,
+  BTabs,
 } from 'bootstrap-vue'
 import DataTables from '@/layouts/components/DataTables'
 import GenericModal from '@/views/app/Generic/modal'
@@ -147,9 +147,14 @@ import EntityForm from '@/views/app/Generic/EntityForm'
 import EditPageMixin from '@/views/app/Generic/EditPageMixin'
 import Notes from '@/views/app/Generic/Notes'
 import InvoiceStats from '@/views/app/CustomComponents/InvoiceStats'
+import GenericFilter from '@/views/app/Generic/Filter.vue'
+import TablePagination from '@/layouts/components/TablePagination.vue'
+import Tables from '@/table'
 
 export default {
   components: {
+    TablePagination,
+    GenericFilter,
     InvoiceStats,
     Notes,
     EntityForm,
@@ -171,6 +176,13 @@ export default {
   },
   mixins: [EditPageMixin],
   data() {
+    const payload = this.$store.getters['table/tableData'](this.$route.params.table)
+    const table = this.$route.params.table
+    const definition = Tables[table]
+    let defaultPage = null
+    if (this.isUserExternClient) {
+      defaultPage = definition.perPage
+    }
     return {
       search: '',
       currentPage: 1,
@@ -179,6 +191,8 @@ export default {
       formLoaded: false,
       noBody: false,
       showTool: true,
+      initialFilterData: payload?.filter,
+      relationEntity: null,
     }
   },
   computed: {
@@ -205,10 +219,12 @@ export default {
     this.$watch('$refs.tabs.currentTab', val => {
       if (this.tabIndex !== val) {
         this.tabIndex = val
+        this.relationEntity = this.definition.relations.find(element => element.entityView === this.visibleRelations[val].entityView)
+        console.log("this is the change")
         this.$router.replace({
           name: this.$route.name,
           params: this.$route.params,
-          query: {tab: val},
+          query: { tab: val },
         })
       }
     })
@@ -219,6 +235,11 @@ export default {
     },
     onAction(action) {
       action.onClick(this.$refs.form.entity, this)
+    },
+    filter(data) {
+      console.log('this i sht data', data)
+      this.currentPage = 1
+      this.$refs.table.filter(data)
     },
     currentTool() {
       if (!this.$refs.tabs) return false
@@ -237,31 +258,31 @@ export default {
       return this.visibleRelations[this.$refs.tabs.currentTab]?.search !== false
     },
     deleteSelected() {
-      const {tabs} = this.$refs
+      const { tabs } = this.$refs
       tabs.tabs[tabs.currentTab].$children[0].deleteSelected()
     },
     newElement() {
-      const {tabs} = this.$refs
+      const { tabs } = this.$refs
       const route = this.visibleRelations[tabs.currentTab].newRoute
       if (route) {
-        this.$router.push({name: route.name, params: {id: this.entityId, table: route.params.table}})
+        this.$router.push({ name: route.name, params: { id: this.entityId, table: route.params.table } })
       } else {
-        console.log('Ici tabs', {tabs})
+        console.log('Ici tabs', { tabs })
         const def = this.definition.relations[tabs.currentTab]
-        tabs.tabs[tabs.currentTab].$children[1].openModal(true, {[this.primaryKey]: this.entityId}, `headline~${def.entityForm || def.title}~new`)
+        tabs.tabs[tabs.currentTab].$children[1].openModal(true, { [this.primaryKey]: this.entityId }, `headline~${def.entityForm || def.title}~new`)
       }
     },
     editElement(entity) {
-      const {tabs} = this.$refs
+      const { tabs } = this.$refs
       const def = this.definition.relations[tabs.currentTab]
       tabs.tabs[tabs.currentTab].$children[1].openModal(false, entity, `headline~${def.entityForm || def.title}~detail`)
     },
     reloadRelatedTable() {
-      const {tabs} = this.$refs
+      const { tabs } = this.$refs
       tabs.tabs[tabs.currentTab].$children[0].reload()
     },
     getCurrentTable() {
-      const {tabs} = this.$refs
+      const { tabs } = this.$refs
       return tabs.tabs[tabs.currentTab].$children[0]
     },
   },
