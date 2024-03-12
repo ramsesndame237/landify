@@ -1,5 +1,4 @@
 import { getUserData } from '@/auth/utils'
-import _ from "lodash";
 
 export default {
   entityEndpoint: '/companies',
@@ -246,24 +245,6 @@ export default {
       update: false,
     },
     {
-      title: 'bankdata',
-      entity: 'frontend_2_1_3_7',
-      entityForm: 'company_bankdata_rel',
-      primaryKey: 'bankdata_id',
-      fields: [
-        {
-          key: 'bankdata_id', type: 'list', list: 'bankdata', alwaysNew: true, onlyForm: true,
-        },
-        { key: 'bankdata_bank_name', hideOnForm: true },
-        { key: 'bankdata_account_number', hideOnForm: true },
-        { key: 'bankdata_iban', hideOnForm: true },
-        { key: 'bankdata_bic', hideOnForm: true },
-        { key: 'bankdata_vat', hideOnForm: true },
-        { key: 'bankdata_is_active', hideOnForm: true },
-      ],
-      view: false,
-    },
-    {
       title: 'Point of Sales',
       entity: 'frontend_2_1_3_8',
       primaryKey: 'pos_id',
@@ -353,7 +334,7 @@ export default {
       fields: [
         { key: 'id', listLabel: 'ID', type: 'list', hideOnForm: true },
         { key: 'code', hideOnForm: false, type: 'string' },
-        { key: 'value', hideOnForm: false, type: 'string' },
+        { key: 'value', hideOnForm: false, type: 'number' },
       ],
     },
   ],
@@ -386,6 +367,7 @@ export default {
       vm.$errorToast('Error while saving the company')
       throw err
     }
+
     return response
   },
 }

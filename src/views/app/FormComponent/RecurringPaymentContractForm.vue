@@ -24,7 +24,7 @@ export default {
         recurringpaymenttype_id: Number(data?.recurringpaymenttype?.recurringpaymenttype_id),
         partnercompany_id: Number(data?.partnercompany_id),
         bankdata_id: Number(data?.partnercompany_bankdata?.bankdata_id),
-        tax_rate_id: Number(data?.recurringpayment_taxrate_id), // tax_rate_id
+        tax_rate_id: Number(data?.tax_rate_id), // tax_rate_id
         maturitytype_id: Number(data?.maturitytype?.maturitytype_id),
         indexclause_id: Number(data?.indexclause?.indexclause_id),
         contract_id: Number(data?.contract?.contract_id),
