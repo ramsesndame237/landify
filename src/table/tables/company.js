@@ -325,6 +325,36 @@ export default {
         },
       ],
     },
+    {
+      title: 'Tax rate',
+      primaryKey: 'user_id',
+      entity: 'tax_rates',
+      entityEndpoint: vm => `/companies/${vm.$route.params.id}/tax-rates`,
+      view: false,
+      update: true,
+      customRequest: {
+        method: 'delete',
+        endpoint: () => `/companies/${window.$vue.$route.params.id}/tax-rates`,
+        payload: entities => {
+          return entities.map(e => e.id)
+        },
+      },
+      submit: async (vm, entity, create) => {
+        const method = create ? 'post' : 'put'
+        const url = create ? `/companies/${vm.$route.params.id}/tax-rates` : `/companies/${vm.$route.params.id}/tax-rates/${entity.id}`
+
+        const dataForServer = {
+          ...entity,
+        }
+
+        await vm.$http[method](url, dataForServer)
+      },
+      fields: [
+        { key: 'id', listLabel: 'ID', type: 'list', hideOnForm: true },
+        { key: 'code', hideOnForm: false, type: 'string' },
+        { key: 'value', hideOnForm: false, type: 'string' },
+      ],
+    },
   ],
   note: 'frontend_0_8_11',
   async submit(vm, entity) {
