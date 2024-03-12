@@ -52,7 +52,7 @@ export default {
     { key: 'contactdetails_email', hideOnForm: true },
     { key: 'contactpersons_count', hideOnForm: true },
     { key: 'locations_count', hideOnForm: true },
-    {
+    /* {
       key: 'address_id',
       hideOnIndex: true,
       type: 'list',
@@ -81,7 +81,7 @@ export default {
       withNew: true,
       alwaysNew: true,
       onlyForm: true,
-    },
+    }, */
     // {
     //   key: 'partnercompany_type',
     //   type: 'checkbox',
@@ -346,8 +346,7 @@ export default {
       const fieldsComponent = vm.getFieldComponents()
       const addressField = fieldsComponent.find(f => f.field.key === 'address_id')
       const companydetails = fieldsComponent.find(f => f.field.key === 'companydetails_id')
-
-      if (!taxRegex.exec(companydetails?.subEntity.companydetails_salestaxno)) {
+      /* if (!taxRegex.exec(companydetails?.subEntity.companydetails_salestaxno)) {
         throw Error('errors~invalid~salestaxno')
       }
       if (!comercialRegistryNoRegex.exec(companydetails?.subEntity.companydetails_commercialregisterno)) {
@@ -360,13 +359,12 @@ export default {
       const contactdetails = fieldsComponent.find(f => f.field.key === 'contactdetails_id')
       const cityField = addressField?.getSubFields().find(f => f.field.key === 'city_id')
 
-      const { state, ...cityObj } = cityField?.subEntity || {}
-
+      const { state, ...cityObj } = cityField?.subEntity || {} */
       const method = create ? 'post' : 'put'
 
       const dataForServer = {
         ...entity,
-        contactdetail: contactdetails?.subEntity,
+        /* contactdetail: contactdetails?.subEntity,
         companydetail: companydetails?.subEntity,
         address: {
           ...(addressField?.subEntity || {}),
@@ -374,7 +372,7 @@ export default {
             ...cityObj,
             city_state: state,
           },
-        },
+        }, */
       }
 
       dataForServer.partnergroup = {
