@@ -86,13 +86,14 @@ export default {
       // Prevent modal from closing
       bvModalEvt.preventDefault()
       // Trigger submit handler
+      console.log("this is the data modal")
       this.loading = true
       this.$refs.form.validate()
         .then(success => {
           if (!success) {
             return Promise.reject(new Error('Invalid Form'))
           }
-          this.$refs.modal.hide()
+          // this.$refs.modal.hide()
           this.$emit('filter', this.getFinalData())
         })
     },

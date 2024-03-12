@@ -543,7 +543,7 @@ export default {
       this.$set(record, '__selected', !record.__selected)
     },
     rowClass(item) {
-      return item.ticket_closed === 1 ? 'statusBackground' : '';
+      return item?.ticket_closed === 1 ? 'statusBackground' : '';
     },
     downloadCsv(filename = 'export.csv') {
       const fields = this.allFields.filter(f => (['Actions', '__selected'].indexOf(f.key) === -1))
