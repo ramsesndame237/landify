@@ -230,6 +230,15 @@ export default {
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
         this.items = (await this.$http.get(`/contracts/conditionList/new?${requestQuery}`)).data.data
+      } catch (err) {
+        if (err.code === 'ERR_BAD_REQUEST') {
+          let error = (await err.response).data
+          error = JSON.parse(await error.text())
+
+          this.$errorToast(error.detail || 'Unknown error')
+        } else {
+          this.$errorToast('Unknown error')
+        }
       } finally {
         this.loading = false
       }
