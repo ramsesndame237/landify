@@ -1,7 +1,14 @@
+import {
+  comercialRegistryNoRegex,
+  isValidIBANNumber,
+  taxRegex,
+  websiteRegex,
+} from '@/libs/utils'
+
 export default {
   entity: 'frontend_2_5_1',
   primaryKey: 'partnercompany_id',
-  formComponent: () => import('@/views/app/FormComponent/PartnerCompanyForm.vue'),
+  // formComponent: () => import('@/views/app/FormComponent/PartnerCompanyForm.vue'),
   fields: [
     { key: 'partnercompany_id', auto: true },
     {
@@ -16,6 +23,19 @@ export default {
       ],
       send: false,
     },
+    // {
+    //   key: 'partnercompany_role',
+    //   // label: 'Role',
+    //   type: 'hidden',
+    //   hideOnIndex: true,
+    //   required: false,
+    //   items: [
+    //     { value: 'Manager_Owner', label: 'Owner / Manager' },
+    //     { value: 'Manager', label: 'Manager' },
+    //     { value: 'Owner', label: 'Owner' },
+    //   ],
+    //   send: false,
+    // },
     {
       key: 'partnergroup_id',
       type: 'list',
@@ -26,7 +46,7 @@ export default {
       noFetchOnChange: true,
     },
     { key: 'partnercompany_name' },
-    // { key: 'partnercompany_shortname' },
+    { key: 'partnercompany_shortname', maxLength: 10 },
     { key: 'partnergroup_name', hideOnForm: true },
     { key: 'city_name', hideOnForm: true },
     { key: 'contactdetails_email', hideOnForm: true },
@@ -62,17 +82,114 @@ export default {
       alwaysNew: true,
       onlyForm: true,
     },
+    // {
+    //   key: 'partnercompany_type',
+    //   type: 'checkbox',
+    //   items: [
+    //     { label: 'Option A', value: 0 },
+    //     { label: 'Option B', value: 1 },
+    //     { label: 'Option C', value: 3 },
+    //   ],
+    // },
     {
-      key: 'partnercompany_type',
-      type: 'checkbox',
-      items: [
-        { label: 'Option A', value: 0 },
-        { label: 'Option B', value: 1 },
-        { label: 'Option C', value: 3 },
-      ],
+      key: 'partnertype_id',
+      type: 'list',
+      list: 'partnertype',
+      listLabel: 'partnertype_name',
+      hideOnIndex: true,
+      noFetchOnChange: true,
+    },
+  ],
+  filter_vertical: true,
+  filters: [
+    {
+      key: 'partnercompany_id',
+      type: 'list',
+      list: 'partnercompany',
+      listLabel: 'partnercompany_name',
     },
   ],
   relations: [
+    {
+      title: 'bankdata',
+      entity: 'bankdata',
+      primaryKey: 'bankdata_id',
+      entityEndpoint: vm => `/partners/${vm.$route.params.id}/bankdata`,
+      fields: [
+        {
+          key: 'bankdata_iban',
+          type: 'string',
+        },
+        {
+          key: 'iban_id',
+          type: 'number',
+        },
+        {
+          key: 'bankdata_bank_name',
+          required: false,
+        },
+      ],
+      async submit(vm, entity, create) {
+        try {
+
+          const method = create ? 'post' : 'put'
+          const url = create ? `/partners/${vm.$route.params.id}/bankdata` : `/partners/${vm.$route.params.id}/bankdata/${entity.bankdata_id}`
+
+          const dataForServer = {
+            ...entity,
+          }
+
+          await vm.$http[method](url, dataForServer)
+        } catch (error) {
+          throw Error(error?.response?.data?.detail
+            ?? vm.$t(String(error.message)?.startsWith('errors~')
+              ? vm.$t(error.message)
+              : 'errors~unexpected~error~ocurred'))
+        }
+      },
+    },
+    {
+      title: 'kreditornumber',
+      entity: 'kreditornumber',
+      primaryKey: 'kreditornumber_id',
+      entityEndpoint: vm => `/partners/${vm.$route.params.id}/kreditornumber`,
+      fields: [
+        {
+          key: 'company_id',
+          type: 'list',
+          list: 'company',
+          listLabel: 'company_name',
+          required: true,
+          hideOnUpdate: true,
+        },
+        {
+          key: 'company_name',
+          hideOnForm: true,
+        },
+        {
+          key: 'kreditornumber',
+          type: 'number',
+        },
+      ],
+      async submit(vm, entity, create) {
+        try {
+          console.log({ entity, create })
+
+          const method = create ? 'post' : 'put'
+          const url = create ? `/partners/${vm.$route.params.id}/kreditornumber` : `/partners/${vm.$route.params.id}/kreditornumber/${entity.kreditornumber_id}`
+          const dataForServer = {
+            ...entity,
+          }
+
+          await vm.$http[method](url, dataForServer)
+        } catch (error) {
+          throw Error(error?.response?.data?.detail
+            ?? vm.$t(String(error.message)?.startsWith('errors~')
+              ? vm.$t(error.message)
+              : 'errors~unexpected~error~ocurred'))
+        }
+      },
+    },
     {
       title: 'ticket',
       primaryKey: 'ticket_id',
@@ -223,4 +340,55 @@ export default {
     },
   ],
   note: 'frontend_0_8_4',
+  async submit(vm, entity, create) {
+    try {
+
+      const fieldsComponent = vm.getFieldComponents()
+      const addressField = fieldsComponent.find(f => f.field.key === 'address_id')
+      const companydetails = fieldsComponent.find(f => f.field.key === 'companydetails_id')
+
+      if (!taxRegex.exec(companydetails?.subEntity.companydetails_salestaxno)) {
+        throw Error('errors~invalid~salestaxno')
+      }
+      if (!comercialRegistryNoRegex.exec(companydetails?.subEntity.companydetails_commercialregisterno)) {
+        throw Error('errors~invalid~commercialregisterno')
+      }
+      if (!websiteRegex.exec(companydetails?.subEntity.companydetails_website)) {
+        throw Error('errors~invalid~website')
+      }
+
+      const contactdetails = fieldsComponent.find(f => f.field.key === 'contactdetails_id')
+      const cityField = addressField?.getSubFields().find(f => f.field.key === 'city_id')
+
+      const { state, ...cityObj } = cityField?.subEntity || {}
+
+      const method = create ? 'post' : 'put'
+
+      const dataForServer = {
+        ...entity,
+        contactdetail: contactdetails?.subEntity,
+        companydetail: companydetails?.subEntity,
+        address: {
+          ...(addressField?.subEntity || {}),
+          city: {
+            ...cityObj,
+            city_state: state,
+          },
+        },
+      }
+
+      dataForServer.partnergroup = {
+        partnergroup_id: dataForServer.partnergroup_id,
+      }
+      delete dataForServer.partnergroup_id
+      delete dataForServer.partnergroup_is_internal
+
+      await vm.$http[method]('/partners/new', dataForServer)
+    } catch (error) {
+      throw Error(error?.response?.data?.detail
+        ?? vm.$t(String(error.message)?.startsWith('errors~')
+          ? vm.$t(error.message)
+          : 'errors~unexpected~error~ocurred'))
+    }
+  },
 }

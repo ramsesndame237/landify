@@ -307,6 +307,7 @@ export default {
     },
 
   ],
+  filter_vertical: true,
   filters: [
     {
       key: 'customergroup_id',
@@ -433,6 +434,7 @@ export default {
     {
       entity: 'frontend_3_4_3_11',
       entityView: 'partnercompany',
+      primaryKey: 'partnercompany_id',
       fields: [
         // { key: 'area_id' },
         { key: 'location_id' },
@@ -453,7 +455,65 @@ export default {
       primaryKey: 'document_id',
       entity: 'frontend_3_4_3_1_bottom',
       entityForm: 'document_contract_documentcontracttype_rel',
+      formComponent: () => import('@/views/app/FormComponent/ContractDocumentForm.vue'),
       entityView: 'document',
+      submit: async (vm, entity, create) => {
+        try {
+          if (!create) {
+            await vm.$http({
+              url: '/documents/update',
+              method: 'put',
+              params: {
+                document_id: entity.document_id,
+                documenttype_id: entity.documenttype_id,
+                subdocumenttype_id: entity.subdocumenttype_id,
+                document_name: entity.document_name,
+              },
+            })
+            vm.$successToast(vm.$t('success~document~saved'))
+            return null
+          }
+
+          const formData = new FormData()
+          const files = vm.$refs.fields.find(f => f.field.key === 'files')?.getFiles() || []
+
+          const payload = {
+            contract_id: entity.contract_id,
+            documentsobjects: [],
+          }
+
+          for (let i = 0; i < files.length; i++) {
+            formData.append('files', files[i])
+          }
+
+          const { data } = await vm.$http({
+            url: '/documents/uploadfiles',
+            data: formData,
+            method: 'post',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+
+          data.data.map(file => {
+            payload.documentsobjects.push(
+              {
+                document_id: file.document_id,
+                subdocumenttype_id: entity.subdocumenttype_id,
+                documenttype_id: entity.documenttype_id,
+                documentcontracttype_id: entity.documentcontracttype_id,
+              },
+            )
+          })
+
+          await vm.$http.post('/contracts/step/7', payload)
+          vm.$successToast(vm.$t('success~document~saved'))
+          return null
+        } catch (e) {
+          throw new Error(typeof e?.response?.data?.detail === 'string' ? e?.response?.data?.detail : vm.$t('errors~unexpected~error~occurred'))
+        }
+      },
       fields: [
         {
           key: 'document_id',
@@ -462,15 +522,15 @@ export default {
           list: 'document',
           onlyForm: true,
           alwaysNew: true,
-          defaultEntity: { documenttype_id: 1 },
-          disabled: ['documenttype_id'],
+          // defaultEntity: { documenttype_id: 1 },
+          // disabled: ['documenttype_id'],
         },
         { key: 'document_name', hideOnForm: true },
         { key: 'documenttype_name', hideOnForm: true },
         { key: 'document_entry_time', hideOnForm: true },
         { key: 'documentcontracttype_name', hideOnForm: true },
         {
-          key: 'documentcontracttype_id',
+          key: 'subdocumenttype_id',
           type: 'list',
           list: 'documentcontracttype',
           listLabel: 'documentcontracttype_name',
@@ -489,6 +549,7 @@ export default {
       search: false,
       create: false,
       delete: false,
+      noCache: true,
       defaultSortField: 'contractaction_id',
       fields: [
         {
@@ -608,7 +669,6 @@ export default {
             const status = {
               active: 'Active', unactive: 'Unactive', cancelled: 'Cancelled', pulled: 'Pulled',
             }
-
             return status[value]
           },
         },
@@ -619,6 +679,28 @@ export default {
       entity: 'frontend_3_4_3_3',
       entityForm: 'contract_recurringpayment_rel',
       entityView: 'recurringpayment',
+      formComponent: () => import('@/views/app/FormComponent/RecurringPaymentContractForm.vue'),
+      submit: async (vm, _, create) => {
+        try {
+          const fieldsComponent = vm.getFieldComponents()
+          const recurringPaymentDetails = fieldsComponent.find(f => f.field.key === 'recurringpayment_id')?.subEntity ?? {}
+
+          const recurringpayment = { ...recurringPaymentDetails }
+          delete recurringpayment.contract_id
+
+          const payload = create ? {
+            contract_id: recurringPaymentDetails.contract_id,
+            recurringpayments: [
+              recurringpayment,
+            ],
+          } : recurringpayment
+
+          await vm.$http[create ? 'post' : 'put']('/contracts/step/2', payload)
+          vm.$successToast('success~recurring~payment~saved~successfully')
+        } catch (error) {
+          throw new Error(typeof error?.response?.detail === 'string' ? error.response.detail : vm.$t('errors~unexpected~error~ocurred'))
+        }
+      },
       fields: [
         {
           key: 'recurringpayment_id',
@@ -820,7 +902,75 @@ export default {
     if (create) {
       await vm.$http.post('/contracts/step/0', _.pick(entity, attributes))
     } else {
-      return vm.$http.put(`/contracts/step/0/${entity.contract_id}`, _.pick(entity, attributes))
+      const response = await vm.$http.put(`/contracts/step/0/${entity.contract_id}`, _.pick(entity, attributes))
+      const { data } = response
+      if (data.company) {
+        data.company_id = data.company.company_id
+        data.company_name = data.company.company_name
+        if (data.company.customergroup) {
+          data.customergroup_id = data.company.customergroup.customergroup_id
+          data.customergroup_name = data.company.customergroup.customergroup_name
+        }
+      }
+
+      if (data.areas) {
+        data.contract_count_area = data.areas.length
+        data.contract_sum_allarea_allocationspace = data.areas.reduce(
+          (acc, currentValue) => acc + currentValue.contract_area_unit_usagetype_allocationspace_value,
+          0,
+        )
+        data.contract_sum_allarea_rentalspace = data.areas.reduce(
+          (acc, currentValue) => acc + currentValue.contract_area_unit_usagetype_rentalspace_value,
+          0,
+        )
+      }
+
+      if (data.contracttype) {
+        data.contracttype_id = data.contracttype.contracttype_id
+        data.contracttype_name = data.contracttype.contracttype_name
+      }
+
+      if (data.currency) {
+        data.currency_id = data.currency.currency_id
+        data.currency_name = data.currency.currency_name
+      }
+
+      if (data.documentcontracttypes.length > 0) {
+        data.documentcontracttype_id = data.documentcontracttypes[0].documentcontracttype_id
+        data.documentcontracttype_name = data.documentcontracttypes[0].documentcontracttype_name
+      }
+
+      if (data.location) {
+        data.location_id = data.location.location_id
+        data.location_name = data.location.location_name
+      }
+
+      if (data.pos.length > 0) {
+        data.pos_id = data.pos[0].pos_id
+        data.pos_name = data.pos[0].pos_name
+      }
+
+      if (data.owners.length > 0) {
+        data.owner_id = data.owners[0].owner_id
+        data.owner_name = data.owners[0].owner_name
+      }
+      if (data.managers.length > 0) {
+        data.manager_id = data.managers[0].manager_id
+        data.manager_name = data.managers[0].manager_name
+      }
+
+      if (data.action_begin === null) {
+        data.action_begin = ''
+      }
+      if (data.action_ende_final === null) {
+        data.action_ende_final = ''
+      }
+      if (data.action_ende_soll === null) {
+        data.action_ende_soll = ''
+      }
+      console.log('vm: ', vm)
+      vm.setData(data)
+      return data
     }
   },
   panels: [

@@ -3,6 +3,7 @@ import { getUserData } from '@/auth/utils'
 export default {
   entity: 'frontend_3_2_1',
   primaryKey: 'area_id',
+  entityEndpoint: '/areas',
   updateComponent: () => import('@/views/app/UpdateComponent/AreaForm'),
   filter: (item, vm) => {
     const user = getUserData()
@@ -17,12 +18,12 @@ export default {
   },
   perPage: 100000,
   fields: [
-    { key: 'area_id', auto: true,hideOnUpdate:true },
+    { key: 'area_id', auto: true, hideOnUpdate: true },
     {
-      key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name', hideOnIndex: true,cols:12
+      key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name', hideOnIndex: true, cols: 12,
     },
     {
-      key: 'areatype_id', type: 'list', list: 'areatype', listLabel: 'areatype_name', hideOnIndex: true,cols:12
+      key: 'areatype_id', type: 'list', list: 'areatype', listLabel: 'areatype_name', hideOnIndex: true, cols: 12,
     },
     { key: 'area_name' },
     { key: 'location_name', hideOnForm: true, hideOnIndex: true },
@@ -53,9 +54,30 @@ export default {
       hideOnIndex: true,
       with: ['area_usagetype_valid_from_date', 'area_usagetype_valid_to_date'],
     },
-    { key: 'area_usagetype_valid_from_date', type: 'date', hideOnIndex: true,category:'date' },
     {
-      key: 'area_usagetype_valid_to_date', type: 'date', hideOnIndex: true, required: false,category:'date'
+      key: 'area_usagetype_valid_from_date', type: 'date', hideOnIndex: true, category: 'date',
+    },
+    {
+      key: 'area_usagetype_valid_to_date', type: 'date', hideOnIndex: true, required: false, category: 'date',
+    },
+  ],
+  filter_vertical: true,
+  filters: [
+    {
+      key: 'customergroup_id',
+      type: 'list',
+      list: 'customergroup',
+      listLabel: 'customergroup_name',
+      // send: false,
+    },
+    {
+      key: 'company_id',
+      type: 'list',
+      list: 'company',
+      listLabel: 'company_name',
+      required: false,
+      relationEntity: 'company_pos_rel',
+      filter_key: 'customergroup_id',
     },
   ],
   relations: [
