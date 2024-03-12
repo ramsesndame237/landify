@@ -327,6 +327,7 @@ export default {
           keyword: filter,
           page: currentPage,
           size: payload.per_page,
+          per_page: payload.per_page,
           order_filed: sortBy,
           order: sortDesc ? 'desc' : 'asc',
         }

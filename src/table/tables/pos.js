@@ -259,7 +259,8 @@ export default {
     {
       title: 'headline~ticket~tab',
       primaryKey: 'ticket_id',
-      entity: 'frontend_3_1_3_4',
+      // entity: 'frontend_3_1_3_4',
+      entityEndpoint:'/tickets/list',
       entityForm: 'ticket_pos_rel',
       entityView: 'ticket',
       fields: [
@@ -342,11 +343,65 @@ export default {
           alwaysNew: true,
           onlyForm: true,
           multiple: true,
+          hideOnIndex: true,
         },
         { key: 'document_name', hideOnForm: true },
         { key: 'document_entry_time', hideOnForm: true },
         { key: 'documenttype_name', hideOnForm: true },
       ],
+      submit: async (vm, entity, create) => {
+        let document_id = ''
+        const documentField = vm.$refs.fields.find(f => f.field.key === 'document_id')
+        const documentDetails = documentField.subEntity
+        try {
+          if (!create) {
+            await vm.$http({
+              url: '/documents/update',
+              method: 'put',
+              params: {
+                document_id: documentDetails.document_id,
+                documenttype_id: documentDetails.documenttype_id,
+                subdocumenttype_id: documentDetails.subdocumenttype_id,
+                document_name: documentDetails.document_name,
+              },
+            })
+            vm.$successToast(vm.$t('success~document~saved'))
+            return null
+          }
+
+          const formData = new FormData()
+          const file = documentField.$refs.fields.find(f => f.field.key === 'files')?.getFiles()?.[0] ?? null
+
+          if (file) {
+            formData.append('files', file)
+          }
+
+          const { data } = await vm.$http({
+            url: '/documents/uploadfiles',
+            data: formData,
+            method: 'post',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+
+          document_id = data?.data[0]?.document_id
+
+          const payload = {
+            pos_id: entity.pos_id,
+            document_id,
+            documenttype_id: documentDetails?.documenttype_id,
+            subdocumenttype_id: documentDetails?.subdocumenttype_id,
+          }
+
+          await vm.$http.post('/documents/pos', payload)
+          vm.$successToast(vm.$t('success~document~saved'))
+          return null
+        } catch (e) {
+          throw new Error(typeof e?.response?.data?.detail === 'string' ? e?.response?.data?.detail : vm.$t('errors~unexpected~error~occurred'))
+        }
+      },
     },
     {
       customRequest: {

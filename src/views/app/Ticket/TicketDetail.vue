@@ -49,8 +49,8 @@
                   {{ $t('button~ticket~' + (entity.ticket_closed ? 'reopen' : 'close')) }}
                 </b-button>
                 <b-button variant="primary" class="ml-2" @click="(e)=>makedAsRead(entity.ticket_id)">
-                  <b-spinner v-if="loadingRead" small ></b-spinner>
-                  {{ entity.read === 'NOT_READ' ? 'Mark as read' : 'Mark as unread' }}
+                  <b-spinner v-if="loadingRead" small/>
+                  {{ entity.read === 'NOT_READ' ? $t('translate~key~mark~read') : $t('translate~key~mark~unread') }}
                 </b-button>
                 <assign-user-modal ref="assign" @reload="loadSingleTicket"/>
               </div>
@@ -296,12 +296,13 @@
               <SubticketTable :subtickets="subTickets" :team-users="[]" :loading="loading"/>
             </b-card>
             <generic-modal ref="modal" table="ticket" :definition="subTicketDef" table-definition-key="ticket"
-                           :title="$t('headline~ticket~newsubtask')"/>
+                           :title="$t('headline~ticket~newsubtask')" @reload-table="fetchSubTickets()"/>
           </b-col>
         </b-row>
       </div>
     </b-overlay>
-    <b-modal id="moveModal" ref="moveModal" centered hide-footer :title="'Move ticket' + ' ' + entity.ticket_name + ' '+ 'into another board'  ">
+    <b-modal id="moveModal" ref="moveModal" centered hide-footer
+             :title="'Move ticket' + ' ' + entity.ticket_name + ' '+ 'into another board' ">
       <div class="p-3">
         <v-select
           v-model="boardSelect"
@@ -319,8 +320,9 @@
         <b-button class="flex-grow-1 mr-2" @click="$refs.moveModal.hide()">
           Cancel
         </b-button>
-        <b-button variant="primary" class="flex-grow-1 align-items-center d-flex justify-content-center" @click="moveTicketToAnotherBoard">
-          <b-spinner v-if="loading" />
+        <b-button variant="primary" class="flex-grow-1 align-items-center d-flex justify-content-center"
+                  @click="moveTicketToAnotherBoard">
+          <b-spinner v-if="loadingAnotherBoard"/>
           Move
         </b-button>
       </div>
@@ -343,7 +345,7 @@ import { formatDate, getDocumentLink, getStampedDocumentLink } from '@/libs/util
 import moment from 'moment'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
 import Notes from '@/views/app/Generic/Notes.vue'
-import _, {parseInt} from 'lodash'
+import _, { parseInt } from 'lodash'
 import EmailModal from '@/views/app/Ticket/EmailModal.vue'
 import AddDocumentToContract from '@/views/app/Ticket/AddDocumentToContract.vue'
 import AddDocumentToPos from '@/views/app/Ticket/AddDocumentToPos.vue'
@@ -400,7 +402,9 @@ export default {
       columnsBoard: [],
       boardSelect: '',
       coloumnSelect: '',
-      loadingRead:false
+      loadingRead: false,
+      loadingAnotherBoard: false,
+      updateMove: '',
     }
   },
 
@@ -486,6 +490,12 @@ export default {
       this.coloumnSelect = ''
       if (value !== '') return this.getColumnBoard(value)
     },
+    // async updateMove(value) {
+    //   if (value === 'move') {
+    //     await this.loadSingleTicket()
+    //     this.updateMove = ''
+    //   }
+    // },
   },
   created() {
     this.fetchBoardData()
@@ -528,7 +538,8 @@ export default {
       const index = this.tabTitle.findIndex(item => {
         if (ticket_update_type === 'NEW_FILE' && item.id === '4') {
           return true
-        } if (ticket_update_type === 'NEW_EMAIL' && item.id === '3') {
+        }
+        if (ticket_update_type === 'NEW_EMAIL' && item.id === '3') {
           return true
         }
         return false
@@ -547,7 +558,6 @@ export default {
             this.updateCounter(item.ticket_update_type, item.count)
           })
         }
-        console.log('this is the data', this.isTicket)
         this.tabDetailsTicket = this.tabTitle
       }).catch(error => {
         console.error(error)
@@ -618,13 +628,17 @@ export default {
       this.$refs.ticketModal.openModal(false, model)
     },
     async moveTicketToAnotherBoard() {
-      this.loading = true
-      this.$http.post('tickets/change-ticket-board', { new_board_id: this.boardSelect, new_column_id: this.coloumnSelect.value, ticket_id: parseInt(this.$route.params.id) }).then(response => {
-        console.log("this is the response", response)
+      this.loadingAnotherBoard = true
+      this.$http.post('tickets/change-ticket-board', {
+        new_board_id: this.boardSelect,
+        new_column_id: this.coloumnSelect.value,
+        ticket_id: parseInt(this.$route.params.id),
+      }).then(async response => {
         this.$refs.moveModal.hide()
+        this.updateMove = 'move'
       }).catch(error => {
         console.error(error)
-      }).finally(()=>this.loading =false)
+      }).finally(() => this.loadingAnotherBoard = false)
     },
     async onNewTicket(ticket) {
       // Save subticket relation

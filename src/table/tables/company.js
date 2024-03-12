@@ -245,24 +245,6 @@ export default {
       update: false,
     },
     {
-      title: 'bankdata',
-      entity: 'frontend_2_1_3_7',
-      entityForm: 'company_bankdata_rel',
-      primaryKey: 'bankdata_id',
-      fields: [
-        {
-          key: 'bankdata_id', type: 'list', list: 'bankdata', alwaysNew: true, onlyForm: true,
-        },
-        { key: 'bankdata_bank_name', hideOnForm: true },
-        { key: 'bankdata_account_number', hideOnForm: true },
-        { key: 'bankdata_iban', hideOnForm: true },
-        { key: 'bankdata_bic', hideOnForm: true },
-        { key: 'bankdata_vat', hideOnForm: true },
-        { key: 'bankdata_is_active', hideOnForm: true },
-      ],
-      view: false,
-    },
-    {
       title: 'Point of Sales',
       entity: 'frontend_2_1_3_8',
       primaryKey: 'pos_id',
