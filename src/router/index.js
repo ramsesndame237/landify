@@ -175,7 +175,7 @@ const router = new VueRouter({
     {
       name: 'deadline-list',
       path: '/app/deadline-list',
-      component: () => import('@/views/app/Page/ConditionList.vue'),
+      component: () => import('@/views/app/Page/DeadlineList.vue'),
       meta: {
         action: 'menu~contractdeadline',
         resource: 'menu',
