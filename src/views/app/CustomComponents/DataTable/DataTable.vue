@@ -9,7 +9,11 @@
       :delete-url="deleteBulkUrl"
       :actions="moreTableActions"
       :bar-actions="barActions"
-    />
+    >
+      <template #customFilter>
+        <slot name="customTabFilter"/>
+      </template>
+    </table-filters>
     <slot
       :tableStore="tableStore"
       :getData="getData"
@@ -73,7 +77,7 @@
                 class="position-relative"
               >
                 <div >
-                  <b-spinner v-if="j === 0 && row.read === 'NOT_READ'" variant="primary" small type="grow" class="position-absolute" style="left: 5px"></b-spinner>
+                  <b-spinner v-if="j === 0 && row.read === 'NOT_READ'" variant="primary" small type="grow" class="position-absolute" style="left: 5px"/>
                   <div
                     :class="`td-first-div${
                       (buttons.concat(moreActions).length > 0 && !col.hideActions)
@@ -388,9 +392,9 @@ export default {
         this.sidebarVisible = !!val
       }
     },
-    includeInQuery() {
-      if (this.url) this.getData()
-    },
+    // includeInQuery() {
+    //   if (this.url) this.getData()
+    // },
   },
   created() {
     initDataTable()
@@ -493,7 +497,7 @@ export default {
           resolveData: data => this.resolveData?.(data),
           extra: this.filters,
           toastError: () => toastError(this.$toast),
-          params: {...(this.includeInQuery || {}), ...(params || {})},
+          params: { ...(this.includeInQuery || {}), ...(params || {}) },
         })
       }
     },

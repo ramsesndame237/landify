@@ -10,6 +10,9 @@
       <field ref="criteriaField" :disabled="disabled || (!create)" :entity="entity" :table-definition="tableDefinition"
              :field="getField('criteria_id')"/>
     </b-col>
+    <b-col v-if="getField('contract_criteria_value')" cols="12">
+      <field :entity="entity" :table-definition="tableDefinition" :field="getField('contract_criteria_value')"/>
+    </b-col>
     <b-col v-show="entity.criteria_id && (!$refs.choice || $refs.choice.listItems.length > 0)" cols="12">
       <field ref="choice" :disabled="disabled" :entity="entity" :table-definition="tableDefinition"
              :field="getField('choice_id')" :filter-value="entity.criteria_id"/>
@@ -99,7 +102,7 @@ export default {
       // Mise à jour des données du champ criteria_id
       await this.$store.dispatch('table/setListData', {
         entity: this.definition.fields[index].list,
-        data: data?.criterias
+        data: data?.criterias,
       })
     } catch (error) {
       console.log({ error })
