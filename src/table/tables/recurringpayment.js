@@ -96,6 +96,9 @@ export default {
       key: 'recurringpayment_condition_comment', hideOnIndex: true, type: 'textarea', required: false,
     },
     {
+      key: 'bemerkung', hideOnIndex: true, type: 'textarea', required: false,
+    },
+    {
       key: 'maturitytype_id',
       type: 'list',
       list: 'maturitytype',
@@ -190,6 +193,8 @@ export default {
           recurringpayment,
         ],
       } : recurringpayment
+      console.log({ payload })
+      return;
       await vm.$http[create ? 'post' : 'put']('/contracts/step/2', payload)
       vm.$successToast('success~recurring~payment~saved~successfully')
     } catch (error) {

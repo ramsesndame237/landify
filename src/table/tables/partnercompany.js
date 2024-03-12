@@ -121,32 +121,25 @@ export default {
           type: 'string',
         },
         {
-          key: 'bankdata_iban_id',
+          key: 'iban_id',
           type: 'number',
         },
         {
-          key: 'bank_name',
+          key: 'bankdata_bank_name',
           required: false,
         },
       ],
       async submit(vm, entity, create) {
         try {
-          // if (!isValidIBANNumber(entity?.bankdata_iban)) {
-          //   vm.$errorToast('error~all~ibans~must~be~valid')
-          //   throw new Error(vm.$t('error~all~ibans~must~be~valid'))
-          // }
-          if (String(entity?.bankdata_iban_id || '').length !== 4) {
-            vm.$errorToast(vm.$t('error~all~iban~ids~length~must~be~four'))
-            throw new Error(vm.$t('error~all~iban~ids~length~must~be~four'))
-          }
 
           const method = create ? 'post' : 'put'
+          const url = create ? `/partners/${vm.$route.params.id}/bankdata` : `/partners/${vm.$route.params.id}/bankdata/${entity.bankdata_id}`
 
           const dataForServer = {
             ...entity,
           }
 
-          await vm.$http[method]('/partners/new/bankdata', dataForServer)
+          await vm.$http[method](url, dataForServer)
         } catch (error) {
           throw Error(error?.response?.data?.detail
             ?? vm.$t(String(error.message)?.startsWith('errors~')
@@ -166,6 +159,12 @@ export default {
           type: 'list',
           list: 'company',
           listLabel: 'company_name',
+          required: true,
+          hideOnUpdate: true,
+        },
+        {
+          key: 'company_name',
+          hideOnForm: true,
         },
         {
           key: 'kreditornumber',
@@ -174,22 +173,15 @@ export default {
       ],
       async submit(vm, entity, create) {
         try {
-          // if (!isValidIBANNumber(entity?.bankdata_iban)) {
-          //   vm.$errorToast('error~all~ibans~must~be~valid')
-          //   throw new Error(vm.$t('error~all~ibans~must~be~valid'))
-          // }
-          if (String(entity?.bankdata_iban_id || '').length !== 4) {
-            vm.$errorToast(vm.$t('error~all~iban~ids~length~must~be~four'))
-            throw new Error(vm.$t('error~all~iban~ids~length~must~be~four'))
-          }
+          console.log({ entity, create })
 
           const method = create ? 'post' : 'put'
-
+          const url = create ? `/partners/${vm.$route.params.id}/kreditornumber` : `/partners/${vm.$route.params.id}/kreditornumber/${entity.kreditornumber_id}`
           const dataForServer = {
             ...entity,
           }
 
-          await vm.$http[method]('/partners/new/bankdata', dataForServer)
+          await vm.$http[method](url, dataForServer)
         } catch (error) {
           throw Error(error?.response?.data?.detail
             ?? vm.$t(String(error.message)?.startsWith('errors~')
