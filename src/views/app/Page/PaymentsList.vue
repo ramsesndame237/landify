@@ -227,9 +227,16 @@ export default {
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
-
         this.items = (await this.$http.get(`/contracts/payment-list/data?${requestQuery}`)).data.data;
+      } catch (err) {
+        if (err.code === 'ERR_BAD_REQUEST') {
+          let error = (await err.response).data
+          error = JSON.parse(await error.text())
 
+          this.$errorToast(error.detail || 'Unknown error')
+        } else {
+          this.$errorToast('Unknown error')
+        }
       } finally {
         this.loading = false
       }
@@ -301,7 +308,7 @@ export default {
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
-      }  catch (err) {
+      } catch (err) {
         if (err.code === 'ERR_BAD_REQUEST') {
           let error = (await err.response).data
           error = JSON.parse(await error.text())
