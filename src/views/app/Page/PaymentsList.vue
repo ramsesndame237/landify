@@ -31,46 +31,11 @@
     </b-card-actions>
 
     <b-card>
-      <div v-if="table==='payments_list'" class="mb-1">
-        <!--        <b-form-input debounce="500" id="filterInput" v-model="search" type="search" class="w-auto"-->
-        <!--                      placeholder="Search.."/>-->
-        <b-form-group label="Currency" label-cols="auto">
-          <b-form-checkbox v-model="eurCurrency" name="check-button" switch inline>
-            {{ eurCurrency ? 'EUR' : 'Local' }}
-          </b-form-checkbox>
-        </b-form-group>
-      </div>
       <Datatable :key="table" ref="table" :selectable="false" :search="search" primary-key-column="contract_id"
                  entity="contract" :with-delete="false" :with-edit="false" :with-nested="table === 'deadlines'"
-                 :fields="definition.fields" :items="items" sub-fields-data-key="deadlines" :with-actions="false"
+                 :fields="definition.fields" :items="items" sub-fields-data-key="deadlines" :with-actions="true"
       />
     </b-card>
-
-    <b-row v-if="table==='conditions'">
-      <b-col lg="4" md="6">
-        <b-card v-if="items.length>0" title="Totals">
-          <table class="mt-2 mt-xl-0 w-100">
-            <tr>
-              <th class="pb-50 font-weight-bold">
-                Total Rental Space
-              </th>
-              <td class="pb-50">
-                {{ total_rental_space }}
-              </td>
-            </tr>
-            <tr>
-              <th class="pb-50 font-weight-bold">
-                Total rent per month
-              </th>
-              <td class="pb-50">
-                {{ total_rent_per_month }}
-              </td>
-            </tr>
-          </table>
-        </b-card>
-      </b-col>
-    </b-row>
-
   </div>
 </template>
 
@@ -170,51 +135,6 @@ export default {
           {"key": "contract_status"},
           {"key": "contract_end_date"}
         ],
-        // subFields: [
-        //   {
-        //     key: 'contractdeadline_type',
-        //     formatter: value => this.typeFormatter(value),
-        //   },
-        //   {key: 'contractdeadline_acting_by', label: 'Acting By'},
-        //   {
-        //     key: 'contractdeadline_available_options',
-        //     label: 'Available options',
-        //     hideOnForm: true,
-        //     formatter: (value, key, item) => {
-        //       const {contractdeadline_options, contractdeadline_option_position, contractdeadline_status} = item
-        //       if (contractdeadline_status === 'resiliated') {
-        //         return 0
-        //       }
-        //       return contractdeadline_options - contractdeadline_option_position
-        //     },
-        //   },
-        //   {key: 'contractdeadline_options', label: 'Nbr of Options'},
-        //   {
-        //     key: 'extension',
-        //     label: 'Extension(unit)',
-        //     formatter: (value, key, item) => {
-        //       const {contractdeadline_extension_value, contractdeadline_extension_unit, contractdeadline_type} = item
-        //       if (['resiliation', 'special_resiliation'].includes(contractdeadline_type)) return '--'
-        //       return `${contractdeadline_extension_value}  ${contractdeadline_extension_unit}`
-        //     },
-        //   },
-        //   {
-        //     key: 'contractdeadline_notice_period',
-        //     label: 'Notice period',
-        //     hideOnForm: true,
-        //     send: false,
-        //     formatter: (value, key, item) => {
-        //       const {contractdeadline_notice_period_value, contractdeadline_notice_period_unit} = item
-        //       return `${contractdeadline_notice_period_value}  ${contractdeadline_notice_period_unit}`
-        //     },
-        //   },
-        //   {
-        //     key: 'contractdeadline_status',
-        //     hideOnForm: true,
-        //     label: 'Status',
-        //     formatter: value => this.statusDeadlineFormatter(value),
-        //   },
-        // ],
         filter_vertical: true,
         filters: [
           {
@@ -266,7 +186,7 @@ export default {
       }
     },
     table() {
-      return this.$route.name === 'condition-list' ? 'conditions' : 'deadlines'
+      return 'payments'
     },
     total_rental_space() {
       return _.sumBy(this.items, 'total_rental_space')
@@ -307,10 +227,8 @@ export default {
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
-        const date = moment(this.data.date, 'YYYY-MM-DD')
-        const masterData = (await this.$http.get(`/contracts/payment-list/data?${requestQuery}`)).data.data
 
-        this.items = masterData;
+        this.items = (await this.$http.get(`/contracts/payment-list/data?${requestQuery}`)).data.data;
 
       } finally {
         this.loading = false
@@ -372,7 +290,7 @@ export default {
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
-        const filename = `${this.$t(`menu~${this.table === 'conditions' ? 'contractcondition' : 'contractdeadline'}`)}-Export_${moment().format('DD_MM_YYYY')}.xlsx`
+        const filename = `Payment list-Export_${moment().format('DD_MM_YYYY')}.xlsx`
         const masterData = (await this.$http.post(`/contracts/payment-list/export?${requestQuery}`, {}, {
           responseType: 'blob',
         })).data
@@ -383,6 +301,15 @@ export default {
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
+      }  catch (err) {
+        if (err.code === 'ERR_BAD_REQUEST') {
+          let error = (await err.response).data
+          error = JSON.parse(await error.text())
+
+          this.$errorToast(error.detail || 'Unknown error')
+        } else {
+          this.$errorToast('Unknown error')
+        }
       } finally {
         this.loadingDownload = false
       }
