@@ -1,5 +1,9 @@
+import _ from "lodash";
+
 export default {
-  entity: 'frontend_3_3_1',
+  entityEndpoint: '/locations',
+  // newEndpointCreate: '/locations',
+  // newEndpointUpdate: '/locations',
   primaryKey: 'location_id',
   fields: [
     { key: 'location_id', auto: true },
@@ -16,8 +20,8 @@ export default {
     { key: 'owner_name', hideOnForm: true, hideOnIndex: true },
     { key: 'manager_name', hideOnForm: true, hideOnIndex: true },
     { key: 'locationtype_name', hideOnForm: true },
-    { key: 'city_name', hideOnForm: true },
-    { key: 'country_name', hideOnForm: true },
+    { key: 'city_name' },
+    { key: 'country_name' },
     { key: 'area_count', hideOnForm: true },
     {
       key: 'locationtype_id',
@@ -35,6 +39,23 @@ export default {
       hideOnIndex: true,
       withNew: true,
       alwaysNew: true,
+    },
+  ],
+  filter_vertical: true,
+  filters: [
+    {
+      key: 'customergroup_id',
+      type: 'list',
+      list: 'customergroup',
+      listLabel: 'customergroup_name',
+    },
+    {
+      key: 'company_id',
+      type: 'list',
+      list: 'company',
+      listLabel: 'company_name',
+      relationEntity: 'company_pos_rel',
+      filter_key: 'customergroup_id',
     },
   ],
   relations: [
@@ -127,5 +148,24 @@ export default {
       ],
     },
   ],
+  // isUpdate: window.$vue.$route.query.edit === 'true',
   note: 'frontend_0_8_5',
+  submit: async (vm, entity, create) => {
+    const fieldsComponents = vm.getFieldComponents()
+    const addressField = fieldsComponents.find(f => f.field.key === 'address_id')?.subEntity
+    console.log('addressField: ', addressField)
+    console.log('vm: ', vm)
+    const attributes = []
+    console.log('entity: ', entity)
+    if (create) {
+      await vm.$http.post('/locations', {
+        ...entity,
+        ...addressField,
+      })
+    } else {
+      return vm.$http.put('/locations', { ...entity, ...addressField, address_id: '' })
+    }
+  },
+  validate: () => alert('validate'),
 }
+

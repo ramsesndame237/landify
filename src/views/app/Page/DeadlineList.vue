@@ -40,7 +40,7 @@
       </div> -->
       <Datatable :key="table" ref="table" :selectable="false" :search="search" primary-key-column="contract_id"
                  entity="contract" :with-delete="false" :with-edit="false" :with-nested="table === 'deadlines'" :sub-fields="definition.subFields"
-                 :fields="definition.fields" :items="items" sub-fields-data-key="deadlines" :with-actions="true"
+                 :fields="definition.fields" :items="items" sub-fields-data-key="deadlines" :with-actions="true" :with-view="true"
       />
     </b-card>
 
@@ -56,17 +56,9 @@ import BCardActions from '@core/components/b-card-actions/BCardActions'
 import Field from '@/views/app/Generic/Field'
 import _ from 'lodash'
 import moment from 'moment'
-import { formatDate } from '@/libs/utils'
 import DeadlineMixin from '@/views/app/Contracts/Relations/Deadlines/DeadlineMixin'
-import { getUserData } from '@/auth/utils'
-import rates from './rates.json'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
-const CONTRACT_STATUS_CRITERIA_CODE = 'aktueller Vertragstyp'
-const CONTRACT_MISSING_DOCUMENT_CRITERIA_CODE = 'Fehlende Unterlagen FriKo-Liste'
-const CONTRACT_RETAIL_SPACE_CRITERIA_CODE = 'Verkaufsfläche'
-const CONTRACT_COMMENT_CRITERIA_CODE = 'Bemerkung FriKo-Liste'
-const CONTRACT_SECURITIES_CRITERIA_CODE = 'Mietsicherheit - Anzeige'
 export default {
   components: {
     Field,
@@ -99,42 +91,57 @@ export default {
   },
   computed: {
     definition() {
-      const user = getUserData()
-
       return {
-        title: 'headline~contractlist~condition',
-        entityEndpoint: '/contracts/conditionList',
+        title: 'headline~contractlist~deadlinelist',
+        entityEndpoint: '/contracts/deadlineList/data',
+        entityView: 'pos',
+        primaryKey: 'pos_id',
+        onViewElement: element => {
+          console.log({ element })
+        },
         fields: [
-          { key: 'contract_id' },
-          { key: 'contract_name', stickyColumn: false, variant: 'light' },
-          { key: 'contract_of_status' },
-          { key: 'contracttype_name' },
-          { key: 'contract_begin_date' },
-          { key: 'contract_end_date' },
-          { key: 'last_possible_end_of_contract' },
-          { key: 'company_name' },
-          { key: 'location_name' },
-          { key: 'pos_name' },
-          { key: 'pos_id' },
-          { key: 'country_short' },
-          { key: 'sum_umlageflache' },
-          { key: 'sum_mietflache' },
-          { key: 'owner_name' },
-          { key: 'manager_name' },
-          { key: 'verkaufsfläche' },
-          { key: 'currency_name' },
-          { key: 'total_minimum_rent_per_m2' },
-          { key: 'sum_gesamtmiete' },
-          { key: 'sum_nkpauschale' },
-          { key: 'sum_heizung_nk' },
-          { key: 'indexanpassung_miete' },
-          { key: 'indexanpassung_rate_miete' },
-          { key: 'staffelung' },
-          { key: 'sum_umsatzmiete' },
-          { key: 'mietsicherheit' },
-          { key: 'bemerkung' },
-          { key: 'fehlende_unterlagen' },
-          { key: 'negotiator' },
+          { key: 'location_name', label: 'Standort' },
+          { key: 'pos_id', label: 'Filial-Nr.' },
+          { key: 'country_short', label: 'Land' },
+          { key: 'sum_gesamt_flache', label: 'Gesamt-fläche (ohne Werbe-fläche)' },
+          { key: 'owner_name', label: 'Vermieter' },
+          { key: 'manager_name', label: 'Manager' },
+          { key: 'contract_of_status', label: 'Vertragsstatus' },
+          { key: 'term_type', label: 'Laufzeitentyp' },
+          { key: 'contract_begin_date', label: 'MV-Beginn' },
+          { key: 'contract_end_date', label: 'Aktuelles MV-Ende' },
+          { key: 'next_possible_end_of_contract', label: 'nächstmögliches Mietvertragsende (inkl. nächster Handlungsmögl.)' },
+          { key: 'last_possible_end_of_contract', label: 'spätmögliches Mietvertra   gsende (inkl. aller Handlungsmögl.)' },
+          { key: 'next_action', label: 'nächste Aktion' },
+          { key: 'action_begin', label: 'Aktion Beginn' },
+          { key: 'action_ende_soll', label: 'Aktion Ende Soll' },
+          { key: 'action_ende_final', label: 'Aktion Ende final \n (bisher "Aktionstermin")' },
+          { key: 'contractdeadline_type', label: 'nächtes Handlungsintrument' },
+          { key: 'contractdeadline_acting_by', label: 'Handelnder' },
+          { key: 'remain_option', label: 'Anzahl Handlungsmöglichkeiten verfügbar' },
+          { key: 'contractdeadline_options', label: 'Anzahl Handlungsmöglichkeiten ursprünglich' },
+          { key: 'contractdeadline_extension_value', label: 'Verlängerungsjahre' },
+          { key: 'contractdeadline_notice_period_value', label: 'Ankündigungsfrist' },
+          { key: 'contractdeadline_notice_period_unit', label: 'Einheit Ankündigugnsfrist' },
+          { key: 'contractdeadline_notice_date', label: 'Ankündigungszeitpunkt' },
+          { key: 'announcement_date', label: 'endet automatisch' },
+          { key: 'mieter_next_resiliation', label: 'nächster reg. Kündigungs-termin Mieter' },
+          { key: 'vermieter_next_resiliation', label: 'nächster Kündigungs-termin Vermieter' },
+          { key: 'next_option_extension', label: 'nächste Optionsverlängerung' },
+          { key: 'special_resiliation', label: 'nächster Sonderkündigungstermin Mieter' },
+          { key: 'automatic_extension_by', label: 'automatische Verlängerung um' },
+
+          { key: 'remaining_options_current_action', label: 'Verfügbare Optionen' },
+          { key: 'mieter_special_resiliation', label: 'Sonderkündigung Mieter' },
+          { key: 'vermieter_special_resiliation', label: 'Sonderkündigung Vermieter' },
+          { key: 'negotiation_status', label: 'Status Verhandlung' },
+          { key: 'date_Status_change', label: 'Datum Statusfestlegung/-veränderung' },
+
+          { key: 'remark_negotiation', label: 'Bemerkung Verhandlung' },
+          { key: 'bemerkung', label: 'Bemerkungen' },
+          { key: 'fehlende_unterlagen', label: 'Fehlende Unterlagen' },
+          { key: 'state', label: 'Bundesland' },
+          { key: 'negociator', label: 'Verhandler' },
         ],
         filter_vertical: true,
         filters: [
@@ -188,18 +195,11 @@ export default {
       }
     },
     table() {
-      return this.$route.name === 'condition-list' ? 'conditions' : 'deadlines'
-    },
-    total_rental_space() {
-      return _.sumBy(this.items, 'total_rental_space')
-    },
-    total_rent_per_month() {
-      return _.sumBy(this.items, item => (parseFloat(item.rent_per_month) || 0)).toFixed(2)
+      return this.$route.name === 'deadlines'
     },
   },
   watch: {
     eurCurrency() {
-      if (this.table === 'conditions') this.updateCurrencyValues()
     },
     table() {
       this.reset()
@@ -225,48 +225,14 @@ export default {
       if (!valid) return
       this.loading = true
       const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id', 'contactperson_id']).omitBy(_.isNil).value()
-      filter.size = 100000
+      filter.per_page = 100000
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
-        this.items = (await this.$http.get(`/contracts/conditionList/new?${requestQuery}`)).data.data
+        this.items = (await this.$http.get(`/contracts/deadlineList/data?${requestQuery}`)).data.data
       } finally {
         this.loading = false
       }
-    },
-    updateCurrencyValues() {
-      console.log('update_currency')
-      // get currency data
-      const code = 'eur'
-      this.items.forEach(contract => {
-        if (!this.eurCurrency) {
-          this.$set(contract, 'rent_per_month', contract.local_rent_per_month)
-          this.$set(contract, 'base_rent_per_area_amount', contract.local_base_rent_per_area_amount)
-          this.$set(contract, 'advertising_per_month', contract.local_advertising_per_month)
-          this.$set(contract, 'ancillary_cost_per_month', contract.local_ancillary_cost_per_month)
-          this.$set(contract, 'heating_ancillary_cost_per_mont', contract.local_heating_ancillary_cost_per_month)
-          return
-        }
-        if (contract.currency_short) {
-          const rate = rates[code][contract.currency_short.toLowerCase()]
-          if (!rate) return
-          this.$set(contract, 'rent_per_month', (contract.local_rent_per_month / rate).toFixed(2))
-          this.$set(contract, 'base_rent_per_area_amount', (contract.local_base_rent_per_area_amount / rate).toFixed(2))
-          this.$set(contract, 'advertising_per_month', (contract.local_advertising_per_month / rate).toFixed(2))
-          this.$set(contract, 'ancillary_cost_per_month', (contract.local_ancillary_cost_per_month / rate).toFixed(2))
-          this.$set(contract, 'heating_ancillary_cost_per_month', (contract.local_heating_ancillary_cost_per_month / rate).toFixed(2))
-        }
-      })
-    },
-    getRecurringPaymentMonthValue(rc) {
-      if (!rc) return 0
-      let val = rc.recurringpayment_sum_per_month
-      if (rc.maturitytype_name === 'Intervall') {
-        val /= rc.recurringpayment_maturity_monthly_range
-      } else {
-        val /= 12
-      }
-      return val
     },
     reset() {
       Object.keys(this.data).forEach(key => {
@@ -286,12 +252,12 @@ export default {
       if (!valid) return
       this.loadingDonwload = true
       const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
-      filter.size = 100000
+      filter.per_page = 100000
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
-        const filename = `${this.$t(`menu~${this.table === 'conditions' ? 'contractcondition' : 'contractdeadline'}`)}-Export_${moment().format('DD_MM_YYYY')}.xlsx`
-        const masterData = (await this.$http.get(`/contracts/conditionList/export?${requestQuery}`, {
+        const filename = `Deadline list-Export_${moment().format('DD_MM_YYYY')}SFM.xlsx`
+        const masterData = (await this.$http.get(`/contracts/deadlineList/export?${requestQuery}`, {
           responseType: 'blob',
         })).data
         console.log('masterData: ', masterData)

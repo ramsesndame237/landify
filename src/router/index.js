@@ -3,9 +3,9 @@ import VueRouter from 'vue-router'
 import { canNavigate } from '@/libs/acl/routeProtection'
 import jwt from '@/auth/jwt/useJwt'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
-import { parseJwt } from '@/views/app/CustomComponents/DataTable/utils'
-import axiosIns from '@/libs/axios'
+import { checkAndverficationJwt, parseJwt } from '@/views/app/CustomComponents/DataTable/utils'
 import BrowserId from 'browser-id'
+import axiosIns from '@/libs/axios'
 
 Vue.use(VueRouter)
 
@@ -75,6 +75,21 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/app/update_ticket',
+      name: 'updateTicket',
+      component: () => import('@/views/app/Ticket/UpdateTicketList.vue'),
+      meta: {
+        pageTitle: '',
+        breadcrumb: [
+          {
+            text: 'menu~ticketlistupdate',
+            active: true,
+          },
+        ],
+        action: 'read',
+      },
+    },
+    {
       path: '/app/preview/document/:document_id/:name',
       name: 'previewDocument',
       component: () => import('@/views/app/Ticket/widgets/PreviewDocumentWidget.vue'),
@@ -140,6 +155,15 @@ const router = new VueRouter({
       component: () => import('@/views/app/InvoicePositionImport.vue'),
     },
     {
+      name: 'payments-list',
+      path: '/app/payments-list',
+      component: () => import('@/views/app/Page/PaymentsList.vue'),
+      meta: {
+        action: 'menu~contractpaymentslist',
+        resource: 'menu',
+      },
+    },
+    {
       name: 'condition-list',
       path: '/app/condition-list',
       component: () => import('@/views/app/Page/ConditionList.vue'),
@@ -151,7 +175,7 @@ const router = new VueRouter({
     {
       name: 'deadline-list',
       path: '/app/deadline-list',
-      component: () => import('@/views/app/Page/ConditionList.vue'),
+      component: () => import('@/views/app/Page/DeadlineList.vue'),
       meta: {
         action: 'menu~contractdeadline',
         resource: 'menu',
@@ -394,7 +418,6 @@ router.afterEach(() => {
     appLoading.style.display = 'none'
   }
 })
-
 router.beforeEach((to, from, next) => {
   const currentToken = localStorage.getItem('accessToken')
   const currentRefreshToken = localStorage.getItem('refreshToken')
