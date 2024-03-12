@@ -298,6 +298,7 @@ export default {
       type: 'custom-select',
       required: false,
       clearable: false,
+      hideOnListing: true,
       items: [
         {
           label: 'All',

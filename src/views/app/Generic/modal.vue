@@ -1,7 +1,7 @@
 <template>
   <!--modal-->
   <b-modal id="generic-modal" ref="modal" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary" centered
-           :title="$t(forceTitle || title)" size="lg" :busy="loading" :no-close-on-backdrop="true" @ok="handleOk">
+           :title="$t(forceTitle || title)" size="lg" :busy="loading" :no-close-on-backdrop="true" @ok="handleOk" :hide-footer="this.definition.hideFooter || hideFooter" >
     <component
       :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
       ref="form" :fetch-data="fetchData" :table="table" :definition="definition" :entity-id="entityId"
@@ -52,6 +52,7 @@ export default {
     tableDefinitionKey: String,
     title: String,
     isRelation: Boolean,
+    hideFooter:{type:Boolean,default:false},
     withContinue: { type: Boolean, default: false },
     fetchData: { type: Boolean, default: true },
     entityId: String,
@@ -67,7 +68,6 @@ export default {
   computed: {},
   methods: {
     openModal(create, data, title) {
-      console.log({ data })
       this.initialData = data
       this.forceTitle = title
       this.create = create
@@ -86,7 +86,7 @@ export default {
             this.$refs.modal.hide()
             this.$router.push({
               name: 'table-view',
-              params: { table: this.table, id: entity[this.$refs.form.primaryKey] },
+              params: {table: this.table, id: entity[this.$refs.form.primaryKey]},
             })
           } else if (redirect === 2) {
             this.$refs.form.reset()
@@ -99,6 +99,7 @@ export default {
         .finally(() => this.loading = false)
     },
   },
+
 }
 </script>
 

@@ -1,4 +1,5 @@
 import { getUserData } from '@/auth/utils'
+import _ from "lodash";
 
 export default {
   entityEndpoint: '/companies',
@@ -385,7 +386,6 @@ export default {
       vm.$errorToast('Error while saving the company')
       throw err
     }
-
     return response
   },
 }

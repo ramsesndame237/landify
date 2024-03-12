@@ -1,101 +1,110 @@
 <template>
-  <b-nav-item-dropdown
-    class="dropdown-notification mr-25 "
-    menu-class="dropdown-menu-media"
-    right
-  >
-    <template #button-content>
-      <feather-icon
-        :badge="newNotification"
-        badge-classes="bg-danger"
-        class="text-body"
-        icon="BellIcon"
-        size="21"
-      />
-    </template>
-
-    <!-- Header -->
-    <li class="dropdown-menu-header" v-if="newNotification > 0">
-      <div class="dropdown-header d-flex">
-        <h4 class="notification-title mb-0 mr-auto">
-          Notifications
-        </h4>
-        <b-badge
-          pill
-          variant="light-primary"
+        <b-nav-item-dropdown
+          class="dropdown-notification mr-25 "
+          menu-class="dropdown-menu-media"
+          ref="notificationNav"
+          right
         >
-          {{ newNotification }} New
-        </b-badge>
-      </div>
-    </li>
-    <b-spinner label="Spinning" class="m-2 text-primary" size="lg" v-if="loadingNotificaton"></b-spinner>
-    <div class="scrollable-container media-list scroll-area overflow-y-scroll overflow-x-scroll"
-         v-if="!loadingNotificaton">
-      <div
-        v-for="(notification,index) in notifications"
-        :key="index"
-        class="relative cursor-pointer"
-        @click="$router.push(`/app/table/ticket/view/${notification.payload_json.ticket_id}`)"
-        @mouseenter="notificationAction = notification.id"
-      >
-        <div v-if="notification.id === notificationAction"
-             class="position-absolute position-right-0 position-top-2 d-flex ">
-          <b-avatar v-if="notification.read === 0" v-b-tooltip.hover title="'Mark as read'"
-                    :class="['mx-2',notification.read === 0 ? 'bg-primary':'']"
-                    size="sm"
-                    @click.native="markedNotificationAsRead(notification.id)">
-            <feather-icon size="10" :icon="notification.read === 0 ?  'MailIcon' : 'BookOpenIcon'"
-                          class="position-absolute"/>
-          </b-avatar>
-          <b-avatar v-b-tooltip.hover title="Delete notification"
-                    :class="[notification.read === 0 ? 'bg-primary':'']"
-                    size="sm"
-                    @click.native="deleteNotification(notification.id)">
-            <feather-icon size="10" icon="TrashIcon"
-                          class="position-absolute"/>
-          </b-avatar>
+          <template #button-content>
+            <feather-icon
+              :badge="newNotification"
+              badge-classes="bg-danger"
+              class="text-body"
+              icon="BellIcon"
+              size="21"
+            />
+          </template>
 
-        </div>
-        <b-media>
-          <p class="media-heading text-ellipsis overflow-hidden" style="max-height: 80px">
+          <!-- Header -->
+          <li class="dropdown-menu-header" v-if="newNotification > 0">
+            <div class="dropdown-header d-flex">
+              <h4 class="notification-title mb-0 mr-auto">
+                Notifications
+              </h4>
+              <b-badge
+                pill
+                variant="light-primary"
+              >
+                {{ newNotification }} New
+              </b-badge>
+            </div>
+          </li>
+          <b-spinner label="Spinning" class="m-2 text-primary" size="lg" v-if="loadingNotificaton"></b-spinner>
+          <div class="scrollable-container media-list scroll-area overflow-y-scroll overflow-x-scroll"
+               v-if="!loadingNotificaton">
+            <div
+              v-for="(notification,index) in notifications"
+              :key="index"
+              class="relative cursor-pointer"
+              @click.native="()=>{
+                $router.push(`/app/table/ticket/view/${notification.payload_json.ticket_id}`)
+                this.$refs.notificationNav.hide()
+              }"
+              @mouseenter="notificationAction = notification.id"
+            >
+              <div v-if="notification.id === notificationAction"
+                   class="position-absolute position-right-0 position-top-2 d-flex ">
+                <b-avatar v-if="notification.read === 0" v-b-tooltip.hover :title="$t('translate~key~mark~read')"
+                          :class="['mx-2',notification.read === 0 ? 'bg-primary':'']"
+                          size="sm"
+                          @click.native="markedNotificationAsRead(notification.id)">
+                  <feather-icon size="10" :icon="notification.read === 0 ?  'MailIcon' : 'BookOpenIcon'"
+                                class="position-absolute"/>
+                </b-avatar>
+                <b-avatar v-b-tooltip.hover title="Delete notification"
+                          :class="[notification.read === 0 ? 'bg-primary':'']"
+                          size="sm"
+                          @click.native="deleteNotification(notification.id)">
+                  <feather-icon size="10" icon="TrashIcon"
+                                class="position-absolute"/>
+                </b-avatar>
+
+              </div>
+              <b-media>
+                <p class="media-heading text-ellipsis overflow-hidden d-flex justify-content-between"
+                   style="max-height: 80px">
             <span class="font-weight-bolder">
               {{
-                current_lang == 'en' ? notification.payload_json.title.en : current_lang === 'de' ? notification.payload_json.title.de : current_lang === 'fr' ? notification.payload_json.title.fr : notification.payload_json.title.en
+                current_lang === 'en' ? notification.payload_json.title.en : current_lang === 'de' ? notification.payload_json.title.de : current_lang === 'fr' ? notification.payload_json.title.fr : notification.payload_json.title.en
               }}
             </span>
-          </p>
-          <small class="notification-text text-ellipsis overflow-hidden  " style="max-height:100px;">{{
-              urrent_lang == 'en' ? notification.payload_json.content.en : current_lang === 'de' ? notification.payload_json.content.de : current_lang === 'fr' ? notification.payload_json.content.fr : notification.payload_json.content.en
-            }}</small>
-        </b-media>
-      </div>
-    </div>
+                  <small>
+                    {{ formatDate(notification.timespan) }}
+                  </small>
+                </p>
+                <small class="notification-text text-ellipsis overflow-hidden  " style="max-height:100px;">{{
+                    current_lang === 'en' ? notification.payload_json.content.en : current_lang === 'de' ? notification.payload_json.content.de : current_lang === 'fr' ? notification.payload_json.content.fr : notification.payload_json.content.en
+                  }}</small>
+              </b-media>
+            </div>
+          </div>
 
-    <!-- Cart Footer -->
-    <li class="dropdown-menu-footer d-flex">
-      <b-button
-        class="mx-1"
-        v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-        variant="warning"
+<!--          &lt;!&ndash; Cart Footer &ndash;&gt;-->
+          <li class="dropdown-menu-footer d-flex overflow-hidden">
+            <b-button
+              class="mx-1"
+              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+              variant="warning"
 
-        @click="() => markedNotificationAsRead(undefined) "
-      >Read all notifications
-      </b-button>
-      <b-button
-        v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-        variant="primary"
+              @click="() => markedNotificationAsRead(undefined) "
+            >{{ $t('translate~key~read~all~notification') }}
+            </b-button>
+            <b-button
+              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+              variant="primary"
 
-        @click="() => deleteNotification(undefined) "
-      >Delete all notifications
-      </b-button>
-    </li>
-  </b-nav-item-dropdown>
+              @click="() => deleteNotification(undefined) "
+            >{{ $t('translate~key~delete~all~notification') }}
+            </b-button>
+          </li>
+        </b-nav-item-dropdown>
 </template>
 
 <script>
-import {BAvatar, BBadge, BButton, BFormCheckbox, BLink, BMedia, BNavItemDropdown,} from 'bootstrap-vue'
+import {BAvatar, BBadge, BButton, BFormCheckbox, BLink, BMedia, BNavbar, BNavItemDropdown,} from 'bootstrap-vue'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import Ripple from 'vue-ripple-directive'
+import {formatDate} from "../../../../../views/app/CustomComponents/DataTable/utils";
 
 export default {
   components: {
@@ -104,6 +113,7 @@ export default {
     BMedia,
     BLink,
     BAvatar,
+    BNavbar,
     VuePerfectScrollbar,
     BButton,
     BFormCheckbox,
@@ -135,9 +145,11 @@ export default {
     this.clearInterval()
   },
   methods: {
+    formatDate,
     getNumberUnreadedNotification() {
       this.$http.get('/notifications/unread/count').then((response) => {
         this.newNotification = response.data
+        this.getAllNotification()
       }).catch((error) => {
         console.error(error.messages)
       })
@@ -146,10 +158,11 @@ export default {
       if (id_notification) {
         return this.$http.delete('/notifications', {
           data: {"notification_id": id_notification}
-        }).then((response) => {
+        }).then(async (response) => {
           this.$successToast(response.data.message || 'delete success')
-          this.getAllNotification()
           this.getNumberUnreadedNotification()
+          this.$refs.notificationNav.hide()
+          await this.getAllNotification()
         }).catch((error) => {
           console.error(error)
         })
@@ -167,7 +180,6 @@ export default {
     markedNotificationAsRead(id_notification) {
       if (id_notification) {
         return this.$http.post('/notifications', {"notification_id": id_notification}).then((response) => {
-          console.log("thios is the response of the mark read notification", response)
           this.$successToast(response.data.message)
           this.getAllNotification()
           this.getNumberUnreadedNotification()
@@ -204,7 +216,6 @@ export default {
       })
     },
     notoficationFetchLogic(delay) {
-      console.log("this is the delay", delay)
       this.intervalId = setInterval(() => {
         this.getNumberUnreadedNotification()
         // this.getUnReadedNotification()

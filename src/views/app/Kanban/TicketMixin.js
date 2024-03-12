@@ -50,6 +50,7 @@ export default {
     ...mapGetters('user', ['isUserAdmin']),
   },
   methods: {
+
     async moveToNextColumn(ticket) {
       const column = this.columns[this.columns.findIndex(c => c.column_name === ticket.column_name) + 1]
       const result = await this.$swal({
@@ -131,10 +132,10 @@ export default {
     },
     async makedAsRead(id) {
       this.loadingRead = true
-      this.$http.put(`/tickets/mark-status?ticket_id=${id}`).then((response) => {
+      this.$http.put(`/tickets/mark-status?ticket_id=${id}`).then(async (response) => {
         console.log("this is the response",response)
         const idTicket =this.$route.params.id
-        this.loadTickets({ticket_id:idTicket})
+        await this.loadSingleTicket()
       }).catch((error) => {
         console.error(error)
       }).finally(()=>this.loadingRead =false)
