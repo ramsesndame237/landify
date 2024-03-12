@@ -267,6 +267,15 @@ export default {
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
+      } catch (err) {
+        if (err.code === 'ERR_BAD_REQUEST') {
+          let error = (await err.response).data
+          error = JSON.parse(await error.text())
+
+          this.$errorToast(error.detail || 'Unknown error')
+        } else {
+          this.$errorToast('Unknown error')
+        }
       } finally {
         this.loadingDonwload = false
       }
