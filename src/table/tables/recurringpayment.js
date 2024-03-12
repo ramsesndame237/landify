@@ -36,7 +36,6 @@ export default {
       entityKey: 'partnercompany_bankdata_id',
       type: 'list',
       list: 'company',
-      useWholeResponse: true,
       entityCustomEndPoint: vm => `/partners/${vm.entity.partnercompany_id}/bankdata`,
       listLabel: 'iban_id',
       filter_key: 'partnercompany_id',
