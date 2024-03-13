@@ -300,6 +300,7 @@ export default {
       const now = moment()
       const column = this.columns[0]
       const deadline_yellow = now.clone().addWorkingTime(column.default_deadline_yellow, 'hours').format('YYYY-MM-DD HH:mm:ss')
+      console.log("this i sthe column is the data", column.default_deadline_yellow)
       const deadline_red = now.clone().addWorkingTime(column.default_deadline_red, 'hours').format('YYYY-MM-DD HH:mm:ss')
       this.$refs.modal.openModal(true, {
         column_id: column.column_id,

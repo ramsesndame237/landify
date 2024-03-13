@@ -44,18 +44,18 @@ export default {
       comment: '',
       loadingSaveError: false,
       errorData: null,
-      loadingTicket: null,
+      loadingTicket: [],
       filterOptions: [
         {
-          text: this.$t('header~board~status~open'), value: 0,
+          text: this.$t('header~board~status~open'), value: 'opened',
         },
-        { text: this.$t('header~board~status~my'), value: 1 },
-        { text: this.$t('header~board~status~closed'), value: 2 }, {
+        {text: this.$t('header~board~status~my'), value: 'my_tickets'},
+        {text: this.$t('header~board~status~closed'), value: 'closed'}, {
           text: this.$t('header~board~status~notassigned'),
-          value: 3,
+          value: 'not_assigned',
         },
       ],
-      filterValue: 0,
+      filterValue: 'opened',
       definition: Table.ticket,
       showSubTickets: true,
       loading: true,
@@ -67,7 +67,10 @@ export default {
   },
   computed: {
     board_name() {
-      return this.columns[0]?.board_name
+      return this.$route.params.name
+    },
+    columnIsScroll() {
+
     },
   },
   watch: {
@@ -75,13 +78,15 @@ export default {
       if (newValue.length !== 0 && this.initialFetch) {
         console.log('this is the new value of the column', newValue)
         newValue.forEach(element => {
-          this.pages.push({ column_id: element.column_id, page: 1 })
-          this.fetchTicketOfTheColumn(element.column_id)
+          this.pages.push({column_id: element.column_id, page: 1})
+          this.fetchTicketOfTheColumn(element.column_id, false)
         })
-        this.loadingTicket = newValue.map(item => ({ id: item.column_id, value: false }))
         console.log('this is the loading state')
       }
     },
+    filterValue(newValue) {
+      this.fetchTicketOfTheColumn(undefined, false, {status: newValue})
+    }
   },
   created() {
     this.fetchColumnOfTheBoard()
@@ -91,7 +96,7 @@ export default {
     async handleScroll(event, value) {
       if (event.target.scrollTop + event.target.offsetHeight >= event.target.scrollHeight) {
         this.pages.find(elet => elet.column_id === value.column_id).page += 1
-        await this.fetchTicketOfTheColumn(value.column_id)
+        await this.fetchTicketOfTheColumn(value.column_id, false)
       }
     },
     async handleDrag(event, column, ticket) {
@@ -154,9 +159,6 @@ export default {
       }
     },
     handleDragOver(event) {
-      console.log(
-        `dragOver: dropEffect = ${event.dataTransfer.dropEffect} ; effectAllowed = ${event.dataTransfer.effectAllowed}`,
-      )
       event.preventDefault()
       // Set the dropEffect to move
       const bottomTicket = this.insertAboveTicket(event.target.offsetParent, event.clientY)
@@ -181,17 +183,14 @@ export default {
       // event.dataTransfer.dropEffect = 'move'
     },
     handleDrop(event, column_id, column_name) {
-      this.dropColumn = { column_id, column_name }
+      this.dropColumn = {column_id, column_name}
     },
     insertAboveTicket(column, mouseY) {
-      console.log('this is the column value', column.offsetParent)
-      console.log('this is the value of the mouse ', mouseY)
       const elements = column.offsetParent.querySelector('.card-body').querySelectorAll('.ticket:not(.card_draggable)')
       let closestTask = null
       let closestOffset = Number.NEGATIVE_INFINITY
-      console.log('this is the elements', elements)
       elements.forEach(ticket => {
-        const { top } = ticket.getBoundingClientRect()
+        const {top} = ticket.getBoundingClientRect()
 
         const offset = mouseY - top
 
@@ -203,13 +202,20 @@ export default {
 
       return closestTask
     },
-    fetchTicketOfTheColumn(id) {
+    fetchTicketOfTheColumn(id, reloading, filterData) {
+      for (const idKey in filterData) {
+        if (filterData[idKey] === -1) {
+          delete filterData[idKey]
+        }
+      }
+      this.loadingTicket.push(id)
       console.log('this i sth fetch', id)
       if (id) {
-        this.$http.get(`/tickets/slims?column_id=${id}&board_id=${this.$route.params.id}&size=${this.size}&page=${this.pages.find(pageElement => pageElement.column_id === id).page}`).then(response => {
+        this.$http.get(`/tickets/slims?column_id=${id}&board_id=${this.$route.params.id}&size=${this.size}&page=${this.pages.find(pageElement => pageElement.column_id === id).page}&order_filed=ticket_id`).then(response => {
           console.log('this is the ticket of the column', response.data.data)
+          this.loadingTicket = []
           const oldticket = this.columnData.find(element => element.column_id === id).tickets
-          if (oldticket.length > 0) {
+          if (oldticket.length > 0 && !reloading) {
             console.log('this is the data', [...oldticket, ...response.data.data])
             this.columnData.find(column => column.column_id === id).tickets = [...oldticket, ...response.data.data]
           } else {
@@ -218,6 +224,18 @@ export default {
           console.log('this is the column data', this.columnData)
         }).catch(error => {
           console.error(error)
+        })
+      } else {
+        this.columnData.forEach(element => {
+          this.loadingTicket.push(element.column_id)
+          this.$http.get(`/tickets/slims?column_id=${element.column_id}&board_id=${this.$route.params.id}&size=${this.size}&page=${this.pages.find(pageElement => pageElement.column_id === element.column_id).page}&order_filed=ticket_id`, {
+            params: {...filterData},
+          }).then(response => {
+            this.loadingTicket = this.loadingTicket.filter(x => x !== element.column_id)
+            this.columnData.find(column => column.column_id === element.column_id).tickets = response.data.data
+          }).catch(error => {
+            console.error(error)
+          })
         })
       }
     },
@@ -229,15 +247,15 @@ export default {
       })
     },
     createTicket() {
-      console.log("this is the creatioin of the data")
+      console.log('this is the creatioin of the data')
       const now = moment()
       const column = this.columnData[0]
-      console.log("this i sthe column is the data", column)
-      const deadline_yellow = now.clone().addWorkingTime(column.default_deadline_yellow, 'hours').format('YYYY-MM-DD HH:mm:ss')
-      const deadline_red = now.clone().addWorkingTime(column.default_deadline_red, 'hours').format('YYYY-MM-DD HH:mm:ss')
+      console.log('this i sthe column is the data', column.default_deadline_red)
+      const deadline_yellow = now.clone().addWorkingTime(1, 'hours').format('YYYY-MM-DD HH:mm:ss')
+      const deadline_red = now.clone().addWorkingTime(1, 'hours').format('YYYY-MM-DD HH:mm:ss')
       this.$refs.modal.openModal(true, {
         column_id: column.column_id,
-        board_id: column.board_id,
+        board_id: this.$route.params.id,
         ticket_deadline_yellow: deadline_yellow,
         ticket_deadline_red: deadline_red,
         ticket_planned_treatment_week: 'KW42',
@@ -245,8 +263,8 @@ export default {
     },
     fetchColumnOfTheBoard() {
       this.$http.get(`${this.boardColumnUrl}?board_id=${this.$route.params.id}`).then(response => {
-        console.log("this is the data", response.data.data)
-        this.columnData = response.data.data.map(items => ({ ...items, tickets: [] }))
+        console.log('this is the data', response.data.data)
+        this.columnData = response.data.data.map(items => ({...items, tickets: []}))
         this.initialFetch = true
       }).catch(error => {
         console.error(error)
@@ -270,7 +288,8 @@ export default {
           <b-button size="sm" variant="primary" class="mr-1 btn-icon" @click="$refs.filter.openModal()">
             <feather-icon icon="FilterIcon"/>
           </b-button>
-          <!--          <generic-filter ref="filter" vertical :table="table" :definition="definition" @filter="filter"/>-->
+          <generic-filter ref="filter" vertical :table="table" :definition="definition"
+                          @filter="(value)=>fetchTicketOfTheColumn(undefined,false,value)"/>
           <b-form-checkbox v-model="advanced" switch title="Advanced Mode"/>
           <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
           <b-button v-b-tooltip.hover :title="showSubTickets ? 'Hide Subtasks' : 'Show Subtasks' "
@@ -286,12 +305,15 @@ export default {
       </div>
     </b-card>
     <div class="h-100">
-      <KanbanViewDisplay ref="KanbanContainer" classes="d-flex kanbanContainer position-relative" :styles="'border:solid green'">
-        <NoData v-if="columnData.length === 0"/>
+      <KanbanViewDisplay ref="KanbanContainer" classes="d-flex kanbanContainer position-relative"
+                         :styles="'border:solid green'">
+        <div class="w-100" v-if="columnData.length === 0">
+          <NoData/>
+        </div>
         <b-card v-for="item in columnData" :key="item.column_id" class="columnBoardElement"
                 @scrollend.passive="(e)=>handleScroll(e,item)"
                 @drop.prevent="(event)=> handleDrop(event,item.column_id,item.column_name)"
-                @dragover.prevent="(event) =>handleDragOver(event)">
+                @dragover.prevent="(event) =>handleDragOver(event)" body-class="position-relative">
           <template #header>
             <div class="border-bottom-2 border-bottom-primary  w-100">
               <h5>
@@ -309,11 +331,21 @@ export default {
                                  :team-users="teams.filter(team => team.team_id === ticket.team_id)"
                                  @moredetails="$router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
                                  @assign="$refs.assign.openModal(ticket, userIdsOfTeam(ticket.team_id))"
-                                 @subticket-updated="fetchTicketOfTheColumn(item.column_id)"/>
+                                 @subticket-updated="fetchTicketOfTheColumn(item.column_id,true)"/>
           </div>
+          <div class="flex align-items-center justify-content-center w-100  text-center mt-2 position-absolute"
+               style="top:-35px">
+            <b-spinner v-if="loadingTicket.includes(item.column_id)" variant="primary"
+                       style="width: 3rem; height: 3rem;"/>
+          </div>
+          <b-button v-if="item.tickets.length <= 3" block variant="primary" class="mt-2"
+                    @click="fetchTicketOfTheColumn(item.column_id,false)">
+            Load More Ticket
+          </b-button>
         </b-card>
         <generic-modal ref="modal" :table="table" :definition="definition" :table-definition-key="table"
-                       :title="$t('headline~ticket~newticket')" @reload-table="()=>{}"/>
+                       :title="$t('headline~ticket~newticket')"
+                       @reload-table="(value) =>fetchTicketOfTheColumn(value.column_id,true)"/>
         <!--        <assign-user-modal ref="assign" @reload="fetchTicketOfTheColumn()"/>-->
       </KanbanViewDisplay>
     </div>
