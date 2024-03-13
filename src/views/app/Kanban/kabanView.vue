@@ -7,7 +7,7 @@ import InvoiceTicketCard from '@/views/app/CustomComponents/WP6/InvoiceTicketCar
 import GenericModal from '@/views/app/Generic/modal.vue'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
 import NoData from '@/views/app/CustomComponents/NoData/NoData.vue'
-import moment from "moment-business-time";
+import moment from 'moment-business-time'
 
 export default {
   name: 'KabanView',
@@ -61,6 +61,7 @@ export default {
       loading: true,
       initialFetch: false,
       size: 3,
+      previousScrollValue: 0,
       pages: [],
     }
   },
@@ -138,9 +139,13 @@ export default {
         ticket_id: ticket.ticket_id,
       }
       this.$http.post('/tickets/change-ticket-column', payload).then(response => {
-        console.log("this is the response of the changecolumn", response)
+        console.log('this is the response of the changecolumn', response)
         this.columnData.find(elet => elet.column_id === previous_column_id).tickets = this.columnData.find(elet => elet.column_id === previous_column_id).tickets.filter(elt => elt.ticket_id !== ticket.ticket_id)
-        this.columnData.find(elet => elet.column_id === next_column_id).tickets.push({ ...ticket, column_id: next_column_id, column_name: next_column_name })
+        this.columnData.find(elet => elet.column_id === next_column_id).tickets.push({
+          ...ticket,
+          column_id: next_column_id,
+          column_name: next_column_name,
+        })
       }).catch(error => {
         console.error(error)
       })
@@ -154,10 +159,49 @@ export default {
       )
       event.preventDefault()
       // Set the dropEffect to move
-      event.dataTransfer.dropEffect = 'move'
+      const bottomTicket = this.insertAboveTicket(event.target.offsetParent, event.clientY)
+      const curTicket = document.querySelector('.card_draggable')
+
+      const containerWidth = this.$refs.KanbanContainer.$el.clientWidth
+      const containerScrollWidth = this.$refs.KanbanContainer.$el.scrollWidth
+      if (containerWidth < containerScrollWidth && event.clientX >= containerWidth) {
+        if (this.previousScrollEvent <= event.clientX) {
+          this.$refs.KanbanContainer.$el.scrollTo(this.$refs.KanbanContainer.$el.scrollLeft + 10, 0)
+        } else {
+          this.$refs.KanbanContainer.$el.scrollTo(this.$refs.KanbanContainer.$el.scrollLeft - 10, 0)
+        }
+        this.previousScrollEvent = event.clientX
+      }
+
+      if (!bottomTicket) {
+        event.target.offsetParent.querySelector('.card-body').appendChild(curTicket)
+      } else {
+        event.target.offsetParent.querySelector('.card-body').insertBefore(curTicket, bottomTicket)
+      }
+      // event.dataTransfer.dropEffect = 'move'
     },
     handleDrop(event, column_id, column_name) {
       this.dropColumn = { column_id, column_name }
+    },
+    insertAboveTicket(column, mouseY) {
+      console.log('this is the column value', column.offsetParent)
+      console.log('this is the value of the mouse ', mouseY)
+      const elements = column.offsetParent.querySelector('.card-body').querySelectorAll('.ticket:not(.card_draggable)')
+      let closestTask = null
+      let closestOffset = Number.NEGATIVE_INFINITY
+      console.log('this is the elements', elements)
+      elements.forEach(ticket => {
+        const { top } = ticket.getBoundingClientRect()
+
+        const offset = mouseY - top
+
+        if (offset < 0 && offset > closestOffset) {
+          closestOffset = offset
+          closestTask = ticket
+        }
+      })
+
+      return closestTask
     },
     fetchTicketOfTheColumn(id) {
       console.log('this i sth fetch', id)
@@ -185,8 +229,10 @@ export default {
       })
     },
     createTicket() {
+      console.log("this is the creatioin of the data")
       const now = moment()
-      const column = this.columns[0]
+      const column = this.columnData[0]
+      console.log("this i sthe column is the data", column)
       const deadline_yellow = now.clone().addWorkingTime(column.default_deadline_yellow, 'hours').format('YYYY-MM-DD HH:mm:ss')
       const deadline_red = now.clone().addWorkingTime(column.default_deadline_red, 'hours').format('YYYY-MM-DD HH:mm:ss')
       this.$refs.modal.openModal(true, {
@@ -199,6 +245,7 @@ export default {
     },
     fetchColumnOfTheBoard() {
       this.$http.get(`${this.boardColumnUrl}?board_id=${this.$route.params.id}`).then(response => {
+        console.log("this is the data", response.data.data)
         this.columnData = response.data.data.map(items => ({ ...items, tickets: [] }))
         this.initialFetch = true
       }).catch(error => {
@@ -239,7 +286,7 @@ export default {
       </div>
     </b-card>
     <div class="h-100">
-      <KanbanViewDisplay classes="d-flex kanbanContainer position-relative" :styles="'border:solid green'">
+      <KanbanViewDisplay ref="KanbanContainer" classes="d-flex kanbanContainer position-relative" :styles="'border:solid green'">
         <NoData v-if="columnData.length === 0"/>
         <b-card v-for="item in columnData" :key="item.column_id" class="columnBoardElement"
                 @scrollend.passive="(e)=>handleScroll(e,item)"
