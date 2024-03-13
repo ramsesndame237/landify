@@ -573,7 +573,7 @@ export default {
     },
     initializeValue() {
       const user = getUserData()
-      if (this.isUserExternClient) {
+      if (this.isUserExternClient || this.$isUserExtern) {
         if (this.field.key === 'customergroup_id') {
           console.log('reset ', this.entity)
           const customergroup_id = user.customergroup?.customergroup_id
