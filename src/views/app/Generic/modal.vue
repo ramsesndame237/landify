@@ -93,7 +93,7 @@ export default {
             this.$emit('reload-table')
           } else {
             this.$refs.modal.hide()
-            this.$emit('reload-table', entity)
+            this.$emit('reload-table', this.initialData)
           }
         })
         .finally(() => this.loading = false)

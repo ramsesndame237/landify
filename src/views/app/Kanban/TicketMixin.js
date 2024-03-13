@@ -52,6 +52,7 @@ export default {
   methods: {
 
     async moveToNextColumn(ticket) {
+      console.log("this is ticket name column", ticket.column_name)
       const column = this.columns[this.columns.findIndex(c => c.column_name === ticket.column_name) + 1]
       const result = await this.$swal({
         title: 'Are you sure?',
