@@ -11,7 +11,7 @@ export default {
     {
       key: 'role_description', hideOnIndex: true, required: false, type: 'textarea',
     },
-    { key: 'role_is_internal', type: 'boolean', hideOnIndex: true },
+    // { key: 'role_is_internal', type: 'boolean', hideOnIndex: true },
     {
       key: 'user_firstname',
       type: 'html',
@@ -25,36 +25,36 @@ export default {
       </div>`,
       hideOnForm: true,
     },
-    {
-      key: 'role_menu',
-      hideOnIndex: true,
-      type: 'custom-select',
-      items: async vm => {
-        const { entity } = vm
-        let menus = vm.$store.getters['table/listCache']('menu')
-        if (!menus.length) {
-          try {
-            const response = await http.get('/configs/menu')
-            const configValue = JSON.parse(response.data?.config_val)
-            menus = configValue[0].menus
-            vm.$store.dispatch('table/setListData', { entity: 'menu', data: menus })
-          } catch (error) {
-            console.log({ error })
-            vm.$toast({
-              component: ToastificationContent,
-              props: {
-                title: error.response.data.detail,
-                icon: 'errorIcon',
-                variant: 'error',
-              },
-            })
-          }
-        }
-        const menu_role = entity.role_is_internal === 0
-        const filteredMenu = menu_role ? [{ label: 'Menu Extern', value: 'Menu Extern', menu_is_internal: false }] : menus.filter(menu => (menu.value === menu_role))
-        return menu_role ? filteredMenu : filteredMenu.map(menu => ({ label: menu.name, value: menu.name, menu_is_internal: menu.value }))
-      },
-    },
+    // {
+    //   key: 'role_menu',
+    //   hideOnIndex: true,
+    //   type: 'custom-select',
+    //   items: async vm => {
+    //     const { entity } = vm
+    //     let menus = vm.$store.getters['table/listCache']('menu')
+    //     if (!menus.length) {
+    //       try {
+    //         const response = await http.get('/configs/menu')
+    //         const configValue = JSON.parse(response.data?.config_val)
+    //         menus = configValue[0].menus
+    //         vm.$store.dispatch('table/setListData', { entity: 'menu', data: menus })
+    //       } catch (error) {
+    //         console.log({ error })
+    //         vm.$toast({
+    //           component: ToastificationContent,
+    //           props: {
+    //             title: error.response.data.detail,
+    //             icon: 'errorIcon',
+    //             variant: 'error',
+    //           },
+    //         })
+    //       }
+    //     }
+    //     const menu_role = entity.role_is_internal === 0
+    //     const filteredMenu = menu_role ? [{ label: 'Menu Extern', value: 'Menu Extern', menu_is_internal: false }] : menus.filter(menu => (menu.value === menu_role))
+    //     return menu_role ? filteredMenu : filteredMenu.map(menu => ({ label: menu.name, value: menu.name, menu_is_internal: menu.value }))
+    //   },
+    // },
     {
       key: 'roles',
       type: 'html',
@@ -112,32 +112,32 @@ export default {
         },
       ],
     },
-    {
-      title: 'headline~role~tablegroups',
-      primaryKey: 'tablegroup_id',
-      entity: 'role_tablegroup_crud_grp',
-      entityForm: 'role_tablegroup_crud_rel',
-      entityView: 'tablegroup',
-      lazy: false,
-      update: false,
-      create: false,
-      delete: false,
-      search: false,
-      component: () => import('@/views/app/Role/Relation/TableGroupMatrix.vue'),
-      tool: () => import('@/views/app/Role/Relation/MatrixTool.vue'),
-      entityName: 'role', // Ce champ est utilisé lors de l'affichage dans le TableGroupMatrix
-      fields: [
-        {
-          key: 'tablegroup_id', type: 'list', list: 'tablegroup', listLabel: 'tablegroup_name',
-        },
-        {
-          key: 'crud', type: 'list', list: 'crud', listLabel: 'crud', composite: true,
-        },
-        { key: 'tablegroup_name', hideOnForm: true },
-        { key: 'tablegroup_description', hideOnForm: true },
-      ],
+    // {
+    //   title: 'headline~role~tablegroups',
+    //   primaryKey: 'tablegroup_id',
+    //   entity: 'role_tablegroup_crud_grp',
+    //   entityForm: 'role_tablegroup_crud_rel',
+    //   entityView: 'tablegroup',
+    //   lazy: false,
+    //   update: false,
+    //   create: false,
+    //   delete: false,
+    //   search: false,
+    //   component: () => import('@/views/app/Role/Relation/TableGroupMatrix.vue'),
+    //   tool: () => import('@/views/app/Role/Relation/MatrixTool.vue'),
+    //   entityName: 'role', // Ce champ est utilisé lors de l'affichage dans le TableGroupMatrix
+    //   fields: [
+    //     {
+    //       key: 'tablegroup_id', type: 'list', list: 'tablegroup', listLabel: 'tablegroup_name',
+    //     },
+    //     {
+    //       key: 'crud', type: 'list', list: 'crud', listLabel: 'crud', composite: true,
+    //     },
+    //     { key: 'tablegroup_name', hideOnForm: true },
+    //     { key: 'tablegroup_description', hideOnForm: true },
+    //   ],
 
-    },
+    // },
 
     // {
     //   title: 'Tables',

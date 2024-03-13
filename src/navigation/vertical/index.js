@@ -228,24 +228,25 @@ export default [
       item('user'),
       item('team'),
       item('usertype'),
-    ],
-  },
-  {
-    title: key('administrationrights'),
-    children: [
       item('role', 'authorization'),
-      {
-        title: key('menu'),
-        action: 'menu~menu',
-        resource: 'menu',
-        route: 'menu',
-      },
-      item('access'),
-      item('tablename', 'table'),
-      item('tablegroup'),
-      item('crud'),
     ],
   },
+  // {
+  //   title: key('administrationrights'),
+  //   children: [
+  //     item('role', 'authorization'),
+  //     {
+  //       title: key('menu'),
+  //       action: 'menu~menu',
+  //       resource: 'menu',
+  //       route: 'menu',
+  //     },
+  //     item('access'),
+  //     item('tablename', 'table'),
+  //     item('tablegroup'),
+  //     item('crud'),
+  //   ],
+  // },
   {
     title: key('import'),
     action: 'menu~import',
