@@ -3,16 +3,14 @@ import { getUserData } from '@/auth/utils'
 import Vue from 'vue'
 import emailModal from '@/views/app/Ticket/EmailModal.vue'
 import { USER_PERMISSIONS, buildPermissions } from '@/config/config-permissions'
+import { ACCESS } from '@/config/config-access'
 
 export default {
   entity: 'frontend_3_1_1',
   primaryKey: 'pos_id',
   createModal: 'modal',
   entityEndpoint: '/pos',
-  permissions: buildPermissions({
-    list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-    read: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-  }),
+  permissions: ACCESS.tableAccess.pos.main,
   filter: (item, vm) => {
     const user = getUserData()
     if (vm.$store.getters['user/isUserExternClient']) {
@@ -107,7 +105,10 @@ export default {
       entity: 'frontend_3_1_3_7',
       entityView: 'location',
       permissions: buildPermissions({
-        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+        list: [
+          USER_PERMISSIONS.lead,
+          USER_PERMISSIONS.expansion_manager,
+        ],
       }),
       update: false,
       create: false,
@@ -133,7 +134,10 @@ export default {
       entityView: 'area',
       update: false,
       permissions: buildPermissions({
-        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+        list: [
+          USER_PERMISSIONS.lead,
+          USER_PERMISSIONS.expansion_manager,
+        ],
       }),
       fields: [
         {
@@ -168,7 +172,10 @@ export default {
       entityForm: 'contract_area_unit_usagetype_rel',
       entityView: 'contract',
       permissions: buildPermissions({
-        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+        list: [
+          USER_PERMISSIONS.lead,
+          USER_PERMISSIONS.expansion_manager,
+        ],
       }),
       fields: [
         {
@@ -252,8 +259,14 @@ export default {
       entityView: 'tag',
       update: false,
       permissions: buildPermissions({
-        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-        read: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+        list: [
+          USER_PERMISSIONS.lead,
+          USER_PERMISSIONS.expansion_manager,
+        ],
+        read: [
+          USER_PERMISSIONS.lead,
+          USER_PERMISSIONS.expansion_manager,
+        ],
       }),
       fields: [
         {
@@ -277,8 +290,14 @@ export default {
       entityForm: 'ticket_pos_rel',
       entityView: 'ticket',
       permissions: buildPermissions({
-        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-        read: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+        list: [
+          USER_PERMISSIONS.lead,
+          USER_PERMISSIONS.expansion_manager,
+        ],
+        read: [
+          USER_PERMISSIONS.lead,
+          USER_PERMISSIONS.expansion_manager,
+        ],
       }),
       fields: [
         {

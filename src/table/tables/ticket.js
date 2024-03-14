@@ -1,4 +1,4 @@
-import { USER_PERMISSIONS, buildPermissions } from '@/config/config-permissions'
+import { ACCESS } from '@/config/config-access'
 import { union } from 'lodash'
 
 export default {
@@ -6,10 +6,7 @@ export default {
   customPage: () => import('@/views/app/Ticket/TicketDetail.vue'),
   fieldComponent: () => import('@/views/app/CreateComponent/TicketForm.vue'),
   create: false,
-  permissions: buildPermissions({
-    list: [USER_PERMISSIONS.lead],
-    read: [USER_PERMISSIONS.lead],
-  }),
+  permissions: ACCESS.tableAccess.ticket.main,
   entity: 'frontend_6_1_6_overview',
   entityEndpoint: '/tickets/slims',
   defaultSortField: 'ticket_creation_time',

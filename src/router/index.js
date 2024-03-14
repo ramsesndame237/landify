@@ -6,6 +6,7 @@ import { checkAndverficationJwt, parseJwt } from '@/views/app/CustomComponents/D
 import BrowserId from 'browser-id'
 import axiosIns from "@/libs/axios";
 import { USER_PERMISSIONS, isAbleTo } from '@/config/config-permissions'
+import { ACCESS } from '@/config/config-access'
 
 
 Vue.use(VueRouter)
@@ -15,7 +16,7 @@ const routes = [
     path: '/app',
     name: 'home',
     component: () => import('@/views/app/Dashboard.vue'),
-    permissions: [USER_PERMISSIONS.lead],
+    permissions: ACCESS.dashbaord_home,
     meta: {
       pageTitle: 'headline~dashboard',
       breadcrumb: [
@@ -51,7 +52,6 @@ const routes = [
   {
     path: '/app/table/:table',
     name: 'table',
-    permissions: [USER_PERMISSIONS.lead],
     component: () => import('@/views/app/Generic/KeyFix/Index.vue'),
     meta: {
       pageTitle: '',
@@ -62,7 +62,7 @@ const routes = [
   {
     path: '/app/update_ticket',
     name: 'updateTicket',
-    permissions: [USER_PERMISSIONS.lead],
+    permissions: ACCESS.tableAccess.ticket.update_ticket,
     component: () => import('@/views/app/Ticket/UpdateTicketList.vue'),
     meta: {
       pageTitle: '',
@@ -144,6 +144,7 @@ const routes = [
   {
     name: 'payments-list',
     path: '/app/payments-list',
+    permissions: [USER_PERMISSIONS.lead],
     component: () => import('@/views/app/Page/PaymentsList.vue'),
     meta: {
       action: 'menu~contractpaymentslist',
@@ -418,7 +419,7 @@ const canOpenRoute = to => {
 
     return isAbleTo('list', permissionsFromDefinition)
   }
-  return ['misc-not-authorized', 'login'].includes(to.name) || isAbleTo('read', routes.find(route => to.path === route.path || to.path === `${route.path}/`)?.permissions)
+  return ['misc-not-authorized', 'login'].includes(to.name) || isAbleTo('list', routes.find(route => to.path === route.path || to.path === `${route.path}/`)?.permissions)
 }
 
 router.beforeEach((to, _, next) => {

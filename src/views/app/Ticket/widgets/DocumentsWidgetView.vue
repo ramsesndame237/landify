@@ -7,6 +7,7 @@ import EditPageMixin from '@/views/app/Generic/EditPageMixin'
 import TicketMixin from '@/views/app/Kanban/TicketMixin'
 import { mapMutations } from 'vuex'
 import { USER_ROLES } from '@/config/config-roles'
+import { TRUE } from 'sass'
 
 export default {
   name: 'DocumentsWidgetView',
@@ -71,6 +72,15 @@ export default {
     }
   },
   computed: {
+    canStamp() {
+      return this.$isUserA([USER_ROLES.admin])
+    },
+    canEdit() {
+      return this.$isUserA([USER_ROLES.admin])
+    },
+    canViewDetails() {
+      return true
+    },
     documentDef() {
       return this.isCreate ? { ...Table.document, customRequest: Table.document.customRequestCreate } : Table.document
     },
@@ -198,10 +208,10 @@ export default {
       </div>
       <section>
         <DataTable ref="dataTableRef" :columns="columDataDocument" :url="`/tickets/documents?ticket_id=${ticket_id}`"
-                   :on-details-click="previewDocument" hide-top-bar="true"
-                   :on-update-click="editDocument"
+                   :on-details-click="canViewDetails ? previewDocument : undefined" hide-top-bar="true"
+                   :on-update-click="canEdit ? editDocument : undefined"
                    :resolve-data="data =>data.data"
-                   :custom-actions="$can('read', '/app/preview/document') ? [{icon:'FeatherIcon',onClick:onStampClicked, label:'Stamp'}] : []"/>
+                   :custom-actions="canStamp ? [{icon:'FeatherIcon',onClick:onStampClicked, label:'Stamp'}] : []"/>
       </section>
 
     </div>

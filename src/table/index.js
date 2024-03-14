@@ -109,6 +109,7 @@ export default {
     filter_vertical: true,
     permissions: buildPermissions({
       list: [USER_PERMISSIONS.lead],
+      read: [USER_PERMISSIONS.lead],
     }),
     filters: [
       {

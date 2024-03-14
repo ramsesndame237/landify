@@ -1,6 +1,6 @@
 <template>
   <li
-    v-if="$isAbleTo('read', item.permissions)"
+    v-if="$isAbleTo('list', item.permissions)"
     class="nav-item has-sub"
     :class="{
       'open': isOpen,
@@ -31,7 +31,7 @@
       <component
         :is="resolveNavItemComponent(child)"
         v-for="child in item.children"
-        v-if="$isAbleTo('read', child.permissions)"
+        v-if="$isAbleTo('list', child.permissions)"
         :key="child.header || child.title"
         ref="groupChild"
         :item="child"

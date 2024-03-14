@@ -84,13 +84,14 @@
                 sub-fields-type="component"
                 :sub-fields-component="DeadlineComments"
                 sub-fields-data-key="contractdeadline_negotiations"
+                :permissions="permissions"
                 :sub-fields-data="{modalSize: 'sm', modalTitle: 'Comments', insertAtIndex: 5, btnText: 'Show comments', theadText: 'Comments'}"
               />
             </b-card-text>
           </b-card>
         </b-collapse>
         <b-card-text class="text-right">
-           <b-button v-b-toggle.available-options variant="primary" @click="showOptions" > <!--@click="collapseVisible = !collapseVisible" -->
+           <b-button v-if="canViewAllOptions" v-b-toggle.available-options variant="primary" @click="showOptions" > <!--@click="collapseVisible = !collapseVisible" -->
             viewed all Options
           </b-button>
         </b-card-text>
@@ -105,6 +106,8 @@ import sortBy from 'lodash/sortBy'
 import DataTables from '@/layouts/components/DataTables.vue'
 import DeadlinesTools from '@/views/app/Contracts/Relations/Deadlines/DeadlinesTools.vue'
 import DeadlineComments from '@/views/app/Contracts/Relations/Deadlines/DeadlineComments.vue'
+import { USER_ROLES } from '@/config/config-roles'
+import { USER_PERMISSIONS, buildPermissions } from '@/config/config-permissions'
 
 export default {
   name: 'DeadlineTable',
@@ -117,6 +120,9 @@ export default {
         {label: 'Mieter', value: 'mieter'},
         {label: 'Vermieter', value: 'vermieter'},
       ],
+      permissions: buildPermissions({
+        list: [USER_PERMISSIONS.lead],
+      }),
       deadlineFields: [
         {
           key: 'contractdeadline_type',
@@ -388,7 +394,7 @@ export default {
             return status[value]
           },
         },
-        {
+        ...(this.$isUserA(USER_ROLES.admin) ? [{
           key: 'action',
           hideOnForm: true,
           label: 'Action',
@@ -401,7 +407,7 @@ export default {
             },
             fetchDeadlines: () => this.getDeadlines(),
           },
-        },
+        }] : []),
       ],
       totalRows: 0,
       perPage: 100000,
@@ -422,6 +428,9 @@ export default {
     }
   },
   computed: {
+    canViewAllOptions() {
+      return this.$isUserA(USER_ROLES.lead)
+    },
     DeadlineComments() {
       return DeadlineComments
     },

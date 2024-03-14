@@ -1,6 +1,7 @@
 <script>
 import { BForm, BModal } from 'bootstrap-vue'
 import Field from '@/views/app/Generic/Field.vue'
+import { USER_ROLES } from '@/config/config-roles'
 
 const period = [
   { label: 'Day', value: 'Day' },
@@ -31,6 +32,9 @@ export default {
     }
   },
   computed: {
+    canCreate() {
+      return this.$isUserA(USER_ROLES.admin)
+    },
     fields() {
       return [
         {
@@ -202,7 +206,7 @@ export default {
 
 <template>
   <div class="d-flex align-items-center">
-    <b-button v-if="isButtonShowed" class="mr-1" size="sm" variant="info" @click="openModal">
+    <b-button v-if="canCreate && isButtonShowed" class="mr-1" size="sm" variant="info" @click="openModal">
       <span>New</span>
     </b-button>
     <b-modal ref="modal" :title="$t(forceTitle || 'Action Data')" ok-title="Save" cancel-title="Cancel" modal-class="modal-primary"

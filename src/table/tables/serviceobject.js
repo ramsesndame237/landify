@@ -1,6 +1,12 @@
+import { USER_PERMISSIONS, buildPermissions } from '@/config/config-permissions'
+
 export default {
   entity: 'frontend_3_5_1',
   entityEndpoint: '/areas/serviceobjects/list',
+  permissions: buildPermissions({
+    list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+    read: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+  }),
   fields: [
     { key: 'serviceobject_id', auto: true },
     { key: 'serviceobject_name' },
@@ -47,6 +53,9 @@ export default {
       entityForm: 'area_serviceobject_rel',
       entityView: 'area',
       primaryKey: 'area_id',
+      permissions: buildPermissions({
+        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+      }),
       fields: [
         {
           key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name',
@@ -65,6 +74,9 @@ export default {
       entityForm: 'location_serviceobject_rel',
       entityView: 'location',
       primaryKey: 'location_id',
+      permissions: buildPermissions({
+        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+      }),
       fields: [
         {
           key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name',
@@ -87,6 +99,10 @@ export default {
       entityForm: 'serviceobject_contract_rel',
       entityView: 'contract',
       primaryKey: 'contract_id',
+      permissions: buildPermissions({
+        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+        read: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+      }),
       fields: [
         {
           key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name',

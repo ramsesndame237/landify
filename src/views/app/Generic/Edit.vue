@@ -54,7 +54,7 @@
       <invoice-stats/>
     </template>
     <generic-filter ref="filterEdit" :table="table"
-                    :definition="definition.relations.find(element=> (element.entityView === 'ticket'))"
+                    :definition="definition.relations && definition.relations.find(element=> (element.entityView === 'ticket'))"
                     :initial-data="initialFilterData"
                     @filter="filter"/>
     <b-card v-if="definition.relations && formLoaded && visibleRelations.length>0 && !create ">
@@ -213,7 +213,7 @@ export default {
       return this.$isAbleTo('create', this.currentRelation.permissions)
     },
     visibleRelations() {
-      return this.definition.relations.filter(r => {
+      return (this.definition.relations ?? []).filter(r => {
         // console.log('call visible', this.$refs.form)
         if (r.visible && this.formLoaded) {
           if (!r.visible(this)) return false
@@ -227,7 +227,7 @@ export default {
     this.$watch('$refs.tabs.currentTab', val => {
       if (this.tabIndex !== val) {
         this.tabIndex = val
-        this.relationEntity = this.definition.relations.find(element => element.entityView === this.visibleRelations[val].entityView)
+        this.relationEntity = (this.definition.relations ?? []).find(element => element.entityView === this.visibleRelations[val].entityView)
         console.log("this is the change")
         this.$router.replace({
           name: this.$route.name,
@@ -276,13 +276,13 @@ export default {
         this.$router.push({ name: route.name, params: { id: this.entityId, table: route.params.table } })
       } else {
         console.log('Ici tabs', { tabs })
-        const def = this.definition.relations[tabs.currentTab]
+        const def = (this.definition.relations || [])[tabs.currentTab]
         tabs.tabs[tabs.currentTab].$children[1].openModal(true, { [this.primaryKey]: this.entityId }, `headline~${def.entityForm || def.title}~new`)
       }
     },
     editElement(entity) {
       const { tabs } = this.$refs
-      const def = this.definition.relations[tabs.currentTab]
+      const def = (this.definition.relations || [])[tabs.currentTab]
       tabs.tabs[tabs.currentTab].$children[1].openModal(false, entity, `headline~${def.entityForm || def.title}~detail`)
     },
     reloadRelatedTable() {

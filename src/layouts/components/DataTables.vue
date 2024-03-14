@@ -1,8 +1,9 @@
 <template>
   <div class="">
     <b-table ref="table" sticky-header striped hover responsive :busy.sync="loading" :per-page="perPage"
-             :current-page="currentPage" :items="canList ? (items || provider) : []" :fields="allFields" :sort-by.sync="sortBy"
-             :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" show-empty @row-clicked="onRowClicked">
+             :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
+             :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" show-empty @row-clicked="onRowClicked"
+             :tbody-tr-class="rowClass">
       <template #table-busy>
         <div class="text-center text-danger">
           <b-spinner class="align-middle"/>
@@ -277,7 +278,7 @@ export default {
       this.selectAll()
     },
     items() {
-      // this.currentItems = this.items
+      this.currentItems = this.items
     },
     filterData() {
       this.$refs.table.refresh()
@@ -310,6 +311,7 @@ export default {
     },
     provider(ctx) {
       if (!this.canList) {
+        this.$errorToast('error~permission~error')
         return []
       }
       const {

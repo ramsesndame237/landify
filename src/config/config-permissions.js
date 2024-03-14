@@ -4,18 +4,7 @@ import { USER_ROLES } from './config-roles'
 /**
  * @typedef { (userData) => Object } SinglePermissionObject
  * @property {number} role_code
- * @property {number} team_id
- */
-
-/**
- * Object used to check if user have the right permissions
- * @typedef  {Object} PermissionObject
- * @property {SinglePermissionObject[]} create
- * @property {SinglePermissionObject[]} read
- * @property {SinglePermissionObject[]} update
- * @property {SinglePermissionObject[]} remove
- * @property {SinglePermissionObject[]} list
- * @property {SinglePermissionObject[]} note
+ * @property {number} teams
  */
 
 /**
@@ -44,34 +33,84 @@ export const buildPermissions = ({
 }
 
 /**
- * Build the permission object easily
- * @param {number} role_code - code of the role of the user
- * @param {number} team_id - id of the team the user belongs to
- * @returns {SinglePermissionObject}
+ * Create Permission object that will be use for access guard
+ * @constructor
+ * @property {string} role_code - the code of the role allowed
+ * @property {array} teams - teams allowed with this role code
+ * @property {array} options - options allowed with this role code
+ * @method withOptions - Replace initial permission options. Can be chained. @returns {Permission}
+ * @method withTeams - Replace initial teams options. Can be chained. @returns {Permission}
  */
-export const buildPermission = (role_code, team_id) => ({ role_code, team_id: Number(team_id) })
+export class Permission {
+  constructor(role_code, teams, options) {
+    this.role_code = role_code
+    if (Array.isArray(teams)) {
+      this.teams = teams.map(teamId => Number(teamId))
+    } else {
+      this.teams = teams ? [teams] : []
+    }
+    if (Array.isArray(options)) {
+      this.options = options.map(optionId => Number(optionId))
+    } else {
+      this.options = options ? [options] : []
+    }
+  }
+
+  /**
+   * Returns the same permission with the passed options
+   * @param {number | number[]} options - id of the team
+   * @returns {Permission}
+   */
+  withOptions(options) {
+    return {
+      ...this,
+      options,
+    }
+  }
+
+  /**
+   * Returns the same permission with the passed team
+   * @param {number | number[]} teams - id of the team
+   * @returns {Permission}
+   */
+  withTeams(teams) {
+    return {
+      ...this,
+      teams: Array.isArray(teams) ? teams : [teams],
+    }
+  }
+}
 
 /**
  * Return true if user have a specific a `role_code` and return false otherwhise
- * @param {string} roleCode
+ * @param {(string | array)} roleCode
  */
 export const isUserA = roleCode => {
   const userData = getUserData()
   const userRoleCode = userData?.roles?.[0]?.role_code
 
-  return userRoleCode === roleCode
+  if (Array.isArray(roleCode)) {
+    return roleCode.includes(userRoleCode)
+  }
+
+  if (typeof roleCode === 'string') {
+    return userRoleCode === roleCode
+  }
+
+  return false
 }
 
 /**
  * Check permission and return true if user have access and false otherwhise
- * @param {PermissionObject} permissions
+ * @param {Permission} permissions
  * @returns {boolean}
  */
 export const isAbleTo = (action, permissions) => {
   const userData = getUserData()
 
   const userRoleCode = userData?.roles?.[0]?.role_code
-  const userTeams = userData?.team_id
+  const userTeams = userData?.teams ?? []
+  const userOptions = userData?.options ?? []
 
   // eslint-disable-next-line no-nested-ternary
   const permissionList = permissions
@@ -82,18 +121,24 @@ export const isAbleTo = (action, permissions) => {
     return false
   }
 
-  return permissionList.some(permission => permission.role_code === userRoleCode)
-    || permissionList.some(permission => userTeams?.includes(permission.team_id))
+  return permissionList.some(
+    permission => ((permission.role_code === userRoleCode)
+    && (permission.teams.length > 0 ? permission.teams.some(teamId => userTeams.includes(teamId)) : true)
+    && (permission.options.length > 0 ? permission.options.some(optionId => userOptions.includes(optionId)) : true)),
+  )
 }
 
+/**
+ * List of user permissions
+ */
 export const USER_PERMISSIONS = {
-  admin: buildPermission(USER_ROLES.admin, -2),
-  team_lead: buildPermission(USER_ROLES.team_lead, -2),
-  team_member: buildPermission(USER_ROLES.team_member, -2),
-  ext_team_member: buildPermission(USER_ROLES.ext_team_member, -2),
-  lead: buildPermission(USER_ROLES.lead, -2),
-  expansion_manager: buildPermission(USER_ROLES.expansion_manager, -2),
-  area_manager: buildPermission(USER_ROLES.area_manager, -2),
-  store_manager: buildPermission(USER_ROLES.store_manager, -2),
-  lawyer: buildPermission(USER_ROLES.lawyer, -2),
+  admin: new Permission(USER_ROLES.admin),
+  team_lead: new Permission(USER_ROLES.team_lead),
+  team_member: new Permission(USER_ROLES.team_member),
+  ext_team_member: new Permission(USER_ROLES.ext_team_member),
+  lead: new Permission(USER_ROLES.lead),
+  expansion_manager: new Permission(USER_ROLES.expansion_manager),
+  area_manager: new Permission(USER_ROLES.area_manager),
+  store_manager: new Permission(USER_ROLES.store_manager),
+  lawyer: new Permission(USER_ROLES.lawyer),
 }

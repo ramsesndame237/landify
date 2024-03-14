@@ -3,7 +3,7 @@
     <component
       v-for="item in items"
       :is="resolveNavItemComponent(item)"
-      v-if="$isAbleTo('read', item.permissions)"
+      v-if="$isAbleTo('list', item.permissions)"
       :key="item.header || item.title"
       :item="item"
     />

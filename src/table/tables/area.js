@@ -1,9 +1,14 @@
 import { getUserData } from '@/auth/utils'
+import { USER_PERMISSIONS, buildPermissions } from '@/config/config-permissions'
 
 export default {
   entity: 'frontend_3_2_1',
   primaryKey: 'area_id',
   entityEndpoint: '/areas',
+  permissions: buildPermissions({
+    list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+    read: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+  }),
   updateComponent: () => import('@/views/app/UpdateComponent/AreaForm'),
   filter: (item, vm) => {
     const user = getUserData()
