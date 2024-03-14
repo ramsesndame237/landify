@@ -20,7 +20,7 @@ export default {
       hideOnIndex: false,
       btnLabel: 'Kanban',
       component: KanbanButton,
-      getRoute: board => ({ name: 'table-kanban', params: { id: board.board_id, table: 'board' } }),
+      getRoute: board => ({ name: 'kanbanView', params: { id: board.board_id, table: 'board',name:board.board_name } }),
     },
     { key: 'board_id', auto: true },
     { key: 'board_name' },

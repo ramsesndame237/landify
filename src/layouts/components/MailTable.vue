@@ -549,6 +549,7 @@ export default {
 
         if (item.email_dismissed) item.status = 'dismiss'
         else if (item.email_processed) item.status = 'done'
+        else if (item.email_classification_type === 'email') item.status = 'notprocess'
         else if (item.documents.findIndex(d => d.status !== 'notprocess') >= 0) item.status = 'inprogress'
         else item.status = 'notprocess'
       })

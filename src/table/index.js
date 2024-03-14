@@ -107,6 +107,9 @@ export default {
   payment: {
     entity: 'frontend_2_4_1',
     filter_vertical: true,
+    permissions: buildPermissions({
+      list: [USER_PERMISSIONS.lead],
+    }),
     filters: [
       {
         key: 'customergroup_id',
