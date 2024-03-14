@@ -248,7 +248,7 @@ export default {
       this.selectAll()
     },
     items() {
-      // this.currentItems = this.items
+      this.currentItems = this.items
     },
     filterData() {
       this.$refs.table.refresh()
