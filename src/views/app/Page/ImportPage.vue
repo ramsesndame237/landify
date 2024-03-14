@@ -45,7 +45,7 @@
             <!--              </tr>-->
             <!--              </thead>-->
             <!--            </table>-->
-            <b-table-simple class="table-responsive" style="max-height: 70vh">
+            <b-table-simple class="table-responsive w-100" style="max-height: 70vh">
               <b-thead>
                 <b-tr>
                   <b-th>
@@ -167,39 +167,42 @@ export default {
           'partnercompany_name',
           'partnercompany_shortname',
           'partnergroup_name',
-          'city_zip',
-          'city_name',
-          'address_street',
-          'address_house_number',
-          'address_extra',
-          'country_name',
-          'contactdetails_email',
-          'contactdetails_phone',
-          'contactdetails_mobile',
-          'contactdetails_fax',
+          // 'city_zip',
+          // 'city_name',
+          // 'address_street',
+          // 'address_house_number',
+          // 'address_extra',
+          // 'country_name',
+          // 'contactdetails_email',
+          // 'contactdetails_phone',
+          // 'contactdetails_mobile',
+          // 'contactdetails_fax',
           // { key: 'contactdetails_salestaxno' },
           // { key: 'contactdetails_commercialregisterno' },
           // { key: 'contactdetails_website' },
         ],
         'companies': ['company_name', 'company_shortname', 'customergroup_name', 'company_template_coverletter_subject',
-          'company_template_coverletter_text', 'city_zip', 'city_name', 'address_street', 'address_house_number',
-          'address_extra', 'country_name', 'contactdetails_email', 'contactdetails_phone', 'contactdetails_mobile',
-          'contactdetails_fax', 'companydetails_salestaxno', 'companydetails_commercialregisterno',
-          'companydetails_website', 'bankdata_iban', 'bankdata_bic', 'bankdata_name', 'payment_date',
-          'payment_debitor', 'payment_info', 'payment_objectreference', 'payment_type', 'payment_value'
+          'company_template_coverletter_text',
+          // 'city_zip', 'city_name', 'address_street', 'address_house_number',
+          // 'address_extra', 'country_name', 'contactdetails_email', 'contactdetails_phone', 'contactdetails_mobile',
+          // 'contactdetails_fax', 'companydetails_salestaxno', 'companydetails_commercialregisterno',
+          // 'companydetails_website', 'bankdata_iban', 'bankdata_bic', 'bankdata_name', 'payment_date',
+          // 'payment_debitor', 'payment_info', 'payment_objectreference', 'payment_type', 'payment_value'
         ],
         'contact_persons': ['contactperson_firstname', 'contactperson_lastname', 'contactperson_department',
           'contactperson_shortname', 'contactperson_function', 'user_email', 'contactdetails_email',
           'contactdetails_phone', 'contactdetails_mobile', 'contactdetails_fax', 'company_name', 'customergroup_name',
-          'partnercompany_name', 'city_name', 'address_street', 'address_house_number', 'address_extra'
-          , 'contactsalutation_name', 'contacttitle_name', 'city_zip', 'country_name'
+          'partnercompany_name',
+          // 'city_name', 'address_street', 'address_house_number', 'address_extra'
+          // , 'contactsalutation_name', 'contacttitle_name', 'city_zip', 'country_name'
         ],
         'locations': ['location_name', 'location_objectdescription', 'location_total_area', 'location_start_date',
           'partnercompany_name', 'location_partnercompany_partnertype_valid_from_date',
           'location_partnercompany_partnertype_valid_to_date', 'partnercompany_name',
           'location_partnercompany_partnertype_valid_from_date', 'location_partnercompany_partnertype_valid_to_date',
-          'locationtype_name', 'city_name', 'address_street', 'address_house_number', 'address_extra', 'city_zip',
-          'country_name'
+          'locationtype_name',
+          // 'city_name', 'address_street', 'address_house_number', 'address_extra', 'city_zip',
+          // 'country_name'
         ],
         'pos': ['pos_name', 'pos_branchnumber', 'pos_name_external', 'pos_first_year', 'company_name', 'tag_name',],
         'areas': ['area_name', 'area_name_external', 'area_space_value', 'location_name', 'usagetype_name',

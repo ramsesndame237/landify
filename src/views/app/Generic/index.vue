@@ -11,7 +11,8 @@
                         :inline-filter="!definition.inline_filter"
                         :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
                         :actions="definition.actions" :filter-badge="getFilterCount()"
-                        @action="(a)=>$refs.table.onAction(a)" @filter="$refs.filter.openModal()"/>
+                        :on-export-data="fetchExportData" @action="(a)=>$refs.table.onAction(a)"
+                        @filter="$refs.filter.openModal()"/>
       <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
                       @filter="filter"/>
     </b-card>
@@ -28,9 +29,10 @@
       <!--                 hide-top-bar="true" :resolve-data="data =>data.data.data || data.data || data.items" :custom-actions="definition.custom_actions"-->
       <!--                 :hidde-filter-bar="true"/>-->
     </b-card>
-    <generic-modal v-if="definition.useModalGeneric || definition.useModalGeneric === undefined" ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"
+    <generic-modal v-if="definition.useModalGeneric || definition.useModalGeneric === undefined" ref="modal"
+                   :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"
                    with-continue :table-definition-key="table" :title="`headline~${table}~new`"
-                   @reload-table="$refs.table.reload()" />
+                   @reload-table="$refs.table.reload()"/>
     <SidebarModalComponent ref="sidebarComponent" :title="`headline~${table}~new`" :definition="definition"
                            :options="definition.options || null" :table-definition-key="table" :table="table">
       <div slot="customHeader" class="header-customer mb-3 d-flex align-items-center justify-content-center">
@@ -50,6 +52,7 @@ import GenericModal from '@/views/app/Generic/modal.vue'
 import { mapGetters } from 'vuex'
 import SidebarModalComponent from '@/components/SidebarModalComponent.vue'
 import DataTable from '@/views/app/CustomComponents/DataTable/DataTable.vue'
+import moment from 'moment'
 import Tables from '../../../table'
 import GenericFilter from './Filter.vue'
 import InlineFilter from './InlineFilter.vue'
@@ -135,6 +138,39 @@ export default {
       if (count === 0) return null
       return count
     },
+    async fetchExportData(name) {
+      // const valid = await this.$refs.form.validate()
+      // if (!valid) return
+      // this.loadingDonwload = true
+      // const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
+      // filter.size = 100000
+      // // generate the request query string
+      // const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
+      try {
+        const filename = `${name}-Export_${moment().format('DD_MM_YYYY')}.xlsx`
+        const masterData = (await this.$http.get(`synchronizations/${name}/export`, {
+          responseType: 'blob',
+        })).data
+        console.log('masterData: ', masterData)
+        const link = document.createElement('a')
+        link.setAttribute('href', URL.createObjectURL(masterData))
+        link.setAttribute('download', filename)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      } catch (err) {
+        if (err.code === 'ERR_BAD_REQUEST') {
+          let error = (await err.response).data
+          error = JSON.parse(await error.text())
+
+          this.$errorToast(error.detail || 'Unknown error')
+        } else {
+          this.$errorToast('Unknown error')
+        }
+      } finally {
+        this.loadingDonwload = false
+      }
+    },
     filter(data) {
       this.currentPage = 1
       this.$refs.table.filter(data)
@@ -144,6 +180,12 @@ export default {
     },
     editElement(entity) {
       this.$refs.modal.openModal(false, entity, `headline~${this.definition.entityForm || this.definition.entity}~detail`)
+    },
+    s2ab(s) {
+      const buf = new ArrayBuffer(s.length)
+      const view = new Uint8Array(buf)
+      for (let i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF
+      return buf
     },
     onNewElement() {
       console.log('this is the value of the create modal', this.definition.createModal)
