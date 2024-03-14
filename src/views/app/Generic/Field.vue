@@ -337,7 +337,11 @@ export default {
     },
     list() {
       const list = this.field.noCache ? this.nonCachedItems : this.$store.getters['table/listCache'](this.field.entityList || this.field.list)
-      return this.field.formatList?.(list) || list
+      let new_list = this.field.formatList?.(list) || list
+      if (typeof new_list === 'object' && new_list.data) {
+        new_list = new_list.data
+      }
+      return new_list
     },
     passwordToggleIcon() {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
@@ -356,6 +360,9 @@ export default {
         return this.list.filter(item => this.field.filter(item, this))
       }
       let new_list = this.list
+      if (typeof new_list === 'object' && new_list.data) {
+        new_list = new_list.data
+      }
       if (this.field.orderByField) {
         new_list = new_list.toSorted((a, b) => a[this.field.orderByField].localeCompare(b[this.field.orderByField]))
       }
@@ -899,6 +906,9 @@ export default {
         let newData = []
         if (this.field.entityCustomEndPoint) {
           newData = this.field.useWholeResponse ? response : response.data
+          if (typeof newData === 'object' && newData.data) {
+            newData = newData.data
+          }
           this.hasNext = response.current_page < response.pages
           console.log({ response }, this.field.useWholeResponse, this.hasNext)
         } else {

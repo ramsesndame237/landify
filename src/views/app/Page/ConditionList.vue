@@ -41,6 +41,7 @@
       <Datatable :key="table" ref="table" :selectable="false" :search="search" primary-key-column="contract_id"
                  entity="contract" :with-delete="false" :with-edit="false" :with-nested="table === 'deadlines'" :sub-fields="definition.subFields"
                  :fields="definition.fields" :items="items" sub-fields-data-key="deadlines" :with-actions="false"
+                 :permissions="permissions"
       />
     </b-card>
 
@@ -85,6 +86,7 @@ import { formatDate } from '@/libs/utils'
 import DeadlineMixin from '@/views/app/Contracts/Relations/Deadlines/DeadlineMixin'
 import { getUserData } from '@/auth/utils'
 import rates from './rates.json'
+import { USER_PERMISSIONS } from '@/config/config-permissions'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
 const CONTRACT_STATUS_CRITERIA_CODE = 'aktueller Vertragstyp'
@@ -120,6 +122,7 @@ export default {
       loading: false,
       loadingDonwload: false,
       eurCurrency: false,
+      permissions: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
     }
   },
   computed: {

@@ -177,6 +177,6 @@ export default class JwtService {
 
 
   isUserLoggedIn() {
-    return localStorage.getItem('userData') && localStorage.getItem(this.jwtConfig.storageTokenKeyName)
+    return localStorage.getItem('userData') && localStorage.getItem(this.jwtConfig?.storageTokenKeyName)
   }
 }

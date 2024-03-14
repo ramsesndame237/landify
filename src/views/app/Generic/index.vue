@@ -25,7 +25,7 @@
                  :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"
                  :no-cache="definition.noCache"
                  :filter-items="definition.filter" :custom-request="definition.customRequest"
-                 :initial-filter-data="initialFilterData"/>
+                 :initial-filter-data="initialFilterData" :permissions="definition.permissions"/>
       <!--      <DataTable :key="table" :columns="getHeadersDataTable" :url="definition.entityEndpoint || definition.entity"-->
       <!--                 hide-top-bar="true" :resolve-data="data =>data.data.data || data.data || data.items" :custom-actions="definition.custom_actions"-->
       <!--                 :hidde-filter-bar="true"/>-->

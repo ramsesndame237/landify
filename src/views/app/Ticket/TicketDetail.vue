@@ -36,7 +36,7 @@
                           variant="primary" @click="moveToNext">
                   {{ $t('button~movetonextcolumn') }}
                 </b-button>
-                <b-button v-if="canMoveToNext() && (showButton.all || showButton.confirm)" v-b-modal.moveModal
+                <b-button v-if="canMoveToAnotherBoard && canMoveToNext() && (showButton.all || showButton.confirm)" v-b-modal.moveModal
                           class="ml-2"
                           variant="primary">
                   Move to another board
@@ -267,7 +267,7 @@
                 </b-table-simple>
               </b-overlay>
               <div class="text-right p-1">
-                <b-button v-if="!entity.ticket_closed && showButton.all" variant="primary"
+                <b-button v-if="canAddNewMail && !entity.ticket_closed && showButton.all" variant="primary"
                           @click="$refs.emailModal.show(false)">New Email
                 </b-button>
               </div>
@@ -289,7 +289,7 @@
           <b-col v-if="activeTabItem && activeTabItem.id ==='5' && isTicket" lg="12">
             <b-card :title="$t('headline~ticket~subtasks')">
               <b-card-text class="text-right">
-                <b-button v-if="$can('create', table)" variant="primary" @click="createSubTicket">
+                <b-button v-if="canAddSubTask" variant="primary" @click="createSubTicket">
                   {{ $t('headline~ticket~newsubtask') }}
                 </b-button>
               </b-card-text>
@@ -353,6 +353,7 @@ import DocumentsWidgetView from '@/views/app/Ticket/widgets/DocumentsWidgetView.
 import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.js'
 import SubticketTable from '@/views/app/CustomComponents/WP6/SubticketTable.vue'
 import vSelect from 'vue-select'
+import { USER_ROLES } from '@/config/config-roles'
 
 const ticketDef = {
   ...Table.ticket,
@@ -405,6 +406,15 @@ export default {
   },
 
   computed: {
+    canMoveToAnotherBoard() {
+      return this.$isUserA(USER_ROLES.admin)
+    },
+    canAddSubTask() {
+      return this.$isUserA(USER_ROLES.admin)
+    },
+    canAddNewMail() {
+      return this.$isUserA(USER_ROLES.admin)
+    },
     tabTitle() {
       return [
         {

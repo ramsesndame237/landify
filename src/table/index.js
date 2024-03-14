@@ -25,6 +25,7 @@ import contradiction from './tables/contradiction'
 import inspectionresult from './tables/inspectionresult'
 import contradictionpackage from './tables/contradictionpackage'
 import board from './tables/board'
+import { USER_PERMISSIONS, buildPermissions } from '@/config/config-permissions'
 
 export default {
   // region Work Package 1
@@ -275,6 +276,9 @@ export default {
 
   tag: {
     entity: 'frontend_3_10_1',
+    permissions: buildPermissions({
+      read: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+    }),
     fields: [
       { key: 'tag_id', auto: true },
       { key: 'tag_name' },
@@ -288,6 +292,9 @@ export default {
         entityForm: 'pos_tag_rel',
         entityView: 'pos',
         primaryKey: 'pos_id',
+        permissions: buildPermissions({
+          list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+        }),
         fields: [
           {
             key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name', disableOnUpdate: true,

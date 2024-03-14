@@ -2,12 +2,17 @@ import _ from 'lodash'
 import { getUserData } from '@/auth/utils'
 import Vue from 'vue'
 import emailModal from '@/views/app/Ticket/EmailModal.vue'
+import { USER_PERMISSIONS, buildPermissions } from '@/config/config-permissions'
 
 export default {
   entity: 'frontend_3_1_1',
   primaryKey: 'pos_id',
   createModal: 'modal',
   entityEndpoint: '/pos',
+  permissions: buildPermissions({
+    list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+    read: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+  }),
   filter: (item, vm) => {
     const user = getUserData()
     if (vm.$store.getters['user/isUserExternClient']) {
@@ -106,6 +111,9 @@ export default {
       primaryKey: 'location_id',
       entity: 'frontend_3_1_3_7',
       entityView: 'location',
+      permissions: buildPermissions({
+        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+      }),
       update: false,
       create: false,
       delete: false,
@@ -129,6 +137,9 @@ export default {
       entityForm: 'area_pos_rel',
       entityView: 'area',
       update: false,
+      permissions: buildPermissions({
+        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+      }),
       fields: [
         {
           key: 'area_id',
@@ -161,6 +172,9 @@ export default {
       entity: 'frontend_3_1_3_2',
       entityForm: 'contract_area_unit_usagetype_rel',
       entityView: 'contract',
+      permissions: buildPermissions({
+        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+      }),
       fields: [
         {
           key: 'contract_id',
@@ -242,6 +256,10 @@ export default {
       entityForm: 'pos_tag_rel',
       entityView: 'tag',
       update: false,
+      permissions: buildPermissions({
+        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+        read: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+      }),
       fields: [
         {
           key: 'tag_id',
@@ -262,6 +280,10 @@ export default {
       entity: 'frontend_3_1_3_4',
       entityForm: 'ticket_pos_rel',
       entityView: 'ticket',
+      permissions: buildPermissions({
+        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+        read: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+      }),
       fields: [
         {
           key: 'ticket_id',
@@ -333,6 +355,10 @@ export default {
       entityForm: 'document_pos_rel',
       entityEndpoint: '/documents/pos',
       entity: 'frontend_3_1_3_8',
+      permissions: buildPermissions({
+        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+        read: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+      }),
       fields: [
         {
           key: 'document_id',
@@ -360,6 +386,10 @@ export default {
       entity: 'frontend_3_1_3_1',
       entityForm: 'area_pos_rel',
       entityView: 'Email',
+      permissions: buildPermissions({
+        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+        read: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+      }),
       update: false,
       delete: false,
       create: false,
@@ -426,6 +456,7 @@ export default {
     {
       component: () => import('@/views/app/Generic/Panels/TrackRecord.vue'),
       props: {},
+      permissions: [USER_PERMISSIONS.admin],
     },
   ],
 }

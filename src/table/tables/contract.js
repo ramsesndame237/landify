@@ -1,12 +1,16 @@
 import { getContractCriteriaFields } from '@/table/utils'
 import _ from 'lodash'
-import router from '@/router'
+import { USER_PERMISSIONS, buildPermissions } from '@/config/config-permissions'
 
 export default {
   // entity: 'frontend_3_4_1_1',
   entityEndpoint: '/contracts',
   fetchWithEntity: true,
   formComponent: () => import('@/views/app/FormComponent/ContractForm.vue'),
+  permissions: buildPermissions({
+    list: [USER_PERMISSIONS.lead],
+    read: [USER_PERMISSIONS.lead],
+  }),
   createModal: 'otherPage',
   // createComponent: () => import('@/views/app/CreateComponent/ContractForm/ContractFormNew.vue'),
   fields: [

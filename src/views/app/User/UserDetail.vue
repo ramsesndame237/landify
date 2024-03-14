@@ -162,7 +162,7 @@
                   />
                 </template>
               </b-card>
-              <b-card no-body>
+              <b-card no-body v-if="canViewTrackRecord">
                 <TrackRecord :definition="definition" :endpoint="endpoint" />
               </b-card>
             </b-tab>
@@ -235,6 +235,7 @@ import TeamMixin from '@/views/app/Team/TeamMixin'
 import { getUserData } from '@/auth/utils'
 import intersection from 'lodash/intersection'
 import { mapGetters } from 'vuex'
+import { USER_ROLES } from '@/config/config-roles'
 
 export default {
   name: 'UserDetail',
@@ -262,6 +263,9 @@ export default {
   computed: {
     user() {
       return this.entity
+    },
+    canViewTrackRecord() {
+      return this.$isUserA(USER_ROLES.admin)
     },
     avatarPlaceholder() {
       return this.user?.user_firstname.charAt(0).toUpperCase()

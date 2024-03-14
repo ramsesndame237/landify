@@ -141,7 +141,7 @@
                      :title="$t('headline~ticket~newsubtask')" @reload-table="isDataUpdated = true" />
     </div>
 
-    <FloatingActionButton v-if="itemOver" :key="itemOver.ticket_id" class="position-absolute" :style="{top:topFloatElement,left:leftFloatElement}">
+    <FloatingActionButton v-if="canShowQuickAction && itemOver" :key="itemOver.ticket_id" class="position-absolute" :style="{top:topFloatElement,left:leftFloatElement}">
       <b-row slot="action">
         <b-col>
           <b-button v-b-tooltip.hover :title="$t('button~assignto')" size="sm" class="mr-1" @click.stop="$emit('assign')">
@@ -177,6 +177,7 @@ import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin'
 import SubticketTr from '@/views/app/Ticket/Subticket/SubticketTr.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
 import bussinessMoment from 'moment-business-time'
+import { USER_ROLES } from '@/config/config-roles'
 
 export default {
   name: 'InvoiceTicketCard',
@@ -218,6 +219,9 @@ export default {
     }
   },
   computed: {
+    canShowQuickAction() {
+      return this.$isUserA(USER_ROLES.admin)
+    },
     ...mapGetters({
       now: 'app/now',
     }),

@@ -30,6 +30,7 @@ import { checkAndverficationJwt } from '@/views/app/CustomComponents/DataTable/u
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import { isAbleTo, isUserA } from './config/config-permissions'
 // Vee validate
 Vue.component('validation-provider', ValidationProvider)
 Vue.component('validation-observer', ValidationObserver)
@@ -103,6 +104,8 @@ require('@core/scss/core.scss')
 require('@/assets/scss/style.scss')
 
 Vue.config.productionTip = false
+Vue.prototype.$isAbleTo = isAbleTo
+Vue.prototype.$isUserA = isUserA
 
 const userEmail = localStorage.getItem('userEmail')
 const env = process.env.VUE_APP_ENV

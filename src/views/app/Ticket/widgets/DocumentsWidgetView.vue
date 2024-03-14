@@ -6,6 +6,7 @@ import { getDocumentLink, getDocumentLinkPreview, getStampedDocumentLink } from 
 import EditPageMixin from '@/views/app/Generic/EditPageMixin'
 import TicketMixin from '@/views/app/Kanban/TicketMixin'
 import { mapMutations } from 'vuex'
+import { USER_ROLES } from '@/config/config-roles'
 
 export default {
   name: 'DocumentsWidgetView',
@@ -72,6 +73,9 @@ export default {
   computed: {
     documentDef() {
       return this.isCreate ? { ...Table.document, customRequest: Table.document.customRequestCreate } : Table.document
+    },
+    canAddDocument() {
+      return this.$isUserA(USER_ROLES.admin)
     },
   },
   watch: {
@@ -187,7 +191,7 @@ export default {
             <!--            <feather-icon icon="DownloadIcon" size="25" class="text-white"/>-->
             <!--          </div>-->
           </div>
-          <b-button variant="primary" @click="createDocument">
+          <b-button v-if="canAddDocument" variant="primary" @click="createDocument">
             {{ $t('button~newdocument') }}
           </b-button>
         </div>

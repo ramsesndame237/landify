@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <b-table ref="table" sticky-header striped hover responsive :busy.sync="loading" :per-page="perPage"
-             :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
+             :current-page="currentPage" :items="canList ? (items || provider) : []" :fields="allFields" :sort-by.sync="sortBy"
              :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" show-empty @row-clicked="onRowClicked">
       <template #table-busy>
         <div class="text-center text-danger">
@@ -10,11 +10,11 @@
         </div>
       </template>
       <template #cell(__selected)="data">
-        <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"
+        <b-form-checkbox v-if="multiSelect && currentItems[data.index]" v-model="currentItems[data.index].__selected"
                          :disabled="disabled" @change="onSelect(data.index)"/>
       </template>
       <template #cell()="data">
-        <b-form-checkbox v-if="data.field.type === 'boolean'" v-model="data.value" :disabled="!data.field.editable"
+        <b-form-checkbox v-if="multiSelect && data.field.type === 'boolean'" v-model="data.value" :disabled="!data.field.editable"
                          :value="1" :unchecked-value="0"
                          @change="data.field.onChange ? data.field.onChange(data) : null"/>
         <b-button v-else-if="data.field.type === 'button'" size="xs"
@@ -46,20 +46,20 @@
       <template #emptyfiltered>
         {{ $t('message~table~emptyFiltered') }}
       </template>
-      <template v-if="withActions" #cell(Actions)="data">
+      <template v-if="actionsEnabled" #cell(Actions)="data">
         <div class="text-nowrap">
-          <b-button v-if="withView" class=" btn-icon" style="margin-bottom: 3px" variant="flat-success" pill
+          <b-button v-if="detailsEnabled" class=" btn-icon" style="margin-bottom: 3px" variant="flat-success" pill
                     @click="onViewClick(data)">
             <feather-icon icon="EyeIcon"/>
             <!--        <span>{{ $t('button~view') }}</span>-->
           </b-button>
-          <b-button v-if="withEdit && canUpdate" :disabled="canUpdateItem && canUpdateItem(currentItems[data.index])"
+          <b-button v-if="updateEnabled" :disabled="canUpdateItem && canUpdateItem(currentItems[data.index])"
                     class="btn-icon" variant="flat-info" style="margin-bottom: 3px" pill
                     @click="onEditElement ? onEditElement(currentItems[data.index]) : $router.push({ name: 'table-view', params: { table: entity, id: currentItems[data.index][primaryKey], entity: currentItems[data.index], ids: currentItems.map(i => i[primaryKey]) }, query: { edit: 'true' } })">
             <feather-icon icon="EditIcon"/>
             <!--        <span>{{ $t('button~edit') }}</span>-->
           </b-button>
-          <b-button v-if="withDelete && canDelete" :disabled="canDeleteItem && canDeleteItem(currentItems[data.index])"
+          <b-button v-if="deleteEnabled" :disabled="canDeleteItem && canDeleteItem(currentItems[data.index])"
                     class="btn-icon" variant="flat-primary" style="margin-bottom: 3px" pill
                     @click="deleteElement(data.index)">
             <feather-icon icon="Trash2Icon"/>
@@ -116,6 +116,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    permissions: {
+      type: [Object, Array],
+      default: () => [],
+    },
     noCache: {type: Boolean, default: false},
     entity: {type: String, required: true},
     entityList: {type: String},
@@ -136,7 +140,7 @@ export default {
     subFieldsType: {type: String, required: false}, // Ce champ indique si les éléments à afficher sous le tableau est un composant ou un tableau
     subFieldsComponent: {type: Object, required: false}, // Ce champ indique le composant pour le sous tableau
     subFieldsData: {type: Object, required: false}, // Ce champ contient certaines configuration pour les données du subfields
-    multiSelect: {type: Boolean, default: true},
+    multiSelect: {type: Boolean, default: false},
     defaultSortColumn: {type: String, default: ''},
     secondKey: {},
     secondKeyValue: {},
@@ -180,6 +184,18 @@ export default {
     }
   },
   computed: {
+    actionsEnabled() {
+      return this.withActions && (this.detailsEnabled || this.deleteEnabled || this.updateEnabled)
+    },
+    detailsEnabled() {
+      return this.withView && this.canRead
+    },
+    deleteEnabled() {
+      return this.withDelete && this.canDelete
+    },
+    updateEnabled() {
+      return this.withEdit && this.canUpdate
+    },
     truncateStyle() {
       return this.truncateBy ? {maxWidth: `${this.truncateBy}rem`, display: 'block'} : {}
     },
@@ -192,7 +208,7 @@ export default {
     allFields() {
       const fields = [
         ...(this.selectable ? [{key: '__selected', thStyle: {width: '50px'}}] : []),
-        ...(this.withActions ? [{
+        ...(this.actionsEnabled ? [{
           key: 'Actions',
           stickyColumn: true,
           tdClass: 'p-0',
@@ -231,10 +247,24 @@ export default {
       return fields
     },
     canDelete() {
-      return this.$can('delete', this.entityForm || this.entity)
+      // return this.$can('delete', this.entityForm || this.entity)
+      return this.$isAbleTo('remove', this.permissions)
     },
     canUpdate() {
-      return this.$can('update', this.entityForm || this.entity)
+      // return this.$can('update', this.entityForm || this.entity)
+      return this.$isAbleTo('update', this.permissions)
+    },
+    canRead() {
+      // return this.$can('update', this.entityForm || this.entity)
+      return this.$isAbleTo('read', this.permissions)
+    },
+    canCreate() {
+      // return this.$can('update', this.entityForm || this.entity)
+      return this.$isAbleTo('create', this.permissions)
+    },
+    canList() {
+      // return this.$can('update', this.entityForm || this.entity)
+      return this.$isAbleTo('list', this.permissions)
     },
     ...mapGetters('user', ['isUserExternClient']),
   },
@@ -285,6 +315,9 @@ export default {
       } else this.$router.push(routeData)
     },
     provider(ctx) {
+      if (!this.canList) {
+        return []
+      }
       const {
         currentPage, perPage, filter, sortBy, sortDesc,
       } = ctx

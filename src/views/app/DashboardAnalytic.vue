@@ -23,14 +23,14 @@
                     key: 'company_id',
                     filter_key: 'customergroup_id',
                     type: 'list',
-                    required: true,
+                    required: false,
                     list: 'company',
                     listLabel: 'company_name',
                   }"
                  :entity="entity"/>
           <field class=" mx-sm-1 w-100"
                  :field="{ key: 'team_id', type: 'custom-select', required: false, items: filteredTeams}"
-                 :entity="entity" :disabled="entity.company_id === -1"/>
+                 :entity="entity" />
           <field class="w-100"
                  :field="{ key: 'user_id', type: 'custom-select', items: usersData, required: false }"
                  :entity="entity" :disabled="entity.company_id === -1"/>
@@ -66,6 +66,7 @@ import CompanyMixin from '@/views/app/Company/CompanyMixin'
 import {getUserData} from '@/auth/utils'
 import {filter, pickBy} from 'lodash'
 import {mapGetters} from 'vuex'
+import { USER_ROLES } from '@/config/config-roles'
 
 export default {
   name: 'DashboardAnalytic',
@@ -181,6 +182,7 @@ export default {
     async getUsers() {
       try {
         const {user_id} = this.user
+        console.log("User ", this.user)
         const filteredEntity = pickBy(this.entity, val => ![-1, null, undefined].includes(val))
 
         const response = await this.$http.get('users', {
@@ -194,7 +196,7 @@ export default {
           return {label: user.user_email, value: user.user_id, ...user}
         })
 
-        if (this.isUserExternClientNotDirector && this.team_is_customer) {
+        if (((this.isUserExternClientNotDirector) && this.team_is_customer) && this.user?.role?.[0]?.role_code === USER_ROLES.lead) {
           transformedData = filter(data, {user_id}).map(user => ({label: 'My Tickets', value: user.user_id, ...user}))
           this.entity.user_id = data.some(user => user.user_id === user_id) ? user_id : -1
         }

@@ -8,7 +8,7 @@
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex align-items-center">
-            <notes v-if="definition.note" :id="entityId" class="mr-2" :primary-key="primaryKey" :note="definition.note"
+            <notes v-if="definition.note && $isAbleTo('note', definition.permissions)" :id="entityId" class="mr-2" :primary-key="primaryKey" :note="definition.note"
                    :note-rel="'note_user_'+table+'_rel'"/>
             <template v-if="view">
               <b-button v-for="(action,i) in definition.actions" :key="i" :disabled="action.loading" size="sm"
@@ -17,13 +17,13 @@
                 <span>{{ action.text }}</span>
               </b-button>
             </template>
-            <template v-if="$can('delete', table)">
+            <template v-if="$isAbleTo('remove', definition.permissions)">
               <b-button v-if="view" size="sm" variant="primary" class="mr-1" @click="deleteEntity">
                 <feather-icon icon="Trash2Icon" class="mr-50"/>
                 {{ $t('button~delete') }}
               </b-button>
             </template>
-            <template v-if="definition.update !== false && $can('update', table)">
+            <template v-if="definition.update !== false && $isAbleTo('update', definition.permissions)">
               <b-button v-if="view" size="sm" variant="info" class="mr-1" @click="edit">
                 <feather-icon icon="EditIcon" class="mr-50"/>
                 {{ $t('button~edit') }}
@@ -55,7 +55,7 @@
     </template>
 
     <b-card v-if="definition.relations && formLoaded && visibleRelations.length>0 && !create ">
-      <b-tabs ref="tabs" pills>
+      <b-tabs ref="tabs" pills v-model="tabIndex">
         <b-tab v-for="(relation, index) in visibleRelations" :key="index"
                :title="$t(relation.title || ('headline~'+(relation.entityView||relation.entityForm)+'~tab'))"
                :active="index===tabIndex" :lazy="relation.lazy!==false">
@@ -69,7 +69,8 @@
                          :entity-view="relation.entityView" :with-view="relation.view!==false" :fields="relation.fields"
                          :on-edit-element="editElement" :with-edit="relation.update!==false"
                          :with-delete="relation.delete!==false" :custom-request="relation.customRequest"
-                         :entity-endpoint="relation.entityEndpoint" :on-view-element="relation.onViewElement"/>
+                         :entity-endpoint="relation.entityEndpoint" :on-view-element="relation.onViewElement"
+                         :permissions="relation.permissions"/>
             <generic-modal :cache-key="relation.entity+'-'" title="Test" :table="relation.entityForm || relation.entity"
                            :definition="relation" is-relation
                            :table-definition-key="relation.entityForm || relation.entity"
@@ -86,11 +87,11 @@
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
             <component :is="currentTool()" v-if="currentTool() && showTool"/>
-            <b-button v-if="currentHasNew() && canCreateCurrent" class="mr-1" size="sm" variant="info"
+            <b-button v-if="currentRelation && canCreateCurrent" class="mr-1" size="sm" variant="info"
                       @click="newElement">
               {{ $t('button~new') }}
             </b-button>
-            <b-button v-if="currentHasDelete() && canDeleteCurrent" class="mr-1" size="sm" variant="primary"
+            <b-button v-if="currentRelation && canDeleteCurrent" class="mr-1" size="sm" variant="primary"
                       @click="deleteSelected">
               {{ $t('button~delete') }}
             </b-button>
@@ -108,7 +109,7 @@
 
     <template v-if="formLoaded && definition.panels && definition.panels.length > 0">
       <template v-for="(panel,idx) in definition.panels">
-        <component :is="panel.component" :key="idx" :definition="definition" v-bind="panel.props"/>
+        <component :is="panel.component" v-if="$isAbleTo('read', panel.permissions)" :key="idx" :definition="definition" v-bind="panel.props"/>
       </template>
     </template>
   </div>
@@ -168,17 +169,23 @@ export default {
       formLoaded: false,
       noBody: false,
       showTool: true,
+      tabIndex: 0,
     }
   },
   computed: {
+    currentRelation() {
+      return this.visibleRelations[this.tabIndex]
+    },
     currentHasFilter() {
       return this.visibleRelations[this.$refs.tabs?.currentTab]?.filters != null
     },
     canDeleteCurrent() {
-      return this.$can('delete', this.visibleRelations[this.$refs.tabs?.currentTab]?.entityForm)
+      // return this.$can('delete', this.visibleRelations[this.$refs.tabs?.currentTab]?.entityForm)
+      return this.$isAbleTo('remove', this.currentRelation.permissions)
     },
     canCreateCurrent() {
-      return this.$can('create', this.visibleRelations[this.$refs.tabs?.currentTab]?.entityForm)
+      // return this.$can('create', this.visibleRelations[this.$refs.tabs?.currentTab]?.entityForm)
+      return this.$isAbleTo('create', this.currentRelation.permissions)
     },
     visibleRelations() {
       return this.definition.relations.filter(r => {
@@ -186,7 +193,8 @@ export default {
         if (r.visible && this.formLoaded) {
           if (!r.visible(this)) return false
         }
-        return this.$can('read', r.entityForm || r.entityView)
+        // return this.$can('read', r.entityForm || r.entityView)
+        return this.$isAbleTo('list', r.permissions)
       })
     },
   },

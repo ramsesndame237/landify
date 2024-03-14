@@ -1,22 +1,26 @@
+import { USER_PERMISSIONS } from '@/config/config-permissions'
+
 function table(name) {
   return { name: 'table', params: { table: name } }
 }
 
-function item(tablename, title, route) {
+function item(tablename, title, route, permissions) {
   return {
     title: `menu~${title || tablename}`,
     route: route || table(tablename),
     // icon: 'UserIcon',
     action: `menu~${title || tablename}`,
     resource: 'menu',
+    permissions,
   }
 }
 
-function headerItem(itemKey) {
+function headerItem(itemKey, permissions) {
   return {
     header: `menu~${itemKey}`,
     action: `menu~${itemKey}`,
     resource: 'menu',
+    permissions,
   }
 }
 
@@ -25,23 +29,25 @@ function key(val) {
 }
 
 export default [
-  headerItem('main'),
+  headerItem('main', [USER_PERMISSIONS.lead]),
   {
     title: key('dashboard'),
     icon: 'HomeIcon',
     action: 'menu~dashboard',
     resource: 'menu',
+    permissions: [USER_PERMISSIONS.lead],
     children: [
-      item(null, 'dashboard', 'home'),
+      item(null, 'dashboard', 'home', [USER_PERMISSIONS.lead]),
       item(null, 'ticketdashboard', 'ticketDashboard'),
     ],
   },
   {
     title: key('ticket'),
+    permissions: [USER_PERMISSIONS.lead],
     children: [
-      item('board', 'ticketboard'),
-      item('ticket', 'ticketlist'),
-      item(null, 'ticketlistupdate', 'updateTicket'),
+      item('board', 'ticketboard', null, [USER_PERMISSIONS.lead]),
+      item('ticket', 'ticketlist', null, [USER_PERMISSIONS.lead]),
+      item(null, 'ticketlistupdate', 'updateTicket', [USER_PERMISSIONS.lead]),
       // {
       //   title: key('documentupload'),
       //   route: 'document-classification',
@@ -56,20 +62,23 @@ export default [
   //   action: `menu~classification`,
   //   resource: 'menu',
   // },
-  item('pos'),
+  item('pos', null, null, [USER_PERMISSIONS.lead]),
   {
     title: key('contractlists'),
+    permissions: [USER_PERMISSIONS.lead],
     children: [
       {
         title: key('contractcondition'),
         action: 'menu~contractcondition',
         resource: 'menu',
+        permissions: [USER_PERMISSIONS.lead],
         route: { name: 'condition-list' },
       },
       {
         title: key('contractdeadline'),
         action: 'menu~contractdeadline',
         resource: 'menu',
+        permissions: [USER_PERMISSIONS.lead],
         route: { name: 'deadline-list' },
       },
       {
@@ -113,12 +122,13 @@ export default [
   item('contactperson'),
   {
     title: key('rentalsandcontracts'),
+    permissions: [USER_PERMISSIONS.lead],
     children: [
-      item('contract'),
+      item('contract', null, null, [USER_PERMISSIONS.lead]),
       item('invoice'),
       item('location'),
-      item('payment'),
-      item('serviceobject'),
+      item('payment', null, null, [USER_PERMISSIONS.lead]),
+      item('serviceobject', null, null, [USER_PERMISSIONS.lead]),
     ],
   },
   headerItem('operations'),
