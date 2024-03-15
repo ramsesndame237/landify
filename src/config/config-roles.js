@@ -1,8 +1,8 @@
 export class UserRole {
   constructor(role_code, teams, options) {
     this.role_code = role_code
-    this.teams = teams
-    this.options = options
+    this.teams = teams ?? []
+    this.options = options ?? []
   }
 
   withTeams(...teams) {

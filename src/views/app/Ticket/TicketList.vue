@@ -200,8 +200,8 @@ export default {
         perPage: this.perPage,
         totalRows: this.totalRows,
         filter: { ...this.$refs.filter.getFinalData(), status: this.filterValue },
-        sortBy: this.$refs.table.sortBy,
-        sortDesc: this.$refs.table.sortDesc,
+        sortBy: this.$refs.table?.sortBy,
+        sortDesc: this.$refs.table?.sortDesc,
       },
     })
   },
@@ -230,7 +230,7 @@ export default {
       console.log(obj, 'filter')
       this.currentPage = 1
       setTimeout(() => {
-        this.$refs.table.filter(obj)
+        this.$refs.table?.filter(obj)
       }, 500)
     },
     reset() {

@@ -95,8 +95,7 @@ export const isUserA = (...roles) => {
   const userRoleCode = userData?.roles?.[0]?.role_code
   const userTeams = userData?.teams ?? []
 
-  return (roles.some(role => role.role_code === userRoleCode)
-  && (roles.teams.length > 0 ? roles.teams.some(teamId => userTeams.includes(teamId)) : true))
+  return (roles.some(role => role.role_code === userRoleCode && (role.teams.length > 0 ? role.teams.some(teamId => userTeams.includes(teamId)) : true)))
 }
 
 /**

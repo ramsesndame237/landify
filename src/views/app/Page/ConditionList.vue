@@ -62,6 +62,7 @@ import DeadlineMixin from '@/views/app/Contracts/Relations/Deadlines/DeadlineMix
 import { getUserData } from '@/auth/utils'
 import rates from './rates.json'
 import { USER_PERMISSIONS, buildPermissions } from '@/config/config-permissions'
+import { EXTERN_TEAMS_IDS } from '@/config/config-access'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
 const CONTRACT_STATUS_CRITERIA_CODE = 'aktueller Vertragstyp'
@@ -101,8 +102,8 @@ export default {
         list: [
           USER_PERMISSIONS.lead,
           USER_PERMISSIONS.expansion_manager,
-          USER_PERMISSIONS.ext_team_member.withTeams(TEAMS_IDS.FM),
-          USER_PERMISSIONS.ext_team_member.withTeams(TEAMS_IDS.MVM),
+          USER_PERMISSIONS.ext_team_member.withTeams(EXTERN_TEAMS_IDS.FM),
+          USER_PERMISSIONS.ext_team_member.withTeams(EXTERN_TEAMS_IDS.MVM),
         ],
       }),
     }

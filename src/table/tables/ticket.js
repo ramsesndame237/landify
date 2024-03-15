@@ -1,4 +1,5 @@
 import { ACCESS } from '@/config/config-access'
+import { USER_ROLES } from '@/config/config-roles'
 import { union } from 'lodash'
 
 export default {
@@ -187,7 +188,7 @@ export default {
 
         const seyboldTeams = teams.filter(t => t.team_is_customer === 0)
 
-        if (isUserExternClientNotDirector) {
+        if (isUserExternClientNotDirector && !vm.$isUserA(USER_ROLES.expansion_manager)) {
           vm.$set(vm.entity, 'team_id', -1)
           return union(seyboldTeams.map(t => t.team_id), team_id).includes(team.team_id)
         }

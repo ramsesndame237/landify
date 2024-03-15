@@ -238,6 +238,9 @@ import { mapGetters } from 'vuex'
 import SelectedButtonList from '@/components/SelectedButtonList.vue'
 import AutoCompleteInput from '@/components/AutoCompleteInput.vue'
 import _ from 'lodash'
+import { USER_ROLES } from '@/config/config-roles'
+
+const MVM_KUNDE_TEAM_ID = 6
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -605,6 +608,14 @@ export default {
           if (this.entity.partnergroup_id) {
             this.isDisabled = true
           }
+        }
+      }
+      if (this.$isUserA(USER_ROLES.expansion_manager)) {
+        if (this.field.key === 'team_id' && user?.team_id?.includes(MVM_KUNDE_TEAM_ID)) {
+          this.$set(this.entity, 'team_id', MVM_KUNDE_TEAM_ID)
+          // if (this.entity.team_id) {
+          //   this.isDisabled = true
+          // }
         }
       }
     },

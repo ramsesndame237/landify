@@ -392,6 +392,7 @@ const tableAccess = {
           USER_PERMISSIONS.admin,
           USER_PERMISSIONS.team_lead,
           USER_PERMISSIONS.team_member,
+          USER_PERMISSIONS.expansion_manager,
           USER_PERMISSIONS.lawyer,
         ],
         update: [
@@ -820,6 +821,7 @@ const menuAccess = {
 
       // EXTERN
       USER_PERMISSIONS.lead,
+      USER_PERMISSIONS.expansion_manager,
     ],
   }),
   contract_list: buildPermissions({
