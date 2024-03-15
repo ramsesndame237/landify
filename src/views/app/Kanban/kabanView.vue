@@ -60,7 +60,7 @@ export default {
       showSubTickets: true,
       loading: true,
       initialFetch: false,
-      size: 3,
+      size: 10,
       previousScrollValue: 0,
       pages: [],
     }
@@ -338,7 +338,7 @@ export default {
             <b-spinner v-if="loadingTicket.includes(item.column_id)" variant="primary"
                        style="width: 3rem; height: 3rem;"/>
           </div>
-          <b-button v-if="item.tickets.length <= 3" block variant="primary" class="mt-2"
+          <b-button v-if="item.tickets.length <= 3 && !loading" block variant="primary" class="mt-2"
                     @click="fetchTicketOfTheColumn(item.column_id,false)">
             Load More Ticket
           </b-button>
