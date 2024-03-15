@@ -73,10 +73,10 @@ export default {
   },
   computed: {
     canStamp() {
-      return this.$isUserA([USER_ROLES.admin])
+      return this.$isUserA(USER_ROLES.admin)
     },
     canEdit() {
-      return this.$isUserA([USER_ROLES.admin])
+      return this.$isUserA(USER_ROLES.admin)
     },
     canViewDetails() {
       return true

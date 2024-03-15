@@ -1,16 +1,14 @@
 import { getContractCriteriaFields } from '@/table/utils'
 import _ from 'lodash'
 import { USER_PERMISSIONS, buildPermissions } from '@/config/config-permissions'
+import { ACCESS } from '@/config/config-access'
 
 export default {
   // entity: 'frontend_3_4_1_1',
   entityEndpoint: '/contracts',
   fetchWithEntity: true,
   formComponent: () => import('@/views/app/FormComponent/ContractForm.vue'),
-  permissions: buildPermissions({
-    list: [USER_PERMISSIONS.lead],
-    read: [USER_PERMISSIONS.lead],
-  }),
+  permissions: ACCESS.tableAccess.contract.main,
   createModal: 'otherPage',
   // createComponent: () => import('@/views/app/CreateComponent/ContractForm/ContractFormNew.vue'),
   fields: [
@@ -376,9 +374,7 @@ export default {
       entity: 'frontend_3_4_3_10',
       entityView: 'area',
       entityForm: 'contract_area_unit_usagetype_rel',
-      permissions: buildPermissions({
-        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-      }),
+      permissions: ACCESS.tableAccess.contract.relations.area,
       primaryKey: 'area_id',
       fields: [
         {
@@ -442,9 +438,7 @@ export default {
       entity: 'frontend_3_4_3_11',
       entityView: 'partnercompany',
       primaryKey: 'partnercompany_id',
-      permissions: buildPermissions({
-        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-      }),
+      permissions: ACCESS.tableAccess.contract.relations.partner_company,
       fields: [
         // { key: 'area_id' },
         { key: 'location_id' },
@@ -466,10 +460,7 @@ export default {
       entity: 'frontend_3_4_3_1_bottom',
       entityForm: 'document_contract_documentcontracttype_rel',
       formComponent: () => import('@/views/app/FormComponent/ContractDocumentForm.vue'),
-      permissions: buildPermissions({
-        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-        read: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-      }),
+      permissions: ACCESS.tableAccess.contract.relations.document,
       entityView: 'document',
       submit: async (vm, entity, create) => {
         try {
@@ -560,10 +551,7 @@ export default {
       entityEndpoint: '/contracts/deadlines',
       component: () => import('@/views/app/Contracts/Relations/Deadlines/DeadlineTable.vue'),
       tool: () => import('@/views/app/Contracts/Relations/Deadlines/DeadlinesTools.vue'),
-      permissions: buildPermissions({
-        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-        read: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-      }),
+      permissions: ACCESS.tableAccess.contract.relations.deadlines,
       search: false,
       create: false,
       delete: false,
@@ -698,9 +686,7 @@ export default {
       entityForm: 'contract_recurringpayment_rel',
       entityView: 'recurringpayment',
       formComponent: () => import('@/views/app/FormComponent/RecurringPaymentContractForm.vue'),
-      permissions: buildPermissions({
-        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-      }),
+      permissions: ACCESS.tableAccess.contract.relations.recurring_payment,
       submit: async (vm, _, create) => {
         try {
           const fieldsComponent = vm.getFieldComponents()
@@ -763,10 +749,7 @@ export default {
       entity: 'frontend_3_4_3_7',
       entityForm: 'serviceobject_contract_rel',
       entityView: 'serviceobject',
-      permissions: buildPermissions({
-        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-        read: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-      }),
+      permissions: ACCESS.tableAccess.contract.relations.service_object,
       fields: [
         {
           key: 'serviceobject_id',
@@ -820,9 +803,7 @@ export default {
       entity: 'frontend_3_4_3_4',
       entityForm: 'contract_criteria_rel',
       entityView: 'criteria',
-      permissions: buildPermissions({
-        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-      }),
+      permissions: ACCESS.tableAccess.contract.relations.criteria,
       fieldComponent: () => import('@/views/app/CreateComponent/ContractCriteria'),
       fields: [
         {

@@ -5,8 +5,8 @@ import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 import { checkAndverficationJwt, parseJwt } from '@/views/app/CustomComponents/DataTable/utils'
 import BrowserId from 'browser-id'
 import axiosIns from "@/libs/axios";
-import { USER_PERMISSIONS, isAbleTo } from '@/config/config-permissions'
-import { ACCESS } from '@/config/config-access'
+import { USER_PERMISSIONS, buildPermissions, isAbleTo } from '@/config/config-permissions'
+import { ACCESS, EXTERN_TEAMS_IDS } from '@/config/config-access'
 
 
 Vue.use(VueRouter)
@@ -16,7 +16,7 @@ const routes = [
     path: '/app',
     name: 'home',
     component: () => import('@/views/app/Dashboard.vue'),
-    permissions: ACCESS.dashbaord_home,
+    permissions: ACCESS.menuAccess.dashbaord_home,
     meta: {
       pageTitle: 'headline~dashboard',
       breadcrumb: [
@@ -144,7 +144,7 @@ const routes = [
   {
     name: 'payments-list',
     path: '/app/payments-list',
-    permissions: [USER_PERMISSIONS.lead],
+    permissions: ACCESS.tableAccess.payment_list,
     component: () => import('@/views/app/Page/PaymentsList.vue'),
     meta: {
       action: 'menu~contractpaymentslist',
@@ -154,7 +154,7 @@ const routes = [
   {
     name: 'condition-list',
     path: '/app/condition-list',
-    permissions: [USER_PERMISSIONS.lead],
+    permissions: ACCESS.tableAccess.condictions_list,
     component: () => import('@/views/app/Page/ConditionList.vue'),
     meta: {
       action: 'menu~contractcondition',
@@ -164,7 +164,7 @@ const routes = [
   {
     name: 'deadline-list',
     path: '/app/deadline-list',
-    permissions: [USER_PERMISSIONS.lead],
+    permissions: ACCESS.tableAccess.deadlines_list,
     component: () => import('@/views/app/Page/ConditionList.vue'),
     meta: {
       action: 'menu~contractdeadline',

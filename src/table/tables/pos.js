@@ -1,9 +1,9 @@
-import _ from 'lodash'
 import { getUserData } from '@/auth/utils'
 import Vue from 'vue'
 import emailModal from '@/views/app/Ticket/EmailModal.vue'
-import { USER_PERMISSIONS, buildPermissions } from '@/config/config-permissions'
+import { USER_PERMISSIONS } from '@/config/config-permissions'
 import { ACCESS } from '@/config/config-access'
+import _, { union } from 'lodash'
 
 export default {
   entity: 'frontend_3_1_1',
@@ -104,12 +104,7 @@ export default {
       primaryKey: 'location_id',
       entity: 'frontend_3_1_3_7',
       entityView: 'location',
-      permissions: buildPermissions({
-        list: [
-          USER_PERMISSIONS.lead,
-          USER_PERMISSIONS.expansion_manager,
-        ],
-      }),
+      permissions: ACCESS.tableAccess.pos.relations.location,
       update: false,
       create: false,
       delete: false,
@@ -128,17 +123,12 @@ export default {
         relationKey: 'area_ids',
         entityKey: 'pos_id',
       },
+      permissions: ACCESS.tableAccess.pos.relations.area,
       primaryKey: 'area_id',
       entity: 'frontend_3_1_3_1',
       entityForm: 'area_pos_rel',
       entityView: 'area',
       update: false,
-      permissions: buildPermissions({
-        list: [
-          USER_PERMISSIONS.lead,
-          USER_PERMISSIONS.expansion_manager,
-        ],
-      }),
       fields: [
         {
           key: 'area_id',
@@ -171,12 +161,7 @@ export default {
       entity: 'frontend_3_1_3_2',
       entityForm: 'contract_area_unit_usagetype_rel',
       entityView: 'contract',
-      permissions: buildPermissions({
-        list: [
-          USER_PERMISSIONS.lead,
-          USER_PERMISSIONS.expansion_manager,
-        ],
-      }),
+      permissions: ACCESS.tableAccess.pos.relations.contract,
       fields: [
         {
           key: 'contract_id',
@@ -258,16 +243,7 @@ export default {
       entityForm: 'pos_tag_rel',
       entityView: 'tag',
       update: false,
-      permissions: buildPermissions({
-        list: [
-          USER_PERMISSIONS.lead,
-          USER_PERMISSIONS.expansion_manager,
-        ],
-        read: [
-          USER_PERMISSIONS.lead,
-          USER_PERMISSIONS.expansion_manager,
-        ],
-      }),
+      permissions: ACCESS.tableAccess.pos.relations.tag,
       fields: [
         {
           key: 'tag_id',
@@ -289,16 +265,7 @@ export default {
       entityEndpoint: '/tickets/list',
       entityForm: 'ticket_pos_rel',
       entityView: 'ticket',
-      permissions: buildPermissions({
-        list: [
-          USER_PERMISSIONS.lead,
-          USER_PERMISSIONS.expansion_manager,
-        ],
-        read: [
-          USER_PERMISSIONS.lead,
-          USER_PERMISSIONS.expansion_manager,
-        ],
-      }),
+      permissions: ACCESS.tableAccess.pos.relations.ticket,
       fields: [
         {
           key: 'ticket_id',
@@ -559,10 +526,7 @@ export default {
       primaryKey: 'document_id',
       entityForm: 'document_pos_rel',
       entity: 'frontend_3_1_3_8',
-      permissions: buildPermissions({
-        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-        read: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-      }),
+      permissions: ACCESS.tableAccess.pos.relations.document,
       fields: [
         {
           key: 'document_id',
@@ -590,10 +554,7 @@ export default {
       entity: 'frontend_3_1_3_1',
       entityForm: 'area_pos_rel',
       entityView: 'Email',
-      permissions: buildPermissions({
-        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-        read: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-      }),
+      permissions: ACCESS.tableAccess.pos.relations.email,
       update: false,
       delete: false,
       create: false,

@@ -9,7 +9,7 @@ import { USER_ROLES } from './config-roles'
 
 /**
  * Build permission object
- * @param {object} PermissionObject - Object with create, update, remove, read, list
+ * @param {PermissionObject} PermissionObject - Object with create, update, remove, read, list, seeHeader
  * @returns {PermissionObject}
  */
 export const buildPermissions = ({
@@ -19,6 +19,7 @@ export const buildPermissions = ({
   list,
   read,
   note,
+  seeHeader,
 }) => {
   const userData = getUserData()
 
@@ -29,21 +30,25 @@ export const buildPermissions = ({
     list: list instanceof Function ? list?.(userData) : list,
     read: read instanceof Function ? read?.(userData) : read,
     note: note instanceof Function ? note?.(userData) : note,
+    seeHeader: seeHeader instanceof Function ? seeHeader?.(userData) : seeHeader,
   }
 }
 
 /**
  * Create Permission object that will be use for access guard
  * @constructor
- * @property {string} role_code - the code of the role allowed
+ * @property {UserRole} role - the code of the role allowed
  * @property {array} teams - teams allowed with this role code
  * @property {array} options - options allowed with this role code
  * @method withOptions - Replace initial permission options. Can be chained. @returns {Permission}
  * @method withTeams - Replace initial teams options. Can be chained. @returns {Permission}
  */
 export class Permission {
-  constructor(role_code, teams, options) {
-    this.role_code = role_code
+  constructor(role, _teams, _options) {
+    this.role = role
+    const teams = _teams || role.teams
+    const options = _options || role.options
+
     if (Array.isArray(teams)) {
       this.teams = teams.map(teamId => Number(teamId))
     } else {
@@ -58,10 +63,10 @@ export class Permission {
 
   /**
    * Returns the same permission with the passed options
-   * @param {number | number[]} options - id of the team
+   * @args list of options ids
    * @returns {Permission}
    */
-  withOptions(options) {
+  withOptions(...options) {
     return {
       ...this,
       options,
@@ -70,34 +75,28 @@ export class Permission {
 
   /**
    * Returns the same permission with the passed team
-   * @param {number | number[]} teams - id of the team
+   * @args - List of team ids
    * @returns {Permission}
    */
-  withTeams(teams) {
+  withTeams(...teams) {
     return {
       ...this,
-      teams: Array.isArray(teams) ? teams : [teams],
+      teams,
     }
   }
 }
 
 /**
  * Return true if user have a specific a `role_code` and return false otherwhise
- * @param {(string | array)} roleCode
+ * @args roles list
  */
-export const isUserA = roleCode => {
+export const isUserA = (...roles) => {
   const userData = getUserData()
   const userRoleCode = userData?.roles?.[0]?.role_code
+  const userTeams = userData?.teams ?? []
 
-  if (Array.isArray(roleCode)) {
-    return roleCode.includes(userRoleCode)
-  }
-
-  if (typeof roleCode === 'string') {
-    return userRoleCode === roleCode
-  }
-
-  return false
+  return (roles.some(role => role.role_code === userRoleCode)
+  && (roles.teams.length > 0 ? roles.teams.some(teamId => userTeams.includes(teamId)) : true))
 }
 
 /**
@@ -122,7 +121,7 @@ export const isAbleTo = (action, permissions) => {
   }
 
   return permissionList.some(
-    permission => ((permission.role_code === userRoleCode)
+    permission => ((permission.role.role_code === userRoleCode)
     && (permission.teams.length > 0 ? permission.teams.some(teamId => userTeams.includes(teamId)) : true)
     && (permission.options.length > 0 ? permission.options.some(optionId => userOptions.includes(optionId)) : true)),
   )

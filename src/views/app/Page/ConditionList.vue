@@ -98,8 +98,12 @@ export default {
       loadingDonwload: false,
       eurCurrency: false,
       permissions: buildPermissions({
-        list: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
-        read: [USER_PERMISSIONS.lead, USER_PERMISSIONS.admin],
+        list: [
+          USER_PERMISSIONS.lead,
+          USER_PERMISSIONS.expansion_manager,
+          USER_PERMISSIONS.ext_team_member.withTeams(TEAMS_IDS.FM),
+          USER_PERMISSIONS.ext_team_member.withTeams(TEAMS_IDS.MVM),
+        ],
       }),
     }
   },

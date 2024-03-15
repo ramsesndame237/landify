@@ -14,7 +14,7 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? `/${process.env.PUBLIC_PATH}` : '/',
   lintOnSave: false,
   devServer: {
-    proxy: 'http://192.168.1.24:8001',
+    proxy: 'http://192.168.1.38:8001',
   },
   css: {
     loaderOptions: {

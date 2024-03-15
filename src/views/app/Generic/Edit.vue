@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-card body-class="p-0">
+    <b-card v-if="$isAbleTo('seeHeader', definition.permissions)" body-class="p-0">
       <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
         <div class="d-flex align-items-center">
           <img class="mr-1" src="@/assets/images/icons/people.svg" alt="">

@@ -108,6 +108,7 @@ import DeadlinesTools from '@/views/app/Contracts/Relations/Deadlines/DeadlinesT
 import DeadlineComments from '@/views/app/Contracts/Relations/Deadlines/DeadlineComments.vue'
 import { USER_ROLES } from '@/config/config-roles'
 import { USER_PERMISSIONS, buildPermissions } from '@/config/config-permissions'
+import { EXTERN_TEAMS_IDS } from '@/config/config-access'
 
 export default {
   name: 'DeadlineTable',
@@ -121,7 +122,9 @@ export default {
         {label: 'Vermieter', value: 'vermieter'},
       ],
       permissions: buildPermissions({
-        list: [USER_PERMISSIONS.lead],
+        list: [
+          USER_PERMISSIONS.lead,
+        ],
       }),
       deadlineFields: [
         {
@@ -429,7 +432,14 @@ export default {
   },
   computed: {
     canViewAllOptions() {
-      return this.$isUserA(USER_ROLES.lead)
+      return this.$isUserA(
+        USER_ROLES.lead,
+        USER_ROLES.expansion_manager,
+        USER_ROLES.ext_team_member.withTeams(
+          EXTERN_TEAMS_IDS.FM,
+          EXTERN_TEAMS_IDS.MVM,
+        ),
+      )
     },
     DeadlineComments() {
       return DeadlineComments

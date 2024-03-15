@@ -1,3 +1,4 @@
+import { USER_PERMISSIONS, buildPermissions } from '@/config/config-permissions'
 import { getDocumentLink } from '@/libs/utils'
 
 import team from '@/table/tables/team'
@@ -25,7 +26,7 @@ import contradiction from './tables/contradiction'
 import inspectionresult from './tables/inspectionresult'
 import contradictionpackage from './tables/contradictionpackage'
 import board from './tables/board'
-import { USER_PERMISSIONS, buildPermissions } from '@/config/config-permissions'
+import { ACCESS } from '@/config/config-access'
 
 export default {
   // region Work Package 1
@@ -107,10 +108,7 @@ export default {
   payment: {
     entity: 'frontend_2_4_1',
     filter_vertical: true,
-    permissions: buildPermissions({
-      list: [USER_PERMISSIONS.lead],
-      read: [USER_PERMISSIONS.lead],
-    }),
+    permissions: ACCESS.tableAccess.payment_info.main,
     filters: [
       {
         key: 'customergroup_id',
