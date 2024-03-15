@@ -47,6 +47,9 @@ export default {
     },
     edit() {
       this.view = false
+      const url = new URL(window.location.href)
+      url.searchParams.set('edit', 'true')
+      window.history.pushState({ path: url.href }, '', url.href)
     },
     update() {
       this.loading = true
