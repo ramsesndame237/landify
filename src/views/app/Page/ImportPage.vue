@@ -27,25 +27,9 @@
     </form>
     <div v-else>
       <b-card>
-        <b-tabs ref="tabs" :disabled="loading" pills>
-          <b-tab v-for="(entity, index) in entities.filter(e => !!result[e])" :key="index" :title="titles[entity]" lazy>
-            <!--            <table v-if="result[entity]" class="my-2 table w-100">-->
-            <!--              <thead>-->
-            <!--              <tr>-->
-            <!--                <th class="pb-50 font-weight-bold">Total</th>-->
-            <!--                <th class="pb-50">{{ getCount(entity) }}</th>-->
-            <!--                <th class="pb-50 font-weight-bold">Inserted</th>-->
-            <!--                <th class="pb-50">{{ getCount(entity, 'added') }}</th>-->
-            <!--                <th class="pb-50 font-weight-bold">Updated</th>-->
-            <!--                <th class="pb-50">{{ getCount(entity, 'updated') }}</th>-->
-            <!--                <th class="pb-50 font-weight-bold">Unchanged</th>-->
-            <!--                <th class="pb-50">{{ getCount(entity, 'unchanged') }}</th>-->
-            <!--                <th class="pb-50 font-weight-bold">Failed</th>-->
-            <!--                <th class="pb-50">{{ getCount(entity, 'failed') }}</th>-->
-            <!--              </tr>-->
-            <!--              </thead>-->
-            <!--            </table>-->
-            <b-table-simple class="table-responsive w-100" style="max-height: 70vh">
+        <b-tabs ref="tabs" :disabled="loading" pills v-model="activeTab">
+          <b-tab v-for="(entity, index) in entities.filter(e => !!result[e])" :key="index" :title="titles[entity]"  >
+            <b-table-simple class="table-responsive" style="max-height: 70vh">
               <b-thead>
                 <b-tr>
                   <b-th>
@@ -55,9 +39,6 @@
                   <b-th v-for="(field,i) in fields[entity]" :key="i">
                     {{ $t('attribute.' + field) }}
                   </b-th>
-                  <!--                  <b-th class="text-center">-->
-                  <!--                    Action-->
-                  <!--                  </b-th>-->
                 </b-tr>
               </b-thead>
               <b-tbody>
@@ -99,14 +80,14 @@
           </b-tab>
           <template #tabs-end>
             <div class=" d-flex align-items-center ml-auto">
-              <template v-if="['added','changed'].indexOf(status)>=0 && getResult(currentEntity).length>0">
+              <template v-if="['added','changed','all'].includes(status)">
                 <b-button :disabled="loading" class="mr-1" variant="primary" @click="importData(true)">
                   Import All
                   <b-spinner v-if="loading && importAll" small/>
                 </b-button>
-                <b-button v-if="getSelected(currentEntity).length>0" :disabled="loading" class="mr-1" variant="primary"
+                <b-button v-if="getSelected(entities[activeTab]).length>0" :disabled="loading" class="mr-1" variant="primary"
                           @click="importData()">
-                  Import selected ({{ getSelected(currentEntity).length }})
+                  Import selected ({{ getSelected(entities[activeTab]).length }})
                   <b-spinner v-if="loading && !importAll" small/>
                 </b-button>
               </template>
@@ -124,8 +105,6 @@
 /* eslint-disable */
 import { BButton, BIconArrowRepeat, BIconCheck, BTable, BCard, BTab, BTabs } from 'bootstrap-vue'
 import { BCardActions } from '@core/components/b-card-actions'
-import readXlsxFile from 'read-excel-file'
-import { importPartnercompany, importCompany } from '@/import'
 import DataTables from "@/layouts/components/DataTables";
 
 export default {
@@ -150,6 +129,7 @@ export default {
       errorsCnt: 0,
       disabled: false,
       tables: [],
+      activeTab:0,
       entities: [
         'partner_companies', 'companies', 'contact_persons', 'locations', 'pos', 'areas'
       ],
@@ -167,42 +147,39 @@ export default {
           'partnercompany_name',
           'partnercompany_shortname',
           'partnergroup_name',
-          // 'city_zip',
-          // 'city_name',
-          // 'address_street',
-          // 'address_house_number',
-          // 'address_extra',
-          // 'country_name',
-          // 'contactdetails_email',
-          // 'contactdetails_phone',
-          // 'contactdetails_mobile',
-          // 'contactdetails_fax',
+          'city_zip',
+          'city_name',
+          'address_street',
+          'address_house_number',
+          'address_extra',
+          'country_name',
+          'contactdetails_email',
+          'contactdetails_phone',
+          'contactdetails_mobile',
+          'contactdetails_fax',
           // { key: 'contactdetails_salestaxno' },
           // { key: 'contactdetails_commercialregisterno' },
           // { key: 'contactdetails_website' },
         ],
         'companies': ['company_name', 'company_shortname', 'customergroup_name', 'company_template_coverletter_subject',
-          'company_template_coverletter_text',
-          // 'city_zip', 'city_name', 'address_street', 'address_house_number',
-          // 'address_extra', 'country_name', 'contactdetails_email', 'contactdetails_phone', 'contactdetails_mobile',
-          // 'contactdetails_fax', 'companydetails_salestaxno', 'companydetails_commercialregisterno',
-          // 'companydetails_website', 'bankdata_iban', 'bankdata_bic', 'bankdata_name', 'payment_date',
-          // 'payment_debitor', 'payment_info', 'payment_objectreference', 'payment_type', 'payment_value'
+          'company_template_coverletter_text', 'city_zip', 'city_name', 'address_street', 'address_house_number',
+          'address_extra', 'country_name', 'contactdetails_email', 'contactdetails_phone', 'contactdetails_mobile',
+          'contactdetails_fax', 'companydetails_salestaxno', 'companydetails_commercialregisterno',
+          'companydetails_website', 'bankdata_iban', 'bankdata_bic', 'bankdata_name', 'payment_date',
+          'payment_debitor', 'payment_info', 'payment_objectreference', 'payment_type', 'payment_value'
         ],
         'contact_persons': ['contactperson_firstname', 'contactperson_lastname', 'contactperson_department',
           'contactperson_shortname', 'contactperson_function', 'user_email', 'contactdetails_email',
           'contactdetails_phone', 'contactdetails_mobile', 'contactdetails_fax', 'company_name', 'customergroup_name',
-          'partnercompany_name',
-          // 'city_name', 'address_street', 'address_house_number', 'address_extra'
-          // , 'contactsalutation_name', 'contacttitle_name', 'city_zip', 'country_name'
+          'partnercompany_name', 'city_name', 'address_street', 'address_house_number', 'address_extra'
+          , 'contactsalutation_name', 'contacttitle_name', 'city_zip', 'country_name'
         ],
         'locations': ['location_name', 'location_objectdescription', 'location_total_area', 'location_start_date',
           'partnercompany_name', 'location_partnercompany_partnertype_valid_from_date',
           'location_partnercompany_partnertype_valid_to_date', 'partnercompany_name',
           'location_partnercompany_partnertype_valid_from_date', 'location_partnercompany_partnertype_valid_to_date',
-          'locationtype_name',
-          // 'city_name', 'address_street', 'address_house_number', 'address_extra', 'city_zip',
-          // 'country_name'
+          'locationtype_name', 'city_name', 'address_street', 'address_house_number', 'address_extra', 'city_zip',
+          'country_name'
         ],
         'pos': ['pos_name', 'pos_branchnumber', 'pos_name_external', 'pos_first_year', 'company_name', 'tag_name',],
         'areas': ['area_name', 'area_name_external', 'area_space_value', 'location_name', 'usagetype_name',
@@ -210,21 +187,22 @@ export default {
       },
       result: null,
       statusList: [
-        { text: 'All', value: '' },
+        { text: 'All', value: 'all' },
         { text: 'Added', value: 'added' },
         { text: 'Changed', value: 'changed' },
         { text: 'Unchanged', value: 'unchanged' },
         { text: 'Failed', value: 'failed' }
       ],
-      status: '',
+      status: 'all',
       importAll: false,
     }
   },
   computed: {
     currentEntity() {
-      return this.entities.filter(e => !!this.result[e])[this.$refs.tabs?.currentTab]
+      return this.entities.filter(e => !!this.result[e])[this.entities[this.activeTab]]
     }
   },
+
   mounted() {
     this.reset()
   },
@@ -235,8 +213,8 @@ export default {
       })
     },
     getResult(entity) {
-      if (!this.status) return this.result[entity]
-      return this.result[entity].filter(row => row.status === this.status)
+      if (!this.status || this.status === 'all') return this.result[entity]
+      return this.result[entity]?.filter(row => row.status === this.status) || []
     },
     getSelected(entity) {
       return this.getResult(entity).filter(row => row.__selected)
@@ -262,6 +240,7 @@ export default {
       this.uploadError = null
     },
     importData(all) {
+      console.log("this is the entity", this.entities[this.activeTab])
       if (this.loading) return
       this.importAll = all
       this.loading = true
@@ -269,8 +248,8 @@ export default {
       formData.append('file', this.file)
       formData.append('leaves', JSON.stringify({
         data: [{
-          leave: this.titles[this.currentEntity],
-          lines: (all ? this.getResult(this.currentEntity) : this.getSelected(this.currentEntity)).map(el => el.line)
+          leave: this.titles[this.entities[this.activeTab]],
+          lines: (all ? this.getResult(this.entities[this.activeTab]) : this.getSelected(this.entities[this.activeTab])).map(el => el.line)
         }]
       }))
       this.$http.post('/provisionings/partnercompany/save', formData, { headers: { 'content-type': 'form-data' } })

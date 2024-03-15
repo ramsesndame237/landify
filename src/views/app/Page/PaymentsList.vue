@@ -16,11 +16,11 @@
         </b-form>
       </validation-observer>
       <div class="text-right">
-        <b-button variant="success" :disabled="loadingDonwload" @click="download">
-          <b-spinner v-if="loadingDonwload" class="mr-1" small/>
+        <b-button variant="success" :disabled="loadingDownload" @click="download">
+          <b-spinner v-if="loadingDownload" class="mr-1" small/>
           {{ $t('button~download') }}
         </b-button>
-        <b-button variant="info" class="ml-1" :disabled="loading || loadingDonwload" @click="reset">
+        <b-button variant="info" class="ml-1" :disabled="loading || loadingDownload" @click="reset">
           {{ $t('button~reset') }}
         </b-button>
         <b-button variant="primary" :disabled="loading" class="ml-1" @click="filter">
@@ -31,19 +31,11 @@
     </b-card-actions>
 
     <b-card>
-      <!-- <div v-if="table==='conditions'" class="mb-1">
-        <b-form-group label="Currency" label-cols="auto">
-          <b-form-checkbox v-model="eurCurrency" name="check-button" switch inline>
-            {{ eurCurrency ? 'EUR' : 'Local' }}
-          </b-form-checkbox>
-        </b-form-group>
-      </div> -->
       <Datatable :key="table" ref="table" :selectable="false" :search="search" primary-key-column="contract_id"
-                 entity="contract" :with-delete="false" :with-edit="false" :with-nested="table === 'deadlines'" :sub-fields="definition.subFields"
+                 entity="contract" :with-delete="false" :with-edit="false" :with-nested="table === 'deadlines'"
                  :fields="definition.fields" :items="items" sub-fields-data-key="deadlines" :with-actions="true"
       />
     </b-card>
-
   </div>
 </template>
 
@@ -56,9 +48,9 @@ import BCardActions from '@core/components/b-card-actions/BCardActions'
 import Field from '@/views/app/Generic/Field'
 import _ from 'lodash'
 import moment from 'moment'
-import { formatDate } from '@/libs/utils'
+import {formatDate} from '@/libs/utils'
 import DeadlineMixin from '@/views/app/Contracts/Relations/Deadlines/DeadlineMixin'
-import { getUserData } from '@/auth/utils'
+import {getUserData} from '@/auth/utils'
 import rates from './rates.json'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
@@ -93,7 +85,7 @@ export default {
       items: [],
       data: {},
       loading: false,
-      loadingDonwload: false,
+      loadingDownload: false,
       eurCurrency: false,
     }
   },
@@ -103,38 +95,45 @@ export default {
 
       return {
         title: 'headline~contractlist~condition',
-        entityEndpoint: '/contracts/conditionList',
+        entity: 'frontend_contractlist_criteria',
         fields: [
-          { key: 'contract_id' },
-          { key: 'contract_name', stickyColumn: false, variant: 'light' },
-          { key: 'contract_of_status' },
-          { key: 'contracttype_name' },
-          { key: 'contract_begin_date' },
-          { key: 'contract_end_date' },
-          { key: 'last_possible_end_of_contract' },
-          { key: 'company_name' },
-          { key: 'location_name' },
-          { key: 'pos_name' },
-          { key: 'pos_id' },
-          { key: 'country_short' },
-          { key: 'sum_umlageflache' },
-          { key: 'sum_mietflache' },
-          { key: 'owner_name' },
-          { key: 'manager_name' },
-          { key: 'verkaufsfläche' },
-          { key: 'currency_name' },
-          { key: 'total_minimum_rent_per_m2' },
-          { key: 'sum_gesamtmiete' },
-          { key: 'sum_nkpauschale' },
-          { key: 'sum_heizung_nk' },
-          { key: 'indexanpassung_miete' },
-          { key: 'indexanpassung_rate_miete' },
-          { key: 'staffelung' },
-          { key: 'sum_umsatzmiete' },
-          { key: 'mietsicherheit' },
-          { key: 'bemerkung' },
-          { key: 'fehlende_unterlagen' },
-          { key: 'negotiator' },
+          {"key": "company_code", "stickyColumn": false, "variant": "light"},
+          {"key": "document_date"},
+          {"key": "bookingh_date"},
+          {"key": "g_l_account"},
+          {"key": "recurringpaymentcategory_name"},
+          {"key": "booking_text"},
+          {"key": "partnercompany_bank_type"},
+          {"key": "partnercompany_iban"},
+          {"key": "contract_type"},
+          {"key": "pos_branchnumber"},
+          {"key": "object_identification"},
+          {"key": "pca"},
+          {"key": "location_name"},
+          {"key": "creditor"},
+          {"key": "partnercompany_iban_id"},
+          {"key": "debitor"},
+          {"key": "partner_name"},
+          {"key": "payment_object"},
+          {"key": "recurringpaymenttype_name"},
+          {"key": "payment_term_basis"},
+          {"key": "tax_code"},
+          {"key": "net_amount"},
+          {"key": "percentage"},
+          {"key": "net_paid_amount"},
+          {"key": "tax_amount"},
+          {"key": "gross_amount"},
+          {"key": "currency"},
+          {"key": "payment_from"},
+          {"key": "payment_to"},
+          {"key": "daily_range"},
+          {"key": "payment_block"},
+          {"key": "gp"},
+          {"key": "monthly_range"},
+          {"key": "remark"},
+          {"key": "change_report"},
+          {"key": "contract_status"},
+          {"key": "contract_end_date"}
         ],
         filter_vertical: true,
         filters: [
@@ -179,8 +178,7 @@ export default {
             listLabel: 'country_name',
             disabled: true,
           },
-          { key: 'date', default: moment().format('DD/MM/YYYY') },
-
+          {key: 'date', type: 'date', default: moment().format('YYYY-MM-DD')},
         ],
         create: false,
         update: false,
@@ -188,7 +186,7 @@ export default {
       }
     },
     table() {
-      return this.$route.name === 'condition-list' ? 'conditions' : 'deadlines'
+      return 'payments'
     },
     total_rental_space() {
       return _.sumBy(this.items, 'total_rental_space')
@@ -224,16 +222,17 @@ export default {
       const valid = await this.$refs.form.validate()
       if (!valid) return
       this.loading = true
-      const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id', 'contactperson_id']).omitBy(_.isNil).value()
-      filter.size = 100000
+      const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
+      filter.per_page = 100000
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
-        const response = (await this.$http.get(`/contracts/conditionList/new?${requestQuery}`))
-        this.items = response.data.data
+        this.items = (await this.$http.get(`/contracts/payment-list/data?${requestQuery}`)).data.data;
       } catch (err) {
         if (err.code === 'ERR_BAD_REQUEST') {
-          const error = (await err.response).data
+          let error = (await err.response).data
+          error = JSON.parse(await error.text())
+
           this.$errorToast(error.detail || 'Unknown error')
         } else {
           this.$errorToast('Unknown error')
@@ -292,14 +291,14 @@ export default {
     async download() {
       const valid = await this.$refs.form.validate()
       if (!valid) return
-      this.loadingDonwload = true
+      this.loadingDownload = true
       const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
-      filter.size = 100000
+      filter.per_page = 100000
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
-        const filename = `${this.$t(`menu~${this.table === 'conditions' ? 'contractcondition' : 'contractdeadline'}`)}-Export_${moment().format('DD_MM_YYYY')}.xlsx`
-        const masterData = (await this.$http.get(`/contracts/conditionList/export?${requestQuery}`, {
+        const filename = `Payment list-Export_${moment().format('DD_MM_YYYY')}.xlsx`
+        const masterData = (await this.$http.post(`/contracts/payment-list/export?${requestQuery}`, {}, {
           responseType: 'blob',
         })).data
         console.log('masterData: ', masterData)
@@ -319,7 +318,7 @@ export default {
           this.$errorToast('Unknown error')
         }
       } finally {
-        this.loadingDonwload = false
+        this.loadingDownload = false
       }
     },
   },

@@ -61,7 +61,7 @@
         <!--        <feather-icon icon="Trash2Icon" class="mr-50"/>-->
         <span>{{ action.text }}</span>
       </b-button>
-      <b-form-input id="filterInput" v-model="internalSearch" debounce="500" type="search" class="w-auto"
+      <b-form-input id="filterInput" v-if="!showInput" v-model="internalSearch" debounce="500" type="search" class="w-auto"
                     placeholder="Search.."/>
     </div>
 
@@ -99,6 +99,7 @@ export default {
     search: String,
     totalRows: Number,
     entity: String,
+    showInput: Boolean,
     actions: Array,
     filterBadge: Number,
     inlineFilter: Boolean, // Indique s'il s'agit d'un filtre en ligne, afin de masquer l'icône de filtre

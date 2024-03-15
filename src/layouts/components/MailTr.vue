@@ -237,7 +237,7 @@ export default {
     visible() {
       return this.item.document_id
         ? (!this.item.classification_dismissed && !this.item.ticket_created)
-        : (this.item.documents.every(d => d.classification_dismissed) && (!this.item.email_dismissed && !this.item.ticket_id_created))
+        : (this.item.email_classification_type === 'email' && (!this.item?.email_processed && !this.item?.email_dismissed)) || (this.item.documents.every(d => d.classification_dismissed) && (!this.item.email_dismissed && !this.item.ticket_id_created))
     },
   },
   watch: {

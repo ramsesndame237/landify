@@ -18,7 +18,7 @@ export default {
   fields: [
     { key: 'ticket_id', auto: true },
     // { key: 'ticket_deadline', type: 'date', time: true },
-    { key: 'ticket_name' },
+    { key: 'ticket_name'},
     // { key: 'column_has_stamp', hideOnForm: true, type: 'boolean' },
     {
       key: 'ticket_deadline_yellow', type: 'date', time: true, hideOnIndex: true, minDate: 'today',
@@ -255,6 +255,79 @@ export default {
           label: 'After critical deadline',
           value: 'over_due_red',
         },
+      ],
+      change: (entity, vm) => {
+        if (entity.ticket_deadline_status === undefined) {
+          vm.$set(vm.entity, 'ticket_deadline_status', -1)
+        }
+      },
+    },
+    {
+      key: 'ticket_update_type',
+      label: 'Update type',
+      type: 'custom-select',
+      required: false,
+      clearable: false,
+      items: [
+        {
+          label: 'All',
+          value: -1,
+        },
+        {
+          label: 'New file',
+          value: 'NEW_FILE',
+        },
+        {
+          label: 'New email',
+          value: 'NEW_EMAIL',
+        },
+        {
+          label: 'New ticket',
+          value: 'NEW_TICKET',
+        },
+      ],
+      change: (entity, vm) => {
+        if (entity.ticket_deadline_status === undefined) {
+          vm.$set(vm.entity, 'ticket_deadline_status', -1)
+        }
+      },
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'custom-select',
+      required: false,
+      clearable: false,
+      hideOnListing: true,
+      items: [
+        {
+          label: 'All',
+          value: -1,
+        },
+        {
+          label: 'Not assigned',
+          value: 'not_assigned',
+        },
+        {
+          label: 'Open',
+          value: 'opened',
+        },
+        {
+          label: 'Close',
+          value: 'closed',
+        },
+        {
+          label: 'My tickets',
+          value: 'my_tickets',
+        },
+        {
+          label: 'Done',
+          value: 'done',
+        },
+        // {
+        //   label: 'Updated ticket',
+        //   value: 'update_ticket',
+        // },
       ],
       change: (entity, vm) => {
         if (entity.ticket_deadline_status === undefined) {

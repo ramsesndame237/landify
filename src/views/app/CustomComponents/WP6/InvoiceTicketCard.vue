@@ -350,7 +350,7 @@
       <b-avatar variant="light-warning" text="I"/>
       <h4 class="font-weight-bolder text-truncate mb-0 ml-1" style="color: #ccc; font-size: 15px"
           :title="ticket.ticket_name">
-        {{ ticket.ticket_name }}</h4>
+        {{ ticket.ticket_name }}</h4><b-spinner class="position-absolute position-right-0" type="grow" small variant="primary" v-if="ticket.read === 'NOT_READ'"></b-spinner>
     </div>
     <p class="text-truncate" :title="ticket.ticket_description">
       {{ ticket.ticket_description }}
