@@ -154,6 +154,11 @@ const router = new VueRouter({
       component: () => import('@/views/app/Kanban/kabanView.vue'),
     },
     {
+      name: 'importView',
+      path: '/app/table/:name/importview',
+      component: () => import('@/views/app/Generic/widgets/importWidgets.vue'),
+    },
+    {
       name: 'table-positions-import',
       // table parameter is just to fix menu
       path: '/app/table/:table/import/:invoice',

@@ -74,7 +74,7 @@
                   </th>
                   <td class="pb-50">
                     <router-link v-if="entity && entity.board_id"
-                                 :to="{name:'table-kanban',params: {table:'board',id: entity.board_id}}">
+                                 :to="{name:'kanbanView',params: {table:'board',id: entity.board_id}}">
                       {{ entity.board_name }}
                     </router-link>
                   </td>

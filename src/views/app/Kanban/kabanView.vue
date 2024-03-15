@@ -60,7 +60,7 @@ export default {
       showSubTickets: true,
       loading: true,
       initialFetch: false,
-      size: 3,
+      size: 10,
       previousScrollValue: 0,
       pages: [],
     }
@@ -103,22 +103,22 @@ export default {
       if (event.type === 'dragend') {
         if (this.dropColumn) {
           console.log('this is the column dropColumn', this.dropColumn)
-          const result = await this.$swal({
-            title: 'Are you sure?',
-            text: `This ticket ${ticket.ticket_name} will be moved to the column: ${this.dropColumn.column_name}`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes',
-            customClass: {
-              confirmButton: 'btn btn-primary',
-              cancelButton: 'btn btn-outline-danger ml-1',
-            },
-            buttonsStyling: false,
-          })
+          // const result = await this.$swal({
+          //   title: 'Are you sure?',
+          //   text: `This ticket ${ticket.ticket_name} will be moved to the column: ${this.dropColumn.column_name}`,
+          //   icon: 'warning',
+          //   showCancelButton: true,
+          //   confirmButtonText: 'Yes',
+          //   customClass: {
+          //     confirmButton: 'btn btn-primary',
+          //     cancelButton: 'btn btn-outline-danger ml-1',
+          //   },
+          //   buttonsStyling: false,
+          // })
           if (event.target.classList.contains('card_draggable')) {
             event.target.classList.remove('card_draggable')
           }
-          if (!result.value) return false
+          // if (!result.value) return false
           this.loading = true
           try {
             await this.changeTicketColumn(event, column.column_id, this.dropColumn.column_id, '', ticket)
@@ -144,9 +144,8 @@ export default {
         ticket_id: ticket.ticket_id,
       }
       this.$http.post('/tickets/change-ticket-column', payload).then(response => {
-        console.log('this is the response of the changecolumn', response)
         this.columnData.find(elet => elet.column_id === previous_column_id).tickets = this.columnData.find(elet => elet.column_id === previous_column_id).tickets.filter(elt => elt.ticket_id !== ticket.ticket_id)
-        this.columnData.find(elet => elet.column_id === next_column_id).tickets.push({
+        this.columnData.find(elet => elet.column_id === next_column_id).tickets.unshift({
           ...ticket,
           column_id: next_column_id,
           column_name: next_column_name,
@@ -338,10 +337,10 @@ export default {
             <b-spinner v-if="loadingTicket.includes(item.column_id)" variant="primary"
                        style="width: 3rem; height: 3rem;"/>
           </div>
-          <b-button v-if="item.tickets.length <= 3" block variant="primary" class="mt-2"
-                    @click="fetchTicketOfTheColumn(item.column_id,false)">
-            Load More Ticket
-          </b-button>
+<!--          <b-button v-if="item.tickets.length <= 3 && !loading" block variant="primary" class="mt-2"-->
+<!--                    @click="fetchTicketOfTheColumn(item.column_id,false)">-->
+<!--            Load More Ticket-->
+<!--          </b-button>-->
         </b-card>
         <generic-modal ref="modal" :table="table" :definition="definition" :table-definition-key="table"
                        :title="$t('headline~ticket~newticket')"

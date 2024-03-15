@@ -11,7 +11,8 @@
                         :inline-filter="!definition.inline_filter"
                         :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
                         :actions="definition.actions" :filter-badge="getFilterCount()"
-                        @action="(a)=>$refs.table.onAction(a)" @filter="$refs.filter.openModal()"/>
+                        :on-export-data="fetchExportData" @action="(a)=>$refs.table.onAction(a)"
+                        @filter="$refs.filter.openModal()"/>
       <generic-filter ref="filter" :table="table" :definition="definition" :initial-data="initialFilterData"
                       @filter="filter"/>
     </b-card>
@@ -23,9 +24,7 @@
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
                  :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"
-                 :no-cache="definition.noCache"
-                 :filter-items="definition.filter" :custom-request="definition.customRequest"
-                 :initial-filter-data="initialFilterData"/>
+                 :filter-items="definition.filter" :custom-request="definition.customRequest"/>
       <!--      <DataTable :key="table" :columns="getHeadersDataTable" :url="definition.entityEndpoint || definition.entity"-->
       <!--                 hide-top-bar="true" :resolve-data="data =>data.data.data || data.data || data.items" :custom-actions="definition.custom_actions"-->
       <!--                 :hidde-filter-bar="true"/>-->
@@ -47,13 +46,13 @@
 
 <script>
 
-import {BCard} from 'bootstrap-vue'
+import { BCard } from 'bootstrap-vue'
 import TablePagination from '@/layouts/components/TablePagination.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 import SidebarModalComponent from '@/components/SidebarModalComponent.vue'
 import DataTable from '@/views/app/CustomComponents/DataTable/DataTable.vue'
-import {getUserData} from '@/auth/utils'
+import moment from 'moment'
 import Tables from '../../../table'
 import GenericFilter from './Filter.vue'
 import InlineFilter from './InlineFilter.vue'
@@ -75,29 +74,16 @@ export default {
     const payload = this.$store.getters['table/tableData'](this.$route.params.table)
     const table = this.$route.params.table
     const definition = Tables[table]
-    const defaultPage = null
-    // if (this.isUserExternClient) {
-    //   defaultPage = definition.perPage
-    // }
-
-    const user = getUserData()
-    const customergroup_id = user?.customergroup?.customergroup_id
-
-    const hasCustomerGroupIdInFilters = definition.filters?.find(filter => filter.key === 'customergroup_id')
-
-    const filterValues = {
-      ...(definition.initialFilterValues ? definition.initialFilterValues?.(this) : hasCustomerGroupIdInFilters ? {customergroup_id} : {}),
-      ...(payload?.filter ?? {}),
+    let defaultPage = null
+    if (this.isUserExternClient) {
+      defaultPage = definition.perPage
     }
-
-    const hasFilters = Object.keys(filterValues || {}).length > 0
-
     return {
       search: payload?.search || '',
       perPage: payload?.perPage || defaultPage || 10,
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
-      initialFilterData: this.$isUserAdmin ? payload?.filter : hasFilters ? filterValues : payload?.filter,
+      initialFilterData: payload?.filter,
       initialSortBy: payload?.sortBy,
       initialSortDesc: payload?.sortDesc ?? true,
       table,
@@ -135,14 +121,13 @@ export default {
         currentPage: this.currentPage,
         perPage: this.perPage,
         totalRows: this.totalRows,
-        filter: {...this.$refs.filter.data},
+        filter: { ...this.$refs.filter.data },
         sortBy: this.$refs.table.sortBy,
         sortDesc: this.$refs.table.sortDesc,
       },
     })
   },
   mounted() {
-    console.log("definition: ", this.definition.noCache)
     console.log('this is the entity definition', this.definition)
   },
   methods: {
@@ -152,6 +137,39 @@ export default {
       const count = Object.keys(obj).length
       if (count === 0) return null
       return count
+    },
+    async fetchExportData(name) {
+      // const valid = await this.$refs.form.validate()
+      // if (!valid) return
+      // this.loadingDonwload = true
+      // const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
+      // filter.size = 100000
+      // // generate the request query string
+      // const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
+      try {
+        const filename = `${name}-Export_${moment().format('DD_MM_YYYY')}.xlsx`
+        const masterData = (await this.$http.get(`synchronizations/${name}/export`, {
+          responseType: 'blob',
+        })).data
+        console.log('masterData: ', masterData)
+        const link = document.createElement('a')
+        link.setAttribute('href', URL.createObjectURL(masterData))
+        link.setAttribute('download', filename)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      } catch (err) {
+        if (err.code === 'ERR_BAD_REQUEST') {
+          let error = (await err.response).data
+          error = JSON.parse(await error.text())
+
+          this.$errorToast(error.detail || 'Unknown error')
+        } else {
+          this.$errorToast('Unknown error')
+        }
+      } finally {
+        this.loadingDonwload = false
+      }
     },
     filter(data) {
       this.currentPage = 1
@@ -163,19 +181,25 @@ export default {
     editElement(entity) {
       this.$refs.modal.openModal(false, entity, `headline~${this.definition.entityForm || this.definition.entity}~detail`)
     },
+    s2ab(s) {
+      const buf = new ArrayBuffer(s.length)
+      const view = new Uint8Array(buf)
+      for (let i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF
+      return buf
+    },
     onNewElement() {
       console.log('this is the value of the create modal', this.definition.createModal)
       if (this.definition.createModal === 'sidebar') this.$refs.sidebarComponent.openSidebarComponent()
       else if (this.definition.createModal === 'otherPage') {
         this.$router.push({
           name: 'table-form',
-          params: {table: this.table},
+          params: { table: this.table },
         })
       } else if (this.useModalToCreate) this.$refs.modal.openModal(true, {})
       else {
         this.$router.push({
           name: 'table-form',
-          params: {table: this.table},
+          params: { table: this.table },
         })
       }
     },

@@ -86,7 +86,7 @@
       <field v-if="visible" :field="boardIdField" :entity="item"
              :disabled="!item.pos_id || (item.ticket_id && !shouldCreateSubTicket) || is_dismissed || is_done"/>
       <router-link v-if="is_done" target="_blank"
-                   :to="{name: 'table-kanban', params: {table: 'board',id: item.board_id}}">
+                   :to="{name: 'kanbanView', params: {table: 'board',id: item.board_id}}">
         {{ getBoardName() }}
       </router-link>
     </b-td>
