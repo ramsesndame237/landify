@@ -328,6 +328,65 @@ export default {
       primaryKey: 'document_id',
       entityForm: 'document_pos_rel',
       entity: 'frontend_3_1_3_8',
+      entityEndpoint: '/documents/pos',
+      submit: async (vm, entity, create) => {
+        const fieldsComponent = vm.getFieldComponents()
+        const documentField = fieldsComponent.find(f => f.field.key === 'document_id')
+        const documentEntity = documentField?.subEntity
+        console.log({ documentField, documentEntity })
+        try {
+          if (!create) {
+            await vm.$http({
+              url: '/documents/update',
+              method: 'put',
+              params: {
+                document_id: documentEntity.document_id,
+                documenttype_id: documentEntity.documenttype_id,
+                subdocumenttype_id: documentEntity.subdocumenttype_id,
+                document_name: documentEntity.document_name,
+              },
+            })
+            vm.$successToast(vm.$t('success~document~saved'))
+            return null
+          }
+
+          const formData = new FormData()
+          const files = documentField.$refs.fields.find(f => f.field.key === 'files')?.getFiles() || []
+
+          for (let i = 0; i < files.length; i++) {
+            formData.append('files', files[i])
+          }
+
+          const { data } = await vm.$http({
+            url: '/documents/uploadfiles',
+            data: formData,
+            method: 'post',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+
+          const file = data.data?.[0]
+
+          if (!file) {
+            throw new Error(vm.$t('errors~unexpected~error~occurred'))
+          }
+
+          const payload = {
+            document_id: file.document_id,
+            pos_id: entity.pos_id,
+            subdocumenttype_id: documentEntity.subdocumenttype_id,
+            documenttype_id: documentEntity.documenttype_id,
+          }
+
+          await vm.$http.post('/documents/pos', payload)
+          vm.$successToast(vm.$t('success~document~saved'))
+          return null
+        } catch (e) {
+          throw new Error(typeof e?.response?.data?.detail === 'string' ? e?.response?.data?.detail : vm.$t('errors~unexpected~error~occurred'))
+        }
+      },
       fields: [
         {
           key: 'document_id',
