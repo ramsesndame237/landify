@@ -511,6 +511,7 @@ export default {
         endpoint: '/pos',
         relationKey: 'document_ids',
         entityKey: 'pos_id',
+        method: 'delete',
       },
       title: 'headline~document~tab',
       primaryKey: 'document_id',
