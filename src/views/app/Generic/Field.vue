@@ -596,6 +596,9 @@ export default {
           }
         }
       }
+
+      // eslint-disable-next-line no-unused-expressions
+      this.field?.onInit?.(this)
     },
     SelectedButtonOptions(value, keyValue) {
       console.log('this is the value', value, keyValue)

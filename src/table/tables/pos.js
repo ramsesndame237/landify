@@ -397,6 +397,9 @@ export default {
           onlyForm: true,
           multiple: true,
           hideOnIndex: true,
+          onInit: vm => {
+            vm.subEntity.subdocumenttype_id = vm.entity.subdocumenttype_id
+          },
         },
         { key: 'document_name', hideOnForm: true },
         { key: 'document_entry_time', hideOnForm: true },
