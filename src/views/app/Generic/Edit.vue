@@ -222,7 +222,7 @@ export default {
   },
   watch: {
     tabIndex(newValue) {
-      console.log('this is the data url', this.visibleRelations[newValue])
+      this.itemsData = []
       this.filterDataSearch()
     },
   },
@@ -246,8 +246,11 @@ export default {
       return this.noBody = val
     },
     filterDataSearch(data) {
+      if(!this.visibleRelations[this.tabIndex]?.entityEndpoint){
+        return this.itemsData = undefined
+      }
       this.isLoadingDataFetch = true
-      const url = this.visibleRelations[this.tabIndex]?.entityEndpoint
+      const url = this.visibleRelations[this.tabIndex]?.entityEndpoint || this.visibleRelations[this.tabIndex]?.entityForm || this.visibleRelations[this.tabIndex]?.entity
       if (data) {
         for (const element in data) {
           if (data[element] === -1) {
