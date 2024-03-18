@@ -362,7 +362,6 @@ export default {
       if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
         const val = (this.filterValue || this.entity[this.field.filter_key])
         if (this.field.filter_key && val != null) {
-          console.log('filter with value', val)
           return new_list.filter(e => {
             if (Array.isArray(val)) {
               return val.includes(e[this.field.filter_key])

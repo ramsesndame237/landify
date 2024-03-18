@@ -56,12 +56,13 @@
     <generic-filter ref="filterEdit" :table="table"
                     :definition="definition.relations.find(element=> (element.entityView === 'ticket'))"
                     :initial-data="initialFilterData"
-                    @filter="filter"/>
+                    :is-loading-data="isLoading"
+                    @filter="filterDataSearch"/>
     <b-card v-if="definition.relations && formLoaded && visibleRelations.length>0 && !create ">
-      <b-tabs ref="tabs" pills>
+      <b-tabs ref="tabs" v-model="tabIndex" card>
         <b-tab v-for="(relation, index) in visibleRelations" :key="index"
                :title="$t(relation.title || ('headline~'+(relation.entityView||relation.entityForm)+'~tab'))"
-               :active="index===tabIndex" :lazy="relation.lazy!==false">
+               :lazy="relation.lazy!==false" :active="index===tabIndex" >
           <template v-if="relation.component">
             <component :is="relation.component" :relation="relation" :entity-id="entityId"/>
           </template>
@@ -78,8 +79,9 @@
                          :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
                          :entity-view="relation.entityView" :with-view="relation.view!==false" :fields="relation.fields"
                          :on-edit-element="editElement" :with-edit="relation.update!==false"
-                         :opacity="relation.primaryKey === 'ticket_id'"
+                         :opacity="relation.primaryKey === 'ticket_id'" :items="itemsData"
                          :with-delete="relation.delete!==false" :custom-request="relation.customRequest"
+                         :is-loading-data="isLoadingDataFetch"
                          :entity-endpoint="relation.entityEndpoint"/>
             <generic-modal :cache-key="relation.entity+'-'" title="Test" :table="relation.entityForm || relation.entity"
                            :definition="relation" is-relation
@@ -187,6 +189,9 @@ export default {
       search: '',
       currentPage: 1,
       perPage: 100_000,
+      isLoading: true,
+      isLoadingDataFetch:false,
+      itemsData: [],
       totalRows: 0,
       formLoaded: false,
       noBody: false,
@@ -215,12 +220,18 @@ export default {
       })
     },
   },
+  watch: {
+    tabIndex(newValue) {
+      console.log('this is the data url', this.visibleRelations[newValue])
+      this.filterDataSearch()
+    },
+  },
+
   mounted() {
     this.$watch('$refs.tabs.currentTab', val => {
       if (this.tabIndex !== val) {
         this.tabIndex = val
         this.relationEntity = this.definition.relations.find(element => element.entityView === this.visibleRelations[val].entityView)
-        console.log("this is the change")
         this.$router.replace({
           name: this.$route.name,
           params: this.$route.params,
@@ -228,16 +239,38 @@ export default {
         })
       }
     })
+    this.filterDataSearch()
   },
   methods: {
     removeBody(val = false) {
       return this.noBody = val
     },
+    filterDataSearch(data) {
+      this.isLoadingDataFetch = true
+      const url = this.visibleRelations[this.tabIndex]?.entityEndpoint
+      if (data) {
+        for (const element in data) {
+          if (data[element] === -1) {
+            delete data[element]
+          }
+        }
+      } else {
+        data = {}
+      }
+
+      this.$http.get(url, {
+        params: { ...data },
+      }).then(response => {
+        console.log("this is the responser", response.data)
+        this.itemsData = response.data.data
+      }).catch(error => console.error(error)).finally(()=>this.isLoadingDataFetch =false)
+      this.currentPage = 1
+      this.$refs.table.filter(data)
+    },
     onAction(action) {
       action.onClick(this.$refs.form.entity, this)
     },
     filter(data) {
-      console.log('this i sht data', data)
       this.currentPage = 1
       this.$refs.table.filter(data)
     },

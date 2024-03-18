@@ -57,6 +57,7 @@ export default {
     tableDefinitionKey: String,
     initialData: Object,
     vertical: Boolean,
+    isLoadingData:Boolean
   },
   data() {
     return {
@@ -114,19 +115,19 @@ export default {
       // this.$refs.modal.hide()
     },
     handleOk(bvModalEvt) {
+      console.log("this is the okay")
       // Prevent modal from closing
       bvModalEvt.preventDefault()
       // Trigger submit handler
-      console.log("this is the data modal")
       this.loading = true
-      this.$refs.form.validate()
-        .then(success => {
-          if (!success) {
-            return Promise.reject(new Error('Invalid Form'))
-          }
-          // this.$refs.modal.hide()
-          this.$emit('filter', this.getFinalData())
-        })
+      this.$refs.form.validate().then(success => {
+        console.log("this is the success data", success)
+        if (!success) {
+          return Promise.reject(new Error('Invalid Form'))
+        }
+        // this.$refs.modal.hide()
+        this.$emit('filter', this.getFinalData())
+      })
     },
     getFinalData() {
       return Object.keys(this.data)
