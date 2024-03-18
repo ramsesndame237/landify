@@ -125,8 +125,8 @@ export default {
         if (!success) {
           return Promise.reject(new Error('Invalid Form'))
         }
-        // this.$refs.modal.hide()
         this.$emit('filter', this.getFinalData())
+        this.$refs.modal.hide()
       })
     },
     getFinalData() {
