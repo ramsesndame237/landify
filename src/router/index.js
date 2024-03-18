@@ -116,6 +116,7 @@ const routes = [
   {
     path: '/app/ticket/:id/customer',
     name: 'new-business',
+    permissions: ACCESS.menuAccess.new_business,
     component: () => import('@/views/app/SPNB/Index.vue'),
     meta: {
       pageTitle: 'headline~new_business',
@@ -415,6 +416,10 @@ const canOpenRoute = to => {
     
     if (name === 'table-form') { // Create view
       return isAbleTo('create', permissionsFromDefinition)
+    }
+    
+    if (name === 'new-business') {
+      return isAbleTo('create', to.permissions)
     }
 
     return isAbleTo('list', permissionsFromDefinition)
