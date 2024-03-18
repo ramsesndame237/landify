@@ -41,6 +41,10 @@ const contractDocumentsFields = [
     accepted: '.pdf',
     multiple: false,
   },
+  {
+    key: 'document_name',
+    hideOnCreate: true,
+  },
 ]
 
 export default {
