@@ -460,21 +460,48 @@ const tableAccess = {
           USER_PERMISSIONS.admin,
           USER_PERMISSIONS.lead,
           USER_PERMISSIONS.expansion_manager,
-          USER_PERMISSIONS.ext_team_member,
-          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.ext_team_member.withTeams(
+            INTERN_TEAMS_IDS.MVM,
+            INTERN_TEAMS_IDS.FM,
+            INTERN_TEAMS_IDS.NKA,
+            INTERN_TEAMS_IDS.FoMa,
+          ),
+          USER_PERMISSIONS.team_lead.withTeams(
+            INTERN_TEAMS_IDS.MVM,
+            INTERN_TEAMS_IDS.FM,
+            INTERN_TEAMS_IDS.NKA,
+          ),
         ],
         create: [
           USER_PERMISSIONS.admin,
-          USER_PERMISSIONS.team_lead,
-          USER_PERMISSIONS.team_member,
+          USER_PERMISSIONS.team_lead.withTeams(
+            INTERN_TEAMS_IDS.MVM,
+            INTERN_TEAMS_IDS.FM,
+            INTERN_TEAMS_IDS.NKA,
+          ),
+          USER_PERMISSIONS.team_member.withTeams(
+            INTERN_TEAMS_IDS.MVM,
+            INTERN_TEAMS_IDS.FM,
+            INTERN_TEAMS_IDS.NKA,
+            INTERN_TEAMS_IDS.FoMa,
+          ),
         ],
         read: [
+          USER_PERMISSIONS.admin,
           USER_PERMISSIONS.lead,
           USER_PERMISSIONS.expansion_manager,
           USER_PERMISSIONS.ext_team_member,
-          USER_PERMISSIONS.admin,
-          USER_PERMISSIONS.team_lead,
-          USER_PERMISSIONS.team_member,
+          USER_PERMISSIONS.team_lead.withTeams(
+            INTERN_TEAMS_IDS.MVM,
+            INTERN_TEAMS_IDS.FM,
+            INTERN_TEAMS_IDS.NKA,
+          ),
+          USER_PERMISSIONS.team_member.withTeams(
+            INTERN_TEAMS_IDS.MVM,
+            INTERN_TEAMS_IDS.FM,
+            INTERN_TEAMS_IDS.NKA,
+            INTERN_TEAMS_IDS.FoMa,
+          ),
           USER_PERMISSIONS.lawyer,
         ],
         update: [
@@ -482,10 +509,13 @@ const tableAccess = {
           USER_PERMISSIONS.team_lead.withTeams(
             INTERN_TEAMS_IDS.MVM,
             INTERN_TEAMS_IDS.FM,
+            INTERN_TEAMS_IDS.NKA,
           ),
           USER_PERMISSIONS.team_member.withTeams(
             INTERN_TEAMS_IDS.MVM,
             INTERN_TEAMS_IDS.FM,
+            INTERN_TEAMS_IDS.NKA,
+            INTERN_TEAMS_IDS.FoMa,
           ),
         ],
         remove: [
@@ -493,7 +523,21 @@ const tableAccess = {
           USER_PERMISSIONS.team_lead.withTeams(
             INTERN_TEAMS_IDS.MVM,
             INTERN_TEAMS_IDS.FM,
+            INTERN_TEAMS_IDS.NKA,
           ),
+        ],
+      }),
+      ta_invoices: buildPermissions({
+        list: [
+          USER_PERMISSIONS.lead,
+          USER_PERMISSIONS.expansion_manager,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.ext_team_member,
+        ],
+        read: [
+          USER_PERMISSIONS.lead,
+          USER_PERMISSIONS.expansion_manager,
+          USER_PERMISSIONS.ext_team_member,
         ],
       }),
       document: buildPermissions({
