@@ -333,7 +333,7 @@ export default {
         const fieldsComponent = vm.getFieldComponents()
         const documentField = fieldsComponent.find(f => f.field.key === 'document_id')
         const documentEntity = documentField?.subEntity
-        console.log({ documentField, documentEntity })
+
         try {
           if (!create) {
             await vm.$http({
