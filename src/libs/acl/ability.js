@@ -21,17 +21,19 @@ function getAction(crud) {
 
 export const defineRules = () => {
   const userData = JSON.parse(localStorage.getItem('userData'))
+  const isExternal = !!userData?.usertype?.usertype_external
   const rules = [{ subject: 'Auth', action: 'read' }]
   if (!userData) return rules
   const tablegroups = userData.tablegroups
-  const users_tablegroups = userData.users_tablegroups
+  const users_tablegroups = userData.users_tablegroups || []
   rules.push({ action: 'read', subject: 'dashboard' })
+  const userRoles = userData.roles || []
   //
   try {
-    if (userData.roles.find(r => r.role_name === 'Administratoren')) {
+    if (userRoles?.find(r => r.role_name === 'Administratoren')) {
       rules.push({ action: 'manage', subject: 'all' })
     }
-    userData.roles.forEach(role => {
+    userRoles.forEach(role => {
       const { tablegroups: roleTableGroups } = role
 
       if (roleTableGroups.length > 0) {
@@ -61,7 +63,21 @@ export const defineRules = () => {
         }
       }
 
-      rules.push(...tempsRules)
+      let rulesToPush = tempsRules
+      // Implicitly remove rights
+      if (isExternal) {
+        rulesToPush = rulesToPush.filter(rule => ![
+          'menu~payment',
+          'menu~administration',
+          'menu~user',
+          'menu~trackrecord',
+          'menu~contradictionpackage',
+          'menu~contradiction',
+          'menu~inspectionresult',
+        ].includes(rule.action))
+      }
+
+      rules.push(...rulesToPush)
       // rules.push(...role.access.map(access => ({ action: access.access_name, subject: 'menu' })))
     })
     // J'ajoute les permissions propres à un User

@@ -34,8 +34,10 @@ export default {
       cols: 12,
       relationEntity: 'customergroup_company_rel',
     },
-    { key: 'company_name', cols: 6 },
-    { key: 'company_shortname', cols: 6 },
+    { key: 'company_name', cols: 5 },
+    { key: 'company_shortname', cols: 4 },
+    // BuchungsKreis
+    {key: 'company_buchungskreis', cols: 3, required: false},
     // { key: 'customergroup_name', sortable: true, hideOnForm: true },
     // {
     //   key: 'address_id',
@@ -120,6 +122,16 @@ export default {
   default: {
     company_template_coverletter_subject: 'Un Template de teste',
   },
+  filter_vertical: true,
+  filters: [
+    {
+      key: 'customergroup_id',
+      type: 'list',
+      required: true,
+      list: 'customergroup',
+      listLabel: 'customergroup_name',
+    },
+  ],
   relations: [
     {
       title: 'ticket',
@@ -233,24 +245,6 @@ export default {
       update: false,
     },
     {
-      title: 'bankdata',
-      entity: 'frontend_2_1_3_7',
-      entityForm: 'company_bankdata_rel',
-      primaryKey: 'bankdata_id',
-      fields: [
-        {
-          key: 'bankdata_id', type: 'list', list: 'bankdata', alwaysNew: true, onlyForm: true,
-        },
-        { key: 'bankdata_bank_name', hideOnForm: true },
-        { key: 'bankdata_account_number', hideOnForm: true },
-        { key: 'bankdata_iban', hideOnForm: true },
-        { key: 'bankdata_bic', hideOnForm: true },
-        { key: 'bankdata_vat', hideOnForm: true },
-        { key: 'bankdata_is_active', hideOnForm: true },
-      ],
-      view: false,
-    },
-    {
       title: 'Point of Sales',
       entity: 'frontend_2_1_3_8',
       primaryKey: 'pos_id',
@@ -311,6 +305,36 @@ export default {
           type: 'date',
           rules: { date_after: ['@user_company_valid_from'] },
         },
+      ],
+    },
+    {
+      title: 'Tax rate',
+      primaryKey: 'user_id',
+      entity: 'tax_rates',
+      entityEndpoint: vm => `/companies/${vm.$route.params.id}/tax-rates`,
+      view: false,
+      update: true,
+      customRequest: {
+        method: 'delete',
+        endpoint: () => `/companies/${window.$vue.$route.params.id}/tax-rates`,
+        payload: entities => {
+          return entities.map(e => e.id)
+        },
+      },
+      submit: async (vm, entity, create) => {
+        const method = create ? 'post' : 'put'
+        const url = create ? `/companies/${vm.$route.params.id}/tax-rates` : `/companies/${vm.$route.params.id}/tax-rates/${entity.id}`
+
+        const dataForServer = {
+          ...entity,
+        }
+
+        await vm.$http[method](url, dataForServer)
+      },
+      fields: [
+        { key: 'id', listLabel: 'ID', type: 'list', hideOnForm: true },
+        { key: 'code', hideOnForm: false, type: 'string' },
+        { key: 'value', hideOnForm: false, type: 'number' },
       ],
     },
   ],

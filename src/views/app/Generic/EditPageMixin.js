@@ -10,6 +10,11 @@ export default {
       tabIndex: parseInt(this.$route.query.tab || 0),
     }
   },
+  watch:{
+    tabIndex(newValue){
+      console.log("this is the value", newValue)
+    }
+  },
   computed: {
     title() {
       if (this.create) return `headline~${this.table}~new`
@@ -42,6 +47,9 @@ export default {
     },
     edit() {
       this.view = false
+      const url = new URL(window.location.href)
+      url.searchParams.set('edit', 'true')
+      window.history.pushState({ path: url.href }, '', url.href)
     },
     update() {
       this.loading = true
@@ -109,4 +117,5 @@ export default {
       })
     },
   },
+
 }

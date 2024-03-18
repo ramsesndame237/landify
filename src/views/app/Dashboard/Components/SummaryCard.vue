@@ -25,7 +25,7 @@
             <!--            <span style="font-size: 18px; font-weight: 600" :style="{ color: color }" class="value"> {{ value }}</span>-->
             <!--          </b-card-text>-->
             <b-progress :value="percent" max="100" height="6px" :variant="variant"/>
-            <div style="display: flex; justify-content: space-between; margin-top: 8px">
+            <div v-if="!hidePercentage" style="display: flex; justify-content: space-between; margin-top: 8px">
               <h6>{{ $t('headline~dashboard~subframe~open_tickets_statusbar') }}</h6>
               <h6>{{ percent }}%</h6>
             </div>
@@ -74,7 +74,7 @@ export default {
     BIconThreeDots,
     BIconCaretRight,
   },
-  props: ['value', 'color', 'title', 'percent', 'number', 'variant', 'cols', 'loading'],
+  props: ['value', 'color', 'title', 'percent', 'number', 'variant', 'cols', 'loading','hidePercentage'],
   data() {
     return {
       options: ['opt 1', 'opt 2', 'opt 3', 'opt 4'],
