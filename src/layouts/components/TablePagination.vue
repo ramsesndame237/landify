@@ -23,7 +23,7 @@
                 @click="$emit('filter')">
         <feather-icon icon="FilterIcon" :badge="filterBadge"/>
       </b-button>
-      <b-dropdown v-if="importFunctionnality.includes(entity)" size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
+      <b-dropdown v-if="importFunctionnality.includes(entity) && showInput" size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
         <template #button-content>
           <b-button id="popover-button-variant" size="sm" variant="success" class="mr-1 btn-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">

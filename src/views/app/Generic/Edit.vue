@@ -68,7 +68,7 @@
           </template>
           <template v-else>
             <b-card v-if="relation.primaryKey === 'ticket_id'" body-class="p-0">
-              <table-pagination :per-page.sync="perPage" :show-input="true" :current-page.sync="currentPage"
+              <table-pagination :per-page.sync="perPage" :show-input="false" :current-page.sync="currentPage"
                                 :entity="table"
                                 :with-filter="definition.filters && definition.filters.length > 0"
                                 :total-rows.sync="totalRows"
