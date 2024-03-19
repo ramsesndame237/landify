@@ -148,7 +148,7 @@ export default {
         listLabel: item => `${item.ticket_id} - ${item.ticket_name}`,
         noLabel: true,
         required: false,
-        filter_key: 'pos_id',
+        // filter_key: 'pos_id',
         noCache: true,
         customPagination: {
           data: [{ size: 15 }],
@@ -190,7 +190,7 @@ export default {
         type: 'list',
         list: 'frontend_4_2_1_contract_selector',
         listLabel: 'contract_name',
-        filter_key: 'pos_id',
+        // filter_key: 'pos_id',
         noLabel: true,
         noCache: true,
         // optionWithTooltipDetail: true,
