@@ -1,6 +1,5 @@
 import { getContractCriteriaFields } from '@/table/utils'
 import _ from 'lodash'
-import router from '@/router'
 
 export default {
   // entity: 'frontend_3_4_1_1',
@@ -468,6 +467,7 @@ export default {
                 documenttype_id: entity.documenttype_id,
                 subdocumenttype_id: entity.subdocumenttype_id,
                 document_name: entity.document_name,
+                documentcontracttype_id: entity.documentcontracttype_id,
               },
             })
             vm.$successToast(vm.$t('success~document~saved'))
