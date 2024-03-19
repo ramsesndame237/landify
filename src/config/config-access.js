@@ -104,6 +104,32 @@ const tableAccess = {
       ],
     }),
   },
+  tag: {
+    main: buildPermissions({
+      list: [
+        USER_PERMISSIONS.admin,
+        USER_PERMISSIONS.team_lead,
+        USER_PERMISSIONS.team_member,
+        USER_PERMISSIONS.expansion_manager,
+        USER_PERMISSIONS.lawyer,
+      ],
+      read: [
+        USER_PERMISSIONS.admin,
+        USER_PERMISSIONS.team_lead,
+        USER_PERMISSIONS.team_member,
+        USER_PERMISSIONS.expansion_manager,
+        USER_PERMISSIONS.lawyer,
+      ],
+    }),
+    relations: {
+      pos: buildPermissions({
+        list: [
+          USER_PERMISSIONS.lead,
+          USER_PERMISSIONS.admin,
+        ],
+      }),
+    },
+  },
   board: {
     main: buildPermissions({
       list: [
@@ -733,7 +759,6 @@ const tableAccess = {
       service_object: buildPermissions({
         list: [
           USER_PERMISSIONS.lead,
-          USER_PERMISSIONS.expansion_manager,
           USER_PERMISSIONS.ext_team_member.withTeams(
             EXTERN_TEAMS_IDS.FM,
           ),
@@ -832,6 +857,12 @@ const tableAccess = {
         USER_PERMISSIONS.admin,
         USER_PERMISSIONS.team_lead,
         USER_PERMISSIONS.team_member,
+        USER_PERMISSIONS.lawyer,
+      ],
+      seeHeader: [
+        USER_PERMISSIONS.admin,
+        USER_PERMISSIONS.team_lead,
+        USER_PERMISSIONS.team_member,
       ],
       create: [
         USER_PERMISSIONS.admin,
@@ -845,6 +876,217 @@ const tableAccess = {
     }),
     relations: {
       companies: buildPermissions({
+        list: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+          USER_PERMISSIONS.lawyer,
+        ],
+        read: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+          USER_PERMISSIONS.lawyer,
+        ],
+        create: [
+          USER_PERMISSIONS.admin,
+        ],
+        update: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+        ],
+        delete: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+        ],
+      }),
+      contact_person: buildPermissions({
+        list: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+          USER_PERMISSIONS.lawyer,
+        ],
+        read: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+          USER_PERMISSIONS.lawyer,
+        ],
+        create: [
+          USER_PERMISSIONS.admin,
+        ],
+        update: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+        ],
+        delete: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+        ],
+      }),
+      ticket: buildPermissions({
+        list: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+          USER_PERMISSIONS.lawyer,
+        ],
+        read: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+          USER_PERMISSIONS.lawyer,
+        ],
+        create: [
+          USER_PERMISSIONS.admin,
+        ],
+        update: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+        ],
+        delete: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+        ],
+      }),
+      users: buildPermissions({
+        list: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+          USER_PERMISSIONS.lawyer,
+        ],
+        read: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+          USER_PERMISSIONS.lawyer,
+        ],
+        create: [
+          USER_PERMISSIONS.admin,
+        ],
+        update: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+        ],
+        delete: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+        ],
+      }),
+    },
+  },
+  company: {
+    main: buildPermissions({
+      list: [
+        USER_PERMISSIONS.admin,
+        USER_PERMISSIONS.team_lead,
+        USER_PERMISSIONS.team_member,
+      ],
+      read: [
+        USER_PERMISSIONS.admin,
+        USER_PERMISSIONS.team_lead,
+        USER_PERMISSIONS.team_member,
+        USER_PERMISSIONS.lawyer,
+      ],
+      seeHeader: [
+        USER_PERMISSIONS.admin,
+        USER_PERMISSIONS.team_lead,
+        USER_PERMISSIONS.team_member,
+      ],
+      create: [
+        USER_PERMISSIONS.admin,
+      ],
+      update: [
+        USER_PERMISSIONS.admin,
+      ],
+      remove: [
+        USER_PERMISSIONS.admin,
+      ],
+    }),
+    relations: {
+      tickets: buildPermissions({
+        list: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+          USER_PERMISSIONS.lawyer,
+        ],
+        read: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+          USER_PERMISSIONS.lawyer,
+        ],
+        create: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+        ],
+        update: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+        ],
+        delete: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+        ],
+      }),
+      contact_person: buildPermissions({
+        list: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+        ],
+        read: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+        ],
+        update: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+        ],
+        delete: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+        ],
+      }),
+      ticket: buildPermissions({
+        list: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+        ],
+        read: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+        ],
+        update: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+        ],
+        delete: [
+          USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
+        ],
+      }),
+      users: buildPermissions({
         list: [
           USER_PERMISSIONS.admin,
           USER_PERMISSIONS.team_lead,
@@ -884,6 +1126,7 @@ const menuAccess = {
       USER_PERMISSIONS.lead,
       USER_PERMISSIONS.expansion_manager,
       USER_PERMISSIONS.store_manager,
+      USER_PERMISSIONS.area_manager,
       USER_PERMISSIONS.ext_team_member.withTeams(EXTERN_TEAMS_IDS.BuHa),
       USER_PERMISSIONS.ext_team_member.withTeams(EXTERN_TEAMS_IDS.MVM),
       USER_PERMISSIONS.ext_team_member.withTeams(EXTERN_TEAMS_IDS.NKA),
@@ -901,6 +1144,7 @@ const menuAccess = {
       USER_PERMISSIONS.lead,
       USER_PERMISSIONS.expansion_manager,
       USER_PERMISSIONS.store_manager,
+      USER_PERMISSIONS.area_manager,
       USER_PERMISSIONS.ext_team_member,
     ],
   }),
@@ -931,6 +1175,7 @@ const menuAccess = {
       // EXTERN
       USER_PERMISSIONS.lead,
       USER_PERMISSIONS.expansion_manager,
+      USER_PERMISSIONS.area_manager,
     ],
   }),
   ticket_dashboard: [],
@@ -945,6 +1190,8 @@ const menuAccess = {
       // EXTERN
       USER_PERMISSIONS.lead,
       USER_PERMISSIONS.expansion_manager,
+      USER_PERMISSIONS.store_manager,
+      USER_PERMISSIONS.area_manager,
     ],
   }),
   ticket_list: buildPermissions({
@@ -958,6 +1205,8 @@ const menuAccess = {
       // EXTERN
       USER_PERMISSIONS.lead,
       USER_PERMISSIONS.expansion_manager,
+      USER_PERMISSIONS.store_manager,
+      USER_PERMISSIONS.area_manager,
     ],
   }),
   ticket_list_update: buildPermissions({
@@ -971,6 +1220,8 @@ const menuAccess = {
       // EXTERN
       USER_PERMISSIONS.lead,
       USER_PERMISSIONS.expansion_manager,
+      USER_PERMISSIONS.area_manager,
+      USER_PERMISSIONS.store_manager,
     ],
   }),
 
@@ -1063,151 +1314,20 @@ const menuAccess = {
       USER_PERMISSIONS.team_member,
     ],
   }),
-  customer_group: {
-    main: buildPermissions({
-      seeHeader: [
-        USER_PERMISSIONS.admin,
-      ],
-      note: [
-        USER_PERMISSIONS.admin,
-      ],
-      list: [
-        USER_PERMISSIONS.admin,
-        USER_PERMISSIONS.team_lead,
-        USER_PERMISSIONS.team_member,
-      ],
-      read: [
-        USER_PERMISSIONS.admin,
-        USER_PERMISSIONS.team_lead,
-        USER_PERMISSIONS.team_member,
-      ],
-      create: [
-        USER_PERMISSIONS.admin,
-      ],
-      update: [
-        USER_PERMISSIONS.admin,
-      ],
-      remove: [
-        USER_PERMISSIONS.admin,
-      ],
-    }),
-    relations: {
-      companies: buildPermissions({
-        list: [
-          USER_PERMISSIONS.admin,
-          USER_PERMISSIONS.team_lead,
-          USER_PERMISSIONS.team_member,
-        ],
-        read: [
-          USER_PERMISSIONS.admin,
-          USER_PERMISSIONS.team_lead,
-          USER_PERMISSIONS.team_member,
-        ],
-        create: [
-          USER_PERMISSIONS.admin,
-        ],
-        update: [
-          USER_PERMISSIONS.admin,
-        ],
-        remove: [
-          USER_PERMISSIONS.admin,
-        ],
-      }),
-      contact_person: buildPermissions({
-        list: [
-          USER_PERMISSIONS.admin,
-          USER_PERMISSIONS.team_lead,
-          USER_PERMISSIONS.team_member,
-        ],
-        read: [
-          USER_PERMISSIONS.admin,
-          USER_PERMISSIONS.team_lead,
-          USER_PERMISSIONS.team_member,
-        ],
-        create: [
-          USER_PERMISSIONS.admin,
-        ],
-        update: [
-          USER_PERMISSIONS.admin,
-        ],
-        remove: [
-          USER_PERMISSIONS.admin,
-        ],
-      }),
-      ticket: buildPermissions({
-        list: [
-          USER_PERMISSIONS.admin,
-          USER_PERMISSIONS.team_lead,
-          USER_PERMISSIONS.team_member,
-        ],
-        read: [
-          USER_PERMISSIONS.admin,
-          USER_PERMISSIONS.team_lead,
-          USER_PERMISSIONS.team_member,
-        ],
-        create: [
-          USER_PERMISSIONS.admin,
-        ],
-        update: [
-          USER_PERMISSIONS.admin,
-        ],
-        remove: [
-          USER_PERMISSIONS.admin,
-        ],
-      }),
-      user: buildPermissions({
-        list: [
-          USER_PERMISSIONS.admin,
-          USER_PERMISSIONS.team_lead,
-          USER_PERMISSIONS.team_member,
-        ],
-        read: [
-          USER_PERMISSIONS.admin,
-          USER_PERMISSIONS.team_lead,
-          USER_PERMISSIONS.team_member,
-        ],
-        create: [
-          USER_PERMISSIONS.admin,
-        ],
-        update: [
-          USER_PERMISSIONS.admin,
-        ],
-        remove: [
-          USER_PERMISSIONS.admin,
-        ],
-      }),
-    },
-  },
-  company: {
-    main: buildPermissions({
-      seeHeader: [
-        USER_PERMISSIONS.admin,
-      ],
-      note: [
-        USER_PERMISSIONS.admin,
-      ],
-      list: [
-        USER_PERMISSIONS.admin,
-        USER_PERMISSIONS.team_lead,
-        USER_PERMISSIONS.team_member,
-      ],
-      read: [
-        USER_PERMISSIONS.admin,
-        USER_PERMISSIONS.team_lead,
-        USER_PERMISSIONS.team_member,
-      ],
-      create: [
-        USER_PERMISSIONS.admin,
-      ],
-      update: [
-        USER_PERMISSIONS.admin,
-      ],
-      remove: [
-        USER_PERMISSIONS.admin,
-      ],
-    }),
-    relations: {},
-  },
+  customer_group: buildPermissions({
+    list: [
+      USER_PERMISSIONS.admin,
+      USER_PERMISSIONS.team_lead,
+      USER_PERMISSIONS.team_member,
+    ],
+  }),
+  company: buildPermissions({
+    list: [
+      USER_PERMISSIONS.admin,
+      USER_PERMISSIONS.team_lead,
+      USER_PERMISSIONS.team_member,
+    ],
+  }),
   pos: [],
   area: [],
 

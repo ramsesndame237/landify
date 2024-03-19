@@ -1,12 +1,12 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
 import jwt from '@/auth/jwt/useJwt'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
-import { checkAndverficationJwt, parseJwt } from '@/views/app/CustomComponents/DataTable/utils'
+import { ACCESS } from '@/config/config-access'
+import { isAbleTo } from '@/config/config-permissions'
+import axiosIns from "@/libs/axios"
+import { parseJwt } from '@/views/app/CustomComponents/DataTable/utils'
 import BrowserId from 'browser-id'
-import axiosIns from "@/libs/axios";
-import { USER_PERMISSIONS, buildPermissions, isAbleTo } from '@/config/config-permissions'
-import { ACCESS, EXTERN_TEAMS_IDS } from '@/config/config-access'
+import Vue from 'vue'
+import VueRouter from 'vue-router'
 
 
 Vue.use(VueRouter)
@@ -412,14 +412,12 @@ const canOpenRoute = to => {
         return isAbleTo('update', permissionsFromDefinition)
       }
       return isAbleTo('read', permissionsFromDefinition)
-    }
-    
-    if (name === 'table-form') { // Create view
+    } else if (name === 'table-form') { // Create view
       return isAbleTo('create', permissionsFromDefinition)
-    }
-    
-    if (name === 'new-business') {
+    } else if (name === 'new-business') {
       return isAbleTo('create', to.permissions)
+    } else if (name === 'user-profile') {
+      return true
     }
 
     return isAbleTo('list', permissionsFromDefinition)

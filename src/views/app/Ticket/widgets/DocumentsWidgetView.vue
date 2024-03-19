@@ -7,7 +7,6 @@ import EditPageMixin from '@/views/app/Generic/EditPageMixin'
 import TicketMixin from '@/views/app/Kanban/TicketMixin'
 import { mapMutations } from 'vuex'
 import { USER_ROLES } from '@/config/config-roles'
-import { TRUE } from 'sass'
 
 export default {
   name: 'DocumentsWidgetView',

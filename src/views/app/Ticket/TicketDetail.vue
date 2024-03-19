@@ -23,7 +23,7 @@
                 <b-button v-if="showButton.all" variant="primary" @click="createInvoice">
                   {{ $t('button~newinvoice') }}
                 </b-button>
-                <b-button v-if="!entity.ticket_closed && (showButton.all || showButton.assign)" variant="primary"
+                <b-button v-if="canAssign()" variant="primary"
                           class="ml-2"
                           @click="$refs.assign.openModal(entity, userIdsOfTeam(entity.columns[0].team_id))">
                   {{ $t('button~assignto') }}
@@ -332,30 +332,30 @@
 </template>
 
 <script>
-import { BButton, BCol, BRow } from 'bootstrap-vue'
-import EditPageMixin from '@/views/app/Generic/EditPageMixin'
+import TabComponent from '@/components/TabComponent.vue'
+import { USER_ROLES } from '@/config/config-roles'
+import { formatDate, getDocumentLink, getStampedDocumentLink } from '@/libs/utils'
 import Table from '@/table'
-import GenericModal from '@/views/app/Generic/modal.vue'
 import SubTicketCard from '@/views/app/CustomComponents/WP6/SubTicketCard.vue'
+import SubticketTable from '@/views/app/CustomComponents/WP6/SubticketTable.vue'
+import EditPageMixin from '@/views/app/Generic/EditPageMixin'
+import Notes from '@/views/app/Generic/Notes.vue'
+import GenericModal from '@/views/app/Generic/modal.vue'
+import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
+import TicketMixin from '@/views/app/Kanban/TicketMixin'
+import AddDocumentToContract from '@/views/app/Ticket/AddDocumentToContract.vue'
+import AddDocumentToPos from '@/views/app/Ticket/AddDocumentToPos.vue'
+import EmailModal from '@/views/app/Ticket/EmailModal.vue'
+import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.js'
+import DocumentsWidgetView from '@/views/app/Ticket/widgets/DocumentsWidgetView.vue'
 import AppTimeline from '@core/components/app-timeline/AppTimeline.vue'
 import AppTimelineItem from '@core/components/app-timeline/AppTimelineItem.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
-import TicketMixin from '@/views/app/Kanban/TicketMixin'
-import { formatDate, getDocumentLink, getStampedDocumentLink } from '@/libs/utils'
-import moment from 'moment'
-import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
-import Notes from '@/views/app/Generic/Notes.vue'
+import { BButton, BCol, BRow } from 'bootstrap-vue'
 import _, { parseInt } from 'lodash'
-import EmailModal from '@/views/app/Ticket/EmailModal.vue'
-import AddDocumentToContract from '@/views/app/Ticket/AddDocumentToContract.vue'
-import AddDocumentToPos from '@/views/app/Ticket/AddDocumentToPos.vue'
-import { mapGetters } from 'vuex'
-import TabComponent from '@/components/TabComponent.vue'
-import DocumentsWidgetView from '@/views/app/Ticket/widgets/DocumentsWidgetView.vue'
-import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.js'
-import SubticketTable from '@/views/app/CustomComponents/WP6/SubticketTable.vue'
+import moment from 'moment'
 import vSelect from 'vue-select'
-import { USER_ROLES } from '@/config/config-roles'
+import { mapGetters } from 'vuex'
 
 const ticketDef = {
   ...Table.ticket,
@@ -601,6 +601,14 @@ export default {
       const colIdx = this.columns.findIndex(c => c.column_name === this.entity?.column_name)
       if (colIdx === this.columns.length - 1) return false
       return this.config.accepts(null, { dataset: { status: this.columns[colIdx + 1].column_name } }, { dataset: { status: this.entity?.column_name } })
+    },
+    canAssign() {
+      const colIdx = this.columns.findIndex(c => c.column_name === this.entity?.column_name)
+      const teamId = this.columns[colIdx].team_id
+      let isInTeam = true
+      if (teamId) isInTeam = this.currentUserInTeam(teamId)
+      if (!isInTeam) return false
+      return !this.entity.ticket_closed && (this.showButton.all || this.showButton.assign)
     },
     async moveToNext() {
       const result = await this.moveToNextColumn(this.entity)
