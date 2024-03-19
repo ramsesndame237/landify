@@ -179,6 +179,9 @@ export default {
     const payload = this.$store.getters['table/tableData'](this.$route.params.table)
     const table = this.$route.params.table
     const definition = Tables[table]
+    if (!definition.relations) {
+      definition.relations = []
+    }
     let defaultPage = null
     if (this.isUserExternClient) {
       defaultPage = definition.perPage

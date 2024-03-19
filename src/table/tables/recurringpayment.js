@@ -51,7 +51,7 @@ export default {
       list: 'tax_rate',
       useWholeResponse: true,
       entityCustomEndPoint: '/contracts/tax-rates',
-      listLabel: 'code',
+      listLabel: 'value',
       filter_key: 'contract_id',
       filter: () => true,
       hideOnIndex: true,
