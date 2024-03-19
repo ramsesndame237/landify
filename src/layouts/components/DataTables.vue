@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <b-table ref="table" sticky-header striped hover responsive :busy.sync="loading" :per-page="perPage"
+    <b-table ref="table" sticky-header striped hover responsive :busy.sync="isLoadingData" :per-page="perPage"
              :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
              :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" show-empty :tbody-tr-class="rowClass" @row-clicked="onRowClicked">
       <template #table-busy>
@@ -112,7 +112,8 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    noCache: {type: Boolean, default: false},
+    noCache: { type: Boolean, default: false },
+    isLoadingData: Boolean,
     entity: { type: String, required: true },
     entityList: { type: String },
     opacity: { type: Boolean, default: false },
@@ -138,7 +139,7 @@ export default {
     secondKey: {},
     secondKeyValue: {},
     search: {},
-    onDeleteElement: {type: Function},
+    onDeleteElement: { type: Function },
     onEditElement: { type: Function },
     onViewElement: { type: Function },
     perPage: Number,
@@ -379,6 +380,7 @@ export default {
       return `${this.entity}-${JSON.stringify(payload)}`
     },
     processData(data) {
+      console.log('this is the data process', data)
       if (this.entityEndpoint && Array.isArray(data.data)) {
         this.$emit('update:totalRows', data.total)
         data.data.forEach(el => {
@@ -533,15 +535,16 @@ export default {
       })
     },
     reload() {
+      console.log('this is the data')
       this.$refs.table.refresh()
       this.$emit('table-refreshed')
     },
     filter(data) {
+      console.log('this is the data of --------', data)
       this.filterData = { ...data }
       this.reload()
     },
     onSelect(index) {
-      console.log('index', index)
       if (!this.multiSelect) {
         this.currentItems.forEach((item, idx) => {
           if (idx !== index) this.$set(item, '__selected', false)
@@ -550,7 +553,7 @@ export default {
       }
     },
     onRowClicked(record, index) {
-      console.log('row clicked', record)
+      console.log('row clicked', [record, index])
       this.$set(record, '__selected', !record.__selected)
     },
     rowClass(item) {
