@@ -17,6 +17,7 @@ import location from './tables/location'
 import contract from './tables/contract'
 import serviceobject from './tables/serviceobject'
 import criteria from './tables/criteria'
+import sachkonto from './tables/sachkonto'
 import recurringpayment from './tables/recurringpayment'
 import invoice from './tables/invoice'
 import invoiceposition from './tables/invoiceposition'
@@ -268,7 +269,7 @@ export default {
   },
 
   criteria,
-
+  sachkonto,
   indexclause,
 
   recurringpayment,
