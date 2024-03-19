@@ -1,8 +1,10 @@
 import { getUserData } from '@/auth/utils'
+import { ACCESS } from '@/config/config-access'
 
 export default {
   entityEndpoint: '/companies',
   primaryKey: 'company_id',
+  permissions: ACCESS.tableAccess.company.main,
   // createModal: 'otherPage',
   formComponent: () => import('@/views/app/CreateComponent/CompanyForm.vue'),
   /**
@@ -137,6 +139,7 @@ export default {
       title: 'ticket',
       primaryKey: 'ticket_id',
       entity: 'frontend_2_1_3_1_read_ticket',
+      permissions: ACCESS.tableAccess.company.relations.tickets,
       newRoute: { name: 'table-form', params: { table: 'ticket' } },
       fields: [
         {
@@ -152,6 +155,7 @@ export default {
       title: 'contradiction',
       primaryKey: 'contradiction_id',
       entity: 'frontend_2_1_3_2',
+      permissions: ACCESS.tableAccess.company.relations.contradiction,
       create: false,
       update: false,
       // delete: false,
@@ -172,6 +176,7 @@ export default {
       title: 'Reviews Invoices',
       primaryKey: 'invoice_id',
       entity: 'frontend_2_1_3_3',
+      permissions: ACCESS.tableAccess.company.relations.review_invoices,
       create: false,
       delete: false,
       entityView: 'invoice',
@@ -199,6 +204,7 @@ export default {
       primaryKey: 'product_id',
       entity: 'frontend_2_1_3_4',
       entityForm: 'company_product_rel',
+      permissions: ACCESS.tableAccess.company.relations.sales_order,
       view: false,
       fields: [
         {
@@ -219,6 +225,7 @@ export default {
       entity: 'frontend_2_1_3_5',
       entityForm: 'contactperson_company_rel',
       entityView: 'contactperson',
+      permissions: ACCESS.tableAccess.company.relations.contact_person,
       update: false,
       fields: [
         {
@@ -240,6 +247,7 @@ export default {
     },
     {
       title: 'Appointment Track',
+      permissions: ACCESS.tableAccess.company.relations.appointment_track,
       create: false,
       delete: false,
       update: false,
@@ -250,6 +258,7 @@ export default {
       primaryKey: 'pos_id',
       entityForm: 'company_pos_rel',
       entityView: 'pos',
+      permissions: ACCESS.tableAccess.company.relations.pos,
       update: false,
       fields: [
         {
@@ -269,6 +278,7 @@ export default {
       entity: 'frontend_2_1_3_9',
       entityForm: 'company_payment_rel',
       entityView: 'payment',
+      permissions: ACCESS.tableAccess.company.relations.payments,
       fields: [
         {
           key: 'payment_id', type: 'list', list: 'payment', alwaysNew: true, onlyForm: true, without: 'company_id',
@@ -287,6 +297,7 @@ export default {
       entity: 'frontend_2_1_3_10',
       entityForm: 'user_company_rel',
       entityView: 'user',
+      permissions: ACCESS.tableAccess.company.relations.users,
       fields: [
         {
           key: 'user_id', type: 'list', list: 'user', listLabel: 'user_firstname',
@@ -311,6 +322,7 @@ export default {
       title: 'Tax rate',
       primaryKey: 'user_id',
       entity: 'tax_rates',
+      permissions: ACCESS.tableAccess.company.relations.tax_rates,
       entityEndpoint: vm => `/companies/${vm.$route.params.id}/tax-rates`,
       view: false,
       update: true,
