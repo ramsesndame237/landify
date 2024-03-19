@@ -281,6 +281,7 @@ export default {
       } else this.$router.push(routeData)
     },
     provider(ctx) {
+      this.isLoadingData = true
       const {
         currentPage, perPage, filter, sortBy, sortDesc,
       } = ctx
@@ -351,10 +352,12 @@ export default {
             } else {
               throw new Error('invalid data')
             }
+            this.isLoadingData = false
             return items
           })
           .catch(e => {
             console.log(e)
+            this.isLoadingData = false
             const title = e.response?.data.detail
             this.$errorToast(title)
             return null

@@ -261,9 +261,9 @@ export default {
       })
     },
     fetchColumnOfTheBoard() {
-      this.$http.get(`${this.boardColumnUrl}?board_id=${this.$route.params.id}`).then(response => {
+      this.$http.get(`${this.boardColumnUrl}?board_id=${this.$route.params.id}&order_filed=rank_order`).then(response => {
         console.log('this is the data', response.data.data)
-        this.columnData = response.data.data.map(items => ({...items, tickets: []}))
+        this.columnData = response.data.data.sort((a, b) => a.rank_order - b.rank_order).map(items => ({...items, tickets: []}))
         this.initialFetch = true
       }).catch(error => {
         console.error(error)
@@ -303,39 +303,41 @@ export default {
         </div>
       </div>
     </b-card>
-    <div class="h-100">
+    <div class="h-100 position-relative">
       <KanbanViewDisplay ref="KanbanContainer" classes="d-flex kanbanContainer position-relative"
                          :styles="'border:solid green'">
         <div class="w-100" v-if="columnData.length === 0">
           <NoData/>
         </div>
         <b-card v-for="item in columnData" :key="item.column_id" class="columnBoardElement"
-                @scrollend.passive="(e)=>handleScroll(e,item)"
                 @drop.prevent="(event)=> handleDrop(event,item.column_id,item.column_name)"
-                @dragover.prevent="(event) =>handleDragOver(event)" body-class="position-relative">
-          <template #header>
-            <div class="border-bottom-2 border-bottom-primary  w-100">
-              <h5>
-                {{ item.column_name }}
-              </h5>
+                @dragover.prevent="(event) =>handleDragOver(event)" body-class="position-relative" :header="item.column_name"
+                header-bg-variant="secondary" header-text-variant="white" >
+<!--          <template #header>-->
+<!--            <div class="border-bottom-2 border-bottom-primary  w-100">-->
+<!--              <h5>-->
+<!--                {{ i }}-->
+<!--              </h5>-->
+<!--            </div>-->
+<!--          </template>-->
+          <div class="card-body-container"  @scrollend.passive="(e)=>handleScroll(e,item)">
+            <div v-for="ticket in item.tickets" :id="ticket.ticket_id" :key="ticket.ticket_id" draggable="true"
+                 class="cursor-pointer" style="height: auto;margin-top: 15px;z-index: 0;position: relative"
+                 @dragend="(event)=> handleDrag(event,item,ticket)"
+                 @dragstart="(event)=> handleDrag(event)">
+              <invoice-ticket-card v-if="ticket.ticket_id_group === null || showSubTickets" class="bg-white"
+                                   :advanced="advanced"
+                                   :ticket="{...ticket, column_id:item.column_id,column_is_qualitygate:item.column_is_qualitygate}"
+                                   :team-users="teams.filter(team => team.team_id === ticket.team_id)"
+                                   @moredetails="$router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
+                                   @assign="$refs.assign.openModal(ticket, userIdsOfTeam(ticket.team_id))"
+                                   @subticket-updated="fetchTicketOfTheColumn(item.column_id,true)"/>
             </div>
-          </template>
-          <div v-for="ticket in item.tickets" :id="ticket.ticket_id" :key="ticket.ticket_id" draggable="true"
-               class="cursor-pointer" style="height: auto;margin-top: 15px;"
-               @dragend="(event)=> handleDrag(event,item,ticket)"
-               @dragstart="(event)=> handleDrag(event)">
-            <invoice-ticket-card v-if="ticket.ticket_id_group === null || showSubTickets" class="bg-white"
-                                 :advanced="advanced"
-                                 :ticket="{...ticket, column_id:item.column_id,column_is_qualitygate:item.column_is_qualitygate}"
-                                 :team-users="teams.filter(team => team.team_id === ticket.team_id)"
-                                 @moredetails="$router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
-                                 @assign="$refs.assign.openModal(ticket, userIdsOfTeam(ticket.team_id))"
-                                 @subticket-updated="fetchTicketOfTheColumn(item.column_id,true)"/>
-          </div>
-          <div class="flex align-items-center justify-content-center w-100  text-center mt-2 position-absolute"
-               style="top:-35px">
-            <b-spinner v-if="loadingTicket.includes(item.column_id)" variant="primary"
-                       style="width: 3rem; height: 3rem;"/>
+            <div class="flex align-items-center justify-content-center w-100  text-center mt-2 position-absolute"
+                 style="top:-35px">
+              <b-spinner v-if="loadingTicket.includes(item.column_id)" variant="primary"
+                         style="width: 3rem; height: 3rem;"/>
+            </div>
           </div>
 <!--          <b-button v-if="item.tickets.length <= 3 && !loading" block variant="primary" class="mt-2"-->
 <!--                    @click="fetchTicketOfTheColumn(item.column_id,false)">-->
@@ -352,7 +354,7 @@ export default {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .kanbanContainer {
   overflow-x: auto;
   gap: 15px;
@@ -362,14 +364,26 @@ export default {
 
 .columnBoardElement {
   background: #ecebeb;
+  position: relative;
   min-width: 450px;
+  max-width: 460px;
   max-height: 100vh;
   margin-bottom: 15px;
   padding: 10px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  .card-header{
+    z-index: 10;
+  }
+  .card-body-container{
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+  }
 
 }
+
 
 .card_draggable {
   border: dashed;
