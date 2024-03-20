@@ -291,6 +291,7 @@ export default {
         order_by: sortBy,
         order_dir: sortDesc ? 'DESC' : 'ASC',
         per_page: perPage === 0 ? 1000000 : perPage,
+        size: perPage === 0 ? 1000000 : perPage,
         from: 0,
         current_page: currentPage,
         filter_all: filter ?? '',
@@ -325,6 +326,7 @@ export default {
           keyword: filter,
           page: currentPage,
           size: payload.per_page,
+          per_page: perPage === 0 ? 25 : perPage,
           order_filed: sortBy,
           order: sortDesc ? 'desc' : 'asc',
         }

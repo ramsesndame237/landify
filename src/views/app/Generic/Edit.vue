@@ -42,7 +42,7 @@
       </div>
     </b-card>
 
-    <b-card class="" :no-body="noBody">
+    <b-card class="container-card" :no-body="noBody">
       <component
         :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
         ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="create"
@@ -62,7 +62,7 @@
       <b-tabs ref="tabs" v-model="tabIndex" card>
         <b-tab v-for="(relation, index) in visibleRelations" :key="index"
                :title="$t(relation.title || ('headline~'+(relation.entityView||relation.entityForm)+'~tab'))"
-               :lazy="relation.lazy!==false" :active="index===tabIndex" >
+               :lazy="relation.lazy!==false" :active="index===tabIndex" :title-item-class="[index === tabIndex ? 'activeTab': '']">
           <template v-if="relation.component">
             <component :is="relation.component" :relation="relation" :entity-id="entityId"/>
           </template>
@@ -70,6 +70,7 @@
             <b-card v-if="relation.primaryKey === 'ticket_id'" body-class="p-0">
               <table-pagination :per-page.sync="perPage" :show-input="false" :current-page.sync="currentPage"
                                 :entity="table"
+                                :show-for-childreen="visibleRelations[tabIndex].entity === 'tax_rates' || false"
                                 :with-filter="definition.filters && definition.filters.length > 0"
                                 :total-rows.sync="totalRows"
                                 :inline-filter="!definition.inline_filter" @filter="$refs.filterEdit.openModal()"/>
@@ -111,6 +112,27 @@
                       @click="$emit('filter')">
               <feather-icon icon="FilterIcon"/>
             </b-button>
+            <b-dropdown v-if="canImportOrExport.includes(visibleRelations[tabIndex].entity)" size="lg" variant="link"
+                        toggle-class="text-decoration-none" no-caret>
+              <template #button-content>
+                <b-button id="popover-button-variant" size="sm" variant="success" class="mr-1 btn-icon">
+
+                  <span>
+              Ex-/Import
+            </span>
+                </b-button>
+              </template>
+              <b-dropdown-item @click="fetchExportData(visibleRelations[tabIndex].entity === 'tax_rates' ? 'tax-rate' : visibleRelations[tabIndex].entity)">
+                <FeatherIcon icon="ArrowUpIcon" />
+
+                {{ $t('translate~key~export') }}
+              </b-dropdown-item>
+              <b-dropdown-item @click="()=>$router.push({name:'importView',params:{name:visibleRelations[tabIndex].entity === 'tax_rates' ? 'tax_rate' : visibleRelations[tabIndex].entity}})">
+
+                <FeatherIcon icon="ArrowDownIcon" />
+                {{ $t('translate~key~import') }}
+              </b-dropdown-item>
+            </b-dropdown>
 
             <b-form-input v-if="currentHasSearch()" id="filterInput" v-model="search" debounce="500" type="search"
                           placeholder="Search..."/>
@@ -190,8 +212,9 @@ export default {
       currentPage: 1,
       perPage: 100_000,
       isLoading: true,
-      isLoadingDataFetch:false,
+      isLoadingDataFetch: false,
       itemsData: [],
+      canImportOrExport:['tax_rates','bankdata','kreditornumber'],
       totalRows: 0,
       formLoaded: false,
       noBody: false,
@@ -246,7 +269,7 @@ export default {
       return this.noBody = val
     },
     filterDataSearch(data) {
-      if(!this.visibleRelations[this.tabIndex]?.entityEndpoint){
+      if (!this.visibleRelations[this.tabIndex]?.entityEndpoint || typeof this.visibleRelations[this.tabIndex]?.entityEndpoint === 'function') {
         return this.itemsData = undefined
       }
       this.isLoadingDataFetch = true
@@ -260,13 +283,13 @@ export default {
       } else {
         data = {}
       }
+      console.log('this is the url', url)
 
       this.$http.get(url, {
         params: { ...data },
       }).then(response => {
-        console.log("this is the responser", response.data)
         this.itemsData = response.data.data
-      }).catch(error => console.error(error)).finally(()=>this.isLoadingDataFetch =false)
+      }).catch(error => console.error(error)).finally(() => this.isLoadingDataFetch = false)
       this.currentPage = 1
       this.$refs.table.filter(data)
     },

@@ -81,7 +81,7 @@ export default {
     }
     return {
       search: payload?.search || '',
-      perPage: payload?.perPage || defaultPage || 10,
+      perPage: payload?.perPage || defaultPage || 20,
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
       initialFilterData: payload?.filter,
@@ -128,9 +128,7 @@ export default {
       },
     })
   },
-  mounted() {
-    console.log('this is the entity definition', this.definition)
-  },
+
   methods: {
     getFilterCount() {
       const obj = this.$refs.filter ? this.$refs.filter.getFinalData() : this.initialFilterData

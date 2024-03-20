@@ -92,6 +92,7 @@ export default {
     if (this.loadOnMount) {
       this.$emit('filter', this.getFinalData())
     }
+    console.log("this is the initial", this.initialData)
   },
   methods: {
     openModal() {
