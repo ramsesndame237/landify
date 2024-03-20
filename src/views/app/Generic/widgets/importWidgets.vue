@@ -27,14 +27,21 @@ export default {
         'partnercompany_shortname',
         'partnergroup_name',
       ],
+      tax_rate: [
+        'code',
+        'value',
+        'company_name',
+      ],
       company: ['company_name', 'company_shortname', 'company_template_coverletter_subject',
         'company_template_coverletter_text', 'customergroup_name',
       ],
-      contact_persons: ['contactperson_firstname', 'contactperson_lastname', 'contactperson_department',
+      contactperson: ['contactperson_firstname', 'contactperson_lastname', 'contactperson_department',
         'contactperson_shortname', 'contactperson_function', 'user_email', 'contactdetails_email',
         'contactdetails_phone', 'contactdetails_mobile', 'contactdetails_fax', 'company_name', 'customergroup_name',
       ],
-      locations: ['location_name', 'location_objectdescription', 'location_total_area', 'location_start_date',
+      bankdata: ['bankdata_iban', 'iban_id', 'bankdata_bank_name','partnercompany_name'],
+      kreditornumber: ['company_id', 'company_name', 'kreditornumber'],
+      location: ['location_name', 'location_objectdescription', 'location_total_area', 'location_start_date',
         'partnercompany_name', 'location_partnercompany_partnertype_valid_from_date',
         'location_partnercompany_partnertype_valid_to_date', 'partnercompany_name',
         'location_partnercompany_partnertype_valid_from_date', 'location_partnercompany_partnertype_valid_to_date',
@@ -45,13 +52,13 @@ export default {
         'areatype_name', 'pos_name', 'area_usagetype_valid_from_date', 'area_usagetype_valid_to_date'],
     },
     statusList: [
-      { text: 'All', value: '' },
+      { text: 'All', value: 'all' },
       { text: 'Added', value: 'added' },
       { text: 'Changed', value: 'changed' },
       { text: 'Unchanged', value: 'unchanged' },
       { text: 'Failed', value: 'failed' },
     ],
-    status: '',
+    status: 'all',
     importAll: false,
   }),
   methods: {
@@ -59,7 +66,7 @@ export default {
       // this.result.forEach(row => {
       //   row.__selected = !row.__selected
       // })
-      this.result.map(row => ({ ...row, columns: row.columns.map(column => ({ ...column, __selected: !column.__selected })) }))
+     this.result= this.result.map(row => ({ ...row, __selected: !row.__selected }))
     },
     getResult(entity) {
       if (!this.status) return this.result
@@ -78,7 +85,7 @@ export default {
       formData.append('obj_in', JSON.stringify({
         lines: (all ? this.result : this.getSelected(this.currentEntity)).map(el => el.line),
       }))
-      this.$http.post(`/synchronizations/${this.$route.params.name}/save`, formData, { headers: { 'content-type': 'form-data' } })
+      this.$http.post(`/synchronizations/${this.$route.params.name === 'tax_rate' ? 'tax-rate' : this.$route.params.name}/save`, formData, { headers: { 'content-type': 'form-data' } })
         .then(({ data }) => {
           this.$successToast('Import Done.')
           // add __imported attribute to lines
@@ -88,6 +95,7 @@ export default {
         })
         .finally(() => this.loading = false)
     },
+
     async upload() {
       if (!this.file) return this.$errorToast('Please insert a file')
       if (!this.$route.params.name) return this.$errorToast('Please select a table')
@@ -95,15 +103,14 @@ export default {
       formData.append('file', this.file)
       formData.append('leaves', this.$route.params.name)
       this.loading = true
-      this.$http.post(`/synchronizations/${this.$route.params.name}/checking`, formData, { headers: { 'content-type': 'form-data' } })
+      this.$http.post(`/synchronizations/${this.$route.params.name === 'tax_rate' ? 'tax-rate' : this.$route.params.name}/checking`, formData, { headers: { 'content-type': 'form-data' } })
         .then(({ data }) => {
           console.log({ data })
           // if (!data.data[this.$route.params.name]) return
           // data.forEach(row => {
           //   row.columns.map((column) => ({...column,show_old:false}))
           // })
-          this.result = data.map(row => ({ ...row, columns: row.columns.map(column => ({ ...column, show_old: false, __selected: false })) }))
-          console.log('this is the match', this.result)
+          this.result = data.map(row => Object.assign(row, { show_old: false, __selected: false }))
           this.success = true
         })
         .catch(error => {
@@ -144,77 +151,70 @@ export default {
       </div>
     </form>
     <b-card v-if="result">
-      <b-tabs ref="tabs" :disabled="loading" :title="titles[$route.params.name]" pills>
-        <b-tab lazy>
-          <b-table-simple responsive class="table-responsive w-100" style="max-height: 70vh">
-            <b-thead>
-              <b-tr>
-                <b-th>
-                  <b-form-checkbox v-model="selected[$route.params.name]" :disabled="disabled" @change="onSelectChange($route.params.name)"/>
-                </b-th>
-                <b-th>Line</b-th>
-                <b-th v-for="(field,i) in fields[$route.params.name]" :key="i">
-                  {{ $t('attribute.' + field) }}
-                </b-th>
-              </b-tr>
-            </b-thead>
-            <b-tbody>
-              <b-tr v-if="result.length===0">
-                <b-td :colspan="3+fields[$route.params.name].length" class="text-center">
-                  No Data available
-                </b-td>
-              </b-tr>
-              <template v-for="(row, i) in result">
-
-                <b-tr :key="i">
-                  <b-td>
-                    <b-form-checkbox v-model="row.__selected" :disabled="disabled"/>
-                  </b-td>
-                  <b-td class="d-flex align-items-center">
-                    <feather-icon :icon="row.show_old?'ChevronUpIcon':'ChevronDownIcon'"
-                                  size="20" @click="()=> row.show_old = !row.show_old"/>
-                    <span class="ml-1">{{ row.line }}</span>
-                  </b-td>
-                  <template v-for="(item,i) in row.columns">
-                    <b-td v-if="item" :key="i" :title="item.new_value"
-                          :style="{background: item.action === 'changed' ? 'yellow':item.action ==='failed' ? 'red' :item.action ==='added' ? 'greenyellow' :'' }">
-                      {{ item.new_value }}
-                    </b-td>
-                    <b-td v-else :key="i"/>
-                  </template>
-                </b-tr>
-                <!--                                  Old Values-->
-                <b-tr v-if="row.show_old" :key="i+'n'" class="table-secondary">
-                  <b-td/>
-                  <b-td/>
-                  <b-td v-for="(column,i) in row.columns" :key="i">
-                    {{ column.new_value }}
-                    {{ column ? column.old_value : '' }}
-                  </b-td>
-                </b-tr>
-              </template>
-
-            </b-tbody>
-          </b-table-simple>
-        </b-tab>
-        <template #tabs-end>
-          <div class=" d-flex align-items-center ml-auto">
-            <template v-if="['added','changed'].indexOf(status)>=0 && result.length>0">
-              <b-button :disabled="loading" class="mr-1" variant="primary" @click="importData(true)">
-                Import All
-                <b-spinner v-if="loading && importAll" small/>
-              </b-button>
-              <b-button v-if="getSelected($route.params.name).length>0" :disabled="loading" class="mr-1" variant="primary"
-                        @click="importData()">
-                Import selected ({{ getSelected($route.params.name).length }})
-                <b-spinner v-if="loading && !importAll" small/>
-              </b-button>
-            </template>
-            <label class="mr-1">Status</label>
-            <b-form-select v-model="status" :options="statusList" style="width: 100px"/>
-          </div>
+      <div class=" d-flex align-items-center ml-auto w-100 justify-content-end mb-2">
+        <template v-if="['added','changed','all'].indexOf(status)>=0 && result.length>0">
+          <b-button :disabled="loading" class="mr-1" variant="primary" @click="importData(true)">
+            Import All
+            <b-spinner v-if="loading && importAll" small/>
+          </b-button>
+          <b-button v-if="getSelected($route.params.name).length>0" :disabled="loading" class="mr-1" variant="primary"
+                    @click="importData()">
+            Import selected ({{ getSelected($route.params.name).length }})
+            <b-spinner v-if="loading && !importAll" small/>
+          </b-button>
         </template>
-      </b-tabs>
+        <label class="mr-1">Status</label>
+        <b-form-select v-model="status" :options="statusList" style="width: 100px"/>
+      </div>
+      <b-table-simple responsive class="table-responsive w-100" style="max-height: 70vh">
+        <b-thead>
+          <b-tr>
+            <b-th>
+              <b-form-checkbox v-model="selected[$route.params.name]" :disabled="disabled" @change="onSelectChange($route.params.name)"/>
+            </b-th>
+            <b-th>Line</b-th>
+            <b-th v-for="(field,i) in fields[$route.params.name]" :key="i">
+              {{ $t('attribute.' + field) }}
+            </b-th>
+          </b-tr>
+        </b-thead>
+        <b-tbody>
+          <b-tr v-if="result.length===0">
+            <b-td :colspan="3+fields[$route.params.name].length" class="text-center">
+              No Data available
+            </b-td>
+          </b-tr>
+          <template v-for="(row, i) in result">
+            <b-tr :key="i">
+              <b-td>
+                <b-form-checkbox v-model="row.__selected" :disabled="disabled"/>
+              </b-td>
+              <b-td class="d-flex align-items-center cursor-pointer">
+                <feather-icon :icon="row.show_old?'ChevronUpIcon':'ChevronDownIcon'"
+                              size="20"  @click="()=> row.show_old = !row.show_old"/>
+                <span class="ml-1">{{ row.line }}</span>
+              </b-td>
+              <template v-for="(item,i) in row.columns">
+                <b-td v-if="item" :key="i" :title="item.new_value"
+                      :style="{background: item.action === 'changed' ? 'yellow':item.action ==='failed' ? 'red' :item.action ==='added' ? 'greenyellow' :'' }">
+                  {{ item.new_value }}
+                </b-td>
+                <b-td v-else :key="i"/>
+              </template>
+            </b-tr>
+            <!--                                  Old Values-->
+            <b-tr v-if="row.show_old" :key="i+'n'" class="table-secondary">
+              <b-td/>
+              <b-td/>
+              <b-td v-for="(column,i) in row.columns" :key="i">
+                {{ column.new_value }}
+                {{ column ? column.old_value : '' }}
+              </b-td>
+            </b-tr>
+          </template>
+
+        </b-tbody>
+      </b-table-simple>
     </b-card>
   </div>
 </template>

@@ -485,11 +485,12 @@ export default {
       ))
   },
   async mounted() {
-    if (this.url) this.getData()
+    if (this.url) this.getData(this.includeInQuery)
   },
   methods: {
     toggleRowSelection,
     getData(params) {
+      console.log("this is the data", params)
       if (this.url) {
         listData({
           api: this.$http,

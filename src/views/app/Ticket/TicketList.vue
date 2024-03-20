@@ -189,6 +189,7 @@ export default {
     },
   },
   mounted() {
+    this.allFilter(this.filterValue)
   },
   beforeDestroy() {
     this.$store.commit('table/setTableData', {
