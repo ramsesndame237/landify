@@ -93,7 +93,10 @@ export class Permission {
 export const isUserA = (...roles) => {
   const userData = getUserData()
   const userRoleCode = userData?.roles?.[0]?.role_code
-  const userTeams = userData?.teams ?? []
+  if (userRoleCode === 'admin') {
+    return true
+  }
+  const userTeams = userData?.team_id ?? []
 
   return (roles.some(role => role.role_code === userRoleCode && (role.teams.length > 0 ? role.teams.some(teamId => userTeams.includes(teamId)) : true)))
 }
@@ -106,8 +109,13 @@ export const isUserA = (...roles) => {
 export const isAbleTo = (action, permissions) => {
   const userData = getUserData()
 
+  
   const userRoleCode = userData?.roles?.[0]?.role_code
-  const userTeams = userData?.teams ?? []
+  if (userRoleCode === 'admin') {
+    return true
+  }
+
+  const userTeams = userData?.team_id ?? []
   const userOptions = userData?.options ?? []
 
   // eslint-disable-next-line no-nested-ternary
@@ -139,4 +147,19 @@ export const USER_PERMISSIONS = {
   area_manager: new Permission(USER_ROLES.area_manager),
   store_manager: new Permission(USER_ROLES.store_manager),
   lawyer: new Permission(USER_ROLES.lawyer),
+}
+
+export const PERMISSIONS_GROUPS = {
+  externs: [
+    USER_PERMISSIONS.lead,
+    USER_PERMISSIONS.expansion_manager,
+    USER_PERMISSIONS.area_manager,
+    USER_PERMISSIONS.store_manager,
+    USER_PERMISSIONS.ext_team_member,
+  ],
+  interns: [
+    USER_PERMISSIONS.admin,
+    USER_PERMISSIONS.team_lead,
+    USER_PERMISSIONS.team_member,
+  ]
 }

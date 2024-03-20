@@ -9,6 +9,7 @@
                         :on-new-element="definition.create ===false ? null : onNewElement" :total-rows.sync="totalRows"
                         :with-filter="definition.filters && definition.filters.length > 0"
                         :inline-filter="!definition.inline_filter"
+                        :definition="definition"
                         :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
                         :actions="definition.actions" :filter-badge="getFilterCount()"
                         @action="(a)=>$refs.table.onAction(a)" @filter="$refs.filter.openModal()"/>
@@ -47,13 +48,13 @@
 
 <script>
 
-import {BCard} from 'bootstrap-vue'
-import TablePagination from '@/layouts/components/TablePagination.vue'
-import GenericModal from '@/views/app/Generic/modal.vue'
-import {mapGetters} from 'vuex'
+import { getUserData } from '@/auth/utils'
 import SidebarModalComponent from '@/components/SidebarModalComponent.vue'
+import TablePagination from '@/layouts/components/TablePagination.vue'
 import DataTable from '@/views/app/CustomComponents/DataTable/DataTable.vue'
-import {getUserData} from '@/auth/utils'
+import GenericModal from '@/views/app/Generic/modal.vue'
+import { BCard } from 'bootstrap-vue'
+import { mapGetters } from 'vuex'
 import Tables from '../../../table'
 import GenericFilter from './Filter.vue'
 import InlineFilter from './InlineFilter.vue'

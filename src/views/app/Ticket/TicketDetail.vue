@@ -17,7 +17,7 @@
               </div>
 
               <div class="d-flex align-items-center">
-                <notes v-if="definition.note" :id="entityId" :note-to-everyone="noteToEveryOne"
+                <notes v-if="definition.note && canNote" :id="entityId" :note-to-everyone="noteToEveryOne"
                        :note-to-internal="noteToInternal" class="mr-2" :primary-key="primaryKey" :note="definition.note"
                        :note-rel="'note_user_'+table+'_rel'"/>
                 <b-button v-if="showButton.all" variant="primary" @click="createInvoice">
@@ -224,7 +224,7 @@
             </div>
             <email-modal ref="emailModal" @reload="fetchEmail"/>
           </b-col>
-          <b-col v-if="entity.columns &&activeTabItem && activeTabItem.id ==='2'">
+          <b-col v-if="canViewTimeline && entity.columns &&activeTabItem && activeTabItem.id ==='2'">
             <b-card-actions class="mt-3" :title="$t('headline~ticket~timeline')" action-collapse
                             collapsed>
               <app-timeline>
@@ -274,7 +274,7 @@
             </b-card-actions>
           </b-col>
           <b-col lg="12">
-            <DocumentsWidgetView v-if="activeTabItem && activeTabItem.id==='4'"
+            <DocumentsWidgetView v-if="canViewDocumentTab && activeTabItem && activeTabItem.id==='4'"
                                  :ticket_id="entity.ticket_id"
                                  :column_has_stamp="entity.column_has_stamp === 1 ? true:false"/>
             <generic-modal ref="documentModal" table="document" :definition="documentDef"
@@ -286,7 +286,7 @@
             <add-document-to-contract ref="documentContractModal"/>
             <add-document-to-pos ref="documentPosModal"/>
           </b-col>
-          <b-col v-if="activeTabItem && activeTabItem.id ==='5' && isTicket" lg="12">
+          <b-col v-if="canViewSubtask && activeTabItem && activeTabItem.id ==='5' && isTicket" lg="12">
             <b-card :title="$t('headline~ticket~subtasks')">
               <b-card-text class="text-right">
                 <b-button v-if="canAddSubTask" variant="primary" @click="createSubTicket">
@@ -333,7 +333,8 @@
 
 <script>
 import TabComponent from '@/components/TabComponent.vue'
-import { USER_ROLES } from '@/config/config-roles'
+import { EXTERN_TEAMS_IDS } from '@/config/config-access'
+import { USER_ROLES } from '@/config/config-access/config-roles'
 import { formatDate, getDocumentLink, getStampedDocumentLink } from '@/libs/utils'
 import Table from '@/table'
 import SubTicketCard from '@/views/app/CustomComponents/WP6/SubTicketCard.vue'
@@ -410,6 +411,42 @@ export default {
   },
 
   computed: {
+    canViewDocumentTab() {
+      return this.$isUserA(
+        USER_ROLES.admin,
+        USER_ROLES.lead,
+        USER_ROLES.ext_team_member.withTeams(
+          EXTERN_TEAMS_IDS.FM,
+          EXTERN_TEAMS_IDS.MVM,
+          EXTERN_TEAMS_IDS.NKA,
+        ),
+      )
+    },
+    canViewSubtask() {
+      return this.$isUserA(
+        USER_ROLES.admin,
+        USER_ROLES.lead,
+        USER_ROLES.ext_team_member.withTeams(
+          EXTERN_TEAMS_IDS.FM,
+          EXTERN_TEAMS_IDS.MVM,
+          EXTERN_TEAMS_IDS.NKA,
+        ),
+      )
+    },
+    canViewTimeline() {
+      return this.$isUserA(
+        USER_ROLES.admin,
+        USER_ROLES.lead,
+        USER_ROLES.ext_team_member.withTeams(
+          EXTERN_TEAMS_IDS.FM,
+          EXTERN_TEAMS_IDS.MVM,
+          EXTERN_TEAMS_IDS.NKA,
+        ),
+      )
+    },
+    canNote() {
+      return this.$isAbleTo('note', this.definition.permissions)
+    },
     canMoveToAnotherBoard() {
       return this.$isUserA(USER_ROLES.admin)
     },
@@ -421,24 +458,27 @@ export default {
     },
     tabTitle() {
       return [
-        {
+        ...(this.canViewTimeline ?
+        [{
           id: '2',
           title: 'Timeline',
           show: true,
           count: 0,
-        },
-        {
+        }]: []),
+        ...(this.canViewSubtask ?
+        [{
           id: '5',
           title: this.$t('headline~ticket~subtasks'),
           show: this.isTicket,
           count: 0,
-        },
-        {
+        }]: []),
+        ...(this.canViewDocumentTab ?
+        [{
           id: '4',
           title: 'Documents',
           show: true,
           count: 0,
-        },
+        }]: []),
         {
           id: '3',
           title: 'Messages and Emails',
@@ -604,7 +644,7 @@ export default {
     },
     canAssign() {
       const colIdx = this.columns.findIndex(c => c.column_name === this.entity?.column_name)
-      const teamId = this.columns[colIdx].team_id
+      const teamId = this.columns?.[colIdx]?.team_id
       let isInTeam = true
       if (teamId) isInTeam = this.currentUserInTeam(teamId)
       if (!isInTeam) return false

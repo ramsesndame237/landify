@@ -1,5 +1,5 @@
-import { INTERN_TEAMS_IDS } from "./config-constants";
-import { USER_PERMISSIONS, buildPermissions } from "./config-permissions";
+import { EXTERN_TEAMS_IDS, INTERN_TEAMS_IDS } from "./config-constants";
+import { PERMISSIONS_GROUPS, USER_PERMISSIONS, buildPermissions } from "./config-permissions";
 
 export const tableAccess = {
   ticket: {
@@ -10,9 +10,9 @@ export const tableAccess = {
         USER_PERMISSIONS.team_lead,
         USER_PERMISSIONS.team_member,
         USER_PERMISSIONS.lawyer,
-
+        
         // EXTERN
-        USER_PERMISSIONS.lead,
+        ...PERMISSIONS_GROUPS.externs,
       ],
       list: [
         // INTERN
@@ -52,10 +52,12 @@ export const tableAccess = {
         // EXTERN
         USER_PERMISSIONS.lead,
         USER_PERMISSIONS.expansion_manager,
-        USER_PERMISSIONS.ext_team_member.withTeams(EXTERN_TEAMS_IDS.BuHa),
-        USER_PERMISSIONS.ext_team_member.withTeams(EXTERN_TEAMS_IDS.FM),
-        USER_PERMISSIONS.ext_team_member.withTeams(EXTERN_TEAMS_IDS.MVM),
-        USER_PERMISSIONS.ext_team_member.withTeams(EXTERN_TEAMS_IDS.NKA),
+        USER_PERMISSIONS.ext_team_member.withTeams(
+          EXTERN_TEAMS_IDS.BuHa,
+          EXTERN_TEAMS_IDS.FM,
+          EXTERN_TEAMS_IDS.MVM,
+          EXTERN_TEAMS_IDS.NKA,
+        ),
       ],
     }),
     update_ticket: buildPermissions({
@@ -102,15 +104,24 @@ export const tableAccess = {
         USER_PERMISSIONS.admin,
         USER_PERMISSIONS.team_lead,
         USER_PERMISSIONS.team_member,
+        USER_PERMISSIONS.lead,
         USER_PERMISSIONS.expansion_manager,
         USER_PERMISSIONS.lawyer,
+        USER_PERMISSIONS.ext_team_member,
       ],
     }),
     relations: {
       pos: buildPermissions({
         list: [
-          USER_PERMISSIONS.lead,
           USER_PERMISSIONS.admin,
+          USER_PERMISSIONS.area_manager,
+          USER_PERMISSIONS.expansion_manager,
+          USER_PERMISSIONS.ext_team_member,
+          USER_PERMISSIONS.lawyer,
+          USER_PERMISSIONS.lead,
+          USER_PERMISSIONS.store_manager,
+          USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.team_member,
         ],
       }),
     },
@@ -203,9 +214,8 @@ export const tableAccess = {
       USER_PERMISSIONS.expansion_manager,
       USER_PERMISSIONS.ext_team_member.withTeams(
         EXTERN_TEAMS_IDS.FM,
-      ),
-      USER_PERMISSIONS.ext_team_member.withTeams(
         EXTERN_TEAMS_IDS.MVM,
+        EXTERN_TEAMS_IDS.BuHa,
       ),
     ],
   }),
@@ -252,15 +262,15 @@ export const tableAccess = {
         USER_PERMISSIONS.ext_team_member,
       ],
       list: [
-        // INTERN
         USER_PERMISSIONS.admin,
-        USER_PERMISSIONS.team_lead,
-        USER_PERMISSIONS.team_member,
-
-        // EXTERN
-        USER_PERMISSIONS.lead,
+        USER_PERMISSIONS.area_manager,
         USER_PERMISSIONS.expansion_manager,
         USER_PERMISSIONS.ext_team_member,
+        USER_PERMISSIONS.lawyer,
+        USER_PERMISSIONS.lead,
+        USER_PERMISSIONS.store_manager,
+        USER_PERMISSIONS.team_lead,
+        USER_PERMISSIONS.team_member,
       ],
       read: [
         // INTERN
@@ -432,9 +442,11 @@ export const tableAccess = {
         read: [
           USER_PERMISSIONS.admin,
           USER_PERMISSIONS.team_lead,
+          USER_PERMISSIONS.lead,
           USER_PERMISSIONS.team_member,
           USER_PERMISSIONS.expansion_manager,
           USER_PERMISSIONS.lawyer,
+          USER_PERMISSIONS.ext_team_member,
         ],
         update: [
           USER_PERMISSIONS.admin,
@@ -754,6 +766,15 @@ export const tableAccess = {
             EXTERN_TEAMS_IDS.FM,
           ),
         ],
+        create: [
+          USER_PERMISSIONS.admin,
+        ],
+        update: [
+          USER_PERMISSIONS.admin,
+        ],
+        remove: [
+          USER_PERMISSIONS.admin,
+        ],
       }),
       criteria: buildPermissions({
         list: [
@@ -780,17 +801,18 @@ export const tableAccess = {
       ],
       read: [
         USER_PERMISSIONS.lead,
+        USER_PERMISSIONS.expansion_manager,
+        USER_PERMISSIONS.ext_team_member.withTeams(
+          EXTERN_TEAMS_IDS.BuHa,
+          EXTERN_TEAMS_IDS.FM,
+          EXTERN_TEAMS_IDS.MVM,
+        ),
       ],
     }),
   },
   service_object: {
     main: buildPermissions({
-      list: [
-        USER_PERMISSIONS.lead,
-        USER_PERMISSIONS.ext_team_member.withTeams(
-          EXTERN_TEAMS_IDS.FM,
-        ),
-      ],
+      list: PERMISSIONS_GROUPS.externs,
       seeHeader: [
         USER_PERMISSIONS.lead,
         USER_PERMISSIONS.ext_team_member.withTeams(
@@ -823,6 +845,12 @@ export const tableAccess = {
       }),
       contract: buildPermissions({
         list: [
+          USER_PERMISSIONS.lead,
+          USER_PERMISSIONS.ext_team_member.withTeams(
+            EXTERN_TEAMS_IDS.FM,
+          ),
+        ],
+        read: [
           USER_PERMISSIONS.lead,
           USER_PERMISSIONS.ext_team_member.withTeams(
             EXTERN_TEAMS_IDS.FM,
@@ -1416,7 +1444,6 @@ export const tableAccess = {
       }),
     },
   },
-  pos: {},
   area: {
     main: buildPermissions({
       list: [

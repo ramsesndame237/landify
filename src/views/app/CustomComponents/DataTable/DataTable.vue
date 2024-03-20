@@ -75,6 +75,7 @@
                 v-if="!tableStore.columns.hided.includes(col.id)"
                 v-bind="col.props"
                 class="position-relative"
+                :class="{ 'cursor-default': !onRowClick }"
               >
                 <div >
                   <b-spinner v-if="j === 0 && row.read === 'NOT_READ'" variant="primary" small type="grow" class="position-absolute" style="left: 5px"/>
@@ -235,29 +236,29 @@
 
 <script>
 import {
+  BSidebar,
   BSkeletonTable,
   BTableSimple,
-  BSidebar,
   BTooltip,
 } from 'bootstrap-vue'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 
 import SimplePagination from '@/layouts/components/SimplePagination'
 
+import NoData from '../NoData/NoData.vue'
 import TableFilters from './components/TableFilters.vue'
 import TableHead from './components/TableHead.vue'
-import DefaultCol from './components/columns/DefaultCol.vue'
 import DateCol from './components/columns/DateCol.vue'
+import DefaultCol from './components/columns/DefaultCol.vue'
+import StatusCol from './components/columns/StatusCol.vue'
 import {
-  useTableStore,
-  toggleRowSelection,
-  listData,
   handleDelete,
   initDataTable,
+  listData,
+  toggleRowSelection,
+  useTableStore,
 } from './state/data-table-store'
-import NoData from '../NoData/NoData.vue'
 import { toastError } from './utils'
-import StatusCol from './components/columns/StatusCol.vue'
 
 const tableStore = useTableStore()
 

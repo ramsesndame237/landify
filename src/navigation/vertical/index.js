@@ -64,7 +64,7 @@ export default [
   // },
   item('pos', null, null, ACCESS.menuAccess.pos_menu),
   {
-    title: key('contractlists'),
+    title: key('contractlists', ACCESS.menuAccess.contract_list),
     permissions: ACCESS.menuAccess.contract_list,
     children: [
       {
@@ -147,10 +147,11 @@ export default [
     ],
   },
   {
-    title: key('facilityservices'),
+    title: key('facilityservices', ACCESS.menuAccess.facility_menu),
+    permissions: ACCESS.menuAccess.facility_menu,
     children: [
-      item('ticket'),
-      item('serviceobject'),
+      item('ticket', null, null, ACCESS.menuAccess.facility_ticket),
+      item('serviceobject', null, null, ACCESS.menuAccess.facility_service_object),
     ],
   },
   headerItem('configuration'),

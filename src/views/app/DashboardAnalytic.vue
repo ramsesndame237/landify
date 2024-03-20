@@ -29,7 +29,7 @@
                   }"
                  :entity="entity"/>
           <field class=" mx-sm-1 w-100"
-                 :field="{ key: 'team_id', type: 'custom-select', required: false, items: filteredTeams}"
+                 :field="{ key: 'team_id', type: 'custom-select', required: false, items: filteredTeams, noAutoFill: !team_is_customer, disabled: teamFieldDisabled }"
                  :entity="entity" />
           <field class="w-100"
                  :field="{ key: 'user_id', type: 'custom-select', items: usersData, required: false }"
@@ -56,17 +56,17 @@
   </div>
 </template>
 <script>
+import { getUserData } from '@/auth/utils'
+import { USER_ROLES } from '@/config/config-access/config-roles'
+import CompanyMixin from '@/views/app/Company/CompanyMixin'
+import SummaryCard from '@/views/app/Dashboard/Components/SummaryCard.vue'
+import Field from '@/views/app/Generic/Field.vue'
+import TeamMixin from '@/views/app/Team/TeamMixin'
+import { filter, pickBy } from 'lodash'
+import moment from 'moment'
 import DatePicker from 'vue2-datepicker'
 import 'vue2-datepicker/index.css'
-import Field from '@/views/app/Generic/Field.vue'
-import moment from 'moment'
-import SummaryCard from '@/views/app/Dashboard/Components/SummaryCard.vue'
-import TeamMixin from '@/views/app/Team/TeamMixin'
-import CompanyMixin from '@/views/app/Company/CompanyMixin'
-import {getUserData} from '@/auth/utils'
-import {filter, pickBy} from 'lodash'
-import {mapGetters} from 'vuex'
-import { USER_ROLES } from '@/config/config-roles'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'DashboardAnalytic',
@@ -137,6 +137,12 @@ export default {
     }
   },
   computed: {
+    teamFieldDisabled() {
+      return this.$isUserA(
+        USER_ROLES.area_manager,
+        USER_ROLES.store_manager,
+      )
+    },
     initDate() {
       return [moment().subtract(30, 'days').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
     },

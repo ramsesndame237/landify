@@ -1,5 +1,5 @@
-import KanbanButton from '@/views/app/CustomComponents/DataTable/components/generics/KanbanButton.vue'
 import { ACCESS } from '@/config/config-access'
+import KanbanButton from '@/views/app/CustomComponents/DataTable/components/generics/KanbanButton.vue'
 
 export default {
   entity: 'frontend_6_1_4',

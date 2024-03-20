@@ -1,3 +1,6 @@
+import { EXTERN_TEAMS_IDS } from "./config-constants";
+import { PERMISSIONS_GROUPS, USER_PERMISSIONS, buildPermissions } from "./config-permissions";
+
 export const menuAccess = {
   // DASHBOARD
   main: buildPermissions({
@@ -13,9 +16,11 @@ export const menuAccess = {
       USER_PERMISSIONS.expansion_manager,
       USER_PERMISSIONS.store_manager,
       USER_PERMISSIONS.area_manager,
-      USER_PERMISSIONS.ext_team_member.withTeams(EXTERN_TEAMS_IDS.BuHa),
-      USER_PERMISSIONS.ext_team_member.withTeams(EXTERN_TEAMS_IDS.MVM),
-      USER_PERMISSIONS.ext_team_member.withTeams(EXTERN_TEAMS_IDS.NKA),
+      USER_PERMISSIONS.ext_team_member.withTeams(
+        EXTERN_TEAMS_IDS.BuHa,
+        EXTERN_TEAMS_IDS.MVM,
+        EXTERN_TEAMS_IDS.NKA,
+      ),
     ],
   }),
   dashbaord_home: buildPermissions({
@@ -31,7 +36,11 @@ export const menuAccess = {
       USER_PERMISSIONS.expansion_manager,
       USER_PERMISSIONS.store_manager,
       USER_PERMISSIONS.area_manager,
-      USER_PERMISSIONS.ext_team_member,
+      USER_PERMISSIONS.ext_team_member.withTeams(
+        EXTERN_TEAMS_IDS.BuHa,
+        EXTERN_TEAMS_IDS.MVM,
+        EXTERN_TEAMS_IDS.NKA,
+      ),
     ],
   }),
   dashbaord_board: buildPermissions({
@@ -62,6 +71,8 @@ export const menuAccess = {
       USER_PERMISSIONS.lead,
       USER_PERMISSIONS.expansion_manager,
       USER_PERMISSIONS.area_manager,
+      USER_PERMISSIONS.store_manager,
+      USER_PERMISSIONS.ext_team_member,
     ],
   }),
   ticket_dashboard: [],
@@ -78,6 +89,7 @@ export const menuAccess = {
       USER_PERMISSIONS.expansion_manager,
       USER_PERMISSIONS.store_manager,
       USER_PERMISSIONS.area_manager,
+      USER_PERMISSIONS.ext_team_member,
     ],
   }),
   ticket_list: buildPermissions({
@@ -93,6 +105,7 @@ export const menuAccess = {
       USER_PERMISSIONS.expansion_manager,
       USER_PERMISSIONS.store_manager,
       USER_PERMISSIONS.area_manager,
+      USER_PERMISSIONS.ext_team_member,
     ],
   }),
   ticket_list_update: buildPermissions({
@@ -108,6 +121,7 @@ export const menuAccess = {
       USER_PERMISSIONS.expansion_manager,
       USER_PERMISSIONS.area_manager,
       USER_PERMISSIONS.store_manager,
+      USER_PERMISSIONS.ext_team_member,
     ],
   }),
 
@@ -124,22 +138,26 @@ export const menuAccess = {
   // POS
   pos_menu: buildPermissions({
     list: [
-      // INTERN
       USER_PERMISSIONS.admin,
+      USER_PERMISSIONS.area_manager,
+      USER_PERMISSIONS.expansion_manager,
+      USER_PERMISSIONS.ext_team_member,
+      USER_PERMISSIONS.lawyer,
+      USER_PERMISSIONS.lead,
+      USER_PERMISSIONS.store_manager,
       USER_PERMISSIONS.team_lead,
       USER_PERMISSIONS.team_member,
-
-      // EXTERN
-      USER_PERMISSIONS.lead,
-      USER_PERMISSIONS.expansion_manager,
     ],
   }),
   contract_list: buildPermissions({
     list: [
       USER_PERMISSIONS.lead,
       USER_PERMISSIONS.expansion_manager,
-      USER_PERMISSIONS.ext_team_member.withTeams(EXTERN_TEAMS_IDS.FM),
-      USER_PERMISSIONS.ext_team_member.withTeams(EXTERN_TEAMS_IDS.MVM),
+      USER_PERMISSIONS.ext_team_member.withTeams(
+        EXTERN_TEAMS_IDS.FM,
+        EXTERN_TEAMS_IDS.MVM,
+        EXTERN_TEAMS_IDS.BuHa,
+      ),
     ],
   }),
   condictions_list: buildPermissions({
@@ -148,8 +166,6 @@ export const menuAccess = {
       USER_PERMISSIONS.expansion_manager,
       USER_PERMISSIONS.ext_team_member.withTeams(
         EXTERN_TEAMS_IDS.FM,
-      ),
-      USER_PERMISSIONS.ext_team_member.withTeams(
         EXTERN_TEAMS_IDS.MVM,
       ),
     ],
@@ -158,16 +174,21 @@ export const menuAccess = {
     list: [
       USER_PERMISSIONS.lead,
       USER_PERMISSIONS.expansion_manager,
-      USER_PERMISSIONS.ext_team_member.withTeams(EXTERN_TEAMS_IDS.FM),
-      USER_PERMISSIONS.ext_team_member.withTeams(EXTERN_TEAMS_IDS.MVM),
+      USER_PERMISSIONS.ext_team_member.withTeams(
+        EXTERN_TEAMS_IDS.FM,
+        EXTERN_TEAMS_IDS.MVM,
+      ),
     ],
   }),
   payment_list: buildPermissions({
     list: [
       USER_PERMISSIONS.lead,
       USER_PERMISSIONS.expansion_manager,
-      USER_PERMISSIONS.ext_team_member.withTeams(EXTERN_TEAMS_IDS.FM),
-      USER_PERMISSIONS.ext_team_member.withTeams(EXTERN_TEAMS_IDS.MVM),
+      USER_PERMISSIONS.ext_team_member.withTeams(
+        EXTERN_TEAMS_IDS.FM,
+        EXTERN_TEAMS_IDS.MVM,
+        EXTERN_TEAMS_IDS.BuHa,
+      ),
     ],
   }),
   new_business: buildPermissions({
@@ -214,7 +235,19 @@ export const menuAccess = {
       USER_PERMISSIONS.team_member,
     ],
   }),
-  pos: [],
+  pos: buildPermissions({
+    list: [
+      USER_PERMISSIONS.admin,
+      USER_PERMISSIONS.area_manager,
+      USER_PERMISSIONS.expansion_manager,
+      USER_PERMISSIONS.ext_team_member,
+      USER_PERMISSIONS.lawyer,
+      USER_PERMISSIONS.lead,
+      USER_PERMISSIONS.store_manager,
+      USER_PERMISSIONS.team_lead,
+      USER_PERMISSIONS.team_member,
+    ],
+  }),
   area: [],
 
   // PARTNER COMPANY
@@ -261,4 +294,15 @@ export const menuAccess = {
       ),
     ],
   }),
+
+  // FACILITY MANAGEMENT
+  facility_menu:  buildPermissions({
+    list: PERMISSIONS_GROUPS.externs,
+  }),
+  facility_ticket: buildPermissions({
+    list: PERMISSIONS_GROUPS.externs,
+  }),
+  facility_service_object: buildPermissions({
+    list: PERMISSIONS_GROUPS.externs,
+  })
 }

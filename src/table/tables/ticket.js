@@ -1,6 +1,4 @@
 import { ACCESS } from '@/config/config-access'
-import { USER_ROLES } from '@/config/config-roles'
-import { union } from 'lodash'
 
 export default {
   customIndex: () => import('@/views/app/Ticket/TicketList.vue'),
@@ -186,12 +184,12 @@ export default {
 
         const teams = vm.$store.getters['table/listCache']('teams')
 
-        const seyboldTeams = teams.filter(t => t.team_is_customer === 0)
+        // const seyboldTeams = teams.filter(t => t.team_is_customer === 0)
 
-        if (isUserExternClientNotDirector && !vm.$isUserA(USER_ROLES.expansion_manager)) {
-          vm.$set(vm.entity, 'team_id', -1)
-          return union(seyboldTeams.map(t => t.team_id), team_id).includes(team.team_id)
-        }
+        // if (isUserExternClientNotDirector && !vm.$isUserA(USER_ROLES.expansion_manager)) {
+        //   vm.$set(vm.entity, 'team_id', -1)
+        //   return union(seyboldTeams.map(t => t.team_id), team_id).includes(team.team_id)
+        // }
         if (vm.entity.team_id === undefined) {
           vm.$set(vm.entity, 'team_id', -1)
         }

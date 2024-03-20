@@ -499,22 +499,22 @@
 </template>
 
 <script>
-import {
-  BAvatarGroup,
-  BAvatar,
-  BButton,
-  BIconCalendarDate,
-} from 'bootstrap-vue'
-import moment from 'moment'
-import { mapGetters } from 'vuex'
-import TicketMixin from '@/views/app/Kanban/TicketMixin'
-import { formatDate, title } from '@core/utils/filter'
 import FloatingActionButton from '@/components/FloatingActionButton.vue'
+import { USER_ROLES } from '@/config/config-access/config-roles'
+import GenericModal from '@/views/app/Generic/modal.vue'
+import TicketMixin from '@/views/app/Kanban/TicketMixin'
 import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin'
 import SubticketTr from '@/views/app/Ticket/Subticket/SubticketTr.vue'
-import GenericModal from '@/views/app/Generic/modal.vue'
+import { formatDate, title } from '@core/utils/filter'
+import {
+    BAvatar,
+    BAvatarGroup,
+    BButton,
+    BIconCalendarDate,
+} from 'bootstrap-vue'
+import moment from 'moment'
 import bussinessMoment from 'moment-business-time'
-import { USER_ROLES } from '@/config/config-roles'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'InvoiceTicketCard',

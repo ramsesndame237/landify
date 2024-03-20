@@ -29,7 +29,7 @@
       :url="`/tickets/slims`"
       :columns="cols"
       :default-params="{status:filterValue}"
-      :on-row-click="(row) => row.ticket_id && $router.push(`/app/table/ticket/view/${row.ticket_id}`)"
+      :on-row-click="canOpenTicket ? (row) => row.ticket_id && $router.push(`/app/table/ticket/view/${row.ticket_id}`) : undefined"
       :include-in-query="currentFilterData"
       :bar-actions="[
         {
@@ -50,14 +50,14 @@
 
 <script>
 
+import { getUserData } from '@/auth/utils'
+import TablePagination from '@/layouts/components/TablePagination.vue'
+import Table from '@/table/tables/ticket'
+import GenericFilter from '@/views/app/Generic/Filter.vue'
+import GenericModal from '@/views/app/Generic/modal.vue'
 import {
   BCard,
 } from 'bootstrap-vue'
-import TablePagination from '@/layouts/components/TablePagination.vue'
-import GenericModal from '@/views/app/Generic/modal.vue'
-import Table from '@/table/tables/ticket'
-import GenericFilter from '@/views/app/Generic/Filter.vue'
-import { getUserData } from '@/auth/utils'
 import _ from 'lodash'
 import DataTable from '../CustomComponents/DataTable/DataTable.vue'
 import TicketNameCol from './widgets/TicketNameCol.vue'
@@ -181,6 +181,9 @@ export default {
     useModalToCreate() {
       return this.definition.createModal === 'modal'
     },
+    canOpenTicket() {
+      return this.$isAbleTo('read', this.definition.permissions)
+    }
   },
   watch: {
     filterValue: {

@@ -50,19 +50,21 @@
 
 <script>
 
-import {
-  BCard, BButton, BForm, BRow, BCol,
-} from 'bootstrap-vue'
-import BCardActions from '@core/components/b-card-actions/BCardActions'
+import { getUserData } from '@/auth/utils'
+import { EXTERN_TEAMS_IDS, INTERN_TEAMS_IDS } from '@/config/config-access'
+import { USER_PERMISSIONS, buildPermissions } from '@/config/config-access/config-permissions'
+import DeadlineMixin from '@/views/app/Contracts/Relations/Deadlines/DeadlineMixin'
 import Field from '@/views/app/Generic/Field'
+import BCardActions from '@core/components/b-card-actions/BCardActions'
+import {
+  BButton,
+  BCard,
+  BCol,
+  BForm, BRow,
+} from 'bootstrap-vue'
 import _ from 'lodash'
 import moment from 'moment'
-import { formatDate } from '@/libs/utils'
-import DeadlineMixin from '@/views/app/Contracts/Relations/Deadlines/DeadlineMixin'
-import { getUserData } from '@/auth/utils'
 import rates from './rates.json'
-import { USER_PERMISSIONS, buildPermissions } from '@/config/config-permissions'
-import { EXTERN_TEAMS_IDS } from '@/config/config-access'
 
 const Datatable = () => import('@/layouts/components/DataTables.vue')
 const CONTRACT_STATUS_CRITERIA_CODE = 'aktueller Vertragstyp'
@@ -108,13 +110,13 @@ export default {
           ),
           USER_PERMISSIONS.expansion_manager,
           USER_PERMISSIONS.team_lead.withTeams(
-            EXTERN_TEAMS_IDS.FM,
-            EXTERN_TEAMS_IDS.MVM,
-            EXTERN_TEAMS_IDS.NKA,
+            INTERN_TEAMS_IDS.FM,
+            INTERN_TEAMS_IDS.MVM,
+            INTERN_TEAMS_IDS.NKA,
           ),
           USER_PERMISSIONS.team_member.withTeams(
-            EXTERN_TEAMS_IDS.FM,
-            EXTERN_TEAMS_IDS.MVM,
+            INTERN_TEAMS_IDS.FM,
+            INTERN_TEAMS_IDS.MVM,
           ),
           USER_PERMISSIONS.lawyer,
         ],

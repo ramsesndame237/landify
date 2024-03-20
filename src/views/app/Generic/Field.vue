@@ -78,7 +78,7 @@
           </span>
         </div>
         <div v-else-if="field.type==='yesno' || field.type==='custom-select'">
-          <v-select v-model="entity[field.key]" :disabled="disabled" :state="errors.length > 0 ? false:null"
+          <v-select v-model="entity[field.key]" :disabled="isDisabled || disabled" :state="errors.length > 0 ? false:null"
                     :multiple="field.multiple" :placeholder="field.key"
                     :clearable="field.clearable != null ? field.clearable : true"
                     :options="field.type==='yesno'?yesNoOptions: customSelectOptions" transition="" label="label"
@@ -195,52 +195,53 @@
 </template>
 
 <script>
-import Fuse from 'fuse.js'
-import { createPicker } from 'picmo'
+import { snakeToTitle } from '@/libs/utils'
+import Table from '@/table/index'
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+import CKEditor from '@ckeditor/ckeditor5-vue2'
+import Editor from '@tinymce/tinymce-vue'
 import {
   BButton,
-  BImg,
-  BFormFile,
   BCol,
   BFormCheckbox,
+  BFormFile,
   BFormGroup,
   BFormInput,
   BFormSelect,
   BFormTextarea,
+  BImg,
+  BInputGroupAppend,
+  BInputGroupPrepend,
   BRow,
   BSpinner,
-  BInputGroupPrepend,
-  BInputGroupAppend,
 } from 'bootstrap-vue'
+import Fuse from 'fuse.js'
+import { createPicker } from 'picmo'
+import 'tinymce/skins/ui/oxide/skin.min.css'
+import tinymce from 'tinymce/tinymce'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
-import { snakeToTitle } from '@/libs/utils'
-import Table from '@/table/index'
-import CKEditor from '@ckeditor/ckeditor5-vue2'
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import Editor from '@tinymce/tinymce-vue'
-import tinymce from 'tinymce/tinymce'
-import 'tinymce/skins/ui/oxide/skin.min.css'
 // import 'tinymce/skins/ui/oxide/content.min.css';
-import 'tinymce/themes/silver/theme'
 import 'tinymce/icons/default/icons'
-import 'tinymce/plugins/lists'
+import 'tinymce/models/dom'
 import 'tinymce/plugins/advlist'
 import 'tinymce/plugins/link'
+import 'tinymce/plugins/lists'
 import 'tinymce/plugins/media'
-import 'tinymce/models/dom'
+import 'tinymce/themes/silver/theme'
 
-import { togglePasswordVisibility } from '@core/mixins/ui/forms'
-import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import CustomDatePicker from '@/views/app/Generic/CustomDatePicker.vue'
 import { getUserData } from '@/auth/utils'
-import { mapGetters } from 'vuex'
-import SelectedButtonList from '@/components/SelectedButtonList.vue'
 import AutoCompleteInput from '@/components/AutoCompleteInput.vue'
+import SelectedButtonList from '@/components/SelectedButtonList.vue'
+import { USER_ROLES } from '@/config/config-access/config-roles'
+import CustomDatePicker from '@/views/app/Generic/CustomDatePicker.vue'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import _ from 'lodash'
-import { USER_ROLES } from '@/config/config-roles'
+import { mapGetters } from 'vuex'
 
 const MVM_KUNDE_TEAM_ID = 6
+const FM_KUNDE_TEAM_ID = 7
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -344,6 +345,18 @@ export default {
       if (typeof new_list === 'object' && new_list.data) {
         new_list = new_list.data
       }
+      if (this.$isUserA(USER_ROLES.ext_team_member)) {
+        const user = getUserData()
+        const userTeams = user?.team_id ?? []
+        if (this.field.key === 'team_id') {
+          new_list = new_list.filter(item => userTeams.includes(item.team_id))
+
+          if (new_list.length === 1) {
+            this.$set(this.entity, 'team_id', new_list[0].team_id)
+            this.isDisabled = true
+          }
+        }
+      }
       return new_list
     },
     passwordToggleIcon() {
@@ -364,11 +377,12 @@ export default {
       }
       let new_list = this.list
       if (typeof new_list === 'object' && new_list.data) {
-        new_list = new_list.data
+        new_list = new_list.data             
       }
-      if (this.field.orderByField) {
+      if (this.field.orderByField) {             
         new_list = new_list.toSorted((a, b) => a[this.field.orderByField].localeCompare(b[this.field.orderByField]))
       }
+
       if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
         const val = (this.filterValue || this.entity[this.field.filter_key])
         if (this.field.filter_key && val != null) {
@@ -586,6 +600,8 @@ export default {
       return option[(typeof this.field.listLabel === 'string') ? this.field.listLabel : null]
     },
     initializeValue() {
+      if (this.field?.noAutoFill) return
+
       const user = getUserData()
       if (this.isUserExternClient || user?.usertype?.usertype_external === 1) {
         if (this.field.key === 'customergroup_id') {
@@ -616,6 +632,17 @@ export default {
           // if (this.entity.team_id) {
           //   this.isDisabled = true
           // }
+        }
+      }
+      if (
+        this.$isUserA(
+          USER_ROLES.area_manager,
+          USER_ROLES.store_manager,
+        )
+      ) {
+        if (this.field.key === 'team_id' && user?.team_id?.includes(FM_KUNDE_TEAM_ID)) {
+          this.isDisabled = true
+          this.$set(this.entity, 'team_id', FM_KUNDE_TEAM_ID)
         }
       }
     },

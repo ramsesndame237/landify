@@ -101,14 +101,14 @@
   </div>
 </template>
 <script>
-import moment from 'moment'
-import sortBy from 'lodash/sortBy'
-import DataTables from '@/layouts/components/DataTables.vue'
-import DeadlinesTools from '@/views/app/Contracts/Relations/Deadlines/DeadlinesTools.vue'
-import DeadlineComments from '@/views/app/Contracts/Relations/Deadlines/DeadlineComments.vue'
-import { USER_ROLES } from '@/config/config-roles'
-import { USER_PERMISSIONS, buildPermissions } from '@/config/config-permissions'
 import { EXTERN_TEAMS_IDS } from '@/config/config-access'
+import { USER_PERMISSIONS, buildPermissions } from '@/config/config-access/config-permissions'
+import { USER_ROLES } from '@/config/config-access/config-roles'
+import DataTables from '@/layouts/components/DataTables.vue'
+import DeadlineComments from '@/views/app/Contracts/Relations/Deadlines/DeadlineComments.vue'
+import DeadlinesTools from '@/views/app/Contracts/Relations/Deadlines/DeadlinesTools.vue'
+import sortBy from 'lodash/sortBy'
+import moment from 'moment'
 
 export default {
   name: 'DeadlineTable',

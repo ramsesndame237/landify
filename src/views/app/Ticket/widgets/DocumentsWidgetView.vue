@@ -1,12 +1,11 @@
 <script>
-import DataTable from '@/views/app/CustomComponents/DataTable/DataTable.vue'
-import GenericModal from '@/views/app/Generic/modal.vue'
-import Table from '@/table'
+import { USER_ROLES } from '@/config/config-access/config-roles'
 import { getDocumentLink, getDocumentLinkPreview, getStampedDocumentLink } from '@/libs/utils'
+import Table from '@/table'
+import DataTable from '@/views/app/CustomComponents/DataTable/DataTable.vue'
 import EditPageMixin from '@/views/app/Generic/EditPageMixin'
+import GenericModal from '@/views/app/Generic/modal.vue'
 import TicketMixin from '@/views/app/Kanban/TicketMixin'
-import { mapMutations } from 'vuex'
-import { USER_ROLES } from '@/config/config-roles'
 
 export default {
   name: 'DocumentsWidgetView',

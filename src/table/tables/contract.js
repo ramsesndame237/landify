@@ -1,7 +1,6 @@
+import { ACCESS } from '@/config/config-access'
 import { getContractCriteriaFields } from '@/table/utils'
 import _ from 'lodash'
-import { USER_PERMISSIONS, buildPermissions } from '@/config/config-permissions'
-import { ACCESS } from '@/config/config-access'
 
 export default {
   // entity: 'frontend_3_4_1_1',

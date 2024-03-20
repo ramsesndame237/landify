@@ -1,8 +1,8 @@
 export const EXTERN_TEAMS_IDS = {
-  BuHa: 1,
-  FM: 2,
-  MVM: 3,
-  NKA: 4,
+  BuHa: 9,
+  FM: 7,
+  MVM: 6,
+  NKA: 8,
 }
 
 export const INTERN_TEAMS_IDS = {

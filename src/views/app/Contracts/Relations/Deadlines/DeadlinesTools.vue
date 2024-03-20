@@ -1,7 +1,7 @@
 <script>
-import { BForm, BModal } from 'bootstrap-vue'
+import { USER_ROLES } from '@/config/config-access/config-roles'
 import Field from '@/views/app/Generic/Field.vue'
-import { USER_ROLES } from '@/config/config-roles'
+import { BForm, BModal } from 'bootstrap-vue'
 
 const period = [
   { label: 'Day', value: 'Day' },

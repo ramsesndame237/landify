@@ -1,9 +1,9 @@
 import { getUserData } from '@/auth/utils'
-import Vue from 'vue'
-import emailModal from '@/views/app/Ticket/EmailModal.vue'
-import { USER_PERMISSIONS } from '@/config/config-permissions'
 import { ACCESS } from '@/config/config-access'
+import { USER_PERMISSIONS } from '@/config/config-access/config-permissions'
+import emailModal from '@/views/app/Ticket/EmailModal.vue'
 import _, { union } from 'lodash'
+import Vue from 'vue'
 
 export default {
   entity: 'frontend_3_1_1',

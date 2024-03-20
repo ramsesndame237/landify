@@ -1,4 +1,4 @@
-import { USER_ROLES } from '@/config/config-roles'
+import { USER_ROLES } from '@/config/config-access/config-roles'
 import Vue from 'vue'
 
 export const getUserData = () => JSON.parse(localStorage.getItem('userData'))

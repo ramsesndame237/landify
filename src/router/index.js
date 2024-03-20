@@ -1,7 +1,8 @@
 import jwt from '@/auth/jwt/useJwt'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
-import { ACCESS } from '@/config/config-access'
-import { isAbleTo } from '@/config/config-permissions'
+import { ACCESS, EXTERN_TEAMS_IDS } from '@/config/config-access'
+import { isAbleTo, isUserA } from '@/config/config-access/config-permissions'
+import { USER_ROLES } from '@/config/config-access/config-roles'
 import axiosIns from "@/libs/axios"
 import { parseJwt } from '@/views/app/CustomComponents/DataTable/utils'
 import BrowserId from 'browser-id'
@@ -428,6 +429,11 @@ const canOpenRoute = to => {
 router.beforeEach((to, _, next) => {
   console.log(to, 'navigate')
   const isLoggedIn = jwt?.isUserLoggedIn()
+  if (['/app', '/'].includes(to.path) && isUserA(USER_ROLES.ext_team_member.withTeams(
+    EXTERN_TEAMS_IDS.FM,
+  ))) {
+    return next({ path: '/app/table/board' })
+  }
   if (!canOpenRoute(to)) {
     // Redirect to login if not logged in
     if (!isLoggedIn) return next({ name: 'login' })

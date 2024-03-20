@@ -31,3 +31,18 @@ export const USER_ROLES = {
   store_manager: new UserRole('store_manager'),
   lawyer: new UserRole('lawyer'),
 }
+
+export const USER_ROLES_GROUPS = {
+  externs: [
+    USER_ROLES.lead,
+    USER_ROLES.expansion_manager,
+    USER_ROLES.area_manager,
+    USER_ROLES.store_manager,
+    USER_ROLES.ext_team_member,
+  ],
+  interns: [
+    USER_ROLES.admin,
+    USER_ROLES.team_lead,
+    USER_ROLES.team_member,
+  ]
+}

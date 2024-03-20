@@ -46,11 +46,11 @@
 
 <script>
 import {
-  BFormGroup,
-  BFormSelect,
-  BFormInput,
-  BPagination,
   BButton,
+  BFormGroup,
+  BFormInput,
+  BFormSelect,
+  BPagination,
 } from 'bootstrap-vue'
 
 export default {
@@ -80,6 +80,10 @@ export default {
     showInput: Boolean,
     actions: Array,
     filterBadge: Number,
+    definition: {
+      type: Object,
+      default: null,
+    },
     inlineFilter: Boolean, // Indique s'il s'agit d'un filtre en ligne, afin de masquer l'icône de filtre
   },
   data() {
@@ -87,10 +91,10 @@ export default {
   },
   computed: {
     canDelete() {
-      return this.$can('delete', this.entity)
+      return this.definition ? this.$isAbleTo('remove', this.definition.permissions) : true
     },
     canCreate() {
-      return this.$can('create', this.entity)
+      return this.definition ? this.$isAbleTo('create', this.definition.permissions) : true
     },
   },
   watch: {
