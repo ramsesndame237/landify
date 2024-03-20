@@ -54,7 +54,7 @@
     <b-td>
       <b-form-checkbox v-if="visible" :key="`checkbox-new-ticket-for-item-${item.email_id || item.document_id}`"
                        v-model="shouldCreateSubTicket" style="transform: translateY(-6px)"
-                       :disabled="showTicket === null? false : true "/>
+                       :disabled="(showTicket === null? false : true ) || (!item.ticket_id || is_dismissed || is_done) "/>
       <b-form-checkbox v-else :checked="!!item.create_subticket" style="transform: translateY(-6px)" disabled/>
     </b-td>
     <b-td class="td-form">
@@ -307,9 +307,9 @@ export default {
         this.showTicket = selectedTicket.ticket_id_group
         this.$set(this.item, 'contract_id', selectedTicket?.contract_id || null)
         this.$set(this.item, 'board_id', selectedTicket?.board_id || null)
-        if (!val) {
-          this.shouldCreateSubTicket = false
-        }
+        // if (!val) {
+        this.shouldCreateSubTicket = false
+        // }
       }
     },
     getTicketName() {
