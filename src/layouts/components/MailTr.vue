@@ -54,7 +54,7 @@
     <b-td>
       <b-form-checkbox v-if="visible" :key="`checkbox-new-ticket-for-item-${item.email_id || item.document_id}`"
                        v-model="shouldCreateSubTicket" style="transform: translateY(-6px)"
-                       :disabled="!item.ticket_id || is_dismissed || is_done"/>
+                       :disabled="showTicket === null? false : true "/>
       <b-form-checkbox v-else :checked="!!item.create_subticket" style="transform: translateY(-6px)" disabled/>
     </b-td>
     <b-td class="td-form">
@@ -140,15 +140,16 @@ export default {
     return {
       currentTicket: null,
       shouldCreateSubTicket: false,
+      showTicket: '',
       ticketIdField: {
         key: 'ticket_id',
         type: 'list',
         list: 'frontend_6_1_6_overview',
-        entityCustomEndPoint: '/tickets/slims',
+        entityCustomEndPoint: '/tickets/slims?show_with_subtickets=true&',
         listLabel: item => `${item.ticket_id} - ${item.ticket_name}`,
         noLabel: true,
         required: false,
-        // filter_key: 'pos_id',
+        filter_key: 'pos_id',
         noCache: true,
         customPagination: {
           data: [{ size: 15 }],
@@ -190,7 +191,7 @@ export default {
         type: 'list',
         list: 'frontend_4_2_1_contract_selector',
         listLabel: 'contract_name',
-        // filter_key: 'pos_id',
+        filter_key: 'pos_id',
         noLabel: true,
         noCache: true,
         // optionWithTooltipDetail: true,
@@ -303,6 +304,7 @@ export default {
       if (!this.is_done) {
         const ticketList = this.$store.state.table.listCache.frontend_6_1_6_overview
         const selectedTicket = ticketList?.find(ticket => ticket.ticket_id === val)
+        this.showTicket = selectedTicket.ticket_id_group
         this.$set(this.item, 'contract_id', selectedTicket?.contract_id || null)
         this.$set(this.item, 'board_id', selectedTicket?.board_id || null)
         if (!val) {
