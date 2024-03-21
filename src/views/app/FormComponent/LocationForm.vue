@@ -4,11 +4,6 @@ import formMixin from '@/views/app/Generic/FormMixin'
 export default {
   name: 'LocationForm',
   mixins: [formMixin],
-  data() {
-    return {
-      loading: false,
-    }
-  },
   async mounted() {
     try {
       const locationId = this.$route.params.id
@@ -51,7 +46,7 @@ export default {
     <b-form autocomplete="off" @submit.prevent="passes(handleSubmit)">
       <b-row>
         <b-col v-for="field in formFields" :key="field.key" cols="12" :md="cols">
-          <field v-if="field && field.key" ref="fields" :disabled="loading || disabled || field.disabled || (!create && field.disableOnUpdate)"
+          <field v-if="field && field.key" ref="fields" :disabled="disabled || field.disabled || (!create && field.disableOnUpdate)"
                  :create="create" :inline="inline" :entity="entity" :table-definition="tableDefinition" :field="field"/>
         </b-col>
       </b-row>
