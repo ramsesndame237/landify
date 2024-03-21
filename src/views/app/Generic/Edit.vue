@@ -42,33 +42,48 @@
       </div>
     </b-card>
 
-    <b-card class="" :no-body="noBody">
+    <b-card class="container-card" :no-body="noBody">
       <component
         :is="(create ? definition.createComponent :definition.updateComponent) || definition.formComponent || 'entity-form'"
         ref="form" :table="table" :definition="definition" :table-definition-key="table" :create="create"
         :is-relation="false" :disabled="view" :inline="false" :cols="6" :initial-data="entity" :entity-id="entityId"
-        @loaded="formLoaded=true" />
+        @loaded="formLoaded=true"/>
     </b-card>
 
     <template v-if="table==='invoice' && $refs.tabs">
       <invoice-stats/>
     </template>
-
+    <generic-filter ref="filterEdit" :table="table"
+                    :definition="definition.relations.find(element=> (element.entityView === 'ticket'))"
+                    :initial-data="initialFilterData"
+                    :is-loading-data="isLoading"
+                    @filter="filterDataSearch"/>
     <b-card v-if="definition.relations && formLoaded && visibleRelations.length>0 && !create ">
-      <b-tabs ref="tabs" pills>
+      <b-tabs ref="tabs" v-model="tabIndex" card>
         <b-tab v-for="(relation, index) in visibleRelations" :key="index"
                :title="$t(relation.title || ('headline~'+(relation.entityView||relation.entityForm)+'~tab'))"
-               :active="index===tabIndex" :lazy="relation.lazy!==false">
+               :lazy="relation.lazy!==false" :active="index===tabIndex" :title-item-class="[index === tabIndex ? 'activeTab': '']">
           <template v-if="relation.component">
             <component :is="relation.component" :relation="relation" :entity-id="entityId"/>
           </template>
           <template v-else>
-            <data-tables :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
+            <b-card v-if="relation.primaryKey === 'ticket_id'" body-class="p-0">
+              <table-pagination :per-page.sync="perPage" :show-input="false" :current-page.sync="currentPage"
+                                :entity="table"
+                                :show-for-childreen="visibleRelations[tabIndex].entity === 'tax_rates' || false"
+                                :with-filter="definition.filters && definition.filters.length > 0"
+                                :total-rows.sync="totalRows"
+                                :inline-filter="!definition.inline_filter" @filter="$refs.filterEdit.openModal()"/>
+            </b-card>
+            <data-tables ref="table" :second-key="primaryKey" :second-key-value="entityId" :current-page="currentPage"
                          :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
                          :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
                          :entity-view="relation.entityView" :with-view="relation.view!==false" :fields="relation.fields"
                          :on-edit-element="editElement" :with-edit="relation.update!==false"
-                         :with-delete="relation.delete!==false" :custom-request="relation.customRequest" :entity-endpoint="relation.entityEndpoint" />
+                         :opacity="relation.primaryKey === 'ticket_id'" :items="itemsData"
+                         :with-delete="relation.delete!==false" :custom-request="relation.customRequest"
+                         :is-loading-data="isLoadingDataFetch"
+                         :entity-endpoint="relation.entityEndpoint"/>
             <generic-modal :cache-key="relation.entity+'-'" title="Test" :table="relation.entityForm || relation.entity"
                            :definition="relation" is-relation
                            :table-definition-key="relation.entityForm || relation.entity"
@@ -97,6 +112,27 @@
                       @click="$emit('filter')">
               <feather-icon icon="FilterIcon"/>
             </b-button>
+            <b-dropdown v-if="canImportOrExport.includes(visibleRelations[tabIndex].entity)" size="lg" variant="link"
+                        toggle-class="text-decoration-none" no-caret>
+              <template #button-content>
+                <b-button id="popover-button-variant" size="sm" variant="success" class="mr-1 btn-icon">
+
+                  <span>
+              Ex-/Import
+            </span>
+                </b-button>
+              </template>
+              <b-dropdown-item @click="fetchExportData(visibleRelations[tabIndex].entity === 'tax_rates' ? 'tax-rate' : visibleRelations[tabIndex].entity)">
+                <FeatherIcon icon="ArrowUpIcon" />
+
+                {{ $t('translate~key~export') }}
+              </b-dropdown-item>
+              <b-dropdown-item @click="()=>$router.push({name:'importView',params:{name:visibleRelations[tabIndex].entity === 'tax_rates' ? 'tax_rate' : visibleRelations[tabIndex].entity}})">
+
+                <FeatherIcon icon="ArrowDownIcon" />
+                {{ $t('translate~key~import') }}
+              </b-dropdown-item>
+            </b-dropdown>
 
             <b-form-input v-if="currentHasSearch()" id="filterInput" v-model="search" debounce="500" type="search"
                           placeholder="Search..."/>
@@ -115,19 +151,19 @@
 
 <script>
 import {
-  BCard,
-  BTab,
-  BTabs,
-  BRow,
-  BCol,
-  BSpinner,
-  BFormInput,
   BButton,
+  BCard,
+  BCol,
   BDropdown,
   BDropdownForm,
   BFormGroup,
+  BFormInput,
   BInputGroup,
   BInputGroupPrepend,
+  BRow,
+  BSpinner,
+  BTab,
+  BTabs,
 } from 'bootstrap-vue'
 import DataTables from '@/layouts/components/DataTables'
 import GenericModal from '@/views/app/Generic/modal'
@@ -135,9 +171,14 @@ import EntityForm from '@/views/app/Generic/EntityForm'
 import EditPageMixin from '@/views/app/Generic/EditPageMixin'
 import Notes from '@/views/app/Generic/Notes'
 import InvoiceStats from '@/views/app/CustomComponents/InvoiceStats'
+import GenericFilter from '@/views/app/Generic/Filter.vue'
+import TablePagination from '@/layouts/components/TablePagination.vue'
+import Tables from '@/table'
 
 export default {
   components: {
+    TablePagination,
+    GenericFilter,
     InvoiceStats,
     Notes,
     EntityForm,
@@ -159,14 +200,30 @@ export default {
   },
   mixins: [EditPageMixin],
   data() {
+    const payload = this.$store.getters['table/tableData'](this.$route.params.table)
+    const table = this.$route.params.table
+    const definition = Tables[table]
+    if (!definition.relations) {
+      definition.relations = []
+    }
+    let defaultPage = null
+    if (this.isUserExternClient) {
+      defaultPage = definition.perPage
+    }
     return {
       search: '',
       currentPage: 1,
       perPage: 100_000,
+      isLoading: true,
+      isLoadingDataFetch: false,
+      itemsData: [],
+      canImportOrExport:['tax_rates','bankdata','kreditornumber'],
       totalRows: 0,
       formLoaded: false,
       noBody: false,
       showTool: true,
+      initialFilterData: payload?.filter,
+      relationEntity: null,
     }
   },
   computed: {
@@ -189,10 +246,18 @@ export default {
       })
     },
   },
+  watch: {
+    tabIndex(newValue) {
+      this.itemsData = []
+      this.filterDataSearch()
+    },
+  },
+
   mounted() {
     this.$watch('$refs.tabs.currentTab', val => {
       if (this.tabIndex !== val) {
         this.tabIndex = val
+        this.relationEntity = this.definition.relations.find(element => element.entityView === this.visibleRelations[val].entityView)
         this.$router.replace({
           name: this.$route.name,
           params: this.$route.params,
@@ -200,13 +265,43 @@ export default {
         })
       }
     })
+    this.filterDataSearch()
   },
   methods: {
     removeBody(val = false) {
       return this.noBody = val
     },
+    filterDataSearch(data) {
+      if (!this.visibleRelations[this.tabIndex]?.entityEndpoint || typeof this.visibleRelations[this.tabIndex]?.entityEndpoint === 'function') {
+        return this.itemsData = undefined
+      }
+      this.isLoadingDataFetch = true
+      const url = this.visibleRelations[this.tabIndex]?.entityEndpoint || this.visibleRelations[this.tabIndex]?.entityForm || this.visibleRelations[this.tabIndex]?.entity
+      if (data) {
+        for (const element in data) {
+          if (data[element] === -1) {
+            delete data[element]
+          }
+        }
+      } else {
+        data = {}
+      }
+      console.log('this is the url', url)
+
+      this.$http.get(url, {
+        params: { ...data },
+      }).then(response => {
+        this.itemsData = response.data.data
+      }).catch(error => console.error(error)).finally(() => this.isLoadingDataFetch = false)
+      this.currentPage = 1
+      this.$refs.table.filter(data)
+    },
     onAction(action) {
       action.onClick(this.$refs.form.entity, this)
+    },
+    filter(data) {
+      this.currentPage = 1
+      this.$refs.table.filter(data)
     },
     currentTool() {
       if (!this.$refs.tabs) return false

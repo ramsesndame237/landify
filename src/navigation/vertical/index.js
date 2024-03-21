@@ -41,6 +41,7 @@ export default [
     children: [
       item('board', 'ticketboard'),
       item('ticket', 'ticketlist'),
+      item(null, 'ticketlistupdate', 'updateTicket'),
       // {
       //   title: key('documentupload'),
       //   route: 'document-classification',
@@ -70,6 +71,12 @@ export default [
         action: 'menu~contractdeadline',
         resource: 'menu',
         route: { name: 'deadline-list' },
+      },
+      {
+        title: key('contractpaymentslist'),
+        action: 'menu~contractpaymentslist',
+        resource: 'menu',
+        route: { name: 'payments-list' },
       },
       // {
       //   title: key('payment'),
@@ -158,6 +165,7 @@ export default [
       item('criteriatype'),
       item('maturitytype'),
       item('recurringpaymenttype'),
+      item('sachkonto'),
 
     ],
   },

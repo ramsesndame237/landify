@@ -1,4 +1,5 @@
 import Tables from '@/table'
+import moment from "moment/moment";
 
 export default {
   data() {
@@ -8,6 +9,11 @@ export default {
       create: this.$route.name === 'table-form',
       loading: false,
       tabIndex: parseInt(this.$route.query.tab || 0),
+    }
+  },
+  watch:{
+    tabIndex(newValue){
+      console.log("this is the value", newValue)
     }
   },
   computed: {
@@ -42,6 +48,42 @@ export default {
     },
     edit() {
       this.view = false
+      const url = new URL(window.location.href)
+      url.searchParams.set('edit', 'true')
+      window.history.pushState({ path: url.href }, '', url.href)
+    },
+    async fetchExportData(name) {
+      // const valid = await this.$refs.form.validate()
+      // if (!valid) return
+      // this.loadingDonwload = true
+      // const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
+      // filter.size = 100000
+      // // generate the request query string
+      // const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
+      try {
+        const filename = `${name}-Export_${moment().format('DD_MM_YYYY')}.xlsx`
+        const masterData = (await this.$http.get(`synchronizations/${name}/export`, {
+          responseType: 'blob',
+        })).data
+        console.log('masterData: ', masterData)
+        const link = document.createElement('a')
+        link.setAttribute('href', URL.createObjectURL(masterData))
+        link.setAttribute('download', filename)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      } catch (err) {
+        if (err.code === 'ERR_BAD_REQUEST') {
+          let error = (await err.response).data
+          error = JSON.parse(await error.text())
+
+          this.$errorToast(error.detail || 'Unknown error')
+        } else {
+          this.$errorToast('Unknown error')
+        }
+      } finally {
+        this.loadingDonwload = false
+      }
     },
     update() {
       this.loading = true
@@ -109,4 +151,5 @@ export default {
       })
     },
   },
+
 }

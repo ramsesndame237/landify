@@ -1,8 +1,8 @@
 <template>
   <div class="">
-    <b-table ref="table" sticky-header striped hover responsive :busy.sync="loading" :per-page="perPage"
+    <b-table ref="table" sticky-header striped hover responsive :busy.sync="isLoadingData" :per-page="perPage"
              :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
-             :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" show-empty @row-clicked="onRowClicked">
+             :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" show-empty :tbody-tr-class="rowClass" @row-clicked="onRowClicked">
       <template #table-busy>
         <div class="text-center text-danger">
           <b-spinner class="align-middle"/>
@@ -108,11 +108,18 @@ export default {
     BFormCheckbox,
   },
   props: {
+    initialFilterData: {
+      type: Object,
+      default: () => ({}),
+    },
+    noCache: { type: Boolean, default: false },
+    isLoadingData: Boolean,
     entity: { type: String, required: true },
     entityList: { type: String },
+    opacity: { type: Boolean, default: false },
     entityForm: { type: String, required: false },
     entityView: { type: String, required: false },
-    entityEndpoint: { type: String, required: false }, // if it exist a specific route for retrieving data
+    entityEndpoint: { type: [String, Function], required: false }, // if it exist a specific route for retrieving data
     fields: { type: Array, required: true },
     primaryKeyColumn: { type: String },
     blankLink: { type: Boolean, default: false },
@@ -132,6 +139,7 @@ export default {
     secondKey: {},
     secondKeyValue: {},
     search: {},
+    onDeleteElement: { type: Function },
     onEditElement: { type: Function },
     onViewElement: { type: Function },
     perPage: Number,
@@ -273,6 +281,7 @@ export default {
       } else this.$router.push(routeData)
     },
     provider(ctx) {
+      this.isLoadingData = true
       const {
         currentPage, perPage, filter, sortBy, sortDesc,
       } = ctx
@@ -282,6 +291,7 @@ export default {
         order_by: sortBy,
         order_dir: sortDesc ? 'DESC' : 'ASC',
         per_page: perPage === 0 ? 1000000 : perPage,
+        size: perPage === 0 ? 1000000 : perPage,
         from: 0,
         current_page: currentPage,
         filter_all: filter ?? '',
@@ -304,17 +314,19 @@ export default {
       // retrieve from cache
       const cacheKey = this.getCacheKey(payload)
       const fromCache = this.$store.getters['table/tableCache'](cacheKey)
-      if (fromCache) {
+      if (fromCache && this.noCache) {
         return this.processData(fromCache)
       }
 
       // retrieve form specific endpoint
       if (this.entityEndpoint) {
         const filterData = {
+          ...(this.initialFilterData ?? {}),
           ...this.filterData,
           keyword: filter,
           page: currentPage,
           size: payload.per_page,
+          per_page: perPage === 0 ? 25 : perPage,
           order_filed: sortBy,
           order: sortDesc ? 'desc' : 'asc',
         }
@@ -324,7 +336,7 @@ export default {
         const requestQuery = Object.keys(filterData)
           .filter(key => ![null, -1].includes(filterData[key]))
           .map(key => `${key}=${filterData[key]}`).join('&')
-        return this.$http.get(`${this.entityEndpoint}?${requestQuery}`)
+        return this.$http.get(`${this.entityEndpoint instanceof Function ? this.entityEndpoint(this) : this.entityEndpoint}?${requestQuery}`)
           .then(({ data }) => {
             let items
             if (Array.isArray(data.data)) {
@@ -335,13 +347,19 @@ export default {
               items = this.processData(data)
               // set in cache
               this.$store.commit('table/setTableCache', { key: cacheKey, data })
+            } else if (Array.isArray(data)) {
+              items = this.processData({ data })
+              this.$store.commit('table/setTableCache', { key: cacheKey, data })
+              this.$store.commit('table/setTableCache', { key: cacheKey, data })
             } else {
               throw new Error('invalid data')
             }
+            this.isLoadingData = false
             return items
           })
           .catch(e => {
             console.log(e)
+            this.isLoadingData = false
             const title = e.response?.data.detail
             this.$errorToast(title)
             return null
@@ -367,6 +385,7 @@ export default {
       return `${this.entity}-${JSON.stringify(payload)}`
     },
     processData(data) {
+      console.log('this is the data process', data)
       if (this.entityEndpoint && Array.isArray(data.data)) {
         this.$emit('update:totalRows', data.total)
         data.data.forEach(el => {
@@ -474,8 +493,8 @@ export default {
           }
           await this.$http({
             method: this.customRequest.method ? this.customRequest.method : 'put',
-            url: this.customRequest.endpoint,
-            data: payload,
+            url: typeof this.customRequest.endpoint === 'function' ? this.customRequest.endpoint() : this.customRequest.endpoint,
+            data: this.customRequest.payload ? this.customRequest.payload(entities) : payload,
           }).then(res => {
             this.$successToast('Delete Done.')
             this.$root.$emit('update-occured')
@@ -521,15 +540,16 @@ export default {
       })
     },
     reload() {
+      console.log('this is the data')
       this.$refs.table.refresh()
       this.$emit('table-refreshed')
     },
     filter(data) {
+      console.log('this is the data of --------', data)
       this.filterData = { ...data }
       this.reload()
     },
     onSelect(index) {
-      console.log('index', index)
       if (!this.multiSelect) {
         this.currentItems.forEach((item, idx) => {
           if (idx !== index) this.$set(item, '__selected', false)
@@ -538,8 +558,11 @@ export default {
       }
     },
     onRowClicked(record, index) {
-      console.log('row clicked', record)
+      console.log('row clicked', [record, index])
       this.$set(record, '__selected', !record.__selected)
+    },
+    rowClass(item) {
+      return item?.ticket_closed === 1 ? 'statusBackground' : ''
     },
     downloadCsv(filename = 'export.csv') {
       const fields = this.allFields.filter(f => (['Actions', '__selected'].indexOf(f.key) === -1))
@@ -562,3 +585,8 @@ export default {
   },
 }
 </script>
+<style>
+.statusBackground {
+  opacity: 0.3;
+}
+</style>
