@@ -68,7 +68,7 @@
         <!--        <feather-icon icon="Trash2Icon" class="mr-50"/>-->
         <span>{{ action.text }}</span>
       </b-button>
-      <b-form-input id="filterInput" v-if="!showInput" v-model="internalSearch" debounce="500" type="search"
+      <b-form-input id="filterInput"  v-model="internalSearch" debounce="500" type="search"
                     class="w-auto"
                     placeholder="Search.."/>
     </div>

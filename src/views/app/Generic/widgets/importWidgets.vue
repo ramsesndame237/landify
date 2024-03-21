@@ -1,4 +1,6 @@
 <script>
+import ticket from '@/table/tables/ticket'
+
 export default {
   name: 'ImportWidgets',
   data: () => ({
@@ -39,7 +41,7 @@ export default {
         'contactperson_shortname', 'contactperson_function', 'user_email', 'contactdetails_email',
         'contactdetails_phone', 'contactdetails_mobile', 'contactdetails_fax', 'company_name', 'customergroup_name',
       ],
-      bankdata: ['bankdata_iban', 'iban_id', 'bankdata_bank_name','partnercompany_name'],
+      bankdata: ['bankdata_iban', 'iban_id', 'bankdata_bank_name', 'partnercompany_name'],
       kreditornumber: ['company_id', 'company_name', 'kreditornumber'],
       location: ['location_name', 'location_objectdescription', 'location_total_area', 'location_start_date',
         'partnercompany_name', 'location_partnercompany_partnertype_valid_from_date',
@@ -61,14 +63,26 @@ export default {
     status: 'all',
     importAll: false,
   }),
+  computed: {
+    ticket() {
+      return ticket
+    },
+  },
+  watch: {
+    status(newValue) {
+
+      this.result = this.result.filter(x=> x.status === newValue)
+    },
+  },
   methods: {
     onSelectChange(entity) {
       // this.result.forEach(row => {
       //   row.__selected = !row.__selected
       // })
-     this.result= this.result.map(row => ({ ...row, __selected: !row.__selected }))
+      this.result = this.result.map(row => ({ ...row, __selected: !row.__selected }))
     },
-    getResult(entity) {
+    getResult() {
+      console.log('this is the stat', [this.status, this.result])
       if (!this.status) return this.result
       return this.result.filter(row => row.status === this.status)
     },
@@ -80,7 +94,6 @@ export default {
       this.importAll = all
       this.loading = true
       const formData = new FormData()
-      console.log('this is the result value', this.result.map(item => console.log('this is the value', item.line)))
       formData.append('file', this.file)
       formData.append('obj_in', JSON.stringify({
         lines: (all ? this.result : this.getSelected(this.currentEntity)).map(el => el.line),
@@ -106,11 +119,7 @@ export default {
       this.$http.post(`/synchronizations/${this.$route.params.name === 'tax_rate' ? 'tax-rate' : this.$route.params.name}/checking`, formData, { headers: { 'content-type': 'form-data' } })
         .then(({ data }) => {
           console.log({ data })
-          // if (!data.data[this.$route.params.name]) return
-          // data.forEach(row => {
-          //   row.columns.map((column) => ({...column,show_old:false}))
-          // })
-          this.result = data.map(row => Object.assign(row, { show_old: false, __selected: false }))
+          this.result = data.map(row => Object.assign(row, { show_old: false, __selected: false, status: row.columns.find(c => c.action === 'failed') ? 'failed' : row.columns.find(c => c.action === 'changed') ? 'changed' : row.columns.find(c => c.action === 'added') ? 'added' : 'unchanged' }))
           this.success = true
         })
         .catch(error => {
@@ -128,21 +137,23 @@ export default {
 <template>
   <div>
     <form enctype="multipart/form-data" novalidate>
-      <h1>Upload A File for  {{ $route.params.name }} </h1>
+      <h1>Upload A File for {{ $route.params.name }} </h1>
       <div class="dropbox">
         <input type="file" :name="uploadFieldName" :disabled="loading"
                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-               class="input-file" @change="fileCount = $event.target.files.length; file = $event.target.files[0];uploadFieldName= $event.target.files[0].name">
+               class="input-file"
+               @change="fileCount = $event.target.files.length; file = $event.target.files[0];uploadFieldName= $event.target.files[0].name">
         <p v-if="!file">
           Drag your file here to begin<br> or click to browse
         </p>
-        <p v-if="file" style="font-size: 45px" >
+        <p v-if="file" style="font-size: 45px">
           <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-            <path fill="#4db051" d="M16 0H8C6.9 0 6 .9 6 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6zm4 18H8V2h7v5h5zM4 4v18h16v2H4c-1.1 0-2-.9-2-2V4zm6 6v2h8v-2zm0 4v2h5v-2z" />
-          </svg>  {{ uploadFieldName }}
+            <path fill="#4db051"
+                  d="M16 0H8C6.9 0 6 .9 6 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6zm4 18H8V2h7v5h5zM4 4v18h16v2H4c-1.1 0-2-.9-2-2V4zm6 6v2h8v-2zm0 4v2h5v-2z"/>
+          </svg>
+          {{ uploadFieldName }}
         </p>
       </div>
-
       <div class="mt-2">
         <b-button variant="danger" :disabled="loading" @click="upload">
           Check File
@@ -170,7 +181,8 @@ export default {
         <b-thead>
           <b-tr>
             <b-th>
-              <b-form-checkbox v-model="selected[$route.params.name]" :disabled="disabled" @change="onSelectChange($route.params.name)"/>
+              <b-form-checkbox v-model="selected[$route.params.name]" :disabled="disabled"
+                               @change="onSelectChange($route.params.name)"/>
             </b-th>
             <b-th>Line</b-th>
             <b-th v-for="(field,i) in fields[$route.params.name]" :key="i">
@@ -191,7 +203,7 @@ export default {
               </b-td>
               <b-td class="d-flex align-items-center cursor-pointer">
                 <feather-icon :icon="row.show_old?'ChevronUpIcon':'ChevronDownIcon'"
-                              size="20"  @click="()=> row.show_old = !row.show_old"/>
+                              size="20" @click="()=> row.show_old = !row.show_old"/>
                 <span class="ml-1">{{ row.line }}</span>
               </b-td>
               <template v-for="(item,i) in row.columns">
@@ -207,7 +219,6 @@ export default {
               <b-td/>
               <b-td/>
               <b-td v-for="(column,i) in row.columns" :key="i">
-                {{ column.new_value }}
                 {{ column ? column.old_value : '' }}
               </b-td>
             </b-tr>
