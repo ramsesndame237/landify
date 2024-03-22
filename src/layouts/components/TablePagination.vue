@@ -24,34 +24,33 @@
         <feather-icon icon="FilterIcon" :badge="filterBadge"/>
       </b-button>
 
-      <b-dropdown v-if="importFunctionnality.includes(entity) && showInput" size="lg" variant="link"
-                  toggle-class="text-decoration-none" no-caret>
+      <b-dropdown v-if="importFunctionnality.includes(entity) && showInput" size="sm" variant="default"
+                  toggle-class="text-decoration-none" no-caret >
         <template #button-content>
-          <b-button id="popover-button-variant" size="md" variant="success" class="mr-1 btn-icon">
-            <!--            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">-->
-            <!--              <path fill="currentColor"-->
-            <!--                    d="M12 18.5c0 .5.07 1 .18 1.5H6.5c-1.5 0-2.81-.5-3.89-1.57C1.54 17.38 1 16.09 1 14.58c0-1.3.39-2.46 1.17-3.48S4 9.43 5.25 9.15c.42-1.53 1.25-2.77 2.5-3.72S10.42 4 12 4c1.95 0 3.6.68 4.96 2.04C18.32 7.4 19 9.05 19 11c1.15.13 2.1.63 2.86 1.5c.24.26.43.55.6.86A6.37 6.37 0 0 0 18.5 12c-.5 0-1 .07-1.5.18V11c0-1.38-.5-2.56-1.46-3.54C14.56 6.5 13.38 6 12 6s-2.56.5-3.54 1.46C7.5 8.44 7 9.62 7 11h-.5c-.97 0-1.79.34-2.47 1.03c-.69.68-1.03 1.5-1.03 2.47s.34 1.79 1.03 2.5c.68.66 1.5 1 2.47 1h5.53c-.03.17-.03.33-.03.5m6-4c-2.21 0-4 1.79-4 4s1.79 4 4 4c1.68 0 3.12-1.03 3.71-2.5H20a2.5 2.5 0 1 1-.23-3.27L18 18.5h4v-4l-1.17 1.17A3.99 3.99 0 0 0 18 14.5"/>-->
-            <!--            </svg>-->
-            <span>
-              Ex-/Import
-            </span>
+          <b-button variant="success">
+            Ex./Import:{{ chooseTheImportExportItem }}
           </b-button>
         </template>
-        <b-dropdown-item @click="onExportData(entity)">
-          <FeatherIcon icon="ArrowUpIcon" />
-          <!--          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">-->
-<!--            <path fill="currentColor"-->
-<!--                  d="M13 19c0 .34.04.67.09 1H6.5c-1.5 0-2.81-.5-3.89-1.57C1.54 17.38 1 16.09 1 14.58c0-1.3.39-2.46 1.17-3.48S4 9.43 5.25 9.15c.42-1.53 1.25-2.77 2.5-3.72S10.42 4 12 4c1.95 0 3.6.68 4.96 2.04C18.32 7.4 19 9.05 19 11c1.15.13 2.1.63 2.86 1.5c.51.57.84 1.21 1 1.92A5.908 5.908 0 0 0 19 13c-3.31 0-6 2.69-6 6m7-3h-2v4h-2l3 3l3-3h-2z"/>-->
-<!--          </svg>-->
-          {{ $t('translate~key~export') }}
-        </b-dropdown-item>
-        <b-dropdown-item @click="()=>$router.push({name:'importView',params:{name:entity}})">
-          <!--          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">-->
-          <!--            <path fill="currentColor"-->
-          <!--                  d="M13 19c0 .34.04.67.09 1H6.5c-1.5 0-2.81-.5-3.89-1.57C1.54 17.38 1 16.09 1 14.58c0-1.3.39-2.46 1.17-3.48S4 9.43 5.25 9.15c.42-1.53 1.25-2.77 2.5-3.72S10.42 4 12 4c1.95 0 3.6.68 4.96 2.04C18.32 7.4 19 9.05 19 11c1.15.13 2.1.63 2.86 1.5c.51.57.84 1.21 1 1.92A5.908 5.908 0 0 0 19 13c-3.31 0-6 2.69-6 6m3-1h2v4h2v-4h2l-3-3z"/>-->
-          <!--          </svg>-->
-          <FeatherIcon icon="ArrowDownIcon" />
-          {{ $t('translate~key~import') }}
+
+        <template v-if="chooseTheImportExportItem !== ''">
+          <b-dropdown-item @click="onExportData(chooseTheImportExportItem)">
+            <FeatherIcon icon="ArrowUpIcon"/>
+            {{ $t('translate~key~export') }} {{ chooseTheImportExportItem }}
+          </b-dropdown-item>
+          <b-dropdown-item @click="()=>$router.push({name:'importView',params:{name:chooseTheImportExportItem}})">
+            <FeatherIcon icon="ArrowDownIcon"/>
+            {{ $t('translate~key~import') }} {{ chooseTheImportExportItem }}
+          </b-dropdown-item>
+        </template>
+      </b-dropdown>
+      <b-dropdown v-if="importFunctionnality.includes(entity) && showInput" size="sm" variant="default" toggle-class="text-decoration" no-caret style="margin-left: -45px!important;">
+        <template #button-content>
+          <b-button variant="success">
+            <FeatherIcon icon="ChevronDownIcon"/>
+          </b-button>
+        </template>
+        <b-dropdown-item v-for="(item,index) in arrayItem" :key="index" @click="()=>handleChooseItem(item)">
+          {{ item.entity }}
         </b-dropdown-item>
       </b-dropdown>
       <b-button v-if="onNewElement!=null && canCreate" size="sm" variant="info" class="mr-1" @click="onNewElement">
@@ -68,7 +67,7 @@
         <!--        <feather-icon icon="Trash2Icon" class="mr-50"/>-->
         <span>{{ action.text }}</span>
       </b-button>
-      <b-form-input id="filterInput" v-if="!!showInput" v-model="internalSearch" debounce="500" type="search"
+      <b-form-input v-if="!!showInput" id="filterInput" v-model="internalSearch" debounce="500" type="search"
                     class="w-auto"
                     placeholder="Search.."/>
     </div>
@@ -106,15 +105,19 @@ export default {
     totalRows: Number,
     entity: String,
     showInput: Boolean,
-    showForChildreen:Boolean,
+    showForChildreen: Boolean,
     actions: Array,
+    importExportArrayItem: Array,
     filterBadge: Number,
-    inlineFilter: Boolean, // Indique s'il s'agit d'un filtre en ligne, afin de masquer l'icône de filtre
+    inlineFilter: Boolean,
+    // Indique s'il s'agit d'un filtre en ligne, afin de masquer l'icône de filtre
   },
   data() {
     return {
       internalSearch: this.search,
-      importFunctionnality: ['partnercompany', 'contactperson', 'company', 'location', 'pos', 'area']
+      chooseTheImportExportItem: this.entity,
+      arrayItem: [],
+      importFunctionnality: ['partnercompany', 'contactperson', 'company', 'location', 'pos', 'area'],
     }
   },
   computed: {
@@ -135,6 +138,16 @@ export default {
     currentPage() {
       this.$emit('update:currentPage', this.currentPage)
     },
+  },
+
+  methods: {
+    handleChooseItem(value) {
+      this.chooseTheImportExportItem = value.entity
+    }
+  },
+  mounted() {
+    this.arrayItem.push(...this.importExportArrayItem)
+    this.arrayItem.unshift(({entity: this.entity, primaryKey: this.entity}))
   },
 
 }

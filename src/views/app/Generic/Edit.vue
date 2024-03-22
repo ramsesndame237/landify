@@ -122,7 +122,7 @@
             </span>
                 </b-button>
               </template>
-              <b-dropdown-item @click="fetchExportData(visibleRelations[tabIndex].entity === 'tax_rates' ? 'tax-rate' : visibleRelations[tabIndex].entity)">
+              <b-dropdown-item @click="fetchExportData(visibleRelations[tabIndex].entity === 'tax_rates' ? 'tax-rate' : visibleRelations[tabIndex].entity,{name:definition.primaryKey,value:$route.params.id})">
                 <FeatherIcon icon="ArrowUpIcon" />
 
                 {{ $t('translate~key~export') }}
