@@ -1,7 +1,7 @@
 <template>
   <div>
     <generic-filter ref="filter" vertical :table="table" :definition="definition" :initial-data="initialFilterData"
-                    @filter="allFilter" @reset="reset"/>
+                    :remove-status="true" @filter="allFilter" @reset="reset"/>
 
     <data-table
       ref="dataTable"
@@ -15,7 +15,11 @@
           onClick: () => $refs.filter.openModal(),
         }
       ]"
-    />
+    >
+      <template #customTabFilter >
+        <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
+      </template>
+    </data-table>
     <!--    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"-->
     <!--                   with-continue :table-definition-key="table" :title="`headline~${table}~new`"-->
     <!--                   @reload-table="$refs.dataTable.fetchFn()"/>-->
@@ -78,7 +82,7 @@ export default {
       }
     }
 
-    console.log("this is the filter",currFilters)
+    console.log('this is the filter', currFilters)
 
     return {
       cols: [
@@ -137,12 +141,12 @@ export default {
           text: this.$t('header~board~status~notassigned'),
           value: 'not_assigned',
         },
-        {
-          text: this.$t('header~board~status~update~ticket'),
-          value: 'opened',
-        },
+        // {
+        //   text: this.$t('header~board~status~update~ticket'),
+        //   value: 'opened',
+        // },
       ],
-      filterValue: payload?.filter?.status || null,
+      filterValue: payload?.filter?.status || 'opened',
       user: getUserData(),
     }
   },
@@ -156,12 +160,14 @@ export default {
   },
   watch: {
     filterValue: {
-      handler() {
-        this.allFilter()
+      handler(newvalue) {
+        this.allFilter({ status: newvalue })
       },
     },
   },
   mounted() {
+    console.log("this is the data",this.filterValue)
+    this.allFilter({ status: this.filterValue })
   },
   beforeDestroy() {
     this.$store.commit('table/setTableData', {
@@ -188,16 +194,18 @@ export default {
       return count
     },
     allFilter(value) {
+      console.log("this is the all filter")
       // const _payload = { ...this.$refs.filter.getFinalData(), status: this.filterValue }
-      const _payload = { ...value}
+      let _payload = { ...value }
+      if (!_payload.hasOwnProperty('status')) {
+        _payload = { ..._payload, status: this.filterValue }
+      }
       const payload = {}
       Object.keys(_payload).forEach(key => {
         if (_payload[key] && _payload[key] !== -1) {
           payload[key] = _payload[key]
         }
       })
-
-      console.log("this i sht payload",currentFilterData)
       this.$refs.dataTable.getData(payload)
       this.currentFilterData = payload
     },
