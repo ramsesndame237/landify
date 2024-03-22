@@ -23,6 +23,36 @@
                 @click="$emit('filter')">
         <feather-icon icon="FilterIcon" :badge="filterBadge"/>
       </b-button>
+
+      <b-dropdown v-if="importFunctionnality.includes(entity) && showInput" size="sm" variant="default"
+                  toggle-class="text-decoration-none" no-caret >
+        <template #button-content>
+          <b-button variant="success">
+            Ex./Import:{{ chooseTheImportExportItem }}
+          </b-button>
+        </template>
+
+        <template v-if="chooseTheImportExportItem !== ''">
+          <b-dropdown-item @click="onExportData(chooseTheImportExportItem)">
+            <FeatherIcon icon="ArrowUpIcon"/>
+            {{ $t('translate~key~export') }} {{ chooseTheImportExportItem }}
+          </b-dropdown-item>
+          <b-dropdown-item @click="()=>$router.push({name:'importView',params:{name:chooseTheImportExportItem}})">
+            <FeatherIcon icon="ArrowDownIcon"/>
+            {{ $t('translate~key~import') }} {{ chooseTheImportExportItem }}
+          </b-dropdown-item>
+        </template>
+      </b-dropdown>
+      <b-dropdown v-if="importFunctionnality.includes(entity) && showInput" size="sm" variant="default" toggle-class="text-decoration" no-caret style="margin-left: -45px!important;">
+        <template #button-content>
+          <b-button variant="success">
+            <FeatherIcon icon="ChevronDownIcon"/>
+          </b-button>
+        </template>
+        <b-dropdown-item v-for="(item,index) in arrayItem" :key="index" @click="()=>handleChooseItem(item)">
+          {{ item.entity }}
+        </b-dropdown-item>
+      </b-dropdown>
       <b-button v-if="onNewElement!=null && canCreate" size="sm" variant="info" class="mr-1" @click="onNewElement">
         <feather-icon icon="PlusCircleIcon" class="mr-50"/>
         <span>{{ $t('button~new') }}</span>
@@ -37,7 +67,8 @@
         <!--        <feather-icon icon="Trash2Icon" class="mr-50"/>-->
         <span>{{ action.text }}</span>
       </b-button>
-      <b-form-input id="filterInput" v-if="!showInput" v-model="internalSearch" debounce="500" type="search" class="w-auto"
+      <b-form-input v-if="!!showInput" id="filterInput" v-model="internalSearch" debounce="500" type="search"
+                    class="w-auto"
                     placeholder="Search.."/>
     </div>
 
@@ -46,11 +77,11 @@
 
 <script>
 import {
-  BButton,
-  BFormGroup,
-  BFormInput,
-  BFormSelect,
-  BPagination,
+BButton,
+BFormGroup,
+BFormInput,
+BFormSelect,
+BPagination,
 } from 'bootstrap-vue'
 
 export default {
@@ -62,14 +93,16 @@ export default {
     BPagination,
     BButton,
   },
+
   props: {
     onNewElement: Function,
     onDeleteElements: Function,
+    onExportData: Function,
     withFilter: Boolean,
     pageOptions: {
       type: Array,
       default() {
-        return [10, 30, 100, { text: 'All', value: 100000 }]
+        return [10, 30, 100, {text: 'All', value: 100000}]
       },
     },
     perPage: Number,
@@ -78,7 +111,9 @@ export default {
     totalRows: Number,
     entity: String,
     showInput: Boolean,
+    showForChildreen: Boolean,
     actions: Array,
+    importExportArrayItem: Array,
     filterBadge: Number,
     definition: {
       type: Object,
@@ -87,7 +122,12 @@ export default {
     inlineFilter: Boolean, // Indique s'il s'agit d'un filtre en ligne, afin de masquer l'icône de filtre
   },
   data() {
-    return { internalSearch: this.search }
+    return {
+      internalSearch: this.search,
+      chooseTheImportExportItem: this.entity,
+      arrayItem: [],
+      importFunctionnality: ['partnercompany', 'contactperson', 'company', 'location', 'pos', 'area'],
+    }
   },
   computed: {
     canDelete() {
@@ -108,6 +148,17 @@ export default {
       this.$emit('update:currentPage', this.currentPage)
     },
   },
+
+  methods: {
+    handleChooseItem(value) {
+      this.chooseTheImportExportItem = value.entity
+    }
+  },
+  mounted() {
+    this.arrayItem.push(...this.importExportArrayItem)
+    this.arrayItem.unshift(({entity: this.entity, primaryKey: this.entity}))
+  },
+
 }
 </script>
 

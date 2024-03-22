@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <b-table ref="table" sticky-header striped hover responsive :busy.sync="loading" :per-page="perPage"
+    <b-table ref="table" sticky-header striped hover responsive :busy.sync="isLoadingData" :per-page="perPage"
              :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
              :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" show-empty @row-clicked="onRowClicked"
              :tbody-tr-class="rowClass">
@@ -97,9 +97,8 @@
 </template>
 
 <script>
-import { BButton, BFormCheckbox, BTable } from 'bootstrap-vue'
 import { formatDate, getDocumentLink } from '@/libs/utils'
-import flatten from 'lodash/flatten'
+import { BButton, BFormCheckbox, BTable } from 'bootstrap-vue'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -310,6 +309,7 @@ export default {
       } else this.$router.push(routeData)
     },
     provider(ctx) {
+      this.isLoadingData = true
       if (!this.canList) {
         this.$errorToast('error~permission~error')
         return []
@@ -357,6 +357,7 @@ export default {
           keyword: filter,
           page: currentPage,
           size: payload.per_page,
+          per_page: perPage === 0 ? 25 : perPage,
           order_filed: sortBy,
           order: sortDesc ? 'desc' : 'asc',
         }
@@ -384,10 +385,12 @@ export default {
             } else {
               throw new Error('invalid data')
             }
+            this.isLoadingData = false
             return items
           })
           .catch(e => {
             console.log(e)
+            this.isLoadingData = false
             const title = e.response?.data.detail
             this.$errorToast(title)
             return null

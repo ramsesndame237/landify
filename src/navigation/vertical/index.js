@@ -180,6 +180,7 @@ export default [
       item('criteriatype'),
       item('maturitytype'),
       item('recurringpaymenttype'),
+      item('sachkonto'),
 
     ],
   },

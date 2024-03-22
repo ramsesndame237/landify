@@ -103,7 +103,6 @@ export default {
       }
     }
 
-    console.log('initial payload', payload)
     return {
       cols: [
         {
@@ -193,6 +192,7 @@ export default {
     },
   },
   mounted() {
+    this.allFilter(this.filterValue)
   },
   beforeDestroy() {
     this.$store.commit('table/setTableData', {

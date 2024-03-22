@@ -1,10 +1,7 @@
-import _ from "lodash";
-
 export default {
-  entityEndpoint: '/locations',
-  // newEndpointCreate: '/locations',
-  // newEndpointUpdate: '/locations',
+  entity: 'frontend_3_3_1',
   primaryKey: 'location_id',
+  fieldComponent: () => import('@/views/app/FormComponent/LocationForm.vue'),
   fields: [
     { key: 'location_id', auto: true },
     { key: 'location_name' },
@@ -12,17 +9,27 @@ export default {
       key: 'location_objectdescription', type: 'textarea', hideOnIndex: true, required: false,
     },
     {
-      key: 'location_total_area', type: 'number', hideOnIndex: true, required: false,
+      key: 'area_id',
+      entityKey: 'area_ids',
+      list: 'area',
+      type: 'list',
+      entity: 'location_area_rel',
+      listLabel: 'area_name',
+      multiple: true,
     },
     {
       key: 'location_start_date', type: 'date', hideOnIndex: true, required: false,
     },
-    { key: 'owner_name', hideOnForm: true, hideOnIndex: true },
-    { key: 'manager_name', hideOnForm: true, hideOnIndex: true },
+    {
+      key: 'company_id',
+      entityKey: 'owner_id',
+      type: 'list',
+      list: 'company',
+      listLabel: 'company_name',
+      tableKey: 'company_id',
+      required: false,
+    },
     { key: 'locationtype_name', hideOnForm: true },
-    { key: 'city_name' },
-    { key: 'country_name' },
-    { key: 'area_count', hideOnForm: true },
     {
       key: 'locationtype_id',
       type: 'list',
@@ -32,32 +39,47 @@ export default {
       hideOnIndex: true,
     },
     {
-      key: 'address_id',
-      type: 'list',
-      list: 'address',
-      listLabel: 'address_street',
-      hideOnIndex: true,
-      withNew: true,
-      alwaysNew: true,
+      key: 'country_id', hideOnIndex: true, type: 'list', list: 'country', listLabel: 'country_name',
+    },
+    { key: 'address_name' },
+    { key: 'address_street' },
+    { key: 'address_house_number' },
+    { key: 'address_extra', rules: { required: false } },
+    { key: 'city_name', sortable: true },
+    { key: 'city_zip', sortable: true },
+    {
+      key: 'city_state',
+      sortable: true,
+      required: false,
+      change: (entity, vm) => {
+        let cityState
+        if (entity.address_city_zip_code) {
+          const accessToken = localStorage.getItem('accessToken').split(" ")[1]
+          const debounced = _.debounce(
+            () => vm.$http
+              .get(`/users/state/${entity.address_city_zip_code}?Authorization=${accessToken}`)
+              .then(async resp => {
+                if (resp.data?.state) cityState = resp.data.state
+              }),
+            1600,
+          )
+
+          debounced()
+        }
+        return cityState
+      },
     },
   ],
-  filter_vertical: true,
-  filters: [
-    {
-      key: 'customergroup_id',
-      type: 'list',
-      list: 'customergroup',
-      listLabel: 'customergroup_name',
-    },
-    {
-      key: 'company_id',
-      type: 'list',
-      list: 'company',
-      listLabel: 'company_name',
-      relationEntity: 'company_pos_rel',
-      filter_key: 'customergroup_id',
-    },
-  ],
+  async submit(vm, _, create) {
+    try {
+      const method = create ? 'post' : 'put'
+      console.log({vm})
+      await vm.$http[method]('/locations', vm.$refs.fieldComponent.entity)
+      vm.$successToast(vm.$t('location~saved~successfully'))
+    } catch (e) {
+      throw new Error(typeof e?.response?.data?.detail === 'string' ? e.response.data.detail : vm.$t('unexpected~error~ocurred'))
+    }
+  },
   relations: [
     {
       title: 'Areas',
@@ -148,24 +170,5 @@ export default {
       ],
     },
   ],
-  // isUpdate: window.$vue.$route.query.edit === 'true',
   note: 'frontend_0_8_5',
-  submit: async (vm, entity, create) => {
-    const fieldsComponents = vm.getFieldComponents()
-    const addressField = fieldsComponents.find(f => f.field.key === 'address_id')?.subEntity
-    console.log('addressField: ', addressField)
-    console.log('vm: ', vm)
-    const attributes = []
-    console.log('entity: ', entity)
-    if (create) {
-      await vm.$http.post('/locations', {
-        ...entity,
-        ...addressField,
-      })
-    } else {
-      return vm.$http.put('/locations', { ...entity, ...addressField, address_id: '' })
-    }
-  },
-  validate: () => alert('validate'),
 }
-

@@ -1,4 +1,5 @@
 import Tables from '@/table'
+import moment from 'moment/moment'
 
 export default {
   data() {
@@ -10,10 +11,10 @@ export default {
       tabIndex: parseInt(this.$route.query.tab || 0),
     }
   },
-  watch:{
-    tabIndex(newValue){
-      console.log("this is the value", newValue)
-    }
+  watch: {
+    tabIndex(newValue) {
+      console.log('this is the value', newValue)
+    },
   },
   computed: {
     title() {
@@ -31,7 +32,7 @@ export default {
     },
     entityId() {
       // convert to string to fix bug on relation tables
-      return this.$route.params.id + ''
+      return `${this.$route.params.id}`
     },
     primaryKey() {
       return this.definition.primaryKey ?? this.definition.fields.find(f => f.auto).key
@@ -47,6 +48,36 @@ export default {
     },
     edit() {
       this.view = false
+      const url = new URL(window.location.href)
+      url.searchParams.set('edit', 'true')
+      window.history.pushState({ path: url.href }, '', url.href)
+    },
+    async fetchExportData(name, parent) {
+      console.log("this is the parent", parent)
+      try {
+        const filename = `${name}-Export_${moment().format('DD_MM_YYYY')}.xlsx`
+        const masterData = (await this.$http.get(`synchronizations/${name}/export?${parent.name}=${parent.value}`, {
+          responseType: 'blob',
+        })).data
+        console.log('masterData: ', masterData)
+        const link = document.createElement('a')
+        link.setAttribute('href', URL.createObjectURL(masterData))
+        link.setAttribute('download', filename)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      } catch (err) {
+        if (err.code === 'ERR_BAD_REQUEST') {
+          let error = (await err.response).data
+          error = JSON.parse(await error.text())
+
+          this.$errorToast(error.detail || 'Unknown error')
+        } else {
+          this.$errorToast('Unknown error')
+        }
+      } finally {
+        this.loadingDonwload = false
+      }
     },
     update() {
       this.loading = true

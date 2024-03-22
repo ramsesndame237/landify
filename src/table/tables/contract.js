@@ -472,6 +472,7 @@ export default {
                 documenttype_id: entity.documenttype_id,
                 subdocumenttype_id: entity.subdocumenttype_id,
                 document_name: entity.document_name,
+                documentcontracttype_id: entity.documentcontracttype_id,
               },
             })
             vm.$successToast(vm.$t('success~document~saved'))

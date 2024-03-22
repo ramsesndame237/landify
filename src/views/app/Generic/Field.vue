@@ -201,19 +201,19 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
 import Editor from '@tinymce/tinymce-vue'
 import {
-  BButton,
-  BCol,
-  BFormCheckbox,
-  BFormFile,
-  BFormGroup,
-  BFormInput,
-  BFormSelect,
-  BFormTextarea,
-  BImg,
-  BInputGroupAppend,
-  BInputGroupPrepend,
-  BRow,
-  BSpinner,
+BButton,
+BCol,
+BFormCheckbox,
+BFormFile,
+BFormGroup,
+BFormInput,
+BFormSelect,
+BFormTextarea,
+BImg,
+BInputGroupAppend,
+BInputGroupPrepend,
+BRow,
+BSpinner,
 } from 'bootstrap-vue'
 import Fuse from 'fuse.js'
 import { createPicker } from 'picmo'
@@ -386,7 +386,6 @@ export default {
       if (!this.field.ids || this.field.ids.length === 0 || this.showAll) {
         const val = (this.filterValue || this.entity[this.field.filter_key])
         if (this.field.filter_key && val != null) {
-          console.log('filter with value', val)
           return new_list.filter(e => {
             if (Array.isArray(val)) {
               return val.includes(e[this.field.filter_key])
@@ -645,6 +644,9 @@ export default {
           this.$set(this.entity, 'team_id', FM_KUNDE_TEAM_ID)
         }
       }
+
+      // eslint-disable-next-line no-unused-expressions
+      this.field?.onInit?.(this)
     },
     SelectedButtonOptions(value, keyValue) {
       console.log('this is the value', value, keyValue)

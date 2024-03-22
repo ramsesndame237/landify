@@ -1,12 +1,12 @@
 <script>
 import KanbanViewDisplay from '@/components/KanbanDisplayView.vue'
-import GenericFilter from '@/views/app/Generic/Filter.vue'
-import TicketMixin from '@/views/app/Kanban/TicketMixin'
 import Table from '@/table'
+import NoData from '@/views/app/CustomComponents/NoData/NoData.vue'
 import InvoiceTicketCard from '@/views/app/CustomComponents/WP6/InvoiceTicketCard.vue'
+import GenericFilter from '@/views/app/Generic/Filter.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
-import NoData from '@/views/app/CustomComponents/NoData/NoData.vue'
+import TicketMixin from '@/views/app/Kanban/TicketMixin'
 import moment from 'moment-business-time'
 
 export default {
@@ -60,12 +60,15 @@ export default {
       showSubTickets: true,
       loading: true,
       initialFetch: false,
-      size: 3,
+      size: 10,
       previousScrollValue: 0,
       pages: [],
     }
   },
   computed: {
+    canOpenTicket() {
+      return this.$isAbleTo('read', this.definition.permissions)
+    },
     board_name() {
       return this.$route.params.name
     },
@@ -103,22 +106,22 @@ export default {
       if (event.type === 'dragend') {
         if (this.dropColumn) {
           console.log('this is the column dropColumn', this.dropColumn)
-          const result = await this.$swal({
-            title: 'Are you sure?',
-            text: `This ticket ${ticket.ticket_name} will be moved to the column: ${this.dropColumn.column_name}`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes',
-            customClass: {
-              confirmButton: 'btn btn-primary',
-              cancelButton: 'btn btn-outline-danger ml-1',
-            },
-            buttonsStyling: false,
-          })
+          // const result = await this.$swal({
+          //   title: 'Are you sure?',
+          //   text: `This ticket ${ticket.ticket_name} will be moved to the column: ${this.dropColumn.column_name}`,
+          //   icon: 'warning',
+          //   showCancelButton: true,
+          //   confirmButtonText: 'Yes',
+          //   customClass: {
+          //     confirmButton: 'btn btn-primary',
+          //     cancelButton: 'btn btn-outline-danger ml-1',
+          //   },
+          //   buttonsStyling: false,
+          // })
           if (event.target.classList.contains('card_draggable')) {
             event.target.classList.remove('card_draggable')
           }
-          if (!result.value) return false
+          // if (!result.value) return false
           this.loading = true
           try {
             await this.changeTicketColumn(event, column.column_id, this.dropColumn.column_id, '', ticket)
@@ -144,9 +147,8 @@ export default {
         ticket_id: ticket.ticket_id,
       }
       this.$http.post('/tickets/change-ticket-column', payload).then(response => {
-        console.log('this is the response of the changecolumn', response)
         this.columnData.find(elet => elet.column_id === previous_column_id).tickets = this.columnData.find(elet => elet.column_id === previous_column_id).tickets.filter(elt => elt.ticket_id !== ticket.ticket_id)
-        this.columnData.find(elet => elet.column_id === next_column_id).tickets.push({
+        this.columnData.find(elet => elet.column_id === next_column_id).tickets.unshift({
           ...ticket,
           column_id: next_column_id,
           column_name: next_column_name,
@@ -262,9 +264,9 @@ export default {
       })
     },
     fetchColumnOfTheBoard() {
-      this.$http.get(`${this.boardColumnUrl}?board_id=${this.$route.params.id}`).then(response => {
+      this.$http.get(`${this.boardColumnUrl}?board_id=${this.$route.params.id}&order_filed=rank_order`).then(response => {
         console.log('this is the data', response.data.data)
-        this.columnData = response.data.data.map(items => ({...items, tickets: []}))
+        this.columnData = response.data.data.sort((a, b) => a.rank_order - b.rank_order).map(items => ({...items, tickets: []}))
         this.initialFetch = true
       }).catch(error => {
         console.error(error)
@@ -304,44 +306,46 @@ export default {
         </div>
       </div>
     </b-card>
-    <div class="h-100">
-      <KanbanViewDisplay ref="KanbanContainer" classes="d-flex kanbanContainer position-relative"
-                         :styles="'border:solid green'">
+    <div class="h-100 position-relative">
+      <KanbanViewDisplay ref="KanbanContainer" classes="d-flex kanbanContainer position-relative">
         <div class="w-100" v-if="columnData.length === 0">
           <NoData/>
         </div>
         <b-card v-for="item in columnData" :key="item.column_id" class="columnBoardElement"
-                @scrollend.passive="(e)=>handleScroll(e,item)"
                 @drop.prevent="(event)=> handleDrop(event,item.column_id,item.column_name)"
-                @dragover.prevent="(event) =>handleDragOver(event)" body-class="position-relative">
-          <template #header>
-            <div class="border-bottom-2 border-bottom-primary  w-100">
-              <h5>
-                {{ item.column_name }}
-              </h5>
+                @dragover.prevent="(event) =>handleDragOver(event)" body-class="position-relative" :header="item.column_name"
+                 header-text-variant="black" >
+<!--          <template #header>-->
+<!--            <div class="border-bottom-2 border-bottom-primary  w-100">-->
+<!--              <h5>-->
+<!--                {{ i }}-->
+<!--              </h5>-->
+<!--            </div>-->
+<!--          </template>-->
+          <div class="card-body-container"  @scrollend.passive="(e)=>handleScroll(e,item)">
+            <div v-for="ticket in item.tickets" :id="ticket.ticket_id" :key="ticket.ticket_id" draggable="true"
+                 style="height: auto;margin-top: 15px;z-index: 0;position: relative"
+                 :class="{ notClickable: !canOpenTicket, 'cursor-pointer': canOpenTicket }"
+                 @dragend="(event)=> handleDrag(event,item,ticket)"
+                 @dragstart="(event)=> handleDrag(event)">
+              <invoice-ticket-card v-if="ticket.ticket_id_group === null || showSubTickets" class="bg-white"
+                                   :advanced="advanced"
+                                   :ticket="{...ticket, column_id:item.column_id,column_is_qualitygate:item.column_is_qualitygate}"
+                                   :team-users="teams.filter(team => team.team_id === ticket.team_id)"
+                                   @moredetails="!canOpenTicket ? undefined : $router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
+                                   @assign="!canOpenTicket ? undefined : $refs.assign.openModal(ticket, userIdsOfTeam(ticket.team_id))"
+                                   @subticket-updated="!canOpenTicket ? undefined : fetchTicketOfTheColumn(item.column_id,true)"/>
             </div>
-          </template>
-          <div v-for="ticket in item.tickets" :id="ticket.ticket_id" :key="ticket.ticket_id" draggable="true"
-               class="cursor-pointer" style="height: auto;margin-top: 15px;"
-               @dragend="(event)=> handleDrag(event,item,ticket)"
-               @dragstart="(event)=> handleDrag(event)">
-            <invoice-ticket-card v-if="ticket.ticket_id_group === null || showSubTickets" class="bg-white"
-                                 :advanced="advanced"
-                                 :ticket="{...ticket, column_id:item.column_id,column_is_qualitygate:item.column_is_qualitygate}"
-                                 :team-users="teams.filter(team => team.team_id === ticket.team_id)"
-                                 @moredetails="$router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
-                                 @assign="$refs.assign.openModal(ticket, userIdsOfTeam(ticket.team_id))"
-                                 @subticket-updated="fetchTicketOfTheColumn(item.column_id,true)"/>
+            <div class="flex align-items-center justify-content-center w-100  text-center mt-2 position-absolute"
+                 style="top:-35px">
+              <b-spinner v-if="loadingTicket.includes(item.column_id)" variant="primary"
+                         style="width: 3rem; height: 3rem;"/>
+            </div>
           </div>
-          <div class="flex align-items-center justify-content-center w-100  text-center mt-2 position-absolute"
-               style="top:-35px">
-            <b-spinner v-if="loadingTicket.includes(item.column_id)" variant="primary"
-                       style="width: 3rem; height: 3rem;"/>
-          </div>
-          <b-button v-if="item.tickets.length <= 3" block variant="primary" class="mt-2"
-                    @click="fetchTicketOfTheColumn(item.column_id,false)">
-            Load More Ticket
-          </b-button>
+<!--          <b-button v-if="item.tickets.length <= 3 && !loading" block variant="primary" class="mt-2"-->
+<!--                    @click="fetchTicketOfTheColumn(item.column_id,false)">-->
+<!--            Load More Ticket-->
+<!--          </b-button>-->
         </b-card>
         <generic-modal ref="modal" :table="table" :definition="definition" :table-definition-key="table"
                        :title="$t('headline~ticket~newticket')"
@@ -353,26 +357,47 @@ export default {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .kanbanContainer {
   overflow-x: auto;
   gap: 15px;
   height: 80vh;
   user-select: none;
+  background: transparent;
 }
 
 .columnBoardElement {
-  background: #ecebeb;
+  background: #E9E9E9;
+  position: relative;
   min-width: 450px;
+  max-width: 460px;
   max-height: 100vh;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  border-radius: 15px;
   margin-bottom: 15px;
   padding: 10px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  .card-header{
+    z-index: 10;
+    height: 40px;
+    background: #E9E9E9;
+  }
+  .card-body-container{
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+  }
 
 }
 
+
 .card_draggable {
   border: dashed;
+}
+
+.notClickable {
+  pointer-events: none;
 }
 </style>

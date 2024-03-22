@@ -23,6 +23,7 @@ import partnergroup from './tables/partnergroup'
 import pos from './tables/pos'
 import recurringpayment from './tables/recurringpayment'
 import role from './tables/role'
+import sachkonto from './tables/sachkonto'
 import serviceobject from './tables/serviceobject'
 import ticket from './tables/ticket'
 import user from './tables/user'
@@ -270,7 +271,7 @@ export default {
   },
 
   criteria,
-
+  sachkonto,
   indexclause,
 
   recurringpayment,
