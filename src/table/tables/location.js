@@ -8,15 +8,7 @@ export default {
     {
       key: 'location_objectdescription', type: 'textarea', hideOnIndex: true, required: false,
     },
-    {
-      key: 'area_id',
-      entityKey: 'area_ids',
-      list: 'area',
-      type: 'list',
-      entity: 'location_area_rel',
-      listLabel: 'area_name',
-      multiple: true,
-    },
+    { key: 'location_total_area', type: 'number' },
     {
       key: 'location_start_date', type: 'date', hideOnIndex: true, required: false,
     },
