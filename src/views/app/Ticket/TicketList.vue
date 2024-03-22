@@ -12,7 +12,7 @@
         <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions" class="mr-2"/>
       </table-pagination> -->
     <generic-filter ref="filter" vertical :table="table" :definition="definition" :initial-data="initialFilterData"
-                    @filter="allFilter" @reset="reset"/>
+                    :remove-status="true" @filter="allFilter" @reset="reset"/>
     <!-- </b-card> -->
 
     <!-- <b-card>
@@ -87,7 +87,7 @@ export default {
           ticket_deadline_status: data.ticket_deadline_status,
           team_id: data.team_id,
           user_id: data.user_id,
-          status:'opened',
+          status: 'opened',
           tickets: data.tickets,
           company_id: data.company_id,
           customergroup_id: data.customergroup_id,
@@ -189,7 +189,7 @@ export default {
     },
   },
   mounted() {
-    this.allFilter(this.filterValue)
+    this.allFilter({ status: this.filterValue })
   },
   beforeDestroy() {
     this.$store.commit('table/setTableData', {
@@ -216,13 +216,17 @@ export default {
       return count
     },
     allFilter(value) {
-      const _payload ={ ...value}
+      let _payload = { ...value }
+      if (!_payload.hasOwnProperty('status')) {
+        _payload = { ..._payload, status: this.filterValue }
+      }
       const payload = {}
       Object.keys(_payload).forEach(key => {
         if (_payload[key] && _payload[key] !== -1) {
           payload[key] = _payload[key]
         }
       })
+      console.log('this is the payload', payload)
       this.$refs.dataTable.getData(payload)
       this.currentFilterData = payload
     },
