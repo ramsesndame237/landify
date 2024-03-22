@@ -1,5 +1,5 @@
 import Tables from '@/table'
-import moment from "moment/moment";
+import moment from 'moment/moment'
 
 export default {
   data() {
@@ -11,10 +11,10 @@ export default {
       tabIndex: parseInt(this.$route.query.tab || 0),
     }
   },
-  watch:{
-    tabIndex(newValue){
-      console.log("this is the value", newValue)
-    }
+  watch: {
+    tabIndex(newValue) {
+      console.log('this is the value', newValue)
+    },
   },
   computed: {
     title() {
@@ -32,7 +32,7 @@ export default {
     },
     entityId() {
       // convert to string to fix bug on relation tables
-      return this.$route.params.id + ''
+      return `${this.$route.params.id}`
     },
     primaryKey() {
       return this.definition.primaryKey ?? this.definition.fields.find(f => f.auto).key
@@ -52,17 +52,11 @@ export default {
       url.searchParams.set('edit', 'true')
       window.history.pushState({ path: url.href }, '', url.href)
     },
-    async fetchExportData(name) {
-      // const valid = await this.$refs.form.validate()
-      // if (!valid) return
-      // this.loadingDonwload = true
-      // const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
-      // filter.size = 100000
-      // // generate the request query string
-      // const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
+    async fetchExportData(name, parent) {
+      console.log("this is the parent", parent)
       try {
         const filename = `${name}-Export_${moment().format('DD_MM_YYYY')}.xlsx`
-        const masterData = (await this.$http.get(`synchronizations/${name}/export`, {
+        const masterData = (await this.$http.get(`synchronizations/${name}/export?${parent.name}=${parent.value}`, {
           responseType: 'blob',
         })).data
         console.log('masterData: ', masterData)

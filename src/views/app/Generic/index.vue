@@ -9,6 +9,7 @@
                         :on-new-element="definition.create ===false ? null : onNewElement" :total-rows.sync="totalRows"
                         :with-filter="definition.filters && definition.filters.length > 0"
                         :show-input="true"
+                        :import-export-array-item="definition.relations.filter(x => importExportElementArray.includes(x.entity)).map(item =>({entity:item.entity,primaryKey:item.primaryKey}))"
                         :inline-filter="!definition.inline_filter"
                         :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
                         :actions="definition.actions" :filter-badge="getFilterCount()"
@@ -81,6 +82,7 @@ export default {
     }
     return {
       search: payload?.search || '',
+      importExportElementArray:['bankdata','kreditornumber','tax_rates'],
       perPage: payload?.perPage || defaultPage || 20,
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
@@ -147,7 +149,7 @@ export default {
       // const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
         const filename = `${name}-Export_${moment().format('DD_MM_YYYY')}.xlsx`
-        const masterData = (await this.$http.get(`synchronizations/${name}/export`, {
+        const masterData = (await this.$http.get(`synchronizations/${name === 'tax_rates' ? 'tax-rate' : name}/export`, {
           responseType: 'blob',
         })).data
         console.log('masterData: ', masterData)

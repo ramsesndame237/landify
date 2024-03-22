@@ -304,15 +304,14 @@ export default {
       </div>
     </b-card>
     <div class="h-100 position-relative">
-      <KanbanViewDisplay ref="KanbanContainer" classes="d-flex kanbanContainer position-relative"
-                         :styles="'border:solid green'">
+      <KanbanViewDisplay ref="KanbanContainer" classes="d-flex kanbanContainer position-relative">
         <div class="w-100" v-if="columnData.length === 0">
           <NoData/>
         </div>
         <b-card v-for="item in columnData" :key="item.column_id" class="columnBoardElement"
                 @drop.prevent="(event)=> handleDrop(event,item.column_id,item.column_name)"
                 @dragover.prevent="(event) =>handleDragOver(event)" body-class="position-relative" :header="item.column_name"
-                header-bg-variant="secondary" header-text-variant="white" >
+                 header-text-variant="black" >
 <!--          <template #header>-->
 <!--            <div class="border-bottom-2 border-bottom-primary  w-100">-->
 <!--              <h5>-->
@@ -360,14 +359,17 @@ export default {
   gap: 15px;
   height: 80vh;
   user-select: none;
+  background: transparent;
 }
 
 .columnBoardElement {
-  background: #ecebeb;
+  background: #E9E9E9;
   position: relative;
   min-width: 450px;
   max-width: 460px;
   max-height: 100vh;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  border-radius: 15px;
   margin-bottom: 15px;
   padding: 10px;
   display: flex;
@@ -375,6 +377,8 @@ export default {
   overflow: hidden;
   .card-header{
     z-index: 10;
+    height: 40px;
+    background: #E9E9E9;
   }
   .card-body-container{
     overflow-y: auto;
