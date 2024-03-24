@@ -1,3 +1,4 @@
+import { USER_ROLES } from '@/config/config-access/config-roles'
 import Vue from 'vue'
 
 export const getUserData = () => JSON.parse(localStorage.getItem('userData'))
@@ -135,10 +136,16 @@ const useUserAccess = () => {
   const isUserExternClientDirector = () => isUserExternClient() && isUserDirector()
 
   /**
+   * Returns `true` if the user is `lead` and `false` otherwhise
+   * @return {boolean}
+   */
+  const isUserLead = () => userData?.roles?.[0]?.role_code === USER_ROLES.lead
+
+  /**
    * Test if Extern client user is director
    * @return boolean
    */
-  const isUserExternClientNotDirector = () => isUserExternClient() && !isUserDirector()
+  const isUserExternClientNotDirector = () => (isUserExternClient() && !isUserDirector()) || isUserLead()
 
   /**
    * Test if Extern Partner user is director

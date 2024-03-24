@@ -1,31 +1,32 @@
 import { getDocumentLink } from '@/libs/utils'
 
+import { ACCESS } from '@/config/config-access'
 import team from '@/table/tables/team'
-import user from './tables/user'
-import role from './tables/role'
-import customergroup from './tables/customergroup'
+import address from './tables/address'
+import area from './tables/area'
+import board from './tables/board'
+import city from './tables/city'
 import company from './tables/company'
 import contactperson from './tables/contactperson'
-import partnercompany from './tables/partnercompany'
-import partnergroup from './tables/partnergroup'
-import address from './tables/address'
-import city from './tables/city'
-import pos from './tables/pos'
-import area from './tables/area'
-import indexclause from './tables/indexclause'
-import location from './tables/location'
 import contract from './tables/contract'
-import serviceobject from './tables/serviceobject'
+import contradiction from './tables/contradiction'
+import contradictionpackage from './tables/contradictionpackage'
 import criteria from './tables/criteria'
-import sachkonto from './tables/sachkonto'
-import recurringpayment from './tables/recurringpayment'
+import customergroup from './tables/customergroup'
+import indexclause from './tables/indexclause'
+import inspectionresult from './tables/inspectionresult'
 import invoice from './tables/invoice'
 import invoiceposition from './tables/invoiceposition'
+import location from './tables/location'
+import partnercompany from './tables/partnercompany'
+import partnergroup from './tables/partnergroup'
+import pos from './tables/pos'
+import recurringpayment from './tables/recurringpayment'
+import role from './tables/role'
+import sachkonto from './tables/sachkonto'
+import serviceobject from './tables/serviceobject'
 import ticket from './tables/ticket'
-import contradiction from './tables/contradiction'
-import inspectionresult from './tables/inspectionresult'
-import contradictionpackage from './tables/contradictionpackage'
-import board from './tables/board'
+import user from './tables/user'
 
 export default {
   // region Work Package 1
@@ -107,6 +108,7 @@ export default {
   payment: {
     entity: 'frontend_2_4_1',
     filter_vertical: true,
+    permissions: ACCESS.tableAccess.payment_info.main,
     filters: [
       {
         key: 'customergroup_id',
@@ -276,6 +278,7 @@ export default {
 
   tag: {
     entity: 'frontend_3_10_1',
+    permissions: ACCESS.tableAccess.tag.main,
     fields: [
       { key: 'tag_id', auto: true },
       { key: 'tag_name' },
@@ -289,6 +292,7 @@ export default {
         entityForm: 'pos_tag_rel',
         entityView: 'pos',
         primaryKey: 'pos_id',
+        permissions: ACCESS.tableAccess.tag.relations.pos,
         fields: [
           {
             key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name', disableOnUpdate: true,

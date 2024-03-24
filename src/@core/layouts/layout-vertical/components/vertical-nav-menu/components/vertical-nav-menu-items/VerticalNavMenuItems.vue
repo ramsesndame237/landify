@@ -1,8 +1,9 @@
 <template>
   <ul>
     <component
-      :is="resolveNavItemComponent(item)"
       v-for="item in items"
+      :is="resolveNavItemComponent(item)"
+      v-if="$isAbleTo('list', item.permissions)"
       :key="item.header || item.title"
       :item="item"
     />

@@ -17,13 +17,13 @@
               </div>
 
               <div class="d-flex align-items-center">
-                <notes v-if="definition.note" :id="entityId" :note-to-everyone="noteToEveryOne"
+                <notes v-if="definition.note && canNote" :id="entityId" :note-to-everyone="noteToEveryOne"
                        :note-to-internal="noteToInternal" class="mr-2" :primary-key="primaryKey" :note="definition.note"
                        :note-rel="'note_user_'+table+'_rel'"/>
                 <b-button v-if="showButton.all" variant="primary" @click="createInvoice">
                   {{ $t('button~newinvoice') }}
                 </b-button>
-                <b-button v-if="!entity.ticket_closed && (showButton.all || showButton.assign)" variant="primary"
+                <b-button v-if="canAssign()" variant="primary"
                           class="ml-2"
                           @click="$refs.assign.openModal(entity, userIdsOfTeam(entity.columns[0].team_id))">
                   {{ $t('button~assignto') }}
@@ -36,7 +36,7 @@
                           variant="primary" @click="moveToNext">
                   {{ $t('button~movetonextcolumn') }}
                 </b-button>
-                <b-button v-if="canMoveToNext() && (showButton.all || showButton.confirm)" v-b-modal.moveModal
+                <b-button v-if="canMoveToAnotherBoard && canMoveToNext() && (showButton.all || showButton.confirm)" v-b-modal.moveModal
                           class="ml-2"
                           variant="primary">
                   Move to another board
@@ -74,7 +74,7 @@
                   </th>
                   <td class="pb-50">
                     <router-link v-if="entity && entity.board_id"
-                                 :to="{name:'kanbanView',params: {table:'board',id: entity.board_id}}">
+                                 :to="{name:'table-kanban',params: {table:'board',id: entity.board_id}}">
                       {{ entity.board_name }}
                     </router-link>
                   </td>
@@ -224,7 +224,7 @@
             </div>
             <email-modal ref="emailModal" @reload="fetchEmail"/>
           </b-col>
-          <b-col v-if="entity.columns &&activeTabItem && activeTabItem.id ==='2'">
+          <b-col v-if="canViewTimeline && entity.columns &&activeTabItem && activeTabItem.id ==='2'">
             <b-card-actions class="mt-3" :title="$t('headline~ticket~timeline')" action-collapse
                             collapsed>
               <app-timeline>
@@ -267,14 +267,14 @@
                 </b-table-simple>
               </b-overlay>
               <div class="text-right p-1">
-                <b-button v-if="!entity.ticket_closed && showButton.all" variant="primary"
+                <b-button v-if="canAddNewMail && !entity.ticket_closed && showButton.all" variant="primary"
                           @click="$refs.emailModal.show(false)">New Email
                 </b-button>
               </div>
             </b-card-actions>
           </b-col>
           <b-col lg="12">
-            <DocumentsWidgetView v-if="activeTabItem && activeTabItem.id==='4'"
+            <DocumentsWidgetView v-if="canViewDocumentTab && activeTabItem && activeTabItem.id==='4'"
                                  :ticket_id="entity.ticket_id"
                                  :column_has_stamp="entity.column_has_stamp === 1 ? true:false"/>
             <generic-modal ref="documentModal" table="document" :definition="documentDef"
@@ -286,10 +286,10 @@
             <add-document-to-contract ref="documentContractModal"/>
             <add-document-to-pos ref="documentPosModal"/>
           </b-col>
-          <b-col v-if="activeTabItem && activeTabItem.id ==='5' && isTicket" lg="12">
+          <b-col v-if="canViewSubtask && activeTabItem && activeTabItem.id ==='5' && isTicket" lg="12">
             <b-card :title="$t('headline~ticket~subtasks')">
               <b-card-text class="text-right">
-                <b-button v-if="$can('create', table)" variant="primary" @click="createSubTicket">
+                <b-button v-if="canAddSubTask" variant="primary" @click="createSubTicket">
                   {{ $t('headline~ticket~newsubtask') }}
                 </b-button>
               </b-card-text>
@@ -332,29 +332,31 @@
 </template>
 
 <script>
-import { BButton, BCol, BRow } from 'bootstrap-vue'
-import EditPageMixin from '@/views/app/Generic/EditPageMixin'
+import TabComponent from '@/components/TabComponent.vue'
+import { EXTERN_TEAMS_IDS } from '@/config/config-access'
+import { USER_ROLES } from '@/config/config-access/config-roles'
+import { formatDate, getDocumentLink, getStampedDocumentLink } from '@/libs/utils'
 import Table from '@/table'
-import GenericModal from '@/views/app/Generic/modal.vue'
 import SubTicketCard from '@/views/app/CustomComponents/WP6/SubTicketCard.vue'
+import SubticketTable from '@/views/app/CustomComponents/WP6/SubticketTable.vue'
+import EditPageMixin from '@/views/app/Generic/EditPageMixin'
+import Notes from '@/views/app/Generic/Notes.vue'
+import GenericModal from '@/views/app/Generic/modal.vue'
+import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
+import TicketMixin from '@/views/app/Kanban/TicketMixin'
+import AddDocumentToContract from '@/views/app/Ticket/AddDocumentToContract.vue'
+import AddDocumentToPos from '@/views/app/Ticket/AddDocumentToPos.vue'
+import EmailModal from '@/views/app/Ticket/EmailModal.vue'
+import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.js'
+import DocumentsWidgetView from '@/views/app/Ticket/widgets/DocumentsWidgetView.vue'
 import AppTimeline from '@core/components/app-timeline/AppTimeline.vue'
 import AppTimelineItem from '@core/components/app-timeline/AppTimelineItem.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
-import TicketMixin from '@/views/app/Kanban/TicketMixin'
-import { formatDate, getDocumentLink, getStampedDocumentLink } from '@/libs/utils'
-import moment from 'moment'
-import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
-import Notes from '@/views/app/Generic/Notes.vue'
+import { BButton, BCol, BRow } from 'bootstrap-vue'
 import _, { parseInt } from 'lodash'
-import EmailModal from '@/views/app/Ticket/EmailModal.vue'
-import AddDocumentToContract from '@/views/app/Ticket/AddDocumentToContract.vue'
-import AddDocumentToPos from '@/views/app/Ticket/AddDocumentToPos.vue'
-import { mapGetters } from 'vuex'
-import TabComponent from '@/components/TabComponent.vue'
-import DocumentsWidgetView from '@/views/app/Ticket/widgets/DocumentsWidgetView.vue'
-import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin.js'
-import SubticketTable from '@/views/app/CustomComponents/WP6/SubticketTable.vue'
+import moment from 'moment'
 import vSelect from 'vue-select'
+import { mapGetters } from 'vuex'
 
 const ticketDef = {
   ...Table.ticket,
@@ -409,26 +411,77 @@ export default {
   },
 
   computed: {
+    canViewDocumentTab() {
+      return this.$isUserA(
+        USER_ROLES.admin,
+        USER_ROLES.lead,
+        USER_ROLES.expansion_manager,
+        USER_ROLES.ext_team_member.withTeams(
+          EXTERN_TEAMS_IDS.FM,
+          EXTERN_TEAMS_IDS.MVM,
+          EXTERN_TEAMS_IDS.NKA,
+        ),
+      )
+    },
+    canViewSubtask() {
+      return this.$isUserA(
+        USER_ROLES.admin,
+        USER_ROLES.lead,
+        USER_ROLES.expansion_manager,
+        USER_ROLES.ext_team_member.withTeams(
+          EXTERN_TEAMS_IDS.FM,
+          EXTERN_TEAMS_IDS.MVM,
+          EXTERN_TEAMS_IDS.NKA,
+        ),
+      )
+    },
+    canViewTimeline() {
+      return this.$isUserA(
+        USER_ROLES.admin,
+        USER_ROLES.lead,
+        USER_ROLES.expansion_manager,
+        USER_ROLES.ext_team_member.withTeams(
+          EXTERN_TEAMS_IDS.FM,
+          EXTERN_TEAMS_IDS.MVM,
+          EXTERN_TEAMS_IDS.NKA,
+        ),
+      )
+    },
+    canNote() {
+      return this.$isAbleTo('note', this.definition.permissions)
+    },
+    canMoveToAnotherBoard() {
+      return this.$isUserA(USER_ROLES.admin)
+    },
+    canAddSubTask() {
+      return this.$isUserA(USER_ROLES.admin)
+    },
+    canAddNewMail() {
+      return this.$isUserA(USER_ROLES.admin)
+    },
     tabTitle() {
       return [
-        {
+        ...(this.canViewTimeline ?
+        [{
           id: '2',
           title: 'Timeline',
           show: true,
           count: 0,
-        },
-        {
+        }]: []),
+        ...(this.canViewSubtask ?
+        [{
           id: '5',
           title: this.$t('headline~ticket~subtasks'),
           show: this.isTicket,
           count: 0,
-        },
-        {
+        }]: []),
+        ...(this.canViewDocumentTab ?
+        [{
           id: '4',
           title: 'Documents',
           show: true,
           count: 0,
-        },
+        }]: []),
         {
           id: '3',
           title: 'Messages and Emails',
@@ -591,6 +644,14 @@ export default {
       const colIdx = this.columns.findIndex(c => c.column_name === this.entity?.column_name)
       if (colIdx === this.columns.length - 1) return false
       return this.config.accepts(null, { dataset: { status: this.columns[colIdx + 1].column_name } }, { dataset: { status: this.entity?.column_name } })
+    },
+    canAssign() {
+      const colIdx = this.columns.findIndex(c => c.column_name === this.entity?.column_name)
+      const teamId = this.columns?.[colIdx]?.team_id
+      let isInTeam = true
+      if (teamId) isInTeam = this.currentUserInTeam(teamId)
+      if (!isInTeam) return false
+      return !this.entity.ticket_closed && (this.showButton.all || this.showButton.assign)
     },
     async moveToNext() {
       const result = await this.moveToNextColumn(this.entity)

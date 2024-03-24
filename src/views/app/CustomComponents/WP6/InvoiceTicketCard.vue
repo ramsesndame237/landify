@@ -478,7 +478,7 @@
                      :title="$t('headline~ticket~newsubtask')" @reload-table="isDataUpdated = true" />
     </div>
 
-    <FloatingActionButton v-if="itemOver" :key="itemOver.ticket_id" class="position-absolute" :style="{top:topFloatElement,left:leftFloatElement}">
+    <FloatingActionButton v-if="canShowQuickAction && itemOver" :key="itemOver.ticket_id" class="position-absolute" :style="{top:topFloatElement,left:leftFloatElement}">
       <b-row slot="action">
         <b-col>
           <b-button v-b-tooltip.hover :title="$t('button~assignto')" size="sm" class="mr-1" @click.stop="$emit('assign')">
@@ -499,21 +499,22 @@
 </template>
 
 <script>
-import {
-  BAvatarGroup,
-  BAvatar,
-  BButton,
-  BIconCalendarDate,
-} from 'bootstrap-vue'
-import moment from 'moment'
-import { mapGetters } from 'vuex'
-import TicketMixin from '@/views/app/Kanban/TicketMixin'
-import { formatDate, title } from '@core/utils/filter'
 import FloatingActionButton from '@/components/FloatingActionButton.vue'
+import { USER_ROLES } from '@/config/config-access/config-roles'
+import GenericModal from '@/views/app/Generic/modal.vue'
+import TicketMixin from '@/views/app/Kanban/TicketMixin'
 import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin'
 import SubticketTr from '@/views/app/Ticket/Subticket/SubticketTr.vue'
-import GenericModal from '@/views/app/Generic/modal.vue'
+import { formatDate, title } from '@core/utils/filter'
+import {
+    BAvatar,
+    BAvatarGroup,
+    BButton,
+    BIconCalendarDate,
+} from 'bootstrap-vue'
+import moment from 'moment'
 import bussinessMoment from 'moment-business-time'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'InvoiceTicketCard',
@@ -555,6 +556,9 @@ export default {
     }
   },
   computed: {
+    canShowQuickAction() {
+      return this.$isUserA(USER_ROLES.admin)
+    },
     ...mapGetters({
       now: 'app/now',
     }),

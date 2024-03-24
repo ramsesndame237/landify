@@ -1,6 +1,9 @@
+import { ACCESS } from '@/config/config-access'
+
 export default {
   entity: 'frontend_3_5_1',
   entityEndpoint: '/areas/serviceobjects/list',
+  permissions: ACCESS.tableAccess.service_object.main,
   fields: [
     { key: 'serviceobject_id', auto: true },
     { key: 'serviceobject_name' },
@@ -47,6 +50,7 @@ export default {
       entityForm: 'area_serviceobject_rel',
       entityView: 'area',
       primaryKey: 'area_id',
+      permissions: ACCESS.tableAccess.service_object.relations.area,
       fields: [
         {
           key: 'area_id', type: 'list', list: 'area', listLabel: 'area_name',
@@ -65,6 +69,7 @@ export default {
       entityForm: 'location_serviceobject_rel',
       entityView: 'location',
       primaryKey: 'location_id',
+      permissions: ACCESS.tableAccess.service_object.relations.location,
       fields: [
         {
           key: 'location_id', type: 'list', list: 'location', listLabel: 'location_name',
@@ -87,6 +92,7 @@ export default {
       entityForm: 'serviceobject_contract_rel',
       entityView: 'contract',
       primaryKey: 'contract_id',
+      permissions: ACCESS.tableAccess.service_object.relations.contract,
       fields: [
         {
           key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name',

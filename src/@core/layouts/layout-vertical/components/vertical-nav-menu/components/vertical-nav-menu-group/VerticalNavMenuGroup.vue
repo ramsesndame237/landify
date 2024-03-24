@@ -1,6 +1,6 @@
 <template>
   <li
-    v-if="canViewVerticalNavMenuGroup(item)"
+    v-if="$isAbleTo('list', item.permissions)"
     class="nav-item has-sub"
     :class="{
       'open': isOpen,
@@ -31,6 +31,7 @@
       <component
         :is="resolveNavItemComponent(child)"
         v-for="child in item.children"
+        v-if="$isAbleTo('list', child.permissions)"
         :key="child.header || child.title"
         ref="groupChild"
         :item="child"

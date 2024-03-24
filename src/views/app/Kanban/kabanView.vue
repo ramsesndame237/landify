@@ -1,12 +1,12 @@
 <script>
 import KanbanViewDisplay from '@/components/KanbanDisplayView.vue'
-import GenericFilter from '@/views/app/Generic/Filter.vue'
-import TicketMixin from '@/views/app/Kanban/TicketMixin'
 import Table from '@/table'
+import NoData from '@/views/app/CustomComponents/NoData/NoData.vue'
 import InvoiceTicketCard from '@/views/app/CustomComponents/WP6/InvoiceTicketCard.vue'
+import GenericFilter from '@/views/app/Generic/Filter.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
-import NoData from '@/views/app/CustomComponents/NoData/NoData.vue'
+import TicketMixin from '@/views/app/Kanban/TicketMixin'
 import moment from 'moment-business-time'
 
 export default {
@@ -66,6 +66,9 @@ export default {
     }
   },
   computed: {
+    canOpenTicket() {
+      return this.$isAbleTo('read', this.definition.permissions)
+    },
     board_name() {
       return this.$route.params.name
     },
@@ -321,16 +324,17 @@ export default {
 <!--          </template>-->
           <div class="card-body-container"  @scrollend.passive="(e)=>handleScroll(e,item)">
             <div v-for="ticket in item.tickets" :id="ticket.ticket_id" :key="ticket.ticket_id" draggable="true"
-                 class="cursor-pointer" style="height: auto;margin-top: 15px;z-index: 0;position: relative"
+                 style="height: auto;margin-top: 15px;z-index: 0;position: relative"
+                 :class="{ notClickable: !canOpenTicket, 'cursor-pointer': canOpenTicket }"
                  @dragend="(event)=> handleDrag(event,item,ticket)"
                  @dragstart="(event)=> handleDrag(event)">
               <invoice-ticket-card v-if="ticket.ticket_id_group === null || showSubTickets" class="bg-white"
                                    :advanced="advanced"
                                    :ticket="{...ticket, column_id:item.column_id,column_is_qualitygate:item.column_is_qualitygate}"
                                    :team-users="teams.filter(team => team.team_id === ticket.team_id)"
-                                   @moredetails="$router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
-                                   @assign="$refs.assign.openModal(ticket, userIdsOfTeam(ticket.team_id))"
-                                   @subticket-updated="fetchTicketOfTheColumn(item.column_id,true)"/>
+                                   @moredetails="!canOpenTicket ? undefined : $router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
+                                   @assign="!canOpenTicket ? undefined : $refs.assign.openModal(ticket, userIdsOfTeam(ticket.team_id))"
+                                   @subticket-updated="!canOpenTicket ? undefined : fetchTicketOfTheColumn(item.column_id,true)"/>
             </div>
             <div class="flex align-items-center justify-content-center w-100  text-center mt-2 position-absolute"
                  style="top:-35px">
@@ -391,5 +395,9 @@ export default {
 
 .card_draggable {
   border: dashed;
+}
+
+.notClickable {
+  pointer-events: none;
 }
 </style>

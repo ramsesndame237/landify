@@ -1,11 +1,13 @@
+import { ACCESS } from '@/config/config-access'
 import KanbanButton from '@/views/app/CustomComponents/DataTable/components/generics/KanbanButton.vue'
-import router from '@/router'
 
 export default {
   entity: 'frontend_6_1_4',
   entityEndpoint: '/tickets/kanban/user',
   defaultSortField: 'board_id',
-  custom_actions: [{ icon: 'FeatherIcon', onClick: null, label: 'Stamp' }, { icon: 'EyeIcon', onClick: null, label: 'Preview' }, { icon: 'DatabaseIcon', label: 'Kaban', onClick: board => router.push({ name: 'table-kanban', params: { id: board.board_id, table: 'board' } }) }],
+  permissions: ACCESS.tableAccess.board.main,
+  // eslint-disable-next-line global-require
+  custom_actions: [{ icon: 'FeatherIcon', onClick: null, label: 'Stamp' }, { icon: 'EyeIcon', onClick: null, label: 'Preview' }, { icon: 'DatabaseIcon', label: 'Kaban', onClick: board => require('@/router').default.push({ name: 'table-kanban', params: { id: board.board_id, table: 'board' } }) }],
   fields: [
     {
       key: 'board_button',
