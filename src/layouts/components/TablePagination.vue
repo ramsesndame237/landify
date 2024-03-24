@@ -24,7 +24,7 @@
         <feather-icon icon="FilterIcon" :badge="filterBadge"/>
       </b-button>
 
-      <b-dropdown v-if="importFunctionnality.includes(entity) && showInput" size="sm" variant="default"
+      <b-dropdown v-if="canImport && importFunctionnality.includes(entity) && showInput" size="sm" variant="default"
                   toggle-class="text-decoration-none" no-caret >
         <template #button-content>
           <b-button variant="success">
@@ -43,7 +43,7 @@
           </b-dropdown-item>
         </template>
       </b-dropdown>
-      <b-dropdown v-if="importFunctionnality.includes(entity) && showInput" size="sm" variant="default" toggle-class="text-decoration" no-caret style="margin-left: -45px!important;">
+      <b-dropdown v-if="canImport && importFunctionnality.includes(entity) && showInput" size="sm" variant="default" toggle-class="text-decoration" no-caret style="margin-left: -45px!important;">
         <template #button-content>
           <b-button variant="success">
             <FeatherIcon icon="ChevronDownIcon"/>
@@ -76,6 +76,7 @@
 </template>
 
 <script>
+import { USER_ROLES } from '@/config/config-access/config-roles'
 import {
 BButton,
 BFormGroup,
@@ -130,6 +131,9 @@ export default {
     }
   },
   computed: {
+    canImport() {
+      return this.$isUserA(USER_ROLES.admin)
+    },
     canDelete() {
       return this.definition ? this.$isAbleTo('remove', this.definition.permissions) : true
     },

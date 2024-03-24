@@ -50,10 +50,10 @@ import DeadlineMixin from '@/views/app/Contracts/Relations/Deadlines/DeadlineMix
 import Field from '@/views/app/Generic/Field'
 import BCardActions from '@core/components/b-card-actions/BCardActions'
 import {
-  BButton,
-  BCard,
-  BCol,
-  BForm, BRow,
+BButton,
+BCard,
+BCol,
+BForm, BRow,
 } from 'bootstrap-vue'
 import _ from 'lodash'
 import moment from 'moment'
@@ -124,11 +124,12 @@ export default {
       return this.$isUserA(
         USER_ROLES.admin,
         USER_ROLES.lead,
+        USER_ROLES.expansion_manager,
         USER_ROLES.ext_team_member.withTeams(
           EXTERN_TEAMS_IDS.BuHa,
           EXTERN_TEAMS_IDS.FM,
           EXTERN_TEAMS_IDS.MVM,
-        )
+        ),
       )
     },
     definition() {

@@ -9,7 +9,7 @@
                         :on-new-element="definition.create ===false ? null : onNewElement" :total-rows.sync="totalRows"
                         :with-filter="definition.filters && definition.filters.length > 0"
                         :show-input="true"
-                        :import-export-array-item="definition.relations.filter(x => importExportElementArray.includes(x.entity)).map(item =>({entity:item.entity,primaryKey:item.primaryKey}))"
+                        :import-export-array-item="(definition.relations || []).filter(x => importExportElementArray.includes(x.entity)).map(item =>({entity:item.entity,primaryKey:item.primaryKey}))"
                         :inline-filter="!definition.inline_filter"
                         :definition="definition"
                         :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"

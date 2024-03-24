@@ -415,6 +415,7 @@ export default {
       return this.$isUserA(
         USER_ROLES.admin,
         USER_ROLES.lead,
+        USER_ROLES.expansion_manager,
         USER_ROLES.ext_team_member.withTeams(
           EXTERN_TEAMS_IDS.FM,
           EXTERN_TEAMS_IDS.MVM,
@@ -426,6 +427,7 @@ export default {
       return this.$isUserA(
         USER_ROLES.admin,
         USER_ROLES.lead,
+        USER_ROLES.expansion_manager,
         USER_ROLES.ext_team_member.withTeams(
           EXTERN_TEAMS_IDS.FM,
           EXTERN_TEAMS_IDS.MVM,
@@ -437,6 +439,7 @@ export default {
       return this.$isUserA(
         USER_ROLES.admin,
         USER_ROLES.lead,
+        USER_ROLES.expansion_manager,
         USER_ROLES.ext_team_member.withTeams(
           EXTERN_TEAMS_IDS.FM,
           EXTERN_TEAMS_IDS.MVM,
