@@ -412,7 +412,7 @@ export default {
 
   computed: {
     canViewDocumentTab() {
-      return this.$isUserA(
+      return this.$isAdminOr(
         USER_ROLES.admin,
         USER_ROLES.lead,
         USER_ROLES.expansion_manager,
@@ -424,7 +424,7 @@ export default {
       )
     },
     canViewSubtask() {
-      return this.$isUserA(
+      return this.$isAdminOr(
         USER_ROLES.admin,
         USER_ROLES.lead,
         USER_ROLES.expansion_manager,
@@ -436,7 +436,7 @@ export default {
       )
     },
     canViewTimeline() {
-      return this.$isUserA(
+      return this.$isAdminOr(
         USER_ROLES.admin,
         USER_ROLES.lead,
         USER_ROLES.expansion_manager,
@@ -451,13 +451,13 @@ export default {
       return this.$isAbleTo('note', this.definition.permissions)
     },
     canMoveToAnotherBoard() {
-      return this.$isUserA(USER_ROLES.admin)
+      return this.$isAdminOr(USER_ROLES.admin)
     },
     canAddSubTask() {
-      return this.$isUserA(USER_ROLES.admin)
+      return this.$isAdminOr(USER_ROLES.admin)
     },
     canAddNewMail() {
-      return this.$isUserA(USER_ROLES.admin)
+      return this.$isAdminOr(USER_ROLES.admin)
     },
     tabTitle() {
       return [

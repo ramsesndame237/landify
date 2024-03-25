@@ -265,7 +265,7 @@ export default {
       return this.entity
     },
     canViewTrackRecord() {
-      return this.$isUserA(USER_ROLES.admin)
+      return this.$isAdminOr(USER_ROLES.admin)
     },
     avatarPlaceholder() {
       return this.user?.user_firstname.charAt(0).toUpperCase()

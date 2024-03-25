@@ -1,7 +1,7 @@
 import jwt from '@/auth/jwt/useJwt'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 import { ACCESS, EXTERN_TEAMS_IDS } from '@/config/config-access'
-import { isAbleTo, isUserA } from '@/config/config-access/config-permissions'
+import { isA, isAbleTo } from '@/config/config-access/config-permissions'
 import { USER_ROLES } from '@/config/config-access/config-roles'
 import axiosIns from "@/libs/axios"
 import { parseJwt } from '@/views/app/CustomComponents/DataTable/utils'
@@ -132,15 +132,15 @@ const routes = [
     },
   },
   {
+    name: 'kanbanView',
+    path: '/app/table/:table/:id/kanbanview',
+    component: () => import('@/views/app/Kanban/kabanView.vue'),
+  },
+  {
     name: 'table-kanban',
     name: 'kanbanView',
     path: '/app/table/:table/:id/kanban',
     component: () => import('@/views/app/Kanban/index.vue'),
-  },
-  {
-    name: 'kanbanView',
-    path: '/app/table/:table/:id/kanbanview',
-    component: () => import('@/views/app/Kanban/kabanView.vue'),
   },
   {
     name: 'importView',
@@ -439,7 +439,7 @@ const canOpenRoute = to => {
 router.beforeEach((to, _, next) => {
   console.log(to, 'navigate')
   const isLoggedIn = jwt?.isUserLoggedIn()
-  if (['/app', '/'].includes(to.path) && isUserA(USER_ROLES.ext_team_member.withTeams(
+  if (['/app'].includes(to.path) && isA(USER_ROLES.ext_team_member.withTeams(
     EXTERN_TEAMS_IDS.FM,
   ))) {
     return next({ path: '/app/table/board' })

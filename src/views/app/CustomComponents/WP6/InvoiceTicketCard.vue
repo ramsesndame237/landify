@@ -507,10 +507,10 @@ import SubTicketMixin from '@/views/app/Ticket/Subticket/SubTicketMixin'
 import SubticketTr from '@/views/app/Ticket/Subticket/SubticketTr.vue'
 import { formatDate, title } from '@core/utils/filter'
 import {
-    BAvatar,
-    BAvatarGroup,
-    BButton,
-    BIconCalendarDate,
+  BAvatar,
+  BAvatarGroup,
+  BButton,
+  BIconCalendarDate,
 } from 'bootstrap-vue'
 import moment from 'moment'
 import bussinessMoment from 'moment-business-time'
@@ -557,7 +557,7 @@ export default {
   },
   computed: {
     canShowQuickAction() {
-      return this.$isUserA(USER_ROLES.admin)
+      return this.$isAdminOr(USER_ROLES.admin)
     },
     ...mapGetters({
       now: 'app/now',

@@ -78,11 +78,11 @@
 <script>
 import { USER_ROLES } from '@/config/config-access/config-roles'
 import {
-BButton,
-BFormGroup,
-BFormInput,
-BFormSelect,
-BPagination,
+  BButton,
+  BFormGroup,
+  BFormInput,
+  BFormSelect,
+  BPagination,
 } from 'bootstrap-vue'
 
 export default {
@@ -132,7 +132,7 @@ export default {
   },
   computed: {
     canImport() {
-      return this.$isUserA(USER_ROLES.admin)
+      return this.$isAdminOr(USER_ROLES.admin)
     },
     canDelete() {
       return this.definition ? this.$isAbleTo('remove', this.definition.permissions) : true

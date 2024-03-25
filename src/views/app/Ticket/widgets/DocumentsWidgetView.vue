@@ -71,10 +71,10 @@ export default {
   },
   computed: {
     canStamp() {
-      return this.$isUserA(USER_ROLES.admin)
+      return this.$isAdminOr(USER_ROLES.admin)
     },
     canEdit() {
-      return this.$isUserA(USER_ROLES.admin)
+      return this.$isAdminOr(USER_ROLES.admin)
     },
     canViewDetails() {
       return true
@@ -83,7 +83,7 @@ export default {
       return this.isCreate ? { ...Table.document, customRequest: Table.document.customRequestCreate } : Table.document
     },
     canAddDocument() {
-      return this.$isUserA(USER_ROLES.admin)
+      return this.$isAdminOr(USER_ROLES.admin)
     },
   },
   watch: {

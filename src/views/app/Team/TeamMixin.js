@@ -22,7 +22,7 @@ export default {
     filteredTeams() {
       const dataTeams = this.team_is_customer ? this.customerTeams : this.seyboldTeams
       let filteredTeam = dataTeams
-      if (this.$isUserA(USER_ROLES.ext_team_member) && this.team_is_customer) {
+      if (this.$isAdminOr(USER_ROLES.ext_team_member) && this.team_is_customer) {
         filteredTeam = intersectionBy(dataTeams, this.userTeams, 'team_id')
       }
 

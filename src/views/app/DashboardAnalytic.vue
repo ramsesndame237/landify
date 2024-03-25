@@ -81,7 +81,7 @@ export default {
     return {
       entity: {
         tickets: this.team_is_customer ? 'customers' : 'seybolds',
-        team_id: this.$isUserA(USER_ROLES.expansion_manager) && this.team_is_customer ? 6 : -1, // MVM_KUNDE
+        team_id: this.$isAdminOr(USER_ROLES.expansion_manager) && this.team_is_customer ? 6 : -1, // MVM_KUNDE
         user_id: -1,
         company_id: -1,
       },
@@ -138,7 +138,7 @@ export default {
   },
   computed: {
     teamFieldDisabled() {
-      return this.$isUserA(
+      return this.$isAdminOr(
         USER_ROLES.area_manager,
         USER_ROLES.store_manager,
       )

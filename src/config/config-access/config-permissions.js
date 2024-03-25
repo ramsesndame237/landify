@@ -90,7 +90,7 @@ export class Permission {
  * Return true if user have a specific a `role_code` and return false otherwhise
  * @args roles list
  */
-export const isUserA = (...roles) => {
+export const isAdminOr = (...roles) => {
   const userData = getUserData()
   const userRoleCode = userData?.roles?.[0]?.role_code
   if (userRoleCode === 'admin') {
@@ -102,14 +102,25 @@ export const isUserA = (...roles) => {
 }
 
 /**
- * Check permission and return true if user have access and false otherwhise
+ * Return true if user is admin or have a specific a `role_code` and return false otherwhise
+ * @args roles list
+ */
+export const isA = (...roles) => {
+  const userData = getUserData()
+  const userRoleCode = userData?.roles?.[0]?.role_code
+  const userTeams = userData?.team_id ?? []
+
+  return (roles.some(role => role.role_code === userRoleCode && (role.teams.length > 0 ? role.teams.some(teamId => userTeams.includes(teamId)) : true)))
+}
+
+/**
+ * Check permission and return true if user is admin or have access and false otherwhise
  * @param {Permission} permissions
  * @returns {boolean}
  */
 export const isAbleTo = (action, permissions) => {
   const userData = getUserData()
 
-  
   const userRoleCode = userData?.roles?.[0]?.role_code
   if (userRoleCode === 'admin') {
     return true
@@ -161,5 +172,5 @@ export const PERMISSIONS_GROUPS = {
     USER_PERMISSIONS.admin,
     USER_PERMISSIONS.team_lead,
     USER_PERMISSIONS.team_member,
-  ]
+  ],
 }
