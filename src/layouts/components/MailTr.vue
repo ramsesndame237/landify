@@ -86,7 +86,7 @@
       <field v-if="visible" :field="boardIdField" :entity="item"
              :disabled="!item.pos_id || (item.ticket_id && !shouldCreateSubTicket) || is_dismissed || is_done"/>
       <router-link v-if="is_done" target="_blank"
-                   :to="{name: 'kanbanView', params: {table: 'board',id: item.board_id}}">
+                   :to="{name: 'kanbanView', params: {table: 'board',id: item.board_id, name: item.board_name }}">
         {{ getBoardName() }}
       </router-link>
     </b-td>
@@ -113,11 +113,11 @@
 </template>
 
 <script>
+import FeatherIcon from '@/@core/components/feather-icon/FeatherIcon.vue'
+import { getDateFormat, getDocumentLink } from '@/libs/utils'
 import Field from '@/views/app/Generic/Field'
-import { getDocumentLink, getDateFormat } from '@/libs/utils'
 import { VBToggle } from 'bootstrap-vue'
 import moment from 'moment'
-import FeatherIcon from '@/@core/components/feather-icon/FeatherIcon.vue'
 
 export default {
   name: 'MailTr',

@@ -7,7 +7,7 @@ export default {
   defaultSortField: 'board_id',
   permissions: ACCESS.tableAccess.board.main,
   // eslint-disable-next-line global-require
-  custom_actions: [{ icon: 'FeatherIcon', onClick: null, label: 'Stamp' }, { icon: 'EyeIcon', onClick: null, label: 'Preview' }, { icon: 'DatabaseIcon', label: 'Kaban', onClick: board => require('@/router').default.push({ name: 'table-kanban', params: { id: board.board_id, table: 'board' } }) }],
+  custom_actions: [{ icon: 'FeatherIcon', onClick: null, label: 'Stamp' }, { icon: 'EyeIcon', onClick: null, label: 'Preview' }, { icon: 'DatabaseIcon', label: 'Kaban', onClick: board => require('@/router').default.push({ name: 'kanbanView', params: { id: board.board_id, table: 'board', name: board.board_name } }) }],
   fields: [
     {
       key: 'board_button',

@@ -201,19 +201,19 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
 import Editor from '@tinymce/tinymce-vue'
 import {
-  BButton,
-  BCol,
-  BFormCheckbox,
-  BFormFile,
-  BFormGroup,
-  BFormInput,
-  BFormSelect,
-  BFormTextarea,
-  BImg,
-  BInputGroupAppend,
-  BInputGroupPrepend,
-  BRow,
-  BSpinner,
+BButton,
+BCol,
+BFormCheckbox,
+BFormFile,
+BFormGroup,
+BFormInput,
+BFormSelect,
+BFormTextarea,
+BImg,
+BInputGroupAppend,
+BInputGroupPrepend,
+BRow,
+BSpinner,
 } from 'bootstrap-vue'
 import Fuse from 'fuse.js'
 import { createPicker } from 'picmo'
@@ -233,15 +233,15 @@ import 'tinymce/themes/silver/theme'
 import { getUserData } from '@/auth/utils'
 import AutoCompleteInput from '@/components/AutoCompleteInput.vue'
 import SelectedButtonList from '@/components/SelectedButtonList.vue'
-import { USER_ROLES } from '@/config/config-access/config-roles'
+import { EXTERN_TEAMS_IDS } from '@/config/config-access'
 import CustomDatePicker from '@/views/app/Generic/CustomDatePicker.vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
 
-const MVM_KUNDE_TEAM_ID = 6
-const FM_KUNDE_TEAM_ID = 7
+const MVM_KUNDE_TEAM_ID = EXTERN_TEAMS_IDS.MVM
+const FM_KUNDE_TEAM_ID = EXTERN_TEAMS_IDS.FM
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -345,16 +345,11 @@ export default {
       if (typeof new_list === 'object' && new_list.data) {
         new_list = new_list.data
       }
-      if (this.$isA(USER_ROLES.ext_team_member)) {
+      if (this.$isAnExtern() && !this.field?.noAutoFill) {
         const user = getUserData()
         const userTeams = user?.team_id ?? []
         if (this.field.key === 'team_id') {
           new_list = new_list.filter(item => userTeams.includes(item.team_id))
-
-          if (new_list.length === 1) {
-            this.$set(this.entity, 'team_id', new_list[0].team_id)
-            this.isDisabled = true
-          }
         }
       }
       return new_list
@@ -599,49 +594,37 @@ export default {
       return option[(typeof this.field.listLabel === 'string') ? this.field.listLabel : null]
     },
     initializeValue() {
-      if (this.field?.noAutoFill) return
+      if (!this.field?.noAutoFill) {
+        const user = getUserData()
+        if (this.isUserExternClient || this.$isAnExtern()) {
+          if (this.field.key === 'customergroup_id') {
+            console.log('reset ', this.entity)
+            const customergroup_id = user.customergroup?.customergroup_id
+            if (!this.entity.customergroup_id && customergroup_id) {
+              this.$set(this.entity, 'customergroup_id', customergroup_id)
+            }
+            if (this.entity.customergroup_id) {
+              this.isDisabled = true
+            }
+          }
+        }
+        if (this.isUserExternPartner) {
+          if (this.field.key === 'partnergroup_id') {
+            const partnergroup_id = user.partnergroup?.partnergroup_id
+            if (!this.entity.partnergroup_id && partnergroup_id) {
+              this.$set(this.entity, 'partnergroup_id', partnergroup_id)
+            }
+            if (this.entity.partnergroup_id) {
+              this.isDisabled = true
+            }
+          }
+        }
 
-      const user = getUserData()
-      if (this.isUserExternClient || user?.usertype?.usertype_external === 1) {
-        if (this.field.key === 'customergroup_id') {
-          console.log('reset ', this.entity)
-          const customergroup_id = user.customergroup?.customergroup_id
-          if (!this.entity.customergroup_id && customergroup_id) {
-            this.$set(this.entity, 'customergroup_id', customergroup_id)
-          }
-          if (this.entity.customergroup_id) {
+        if (this.field.key === 'team_id') {
+          if (this.$isAnExtern()) {
             this.isDisabled = true
+            this.$set(this.entity, 'team_id', user?.team_id?.[0])
           }
-        }
-      }
-      if (this.isUserExternPartner) {
-        if (this.field.key === 'partnergroup_id') {
-          const partnergroup_id = user.partnergroup?.partnergroup_id
-          if (!this.entity.partnergroup_id && partnergroup_id) {
-            this.$set(this.entity, 'partnergroup_id', partnergroup_id)
-          }
-          if (this.entity.partnergroup_id) {
-            this.isDisabled = true
-          }
-        }
-      }
-      if (this.$isAdminOr(USER_ROLES.expansion_manager)) {
-        if (this.field.key === 'team_id' && user?.team_id?.includes(MVM_KUNDE_TEAM_ID)) {
-          this.$set(this.entity, 'team_id', MVM_KUNDE_TEAM_ID)
-          // if (this.entity.team_id) {
-          //   this.isDisabled = true
-          // }
-        }
-      }
-      if (
-        this.$isAdminOr(
-          USER_ROLES.area_manager,
-          USER_ROLES.store_manager,
-        )
-      ) {
-        if (this.field.key === 'team_id' && user?.team_id?.includes(FM_KUNDE_TEAM_ID)) {
-          this.isDisabled = true
-          this.$set(this.entity, 'team_id', FM_KUNDE_TEAM_ID)
         }
       }
 
