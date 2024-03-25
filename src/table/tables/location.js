@@ -8,7 +8,7 @@ export default {
     {
       key: 'location_objectdescription', type: 'textarea', hideOnIndex: true, required: false,
     },
-    { key: 'location_total_area', type: 'number' },
+    { key: 'location_total_area', type: 'number', required: false },
     {
       key: 'location_start_date', type: 'date', hideOnIndex: true, required: false,
     },
@@ -33,7 +33,7 @@ export default {
     {
       key: 'country_id', hideOnIndex: true, type: 'list', list: 'country', listLabel: 'country_name',
     },
-    { key: 'address_name' },
+    { key: 'address_name', hideOnForm: true },
     { key: 'address_street' },
     { key: 'address_house_number' },
     { key: 'address_extra', rules: { required: false } },
