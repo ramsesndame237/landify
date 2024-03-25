@@ -138,7 +138,6 @@ const routes = [
   },
   {
     name: 'table-kanban',
-    name: 'kanbanView',
     path: '/app/table/:table/:id/kanban',
     component: () => import('@/views/app/Kanban/index.vue'),
   },

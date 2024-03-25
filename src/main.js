@@ -33,7 +33,7 @@ import { defineRules } from '@/libs/acl/ability'
 import moment from 'moment'
 import { Plugin } from 'vue-fragment'
 import App from './App.vue'
-import { isA, isAbleTo, isAdminOr } from './config/config-access/config-permissions'
+import { isA, isAbleTo, isAdminOr, isAnExtern } from './config/config-access/config-permissions'
 import router from './router'
 import store from './store'
 // Vee validate
@@ -112,6 +112,7 @@ Vue.config.productionTip = false
 Vue.prototype.$isAbleTo = isAbleTo
 Vue.prototype.$isAdminOr = isAdminOr
 Vue.prototype.$isA = isA
+Vue.prototype.$isAnExtern = isAnExtern
 
 const userEmail = localStorage.getItem('userEmail')
 const env = process.env.VUE_APP_ENV

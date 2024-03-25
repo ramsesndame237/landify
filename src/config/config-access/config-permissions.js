@@ -102,6 +102,11 @@ export const isAdminOr = (...roles) => {
 }
 
 /**
+ * Returns true if a user is an extern and false otherwise
+ */
+export const isAnExtern = () => getUserData()?.usertype?.usertype_external === 1
+
+/**
  * Return true if user is admin or have a specific a `role_code` and return false otherwhise
  * @args roles list
  */
