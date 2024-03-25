@@ -186,7 +186,7 @@ export default {
 
         // const seyboldTeams = teams.filter(t => t.team_is_customer === 0)
 
-        // if (isUserExternClientNotDirector && !vm.$isUserA(USER_ROLES.expansion_manager)) {
+        // if (isUserExternClientNotDirector && !vm.$isAdminOr(USER_ROLES.expansion_manager)) {
         //   vm.$set(vm.entity, 'team_id', -1)
         //   return union(seyboldTeams.map(t => t.team_id), team_id).includes(team.team_id)
         // }

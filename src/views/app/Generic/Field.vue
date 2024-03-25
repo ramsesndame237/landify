@@ -201,19 +201,19 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
 import Editor from '@tinymce/tinymce-vue'
 import {
-BButton,
-BCol,
-BFormCheckbox,
-BFormFile,
-BFormGroup,
-BFormInput,
-BFormSelect,
-BFormTextarea,
-BImg,
-BInputGroupAppend,
-BInputGroupPrepend,
-BRow,
-BSpinner,
+  BButton,
+  BCol,
+  BFormCheckbox,
+  BFormFile,
+  BFormGroup,
+  BFormInput,
+  BFormSelect,
+  BFormTextarea,
+  BImg,
+  BInputGroupAppend,
+  BInputGroupPrepend,
+  BRow,
+  BSpinner,
 } from 'bootstrap-vue'
 import Fuse from 'fuse.js'
 import { createPicker } from 'picmo'
@@ -345,7 +345,7 @@ export default {
       if (typeof new_list === 'object' && new_list.data) {
         new_list = new_list.data
       }
-      if (this.$isUserA(USER_ROLES.ext_team_member)) {
+      if (this.$isA(USER_ROLES.ext_team_member)) {
         const user = getUserData()
         const userTeams = user?.team_id ?? []
         if (this.field.key === 'team_id') {
@@ -625,7 +625,7 @@ export default {
           }
         }
       }
-      if (this.$isUserA(USER_ROLES.expansion_manager)) {
+      if (this.$isAdminOr(USER_ROLES.expansion_manager)) {
         if (this.field.key === 'team_id' && user?.team_id?.includes(MVM_KUNDE_TEAM_ID)) {
           this.$set(this.entity, 'team_id', MVM_KUNDE_TEAM_ID)
           // if (this.entity.team_id) {
@@ -634,7 +634,7 @@ export default {
         }
       }
       if (
-        this.$isUserA(
+        this.$isAdminOr(
           USER_ROLES.area_manager,
           USER_ROLES.store_manager,
         )

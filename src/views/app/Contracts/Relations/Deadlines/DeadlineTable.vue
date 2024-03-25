@@ -397,7 +397,7 @@ export default {
             return status[value]
           },
         },
-        ...(this.$isUserA(USER_ROLES.admin) ? [{
+        ...(this.$isAdminOr(USER_ROLES.admin) ? [{
           key: 'action',
           hideOnForm: true,
           label: 'Action',
@@ -432,7 +432,7 @@ export default {
   },
   computed: {
     canViewAllOptions() {
-      return this.$isUserA(
+      return this.$isAdminOr(
         USER_ROLES.lead,
         USER_ROLES.expansion_manager,
         USER_ROLES.ext_team_member.withTeams(

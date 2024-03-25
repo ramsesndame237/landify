@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     canCreate() {
-      return this.$isUserA(USER_ROLES.admin)
+      return this.$isAdminOr(USER_ROLES.admin)
     },
     fields() {
       return [

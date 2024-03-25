@@ -50,10 +50,10 @@ import DeadlineMixin from '@/views/app/Contracts/Relations/Deadlines/DeadlineMix
 import Field from '@/views/app/Generic/Field'
 import BCardActions from '@core/components/b-card-actions/BCardActions'
 import {
-BButton,
-BCard,
-BCol,
-BForm, BRow,
+  BButton,
+  BCard,
+  BCol,
+  BForm, BRow,
 } from 'bootstrap-vue'
 import _ from 'lodash'
 import moment from 'moment'
@@ -121,7 +121,7 @@ export default {
   },
   computed: {
     canSeeActions() {
-      return this.$isUserA(
+      return this.$isAdminOr(
         USER_ROLES.admin,
         USER_ROLES.lead,
         USER_ROLES.expansion_manager,
