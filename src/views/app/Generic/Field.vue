@@ -201,19 +201,19 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
 import Editor from '@tinymce/tinymce-vue'
 import {
-BButton,
-BCol,
-BFormCheckbox,
-BFormFile,
-BFormGroup,
-BFormInput,
-BFormSelect,
-BFormTextarea,
-BImg,
-BInputGroupAppend,
-BInputGroupPrepend,
-BRow,
-BSpinner,
+  BButton,
+  BCol,
+  BFormCheckbox,
+  BFormFile,
+  BFormGroup,
+  BFormInput,
+  BFormSelect,
+  BFormTextarea,
+  BImg,
+  BInputGroupAppend,
+  BInputGroupPrepend,
+  BRow,
+  BSpinner,
 } from 'bootstrap-vue'
 import Fuse from 'fuse.js'
 import { createPicker } from 'picmo'
@@ -233,15 +233,11 @@ import 'tinymce/themes/silver/theme'
 import { getUserData } from '@/auth/utils'
 import AutoCompleteInput from '@/components/AutoCompleteInput.vue'
 import SelectedButtonList from '@/components/SelectedButtonList.vue'
-import { EXTERN_TEAMS_IDS } from '@/config/config-access'
 import CustomDatePicker from '@/views/app/Generic/CustomDatePicker.vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
-
-const MVM_KUNDE_TEAM_ID = EXTERN_TEAMS_IDS.MVM
-const FM_KUNDE_TEAM_ID = EXTERN_TEAMS_IDS.FM
 
 function isEmpty(val) {
   return val === '' || val == null
@@ -372,9 +368,9 @@ export default {
       }
       let new_list = this.list
       if (typeof new_list === 'object' && new_list.data) {
-        new_list = new_list.data             
+        new_list = new_list.data
       }
-      if (this.field.orderByField) {             
+      if (this.field.orderByField) {
         new_list = new_list.toSorted((a, b) => a[this.field.orderByField].localeCompare(b[this.field.orderByField]))
       }
 
