@@ -201,19 +201,19 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
 import Editor from '@tinymce/tinymce-vue'
 import {
-  BButton,
-  BCol,
-  BFormCheckbox,
-  BFormFile,
-  BFormGroup,
-  BFormInput,
-  BFormSelect,
-  BFormTextarea,
-  BImg,
-  BInputGroupAppend,
-  BInputGroupPrepend,
-  BRow,
-  BSpinner,
+    BButton,
+    BCol,
+    BFormCheckbox,
+    BFormFile,
+    BFormGroup,
+    BFormInput,
+    BFormSelect,
+    BFormTextarea,
+    BImg,
+    BInputGroupAppend,
+    BInputGroupPrepend,
+    BRow,
+    BSpinner,
 } from 'bootstrap-vue'
 import Fuse from 'fuse.js'
 import { createPicker } from 'picmo'
