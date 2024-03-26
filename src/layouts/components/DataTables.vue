@@ -385,6 +385,16 @@ export default {
       return `${this.entity}-${JSON.stringify(payload)}`
     },
     processData(data) {
+      if (this.primaryKeyColumn === 'location_id') {
+        data.data = data.data.map(element => ({ ...element, address_name: element?.address?.address_name || element?.address_city_name }))
+        data.data = data.data.map(element => ({ ...element, address_street: element?.address?.address_street || element?.address_city_name }))
+        data.data = data.data.map(element => ({ ...element, address_house_number: element?.address?.address_house_number || element?.address_city_name }))
+        data.data = data.data.map(element => ({ ...element, address_extra: element?.address?.address_extra || element?.address_city_name }))
+        data.data = data.data.map(element => ({ ...element, address_city_zip_code: element?.address?.address_city_zip_code || element?.address_city_name }))
+        data.data = data.data.map(element => ({ ...element, address_city_name: element?.address?.address_city_name }))
+        data.data = data.data.map(element => ({ ...element, address_city_state: element?.address?.address_city_state || element?.address_city_name }))
+        data.data = data.data.map(element => ({ ...element, company_name: element?.owner?.company_name || element?.company_id }))
+      }
       console.log('this is the data process', data)
       if (this.entityEndpoint && Array.isArray(data.data)) {
         this.$emit('update:totalRows', data.total)

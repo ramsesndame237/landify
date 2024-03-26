@@ -1,5 +1,6 @@
 export default {
   entity: 'frontend_3_3_1',
+  entityEndpoint: '/locations',
   primaryKey: 'location_id',
   fieldComponent: () => import('@/views/app/FormComponent/LocationForm.vue'),
   fields: [
@@ -20,7 +21,9 @@ export default {
       listLabel: 'company_name',
       tableKey: 'company_id',
       required: false,
+      hideOnIndex: true,
     },
+    { key: 'company_name', hideOnForm: true },
     { key: 'locationtype_name', hideOnForm: true },
     {
       key: 'locationtype_id',
@@ -37,10 +40,10 @@ export default {
     { key: 'address_street' },
     { key: 'address_house_number' },
     { key: 'address_extra', rules: { required: false } },
-    { key: 'city_name', sortable: true },
-    { key: 'city_zip', sortable: true },
+    { key: 'address_city_name', sortable: true },
+    { key: 'address_city_zip_code', sortable: true },
     {
-      key: 'city_state',
+      key: 'address_city_state',
       sortable: true,
       required: false,
       change: (entity, vm) => {
