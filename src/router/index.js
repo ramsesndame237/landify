@@ -176,7 +176,7 @@ const routes = [
     name: 'deadline-list',
     path: '/app/deadline-list',
     permissions: ACCESS.tableAccess.deadlines_list,
-    component: () => import('@/views/app/Page/ConditionList.vue'),
+    component: () => import('@/views/app/Page/DeadlineList.vue'),
     meta: {
       action: 'menu~contractdeadline',
       resource: 'menu',
