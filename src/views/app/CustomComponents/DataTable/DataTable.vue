@@ -372,6 +372,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    noInitialFetch: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -419,7 +423,6 @@ export default {
           label: this.$t('delete'),
           onClick: this.onDeleteClick || (row => {
             if (this.deleteUrl) {
-              console.dir(this.$http)
               handleDelete({
                 swal: this.$swal,
                 http: this.$http,
@@ -463,35 +466,42 @@ export default {
       })
       this.filters.map(({ field }) => this.$watch(
         `tableStore.pagination.filtersValues.${field.key}`,
-        val => {
-          this.getData()
-          this.$emit('on-extra-value-change', { [field.key]: val })
+        (val, old) => {
+          if (val !== old) {
+            this.getData()
+            this.$emit('on-extra-value-change', { [field.key]: val })
+          }
         },
       ))
     }
     if (this.tabs?.items) {
       this.$watch(
         'tableStore.tabs.activeTabIndex',
-        val => {
-          this.getData()
-          this.$emit('on-tab-value-change', tableStore.tabs.list[val])
+        (val, old) => {
+          if (val !== old) {
+            this.getData()
+            this.$emit('on-tab-value-change', tableStore.tabs.list[val])
+          }
         },
       )
     }
     Object.keys(tableStore.pagination)
-      .filter(key => !['isLoading'].includes(key))
+      .filter(key => !['isLoading', 'total', 'pages'].includes(key))
       .forEach(key => this.$watch(
         `tableStore.pagination.${key}`,
-        () => this.getData(),
+        (val, old) => {
+          if (val !== old) {
+            this.getData()
+          }
+        },
       ))
   },
   async mounted() {
-    if (this.url) this.getData(this.includeInQuery)
+    if (this.url && !this.noInitialFetch) this.getData()
   },
   methods: {
     toggleRowSelection,
     getData(params) {
-      console.log("this is the data", params)
       if (this.url) {
         listData({
           api: this.$http,
