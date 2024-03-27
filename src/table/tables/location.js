@@ -1,10 +1,30 @@
 export default {
   entity: 'frontend_3_3_1',
   primaryKey: 'location_id',
+  perPage: 10,
   fieldComponent: () => import('@/views/app/FormComponent/LocationForm.vue'),
   fields: [
     { key: 'location_id', auto: true },
     { key: 'location_name' },
+    { key: 'locationtype_name', hideOnForm: true },
+    { key: 'address_city_name',
+      sortable: true,
+      formatter: (value, key, item) => {
+        const obj = item.address
+        const city_name = `${obj['address_city_name']}`
+        return city_name
+      },
+    },
+    { key: 'address_country_name',
+      hideOnForm: true,
+      formatter: (value, key, item) => {
+        const obj = item.address
+        const country_name = `${obj['address_country_name']}`
+        return country_name
+
+      },
+    },
+    { key: 'area_count', hideOnForm: true },
     {
       key: 'location_objectdescription', type: 'textarea', hideOnIndex: true, required: false,
     },
