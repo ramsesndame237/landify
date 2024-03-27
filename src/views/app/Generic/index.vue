@@ -9,7 +9,9 @@
                         :on-new-element="definition.create ===false ? null : onNewElement" :total-rows.sync="totalRows"
                         :with-filter="definition.filters && definition.filters.length > 0"
                         :show-input="true"
+                        :import-export-array-item="(definition.relations || []).filter(x => importExportElementArray.includes(x.entity)).map(item =>({entity:item.entity,primaryKey:item.primaryKey}))"
                         :inline-filter="!definition.inline_filter"
+                        :definition="definition"
                         :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
                         :actions="definition.actions" :filter-badge="getFilterCount()"
                         :on-export-data="fetchExportData" @action="(a)=>$refs.table.onAction(a)"
@@ -25,7 +27,9 @@
                  :per-page="perPage" :current-page.sync="currentPage" :total-rows.sync="totalRows"
                  :on-edit-element="definition.inlineEdit ? editElement : null" :fields="definition.fields"
                  :primary-key-column="definition.primaryKey" :ids="ids" :entity-endpoint="definition.entityEndpoint"
-                 :filter-items="definition.filter" :custom-request="definition.customRequest"/>
+                 :no-cache="definition.noCache"
+                 :filter-items="definition.filter" :custom-request="definition.customRequest"
+                 :initial-filter-data="initialFilterData" :permissions="definition.permissions"/>
       <!--      <DataTable :key="table" :columns="getHeadersDataTable" :url="definition.entityEndpoint || definition.entity"-->
       <!--                 hide-top-bar="true" :resolve-data="data =>data.data.data || data.data || data.items" :custom-actions="definition.custom_actions"-->
       <!--                 :hidde-filter-bar="true"/>-->
@@ -47,13 +51,13 @@
 
 <script>
 
-import { BCard } from 'bootstrap-vue'
-import TablePagination from '@/layouts/components/TablePagination.vue'
-import GenericModal from '@/views/app/Generic/modal.vue'
-import { mapGetters } from 'vuex'
 import SidebarModalComponent from '@/components/SidebarModalComponent.vue'
+import TablePagination from '@/layouts/components/TablePagination.vue'
 import DataTable from '@/views/app/CustomComponents/DataTable/DataTable.vue'
+import GenericModal from '@/views/app/Generic/modal.vue'
+import { BCard } from 'bootstrap-vue'
 import moment from 'moment'
+import { mapGetters } from 'vuex'
 import Tables from '../../../table'
 import GenericFilter from './Filter.vue'
 import InlineFilter from './InlineFilter.vue'
@@ -81,6 +85,7 @@ export default {
     }
     return {
       search: payload?.search || '',
+      importExportElementArray:['bankdata','kreditornumber','tax_rates'],
       perPage: payload?.perPage || defaultPage || 20,
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
@@ -147,7 +152,7 @@ export default {
       // const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
         const filename = `${name}-Export_${moment().format('DD_MM_YYYY')}.xlsx`
-        const masterData = (await this.$http.get(`synchronizations/${name}/export`, {
+        const masterData = (await this.$http.get(`synchronizations/${name === 'tax_rates' ? 'tax-rate' : name}/export`, {
           responseType: 'blob',
         })).data
         console.log('masterData: ', masterData)

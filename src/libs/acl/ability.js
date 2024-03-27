@@ -95,4 +95,4 @@ export const defineRules = () => {
   return rules
 }
 
-export default new Ability(defineRules())
+export default new Ability()

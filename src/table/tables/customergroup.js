@@ -1,5 +1,8 @@
+import { ACCESS } from '@/config/config-access';
+
 export default {
   entity: 'frontend_2_2_1',
+  permissions: ACCESS.tableAccess.customer_group.main,
   fields: [
     { key: 'customergroup_id', auto: true },
     { key: 'customergroup_name' },
@@ -17,6 +20,7 @@ export default {
       update: false,
       create: false,
       entityView: 'company',
+      permissions: ACCESS.tableAccess.customer_group.relations.companies,
       fields: [
         {
           key: 'company_id', sortable: true, type: 'list', list: 'company', listLabel: 'company_name',
@@ -33,6 +37,7 @@ export default {
       entity: 'frontend_2_2_3_2',
       entityForm: 'contactperson_customergroup_rel',
       entityView: 'contactperson',
+      permissions: ACCESS.tableAccess.customer_group.relations.contact_person,
       update: false,
       // change from franck
       create: false,

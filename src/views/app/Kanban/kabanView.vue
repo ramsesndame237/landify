@@ -1,12 +1,12 @@
 <script>
 import KanbanViewDisplay from '@/components/KanbanDisplayView.vue'
-import GenericFilter from '@/views/app/Generic/Filter.vue'
-import TicketMixin from '@/views/app/Kanban/TicketMixin'
 import Table from '@/table'
+import NoData from '@/views/app/CustomComponents/NoData/NoData.vue'
 import InvoiceTicketCard from '@/views/app/CustomComponents/WP6/InvoiceTicketCard.vue'
+import GenericFilter from '@/views/app/Generic/Filter.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
-import NoData from '@/views/app/CustomComponents/NoData/NoData.vue'
+import TicketMixin from '@/views/app/Kanban/TicketMixin'
 import moment from 'moment-business-time'
 
 export default {
@@ -66,6 +66,9 @@ export default {
     }
   },
   computed: {
+    canOpenTicket() {
+      return this.$isAbleTo('read', this.definition.permissions)
+    },
     board_name() {
       return this.$route.params.name
     },
@@ -304,15 +307,14 @@ export default {
       </div>
     </b-card>
     <div class="h-100 position-relative">
-      <KanbanViewDisplay ref="KanbanContainer" classes="d-flex kanbanContainer position-relative"
-                         :styles="'border:solid green'">
+      <KanbanViewDisplay ref="KanbanContainer" classes="d-flex kanbanContainer position-relative">
         <div class="w-100" v-if="columnData.length === 0">
           <NoData/>
         </div>
         <b-card v-for="item in columnData" :key="item.column_id" class="columnBoardElement"
                 @drop.prevent="(event)=> handleDrop(event,item.column_id,item.column_name)"
                 @dragover.prevent="(event) =>handleDragOver(event)" body-class="position-relative" :header="item.column_name"
-                header-bg-variant="secondary" header-text-variant="white" >
+                 header-text-variant="black" >
 <!--          <template #header>-->
 <!--            <div class="border-bottom-2 border-bottom-primary  w-100">-->
 <!--              <h5>-->
@@ -322,16 +324,17 @@ export default {
 <!--          </template>-->
           <div class="card-body-container"  @scrollend.passive="(e)=>handleScroll(e,item)">
             <div v-for="ticket in item.tickets" :id="ticket.ticket_id" :key="ticket.ticket_id" draggable="true"
-                 class="cursor-pointer" style="height: auto;margin-top: 15px;z-index: 0;position: relative"
+                 style="height: auto;margin-top: 15px;z-index: 0;position: relative"
+                 :class="{ notClickable: !canOpenTicket, 'cursor-pointer': canOpenTicket }"
                  @dragend="(event)=> handleDrag(event,item,ticket)"
                  @dragstart="(event)=> handleDrag(event)">
               <invoice-ticket-card v-if="ticket.ticket_id_group === null || showSubTickets" class="bg-white"
                                    :advanced="advanced"
                                    :ticket="{...ticket, column_id:item.column_id,column_is_qualitygate:item.column_is_qualitygate}"
                                    :team-users="teams.filter(team => team.team_id === ticket.team_id)"
-                                   @moredetails="$router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
-                                   @assign="$refs.assign.openModal(ticket, userIdsOfTeam(ticket.team_id))"
-                                   @subticket-updated="fetchTicketOfTheColumn(item.column_id,true)"/>
+                                   @moredetails="!canOpenTicket ? undefined : $router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
+                                   @assign="!canOpenTicket ? undefined : $refs.assign.openModal(ticket, userIdsOfTeam(ticket.team_id))"
+                                   @subticket-updated="!canOpenTicket ? undefined : fetchTicketOfTheColumn(item.column_id,true)"/>
             </div>
             <div class="flex align-items-center justify-content-center w-100  text-center mt-2 position-absolute"
                  style="top:-35px">
@@ -360,14 +363,17 @@ export default {
   gap: 15px;
   height: 80vh;
   user-select: none;
+  background: transparent;
 }
 
 .columnBoardElement {
-  background: #ecebeb;
+  background: #E9E9E9;
   position: relative;
   min-width: 450px;
   max-width: 460px;
   max-height: 100vh;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  border-radius: 15px;
   margin-bottom: 15px;
   padding: 10px;
   display: flex;
@@ -375,6 +381,8 @@ export default {
   overflow: hidden;
   .card-header{
     z-index: 10;
+    height: 40px;
+    background: #E9E9E9;
   }
   .card-body-container{
     overflow-y: auto;
@@ -387,5 +395,9 @@ export default {
 
 .card_draggable {
   border: dashed;
+}
+
+.notClickable {
+  pointer-events: none;
 }
 </style>

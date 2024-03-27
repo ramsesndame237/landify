@@ -1,13 +1,13 @@
 <template>
   <div>
     <generic-filter ref="filter" vertical :table="table" :definition="definition" :initial-data="initialFilterData"
-                    @filter="allFilter" @reset="reset"/>
+                    :remove-status="true" @filter="allFilter" @reset="reset"/>
 
     <data-table
       ref="dataTable"
       url="/tickets/slims?type_of_ticket=update_ticket"
       :columns="cols"
-      :on-row-click="(row) => row.ticket_id && $router.push(`/app/table/ticket/view/${row.ticket_id}`)"
+      :on-row-click="canOpenTicket ? (row) => row.ticket_id && $router.push(`/app/table/ticket/view/${row.ticket_id}`) : undefined"
       :include-in-query="currentFilterData"
       :bar-actions="[
         {
@@ -15,7 +15,11 @@
           onClick: () => $refs.filter.openModal(),
         }
       ]"
-    />
+    >
+      <template #customTabFilter >
+        <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
+      </template>
+    </data-table>
     <!--    <generic-modal ref="modal" :fetch-data="false" :cache-key="table+'-'" :table="table" :definition="definition"-->
     <!--                   with-continue :table-definition-key="table" :title="`headline~${table}~new`"-->
     <!--                   @reload-table="$refs.dataTable.fetchFn()"/>-->
@@ -24,14 +28,14 @@
 
 <script>
 
+import { getUserData } from '@/auth/utils'
+import TablePagination from '@/layouts/components/TablePagination.vue'
+import Table from '@/table/tables/ticket'
+import GenericFilter from '@/views/app/Generic/Filter.vue'
+import GenericModal from '@/views/app/Generic/modal.vue'
 import {
   BCard,
 } from 'bootstrap-vue'
-import TablePagination from '@/layouts/components/TablePagination.vue'
-import GenericModal from '@/views/app/Generic/modal.vue'
-import Table from '@/table/tables/ticket'
-import GenericFilter from '@/views/app/Generic/Filter.vue'
-import { getUserData } from '@/auth/utils'
 import _ from 'lodash'
 import DataTable from '../CustomComponents/DataTable/DataTable.vue'
 import TicketNameCol from './widgets/TicketNameCol.vue'
@@ -78,7 +82,7 @@ export default {
       }
     }
 
-    console.log("this is the filter",currFilters)
+    console.log('this is the filter', currFilters)
 
     return {
       cols: [
@@ -137,12 +141,12 @@ export default {
           text: this.$t('header~board~status~notassigned'),
           value: 'not_assigned',
         },
-        {
-          text: this.$t('header~board~status~update~ticket'),
-          value: 'opened',
-        },
+        // {
+        //   text: this.$t('header~board~status~update~ticket'),
+        //   value: 'opened',
+        // },
       ],
-      filterValue: payload?.filter?.status || null,
+      filterValue: payload?.filter?.status || 'opened',
       user: getUserData(),
     }
   },
@@ -150,18 +154,23 @@ export default {
     definition() {
       return Table
     },
+    canOpenTicket() {
+      return this.$isAbleTo('read', this.definition.permissions)
+    },
     useModalToCreate() {
       return this.definition.createModal === 'modal'
     },
   },
   watch: {
     filterValue: {
-      handler() {
-        this.allFilter()
+      handler(newvalue) {
+        this.allFilter({ status: newvalue })
       },
     },
   },
   mounted() {
+    console.log("this is the data",this.filterValue)
+    this.allFilter({ status: this.filterValue })
   },
   beforeDestroy() {
     this.$store.commit('table/setTableData', {
@@ -188,16 +197,18 @@ export default {
       return count
     },
     allFilter(value) {
+      console.log("this is the all filter")
       // const _payload = { ...this.$refs.filter.getFinalData(), status: this.filterValue }
-      const _payload = { ...value}
+      let _payload = { ...value }
+      if (!_payload.hasOwnProperty('status')) {
+        _payload = { ..._payload, status: this.filterValue }
+      }
       const payload = {}
       Object.keys(_payload).forEach(key => {
         if (_payload[key] && _payload[key] !== -1) {
           payload[key] = _payload[key]
         }
       })
-
-      console.log("this i sht payload",currentFilterData)
       this.$refs.dataTable.getData(payload)
       this.currentFilterData = payload
     },

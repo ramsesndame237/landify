@@ -1,33 +1,39 @@
-import Vue from 'vue'
-import {
-  ToastPlugin, ModalPlugin, VBTogglePlugin, VBTooltipPlugin,
-} from 'bootstrap-vue'
-import VueCompositionAPI from '@vue/composition-api'
 import i18n from '@/libs/i18n'
-
-import { ValidationProvider, ValidationObserver, extend } from 'vee-validate'
+import VueCompositionAPI from '@vue/composition-api'
 import {
-  required, email, max, regex, max_value as maxValue, required_if, size,
+  ModalPlugin,
+  ToastPlugin,
+  VBTogglePlugin, VBTooltipPlugin,
+} from 'bootstrap-vue'
+import Vue from 'vue'
+
+import * as Sentry from '@sentry/vue'
+import { ValidationObserver, ValidationProvider, extend } from 'vee-validate'
+import {
+  email, max,
+  max_value as maxValue,
+  regex,
+  required,
+  required_if, size,
 } from 'vee-validate/dist/rules'
 import vueKanban from 'vue-kanban'
-import * as Sentry from '@sentry/vue'
 
 // Global Components
 import './global-components'
 
 // 3rd party plugins
-import '@/libs/portal-vue'
-import '@/libs/toastification'
-import '@/libs/sweet-alerts'
 import '@/auth/jwt/useJwt'
 import '@/libs/clipboard'
+import '@/libs/portal-vue'
+import '@/libs/sweet-alerts'
+import '@/libs/toastification'
 
 import ability from '@/libs/acl'
 import { defineRules } from '@/libs/acl/ability'
 import moment from 'moment'
 import { Plugin } from 'vue-fragment'
-import { checkAndverficationJwt } from '@/views/app/CustomComponents/DataTable/utils'
 import App from './App.vue'
+import { isA, isAbleTo, isAdminOr, isAnExtern } from './config/config-access/config-permissions'
 import router from './router'
 import store from './store'
 // Vee validate
@@ -103,6 +109,10 @@ require('@core/scss/core.scss')
 require('@/assets/scss/style.scss')
 
 Vue.config.productionTip = false
+Vue.prototype.$isAbleTo = isAbleTo
+Vue.prototype.$isAdminOr = isAdminOr
+Vue.prototype.$isA = isA
+Vue.prototype.$isAnExtern = isAnExtern
 
 const userEmail = localStorage.getItem('userEmail')
 const env = process.env.VUE_APP_ENV

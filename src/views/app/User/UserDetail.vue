@@ -162,7 +162,7 @@
                   />
                 </template>
               </b-card>
-              <b-card no-body>
+              <b-card no-body v-if="canViewTrackRecord">
                 <TrackRecord :definition="definition" :endpoint="endpoint" />
               </b-card>
             </b-tab>
@@ -222,17 +222,18 @@
   </div>
 </template>
 <script>
-import TrackRecord from '@/views/app/Generic/Panels/TrackRecord.vue'
 import CompactDataTables from '@/layouts/components/CompactDataTables.vue'
-import TableGroupMatrix from '@/views/app/Role/Relation/TableGroupMatrix.vue'
-import GenericModal from '@/views/app/Generic/modal.vue'
 import EditPageMixin from '@/views/app/Generic/EditPageMixin'
+import TrackRecord from '@/views/app/Generic/Panels/TrackRecord.vue'
+import GenericModal from '@/views/app/Generic/modal.vue'
+import TableGroupMatrix from '@/views/app/Role/Relation/TableGroupMatrix.vue'
 
 import Field from '@/views/app/Generic/Field.vue'
 
+import { getUserData } from '@/auth/utils'
+import { USER_ROLES } from '@/config/config-access/config-roles'
 import MatrixTool from '@/views/app/Role/Relation/MatrixTool.vue'
 import TeamMixin from '@/views/app/Team/TeamMixin'
-import { getUserData } from '@/auth/utils'
 import intersection from 'lodash/intersection'
 import { mapGetters } from 'vuex'
 
@@ -262,6 +263,9 @@ export default {
   computed: {
     user() {
       return this.entity
+    },
+    canViewTrackRecord() {
+      return this.$isAdminOr(USER_ROLES.admin)
     },
     avatarPlaceholder() {
       return this.user?.user_firstname.charAt(0).toUpperCase()

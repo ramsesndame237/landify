@@ -63,13 +63,13 @@
         </div>
 
       </div>
-      <div v-for="ticket in visibleTickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item">
+      <div v-for="ticket in visibleTickets" :slot="ticket.ticket_id" :key="ticket.ticket_id" class="item" :class="{notClickable: !canOpenTicket}">
         <invoice-ticket-card v-if="ticket.ticket_id_group === null || showSubTickets" :advanced="advanced"
                              :ticket="ticket"
                              :team-users="teams.filter(team => team.team_id === ticket.columns[0].team_id)"
-                             @moredetails="$router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
-                             @assign="$refs.assign.openModal(ticket, userIdsOfTeam(ticket.columns[0].team_id))"
-                             @subticket-updated="loadBoardTickets"/>
+                             @moredetails="!canOpenTicket ? undefined : $router.push({name: 'table-view', params: {table: 'ticket', id: ticket.ticket_id, entity: ticket, columns, teams}})"
+                             @assign="!canOpenTicket ? undefined : $refs.assign.openModal(ticket, userIdsOfTeam(ticket.columns[0].team_id))"
+                             @subticket-updated="!canOpenTicket ? undefined : loadBoardTickets"/>
       </div>
     </kanban-board>
     <generic-modal ref="modal" :table="table" :definition="definition" :table-definition-key="table"
@@ -84,18 +84,22 @@
 </template>
 <script>
 import {
-  BButton, BCard, BFormInput, BFormSelect, BFormCheckbox, BSkeleton, BSkeletonImg, BFormTextarea,
+  BButton, BCard,
+  BFormCheckbox,
+  BFormInput, BFormSelect,
+  BFormTextarea,
+  BSkeleton, BSkeletonImg,
 } from 'bootstrap-vue'
 // eslint-disable-next-line import/extensions
-import GenericModal from '@/views/app/Generic/modal'
+import { getUserData } from '@/auth/utils'
 import Table from '@/table'
 import InvoiceTicketCard from '@/views/app/CustomComponents/WP6/InvoiceTicketCard'
-import moment from 'moment-business-time'
-import {getUserData} from '@/auth/utils'
 import GenericFilter from '@/views/app/Generic/Filter'
+import GenericModal from '@/views/app/Generic/modal'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal'
-import Fuse from 'fuse.js'
 import TicketMixin from '@/views/app/Kanban/TicketMixin'
+import Fuse from 'fuse.js'
+import moment from 'moment-business-time'
 
 export default {
   name: 'Kanban',
@@ -157,6 +161,9 @@ export default {
     }
   },
   computed: {
+    canOpenTicket() {
+      return this.$isAbleTo('read', this.definition.permissions)
+    },
     stages() {
       return this.columns.map(c => c.column_name)
     },
@@ -518,6 +525,10 @@ ul {
 
 .movingTicket {
   opacity: 0.5;
+  pointer-events: none;
+}
+
+.notClickable {
   pointer-events: none;
 }
 </style>

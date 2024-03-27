@@ -1,5 +1,5 @@
 <template>
-  <li v-if="canViewVerticalNavMenuLink(item)" class="nav-item" :class="{
+  <li v-if="$isAbleTo('list', item.permissions)" class="nav-item" :class="{
       'active': isActive,
       'disabled': item.disabled
     }">

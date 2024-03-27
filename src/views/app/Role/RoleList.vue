@@ -24,7 +24,7 @@
               <h3>{{ role.role_name }}</h3>
             </b-card-text>
             <b-card-text class="d-flex justify-content-between">
-              <b-button class="card-link p-0" variant="link" @click="roleDetail(true, role)">
+              <!-- <b-button class="card-link p-0" variant="link" @click="roleDetail(true, role)">
                 {{ $t('button~edit_role') }}
               </b-button>
               <b-button class="p-0" variant="link" :title="$t('tooltip~btn-icon~detail-role')" @click="roleDetail(false, role)">
@@ -32,11 +32,11 @@
                   icon="EyeIcon"
                   size="18"
                 />
-              </b-button>
+              </b-button> -->
             </b-card-text>
           </b-card>
         </div>
-        <div class="col-lg-4 col-sm-3 col-12">
+        <!-- <div class="col-lg-4 col-sm-3 col-12">
           <b-card class="pt-2 pl-3" img-src="https://demos.pixinvent.com/vuexy-vuejs-admin-template/demo-1/assets/girl-using-mobile-26d497df.png" img-left>
             <div class="text-right">
               <b-card-text>
@@ -50,7 +50,7 @@
             </div>
 
           </b-card>
-        </div>
+        </div> -->
       </div>
     </b-overlay>
     <b-card body-class="p-0">
