@@ -1,6 +1,7 @@
 import { ACCESS } from '@/config/config-access'
 import { getContractCriteriaFields } from '@/table/utils'
 import _ from 'lodash'
+import { merge } from 'lodash'
 
 export default {
   // entity: 'frontend_3_4_1_1',
@@ -979,6 +980,7 @@ export default {
       }
       console.log('vm: ', vm)
       vm.setData(data)
+      vm.originalEntity = merge(vm.originalEntity, data)
       return data
     }
   },
