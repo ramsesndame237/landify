@@ -48,6 +48,9 @@ export default {
     },
     edit() {
       this.view = false
+      const url = new URL(window.location.href)
+      url.searchParams.set('edit', 'true')
+      window.history.pushState({ path: url.href }, '', url.href)
     },
     async fetchExportData(name, parent) {
       console.log("this is the parent", parent)

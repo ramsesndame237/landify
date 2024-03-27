@@ -24,7 +24,7 @@
         <feather-icon icon="FilterIcon" :badge="filterBadge"/>
       </b-button>
 
-      <b-dropdown v-if="importFunctionnality.includes(entity) && showInput" size="sm" variant="default"
+      <b-dropdown v-if="canImport && importFunctionnality.includes(entity) && showInput" size="sm" variant="default"
                   toggle-class="text-decoration-none" no-caret >
         <template #button-content>
           <b-button variant="success">
@@ -43,7 +43,7 @@
           </b-dropdown-item>
         </template>
       </b-dropdown>
-      <b-dropdown v-if="importFunctionnality.includes(entity) && showInput" size="sm" variant="default" toggle-class="text-decoration" no-caret style="margin-left: -45px!important;">
+      <b-dropdown v-if="canImport && importFunctionnality.includes(entity) && showInput" size="sm" variant="default" toggle-class="text-decoration" no-caret style="margin-left: -45px!important;">
         <template #button-content>
           <b-button variant="success">
             <FeatherIcon icon="ChevronDownIcon"/>
@@ -76,7 +76,14 @@
 </template>
 
 <script>
-import {BButton, BFormGroup, BFormInput, BFormSelect, BPagination,} from 'bootstrap-vue'
+import { USER_ROLES } from '@/config/config-access/config-roles'
+import {
+  BButton,
+  BFormGroup,
+  BFormInput,
+  BFormSelect,
+  BPagination,
+} from 'bootstrap-vue'
 
 export default {
   name: 'TablePagination',
@@ -109,8 +116,11 @@ export default {
     actions: Array,
     importExportArrayItem: Array,
     filterBadge: Number,
-    inlineFilter: Boolean,
-    // Indique s'il s'agit d'un filtre en ligne, afin de masquer l'icône de filtre
+    definition: {
+      type: Object,
+      default: null,
+    },
+    inlineFilter: Boolean, // Indique s'il s'agit d'un filtre en ligne, afin de masquer l'icône de filtre
   },
   data() {
     return {
@@ -121,11 +131,14 @@ export default {
     }
   },
   computed: {
+    canImport() {
+      return this.$isAdminOr(USER_ROLES.admin)
+    },
     canDelete() {
-      return this.$can('delete', this.entity)
+      return this.definition ? this.$isAbleTo('remove', this.definition.permissions) : true
     },
     canCreate() {
-      return this.$can('create', this.entity)
+      return this.definition ? this.$isAbleTo('create', this.definition.permissions) : true
     },
   },
   watch: {

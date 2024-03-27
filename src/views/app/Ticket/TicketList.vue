@@ -29,8 +29,8 @@
       :url="`/tickets/slims`"
       :columns="cols"
       :default-params="{status:filterValue}"
-      :on-row-click="(row) => row.ticket_id && $router.push(`/app/table/ticket/view/${row.ticket_id}`)"
-      :include-in-query="currentFilterData"
+      :on-row-click="canOpenTicket ? (row) => row.ticket_id && $router.push(`/app/table/ticket/view/${row.ticket_id}`) : undefined"
+      :no-initial-fetch="true"
       :bar-actions="[
         {
           icon: 'FilterIcon',
@@ -50,28 +50,20 @@
 
 <script>
 
-import {
-  BCard,
-} from 'bootstrap-vue'
-import TablePagination from '@/layouts/components/TablePagination.vue'
-import GenericModal from '@/views/app/Generic/modal.vue'
+import { getUserData } from '@/auth/utils'
+// eslint-disable-next-line import/no-cycle
 import Table from '@/table/tables/ticket'
 import GenericFilter from '@/views/app/Generic/Filter.vue'
-import { getUserData } from '@/auth/utils'
+import GenericModal from '@/views/app/Generic/modal.vue'
 import _ from 'lodash'
 import DataTable from '../CustomComponents/DataTable/DataTable.vue'
 import TicketNameCol from './widgets/TicketNameCol.vue'
-
-const Datatables = () => import('@/layouts/components/DataTables.vue')
 
 export default {
   components: {
     GenericFilter,
     GenericModal,
-    TablePagination,
-    Datatables,
     DataTable,
-    BCard,
   },
   data() {
     let payload = this.$store.getters['table/tableData'](this.$route.params.table)
@@ -145,7 +137,10 @@ export default {
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
       initialFilterData: payload?.filter,
-      currentFilterData: Object.keys(currFilters).length === 0 ? { status: this.filterValue ?? 'opened' } : currFilters,
+      currentFilterData: {
+        ...(currFilters || {}),
+        status: this.filterValue ?? 'opened',
+      },
       initialSortBy: payload?.sortBy,
       initialSortDesc: payload?.sortDesc ?? true,
       table: this.$route.params.table,
@@ -180,16 +175,14 @@ export default {
     useModalToCreate() {
       return this.definition.createModal === 'modal'
     },
-  },
-  watch: {
-    filterValue: {
-      handler(newvalue) {
-        this.allFilter(newvalue === 'update_ticket' ? { type_of_ticket: newvalue } : { status: newvalue })
-      },
+    canOpenTicket() {
+      return this.$isAbleTo('read', this.definition.permissions)
     },
   },
-  mounted() {
-    this.allFilter({ status: this.filterValue })
+  watch: {
+    filterValue() {
+      this.allFilter()
+    },
   },
   beforeDestroy() {
     this.$store.commit('table/setTableData', {
@@ -200,10 +193,13 @@ export default {
         perPage: this.perPage,
         totalRows: this.totalRows,
         filter: { ...this.$refs.filter.getFinalData(), status: this.filterValue },
-        sortBy: this.$refs.table.sortBy,
-        sortDesc: this.$refs.table.sortDesc,
+        sortBy: this.$refs.table?.sortBy,
+        sortDesc: this.$refs.table?.sortDesc,
       },
     })
+  },
+  mounted() {
+    this.allFilter()
   },
   methods: {
     getFilterCount() {
@@ -215,31 +211,21 @@ export default {
       if (count === 0) return null
       return count
     },
-    allFilter(value) {
-      let _payload = { ...value }
-      if (!_payload.hasOwnProperty('status')) {
-        _payload = { ..._payload, status: this.filterValue }
-      }
+    allFilter() {
+      const _payload = { ...(this.$refs.filter.data || {}), status: this.filterValue }
       const payload = {}
       Object.keys(_payload).forEach(key => {
         if (_payload[key] && _payload[key] !== -1) {
           payload[key] = _payload[key]
         }
       })
-      console.log('this is the payload', payload)
       this.$refs.dataTable.getData(payload)
-      this.currentFilterData = payload
-    },
-    filter(obj) {
-      console.log(obj, 'filter')
-      this.currentPage = 1
-      setTimeout(() => {
-        this.$refs.table.filter(obj)
-      }, 500)
     },
     reset() {
       this.initialFilterData = {}
-      this.filter({})
+      this.currentFilterData = {}
+      this.filterValue = 'opened'
+      this.allFilter()
     },
     editElement(entity) {
       this.$refs.modal.openModal(false, entity, `headline~${this.definition.entityForm || this.definition.entity}~detail`)

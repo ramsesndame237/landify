@@ -1,11 +1,16 @@
-import _ from 'lodash'
 import { getUserData } from '@/auth/utils'
+import { ACCESS } from '@/config/config-access'
+import { USER_PERMISSIONS } from '@/config/config-access/config-permissions'
+import emailModal from '@/views/app/Ticket/EmailModal.vue'
+import _, { union } from 'lodash'
+import Vue from 'vue'
 
 export default {
   entity: 'frontend_3_1_1',
   primaryKey: 'pos_id',
   createModal: 'modal',
   entityEndpoint: '/pos',
+  permissions: ACCESS.tableAccess.pos.main,
   filter: (item, vm) => {
     const user = getUserData()
     if (vm.$store.getters['user/isUserExternClient']) {
@@ -99,6 +104,7 @@ export default {
       primaryKey: 'location_id',
       entity: 'frontend_3_1_3_7',
       entityView: 'location',
+      permissions: ACCESS.tableAccess.pos.relations.location,
       update: false,
       create: false,
       delete: false,
@@ -117,6 +123,7 @@ export default {
         relationKey: 'area_ids',
         entityKey: 'pos_id',
       },
+      permissions: ACCESS.tableAccess.pos.relations.area,
       primaryKey: 'area_id',
       entity: 'frontend_3_1_3_1',
       entityForm: 'area_pos_rel',
@@ -154,6 +161,7 @@ export default {
       entity: 'frontend_3_1_3_2',
       entityForm: 'contract_area_unit_usagetype_rel',
       entityView: 'contract',
+      permissions: ACCESS.tableAccess.pos.relations.contract,
       fields: [
         {
           key: 'contract_id',
@@ -235,6 +243,7 @@ export default {
       entityForm: 'pos_tag_rel',
       entityView: 'tag',
       update: false,
+      permissions: ACCESS.tableAccess.pos.relations.tag,
       fields: [
         {
           key: 'tag_id',
@@ -256,6 +265,7 @@ export default {
       entityEndpoint: '/tickets/slims',
       entityForm: 'ticket_pos_rel',
       entityView: 'ticket',
+      permissions: ACCESS.tableAccess.pos.relations.ticket,
       fields: [
         {
           key: 'ticket_id',
@@ -511,11 +521,72 @@ export default {
         endpoint: '/pos',
         relationKey: 'document_ids',
         entityKey: 'pos_id',
+        method: 'delete',
       },
       title: 'headline~document~tab',
       primaryKey: 'document_id',
       entityForm: 'document_pos_rel',
       entity: 'frontend_3_1_3_8',
+      permissions: ACCESS.tableAccess.pos.relations.document,
+      entityEndpoint: '/documents/pos',
+      submit: async (vm, entity, create) => {
+        const fieldsComponent = vm.getFieldComponents()
+        const documentField = fieldsComponent.find(f => f.field.key === 'document_id')
+        const documentEntity = documentField?.subEntity
+
+        try {
+          if (!create) {
+            await vm.$http({
+              url: '/documents/update',
+              method: 'put',
+              params: {
+                document_id: documentEntity.document_id,
+                documenttype_id: documentEntity.documenttype_id,
+                subdocumenttype_id: documentEntity.subdocumenttype_id,
+                document_name: documentEntity.document_name,
+              },
+            })
+            vm.$successToast(vm.$t('success~document~saved'))
+            return null
+          }
+
+          const formData = new FormData()
+          const files = documentField.$refs.fields.find(f => f.field.key === 'files')?.getFiles() || []
+
+          for (let i = 0; i < files.length; i++) {
+            formData.append('files', files[i])
+          }
+
+          const { data } = await vm.$http({
+            url: '/documents/uploadfiles',
+            data: formData,
+            method: 'post',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+
+          const file = data.data?.[0]
+
+          if (!file) {
+            throw new Error(vm.$t('errors~unexpected~error~occurred'))
+          }
+
+          const payload = {
+            document_id: file.document_id,
+            pos_id: entity.pos_id,
+            subdocumenttype_id: documentEntity.subdocumenttype_id,
+            documenttype_id: documentEntity.documenttype_id,
+          }
+
+          await vm.$http.post('/documents/pos', payload)
+          vm.$successToast(vm.$t('success~document~saved'))
+          return null
+        } catch (e) {
+          throw new Error(typeof e?.response?.data?.detail === 'string' ? e?.response?.data?.detail : vm.$t('errors~unexpected~error~occurred'))
+        }
+      },
       fields: [
         {
           key: 'document_id',
@@ -525,10 +596,67 @@ export default {
           alwaysNew: true,
           onlyForm: true,
           multiple: true,
+          hideOnIndex: true,
+          onInit: vm => {
+            vm.subEntity.subdocumenttype_id = vm.entity.subdocumenttype_id
+          },
         },
         { key: 'document_name', hideOnForm: true },
         { key: 'document_entry_time', hideOnForm: true },
         { key: 'documenttype_name', hideOnForm: true },
+      ],
+    },
+    {
+      customRequest: {
+        endpoint: '/pos',
+        relationKey: 'area_ids',
+        entityKey: 'pos_id',
+      },
+      title: 'Email',
+      primaryKey: 'email_id',
+      entityEndpoint: '/pos/emails',
+      entity: 'frontend_3_1_3_1',
+      entityForm: 'area_pos_rel',
+      entityView: 'Email',
+      permissions: ACCESS.tableAccess.pos.relations.email,
+      update: false,
+      delete: false,
+      create: false,
+      onViewElement: element => {
+        const EmailModal = Vue.extend(emailModal)
+        const emailModalInstance = new EmailModal({
+          i18n: window.$vue.$i18n,
+          router: window.$vue.$i18n,
+          store: window.$vue.$store,
+        })
+        emailModalInstance.$mount()
+        emailModalInstance.show(true, element)
+      },
+      fields: [
+        {
+          key: 'email_received_datetime',
+          sortable: true,
+          type: 'list',
+          list: 'area',
+          listLabel: 'area_name',
+          disableOnUpdate: true,
+        },
+        { key: 'email_from', hideOnForm: true },
+        { key: 'email_subject', hideOnForm: true },
+        // { key: 'location_id', hideOnForm: true },
+        // {
+        //   key: 'location_name',
+        //   hideOnForm: true,
+        // },
+        // {
+        //   key: 'areatype_name',
+        //   hideOnForm: true,
+        // },
+        // {
+        //   key: 'area_last_change_time', hideOnForm: true, type: 'date', time: true,
+        // }, {
+        //   key: 'area_space_value', hideOnForm: true,
+        // },
       ],
     },
   ],
@@ -557,6 +685,7 @@ export default {
     {
       component: () => import('@/views/app/Generic/Panels/TrackRecord.vue'),
       props: {},
+      permissions: [USER_PERMISSIONS.admin],
     },
   ],
 }

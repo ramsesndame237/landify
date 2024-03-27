@@ -23,14 +23,14 @@
                     key: 'company_id',
                     filter_key: 'customergroup_id',
                     type: 'list',
-                    required: true,
+                    required: false,
                     list: 'company',
                     listLabel: 'company_name',
                   }"
                  :entity="entity"/>
           <field class=" mx-sm-1 w-100"
-                 :field="{ key: 'team_id', type: 'custom-select', required: false, items: filteredTeams}"
-                 :entity="entity" :disabled="entity.company_id === -1"/>
+                 :field="{ key: 'team_id', type: 'custom-select', required: false, items: filteredTeams, noAutoFill: !team_is_customer, disabled: teamFieldDisabled }"
+                 :entity="entity" />
           <field class="w-100"
                  :field="{ key: 'user_id', type: 'custom-select', items: usersData, required: false }"
                  :entity="entity" :disabled="entity.company_id === -1"/>
@@ -38,10 +38,6 @@
       </div>
     </div>
     <b-row>
-      <summary-card :loading="loading" :hide-percentage="true"
-                    :title="$t('headline~dashboard~subframe~update~tickets~numbers')" color="#008000"
-                    :number="total_update_ticket"
-                    variant="dark" cols="4" @click.native="show('Update_ticket')"/>
       <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~open_tickets_intime')" color="#008000"
                     :percent="(before_deadline*100/total_open_tickets).toFixed(0)" :number="before_deadline"
                     variant="dark" cols="4" @click.native="show(dashboard_filter.BEFORE_DEADLINE)"/>
@@ -52,20 +48,25 @@
       <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~open_tickets_afterred')" color="#d70000"
                     :percent="(over_due_red*100/total_open_tickets).toFixed(0)" :number="over_due_red" variant="danger"
                     cols="4" @click.native="show(dashboard_filter.OVERDUE_RED)"/>
+      <summary-card :loading="loading" :hide-percentage="true"
+                    :title="$t('headline~dashboard~subframe~update~tickets~numbers')" color="#1183D5"
+                    :number="total_update_ticket"
+                    variant="dark" cols="4" @click.native="show('Update_ticket')"/>
     </b-row>
   </div>
 </template>
 <script>
+import { getUserData } from '@/auth/utils'
+import { USER_ROLES } from '@/config/config-access/config-roles'
+import CompanyMixin from '@/views/app/Company/CompanyMixin'
+import SummaryCard from '@/views/app/Dashboard/Components/SummaryCard.vue'
+import Field from '@/views/app/Generic/Field.vue'
+import TeamMixin from '@/views/app/Team/TeamMixin'
+import { filter, pickBy } from 'lodash'
+import moment from 'moment'
 import DatePicker from 'vue2-datepicker'
 import 'vue2-datepicker/index.css'
-import Field from '@/views/app/Generic/Field.vue'
-import moment from 'moment'
-import SummaryCard from '@/views/app/Dashboard/Components/SummaryCard.vue'
-import TeamMixin from '@/views/app/Team/TeamMixin'
-import CompanyMixin from '@/views/app/Company/CompanyMixin'
-import {getUserData} from '@/auth/utils'
-import {filter, pickBy} from 'lodash'
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'DashboardAnalytic',
@@ -80,7 +81,7 @@ export default {
     return {
       entity: {
         tickets: this.team_is_customer ? 'customers' : 'seybolds',
-        team_id: -1,
+        team_id: this.$isAdminOr(USER_ROLES.expansion_manager) && this.team_is_customer ? 6 : -1, // MVM_KUNDE
         user_id: -1,
         company_id: -1,
       },
@@ -136,6 +137,12 @@ export default {
     }
   },
   computed: {
+    teamFieldDisabled() {
+      return this.$isAdminOr(
+        USER_ROLES.area_manager,
+        USER_ROLES.store_manager,
+      )
+    },
     initDate() {
       return [moment().subtract(30, 'days').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
     },
@@ -181,6 +188,7 @@ export default {
     async getUsers() {
       try {
         const {user_id} = this.user
+        console.log("User ", this.user)
         const filteredEntity = pickBy(this.entity, val => ![-1, null, undefined].includes(val))
 
         const response = await this.$http.get('users', {
@@ -194,7 +202,7 @@ export default {
           return {label: user.user_email, value: user.user_id, ...user}
         })
 
-        if (this.isUserExternClientNotDirector && this.team_is_customer) {
+        if (((this.isUserExternClientNotDirector) && this.team_is_customer) && this.user?.role?.[0]?.role_code === USER_ROLES.lead) {
           transformedData = filter(data, {user_id}).map(user => ({label: 'My Tickets', value: user.user_id, ...user}))
           this.entity.user_id = data.some(user => user.user_id === user_id) ? user_id : -1
         }

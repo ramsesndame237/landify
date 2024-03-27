@@ -1,9 +1,11 @@
 import { getUserData } from '@/auth/utils'
+import { ACCESS } from '@/config/config-access'
 
 export default {
   entity: 'frontend_3_2_1',
   primaryKey: 'area_id',
   entityEndpoint: '/areas',
+  permissions: ACCESS.tableAccess.area.main,
   updateComponent: () => import('@/views/app/UpdateComponent/AreaForm'),
   filter: (item, vm) => {
     const user = getUserData()
@@ -87,6 +89,7 @@ export default {
       entity: 'frontend_3_2_3_1',
       entityForm: 'contract_area_unit_usagetype_rel',
       entityView: 'contract',
+      permissions: ACCESS.tableAccess.area.relations.contracts,
       fields: [
         {
           key: 'contract_id', type: 'list', list: 'contract', listLabel: 'contract_name', disableOnUpdate: true,
@@ -140,6 +143,7 @@ export default {
       entityView: 'pos',
       update: false,
       primaryKey: 'pos_id',
+      permissions: ACCESS.tableAccess.area.relations.pos,
       fields: [
         {
           key: 'pos_id', type: 'list', list: 'pos', listLabel: 'pos_name',
@@ -155,6 +159,7 @@ export default {
       entityView: 'serviceobject',
       entityForm: 'area_serviceobject_rel',
       primaryKey: 'serviceobject_id',
+      permissions: ACCESS.tableAccess.area.relations.service_object,
       fields: [
         {
           key: 'serviceobject_id',

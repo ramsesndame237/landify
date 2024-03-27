@@ -1,11 +1,11 @@
 <script>
-import DataTable from '@/views/app/CustomComponents/DataTable/DataTable.vue'
-import GenericModal from '@/views/app/Generic/modal.vue'
-import Table from '@/table'
+import { USER_ROLES } from '@/config/config-access/config-roles'
 import { getDocumentLink, getDocumentLinkPreview, getStampedDocumentLink } from '@/libs/utils'
+import Table from '@/table'
+import DataTable from '@/views/app/CustomComponents/DataTable/DataTable.vue'
 import EditPageMixin from '@/views/app/Generic/EditPageMixin'
+import GenericModal from '@/views/app/Generic/modal.vue'
 import TicketMixin from '@/views/app/Kanban/TicketMixin'
-import { mapMutations } from 'vuex'
 
 export default {
   name: 'DocumentsWidgetView',
@@ -70,8 +70,20 @@ export default {
     }
   },
   computed: {
+    canStamp() {
+      return this.$isAdminOr(USER_ROLES.admin)
+    },
+    canEdit() {
+      return this.$isAdminOr(USER_ROLES.admin)
+    },
+    canViewDetails() {
+      return true
+    },
     documentDef() {
       return this.isCreate ? { ...Table.document, customRequest: Table.document.customRequestCreate } : Table.document
+    },
+    canAddDocument() {
+      return this.$isAdminOr(USER_ROLES.admin)
     },
   },
   watch: {
@@ -187,17 +199,17 @@ export default {
             <!--            <feather-icon icon="DownloadIcon" size="25" class="text-white"/>-->
             <!--          </div>-->
           </div>
-          <b-button variant="primary" @click="createDocument">
+          <b-button v-if="canAddDocument" variant="primary" @click="createDocument">
             {{ $t('button~newdocument') }}
           </b-button>
         </div>
       </div>
       <section>
         <DataTable ref="dataTableRef" :columns="columDataDocument" :url="`/tickets/documents?ticket_id=${ticket_id}`"
-                   :on-details-click="previewDocument" hide-top-bar="true"
-                   :on-update-click="editDocument"
+                   :on-details-click="canViewDetails ? previewDocument : undefined" hide-top-bar="true"
+                   :on-update-click="canEdit ? editDocument : undefined"
                    :resolve-data="data =>data.data"
-                   :custom-actions="$can('read', '/app/preview/document') ? [{icon:'FeatherIcon',onClick:onStampClicked, label:'Stamp'}] : []"/>
+                   :custom-actions="canStamp ? [{icon:'FeatherIcon',onClick:onStampClicked, label:'Stamp'}] : []"/>
       </section>
 
     </div>

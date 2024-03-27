@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-card body-class="p-0">
+    <b-card v-if="$isAbleTo('seeHeader', definition.permissions)" body-class="p-0">
       <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
         <div class="d-flex align-items-center">
           <img class="mr-1" src="@/assets/images/icons/people.svg" alt="">
@@ -8,7 +8,7 @@
         </div>
         <div class="d-flex align-items-center">
           <div class="mr-1 d-flex align-items-center">
-            <notes v-if="definition.note" :id="entityId" class="mr-2" :primary-key="primaryKey" :note="definition.note"
+            <notes v-if="definition.note && $isAbleTo('note', definition.permissions)" :id="entityId" class="mr-2" :primary-key="primaryKey" :note="definition.note"
                    :note-rel="'note_user_'+table+'_rel'"/>
             <template v-if="view">
               <b-button v-for="(action,i) in definition.actions" :key="i" :disabled="action.loading" size="sm"
@@ -17,13 +17,13 @@
                 <span>{{ action.text }}</span>
               </b-button>
             </template>
-            <template v-if="$can('delete', table)">
+            <template v-if="$isAbleTo('remove', definition.permissions)">
               <b-button v-if="view" size="sm" variant="primary" class="mr-1" @click="deleteEntity">
                 <feather-icon icon="Trash2Icon" class="mr-50"/>
                 {{ $t('button~delete') }}
               </b-button>
             </template>
-            <template v-if="definition.update !== false && $can('update', table)">
+            <template v-if="definition.update !== false && $isAbleTo('update', definition.permissions)">
               <b-button v-if="view" size="sm" variant="info" class="mr-1" @click="edit">
                 <feather-icon icon="EditIcon" class="mr-50"/>
                 {{ $t('button~edit') }}
@@ -54,7 +54,7 @@
       <invoice-stats/>
     </template>
     <generic-filter ref="filterEdit" :table="table"
-                    :definition="definition.relations.find(element=> (element.entityView === 'ticket'))"
+                    :definition="definition.relations && definition.relations.find(element=> (element.entityView === 'ticket'))"
                     :initial-data="initialFilterData"
                     :is-loading-data="isLoading"
                     @filter="filterDataSearch"/>
@@ -82,8 +82,8 @@
                          :on-edit-element="editElement" :with-edit="relation.update!==false"
                          :opacity="relation.primaryKey === 'ticket_id'" :items="itemsData"
                          :with-delete="relation.delete!==false" :custom-request="relation.customRequest"
-                         :is-loading-data="isLoadingDataFetch"
-                         :entity-endpoint="relation.entityEndpoint"/>
+                         :entity-endpoint="relation.entityEndpoint" :on-view-element="relation.onViewElement"
+                         :is-loading-data="isLoadingDataFetch" :permissions="relation.permissions"/>
             <generic-modal :cache-key="relation.entity+'-'" title="Test" :table="relation.entityForm || relation.entity"
                            :definition="relation" is-relation
                            :table-definition-key="relation.entityForm || relation.entity"
@@ -100,11 +100,11 @@
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
             <component :is="currentTool()" v-if="currentTool() && showTool"/>
-            <b-button v-if="currentHasNew() && canCreateCurrent" class="mr-1" size="sm" variant="info"
+            <b-button v-if="currentRelation && canCreateCurrent" class="mr-1" size="sm" variant="info"
                       @click="newElement">
               {{ $t('button~new') }}
             </b-button>
-            <b-button v-if="currentHasDelete() && canDeleteCurrent" class="mr-1" size="sm" variant="primary"
+            <b-button v-if="currentRelation && canDeleteCurrent" class="mr-1" size="sm" variant="primary"
                       @click="deleteSelected">
               {{ $t('button~delete') }}
             </b-button>
@@ -143,37 +143,37 @@
 
     <template v-if="formLoaded && definition.panels && definition.panels.length > 0">
       <template v-for="(panel,idx) in definition.panels">
-        <component :is="panel.component" :key="idx" :definition="definition" v-bind="panel.props"/>
+        <component :is="panel.component" v-if="$isAbleTo('read', panel.permissions)" :key="idx" :definition="definition" v-bind="panel.props"/>
       </template>
     </template>
   </div>
 </template>
 
 <script>
-import {
-  BButton,
-  BCard,
-  BCol,
-  BDropdown,
-  BDropdownForm,
-  BFormGroup,
-  BFormInput,
-  BInputGroup,
-  BInputGroupPrepend,
-  BRow,
-  BSpinner,
-  BTab,
-  BTabs,
-} from 'bootstrap-vue'
 import DataTables from '@/layouts/components/DataTables'
-import GenericModal from '@/views/app/Generic/modal'
-import EntityForm from '@/views/app/Generic/EntityForm'
-import EditPageMixin from '@/views/app/Generic/EditPageMixin'
-import Notes from '@/views/app/Generic/Notes'
-import InvoiceStats from '@/views/app/CustomComponents/InvoiceStats'
-import GenericFilter from '@/views/app/Generic/Filter.vue'
 import TablePagination from '@/layouts/components/TablePagination.vue'
 import Tables from '@/table'
+import InvoiceStats from '@/views/app/CustomComponents/InvoiceStats'
+import EditPageMixin from '@/views/app/Generic/EditPageMixin'
+import EntityForm from '@/views/app/Generic/EntityForm'
+import GenericFilter from '@/views/app/Generic/Filter.vue'
+import Notes from '@/views/app/Generic/Notes'
+import GenericModal from '@/views/app/Generic/modal'
+import {
+BButton,
+BCard,
+BCol,
+BDropdown,
+BDropdownForm,
+BFormGroup,
+BFormInput,
+BInputGroup,
+BInputGroupPrepend,
+BRow,
+BSpinner,
+BTab,
+BTabs,
+} from 'bootstrap-vue'
 
 export default {
   components: {
@@ -203,6 +203,9 @@ export default {
     const payload = this.$store.getters['table/tableData'](this.$route.params.table)
     const table = this.$route.params.table
     const definition = Tables[table]
+    if (!definition.relations) {
+      definition.relations = []
+    }
     let defaultPage = null
     if (this.isUserExternClient) {
       defaultPage = definition.perPage
@@ -219,27 +222,34 @@ export default {
       formLoaded: false,
       noBody: false,
       showTool: true,
+      tabIndex: 0,
       initialFilterData: payload?.filter,
       relationEntity: null,
     }
   },
   computed: {
+    currentRelation() {
+      return this.visibleRelations[this.tabIndex]
+    },
     currentHasFilter() {
       return this.visibleRelations[this.$refs.tabs?.currentTab]?.filters != null
     },
     canDeleteCurrent() {
-      return this.$can('delete', this.visibleRelations[this.$refs.tabs?.currentTab]?.entityForm)
+      // return this.$can('delete', this.visibleRelations[this.$refs.tabs?.currentTab]?.entityForm)
+      return this.$isAbleTo('remove', this.currentRelation.permissions)
     },
     canCreateCurrent() {
-      return this.$can('create', this.visibleRelations[this.$refs.tabs?.currentTab]?.entityForm)
+      // return this.$can('create', this.visibleRelations[this.$refs.tabs?.currentTab]?.entityForm)
+      return this.$isAbleTo('create', this.currentRelation.permissions)
     },
     visibleRelations() {
-      return this.definition.relations.filter(r => {
+      return (this.definition.relations ?? []).filter(r => {
         // console.log('call visible', this.$refs.form)
         if (r.visible && this.formLoaded) {
           if (!r.visible(this)) return false
         }
-        return this.$can('read', r.entityForm || r.entityView)
+        // return this.$can('read', r.entityForm || r.entityView)
+        return this.$isAbleTo('list', r.permissions)
       })
     },
   },
@@ -254,7 +264,8 @@ export default {
     this.$watch('$refs.tabs.currentTab', val => {
       if (this.tabIndex !== val) {
         this.tabIndex = val
-        this.relationEntity = this.definition.relations.find(element => element.entityView === this.visibleRelations[val].entityView)
+        this.relationEntity = (this.definition.relations ?? []).find(element => element.entityView === this.visibleRelations[val].entityView)
+        console.log("this is the change")
         this.$router.replace({
           name: this.$route.name,
           params: this.$route.params,
@@ -327,13 +338,13 @@ export default {
         this.$router.push({ name: route.name, params: { id: this.entityId, table: route.params.table } })
       } else {
         console.log('Ici tabs', { tabs })
-        const def = this.definition.relations[tabs.currentTab]
+        const def = (this.definition.relations || [])[tabs.currentTab]
         tabs.tabs[tabs.currentTab].$children[1].openModal(true, { [this.primaryKey]: this.entityId }, `headline~${def.entityForm || def.title}~new`)
       }
     },
     editElement(entity) {
       const { tabs } = this.$refs
-      const def = this.definition.relations[tabs.currentTab]
+      const def = (this.definition.relations || [])[tabs.currentTab]
       tabs.tabs[tabs.currentTab].$children[1].openModal(false, entity, `headline~${def.entityForm || def.title}~detail`)
     },
     reloadRelatedTable() {

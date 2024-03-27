@@ -75,6 +75,7 @@
                 v-if="!tableStore.columns.hided.includes(col.id)"
                 v-bind="col.props"
                 class="position-relative"
+                :class="{ 'cursor-default': !onRowClick }"
               >
                 <div >
                   <b-spinner v-if="j === 0 && row.read === 'NOT_READ'" variant="primary" small type="grow" class="position-absolute" style="left: 5px"/>
@@ -235,29 +236,29 @@
 
 <script>
 import {
+  BSidebar,
   BSkeletonTable,
   BTableSimple,
-  BSidebar,
   BTooltip,
 } from 'bootstrap-vue'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 
 import SimplePagination from '@/layouts/components/SimplePagination'
 
+import NoData from '../NoData/NoData.vue'
 import TableFilters from './components/TableFilters.vue'
 import TableHead from './components/TableHead.vue'
-import DefaultCol from './components/columns/DefaultCol.vue'
 import DateCol from './components/columns/DateCol.vue'
+import DefaultCol from './components/columns/DefaultCol.vue'
+import StatusCol from './components/columns/StatusCol.vue'
 import {
-  useTableStore,
-  toggleRowSelection,
-  listData,
   handleDelete,
   initDataTable,
+  listData,
+  toggleRowSelection,
+  useTableStore,
 } from './state/data-table-store'
-import NoData from '../NoData/NoData.vue'
 import { toastError } from './utils'
-import StatusCol from './components/columns/StatusCol.vue'
 
 const tableStore = useTableStore()
 
@@ -371,6 +372,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    noInitialFetch: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -418,7 +423,6 @@ export default {
           label: this.$t('delete'),
           onClick: this.onDeleteClick || (row => {
             if (this.deleteUrl) {
-              console.dir(this.$http)
               handleDelete({
                 swal: this.$swal,
                 http: this.$http,
@@ -462,35 +466,42 @@ export default {
       })
       this.filters.map(({ field }) => this.$watch(
         `tableStore.pagination.filtersValues.${field.key}`,
-        val => {
-          this.getData()
-          this.$emit('on-extra-value-change', { [field.key]: val })
+        (val, old) => {
+          if (val !== old) {
+            this.getData()
+            this.$emit('on-extra-value-change', { [field.key]: val })
+          }
         },
       ))
     }
     if (this.tabs?.items) {
       this.$watch(
         'tableStore.tabs.activeTabIndex',
-        val => {
-          this.getData()
-          this.$emit('on-tab-value-change', tableStore.tabs.list[val])
+        (val, old) => {
+          if (val !== old) {
+            this.getData()
+            this.$emit('on-tab-value-change', tableStore.tabs.list[val])
+          }
         },
       )
     }
     Object.keys(tableStore.pagination)
-      .filter(key => !['isLoading'].includes(key))
+      .filter(key => !['isLoading', 'total', 'pages'].includes(key))
       .forEach(key => this.$watch(
         `tableStore.pagination.${key}`,
-        () => this.getData(),
+        (val, old) => {
+          if (val !== old) {
+            this.getData()
+          }
+        },
       ))
   },
   async mounted() {
-    if (this.url) this.getData(this.includeInQuery)
+    if (this.url && !this.noInitialFetch) this.getData()
   },
   methods: {
     toggleRowSelection,
     getData(params) {
-      console.log("this is the data", params)
       if (this.url) {
         listData({
           api: this.$http,

@@ -1,10 +1,11 @@
-import { union } from 'lodash'
+import { ACCESS } from '@/config/config-access'
 
 export default {
   customIndex: () => import('@/views/app/Ticket/TicketList.vue'),
   customPage: () => import('@/views/app/Ticket/TicketDetail.vue'),
   fieldComponent: () => import('@/views/app/CreateComponent/TicketForm.vue'),
   create: false,
+  permissions: ACCESS.tableAccess.ticket.main,
   entity: 'frontend_6_1_6_overview',
   entityEndpoint: '/tickets/slims',
   defaultSortField: 'ticket_creation_time',
@@ -109,10 +110,6 @@ export default {
       list: 'customergroup',
       listLabel: 'customergroup_name',
       required: false,
-      noFetchOnInit: true,
-      customPagination: {
-        per_page: 15,
-      },
     },
     {
       key: 'company_id',
@@ -187,12 +184,12 @@ export default {
 
         const teams = vm.$store.getters['table/listCache']('teams')
 
-        const seyboldTeams = teams.filter(t => t.team_is_customer === 0)
+        // const seyboldTeams = teams.filter(t => t.team_is_customer === 0)
 
-        if (isUserExternClientNotDirector) {
-          vm.$set(vm.entity, 'team_id', -1)
-          return union(seyboldTeams.map(t => t.team_id), team_id).includes(team.team_id)
-        }
+        // if (isUserExternClientNotDirector && !vm.$isAdminOr(USER_ROLES.expansion_manager)) {
+        //   vm.$set(vm.entity, 'team_id', -1)
+        //   return union(seyboldTeams.map(t => t.team_id), team_id).includes(team.team_id)
+        // }
         if (vm.entity.team_id === undefined) {
           vm.$set(vm.entity, 'team_id', -1)
         }
@@ -207,22 +204,11 @@ export default {
       filter_key: 'team_id',
       list: 'user_team_grp',
       listLabel: 'user_email',
+      entityCustomEndPoint: '/users',
       required: false,
+      filter: () => true,
       withOptionAll: true,
       clearable: false,
-      filter: (user, vm) => {
-        const { user_id } = vm.$store.getters['user/user']
-        const isUserExternClientNotDirector = vm.$store.getters['user/isUserExternClientNotDirector']
-
-        if (isUserExternClientNotDirector) {
-          return user.user_id === user_id
-        }
-        if (vm.entity.user_id === undefined) {
-          vm.$set(vm.entity, 'user_id', -1)
-        }
-
-        return true
-      },
       change: (entity, vm) => {
         if (entity.team_id === -1) {
           vm.isDisabled = true

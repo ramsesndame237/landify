@@ -1,10 +1,9 @@
 import axios from '@/libs/axios'
 import moment from 'moment'
-import JwtService from '@core/auth/jwt/jwtService'
 
 export const snakeToTitle = s => s.replace(/^_*(.)|_+(.)/g, (a, c, d) => (c ? c.toUpperCase() : ` ${d.toUpperCase()}`))
 // const jwtService = new JwtService()
-const accessToken = localStorage.getItem('accessToken').split(' ')[1]
+const accessToken = localStorage.getItem('accessToken')?.split(' ')[1]
 
 export const getYearFormDateString = date => date?.split('-')[0]
 

@@ -4,7 +4,6 @@
 
 <script>
 import table from '@/table/index'
-import Table from '@/table'
 import Edit from '../Edit.vue'
 
 export default {
@@ -38,7 +37,8 @@ export default {
     },
   },
   beforeRouteEnter(to, from, next) {
-    to.meta.pageTitle = Table[to.params.table]?.title || `headline~${to.params.table}~list`
+    // eslint-disable-next-line global-require
+    to.meta.pageTitle = require('@/table').default[to.params.table]?.title || `headline~${to.params.table}~list`
     to.meta.breadcrumb = [
       {
         text: to.params.table,
@@ -56,7 +56,8 @@ export default {
     // if it is tab update
     if (to.params.id === from.params.id) return next()
     this.handleRouteChange(() => {
-      to.meta.pageTitle = Table[to.params.table]?.title || `headline~${to.params.table}~list`
+      // eslint-disable-next-line global-require
+      to.meta.pageTitle = require('@/table').default[to.params.table]?.title || `headline~${to.params.table}~list`
       to.meta.breadcrumb = [
         {
           text: to.params.table,

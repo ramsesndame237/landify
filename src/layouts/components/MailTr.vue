@@ -54,7 +54,7 @@
     <b-td>
       <b-form-checkbox v-if="visible" :key="`checkbox-new-ticket-for-item-${item.email_id || item.document_id}`"
                        v-model="shouldCreateSubTicket" style="transform: translateY(-6px)"
-                       :disabled="!item.ticket_id || is_dismissed || is_done"/>
+                       :disabled="(showTicket === null? false : true ) || (!item.ticket_id || is_dismissed || is_done) "/>
       <b-form-checkbox v-else :checked="!!item.create_subticket" style="transform: translateY(-6px)" disabled/>
     </b-td>
     <b-td class="td-form">
@@ -86,7 +86,7 @@
       <field v-if="visible" :field="boardIdField" :entity="item"
              :disabled="!item.pos_id || (item.ticket_id && !shouldCreateSubTicket) || is_dismissed || is_done"/>
       <router-link v-if="is_done" target="_blank"
-                   :to="{name: 'kanbanView', params: {table: 'board',id: item.board_id}}">
+                   :to="{name: 'kanbanView', params: {table: 'board',id: item.board_id, name: item.board_name }}">
         {{ getBoardName() }}
       </router-link>
     </b-td>
@@ -113,11 +113,11 @@
 </template>
 
 <script>
+import FeatherIcon from '@/@core/components/feather-icon/FeatherIcon.vue'
+import { getDateFormat, getDocumentLink } from '@/libs/utils'
 import Field from '@/views/app/Generic/Field'
-import { getDocumentLink, getDateFormat } from '@/libs/utils'
 import { VBToggle } from 'bootstrap-vue'
 import moment from 'moment'
-import FeatherIcon from '@/@core/components/feather-icon/FeatherIcon.vue'
 
 export default {
   name: 'MailTr',
@@ -140,11 +140,12 @@ export default {
     return {
       currentTicket: null,
       shouldCreateSubTicket: false,
+      showTicket: '',
       ticketIdField: {
         key: 'ticket_id',
         type: 'list',
         list: 'frontend_6_1_6_overview',
-        entityCustomEndPoint: '/tickets/slims',
+        entityCustomEndPoint: '/tickets/slims?show_with_subtickets=true&',
         listLabel: item => `${item.ticket_id} - ${item.ticket_name}`,
         noLabel: true,
         required: false,
@@ -303,11 +304,12 @@ export default {
       if (!this.is_done) {
         const ticketList = this.$store.state.table.listCache.frontend_6_1_6_overview
         const selectedTicket = ticketList?.find(ticket => ticket.ticket_id === val)
+        this.showTicket = selectedTicket.ticket_id_group
         this.$set(this.item, 'contract_id', selectedTicket?.contract_id || null)
         this.$set(this.item, 'board_id', selectedTicket?.board_id || null)
-        if (!val) {
-          this.shouldCreateSubTicket = false
-        }
+        // if (!val) {
+        this.shouldCreateSubTicket = false
+        // }
       }
     },
     getTicketName() {
