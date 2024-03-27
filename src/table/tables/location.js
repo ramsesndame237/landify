@@ -1,20 +1,14 @@
 export default {
   entity: 'frontend_3_3_1',
-  entityEndpoint: '/locations',
   primaryKey: 'location_id',
   fieldComponent: () => import('@/views/app/FormComponent/LocationForm.vue'),
   fields: [
     { key: 'location_id', auto: true },
     { key: 'location_name' },
-    { key: 'locationtype_name', hideOnForm: true },
-    { key: 'address_city_name', sortable: true },
-    { key: 'country_name', hideOnForm: true },
-    { key: 'area_count', hideOnForm: true },
     {
       key: 'location_objectdescription', type: 'textarea', hideOnIndex: true, required: false,
     },
-    { key: 'location_total_area', type: 'number', required: false, hideOnIndex: true,
-    },
+    { key: 'location_total_area', type: 'number' },
     {
       key: 'location_start_date', type: 'date', hideOnIndex: true, required: false,
     },
@@ -26,9 +20,8 @@ export default {
       listLabel: 'company_name',
       tableKey: 'company_id',
       required: false,
-      hideOnIndex: true,
     },
-    { key: 'company_name', hideOnForm: true, hideOnIndex: true },
+    { key: 'locationtype_name', hideOnForm: true },
     {
       key: 'locationtype_id',
       type: 'list',
@@ -40,15 +33,15 @@ export default {
     {
       key: 'country_id', hideOnIndex: true, type: 'list', list: 'country', listLabel: 'country_name',
     },
-    { key: 'address_name', hideOnForm: true, hideOnIndex: true },
-    { key: 'address_street', hideOnIndex: true },
-    { key: 'address_house_number', hideOnIndex: true },
-    { key: 'address_extra', hideOnIndex: true, rules: { required: false } },
-    { key: 'address_city_zip_code', hideOnIndex: true, sortable: true },
+    { key: 'address_name' },
+    { key: 'address_street' },
+    { key: 'address_house_number' },
+    { key: 'address_extra', rules: { required: false } },
+    { key: 'city_name', sortable: true },
+    { key: 'city_zip', sortable: true },
     {
-      key: 'address_city_state',
+      key: 'city_state',
       sortable: true,
-      hideOnIndex: true,
       required: false,
       change: (entity, vm) => {
         let cityState
