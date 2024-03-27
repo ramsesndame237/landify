@@ -1,5 +1,5 @@
 export default {
-  entity: 'frontend_3_3_1',
+  // entity: 'frontend_3_3_1',
   primaryKey: 'location_id',
   entityEndpoint: '/locations',
   perPage: 10,
@@ -8,13 +8,15 @@ export default {
     { key: 'location_id', auto: true },
     { key: 'location_name' },
     { key: 'locationtype_name', hideOnForm: true },
-    { key: 'address_city_name',
+    {
+      key: 'city_name',
       sortable: true,
       formatter: (value, key, item) => {
         const obj = item.address
         const city_name = `${obj['address_city_name']}`
         return city_name
       },
+      hideOnForm: true,
     },
     { key: 'address_country_name',
       hideOnForm: true,
@@ -55,7 +57,8 @@ export default {
     {
       key: 'country_id', hideOnIndex: true, type: 'list', list: 'country', listLabel: 'country_name',
     },
-    { key: 'address_name', hideOnForm: true, hideOnIndex: true },
+
+    { key: 'address_city_name', hideOnIndex: true },
     { key: 'address_street', hideOnIndex: true },
     { key: 'address_house_number', hideOnIndex: true },
     { key: 'address_extra', hideOnIndex: true, rules: { required: false } },

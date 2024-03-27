@@ -30,7 +30,7 @@ export default {
           locationtype_id: locationtype?.locationtype_id,
           owner_id: owner?.company_id,
           city_zip: address_city_zip_code,
-          city_name: address_city_name,
+          address_city_name: address_city_name,
           city_state: address_city_state,
         }
       }
