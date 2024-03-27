@@ -80,7 +80,7 @@ export default {
     const table = this.$route.params.table
     const definition = Tables[table]
     let defaultPage = null
-    if (this.isUserExternClient) {
+    if (this.isUserExternClient || definition.perPage) {
       defaultPage = definition.perPage
     }
     return {

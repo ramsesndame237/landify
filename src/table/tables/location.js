@@ -2,6 +2,7 @@ export default {
   entity: 'frontend_3_3_1',
   entityEndpoint: '/locations',
   primaryKey: 'location_id',
+  perPage: 10,
   fieldComponent: () => import('@/views/app/FormComponent/LocationForm.vue'),
   fields: [
     { key: 'location_id', auto: true },
