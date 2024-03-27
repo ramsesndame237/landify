@@ -14,6 +14,7 @@ export default {
   customIndex: () => import('@/views/app/User/UserIndex.vue'),
   customPage: () => import('@/views/app/User/UserDetail.vue'),
   createModal: 'modal',
+  showInput: true,
   fields: [
     {
       key: 'usertype_id',

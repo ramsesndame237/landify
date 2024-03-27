@@ -38,10 +38,6 @@
       </div>
     </div>
     <b-row>
-      <summary-card :loading="loading" :hide-percentage="true"
-                    :title="$t('headline~dashboard~subframe~update~tickets~numbers')" color="#008000"
-                    :number="total_update_ticket"
-                    variant="dark" cols="4" @click.native="show('Update_ticket')"/>
       <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~open_tickets_intime')" color="#008000"
                     :percent="(before_deadline*100/total_open_tickets).toFixed(0)" :number="before_deadline"
                     variant="dark" cols="4" @click.native="show(dashboard_filter.BEFORE_DEADLINE)"/>
@@ -52,6 +48,10 @@
       <summary-card :loading="loading" :title="$t('headline~dashboard~subframe~open_tickets_afterred')" color="#d70000"
                     :percent="(over_due_red*100/total_open_tickets).toFixed(0)" :number="over_due_red" variant="danger"
                     cols="4" @click.native="show(dashboard_filter.OVERDUE_RED)"/>
+      <summary-card :loading="loading" :hide-percentage="true"
+                    :title="$t('headline~dashboard~subframe~update~tickets~numbers')" color="#1183D5"
+                    :number="total_update_ticket"
+                    variant="dark" cols="4" @click.native="show('Update_ticket')"/>
     </b-row>
   </div>
 </template>
