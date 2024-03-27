@@ -2,8 +2,7 @@
   <div class="">
     <b-table ref="table" sticky-header striped hover responsive :busy.sync="isLoadingData" :per-page="perPage"
              :current-page="currentPage" :items="items || provider" :fields="allFields" :sort-by.sync="sortBy"
-             :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" show-empty @row-clicked="onRowClicked"
-             :tbody-tr-class="rowClass">
+             :sort-desc.sync="sortDesc" :filter="search" select-mode="multi" show-empty :tbody-tr-class="rowClass" @row-clicked="onRowClicked">
       <template #table-busy>
         <div class="text-center text-danger">
           <b-spinner class="align-middle"/>
@@ -11,11 +10,11 @@
         </div>
       </template>
       <template #cell(__selected)="data">
-        <b-form-checkbox v-if="multiSelect && currentItems[data.index]" v-model="currentItems[data.index].__selected"
+        <b-form-checkbox v-if="currentItems[data.index]" v-model="currentItems[data.index].__selected"
                          :disabled="disabled" @change="onSelect(data.index)"/>
       </template>
       <template #cell()="data">
-        <b-form-checkbox v-if="multiSelect && data.field.type === 'boolean'" v-model="data.value" :disabled="!data.field.editable"
+        <b-form-checkbox v-if="data.field.type === 'boolean'" v-model="data.value" :disabled="!data.field.editable"
                          :value="1" :unchecked-value="0"
                          @change="data.field.onChange ? data.field.onChange(data) : null"/>
         <b-button v-else-if="data.field.type === 'button'" size="xs" @click="$router.push(data.field.getRoute(data.item))">
@@ -45,20 +44,20 @@
       <template #emptyfiltered>
         {{ $t('message~table~emptyFiltered') }}
       </template>
-      <template v-if="actionsEnabled" #cell(Actions)="data">
+      <template v-if="withActions" #cell(Actions)="data">
         <div class="text-nowrap">
-          <b-button v-if="detailsEnabled" class=" btn-icon" style="margin-bottom: 3px" variant="flat-success" pill
+          <b-button v-if="withView" class=" btn-icon" style="margin-bottom: 3px" variant="flat-success" pill
                     @click="onViewClick(data)">
             <feather-icon icon="EyeIcon"/>
             <!--        <span>{{ $t('button~view') }}</span>-->
           </b-button>
-          <b-button v-if="updateEnabled" :disabled="canUpdateItem && canUpdateItem(currentItems[data.index])"
+          <b-button v-if="withEdit && canUpdate" :disabled="canUpdateItem && canUpdateItem(currentItems[data.index])"
                     class="btn-icon" variant="flat-info" style="margin-bottom: 3px" pill
                     @click="onEditElement ? onEditElement(currentItems[data.index]) : $router.push({ name: 'table-view', params: { table: entity, id: currentItems[data.index][primaryKey], entity: currentItems[data.index], ids: currentItems.map(i => i[primaryKey]) }, query: { edit: 'true' } })">
             <feather-icon icon="EditIcon"/>
             <!--        <span>{{ $t('button~edit') }}</span>-->
           </b-button>
-          <b-button v-if="deleteEnabled" :disabled="canDeleteItem && canDeleteItem(currentItems[data.index])"
+          <b-button v-if="withDelete && canDelete" :disabled="canDeleteItem && canDeleteItem(currentItems[data.index])"
                     class="btn-icon" variant="flat-primary" style="margin-bottom: 3px" pill
                     @click="deleteElement(data.index)">
             <feather-icon icon="Trash2Icon"/>
@@ -97,8 +96,9 @@
 </template>
 
 <script>
-import { formatDate, getDocumentLink } from '@/libs/utils'
 import { BButton, BFormCheckbox, BTable } from 'bootstrap-vue'
+import { formatDate, getDocumentLink } from '@/libs/utils'
+import flatten from 'lodash/flatten'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -112,36 +112,34 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    permissions: {
-      type: [Object, Array],
-      default: () => [],
-    },
-    noCache: {type: Boolean, default: false},
-    entity: {type: String, required: true},
-    entityList: {type: String},
-    entityForm: {type: String, required: false},
-    entityView: {type: String, required: false},
-    entityEndpoint: {type: [String, Function], required: false}, // if it exist a specific route for retrieving data
-    fields: {type: Array, required: true},
-    primaryKeyColumn: {type: String},
-    blankLink: {type: Boolean, default: false},
-    withView: {type: Boolean, default: true},
-    withEdit: {type: Boolean, default: true},
-    withDelete: {type: Boolean, default: true},
-    canMakeDeleteCall: {type: Boolean, default: true},
-    withActions: {type: Boolean, default: true},
-    withNested: {type: Boolean, default: false}, // Ce champ indique si on doit avoir des imbrications sous les lignes de tableau
-    subFields: {type: Array, required: false}, // Ce champ donne les fields à afficher lorsqu'on veut afficher plus de détail d'une ligne
-    subFieldsDataKey: {type: String, required: false}, // Ce champ indique la clé de l'objet du tableau qui contiendra les données du sous tableau
-    subFieldsType: {type: String, required: false}, // Ce champ indique si les éléments à afficher sous le tableau est un composant ou un tableau
-    subFieldsComponent: {type: Object, required: false}, // Ce champ indique le composant pour le sous tableau
-    subFieldsData: {type: Object, required: false}, // Ce champ contient certaines configuration pour les données du subfields
-    multiSelect: {type: Boolean, default: false},
-    defaultSortColumn: {type: String, default: ''},
+    noCache: { type: Boolean, default: false },
+    isLoadingData: Boolean,
+    entity: { type: String, required: true },
+    entityList: { type: String },
+    opacity: { type: Boolean, default: false },
+    entityForm: { type: String, required: false },
+    entityView: { type: String, required: false },
+    entityEndpoint: { type: [String, Function], required: false }, // if it exist a specific route for retrieving data
+    fields: { type: Array, required: true },
+    primaryKeyColumn: { type: String },
+    blankLink: { type: Boolean, default: false },
+    withView: { type: Boolean, default: true },
+    withEdit: { type: Boolean, default: true },
+    withDelete: { type: Boolean, default: true },
+    canMakeDeleteCall: { type: Boolean, default: true },
+    withActions: { type: Boolean, default: true },
+    withNested: { type: Boolean, default: false }, // Ce champ indique si on doit avoir des imbrications sous les lignes de tableau
+    subFields: { type: Array, required: false }, // Ce champ donne les fields à afficher lorsqu'on veut afficher plus de détail d'une ligne
+    subFieldsDataKey: { type: String, required: false }, // Ce champ indique la clé de l'objet du tableau qui contiendra les données du sous tableau
+    subFieldsType: { type: String, required: false }, // Ce champ indique si les éléments à afficher sous le tableau est un composant ou un tableau
+    subFieldsComponent: { type: Object, required: false }, // Ce champ indique le composant pour le sous tableau
+    subFieldsData: { type: Object, required: false }, // Ce champ contient certaines configuration pour les données du subfields
+    multiSelect: { type: Boolean, default: true },
+    defaultSortColumn: { type: String, default: '' },
     secondKey: {},
     secondKeyValue: {},
     search: {},
-    onDeleteElement: {type: Function},
+    onDeleteElement: { type: Function },
     onEditElement: { type: Function },
     onViewElement: { type: Function },
     perPage: Number,
@@ -180,18 +178,6 @@ export default {
     }
   },
   computed: {
-    actionsEnabled() {
-      return this.withActions && (this.detailsEnabled || this.deleteEnabled || this.updateEnabled)
-    },
-    detailsEnabled() {
-      return this.withView && this.canRead
-    },
-    deleteEnabled() {
-      return this.withDelete && this.canDelete
-    },
-    updateEnabled() {
-      return this.withEdit && this.canUpdate
-    },
     truncateStyle() {
       return this.truncateBy ? { maxWidth: `${this.truncateBy}rem`, display: 'block' } : {}
     },
@@ -203,8 +189,8 @@ export default {
     },
     allFields() {
       const fields = [
-        ...(this.selectable ? [{key: '__selected', thStyle: {width: '50px'}}] : []),
-        ...(this.actionsEnabled ? [{
+        ...(this.selectable ? [{ key: '__selected', thStyle: { width: '50px' } }] : []),
+        ...(this.withActions ? [{
           key: 'Actions',
           stickyColumn: true,
           tdClass: 'p-0',
@@ -243,24 +229,10 @@ export default {
       return fields
     },
     canDelete() {
-      // return this.$can('delete', this.entityForm || this.entity)
-      return this.$isAbleTo('remove', this.permissions)
+      return this.$can('delete', this.entityForm || this.entity)
     },
     canUpdate() {
-      // return this.$can('update', this.entityForm || this.entity)
-      return this.$isAbleTo('update', this.permissions)
-    },
-    canRead() {
-      // return this.$can('update', this.entityForm || this.entity)
-      return this.$isAbleTo('read', this.permissions)
-    },
-    canCreate() {
-      // return this.$can('update', this.entityForm || this.entity)
-      return this.$isAbleTo('create', this.permissions)
-    },
-    canList() {
-      // return this.$can('update', this.entityForm || this.entity)
-      return this.$isAbleTo('list', this.permissions)
+      return this.$can('update', this.entityForm || this.entity)
     },
     ...mapGetters('user', ['isUserExternClient']),
   },
@@ -310,10 +282,6 @@ export default {
     },
     provider(ctx) {
       this.isLoadingData = true
-      if (!this.canList) {
-        this.$errorToast('error~permission~error')
-        return []
-      }
       const {
         currentPage, perPage, filter, sortBy, sortDesc,
       } = ctx
@@ -323,6 +291,7 @@ export default {
         order_by: sortBy,
         order_dir: sortDesc ? 'DESC' : 'ASC',
         per_page: perPage === 0 ? 1000000 : perPage,
+        size: perPage === 0 ? 1000000 : perPage,
         from: 0,
         current_page: currentPage,
         filter_all: filter ?? '',
@@ -416,6 +385,10 @@ export default {
       return `${this.entity}-${JSON.stringify(payload)}`
     },
     processData(data) {
+      if (this.primaryKeyColumn === 'location_id') {
+        data.data = data.data.map(element => ({ ...element, address_city_name: element?.address?.address_city_name }))
+         }
+      console.log('this is the data process', data)
       if (this.entityEndpoint && Array.isArray(data.data)) {
         this.$emit('update:totalRows', data.total)
         data.data.forEach(el => {
@@ -570,15 +543,16 @@ export default {
       })
     },
     reload() {
+      console.log('this is the data')
       this.$refs.table.refresh()
       this.$emit('table-refreshed')
     },
     filter(data) {
+      console.log('this is the data of --------', data)
       this.filterData = { ...data }
       this.reload()
     },
     onSelect(index) {
-      console.log('index', index)
       if (!this.multiSelect) {
         this.currentItems.forEach((item, idx) => {
           if (idx !== index) this.$set(item, '__selected', false)
@@ -587,7 +561,7 @@ export default {
       }
     },
     onRowClicked(record, index) {
-      console.log('row clicked', record)
+      console.log('row clicked', [record, index])
       this.$set(record, '__selected', !record.__selected)
     },
     rowClass(item) {
