@@ -8,6 +8,7 @@ import GenericModal from '@/views/app/Generic/modal.vue'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
 import NoData from '@/views/app/CustomComponents/NoData/NoData.vue'
 import moment from 'moment-business-time'
+import dragula from 'dragula'
 
 export default {
   name: 'KabanView',
@@ -69,8 +70,8 @@ export default {
     board_name() {
       return this.$route.params.name
     },
-    columnIsScroll() {
-
+    localBlocks() {
+      return this.columnData
     },
   },
   watch: {
@@ -86,11 +87,71 @@ export default {
     },
     filterValue(newValue) {
       this.fetchTicketOfTheColumn(undefined, false, {status: newValue})
-    }
+    },
   },
   created() {
     this.fetchColumnOfTheBoard()
     this.fetchTeamsSystem()
+  },
+  updated() {
+    this.drake.containers = this.$refs.list
+    this.drake.mirrorContainer = this.$el
+  },
+  mounted() {
+    this.drake = dragula(this.$refs.list).on('drag', (el, source) => {
+      // this.$emit('drag', el, source)
+      console.log('this is the move', el)
+      el.classList.add('is-moving')
+      this.allowedTargets(el, source).forEach(c => c.classList.add('allowed'))
+      this.forbiddenTargets(el, source).forEach(c => c.classList.add('forbidden'))
+    }).on('dragend', el => {
+      console.log('this is the dragend function', el)
+      el.classList.remove('is-moving')
+      this.drake.containers.forEach(c => c.classList.remove('allowed', 'forbidden'))
+      window.setTimeout(() => {
+        el.classList.add('is-moved')
+        window.setTimeout(() => {
+          el.classList.remove('is-moved')
+        }, 600)
+      }, 100)
+    })
+      .on('drop', (block, list, source, sibling) => {
+        this.$emit('drop', block, list, source, sibling)
+        console.log('this is the drop element', [block, source, sibling, list])
+        let index = 0
+        for (index = 0; index < list.children.length; index += 1) {
+          if (list.children[index].classList.contains('is-moving')) break
+        }
+
+        let newState = list.dataset.status
+
+        if (this.machine) {
+          const transition = this.findTransition(list, source)
+          if (!transition) return
+          newState = this.machine.transition(source.dataset.status, transition).value
+        }
+
+        this.$emit('update-block', block.dataset.blockId, newState, index)
+        this.changeTicketColumn(null, source.id, list.id, source.innerText, block.id)
+      })
+      .on('cancel', (el, container, source) => {
+        this.$emit('cancel', el, container, source)
+      })
+      .on('remove', (el, container, source) => {
+        this.$emit('remove', el, container, source)
+      })
+      .on('shadow', (el, container, source) => {
+        this.$emit('shadow', el, container, source)
+      })
+      .on('over', (el, container, source) => {
+        this.$emit('over', el, container, source)
+      })
+      .on('out', (el, container, source) => {
+        this.$emit('out', el, container, source)
+      })
+      .on('cloned', (clone, original, type) => {
+        this.$emit('cloned', clone, original, type)
+      })
   },
   methods: {
     async handleScroll(event, value) {
@@ -99,22 +160,17 @@ export default {
         await this.fetchTicketOfTheColumn(value.column_id, false)
       }
     },
+    allowedTargets(el, source) {
+      const block = this.localBlocks.find(b => b[this.idProp] === el.dataset.blockId)
+      return this.drake.containers.filter(c => this.config.accepts(block, c, source))
+    },
+
+    forbiddenTargets(el, source) {
+      return this.drake.containers.filter(c => !this.allowedTargets(el, source).includes(c))
+    },
     async handleDrag(event, column, ticket) {
       if (event.type === 'dragend') {
         if (this.dropColumn) {
-          console.log('this is the column dropColumn', this.dropColumn)
-          // const result = await this.$swal({
-          //   title: 'Are you sure?',
-          //   text: `This ticket ${ticket.ticket_name} will be moved to the column: ${this.dropColumn.column_name}`,
-          //   icon: 'warning',
-          //   showCancelButton: true,
-          //   confirmButtonText: 'Yes',
-          //   customClass: {
-          //     confirmButton: 'btn btn-primary',
-          //     cancelButton: 'btn btn-outline-danger ml-1',
-          //   },
-          //   buttonsStyling: false,
-          // })
           if (event.target.classList.contains('card_draggable')) {
             event.target.classList.remove('card_draggable')
           }
@@ -136,71 +192,70 @@ export default {
       event.dataTransfer.setData('text', event.target.id)
       return event.dataTransfer.effectAllowed = 'move'
     },
-    changeTicketColumn(event, previous_column_id, next_column_id, next_column_name, ticket) {
+    changeTicketColumn(event, previous_column_id, next_column_id, next_column_name, ticket_id) {
       const payload = {
         previous_column_id,
         next_column_id,
-        board_id: this.$route.params.id || ticket.board_id,
-        ticket_id: ticket.ticket_id,
+        board_id: this.$route.params.id,
+        ticket_id: ticket_id,
       }
       this.$http.post('/tickets/change-ticket-column', payload).then(response => {
-        this.columnData.find(elet => elet.column_id === previous_column_id).tickets = this.columnData.find(elet => elet.column_id === previous_column_id).tickets.filter(elt => elt.ticket_id !== ticket.ticket_id)
-        this.columnData.find(elet => elet.column_id === next_column_id).tickets.unshift({
-          ...ticket,
-          column_id: next_column_id,
-          column_name: next_column_name,
-        })
+        console.info('this is the response', response)
       }).catch(error => {
         console.error(error)
       })
-      if (event.target.classList.contains('card_draggable')) {
-        event.target.classList.remove('card_draggable')
-      }
     },
-    handleDragOver(event) {
-      event.preventDefault()
-      // Set the dropEffect to move
-      const bottomTicket = this.insertAboveTicket(event.target.offsetParent, event.clientY)
-      const curTicket = document.querySelector('.card_draggable')
-
-      const containerWidth = this.$refs.KanbanContainer.$el.clientWidth
-      const containerScrollWidth = this.$refs.KanbanContainer.$el.scrollWidth
-      if (containerWidth < containerScrollWidth && event.clientX >= containerWidth) {
-        if (this.previousScrollEvent <= event.clientX) {
-          this.$refs.KanbanContainer.$el.scrollTo(this.$refs.KanbanContainer.$el.scrollLeft + 10, 0)
-        } else {
-          this.$refs.KanbanContainer.$el.scrollTo(this.$refs.KanbanContainer.$el.scrollLeft - 10, 0)
-        }
-        this.previousScrollEvent = event.clientX
-      }
-
-      if (!bottomTicket) {
-        event.target.offsetParent.querySelector('.card-body').appendChild(curTicket)
-      } else {
-        event.target.offsetParent.querySelector('.card-body').insertBefore(curTicket, bottomTicket)
-      }
-      // event.dataTransfer.dropEffect = 'move'
-    },
+    // handleDragOver(event) {
+    //   event.preventDefault()
+    //   // Set the dropEffect to move
+    //   const bottomTicket = this.insertAboveTicket(event.target.offsetParent, event.clientY)
+    //   const curTicket = document.querySelector('.card_draggable')
+    //
+    //   console.log("this is the current ticket", bottomTicket)
+    //   console.log("this is the event target", event.target.offsetParent.querySelector('.card-body-container'))
+    //   const containerWidth = this.$refs.KanbanContainer.$el.clientWidth
+    //   const containerScrollWidth = this.$refs.KanbanContainer.$el.scrollWidth
+    //   if (containerWidth < containerScrollWidth && event.clientX >= containerWidth) {
+    //     if (this.previousScrollEvent <= event.clientX) {
+    //       this.$refs.KanbanContainer.$el.scrollTo(this.$refs.KanbanContainer.$el.scrollLeft + 10, 0)
+    //     } else {
+    //       this.$refs.KanbanContainer.$el.scrollTo(this.$refs.KanbanContainer.$el.scrollLeft - 10, 0)
+    //     }
+    //     this.previousScrollEvent = event.clientX
+    //   }
+    //
+    //   if (!bottomTicket) {
+    //     event.target.offsetParent.querySelector('.card-body-container').appendChild(curTicket)
+    //   } else {
+    //     event.target.offsetParent.querySelector('.card-body-container').insertBefore(curTicket, bottomTicket)
+    //   }
+    //   // event.dataTransfer.dropEffect = 'move'
+    // },
     handleDrop(event, column_id, column_name) {
       this.dropColumn = {column_id, column_name}
     },
-    insertAboveTicket(column, mouseY) {
-      const elements = column.offsetParent.querySelector('.card-body').querySelectorAll('.ticket:not(.card_draggable)')
-      let closestTask = null
-      let closestOffset = Number.NEGATIVE_INFINITY
-      elements.forEach(ticket => {
-        const {top} = ticket.getBoundingClientRect()
-
-        const offset = mouseY - top
-
-        if (offset < 0 && offset > closestOffset) {
-          closestOffset = offset
-          closestTask = ticket
-        }
-      })
-
-      return closestTask
-    },
+    // insertAboveTicket(column, mouseY) {
+    //   console.log('this is the parent ', [column.offsetParent.querySelector('.card-body-container').querySelectorAll('.ticket:not(.card-body-container)')])
+    //   const elements = column.offsetParent.querySelector('.card-body-container').querySelectorAll('.ticket:not(.card_draggable)')
+    //   let closestTask = null
+    //   let closestOffset = Number.NEGATIVE_INFINITY
+    //   if (elements) {
+    //     elements.forEach(ticket => {
+    //       const {top} = ticket.getBoundingClientRect()
+    //
+    //       const offset = mouseY - top
+    //       console.log("this is the offset", offset)
+    //       console.log("this is the offset", closestOffset)
+    //
+    //       if (offset < 0 && offset > closestOffset) {
+    //         closestOffset = offset
+    //         closestTask = ticket
+    //       }
+    //     })
+    //   }
+    //
+    //   return closestTask
+    // },
     fetchTicketOfTheColumn(id, reloading, filterData) {
       for (const idKey in filterData) {
         if (filterData[idKey] === -1) {
@@ -263,7 +318,10 @@ export default {
     fetchColumnOfTheBoard() {
       this.$http.get(`${this.boardColumnUrl}?board_id=${this.$route.params.id}&order_filed=rank_order`).then(response => {
         console.log('this is the data', response.data.data)
-        this.columnData = response.data.data.sort((a, b) => a.rank_order - b.rank_order).map(items => ({...items, tickets: []}))
+        this.columnData = response.data.data.sort((a, b) => a.rank_order - b.rank_order).map(items => ({
+          ...items,
+          tickets: [],
+        }))
         this.initialFetch = true
       }).catch(error => {
         console.error(error)
@@ -305,25 +363,16 @@ export default {
     </b-card>
     <div class="h-100 position-relative">
       <KanbanViewDisplay ref="KanbanContainer" classes="d-flex kanbanContainer position-relative">
-        <div class="w-100" v-if="columnData.length === 0">
+        <div v-if="columnData.length === 0" class="w-100">
           <NoData/>
         </div>
         <b-card v-for="item in columnData" :key="item.column_id" class="columnBoardElement"
-                @drop.prevent="(event)=> handleDrop(event,item.column_id,item.column_name)"
-                @dragover.prevent="(event) =>handleDragOver(event)" body-class="position-relative" :header="item.column_name"
-                 header-text-variant="black" >
-<!--          <template #header>-->
-<!--            <div class="border-bottom-2 border-bottom-primary  w-100">-->
-<!--              <h5>-->
-<!--                {{ i }}-->
-<!--              </h5>-->
-<!--            </div>-->
-<!--          </template>-->
-          <div class="card-body-container"  @scrollend.passive="(e)=>handleScroll(e,item)">
+                body-class="position-relative"
+                :header="item.column_name" header-text-variant="black">
+          <div :id="item.column_id" ref="list" class="card-body-container"
+               @scrollend.passive="(e)=>handleScroll(e,item)">
             <div v-for="ticket in item.tickets" :id="ticket.ticket_id" :key="ticket.ticket_id" draggable="true"
-                 class="cursor-pointer" style="height: auto;margin-top: 15px;z-index: 0;position: relative"
-                 @dragend="(event)=> handleDrag(event,item,ticket)"
-                 @dragstart="(event)=> handleDrag(event)">
+                 class="cursor-pointer" style="height: auto;margin-top: 15px;z-index: 0;position: relative">
               <invoice-ticket-card v-if="ticket.ticket_id_group === null || showSubTickets" class="bg-white"
                                    :advanced="advanced"
                                    :ticket="{...ticket, column_id:item.column_id,column_is_qualitygate:item.column_is_qualitygate}"
@@ -338,10 +387,10 @@ export default {
                          style="width: 3rem; height: 3rem;"/>
             </div>
           </div>
-<!--          <b-button v-if="item.tickets.length <= 3 && !loading" block variant="primary" class="mt-2"-->
-<!--                    @click="fetchTicketOfTheColumn(item.column_id,false)">-->
-<!--            Load More Ticket-->
-<!--          </b-button>-->
+          <!--          <b-button v-if="item.tickets.length <= 3 && !loading" block variant="primary" class="mt-2"-->
+          <!--                    @click="fetchTicketOfTheColumn(item.column_id,false)">-->
+          <!--            Load More Ticket-->
+          <!--          </b-button>-->
         </b-card>
         <generic-modal ref="modal" :table="table" :definition="definition" :table-definition-key="table"
                        :title="$t('headline~ticket~newticket')"
@@ -375,21 +424,47 @@ export default {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  .card-header{
+
+  .card-header {
     z-index: 10;
     height: 40px;
     background: #E9E9E9;
   }
-  .card-body-container{
+
+  .card-body-container {
     overflow-y: auto;
     overflow-x: hidden;
     height: 100%;
+    padding: 10px;
   }
 
 }
 
-
 .card_draggable {
   border: dashed;
 }
+
+.gu-mirror {
+  position: fixed !important;
+  margin: 0 !important;
+  z-index: 9999 !important;
+  opacity: 0.8;
+  list-style-type: none;
+}
+
+.gu-hide {
+  display: none !important;
+}
+
+.gu-unselectable {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+
+.gu-transit {
+  opacity: 0.2;
+}
+
 </style>

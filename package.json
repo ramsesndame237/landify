@@ -35,6 +35,7 @@
     "browser-id": "^2.0.24",
     "chart.js": "2.9.4",
     "core-js": "^3.25.2",
+    "dragula": "^3.7.3",
     "echarts": "5.2.1",
     "font-awesome": "^4.7.0",
     "fuse.js": "^6.6.2",
