@@ -35,6 +35,7 @@
                         :on-new-element="definition.create ===false ? null : onNewElement" :total-rows="totalRows"
                         :with-filter="definition.filters && definition.filters.length > 0"
                         :inline-filter="!definition.inline_filter"
+                        :show-input="definition.showInput"
                         :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
                         :actions="definition.actions" @action="(a)=>$refs.table.onAction(a)"
                         @filter="$refs.filter.openModal()"/>
