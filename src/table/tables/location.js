@@ -187,6 +187,3 @@ export default {
   ],
   note: 'frontend_0_8_5',
 }
-// if (this.primaryKeyColumn === 'location_id') {
-//   data.data = data.data.map(element => ({ ...element, address_city_name: element?.address?.address_city_name }))
-//    }
