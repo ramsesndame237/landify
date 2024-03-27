@@ -8,6 +8,7 @@ import GenericModal from '@/views/app/Generic/modal.vue'
 import AssignUserModal from '@/views/app/Kanban/AssignUserModal.vue'
 import TicketMixin from '@/views/app/Kanban/TicketMixin'
 import moment from 'moment-business-time'
+import _ from 'lodash'
 
 export default {
   name: 'KabanView',
@@ -25,6 +26,7 @@ export default {
       sourceModel: null,
       targetModel: null,
       movingNode: null,
+      debounced: null,
 
       isMovingTicket: false,
 
@@ -89,7 +91,11 @@ export default {
     },
     filterValue(newValue) {
       this.fetchTicketOfTheColumn(undefined, false, {status: newValue})
-    }
+    },
+    /** Reload tickets when the search value change */
+    search() {
+      this.getTicketWithFilters()
+    },
   },
   created() {
     this.fetchColumnOfTheBoard()
@@ -272,6 +278,24 @@ export default {
         console.error(error)
       })
     },
+    /** Filter tickets based on the value in the modal
+     * `filters` and the value of the `search` prop */
+    getTicketWithFilters(value) {
+      if (this.debounced) {
+        this.debounced.cancel()
+      }
+      this.debounced = _.debounce(() => this.fetchTicketOfTheColumn(
+        undefined,
+        false,
+        {
+          ...(value || {}),
+          keyword: this.search,
+        },
+      ).finally(() => {
+        this.debounced = null
+      }), 500)
+      this.debounced()
+    },
 
   },
 }
@@ -291,7 +315,7 @@ export default {
             <feather-icon icon="FilterIcon"/>
           </b-button>
           <generic-filter ref="filter" vertical :table="table" :definition="definition"
-                          @filter="(value)=>fetchTicketOfTheColumn(undefined,false,value)"/>
+                          @filter="getTicketWithFilters"/>
           <b-form-checkbox v-model="advanced" switch title="Advanced Mode"/>
           <b-form-select v-model="filterValue" placeholder="Select an option" :options="filterOptions"/>
           <b-button v-b-tooltip.hover :title="showSubTickets ? 'Hide Subtasks' : 'Show Subtasks' "

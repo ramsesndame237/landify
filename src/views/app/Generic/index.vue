@@ -8,7 +8,7 @@
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"
                         :on-new-element="definition.create ===false ? null : onNewElement" :total-rows.sync="totalRows"
                         :with-filter="definition.filters && definition.filters.length > 0"
-                        :show-input="true"
+                        :show-input="definition.showInput || true"
                         :import-export-array-item="(definition.relations || []).filter(x => importExportElementArray.includes(x.entity)).map(item =>({entity:item.entity,primaryKey:item.primaryKey}))"
                         :inline-filter="!definition.inline_filter"
                         :definition="definition"
