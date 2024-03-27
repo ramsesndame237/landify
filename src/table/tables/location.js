@@ -7,8 +7,23 @@ export default {
     { key: 'location_id', auto: true },
     { key: 'location_name' },
     { key: 'locationtype_name', hideOnForm: true },
-    { key: 'address_city_name', sortable: true },
-    { key: 'country_name', hideOnForm: true },
+    { key: 'address_city_name',
+      sortable: true,
+      formatter: (value, key, item) => {
+        const obj = item.address
+        const city_name = `${obj['address_city_name']}`
+        return city_name
+      },
+    },
+    { key: 'address_country_name',
+      hideOnForm: true,
+      formatter: (value, key, item) => {
+        const obj = item.address
+        const country_name = `${obj['address_country_name']}`
+        return country_name
+
+      },
+    },
     { key: 'area_count', hideOnForm: true },
     {
       key: 'location_objectdescription', type: 'textarea', hideOnIndex: true, required: false,
@@ -171,3 +186,6 @@ export default {
   ],
   note: 'frontend_0_8_5',
 }
+// if (this.primaryKeyColumn === 'location_id') {
+//   data.data = data.data.map(element => ({ ...element, address_city_name: element?.address?.address_city_name }))
+//    }
