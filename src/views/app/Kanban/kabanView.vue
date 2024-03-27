@@ -89,8 +89,8 @@ export default {
         console.log('this is the loading state')
       }
     },
-    filterValue(newValue) {
-      this.fetchTicketOfTheColumn(undefined, false, {status: newValue})
+    filterValue() {
+      this.getTicketWithFilters()
     },
     /** Reload tickets when the search value change */
     search() {
@@ -280,7 +280,7 @@ export default {
     },
     /** Filter tickets based on the value in the modal
      * `filters` and the value of the `search` prop */
-    getTicketWithFilters(value) {
+    getTicketWithFilters() {
       if (this.debounced) {
         this.debounced.cancel()
       }
@@ -288,8 +288,9 @@ export default {
         undefined,
         false,
         {
-          ...(value || {}),
+          ...(this.$refs.filter?.data || {}),
           keyword: this.search,
+          status: this.filterValue,
         },
       ).finally(() => {
         this.debounced = null
