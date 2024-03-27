@@ -30,7 +30,7 @@
       :columns="cols"
       :default-params="{status:filterValue}"
       :on-row-click="canOpenTicket ? (row) => row.ticket_id && $router.push(`/app/table/ticket/view/${row.ticket_id}`) : undefined"
-      :include-in-query="currentFilterData"
+      :no-initial-fetch="true"
       :bar-actions="[
         {
           icon: 'FilterIcon',
@@ -51,27 +51,19 @@
 <script>
 
 import { getUserData } from '@/auth/utils'
-import TablePagination from '@/layouts/components/TablePagination.vue'
+// eslint-disable-next-line import/no-cycle
 import Table from '@/table/tables/ticket'
 import GenericFilter from '@/views/app/Generic/Filter.vue'
 import GenericModal from '@/views/app/Generic/modal.vue'
-import {
-  BCard,
-} from 'bootstrap-vue'
 import _ from 'lodash'
 import DataTable from '../CustomComponents/DataTable/DataTable.vue'
 import TicketNameCol from './widgets/TicketNameCol.vue'
-
-const Datatables = () => import('@/layouts/components/DataTables.vue')
 
 export default {
   components: {
     GenericFilter,
     GenericModal,
-    TablePagination,
-    Datatables,
     DataTable,
-    BCard,
   },
   data() {
     let payload = this.$store.getters['table/tableData'](this.$route.params.table)
@@ -145,7 +137,10 @@ export default {
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
       initialFilterData: payload?.filter,
-      currentFilterData: Object.keys(currFilters).length === 0 ? { status: this.filterValue ?? 'opened' } : currFilters,
+      currentFilterData: {
+        ...(currFilters || {}),
+        status: this.filterValue ?? 'opened',
+      },
       initialSortBy: payload?.sortBy,
       initialSortDesc: payload?.sortDesc ?? true,
       table: this.$route.params.table,
@@ -182,17 +177,12 @@ export default {
     },
     canOpenTicket() {
       return this.$isAbleTo('read', this.definition.permissions)
-    }
-  },
-  watch: {
-    filterValue: {
-      handler(newvalue) {
-        this.allFilter(newvalue === 'update_ticket' ? { type_of_ticket: newvalue } : { status: newvalue })
-      },
     },
   },
-  mounted() {
-    this.allFilter({ status: this.filterValue })
+  watch: {
+    filterValue() {
+      this.allFilter()
+    },
   },
   beforeDestroy() {
     this.$store.commit('table/setTableData', {
@@ -208,6 +198,9 @@ export default {
       },
     })
   },
+  mounted() {
+    this.allFilter()
+  },
   methods: {
     getFilterCount() {
       const obj = this.$refs.filter ? this.$refs.filter.getFinalData() : this.initialFilterData
@@ -218,31 +211,21 @@ export default {
       if (count === 0) return null
       return count
     },
-    allFilter(value) {
-      let _payload = { ...value }
-      if (!_payload.hasOwnProperty('status')) {
-        _payload = { ..._payload, status: this.filterValue }
-      }
+    allFilter() {
+      const _payload = { ...(this.$refs.filter.data || {}), status: this.filterValue }
       const payload = {}
       Object.keys(_payload).forEach(key => {
         if (_payload[key] && _payload[key] !== -1) {
           payload[key] = _payload[key]
         }
       })
-      console.log('this is the payload', payload)
       this.$refs.dataTable.getData(payload)
-      this.currentFilterData = payload
-    },
-    filter(obj) {
-      console.log(obj, 'filter')
-      this.currentPage = 1
-      setTimeout(() => {
-        this.$refs.table?.filter(obj)
-      }, 500)
     },
     reset() {
       this.initialFilterData = {}
-      this.filter({})
+      this.currentFilterData = {}
+      this.filterValue = 'opened'
+      this.allFilter()
     },
     editElement(entity) {
       this.$refs.modal.openModal(false, entity, `headline~${this.definition.entityForm || this.definition.entity}~detail`)

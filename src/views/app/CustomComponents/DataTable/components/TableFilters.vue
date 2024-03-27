@@ -271,7 +271,7 @@ export default {
     }
   },
   created() {
-    tableStore.pagination.search = ''
+    // tableStore.pagination.search = ''
   },
   watch: {
     perPage(val) {
@@ -282,7 +282,7 @@ export default {
     },
   },
   mounted() {
-    this.tableStore.pagination.search = ''
+    // this.tableStore.pagination.search = ''
   },
   methods: {
     toggleColumn,
