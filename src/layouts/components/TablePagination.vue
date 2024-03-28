@@ -127,7 +127,7 @@ export default {
       internalSearch: this.search,
       chooseTheImportExportItem: this.entity,
       arrayItem: [],
-      importFunctionnality: ['partnercompany', 'contactperson', 'company', 'location', 'pos', 'area'],
+      importFunctionnality: ['partnercompany', 'contactperson', 'company', 'location', 'pos', 'area','customergroup','partnergroup'],
     }
   },
   computed: {
