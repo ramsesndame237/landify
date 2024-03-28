@@ -26,9 +26,14 @@ export default {
     fields: {
       partnercompany: [
         'partnercompany_name',
-        'partnercompany_shortname',
-        'partnergroup_name',
+        'address_street',
+        'address_house_number',
+        'city_zip',
+        'city_name',
+        'contactdetails_email',
       ],
+      customergroup: ['customergroup_name', 'customergroup_description'],
+      partnergroup: ['partnergroup_name', 'partnergroup_is_internal', 'partnergroup_description'],
       tax_rate: [
         'code',
         'value',
@@ -37,28 +42,34 @@ export default {
       company: ['company_name', 'company_shortname', 'company_template_coverletter_subject',
         'company_template_coverletter_text', 'customergroup_name',
       ],
-      contactperson: ['contactperson_firstname', 'contactperson_lastname', 'contactperson_department',
-        'contactperson_shortname', 'contactperson_function', 'user_email', 'contactdetails_email',
-        'contactdetails_phone', 'contactdetails_mobile', 'contactdetails_fax', 'company_name', 'customergroup_name',
+      contactperson: ['contactperson_firstname', 'contactperson_lastname', 'contactdetails_email',
+        'contactdetails_phone', 'company_name', 'contactsalutation_name',
       ],
       bankdata: ['bankdata_iban', 'iban_id', 'bankdata_bank_name', 'partnercompany_name'],
-      kreditornumber: ['company_id', 'company_name', 'kreditornumber'],
-      location: ['location_name', 'location_objectdescription', 'location_total_area', 'location_start_date',
-        'partnercompany_name', 'location_partnercompany_partnertype_valid_from_date',
-        'location_partnercompany_partnertype_valid_to_date', 'partnercompany_name',
+      kreditornumber: ['kreditornumber', 'company_name'],
+      location: ['address_street', 'address_house_number', 'address_extra', 'location_name',
+        'location_objectdescription', 'location_total_area',
+        'location_start_date', 'partnercompany_name',
         'location_partnercompany_partnertype_valid_from_date', 'location_partnercompany_partnertype_valid_to_date',
+        'partnertype_name',
+        'partnercompany_name',
+        'location_partnercompany_partnertype_valid_from_date',
+        'location_partnercompany_partnertype_valid_to_date',
+        'partnertype_name',
         'locationtype_name',
+        'country_name',
+        'city_name',
+        'city_zip',
       ],
-      pos: ['pos_name', 'pos_branchnumber', 'pos_name_external', 'pos_first_year', 'company_name', 'tag_name'],
-      area: ['area_name', 'area_name_external', 'area_space_value', 'location_name', 'usagetype_name',
-        'areatype_name', 'pos_name', 'area_usagetype_valid_from_date', 'area_usagetype_valid_to_date'],
+      pos: ['pos_name', 'pos_branchnumber', 'pos_name_external', 'pos_first_year', 'company_name'],
+      area: ['area_name', 'area_name_external', 'area_space_value', 'usagetype_name','area_usagetype_valid_from_date','area_usagetype_valid_to_date'],
     },
     statusList: [
-      { text: 'All', value: 'all' },
-      { text: 'Added', value: 'added' },
-      { text: 'Changed', value: 'changed' },
-      { text: 'Unchanged', value: 'unchanged' },
-      { text: 'Failed', value: 'failed' },
+      {text: 'All', value: 'all'},
+      {text: 'Added', value: 'added'},
+      {text: 'Changed', value: 'changed'},
+      {text: 'Unchanged', value: 'unchanged'},
+      {text: 'Failed', value: 'failed'},
     ],
     status: 'all',
     importAll: false,
@@ -70,8 +81,7 @@ export default {
   },
   watch: {
     status(newValue) {
-
-      this.result = this.result.filter(x=> x.status === newValue)
+      this.result = this.result.filter(x => x.status === newValue)
     },
   },
   methods: {
@@ -79,7 +89,8 @@ export default {
       // this.result.forEach(row => {
       //   row.__selected = !row.__selected
       // })
-      this.result = this.result.map(row => ({ ...row, __selected: !row.__selected }))
+
+      this.result = this.result.map(row => ({...row, __selected: !row.__selected}))
     },
     getResult() {
       console.log('this is the stat', [this.status, this.result])
@@ -98,8 +109,8 @@ export default {
       formData.append('obj_in', JSON.stringify({
         lines: (all ? this.result : this.getSelected(this.currentEntity)).map(el => el.line),
       }))
-      this.$http.post(`/synchronizations/${this.$route.params.name === 'tax_rate' ? 'tax-rate' : this.$route.params.name}/save`, formData, { headers: { 'content-type': 'form-data' } })
-        .then(({ data }) => {
+      this.$http.post(`/synchronizations/${this.$route.params.name === 'tax_rate' ? 'tax-rate' : this.$route.params.name}/save`, formData, {headers: {'content-type': 'form-data'}})
+        .then(({data}) => {
           this.$successToast('Import Done.')
           // add __imported attribute to lines
         })
@@ -116,10 +127,31 @@ export default {
       formData.append('file', this.file)
       formData.append('leaves', this.$route.params.name)
       this.loading = true
-      this.$http.post(`/synchronizations/${this.$route.params.name === 'tax_rate' ? 'tax-rate' : this.$route.params.name}/checking`, formData, { headers: { 'content-type': 'form-data' } })
-        .then(({ data }) => {
-          console.log({ data })
-          this.result = data.map(row => Object.assign(row, { show_old: false, __selected: false, status: row.columns.find(c => c.action === 'failed') ? 'failed' : row.columns.find(c => c.action === 'changed') ? 'changed' : row.columns.find(c => c.action === 'added') ? 'added' : 'unchanged' }))
+      this.$http.post(`/synchronizations/${this.$route.params.name === 'tax_rate' ? 'tax-rate' : this.$route.params.name}/checking`, formData, {headers: {'content-type': 'form-data'}})
+        .then(({data}) => {
+          console.log({data})
+          data = data.map(obj => {
+            const missingKeys = this.fields[this.$route.params.name].filter(key => !obj.columns.some(column => column.name === key))
+
+            const newColumns = missingKeys.map(key => ({
+              column: obj.columns.length + 1,
+              name: key,
+              action: 'unchanged',
+              new_value: '---/---',
+              old_value: '---/---',
+            }))
+
+            return {
+              ...obj,
+              columns: [...obj.columns, ...newColumns],
+            }
+          })
+          console.log('this is the data new', data)
+          this.result = data.map(row => Object.assign(row, {
+            show_old: false,
+            __selected: false,
+            status: row.columns.find(c => c.action === 'failed') ? 'failed' : row.columns.find(c => c.action === 'changed') ? 'changed' : row.columns.find(c => c.action === 'added') ? 'added' : 'unchanged'
+          }))
           this.success = true
         })
         .catch(error => {
@@ -209,7 +241,7 @@ export default {
               <template v-for="(item,i) in row.columns">
                 <b-td v-if="item" :key="i" :title="item.new_value"
                       :style="{background: item.action === 'changed' ? 'yellow':item.action ==='failed' ? 'red' :item.action ==='added' ? 'greenyellow' :'' }">
-                  {{ item.new_value }}
+                  {{ item.new_value === 0 ? 'is external' : item.new_value === 1 ? 'is internal' : item.new_value }}
                 </b-td>
                 <b-td v-else :key="i"/>
               </template>
@@ -233,6 +265,10 @@ export default {
 <style scoped lang="scss">
 .table, .table t-body th {
   font-size: 12px;
+}
+
+.table {
+  outline: solid red;
 }
 
 .dropbox {
