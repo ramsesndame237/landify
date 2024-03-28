@@ -62,8 +62,7 @@ export default {
         'city_zip',
       ],
       pos: ['pos_name', 'pos_branchnumber', 'pos_name_external', 'pos_first_year', 'company_name', 'tag_name'],
-      area: ['area_name', 'area_name_external', 'area_space_value', 'location_name', 'usagetype_name',
-        'areatype_name', 'pos_name', 'area_usagetype_valid_from_date', 'area_usagetype_valid_to_date'],
+      area: ['area_name', 'area_name_external', 'area_space_value', 'usagetype_name','area_usagetype_valid_from_date','area_usagetype_valid_to_date'],
     },
     statusList: [
       {text: 'All', value: 'all'},
