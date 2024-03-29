@@ -85,8 +85,9 @@ export default {
         console.log('this is the new value of the column', newValue)
         newValue.forEach(element => {
           this.pages.push({column_id: element.column_id, page: 1})
-          this.fetchTicketOfTheColumn(element.column_id, false)
+          // this.fetchTicketOfTheColumn(element.column_id, false)
         })
+        this.getTicketWithFilters()
         console.log('this is the loading state')
       }
     },

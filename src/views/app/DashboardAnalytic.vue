@@ -246,30 +246,33 @@ export default {
       await this.fetchDashboardStatistics()
     },
     show(status) {
-      if (status === 'Update_ticket') {
-        return this.$router.push({
-          name: 'updateTicket',
-          params: {
-            dashboardData: {
-              ...( status === 'Update_ticket'? {} :{ticket_deadline_status: status}),
-              start_date: this.date[0],
-              end_date: this.date[1],
-              team_id: this.entity.team_id,
-              user_id: this.entity.user_id,
-              tickets: this.entity.tickets,
-              company_id: this.entity.company_id,
-              customergroup_id: this.getCustomerGroupId(this.entity.company_id),
-              ticket_update_type: ''
-            },
-          },
-        })
-      }
+      // if (status === 'Update_ticket') {
+      //   return this.$router.push({
+      //     name: 'updateTicket',
+      //     params: {
+      //       dashboardData: {
+      //         ...( status === 'Update_ticket'? {} :{ticket_deadline_status: status}),
+      //         start_date: this.date[0],
+      //         end_date: this.date[1],
+      //         team_id: this.entity.team_id,
+      //         user_id: this.entity.user_id,
+      //         tickets: this.entity.tickets,
+      //         company_id: this.entity.company_id,
+      //         customergroup_id: this.getCustomerGroupId(this.entity.company_id),
+      //         ticket_update_type: ''
+      //       },
+      //     },
+      //   })
+      // }
       this.$router.push({
         name: 'table',
         params: {
           table: 'ticket',
           dashboardData: {
-            ticket_deadline_status: status,
+            ...( status === 'Update_ticket'? {
+              type_of_ticket: 'update_ticket'
+            } :{ticket_deadline_status: status}),
+            // ticket_deadline_status: status,
             start_date: this.date[0],
             end_date: this.date[1],
             team_id: this.entity.team_id,
