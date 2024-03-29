@@ -60,22 +60,22 @@ const routes = [
       action: 'read',
     },
   },
-  {
-    path: '/app/update_ticket',
-    name: 'updateTicket',
-    permissions: ACCESS.tableAccess.ticket.update_ticket,
-    component: () => import('@/views/app/Ticket/UpdateTicketList.vue'),
-    meta: {
-      pageTitle: '',
-      breadcrumb: [
-        {
-          text: 'menu~ticketlistupdate',
-          active: true,
-        },
-      ],
-      action: 'read',
-    },
-  },
+  // {
+  //   path: '/app/update_ticket',
+  //   name: 'updateTicket',
+  //   permissions: ACCESS.tableAccess.ticket.update_ticket,
+  //   component: () => import('@/views/app/Ticket/UpdateTicketList.vue'),
+  //   meta: {
+  //     pageTitle: '',
+  //     breadcrumb: [
+  //       {
+  //         text: 'menu~ticketlistupdate',
+  //         active: true,
+  //       },
+  //     ],
+  //     action: 'read',
+  //   },
+  // },
   {
     path: '/app/preview/document/:document_id/:name',
     name: 'previewDocument',

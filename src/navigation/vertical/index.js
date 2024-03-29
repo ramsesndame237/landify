@@ -47,7 +47,7 @@ export default [
     children: [
       item('board', 'ticketboard', null, ACCESS.menuAccess.ticket_board),
       item('ticket', 'ticketlist', null, ACCESS.menuAccess.ticket_list),
-      item(null, 'ticketlistupdate', 'updateTicket', ACCESS.menuAccess.ticket_list_update),
+      // item(null, 'ticketlistupdate', 'updateTicket', ACCESS.menuAccess.ticket_list_update),
       // {
       //   title: key('documentupload'),
       //   route: 'document-classification',

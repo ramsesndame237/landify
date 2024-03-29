@@ -74,15 +74,16 @@ export default {
       const data = params.dashboardData
       payload = {
         filter: {
-          start_date: data.start_date,
-          end_date: data.end_date,
-          ticket_deadline_status: data.ticket_deadline_status,
-          team_id: data.team_id,
-          user_id: data.user_id,
+          // start_date: data.start_date,
+          // end_date: data.end_date,
+          // ticket_deadline_status: data.ticket_deadline_status,
+          // team_id: data.team_id,
+          // user_id: data.user_id,
+          // tickets: data.tickets,
+          // company_id: data.company_id,
+          // customergroup_id: data.customergroup_id,
+          ...data,
           status: 'opened',
-          tickets: data.tickets,
-          company_id: data.company_id,
-          customergroup_id: data.customergroup_id,
         },
       }
       payload.filter = _.omitBy(payload.filter, _.isNil)
