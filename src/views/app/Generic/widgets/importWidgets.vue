@@ -25,6 +25,7 @@ export default {
     },
     fields: {
       partnercompany: [
+        'partnergroup_id',
         'partnercompany_name',
         'address_street',
         'address_house_number',
@@ -134,7 +135,7 @@ export default {
             const missingKeys = this.fields[this.$route.params.name].filter(key => !obj.columns.some(column => column.name === key))
 
             const newColumns = missingKeys.map(key => ({
-              column: obj.columns.length + 1,
+              column: this.fields[this.$route.params.name].indexOf(key) + 1,
               name: key,
               action: 'unchanged',
               new_value: '---/---',
@@ -143,7 +144,7 @@ export default {
 
             return {
               ...obj,
-              columns: [...obj.columns, ...newColumns],
+              columns: [...obj.columns, ...newColumns].sort((a, b) => (a.column > b.column ? 1 : -1)),
             }
           })
           console.log('this is the data new', data)
@@ -238,19 +239,19 @@ export default {
                               size="20" @click="()=> row.show_old = !row.show_old"/>
                 <span class="ml-1">{{ row.line }}</span>
               </b-td>
-              <template v-for="(item,i) in row.columns">
-                <b-td v-if="item" :key="i" :title="item.new_value"
-                      :style="{background: item.action === 'changed' ? 'yellow':item.action ==='failed' ? 'red' :item.action ==='added' ? 'greenyellow' :'' }">
-                  {{ item.new_value === 0 ? 'is external' : item.new_value === 1 ? 'is internal' : item.new_value }}
+              <template v-for="(item,j) in row.columns">
+                <b-td v-if="item" :key="`${i}-${j}`" :title="item.new_value"
+                      :style="{color: item.action ==='failed' ? 'white' : 'inherit', background: item.action === 'changed' ? 'yellow':item.action ==='failed' ? 'red' :item.action ==='added' ? 'greenyellow' :'' }">
+                  {{ item.new_value === 0 ? 'is external' : item.new_value === 1 ? 'is internal' : (item.reason || item.new_value) }}
                 </b-td>
-                <b-td v-else :key="i"/>
+                <b-td v-else :key="`${i}-${j}`"/>
               </template>
             </b-tr>
             <!--                                  Old Values-->
             <b-tr v-if="row.show_old" :key="i+'n'" class="table-secondary">
               <b-td/>
               <b-td/>
-              <b-td v-for="(column,i) in row.columns" :key="i">
+              <b-td v-for="(column,j) in row.columns" :key="`${i}-${j}-n`">
                 {{ column ? column.old_value : '' }}
               </b-td>
             </b-tr>
