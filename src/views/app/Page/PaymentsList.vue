@@ -1,48 +1,58 @@
 <template>
   <div>
     <b-card-actions :title="$t('general~filter')" action-collapse>
-      <!--      <div class="d-flex align-items-center">-->
-      <!--        <b-form-input debounce="500" id="filterInput" v-model="search" type="search" class="w-auto"-->
-      <!--                      placeholder="Search.."/>-->
-      <!--      </div>-->
-
       <validation-observer ref="form" v-slot="{ passes }">
         <b-form @submit.prevent="passes(filter)">
           <b-row>
-            <b-col v-for="(field,index) in definition.filters" :key="index" cols="12" :md="6">
-              <field ref="fields" :entity="data" :disabled="loading || field.disabled" :field="field"/>
+            <b-col v-for="(field, index) in filters" :key="index" cols="12" :md="4">
+              <field
+                ref="fields"
+                :entity="filtersData"
+                :disabled="$refs.dataTable && $refs.dataTable.tableStore.pagination.isLoading"
+                :field="field"
+              />
             </b-col>
           </b-row>
+          <div class="d-flex justify-content-end">
+            <b-button
+              variant="primary"
+              type="submit"
+            >
+              {{ $t('search') }}
+            </b-button>
+          </div>
         </b-form>
       </validation-observer>
-      <div v-if="canSeeActions" class="text-right">
-        <b-button variant="success" :disabled="loadingDownload" @click="download">
-          <b-spinner v-if="loadingDownload" class="mr-1" small/>
-          {{ $t('button~download') }}
-        </b-button>
-        <b-button variant="info" class="ml-1" :disabled="loading || loadingDownload" @click="reset">
-          {{ $t('button~reset') }}
-        </b-button>
-        <b-button variant="primary" :disabled="loading" class="ml-1" @click="filter">
-          <b-spinner v-if="loading" class="mr-1" small/>
-          {{ $t('button~apply') }}
-        </b-button>
-      </div>
     </b-card-actions>
-
-    <b-card>
-      <Datatable :key="table" ref="table" :selectable="false" :search="search" primary-key-column="contract_id"
-                 entity="contract" :with-delete="false" :with-edit="false" :with-nested="table === 'deadlines'"
-                 :fields="definition.fields" :items="items" sub-fields-data-key="deadlines" :with-actions="true"
-                 :permissions="permissions"
+    <div class="overflow-auto">
+      <tab-component
+        :nowrap="true"
+        :active-tab-item="activeTabItem"
+        :tab-title="tabTitles"
+        @selected-item="getActiveItemData"
       />
-    </b-card>
+    </div>
+
+    <data-table
+      ref="dataTable"
+      :data="tData"
+      :columns="cols"
+      :no-initial-fetch="true"
+      :floating-actions="false"
+      :actions-at-the-last-column="true"
+      :list-all-actions="true"
+      :custom-actions="[
+        { icon:'LockIcon',onClick: () => null, label:'Stamp' },
+        { icon:'RefreshCwIcon',onClick: () => null, label:'Stamp' },
+        { icon:'ArrowDownIcon',onClick: () => null, label:'Stamp' },
+        { icon:'UploadIcon',onClick: () => null, label:'Stamp' },
+      ]"
+    />
   </div>
 </template>
 
 <script>
-
-import { getUserData } from '@/auth/utils'
+import TabComponent from '@/components/TabComponent.vue'
 import { EXTERN_TEAMS_IDS, INTERN_TEAMS_IDS } from '@/config/config-access'
 import { USER_PERMISSIONS, buildPermissions } from '@/config/config-access/config-permissions'
 import { USER_ROLES } from '@/config/config-access/config-roles'
@@ -50,49 +60,93 @@ import DeadlineMixin from '@/views/app/Contracts/Relations/Deadlines/DeadlineMix
 import Field from '@/views/app/Generic/Field'
 import BCardActions from '@core/components/b-card-actions/BCardActions'
 import {
-  BButton,
-  BCard,
   BCol,
   BForm, BRow,
 } from 'bootstrap-vue'
-import _ from 'lodash'
-import moment from 'moment'
-import rates from './rates.json'
 
-const Datatable = () => import('@/layouts/components/DataTables.vue')
-const CONTRACT_STATUS_CRITERIA_CODE = 'aktueller Vertragstyp'
-const CONTRACT_MISSING_DOCUMENT_CRITERIA_CODE = 'Fehlende Unterlagen FriKo-Liste'
-const CONTRACT_RETAIL_SPACE_CRITERIA_CODE = 'Verkaufsfläche'
-const CONTRACT_COMMENT_CRITERIA_CODE = 'Bemerkung FriKo-Liste'
-const CONTRACT_SECURITIES_CRITERIA_CODE = 'Mietsicherheit - Anzeige'
+const DataTable = () => import('@/views/app/CustomComponents/DataTable/DataTable.vue')
+
+const BEGIN_YEAR_PAYMENT_LIST = 2022
+const years = Array((new Date().getFullYear() + 1) - BEGIN_YEAR_PAYMENT_LIST).fill('').map((_, i) => (BEGIN_YEAR_PAYMENT_LIST + i)).reverse()
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].reverse()
+
 export default {
   components: {
     Field,
     BCardActions,
-    Datatable,
-    BCard,
-    BButton,
+    DataTable,
     BForm,
     BRow,
     BCol,
+    TabComponent,
   },
   mixins: [DeadlineMixin],
   data() {
+    const tData = [
+      {
+        name: 'Zahlung of Paul Org',
+        company_name: 'Paul Org',
+        status: 'Approved',
+      },
+    ]
+    const tabTitles = months.map(year => ({
+      id: year,
+      title: year,
+      show: true,
+      count: 0,
+    }))
     const payload = this.$store.getters['table/tableData'](this.$route.params.table)
     console.log('initial payload', payload)
     return {
-      search: payload?.search || '',
-      perPage: payload?.perPage || 10,
-      currentPage: payload?.currentPage || 1,
-      totalRows: payload?.totalRows || 0,
-      initialFilterData: this.definition?.initialFilterValues ?? payload?.filter,
-      initialSortBy: payload?.sortBy,
-      initialSortDesc: payload?.sortDesc ?? true,
-      items: [],
-      data: {},
-      loading: false,
-      loadingDownload: false,
-      eurCurrency: false,
+      activeTabItem: tabTitles[0],
+      tabTitles,
+      filtersData: {},
+      tData,
+      cols: [
+        {
+          key: 'name',
+          header: {
+            name: 'zhalung_list_name',
+          },
+          props: {
+            style: 'min-width: 320px;',
+          },
+        },
+        {
+          key: 'company_name',
+          header: {
+            name: 'Company',
+          },
+        },
+        {
+          key: 'status',
+          header: {
+            name: 'Status',
+          },
+        },
+      ],
+      filters: [
+        {
+          key: 'customergroup_id',
+          type: 'list',
+          list: 'customergroup',
+          listLabel: 'customergroup_name',
+          required: false,
+        },
+        {
+          key: 'company_id',
+          type: 'list',
+          list: 'frontend_2_2_3_1',
+          listLabel: 'company_name',
+          filter_key: 'customergroup_id',
+          required: false,
+        },
+        {
+          key: 'year',
+          type: 'custom-select',
+          items: () => years.map(year => ({ label: year, value: year })),
+        },
+      ],
       permissions: buildPermissions({
         list: [
           USER_PERMISSIONS.admin,
@@ -132,243 +186,11 @@ export default {
         ),
       )
     },
-    definition() {
-      const user = getUserData()
-
-      return {
-        title: 'headline~contractlist~condition',
-        entity: 'frontend_contractlist_criteria',
-        fields: [
-          {"key": "company_code", "stickyColumn": false, "variant": "light"},
-          {"key": "document_date"},
-          {"key": "bookingh_date"},
-          {"key": "g_l_account"},
-          {"key": "recurringpaymentcategory_name"},
-          {"key": "booking_text"},
-          {"key": "partnercompany_bank_type"},
-          {"key": "partnercompany_iban"},
-          {"key": "contract_type"},
-          {"key": "pos_branchnumber"},
-          {"key": "object_identification"},
-          {"key": "pca"},
-          {"key": "location_name"},
-          {"key": "creditor"},
-          {"key": "partnercompany_iban_id"},
-          {"key": "debitor"},
-          {"key": "partner_name"},
-          {"key": "payment_object"},
-          {"key": "recurringpaymenttype_name"},
-          {"key": "payment_term_basis"},
-          {"key": "tax_code"},
-          {"key": "net_amount"},
-          {"key": "percentage"},
-          {"key": "net_paid_amount"},
-          {"key": "tax_amount"},
-          {"key": "gross_amount"},
-          {"key": "currency"},
-          {"key": "payment_from"},
-          {"key": "payment_to"},
-          {"key": "daily_range"},
-          {"key": "payment_block"},
-          {"key": "gp"},
-          {"key": "monthly_range"},
-          {"key": "remark"},
-          {"key": "change_report"},
-          {"key": "contract_status"},
-          {"key": "contract_end_date"}
-        ],
-        filter_vertical: true,
-        filters: [
-          {
-            key: 'customergroup_id',
-            required: true,
-            type: 'list',
-            list: 'customergroup',
-            listLabel: 'customergroup_name',
-            send: false,
-          },
-          {
-            key: 'company_id',
-            required: true,
-            type: 'list',
-            list: 'frontend_2_2_3_1',
-            listLabel: 'company_name',
-            filter_key: 'customergroup_id',
-          },
-          {
-            key: 'pos_id',
-            required: false,
-            type: 'list',
-            list: 'frontend_2_1_3_8',
-            listLabel: 'pos_name',
-            entityCustomEndPoint: '/pos',
-            filter_key: 'company_id',
-            change: (entity, vm) => {
-              console.log('vm.entity.pos_id: ', vm.entity.pos_id)
-              const pos = vm.list.find(c => c.pos_id === vm.entity.pos_id)
-              if (pos && pos.hasOwnProperty('pos_id')) {
-                vm.$set(vm.entity, 'country_id', pos.country_id)
-              }
-              if (vm.entity.pos_id === null || vm.entity.pos_id === undefined) vm.$set(vm.entity, 'country_id', null)
-            },
-          },
-          {
-            key: 'country_id',
-            required: false,
-            type: 'list',
-            list: 'country',
-            listLabel: 'country_name',
-            disabled: true,
-          },
-          {key: 'date', type: 'date', default: moment().format('YYYY-MM-DD')},
-        ],
-        create: false,
-        update: false,
-        delete: false,
-      }
-    },
-    table() {
-      return 'payments'
-    },
-    total_rental_space() {
-      return _.sumBy(this.items, 'total_rental_space')
-    },
-    total_rent_per_month() {
-      return _.sumBy(this.items, item => (parseFloat(item.rent_per_month) || 0)).toFixed(2)
-    },
-  },
-  watch: {
-    eurCurrency() {
-      if (this.table === 'conditions') this.updateCurrencyValues()
-    },
-    table() {
-      this.reset()
-    },
-  },
-  created() {
-    if (this.definition.filters) {
-      (this.definition.filters ?? []).forEach(filter => {
-        this.$watch(
-          `data.${filter.key}`,
-          () => {
-            (this.definition.filters ?? []).filter(_filter => _filter.filter_key === filter.key).map(_filter => {
-              this.$set(this.data, _filter.key, null)
-            })
-          },
-        )
-      })
-    }
   },
   methods: {
-    async filter() {
-      const valid = await this.$refs.form.validate()
-      if (!valid) return
-      this.loading = true
-      const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
-      filter.per_page = 100000
-      // generate the request query string
-      const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
-      try {
-        this.items = (await this.$http.get(`/contracts/payment-list/data?${requestQuery}`)).data.data;
-      } catch (err) {
-        if (err.code === 'ERR_BAD_REQUEST') {
-          let error = (await err.response).data
-          error = JSON.parse(await error.text())
-
-          this.$errorToast(error.detail || 'Unknown error')
-        } else {
-          this.$errorToast('Unknown error')
-        }
-      } finally {
-        this.loading = false
-      }
-    },
-    updateCurrencyValues() {
-      console.log('update_currency')
-      // get currency data
-      const code = 'eur'
-      this.items.forEach(contract => {
-        if (!this.eurCurrency) {
-          this.$set(contract, 'rent_per_month', contract.local_rent_per_month)
-          this.$set(contract, 'base_rent_per_area_amount', contract.local_base_rent_per_area_amount)
-          this.$set(contract, 'advertising_per_month', contract.local_advertising_per_month)
-          this.$set(contract, 'ancillary_cost_per_month', contract.local_ancillary_cost_per_month)
-          this.$set(contract, 'heating_ancillary_cost_per_mont', contract.local_heating_ancillary_cost_per_month)
-          return
-        }
-        if (contract.currency_short) {
-          const rate = rates[code][contract.currency_short.toLowerCase()]
-          if (!rate) return
-          this.$set(contract, 'rent_per_month', (contract.local_rent_per_month / rate).toFixed(2))
-          this.$set(contract, 'base_rent_per_area_amount', (contract.local_base_rent_per_area_amount / rate).toFixed(2))
-          this.$set(contract, 'advertising_per_month', (contract.local_advertising_per_month / rate).toFixed(2))
-          this.$set(contract, 'ancillary_cost_per_month', (contract.local_ancillary_cost_per_month / rate).toFixed(2))
-          this.$set(contract, 'heating_ancillary_cost_per_month', (contract.local_heating_ancillary_cost_per_month / rate).toFixed(2))
-        }
-      })
-    },
-    getRecurringPaymentMonthValue(rc) {
-      if (!rc) return 0
-      let val = rc.recurringpayment_sum_per_month
-      if (rc.maturitytype_name === 'Intervall') {
-        val /= rc.recurringpayment_maturity_monthly_range
-      } else {
-        val /= 12
-      }
-      return val
-    },
-    reset() {
-      Object.keys(this.data).forEach(key => {
-        this.$delete(this.data, key)
-      })
-      // call initial data for all the fields then reset (Do it later)
-      const components = (Array.isArray(this.$refs.fields) ? this.$refs.fields : [this.$refs.fields])
-      components.forEach(field => {
-        field.initializeValue()
-      })
-      this.data.date = this.definition.filters.find(f => f.key === 'date').default
-      this.$refs.form.reset()
-      this.items = []
-    },
-    async download() {
-      const valid = await this.$refs.form.validate()
-      if (!valid) return
-      this.loadingDownload = true
-      const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
-      filter.per_page = 100000
-      // generate the request query string
-      const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
-      try {
-        const filename = `Payment list-Export_${moment().format('DD_MM_YYYY')}.xlsx`
-        const masterData = (await this.$http.post(`/contracts/payment-list/export?${requestQuery}`, {}, {
-          responseType: 'blob',
-        })).data
-        console.log('masterData: ', masterData)
-        const link = document.createElement('a')
-        link.setAttribute('href', URL.createObjectURL(masterData))
-        link.setAttribute('download', filename)
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-      } catch (err) {
-        if (err.code === 'ERR_BAD_REQUEST') {
-          let error = (await err.response).data
-          error = JSON.parse(await error.text())
-
-          this.$errorToast(error.detail || 'Unknown error')
-        } else {
-          this.$errorToast('Unknown error')
-        }
-      } finally {
-        this.loadingDownload = false
-      }
+    getActiveItemData(item) {
+      this.activeTabItem = item
     },
   },
 }
 </script>
-
-<style scoped>
-.first-bloc img {
-  margin-right: 4px;
-}
-</style>
