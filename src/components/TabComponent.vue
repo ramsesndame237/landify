@@ -7,6 +7,10 @@ export default {
       type: Object,
       required: true,
     },
+    nowrap: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     visibleTabs() {
@@ -36,7 +40,7 @@ export default {
 
 <template>
   <div class="tab_container">
-    <ul>
+    <ul :class="{ nowrap }">
       <li v-for="(item,index) in visibleTabs" :key="index" class="list-item" :class="{active: activeTabItem && activeTabItem.id === item.id}" @click="(event) =>activeOrDiseableItemsNavigation(event, item)">
         {{ item.title }}
 
@@ -69,10 +73,17 @@ export default {
   ul {
     margin: 0px;
     padding: 0px;
-    overflow: hidden;
-    float: left;
+    overflow: auto;
     padding-left: 48px;
     list-style-type: none;
+    display: flex;
+    flex-direction: row-reverse;
+    scrollbar-width: none;
+    flex-wrap: wrap;
+  }
+
+  ul.nowrap {
+    flex-wrap: nowrap;
   }
 
   ul * {
@@ -82,7 +93,6 @@ export default {
 
   ul li {
     display: block;
-    float: right;
     padding: 10px 24px 8px;
     background-color: #FFF;
     margin-right: 46px;
