@@ -106,6 +106,10 @@ export default {
       type: Object,
       required: true,
     },
+    row: {
+      type: Object,
+      required: true,
+    },
     listAllActions: {
       type: Boolean,
       default: false,
