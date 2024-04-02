@@ -114,6 +114,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    actionsAtTheLastColumn: {
+      type: Boolean,
+      default: true,
+    },
     i: {
       type: Number,
       required: true,

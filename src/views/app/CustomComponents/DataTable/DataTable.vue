@@ -116,6 +116,7 @@
                         :table-store="tableStore"
                         :col="col"
                         :list-all-actions="listAllActions"
+                        :actions-at-the-last-column="actionsAtTheLastColumn"
                         :floating="false"
                         :i="i"
                         :j="j"
@@ -136,6 +137,7 @@
                     :table-store="tableStore"
                     :col="col"
                     :list-all-actions="listAllActions"
+                    :actions-at-the-last-column="actionsAtTheLastColumn"
                     :floating="true"
                     :i="i"
                     :j="j"
@@ -463,7 +465,7 @@ export default {
     getColumns() {
       return this.actionsAtTheLastColumn ? [...this.columns, { key: 'actions', header: { name: 'Actions' } }] : this.columns
     },
-    getData(params) {
+    getData(params, options) {
       console.log({ inQuery: this.includeInQuery, params })
       if (this.url) {
         listData({
@@ -472,7 +474,7 @@ export default {
           resolveData: data => this.resolveData?.(data),
           extra: this.filters,
           toastError: () => toastError(this.$toast),
-          params: { ...(this.includeInQuery || {}), ...(params || {}) },
+          params: { ...(options?.ignoreIncludeQuery ? {} : (this.includeInQuery || {})), ...(params || {}) },
         })
       }
     },
