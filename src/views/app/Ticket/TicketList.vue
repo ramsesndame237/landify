@@ -154,7 +154,7 @@ export default {
   },
   watch: {
     filterValue() {
-      this.allFilter({ page: 1 })
+      this.allFilter()
     },
   },
   beforeDestroy() {
@@ -184,17 +184,17 @@ export default {
       if (count === 0) return null
       return count
     },
-    allFilter(params) {
-      const _payload = { ...(this.$refs.filter.data || {}), status: this.filterValue, ...(params || {}) }
+    allFilter() {
+      const _payload = { ...(this.$refs.filter.data || {}), status: this.filterValue, page: 1 }
       const payload = {}
       Object.keys(_payload).forEach(key => {
-        if (_payload[key] && _payload[key] !== -1) {
-          payload[key] = _payload[key]
+        if (_payload[key]) {
+          payload[key] = _payload[key] === -1 ? undefined : _payload[key]
         }
       })
       const { page, ...rest } = payload
       this.currentFilterData = rest
-      this.$refs.dataTable.getData(payload)
+      this.$refs.dataTable.getData(payload, { ignoreIncludeQuery: true })
     },
     reset() {
       this.initialFilterData = {}
