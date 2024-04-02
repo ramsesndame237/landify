@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="!col.hideActions && !actionsAtTheLastColumn"
+    v-if="!col.hideActions"
     class="d-flex align-items-center"
     :class="{ 'position-absolute': floating }"
     :style="{
