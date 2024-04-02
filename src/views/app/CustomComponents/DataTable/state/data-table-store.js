@@ -202,10 +202,10 @@ export async function listData({
     dataTableStore.pagination.isLoading = true
     const { data } = await api[String(dataTableStore.pagination.method || 'get').toLowerCase()](url, { params: {...payload, ...(params || {})}, signal: dataTableStore.requests.controller.signal })
     dataTableStore.rows.list = resolveData(data)
-    dataTableStore.pagination.total = data?.total || dataTableStore.pagination.total
-    dataTableStore.pagination.page = data?.page || dataTableStore.pagination.page
+    dataTableStore.pagination.total = data?.total || 0
+    dataTableStore.pagination.page = data?.page || data?.current_page || 1
     dataTableStore.pagination.size = data?.size || data?.per_page || dataTableStore.pagination.size
-    dataTableStore.pagination.pages = data?.pages || Math.ceil(dataTableStore.pagination.total/dataTableStore.pagination.size)
+    dataTableStore.pagination.pages = data?.pages || Math.ceil(dataTableStore.pagination.total/dataTableStore.pagination.size) || 1
     dataTableStore.pagination.isLoading = false
     } catch (e) {
     if (e?.code !== 'ERR_CANCELED') {
