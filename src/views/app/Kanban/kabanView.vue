@@ -266,16 +266,28 @@ export default {
     //
     //   return closestTask
     // },
-    fetchTicketOfTheColumn(id, reloading, filterData) {
-      for (const idKey in filterData) {
-        if (filterData[idKey] === -1) {
-          delete filterData[idKey]
-        }
+    fetchTicketOfTheColumn(id, reloading, _filterData) {
+      const filterDataObj = {
+        ...(this.$refs.filter?.data || {}),
+        keyword: this.search,
+        status: this.filterValue,
+        ...(_filterData || {}),
       }
+      const filterData = {}
+      Object.keys(filterDataObj).forEach(key => {
+        filterData[key] = filterDataObj[key] === -1 ? undefined : filterDataObj[key]
+      })
+      // for (const idKey in filterData) {
+      //   if (filterData[idKey] === -1) {
+      //     delete filterData[idKey]
+      //   }
+      // }
       this.loadingTicket.push(id)
       console.log('this i sth fetch', id)
       if (id) {
-        this.$http.get(`/tickets/slims?column_id=${id}&board_id=${this.$route.params.id}&size=${this.size}&page=${this.pages.find(pageElement => pageElement.column_id === id).page}&order_filed=ticket_id`).then(response => {
+        this.$http.get(`/tickets/slims?column_id=${id}&board_id=${this.$route.params.id}&size=${this.size}&page=${this.pages.find(pageElement => pageElement.column_id === id).page}&order_filed=ticket_id&order=desc`, {
+          params: filterData,
+        }).then(response => {
           console.log('this is the ticket of the column', response.data.data)
           this.loadingTicket = []
           const oldticket = this.columnData.find(element => element.column_id === id).tickets
@@ -292,7 +304,7 @@ export default {
       } else {
         this.columnData.forEach(element => {
           this.loadingTicket.push(element.column_id)
-          this.$http.get(`/tickets/slims?column_id=${element.column_id}&board_id=${this.$route.params.id}&size=${this.size}&page=${this.pages.find(pageElement => pageElement.column_id === element.column_id).page}&order_filed=ticket_id`, {
+          this.$http.get(`/tickets/slims?column_id=${element.column_id}&board_id=${this.$route.params.id}&size=${this.size}&page=${this.pages.find(pageElement => pageElement.column_id === element.column_id).page}&order_filed=ticket_id&order=desc`, {
             params: {...filterData},
           }).then(response => {
             this.loadingTicket = this.loadingTicket.filter(x => x !== element.column_id)
@@ -343,17 +355,21 @@ export default {
       if (this.debounced) {
         this.debounced.cancel()
       }
-      this.debounced = _.debounce(() => this.fetchTicketOfTheColumn(
-        undefined,
-        false,
-        {
-          ...(this.$refs.filter?.data || {}),
-          keyword: this.search,
-          status: this.filterValue,
-        },
-      ).finally(() => {
-        this.debounced = null
-      }), 500)
+      this.debounced = _.debounce(() => {
+        try {
+          this.fetchTicketOfTheColumn(
+            undefined,
+            false,
+            {
+              ...(this.$refs.filter?.data || {}),
+              keyword: this.search,
+              status: this.filterValue,
+            },
+          )
+        } finally {
+          this.debounced = null
+        }
+      }, 500)
       this.debounced()
     },
 
