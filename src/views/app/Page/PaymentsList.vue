@@ -35,17 +35,20 @@
 
     <data-table
       ref="dataTable"
-      :data="tData"
+      url="/contracts/payment-list"
       :columns="cols"
-      :no-initial-fetch="true"
       :floating-actions="false"
       :actions-at-the-last-column="true"
       :list-all-actions="true"
       :custom-actions="[
-        { icon:'LockIcon',onClick: () => null, label:'Stamp' },
-        { icon:'RefreshCwIcon',onClick: () => null, label:'Stamp' },
-        { icon:'ArrowDownIcon',onClick: () => null, label:'Stamp' },
-        { icon:'UploadIcon',onClick: () => null, label:'Stamp' },
+        {
+          icon: row => row.blocked ? 'UnlockIcon' : 'LockIcon',
+          onClick: row => lockPaymentList(row),
+          label: row => row.blocked ? 'payment~list~unlock' : 'payment~list~lock',
+        },
+        { icon: 'RefreshCwIcon', onClick: () => null, label:'payment~list~refresh' },
+        { icon: 'ArrowDownIcon', onClick: row => downloadDocument(row.document), label: 'payment~list~download~payment~list' },
+        { icon: 'UploadIcon', onClick: row => provisionPaymentList(row.id), label:'payment~list~download~provision' },
       ]"
     />
   </div>
@@ -63,6 +66,9 @@ import {
   BCol,
   BForm, BRow,
 } from 'bootstrap-vue'
+import { getDocumentLink } from '@/libs/utils'
+import StatusCol from '../CustomComponents/DataTable/components/columns/StatusCol.vue'
+import { handleConfirm } from '../CustomComponents/DataTable/state/data-table-store'
 
 const DataTable = () => import('@/views/app/CustomComponents/DataTable/DataTable.vue')
 
@@ -82,44 +88,42 @@ export default {
   },
   mixins: [DeadlineMixin],
   data() {
-    const tData = [
-      {
-        name: 'Zahlung of Paul Org',
-        company_name: 'Paul Org',
-        status: 'Approved',
-      },
-    ]
     const tabTitles = months.map(year => ({
       id: year,
       title: year,
       show: true,
       count: 0,
     }))
-    const payload = this.$store.getters['table/tableData'](this.$route.params.table)
-    console.log('initial payload', payload)
+
     return {
       activeTabItem: tabTitles[0],
       tabTitles,
       filtersData: {},
-      tData,
       cols: [
         {
-          key: 'name',
+          key: 'document_name',
+          getValue: data => data.document.document_name,
           header: {
             name: 'zhalung_list_name',
           },
           props: {
-            style: 'min-width: 320px;',
+            style: 'min-width: 320px; font-weight: bold;',
           },
         },
         {
           key: 'company_name',
+          getValue: data => data.company.company_name,
           header: {
             name: 'Company',
           },
         },
         {
           key: 'status',
+          component: StatusCol,
+          variant: ({ data }) => (data.blocked ? 'success' : 'warning'),
+          getValue: data => this.$t(
+            data.blocked ? 'payment~list~locked' : 'payment~list~unlocked',
+          ),
           header: {
             name: 'Status',
           },
@@ -144,7 +148,10 @@ export default {
         {
           key: 'year',
           type: 'custom-select',
-          items: () => years.map(year => ({ label: year, value: year })),
+          items: () => years.map(year => ({
+            label: year,
+            value: year,
+          })),
         },
       ],
       permissions: buildPermissions({
@@ -190,6 +197,31 @@ export default {
   methods: {
     getActiveItemData(item) {
       this.activeTabItem = item
+    },
+    lockPaymentList(paymentList) {
+      handleConfirm({
+        swal: this.$swal,
+        http: this.$http,
+        url: `/contracts/payment-list/blocked?blocked=${!paymentList.blocked}`,
+        title: `payment~list~really~want~to~${paymentList.blocked ? 'un' : ''}lock`,
+        method: 'put',
+        body: [paymentList.id],
+        cb: () => this.$refs.dataTable?.getData(),
+      })
+    },
+    downloadDocument(doc) {
+      window.open(getDocumentLink(doc))
+    },
+    provisionPaymentList(id) {
+      handleConfirm({
+        swal: this.$swal,
+        http: this.$http,
+        title: 'payment~list~really~want~to~provision',
+        url: `/contracts/payment-list/${id}/provision`,
+        method: 'put',
+        body: [id],
+        cb: () => this.$refs.dataTable?.getData(),
+      })
     },
   },
 }

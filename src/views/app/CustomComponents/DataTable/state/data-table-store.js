@@ -264,6 +264,7 @@ export function handleConfirm({
   body,
   title,
   text,
+  cb,
 }) {
   swal.fire({
     title: title || 'Are you sure you want to perform this action?',
@@ -282,11 +283,8 @@ export function handleConfirm({
     cancelButtonText: 'Cancel',
     showLoaderOnConfirm: true,
     preConfirm: () => http[method || 'post'](url, body)
-      .then(response => {
-        // if (![200, 201].includes(response?.status)) {
-        //   throw new Error(response?.statusText)
-        // }
-        return response?.json()
+      .then(res => {
+        cb?.(res)
       })
       .catch(error => {
         swal.showValidationMessage(
