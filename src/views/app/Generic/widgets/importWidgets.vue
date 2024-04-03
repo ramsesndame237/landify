@@ -40,14 +40,13 @@ export default {
         'value',
         'company_name',
       ],
-      company: ['company_name', 'company_shortname', 'company_template_coverletter_subject',
-        'company_template_coverletter_text', 'customergroup_name',
+      company: ['customergroup_id', 'company_name', 'company_shortname', 'company_buchungskreis',
       ],
       contactperson: ['contactperson_firstname', 'contactperson_lastname', 'contactdetails_email',
         'contactdetails_phone', 'company_name', 'contactsalutation_name',
       ],
       bankdata: ['bankdata_iban', 'iban_id', 'bankdata_bank_name', 'partnercompany_name'],
-      kreditornumber: ['kreditornumber', 'company_name'],
+      kreditornumber: ['company_name', 'kreditornumber'],
       location: ['address_street', 'address_house_number', 'address_extra', 'location_name',
         'location_objectdescription', 'location_total_area',
         'location_start_date', 'partnercompany_name',
@@ -113,6 +112,8 @@ export default {
       this.$http.post(`/synchronizations/${this.$route.params.name === 'tax_rate' ? 'tax-rate' : this.$route.params.name}/save`, formData, {headers: {'content-type': 'form-data'}})
         .then(({data}) => {
           this.$successToast('Import Done.')
+          this.upload()
+
           // add __imported attribute to lines
         })
         .catch(e => {
@@ -138,8 +139,8 @@ export default {
               column: this.fields[this.$route.params.name].indexOf(key) + 1,
               name: key,
               action: 'unchanged',
-              new_value: '---/---',
-              old_value: '---/---',
+              new_value: '',
+              old_value: '',
             }))
 
             return {
@@ -252,7 +253,7 @@ export default {
               <b-td/>
               <b-td/>
               <b-td v-for="(column,j) in row.columns" :key="`${i}-${j}-n`">
-                {{ column ? column.old_value : '' }}
+                {{ column && column.old_value === 0 ? 'is external' : column && column.old_value === 1 ? 'is internal' : column ? column.old_value : '' }}
               </b-td>
             </b-tr>
           </template>
