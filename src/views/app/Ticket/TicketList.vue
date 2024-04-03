@@ -60,6 +60,7 @@ export default {
         filter: {
           ...data,
           status: 'opened',
+          show_with_subtickets: true,
         },
       }
       payload.filter = _.omitBy(payload.filter, _.isNil)
@@ -186,7 +187,7 @@ export default {
     },
     allFilter() {
       const _payload = { ...(this.$refs.filter.data || {}), status: this.filterValue, page: 1 }
-      const payload = {}
+      const payload = { show_with_subtickets: true }
       Object.keys(_payload).forEach(key => {
         if (_payload[key]) {
           payload[key] = _payload[key] === -1 ? undefined : _payload[key]
