@@ -131,16 +131,6 @@ export default {
       ticket.ticket_closed = 0
       this.$successToast('The ticket is open')
     },
-    async makedAsRead(id) {
-      this.loadingRead = true
-      this.$http.put(`/tickets/mark-status?ticket_id=${id}`).then(async (response) => {
-        console.log("this is the response",response)
-        const idTicket =this.$route.params.id
-        await this.loadSingleTicket()
-      }).catch((error) => {
-        console.error(error)
-      }).finally(()=>this.loadingRead =false)
-    },
     async toggleTicket(e, ticket) {
       e.stopPropagation()
       const result = await this.$swal({
