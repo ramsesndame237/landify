@@ -10,6 +10,19 @@ import TicketMixin from '@/views/app/Kanban/TicketMixin'
 import moment from 'moment-business-time'
 import dragula from 'dragula'
 import _ from 'lodash'
+import Vue from 'vue'
+
+Vue.directive('scroll', {
+  inserted: function (el, binding) {
+    let f = function (evt) {
+      if (binding.value(evt, el)) {
+        window.removeEventListener('scroll', f)
+      }
+    }
+    window.addEventListener('scroll', f)
+  }
+})
+
 
 export default {
   name: 'KabanView',
@@ -172,7 +185,9 @@ export default {
       const block = this.localBlocks.find(b => b[this.idProp] === el.dataset.blockId)
       return this.drake.containers.filter(c => this.config.accepts(block, c, source))
     },
-
+    isSafari() {
+      return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    },
     forbiddenTargets(el, source) {
       return this.drake.containers.filter(c => !this.allowedTargets(el, source).includes(c))
     },
@@ -434,7 +449,7 @@ export default {
                 body-class="position-relative"
                 :header="item.column_name" header-text-variant="black">
           <div :id="item.column_id" ref="list" class="card-body-container"
-               @scrollend="(e)=>handleScroll(e,item)">
+               @scroll="(e)=>handleScroll(e,item)">
             <div v-for="ticket in item.tickets" :id="ticket.ticket_id" :key="ticket.ticket_id" draggable="true"
                  class="cursor-pointer" style="height: auto;margin-top: 15px;z-index: 0;position: relative">
               <invoice-ticket-card v-if="ticket.ticket_id_group === null || showSubTickets" class="bg-white"
