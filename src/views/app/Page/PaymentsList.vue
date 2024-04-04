@@ -2,7 +2,7 @@
   <div>
     <b-card-actions :title="$t('general~filter')" action-collapse>
       <validation-observer ref="form" v-slot="{ passes }">
-        <b-form @submit.prevent="passes(filter)">
+        <b-form @submit.prevent="passes(getPaymentListData)">
           <b-row>
             <b-col v-for="(field, index) in filters" :key="index" cols="12" :md="4">
               <field
@@ -24,21 +24,21 @@
         </b-form>
       </validation-observer>
     </b-card-actions>
-    <div class="overflow-auto">
-      <tab-component
-        :nowrap="true"
-        :active-tab-item="activeTabItem"
-        :tab-title="tabTitles"
-        @selected-item="getActiveItemData"
-      />
-    </div>
+
+    <tab-component
+      :nowrap="true"
+      :active-tab-item="activeTabItem"
+      :tab-title="tabTitles"
+      @selected-item="getActiveItemData"
+    />
 
     <data-table
-      ref="dataTable"
+      ref="paymentListTable"
       url="/contracts/payment-list"
       :columns="cols"
       :floating-actions="false"
       :actions-at-the-last-column="true"
+      :include-in-query="getFilters()"
       :list-all-actions="true"
       :custom-actions="[
         {
@@ -59,7 +59,6 @@ import TabComponent from '@/components/TabComponent.vue'
 import { EXTERN_TEAMS_IDS, INTERN_TEAMS_IDS } from '@/config/config-access'
 import { USER_PERMISSIONS, buildPermissions } from '@/config/config-access/config-permissions'
 import { USER_ROLES } from '@/config/config-access/config-roles'
-import DeadlineMixin from '@/views/app/Contracts/Relations/Deadlines/DeadlineMixin'
 import Field from '@/views/app/Generic/Field'
 import BCardActions from '@core/components/b-card-actions/BCardActions'
 import {
@@ -77,6 +76,7 @@ const years = Array((new Date().getFullYear() + 1) - BEGIN_YEAR_PAYMENT_LIST).fi
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].reverse()
 
 export default {
+  name: 'PaymentList',
   components: {
     Field,
     BCardActions,
@@ -86,19 +86,21 @@ export default {
     BCol,
     TabComponent,
   },
-  mixins: [DeadlineMixin],
   data() {
-    const tabTitles = months.map(year => ({
-      id: year,
-      title: year,
+    const tabTitles = months.map(month => ({
+      id: month,
+      title: month,
       show: true,
       count: 0,
     }))
 
     return {
-      activeTabItem: tabTitles[0],
+      loadedFirstTime: false,
+      activeTabItem: tabTitles[tabTitles.length - (new Date().getMonth() + 1)],
       tabTitles,
-      filtersData: {},
+      filtersData: {
+        year: new Date().getFullYear(),
+      },
       cols: [
         {
           key: 'document_name',
@@ -194,9 +196,23 @@ export default {
       )
     },
   },
+  // watch: {
+  //   activeTabItem() {
+  //     this.getPaymentListData()
+  //   },
+  // },
   methods: {
     getActiveItemData(item) {
       this.activeTabItem = item
+    },
+    getFilters() {
+      return {
+        ...this.filtersData,
+        month: this.tabTitles.length - (this.tabTitles.findIndex(tab => tab.id === this.activeTabItem.id)),
+      }
+    },
+    getPaymentListData() {
+      this.$refs.paymentListTable.getData(this.getFilters())
     },
     lockPaymentList(paymentList) {
       handleConfirm({
@@ -206,7 +222,7 @@ export default {
         title: `payment~list~really~want~to~${paymentList.blocked ? 'un' : ''}lock`,
         method: 'put',
         body: [paymentList.id],
-        cb: () => this.$refs.dataTable?.getData(),
+        cb: this.getPaymentListData,
       })
     },
     downloadDocument(doc) {
@@ -220,7 +236,7 @@ export default {
         url: `/contracts/payment-list/${id}/provision`,
         method: 'put',
         body: [id],
-        cb: () => this.$refs.dataTable?.getData(),
+        cb: this.getPaymentListData,
       })
     },
   },

@@ -468,7 +468,6 @@ export default {
       return this.actionsAtTheLastColumn ? [...this.columns, { key: 'actions', header: { name: 'Actions' } }] : this.columns
     },
     getData(params, options) {
-      console.log({ inQuery: this.includeInQuery, params })
       if (this.url) {
         listData({
           api: this.$http,
