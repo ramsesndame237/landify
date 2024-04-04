@@ -29,9 +29,10 @@
               </b-badge>
             </div>
           </li>
-          <b-spinner label="Spinning" class="m-2 text-primary" size="lg" v-if="loadingNotificaton"></b-spinner>
-          <div class="scrollable-container media-list scroll-area overflow-y-scroll overflow-x-scroll"
-               v-if="!loadingNotificaton">
+          <div class="p-relative w-100" style="display: flex; justify-content: center" v-if="loadingNotificaton">
+            <b-spinner label="Spinning" class="my-2 mx-auto text-primary" size="lg"></b-spinner>
+          </div>
+          <div class="scrollable-container media-list scroll-area overflow-y-scroll overflow-x-scroll">
             <div
               v-for="(notification,index) in notifications"
               :key="index"

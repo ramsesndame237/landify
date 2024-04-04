@@ -44,7 +44,7 @@ export default {
       <li v-for="(item,index) in visibleTabs" :key="index" class="list-item" :class="{active: activeTabItem && activeTabItem.id === item.id}" @click="(event) =>activeOrDiseableItemsNavigation(event, item)">
         {{ item.title }}
 
-        <b-spinner small variant="primary" type="grow" v-if="item.count > 0"></b-spinner>
+        <b-spinner small :variant="!(activeTabItem && activeTabItem.id === item.id) ? 'primary' : 'secondary'" type="grow" v-if="item.count > 0"></b-spinner>
       </li>
     </ul>
   </div>
@@ -62,6 +62,9 @@ export default {
   background-color: #FFF;
   transition: all 250ms ease;
 }
+.text-secondary {
+  color: #fff !important;
+}
 .tab_container {
   width: 100%;
   min-width: 400px;
@@ -76,6 +79,7 @@ export default {
     overflow: auto;
     padding-left: 48px;
     list-style-type: none;
+    float: left;
     display: flex;
     flex-direction: row-reverse;
     scrollbar-width: none;

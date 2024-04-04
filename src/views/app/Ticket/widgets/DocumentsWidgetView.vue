@@ -98,7 +98,22 @@ export default {
   },
   methods: {
     previewDocument(document) {
+      this.markDocumentAsRead(document.document_id)
       this.currentDoc = document
+    },
+
+    markDocumentAsRead(document_id) {
+      this.$http.put(`/tickets/mark-status/document?ticket_id=${this.ticket_id}&document_id=${document_id}`, {}).then(response => {
+        this.$refs.dataTableRef.tableStore.rows.list = this.$refs.dataTableRef.tableStore.rows.list.map(document => {
+          if (document.document_id === document_id) {
+            document.read = 'READ'
+          }
+          return document
+        })
+        this.$emit('preview', document.document_id)
+      }).catch(error => {
+        console.error(error)
+      })
     },
     getDocumentLinkPreview,
     downloadDocument() {
