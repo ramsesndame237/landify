@@ -618,8 +618,13 @@ export default {
     getTicketDetails() {
       this.$http.get(`/tickets/update-stats?ticket_id=${this.$route.params.id}`).then(response => {
         const ticketStat = response.data || []
+        console.log({ ticketStat })
+        this.tabTitle = this.tabTitle.map(item => {
+          item.count = 0
+          return item
+        })
+        this.tabDetailsTicket = this.tabTitle
         if (ticketStat.length > 0) {
-          console.log({ ticketStat })
           ticketStat.forEach(item => {
             this.updateCounter(item.ticket_update_type, item.count)
           })
