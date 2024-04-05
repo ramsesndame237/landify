@@ -90,8 +90,11 @@ export default {
   async submit(vm, _, create) {
     try {
       const method = create ? 'post' : 'put'
-      console.log({vm})
-      await vm.$http[method]('/locations', vm.$refs.fieldComponent.entity)
+      const payload = vm.$refs.fieldComponent.entity || {}
+      await vm.$http[method]('/locations', {
+        ...payload,
+        location_total_area: payload.location_total_area || undefined,
+      })
       vm.$successToast(vm.$t('location~saved~successfully'))
     } catch (e) {
       throw new Error(typeof e?.response?.data?.detail === 'string' ? e.response.data.detail : vm.$t('unexpected~error~ocurred'))
