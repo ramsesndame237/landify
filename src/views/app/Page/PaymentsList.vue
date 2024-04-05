@@ -18,7 +18,7 @@
               variant="primary"
               type="submit"
             >
-              {{ $t('search') }}
+              <feather-icon icon="SearchIcon" /> {{ $t('payment~list~search') }}
             </b-button>
           </div>
         </b-form>
@@ -46,11 +46,34 @@
           onClick: row => lockPaymentList(row),
           label: row => row.blocked ? 'payment~list~unlock' : 'payment~list~lock',
         },
-        { icon: 'RefreshCwIcon', onClick: () => null, label:'payment~list~refresh' },
+        { icon: 'RefreshCwIcon', onClick: row => refreshPaymentList(row), label:'payment~list~refresh' },
         { icon: 'ArrowDownIcon', onClick: row => downloadDocument(row.document), label: 'payment~list~download~payment~list' },
-        { icon: 'UploadIcon', onClick: row => provisionPaymentList(row.id), label:'payment~list~download~provision' },
+        { icon: 'UploadIcon', onClick: row => { paymentListToShare = row }, label:'payment~list~download~provision' },
       ]"
     />
+
+    <b-modal
+      v-model="modalShow"
+      :title="$t('payment~list~select~a~board')"
+      :ok-title="$t('payment~list~assign~to~this~board')"
+      :ok-disabled="!shareEntity.board_id"
+      @ok="provisionPaymentList"
+    >
+      <h3>{{ $t('payment~list~select~a~board') }}</h3>
+      <p class="mb-1">{{ $t('payment~list~in~which~board~do~you~want~to~move') }}</p>
+      <div class="mb-2">
+        <field
+          :entity="shareEntity"
+          :field="{
+            key: 'board_id',
+            type: 'list',
+            list: 'board',
+            listLabel: 'board_name',
+            noLabel: true,
+          }"
+        />
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -95,7 +118,10 @@ export default {
     }))
 
     return {
+      paymentListToShare: null,
+      modalShow: false,
       loadedFirstTime: false,
+      shareEntity: {},
       activeTabItem: tabTitles[tabTitles.length - (new Date().getMonth() + 1)],
       tabTitles,
       filtersData: {
@@ -106,7 +132,7 @@ export default {
           key: 'document_name',
           getValue: data => data.document.document_name,
           header: {
-            name: 'zhalung_list_name',
+            name: 'payment~list~payment~list~name',
           },
           props: {
             style: 'min-width: 320px; font-weight: bold;',
@@ -116,7 +142,7 @@ export default {
           key: 'company_name',
           getValue: data => data.company.company_name,
           header: {
-            name: 'Company',
+            name: 'payment~list~company',
           },
         },
         {
@@ -127,7 +153,7 @@ export default {
             data.blocked ? 'payment~list~locked' : 'payment~list~unlocked',
           ),
           header: {
-            name: 'Status',
+            name: 'general~status',
           },
         },
       ],
@@ -196,11 +222,16 @@ export default {
       )
     },
   },
-  // watch: {
-  //   activeTabItem() {
-  //     this.getPaymentListData()
-  //   },
-  // },
+  watch: {
+    paymentListToShare(val) {
+      this.modalShow = !!val
+    },
+    modalShow(val) {
+      if (!val) {
+        this.paymentListToShare = null
+      }
+    }
+  },
   methods: {
     getActiveItemData(item) {
       this.activeTabItem = item
@@ -219,8 +250,19 @@ export default {
         swal: this.$swal,
         http: this.$http,
         url: `/contracts/payment-list/blocked?blocked=${!paymentList.blocked}`,
-        title: `payment~list~really~want~to~${paymentList.blocked ? 'un' : ''}lock`,
+        title: this.$t(`payment~list~really~want~to~${paymentList.blocked ? 'un' : ''}lock`),
         method: 'put',
+        body: [paymentList.id],
+        cb: this.getPaymentListData,
+      })
+    },
+    refreshPaymentList(paymentList) {
+      handleConfirm({
+        swal: this.$swal,
+        http: this.$http,
+        url: `/contracts/payment-list/export?company_id=${paymentList.company.company_id}`,
+        title: this.$t('payment~list~really~want~to~refresh~the~file'),
+        method: 'post',
         body: [paymentList.id],
         cb: this.getPaymentListData,
       })
@@ -228,16 +270,23 @@ export default {
     downloadDocument(doc) {
       window.open(getDocumentLink(doc))
     },
-    provisionPaymentList(id) {
+    provisionPaymentList() {
+      const body = {
+        ticket_name: "string",
+        contract_id: 0,
+        board_id: 0,
+        priority_id: 0
+      }
       handleConfirm({
         swal: this.$swal,
         http: this.$http,
-        title: 'payment~list~really~want~to~provision',
-        url: `/contracts/payment-list/${id}/provision`,
+        title: this.$t('payment~list~really~want~to~provision'),
+        url: `/tickets/payment-list/${this.paymentListToShare.id}`,
         method: 'put',
-        body: [id],
+        body,
         cb: this.getPaymentListData,
       })
+      this.shareEntity.board_id = undefined
     },
   },
 }

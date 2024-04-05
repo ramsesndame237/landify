@@ -50,6 +50,7 @@ export default {
 <template>
   <div class="tab_container">
     <ul :class="{ nowrap }">
+      <div class="flex-grow-1" />
       <li v-for="(item,index) in visibleTabs" ref="tabItems" :key="index" class="list-item" :class="{active: activeTabItem && activeTabItem.id === item.id}" @click="(event) =>activeOrDiseableItemsNavigation(event, item)">
         {{ item.title }}
 

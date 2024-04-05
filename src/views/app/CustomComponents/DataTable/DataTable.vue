@@ -465,7 +465,7 @@ export default {
   methods: {
     toggleRowSelection,
     getColumns() {
-      return this.actionsAtTheLastColumn ? [...this.columns, { key: 'actions', header: { name: 'Actions' } }] : this.columns
+      return this.actionsAtTheLastColumn ? [...this.columns, { key: 'actions', header: { name: 'general~actions' } }] : this.columns
     },
     getData(params, options) {
       if (this.url) {
