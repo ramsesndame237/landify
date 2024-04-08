@@ -48,7 +48,7 @@
         },
         { icon: 'RefreshCwIcon', onClick: row => refreshPaymentList(row), label:'payment~list~refresh' },
         { icon: 'ArrowDownIcon', onClick: row => downloadDocument(row.document), label: 'payment~list~download~payment~list' },
-        { icon: 'UploadIcon', onClick: row => { paymentListToShare = row }, label:'payment~list~download~provision' },
+        // { icon: 'UploadIcon', onClick: row => { paymentListToShare = row }, label:'payment~list~download~provision' },
       ]"
     />
 
