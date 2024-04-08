@@ -22,6 +22,15 @@ export default {
     // if (allElements) {
     //   allElements?.[3]?.click?.()
     // }
+    if (this.nowrap) {
+      const activeTabIndex = this.visibleTabs.findIndex(tab => tab.id === this.activeTabItem.id)
+      if (activeTabIndex > -1) {
+        this.$refs.tabItems[activeTabIndex].scrollIntoView({
+          block: 'end',
+          inline: 'nearest',
+        })
+      }
+    }
   },
   methods: {
     activeOrDiseableItemsNavigation(event, item) {
@@ -41,9 +50,9 @@ export default {
 <template>
   <div class="tab_container">
     <ul :class="{ nowrap }">
-      <li v-for="(item,index) in visibleTabs" :key="index" class="list-item" :class="{active: activeTabItem && activeTabItem.id === item.id}" @click="(event) =>activeOrDiseableItemsNavigation(event, item)">
+      <div class="flex-grow-1" />
+      <li v-for="(item,index) in visibleTabs" ref="tabItems" :key="index" class="list-item" :class="{active: activeTabItem && activeTabItem.id === item.id}" @click="(event) =>activeOrDiseableItemsNavigation(event, item)">
         {{ item.title }}
-
         <b-spinner small :variant="!(activeTabItem && activeTabItem.id === item.id) ? 'primary' : 'secondary'" type="grow" v-if="item.count > 0"></b-spinner>
       </li>
     </ul>
@@ -84,6 +93,7 @@ export default {
     flex-direction: row-reverse;
     scrollbar-width: none;
     flex-wrap: wrap;
+    max-width: 100%;
   }
 
   ul.nowrap {
@@ -107,6 +117,7 @@ export default {
     text-transform: uppercase;
     font: 600 13px/20px roboto, "Open Sans", Helvetica, sans-serif;
     transition: all 250ms ease;
+    scroll-margin-left: 46px;
 
     &:before{
       @include commonProperty;

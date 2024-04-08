@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="!col.hideActions && !actionsAtTheLastColumn"
+    v-if="!col.hideActions"
     class="d-flex align-items-center"
     :class="{ 'position-absolute': floating }"
     :style="{
@@ -23,7 +23,10 @@
         @click.stop="(e) => btn.onClick(row, tableStore, e)"
       >
         <feather-icon
-          :icon="btn.icon"
+          :icon="isFunction(btn.icon)
+            ? btn.icon(row, tableStore)
+            : btn.icon
+          "
           size="17"
         />
       </b-button>
@@ -32,7 +35,7 @@
         :target="`data-table-${typeof btn.icon === 'string' ? btn.icon : ''}${btnIdx}${i}${j}`"
         triggers="hover"
       >
-        {{ $t(btn.label) }}
+        {{ $t(isFunction(btn.label) ? btn.label(row) : btn.label) }}
       </b-tooltip>
     </fragment>
     <b-dropdown
@@ -45,28 +48,41 @@
       dropleft
     >
       <template #button-content>
-        <feather-icon class="flex-shrink-0" icon="MoreHorizontalIcon" size="14" color="black" />
+        <feather-icon
+          class="flex-shrink-0"
+          icon="MoreHorizontalIcon"
+          size="14"
+          color="black"
+        />
       </template>
 
       <b-dropdown-item
         v-for="btn in moreActions"
         :key="btn.key || btn.id"
-        :title="$t(btn.label)"
+        :title="$t(isFunction(btn.label) ? btn.label(row) : btn.label)"
         @click.stop="(e) => btn.onClick(row, tableStore, e)"
       >
         <div class="d-flex justify-content-between align-items-center">
           <feather-icon
             v-if="typeof btn.icon === 'string'"
             size="16"
-            :icon="btn.icon"
+            :icon="isFunction(btn.icon)
+              ? btn.icon(row, tableStore)
+              : btn.icon
+            "
           />
-          <component :is="btn.icon" v-else />
+          <component
+            :is="isFunction(btn.icon)
+              ? btn.icon(row, tableStore)
+              : btn.icon"
+            v-else
+          />
           <span
-            v-if="btn.label"
+            v-if="isFunction(btn.label) ? btn.label(row) : btn.label"
             class="text-truncate block ml-1"
             style="max-width: 180px"
           >
-            {{ $t(btn.label) }}
+            {{ $t(isFunction(btn.label) ? btn.label(row) : btn.label) }}
           </span>
         </div>
       </b-dropdown-item>
@@ -76,7 +92,7 @@
       :target="`more-${buttons.concat(moreActions).length}${i}${j}`"
       triggers="hover"
     >
-      {{ $t('more actions') }}
+      {{ $t('data~table~more~actions') }}
     </b-tooltip>
   </div>
 </template>
@@ -130,6 +146,9 @@ export default {
       type: Number,
       required: true,
     },
+  },
+  methods: {
+    isFunction: el => el instanceof Function,
   },
 }
 </script>

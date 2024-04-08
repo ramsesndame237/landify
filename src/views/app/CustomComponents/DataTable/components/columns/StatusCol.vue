@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex align-items-center justify-content w-100">
     <b-badge :variant="col.variant && col.variant({data, col})" class="text-truncate" style="min-width: 50px;">
-      {{ col.getValue ? $t(col.getValue({data, col})) : $t(value) }}
+      {{ $t(value) }}
     </b-badge>
   </div>
 </template>
@@ -25,10 +25,14 @@ export default {
   },
   computed: {
     value() {
-      let finalValue = '';
-      (this.col?.key?.split('.') || []).forEach(key => {
-        finalValue = this.data?.[key]
-      })
+      let finalValue = ''
+      if (!this.col?.getValue) {
+        (this.col?.key?.split('.') || []).forEach(key => {
+          finalValue = this.data?.[key]
+        })
+      } else {
+        finalValue = this.col.getValue(this.data)
+      }
       return finalValue
     },
   },
