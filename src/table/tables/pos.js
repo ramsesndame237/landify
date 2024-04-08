@@ -262,7 +262,7 @@ export default {
       title: 'headline~ticket~tab',
       primaryKey: 'ticket_id',
       // entity: 'frontend_3_1_3_4',
-      entityEndpoint: '/tickets/slims',
+      entityEndpoint: () => '/tickets/slims',
       entityForm: 'ticket_pos_rel',
       entityView: 'ticket',
       permissions: ACCESS.tableAccess.pos.relations.ticket,
