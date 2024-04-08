@@ -28,7 +28,7 @@
     <tab-component
       :nowrap="true"
       :active-tab-item="activeTabItem"
-      :tab-title="tabTitles"
+      :tab-title="visibleTabs"
       @selected-item="getActiveItemData"
     />
 
@@ -221,6 +221,12 @@ export default {
         ),
       )
     },
+    visibleTabs() {
+      if (this.filtersData.year === (new Date().getFullYear())) {
+        return [...this.tabTitles].slice(this.tabTitles.length - (new Date().getMonth() + 1), this.tabTitles.length)
+      }
+      return this.tabTitles
+    },
   },
   watch: {
     paymentListToShare(val) {
@@ -230,7 +236,10 @@ export default {
       if (!val) {
         this.paymentListToShare = null
       }
-    }
+    },
+    activeTabItem() {
+      this.getPaymentListData()
+    },
   },
   methods: {
     getActiveItemData(item) {
@@ -253,10 +262,19 @@ export default {
         title: this.$t(`payment~list~really~want~to~${paymentList.blocked ? 'un' : ''}lock`),
         method: 'put',
         body: [paymentList.id],
-        cb: this.getPaymentListData,
+        cb: () => {
+          const updatedPayment = this.$refs.paymentListTable.tableStore.rows.list.find(paymentListRow => paymentList.id === paymentListRow.id)
+          updatedPayment.blocked = !paymentList.blocked
+        },
       })
     },
     refreshPaymentList(paymentList) {
+      if (paymentList.blocked) {
+        return this.$swal.fire({
+          icon: 'warning',
+          title: this.$t('payment~list~unlock~the~document~first')
+        })
+      }
       handleConfirm({
         swal: this.$swal,
         http: this.$http,

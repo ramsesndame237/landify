@@ -180,6 +180,7 @@ export async function listData({
 }) {
   const _payload = {
     size: dataTableStore.pagination.size === 0 ? 1000000 : dataTableStore.pagination.size,
+    per_page: dataTableStore.pagination.size,
     page: dataTableStore.pagination.page,
     query: dataTableStore.pagination.search,
     keyword: dataTableStore.pagination.search,
