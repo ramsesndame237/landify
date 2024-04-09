@@ -41,7 +41,7 @@
       <Datatable :key="table" ref="table" :selectable="false" :search="search" primary-key-column="contract_id"
                  entity="contract" :with-delete="false" :with-edit="false" :with-nested="table === 'deadlines'" :sub-fields="definition.subFields"
                  :fields="definition.fields" :items="items" sub-fields-data-key="deadlines" :with-actions="true"
-                 :permissions="permissions"
+                 :permissions="permissions" default-sort-column="test"
       />
     </b-card>
 
@@ -93,8 +93,8 @@ export default {
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
       initialFilterData: this.definition?.initialFilterValues ?? payload?.filter,
-      initialSortBy: payload?.sortBy,
-      initialSortDesc: payload?.sortDesc ?? true,
+      // initialSortBy: payload?.sortBy,
+      // initialSortDesc: payload?.sortDesc ?? true,
       items: [],
       data: {},
       loading: false,
@@ -216,12 +216,6 @@ export default {
     table() {
       return this.$route.name === 'condition-list' ? 'conditions' : 'deadlines'
     },
-    total_rental_space() {
-      return _.sumBy(this.items, 'total_rental_space')
-    },
-    total_rent_per_month() {
-      return _.sumBy(this.items, item => (parseFloat(item.rent_per_month) || 0)).toFixed(2)
-    },
   },
   watch: {
     eurCurrency() {
@@ -250,8 +244,9 @@ export default {
       const valid = await this.$refs.form.validate()
       if (!valid) return
       this.loading = true
-      const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id', 'contactperson_id']).omitBy(_.isNil).value()
+      const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id', 'contactperson_id', 'date']).omitBy(_.isNil).value()
       filter.size = 100000
+      filter._date = moment(filter.date, 'DD/MM/YYYY').format('YYYY-MM-DD')
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
@@ -292,16 +287,6 @@ export default {
         }
       })
     },
-    getRecurringPaymentMonthValue(rc) {
-      if (!rc) return 0
-      let val = rc.recurringpayment_sum_per_month
-      if (rc.maturitytype_name === 'Intervall') {
-        val /= rc.recurringpayment_maturity_monthly_range
-      } else {
-        val /= 12
-      }
-      return val
-    },
     reset() {
       Object.keys(this.data).forEach(key => {
         this.$delete(this.data, key)
@@ -319,8 +304,9 @@ export default {
       const valid = await this.$refs.form.validate()
       if (!valid) return
       this.loadingDonwload = true
-      const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id']).omitBy(_.isNil).value()
+      const filter = _(this.data).pick(['customergroup_id', 'company_id', 'pos_id', 'country_id', 'date']).omitBy(_.isNil).value()
       filter.size = 100000
+      filter._date = moment(filter.date, 'DD/MM/YYYY').format('YYYY-MM-DD')
       // generate the request query string
       const requestQuery = Object.keys(filter).map(key => `${key}=${filter[key]}`).join('&')
       try {
