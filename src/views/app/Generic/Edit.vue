@@ -118,8 +118,8 @@
                 <b-button id="popover-button-variant" size="sm" variant="success" class="mr-1 btn-icon">
 
                   <span>
-              Ex-/Import
-            </span>
+                    Ex-/Import
+                  </span>
                 </b-button>
               </template>
               <b-dropdown-item @click="fetchExportData(visibleRelations[tabIndex].entity === 'tax_rates' ? 'tax-rate' : visibleRelations[tabIndex].entity,{name:definition.primaryKey,value:$route.params.id})">
@@ -160,19 +160,19 @@ import GenericFilter from '@/views/app/Generic/Filter.vue'
 import Notes from '@/views/app/Generic/Notes'
 import GenericModal from '@/views/app/Generic/modal'
 import {
-BButton,
-BCard,
-BCol,
-BDropdown,
-BDropdownForm,
-BFormGroup,
-BFormInput,
-BInputGroup,
-BInputGroupPrepend,
-BRow,
-BSpinner,
-BTab,
-BTabs,
+  BButton,
+  BCard,
+  BCol,
+  BDropdown,
+  BDropdownForm,
+  BFormGroup,
+  BFormInput,
+  BInputGroup,
+  BInputGroupPrepend,
+  BRow,
+  BSpinner,
+  BTab,
+  BTabs,
 } from 'bootstrap-vue'
 
 export default {
@@ -217,7 +217,7 @@ export default {
       isLoading: true,
       isLoadingDataFetch: false,
       itemsData: [],
-      canImportOrExport:['tax_rates','bankdata','kreditornumber'],
+      canImportOrExport: ['tax_rates', 'bankdata', 'kreditornumber'],
       totalRows: 0,
       formLoaded: false,
       noBody: false,
@@ -265,7 +265,6 @@ export default {
       if (this.tabIndex !== val) {
         this.tabIndex = val
         this.relationEntity = (this.definition.relations ?? []).find(element => element.entityView === this.visibleRelations[val].entityView)
-        console.log("this is the change")
         this.$router.replace({
           name: this.$route.name,
           params: this.$route.params,
@@ -280,21 +279,27 @@ export default {
       return this.noBody = val
     },
     filterDataSearch(data) {
+      data = {
+        ...(this.table === 'pos' ? { pos_id: this.$route.params.id } : {}),
+        ...(data || {}),
+        keyword: this.search,
+        page: this.currentPage,
+        size: this.perPage,
+        per_page: this.perPage === 0 ? 25 : this.perPage,
+        order_filed: this.sortBy,
+        order: this.sortDesc ? 'desc' : 'asc',
+      }
       if (!this.visibleRelations[this.tabIndex]?.entityEndpoint || typeof this.visibleRelations[this.tabIndex]?.entityEndpoint === 'function') {
-        return this.itemsData = undefined
+        this.itemsData = undefined
+        return
       }
       this.isLoadingDataFetch = true
       const url = this.visibleRelations[this.tabIndex]?.entityEndpoint || this.visibleRelations[this.tabIndex]?.entityForm || this.visibleRelations[this.tabIndex]?.entity
-      if (data) {
-        for (const element in data) {
-          if (data[element] === -1) {
-            delete data[element]
-          }
+      for (const element in data) {
+        if (data[element] === -1) {
+          delete data[element]
         }
-      } else {
-        data = {}
       }
-      console.log('this is the url', url)
 
       this.$http.get(url, {
         params: { ...data },

@@ -262,7 +262,7 @@ export default {
       title: 'headline~ticket~tab',
       primaryKey: 'ticket_id',
       // entity: 'frontend_3_1_3_4',
-      entityEndpoint: () => '/tickets/slims',
+      entityEndpoint: '/tickets/slims',
       entityForm: 'ticket_pos_rel',
       entityView: 'ticket',
       permissions: ACCESS.tableAccess.pos.relations.ticket,
@@ -286,45 +286,45 @@ export default {
         { key: 'ticket_deadline_offset', hideOnForm: true },
       ],
       filters: [
-        {
-          key: 'customergroup_id',
-          type: 'list',
-          list: 'customergroup',
-          listLabel: 'customergroup_name',
-          required: false,
-          noFetchOnInit: true,
-          customPagination: {
-            per_page: 15,
-          },
-        },
-        {
-          key: 'company_id',
-          type: 'list',
-          list: 'frontend_2_2_3_1',
-          listLabel: 'company_name',
-          filter_key: 'customergroup_id',
-          required: false,
-          // filter: (company, vm) => {
-          //   const isUserExternClientNotDirector = vm.$store.getters['user/isUserExternClientNotDirector']
-          //
-          //   if (isUserExternClientNotDirector) {
-          //     const { company: userCompany } = vm.$store.getters['user/user']
-          //     // vm.isDisabled = true
-          //     vm.$set(vm.entity, 'company_id', userCompany.company_id)
-          //     // return userCompany.company_id === company.company_id
-          //   }
-          //
-          //   return true
-          // },
-        },
-        {
-          key: 'pos_id',
-          type: 'list',
-          list: 'frontend_2_1_3_8',
-          listLabel: 'pos_name',
-          filter_key: 'company_id',
-          required: false,
-        },
+        // {
+        //   key: 'customergroup_id',
+        //   type: 'list',
+        //   list: 'customergroup',
+        //   listLabel: 'customergroup_name',
+        //   required: false,
+        //   noFetchOnInit: true,
+        //   customPagination: {
+        //     per_page: 15,
+        //   },
+        // },
+        // {
+        //   key: 'company_id',
+        //   type: 'list',
+        //   list: 'frontend_2_2_3_1',
+        //   listLabel: 'company_name',
+        //   filter_key: 'customergroup_id',
+        //   required: false,
+        //   // filter: (company, vm) => {
+        //   //   const isUserExternClientNotDirector = vm.$store.getters['user/isUserExternClientNotDirector']
+        //   //
+        //   //   if (isUserExternClientNotDirector) {
+        //   //     const { company: userCompany } = vm.$store.getters['user/user']
+        //   //     // vm.isDisabled = true
+        //   //     vm.$set(vm.entity, 'company_id', userCompany.company_id)
+        //   //     // return userCompany.company_id === company.company_id
+        //   //   }
+        //   //
+        //   //   return true
+        //   // },
+        // },
+        // {
+        //   key: 'pos_id',
+        //   type: 'list',
+        //   list: 'frontend_2_1_3_8',
+        //   listLabel: 'pos_name',
+        //   filter_key: 'company_id',
+        //   required: false,
+        // },
         {
           key: 'contract_id',
           listLabel: 'contract_name',
