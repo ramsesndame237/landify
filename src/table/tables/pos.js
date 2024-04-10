@@ -325,14 +325,14 @@ export default {
         //   filter_key: 'company_id',
         //   required: false,
         // },
-        {
-          key: 'contract_id',
-          listLabel: 'contract_name',
-          type: 'list',
-          list: 'frontend_4_2_1_contract_selector',
-          filter_key: 'pos_id',
-          required: false,
-        },
+        // {
+        //   key: 'contract_id',
+        //   listLabel: 'contract_name',
+        //   type: 'list',
+        //   list: 'frontend_4_2_1_contract_selector',
+        //   filter_key: 'pos_id',
+        //   required: false,
+        // },
         {
           key: 'start_date',
           label: 'Start Date',
