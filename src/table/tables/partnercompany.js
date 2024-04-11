@@ -111,9 +111,46 @@ export default {
   ],
   relations: [
     {
+      title: 'Contact Persons',
+      primaryKey: 'contactperson_id',
+      entity: 'contactperson',
+      entityForm: 'contactperson_company_rel',
+      entityView: 'contactperson',
+      entityEndpoint: vm => `/contacts?partnercompany_id=${vm.$route.params.id}`,
+      importQueryParams: vm => ({
+        from_detail: true,
+        primary_key: 'partnercompany_id',
+        primary_key_value: vm.$route.params.id,
+        entity: 'contactperson',
+      }),
+      update: false,
+      fields: [
+        {
+          key: 'contactperson_id',
+          type: 'list',
+          list: 'contactperson',
+          listLabel: 'contactperson_lastname',
+          alwaysNew: true,
+          onlyForm: true,
+        },
+        { key: 'contactperson_lastname', hideOnForm: true },
+        { key: 'contactperson_firstname', hideOnForm: true },
+        { key: 'city_name', hideOnForm: true },
+        { key: 'contactdetails_email', hideOnForm: true },
+        { key: 'contactdetails_phone', hideOnForm: true },
+        { key: 'contactdetails_mobile', hideOnForm: true },
+        { key: 'contactperson_department', hideOnForm: true },
+      ],
+    },
+    {
       title: 'bankdata',
       entity: 'bankdata',
       primaryKey: 'bankdata_id',
+      importQueryParams: vm => ({
+        from_detail: true,
+        primary_key: 'partnercompany_id',
+        primary_key_value: vm.$route.params.id,
+      }),
       entityEndpoint: vm => `/partners/${vm.$route.params.id}/bankdata`,
       fields: [
         {
@@ -152,6 +189,11 @@ export default {
       title: 'kreditornumber',
       entity: 'kreditornumber',
       primaryKey: 'kreditornumber_id',
+      importQueryParams: vm => ({
+        from_detail: true,
+        primary_key: 'partnercompany_id',
+        primary_key_value: vm.$route.params.id,
+      }),
       entityEndpoint: vm => `/partners/${vm.$route.params.id}/kreditornumber`,
       fields: [
         {

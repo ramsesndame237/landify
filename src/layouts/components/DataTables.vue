@@ -364,10 +364,15 @@ export default {
 
         if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
         // create request query string
-        const requestQuery = Object.keys(filterData)
+        const requestQuery = {}
+        Object.keys(filterData)
           .filter(key => ![null, -1].includes(filterData[key]))
-          .map(key => `${key}=${filterData[key]}`).join('&')
-        return this.$http.get(`${this.entityEndpoint instanceof Function ? this.entityEndpoint(this) : this.entityEndpoint}?${requestQuery}`)
+          .forEach(key => {
+            requestQuery[key] = filterData[key]
+          })
+        return this.$http.get(`${this.entityEndpoint instanceof Function ? this.entityEndpoint(this) : this.entityEndpoint}`, {
+          params: requestQuery,
+        })
           .then(({ data }) => {
             let items
             if (Array.isArray(data.data)) {

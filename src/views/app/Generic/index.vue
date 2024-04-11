@@ -9,7 +9,7 @@
                         :on-new-element="definition.create ===false ? null : onNewElement" :total-rows.sync="totalRows"
                         :with-filter="definition.filters && definition.filters.length > 0"
                         :show-input="definition.showInput || true"
-                        :import-export-array-item="(definition.relations || []).filter(x => importExportElementArray.includes(x.entity)).map(item =>({entity:item.entity,primaryKey:item.primaryKey}))"
+                        :import-export-array-item="(definition.relations || []).filter(x => importExportElementArray.includes(x.importEntityName || x.entity)).map(item =>({entity: item.importEntityName || item.entity,primaryKey:item.primaryKey}))"
                         :inline-filter="!definition.inline_filter"
                         :definition="definition"
                         :on-delete-elements="definition.delete !== false ? (()=> $refs.table.deleteSelected()):null"
@@ -85,7 +85,7 @@ export default {
     }
     return {
       search: payload?.search || '',
-      importExportElementArray:['bankdata','kreditornumber','tax_rates'],
+      importExportElementArray: ['contactperson', 'bankdata', 'kreditornumber', 'tax_rates'],
       perPage: payload?.perPage || defaultPage || 20,
       currentPage: payload?.currentPage || 1,
       totalRows: payload?.totalRows || 0,
