@@ -112,7 +112,7 @@
                       @click="$emit('filter')">
               <feather-icon icon="FilterIcon"/>
             </b-button>
-            <b-dropdown v-if="canImportOrExport.includes(visibleRelations[tabIndex].entity)" size="lg" variant="link"
+            <!-- <b-dropdown v-if="canImportOrExport.includes(visibleRelations[tabIndex].entity)" size="lg" variant="link"
                         toggle-class="text-decoration-none" no-caret>
               <template #button-content>
                 <b-button id="popover-button-variant" size="sm" variant="success" class="mr-1 btn-icon">
@@ -132,7 +132,7 @@
                 <FeatherIcon icon="ArrowDownIcon" />
                 {{ $t('translate~key~import') }}
               </b-dropdown-item>
-            </b-dropdown>
+            </b-dropdown> -->
 
             <b-form-input v-if="currentHasSearch()" id="filterInput" v-model="search" debounce="500" type="search"
                           placeholder="Search..."/>

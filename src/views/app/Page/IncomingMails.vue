@@ -2,7 +2,7 @@
   <div>
     <b-card body-class="p-0">
       <table-pagination :search.sync="search" :per-page.sync="perPage" :current-page.sync="currentPage" :entity="table"
-                        :total-rows="totalRows">
+                        :total-rows="totalRows" :show-input="true">
         <!--        <div class="d-flex justify-content-end flex-wrap" style="padding: 10px">-->
         <b-button variant="primary" @click="$refs.table.refresh()">
           Refresh
