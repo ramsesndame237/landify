@@ -287,19 +287,19 @@ export default {
   methods: {
     onViewClick(data) {
       if (this.onViewElement) {
-        this.onViewElement(this.currentItems[data.index])
+        this.onViewElement(data.item)
         return
       }
       if (this.primaryKey === 'document_id') {
-        window.open(getDocumentLink(this.currentItems[data.index]), '_blank')
+        window.open(getDocumentLink(data.item), '_blank')
         return
       }
       const routeData = {
         name: 'table-view',
         params: {
           table: this.entityView || this.entity,
-          id: this.currentItems[data.index][this.primaryKey],
-          entity: this.currentItems[data.index],
+          id: data.item[this.primaryKey],
+          entity: data.item,
           ids: this.currentItems.map(i => i[this.primaryKey]),
         },
       }
