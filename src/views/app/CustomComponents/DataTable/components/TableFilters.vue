@@ -220,9 +220,9 @@
 
 <script>
 import refreshIcon from '@/assets/images/icons/refresh.svg'
-import {BDropdownDivider, BDropdownText, BTooltip} from 'bootstrap-vue'
+import { BDropdownDivider, BDropdownText, BTooltip } from 'bootstrap-vue'
 import TableSideFilters from './TableSideFilters.vue'
-import {handleDelete, toggleColumn, useTableStore} from '../state/data-table-store'
+import { handleDelete, toggleColumn, useTableStore } from '../state/data-table-store'
 import SearchInput from './SearchInput.vue'
 
 const tableStore = useTableStore()
@@ -270,9 +270,6 @@ export default {
       extraFiltersValues: {},
     }
   },
-  created() {
-    // tableStore.pagination.search = ''
-  },
   watch: {
     perPage(val) {
       this.$emit('update:per-page', val)
@@ -280,9 +277,6 @@ export default {
     search(val) {
       this.$emit('update:search', val)
     },
-  },
-  mounted() {
-    // this.tableStore.pagination.search = ''
   },
   methods: {
     toggleColumn,

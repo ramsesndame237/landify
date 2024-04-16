@@ -375,6 +375,7 @@ export default {
     tableStore.rows.list = []
     tableStore.columns.hided = this.defaultHiddenCols || []
     tableStore.pagination.lang = this.$i18n.locale
+    tableStore.pagination.search = ''
     if (this.data) {
       tableStore.rows.list = this.data
     }
