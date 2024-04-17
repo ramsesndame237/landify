@@ -60,22 +60,22 @@ const routes = [
       action: 'read',
     },
   },
-  {
-    path: '/app/update_ticket',
-    name: 'updateTicket',
-    permissions: ACCESS.tableAccess.ticket.update_ticket,
-    component: () => import('@/views/app/Ticket/UpdateTicketList.vue'),
-    meta: {
-      pageTitle: '',
-      breadcrumb: [
-        {
-          text: 'menu~ticketlistupdate',
-          active: true,
-        },
-      ],
-      action: 'read',
-    },
-  },
+  // {
+  //   path: '/app/update_ticket',
+  //   name: 'updateTicket',
+  //   permissions: ACCESS.tableAccess.ticket.update_ticket,
+  //   component: () => import('@/views/app/Ticket/UpdateTicketList.vue'),
+  //   meta: {
+  //     pageTitle: '',
+  //     breadcrumb: [
+  //       {
+  //         text: 'menu~ticketlistupdate',
+  //         active: true,
+  //       },
+  //     ],
+  //     action: 'read',
+  //   },
+  // },
   {
     path: '/app/preview/document/:document_id/:name',
     name: 'previewDocument',
@@ -415,7 +415,7 @@ const canOpenRoute = to => {
   const Table = require('@/table').default
   const table = to.params.table
   if (Table && table && table in Table) {
-    const name = to.name 
+    const name = to.name
     const permissionsFromDefinition = Table[table]?.permissions
     if (name === 'table-view') { // Details view
       if (to.query.edit === 'true') { // Edition activated
@@ -432,7 +432,16 @@ const canOpenRoute = to => {
 
     return isAbleTo('list', permissionsFromDefinition)
   }
-  return ['misc-not-authorized', 'login'].includes(to.name) || isAbleTo('list', routes.find(route => to.path === route.path || to.path === `${route.path}/`)?.permissions)
+  return [
+    'misc-not-authorized',
+    'login',
+    'verify-token',
+    'forgot-password',
+    'reset-password',
+    'change-password',
+    'comming-soon',
+    'error-404',
+  ].includes(to.name) || isAbleTo('list', routes.find(route => to.path === route.path || to.path === `${route.path}/`)?.permissions)
 }
 
 router.beforeEach((to, _, next) => {

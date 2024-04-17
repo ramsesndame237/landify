@@ -287,19 +287,19 @@ export default {
   methods: {
     onViewClick(data) {
       if (this.onViewElement) {
-        this.onViewElement(this.currentItems[data.index])
+        this.onViewElement(data.item)
         return
       }
       if (this.primaryKey === 'document_id') {
-        window.open(getDocumentLink(this.currentItems[data.index]), '_blank')
+        window.open(getDocumentLink(data.item), '_blank')
         return
       }
       const routeData = {
         name: 'table-view',
         params: {
           table: this.entityView || this.entity,
-          id: this.currentItems[data.index][this.primaryKey],
-          entity: this.currentItems[data.index],
+          id: data.item[this.primaryKey],
+          entity: data.item,
           ids: this.currentItems.map(i => i[this.primaryKey]),
         },
       }
@@ -309,6 +309,7 @@ export default {
       } else this.$router.push(routeData)
     },
     provider(ctx) {
+
       this.isLoadingData = true
       if (!this.canList) {
         this.$errorToast('error~permission~error')
@@ -348,7 +349,6 @@ export default {
       if (fromCache && this.noCache) {
         return this.processData(fromCache)
       }
-
       // retrieve form specific endpoint
       if (this.entityEndpoint) {
         const filterData = {
@@ -361,6 +361,8 @@ export default {
           order_filed: sortBy,
           order: sortDesc ? 'desc' : 'asc',
         }
+        console.log("this it he data to send url", filterData)
+
 
         if (this.secondKey) filterData[this.secondKey] = this.secondKeyValue
         // create request query string
@@ -617,6 +619,9 @@ export default {
       this.$refs.modal_test.show()
     },
   },
+  mounted() {
+    console.log("thie is the model data", this.items)
+  }
 }
 </script>
 <style>

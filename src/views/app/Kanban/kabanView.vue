@@ -10,6 +10,19 @@ import TicketMixin from '@/views/app/Kanban/TicketMixin'
 import moment from 'moment-business-time'
 import dragula from 'dragula'
 import _ from 'lodash'
+import Vue from 'vue'
+
+Vue.directive('scroll', {
+  inserted: function (el, binding) {
+    let f = function (evt) {
+      if (binding.value(evt, el)) {
+        window.removeEventListener('scroll', f)
+      }
+    }
+    window.addEventListener('scroll', f)
+  }
+})
+
 
 export default {
   name: 'KabanView',
@@ -82,12 +95,11 @@ export default {
   watch: {
     columnData(newValue) {
       if (newValue.length !== 0 && this.initialFetch) {
-        console.log('this is the new value of the column', newValue)
         newValue.forEach(element => {
           this.pages.push({column_id: element.column_id, page: 1})
-          this.fetchTicketOfTheColumn(element.column_id, false)
+          // this.fetchTicketOfTheColumn(element.column_id, false)
         })
-        console.log('this is the loading state')
+        this.getTicketWithFilters()
       }
     },
     filterValue() {
@@ -164,7 +176,7 @@ export default {
   },
   methods: {
     async handleScroll(event, value) {
-      if (event.target.scrollTop + event.target.offsetHeight >= event.target.scrollHeight) {
+      if (!this.loadingTicket.includes(value.column_id) && this.columnData.find(column => column.column_id === value.column_id).total > this.pages.find(elet => elet.column_id === value.column_id).page) {
         this.pages.find(elet => elet.column_id === value.column_id).page += 1
         await this.fetchTicketOfTheColumn(value.column_id, false)
       }
@@ -173,7 +185,9 @@ export default {
       const block = this.localBlocks.find(b => b[this.idProp] === el.dataset.blockId)
       return this.drake.containers.filter(c => this.config.accepts(block, c, source))
     },
-
+    isSafari() {
+      return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    },
     forbiddenTargets(el, source) {
       return this.drake.containers.filter(c => !this.allowedTargets(el, source).includes(c))
     },
@@ -265,57 +279,84 @@ export default {
     //
     //   return closestTask
     // },
-    fetchTicketOfTheColumn(id, reloading, filterData) {
-      for (const idKey in filterData) {
-        if (filterData[idKey] === -1) {
-          delete filterData[idKey]
-        }
+    fetchTicketOfTheColumn(id, reloading, _filterData) {
+      const filterDataObj = {
+        ...(this.$refs.filter?.data || {}),
+        keyword: this.search,
+        status: this.filterValue,
+        ...(_filterData || {}),
       }
+      const filterData = {}
+      Object.keys(filterDataObj).forEach(key => {
+        filterData[key] = filterDataObj[key] === -1 ? undefined : filterDataObj[key]
+      })
+      // for (const idKey in filterData) {
+      //   if (filterData[idKey] === -1) {
+      //     delete filterData[idKey]
+      //   }
+      // }
       this.loadingTicket.push(id)
       console.log('this i sth fetch', id)
       if (id) {
-        this.$http.get(`/tickets/slims?column_id=${id}&board_id=${this.$route.params.id}&size=${this.size}&page=${this.pages.find(pageElement => pageElement.column_id === id).page}&order_filed=ticket_id`).then(response => {
-          console.log('this is the ticket of the column', response.data.data)
+        this.$http.get(`/tickets/slims?column_id=${id}&board_id=${this.$route.params.id}&size=${this.size}&page=${this.pages.find(pageElement => pageElement.column_id === id).page}&order_filed=ticket_id&order=desc`, {
+          params: filterData,
+        }).then(response => {
           this.loadingTicket = []
           const oldticket = this.columnData.find(element => element.column_id === id).tickets
           if (oldticket.length > 0 && !reloading) {
-            console.log('this is the data', [...oldticket, ...response.data.data])
             this.columnData.find(column => column.column_id === id).tickets = [...oldticket, ...response.data.data]
+            this.columnData.find(column => column.column_id === id).total = response.data.pages
           } else {
             this.columnData.find(column => column.column_id === id).tickets = response.data.data
+            this.columnData.find(column => column.column_id === id).total = response.data.pages
           }
-          console.log('this is the column data', this.columnData)
-        }).catch(error => {
-          console.error(error)
         })
+          .catch(error => {
+            console.error(error)
+            if (this.pages.find(pageElement => pageElement.column_id === id).page > 1) {
+              this.pages.find(pageElement => pageElement.column_id === id).page -= 1
+            }
+          })
       } else {
         this.columnData.forEach(element => {
           this.loadingTicket.push(element.column_id)
-          this.$http.get(`/tickets/slims?column_id=${element.column_id}&board_id=${this.$route.params.id}&size=${this.size}&page=${this.pages.find(pageElement => pageElement.column_id === element.column_id).page}&order_filed=ticket_id`, {
-            params: {...filterData},
-          }).then(response => {
-            this.loadingTicket = this.loadingTicket.filter(x => x !== element.column_id)
-            this.columnData.find(column => column.column_id === element.column_id).tickets = response.data.data
-          }).catch(error => {
-            console.error(error)
+          this.$http.get(`/tickets/slims?column_id=${element.column_id}&board_id=${this.$route.params.id}&size=${this.size}&page=${this.pages.find(pageElement => pageElement.column_id === element.column_id).page}&order_filed=ticket_id&order=desc`, {
+            params: { ...filterData },
           })
+            .then(response => {
+              this.loadingTicket = this.loadingTicket.filter(x => x !== element.column_id)
+              this.columnData.find(column => column.column_id === element.column_id).tickets = response.data.data
+              this.columnData.find(column => column.column_id === element.column_id).total = response.data.pages
+            })
+            .catch(error => {
+              console.error(error)
+              if (this.pages.find(pageElement => pageElement.column_id === element.column_id).page > 1) {
+                this.pages.find(pageElement => pageElement.column_id === element.column_id).page -= 1
+              }
+            })
         })
       }
     },
     fetchTeamsSystem() {
-      this.$http.get('/teams').then(response => {
-        this.teams = response.data.data
-      }).catch(error => {
-        console.error(error)
-      })
+      this.$http.get('/teams')
+        .then(response => {
+          this.teams = response.data.data
+        })
+        .catch(error => {
+          console.error(error)
+        })
     },
     createTicket() {
       console.log('this is the creatioin of the data')
       const now = moment()
       const column = this.columnData[0]
       console.log('this i sthe column is the data', column.default_deadline_red)
-      const deadline_yellow = now.clone().addWorkingTime(1, 'hours').format('YYYY-MM-DD HH:mm:ss')
-      const deadline_red = now.clone().addWorkingTime(1, 'hours').format('YYYY-MM-DD HH:mm:ss')
+      const deadline_yellow = now.clone()
+        .addWorkingTime(1, 'hours')
+        .format('YYYY-MM-DD HH:mm:ss')
+      const deadline_red = now.clone()
+        .addWorkingTime(1, 'hours')
+        .format('YYYY-MM-DD HH:mm:ss')
       this.$refs.modal.openModal(true, {
         column_id: column.column_id,
         board_id: this.$route.params.id,
@@ -325,16 +366,19 @@ export default {
       })
     },
     fetchColumnOfTheBoard() {
-      this.$http.get(`${this.boardColumnUrl}?board_id=${this.$route.params.id}&order_filed=rank_order`).then(response => {
-        console.log('this is the data', response.data.data)
-        this.columnData = response.data.data.sort((a, b) => a.rank_order - b.rank_order).map(items => ({
-          ...items,
-          tickets: [],
-        }))
-        this.initialFetch = true
-      }).catch(error => {
-        console.error(error)
-      })
+      this.$http.get(`${this.boardColumnUrl}?board_id=${this.$route.params.id}&order_filed=rank_order`)
+        .then(response => {
+          console.log('this is the data', response.data.data)
+          this.columnData = response.data.data.sort((a, b) => a.rank_order - b.rank_order)
+            .map(items => ({
+              ...items,
+              tickets: [],
+            }))
+          this.initialFetch = true
+        })
+        .catch(error => {
+          console.error(error)
+        })
     },
     /** Filter tickets based on the value in the modal
      * `filters` and the value of the `search` prop */
@@ -342,17 +386,24 @@ export default {
       if (this.debounced) {
         this.debounced.cancel()
       }
-      this.debounced = _.debounce(() => this.fetchTicketOfTheColumn(
-        undefined,
-        false,
-        {
-          ...(this.$refs.filter?.data || {}),
-          keyword: this.search,
-          status: this.filterValue,
-        },
-      ).finally(() => {
-        this.debounced = null
-      }), 500)
+      this.debounced = _.debounce(() => {
+        try {
+          for (let i = 0; i < this.pages.length; i++) {
+            this.pages[i].page = 1
+          }
+          this.fetchTicketOfTheColumn(
+            undefined,
+            false,
+            {
+              ...(this.$refs.filter?.data || {}),
+              keyword: this.search,
+              status: this.filterValue,
+            },
+          )
+        } finally {
+          this.debounced = null
+        }
+      }, 500)
       this.debounced()
     },
 
@@ -398,7 +449,7 @@ export default {
                 body-class="position-relative"
                 :header="item.column_name" header-text-variant="black">
           <div :id="item.column_id" ref="list" class="card-body-container"
-               @scrollend.passive="(e)=>handleScroll(e,item)">
+               @scroll="(e)=>handleScroll(e,item)">
             <div v-for="ticket in item.tickets" :id="ticket.ticket_id" :key="ticket.ticket_id" draggable="true"
                  class="cursor-pointer" style="height: auto;margin-top: 15px;z-index: 0;position: relative">
               <invoice-ticket-card v-if="ticket.ticket_id_group === null || showSubTickets" class="bg-white"
@@ -411,7 +462,7 @@ export default {
             </div>
             <div class="flex align-items-center justify-content-center w-100  text-center mt-2 position-absolute"
                  style="top:-35px">
-              <b-spinner v-if="loadingTicket.includes(item.column_id)" variant="primary"
+              <b-spinner v-if="loadingTicket.includes(item.column_id) && pages.find(elt => elt.column_id === item.column_id).page === 1" variant="primary"
                          style="width: 3rem; height: 3rem;"/>
             </div>
           </div>

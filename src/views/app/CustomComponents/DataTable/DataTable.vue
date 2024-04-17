@@ -26,7 +26,7 @@
       <b-skeleton-table
         v-if="tableStore.pagination.isLoading"
         :rows="tableStore.pagination.size || 5"
-        :columns="columns.length || 4"
+        :columns="columnsArray.length || 4"
         :table-props="{ bordered: true, striped: true }"
       />
       <b-table-simple
@@ -39,7 +39,7 @@
         style="z-index: 1"
       >
         <table-head
-          :columns="columns"
+          :columns="columnsArray"
           :no-checkbox="!withCheckbox"
           :select-row-fn="selectRowFn"
         />
@@ -48,7 +48,7 @@
             v-if="!tableStore.rows.list || tableStore.rows.list.length === 0"
           >
             <b-td
-              :colspan="(columns || []).length + 1"
+              :colspan="(columnsArray || []).length + 1"
               class="py-3 no-data-td"
             >
               <no-data @refresh="getData" />
@@ -59,6 +59,7 @@
             :key="row.id || selectRowFn(row)"
             :style="`z-index: ${tableStore.rows.list.length - i}`"
             class="table-tr"
+            :class="{ shrinkable: !actionsAtTheLastColumn }"
             @click="onRowClick && onRowClick(row, tableStore, i)"
           >
             <b-td v-if="withCheckbox">
@@ -68,7 +69,7 @@
               />
             </b-td>
             <fragment
-              v-for="({component: cmp, ...col}, j) in columns"
+              v-for="({component: cmp, ...col}, j) in columnsArray"
               :key="`${col.id}-${row.id}`"
             >
               <b-td
@@ -108,6 +109,19 @@
                         :data="row"
                         :index="j"
                       />
+                      <row-actions
+                        v-else-if="actionsAtTheLastColumn && j === columnsArray.length - 1"
+                        :buttons="buttons"
+                        :more-actions="moreActions"
+                        :table-store="tableStore"
+                        :col="col"
+                        :row="row"
+                        :list-all-actions="listAllActions"
+                        :actions-at-the-last-column="actionsAtTheLastColumn"
+                        :floating="false"
+                        :i="i"
+                        :j="j"
+                      />
                       <default-col
                         v-else
                         :col="col"
@@ -117,84 +131,19 @@
                       />
                     </div>
                   </div>
-                  <div
-                    v-if="!col.hideActions"
-                    class="d-flex align-items-center position-absolute"
-                    style="column-gap: 8px;
-                      transform: translateY(-50%);
-                      top: 50%;
-                      right: 0;
-                      max-width: 100%;
-                      flex-wrap: wrap;
-                    "
-                  >
-                    <fragment
-                      v-for="(btn, btnIdx) in buttons"
-                      :key="`data-table-${typeof btn.icon === 'string' ? btn.icon : ''}${btnIdx}${i}${j}`"
-                    >
-                      <b-button
-                        :id="`data-table-${typeof btn.icon === 'string' ? btn.icon : ''}${btnIdx}${i}${j}`"
-                        :title="$t(btn.label)"
-                        class="show-btn"
-                        @click.stop="(e) => btn.onClick(row, tableStore, e)"
-                      >
-                        <feather-icon
-                          :icon="btn.icon"
-                          size="17"
-                        />
-                      </b-button>
-                      <b-tooltip
-                        v-if="btn.label"
-                        :target="`data-table-${typeof btn.icon === 'string' ? btn.icon : ''}${btnIdx}${i}${j}`"
-                        triggers="hover"
-                      >
-                        {{ $t(btn.label) }}
-                      </b-tooltip>
-                    </fragment>
-                    <b-dropdown
-                      v-if="moreActions.length > 0"
-                      :id="`more-${buttons.concat(moreActions).length}${i}${j}`"
-                      v-b-tooltip.hover
-                      v-b-toggle.[`more-${buttons.concat(moreActions).length}${i}${j}`]
-                      class="rounded-circle show-btn flex-shrink-0"
-                      no-caret
-                      dropleft
-                    >
-                      <template #button-content>
-                        <feather-icon icon="MoreHorizontalIcon" size="14" />
-                      </template>
-
-                      <b-dropdown-item
-                        v-for="btn in moreActions"
-                        :key="btn.key || btn.id"
-                        :title="$t(btn.label)"
-                        @click.stop="(e) => btn.onClick(row, tableStore, e)"
-                      >
-                        <div class="d-flex justify-content-between align-items-center">
-                          <feather-icon
-                            v-if="typeof btn.icon === 'string'"
-                            size="16"
-                            :icon="btn.icon"
-                          />
-                          <component :is="btn.icon" v-else />
-                          <span
-                            v-if="btn.label"
-                            class="text-truncate block ml-1"
-                            style="max-width: 180px"
-                          >
-                            {{ $t(btn.label) }}
-                          </span>
-                        </div>
-                      </b-dropdown-item>
-                    </b-dropdown>
-
-                    <b-tooltip
-                      :target="`more-${buttons.concat(moreActions).length}${i}${j}`"
-                      triggers="hover"
-                    >
-                      {{ $t('more actions') }}
-                    </b-tooltip>
-                  </div>
+                  <row-actions
+                    v-if="!actionsAtTheLastColumn"
+                    :buttons="buttons"
+                    :more-actions="moreActions"
+                    :table-store="tableStore"
+                    :col="col"
+                    :row="row"
+                    :list-all-actions="listAllActions"
+                    :actions-at-the-last-column="actionsAtTheLastColumn"
+                    :floating="true"
+                    :i="i"
+                    :j="j"
+                  />
                 </div>
               </b-td>
             </fragment>
@@ -251,6 +200,7 @@ import TableHead from './components/TableHead.vue'
 import DateCol from './components/columns/DateCol.vue'
 import DefaultCol from './components/columns/DefaultCol.vue'
 import StatusCol from './components/columns/StatusCol.vue'
+import RowActions from './components/RowActions.vue'
 import {
   handleDelete,
   initDataTable,
@@ -277,6 +227,7 @@ export default {
     BTooltip,
     NoData,
     StatusCol,
+    RowActions,
   },
   props: {
     method: {
@@ -376,6 +327,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    actionsAtTheLastColumn: {
+      type: Boolean,
+      default: false,
+    },
+    listAllActions: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -391,6 +350,11 @@ export default {
       moreActions: [],
     }
   },
+  computed: {
+    columnsArray() {
+      return this.getColumns()
+    },
+  },
   watch: {
     'tableStore.rows.rowToShow': function (val) {
       if (tableStore.rows.rowToShow && this.detailsOnSidebar) {
@@ -403,13 +367,12 @@ export default {
   },
   created() {
     initDataTable()
-    tableStore.columns.list = this.columns || []
+    tableStore.columns.list = this.getColumns() || []
     tableStore.tabs.list = this.tabs?.items || []
     tableStore.tabs.key = this.tabs?.key || ''
     tableStore.tabs.value = this.tabs?.items?.[0]?.value || ''
     tableStore.pagination.method = this.method
     tableStore.rows.list = []
-    tableStore.columns.list = this.columns
     tableStore.columns.hided = this.defaultHiddenCols || []
     tableStore.pagination.lang = this.$i18n.locale
     if (this.data) {
@@ -468,7 +431,7 @@ export default {
         `tableStore.pagination.filtersValues.${field.key}`,
         (val, old) => {
           if (val !== old) {
-            this.getData()
+            this.getData({ page: 1 })
             this.$emit('on-extra-value-change', { [field.key]: val })
           }
         },
@@ -479,7 +442,7 @@ export default {
         'tableStore.tabs.activeTabIndex',
         (val, old) => {
           if (val !== old) {
-            this.getData()
+            this.getData({ page: 1 })
             this.$emit('on-tab-value-change', tableStore.tabs.list[val])
           }
         },
@@ -491,7 +454,7 @@ export default {
         `tableStore.pagination.${key}`,
         (val, old) => {
           if (val !== old) {
-            this.getData()
+            this.getData(key === 'page' ? {} : { page: 1 })
           }
         },
       ))
@@ -501,7 +464,10 @@ export default {
   },
   methods: {
     toggleRowSelection,
-    getData(params) {
+    getColumns() {
+      return this.actionsAtTheLastColumn ? [...this.columns, { key: 'actions', header: { name: 'general~actions' } }] : this.columns
+    },
+    getData(params, options) {
       if (this.url) {
         listData({
           api: this.$http,
@@ -509,7 +475,7 @@ export default {
           resolveData: data => this.resolveData?.(data),
           extra: this.filters,
           toastError: () => toastError(this.$toast),
-          params: { ...(this.includeInQuery || {}), ...(params || {}) },
+          params: { ...(options?.ignoreIncludeQuery ? {} : (this.includeInQuery || {})), ...(params || {}) },
         })
       }
     },
@@ -523,6 +489,10 @@ body {
   position: relative;
 }
 
+svg {
+  flex-shrink: 0;
+}
+
 .data-table {
   .table-tr {
     position: relative;
@@ -533,12 +503,9 @@ body {
     align-items: center;
     justify-content: center;
     width: 30px;
-    opacity: 0;
-    overflow: hidden;
     flex-shrink: 0;
     aspect-ratio: 1;
     border-radius: 999px;
-    padding: 0;
     border: none;
     color: var(--gray-dark);
     justify-content: center;
@@ -563,39 +530,44 @@ body {
     }
   }
 
+  .table-tr.shrinkable .show-btn, .table-tr.shrinkable .show-btn button {
+    opacity: 0;
+    overflow: visible;
+  }
+
   .table-tr td {
     position: relative;
     max-width: 260px;
   }
 
-  .table-tr td:hover .show-btn {
+  .table-tr.shrinkable td:hover .show-btn {
     width: 30px;
     transform: translateX(-20px);
     overflow: visible;
   }
 
-  .table-tr td:hover .show-btn {
+  .table-tr.shrinkable td:hover .show-btn {
     opacity: 1;
     transform: translateX(-20px);
     overflow: visible;
   }
 
-  .table-tr td:hover .td-first-div.shrink-4 {
+  .table-tr.shrinkable td:hover .td-first-div.shrink-4 {
     max-width: calc(100% - 106px - 35px);
     min-width: calc(100% - 106px - 35px);
   }
 
-  .table-tr td:hover .td-first-div.shrink-3 {
+  .table-tr.shrinkable td:hover .td-first-div.shrink-3 {
     max-width: calc(100% - 106px);
     min-width: calc(100% - 106px);
   }
 
-  .table-tr td:hover .td-first-div.shrink-2 {
+  .table-tr.shrinkable td:hover .td-first-div.shrink-2 {
     max-width: calc(100% - 106px + 35px);
     min-width: calc(100% - 106px + 35px);
   }
 
-  .table-tr td:hover .td-first-div.shrink-1 {
+  .table-tr.shrinkable td:hover .td-first-div.shrink-1 {
     max-width: calc(100% - 106px + 53px + 28px);
     min-width: calc(100% - 106px + 53px + 28px);
   }

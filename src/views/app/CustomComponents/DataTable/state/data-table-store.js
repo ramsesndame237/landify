@@ -1,5 +1,6 @@
 import { reactive } from '@vue/composition-api'
 import _ from 'lodash'
+import Vue from 'vue'
 
 export const initialState = {
   pagination: {
@@ -179,6 +180,7 @@ export async function listData({
 }) {
   const _payload = {
     size: dataTableStore.pagination.size === 0 ? 1000000 : dataTableStore.pagination.size,
+    per_page: dataTableStore.pagination.size,
     page: dataTableStore.pagination.page,
     query: dataTableStore.pagination.search,
     keyword: dataTableStore.pagination.search,
@@ -202,10 +204,10 @@ export async function listData({
     dataTableStore.pagination.isLoading = true
     const { data } = await api[String(dataTableStore.pagination.method || 'get').toLowerCase()](url, { params: {...payload, ...(params || {})}, signal: dataTableStore.requests.controller.signal })
     dataTableStore.rows.list = resolveData(data)
-    dataTableStore.pagination.total = data?.total || dataTableStore.pagination.total
-    dataTableStore.pagination.page = data?.page || dataTableStore.pagination.page
+    dataTableStore.pagination.total = data?.total || 0
+    dataTableStore.pagination.page = data?.page || data?.current_page || 1
     dataTableStore.pagination.size = data?.size || data?.per_page || dataTableStore.pagination.size
-    dataTableStore.pagination.pages = data?.pages || Math.ceil(dataTableStore.pagination.total/dataTableStore.pagination.size)
+    dataTableStore.pagination.pages = data?.pages || Math.ceil(dataTableStore.pagination.total/dataTableStore.pagination.size) || 1
     dataTableStore.pagination.isLoading = false
     } catch (e) {
     if (e?.code !== 'ERR_CANCELED') {
@@ -257,18 +259,19 @@ export function handleDelete({
 }
 
 export function handleConfirm({
-  swal,
-  http,
   url,
   method,
   body,
   title,
   text,
+  cb,
 }) {
+  const swal = window.$vue.$swal
+  const http = window.$vue.$http
   swal.fire({
     title: title || 'Are you sure you want to perform this action?',
     icon: 'warning',
-    text: text || 'You are confirming that you want to perform this action.',
+    text,
     showCloseButton: false,
     showCancelButton: true,
     customClass: {
@@ -282,16 +285,11 @@ export function handleConfirm({
     cancelButtonText: 'Cancel',
     showLoaderOnConfirm: true,
     preConfirm: () => http[method || 'post'](url, body)
-      .then(response => {
-        // if (![200, 201].includes(response?.status)) {
-        //   throw new Error(response?.statusText)
-        // }
-        return response?.json()
+      .then(res => {
+        cb?.(res)
       })
       .catch(error => {
-        swal.showValidationMessage(
-          `Request failed: ${error}`,
-        )
+        swal.showValidationMessage(typeof error.response?.data?.detail === 'string' ? error.response?.data?.detail : error)
       }),
     allowOutsideClick: () => !swal.isLoading(),
   })

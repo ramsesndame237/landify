@@ -251,11 +251,19 @@
                     <b-tr v-for="(email,i) in emails" :key="i">
                       <b-td>
                         <b-button class=" btn-icon" variant="flat-success" pill
-                                  @click="$refs.emailModal.show(true,email)">
+                                  @click="() => {
+                                    if (email.read === 'NOT_READ'){
+                                      markEmailAsRead(email.email_id)
+                                    }
+                                    $refs.emailModal.show(true,email)
+                                  }">
                           <feather-icon icon="EyeIcon"/>
                         </b-button>
                       </b-td>
-                      <b-td>{{ email.email_received_datetime }}</b-td>
+                      <b-td>
+                        <b-spinner v-if="email.read === 'NOT_READ'" variant="primary" small type="grow" class="position-absolute" style="left: 5px"/>
+                        {{ email.email_received_datetime }}
+                      </b-td>
                       <b-td>{{ email.email_from }}</b-td>
                       <b-td>{{ email.email_subject }}</b-td>
                       <b-td>
@@ -276,6 +284,7 @@
           <b-col lg="12">
             <DocumentsWidgetView v-if="canViewDocumentTab && activeTabItem && activeTabItem.id==='4'"
                                  :ticket_id="entity.ticket_id"
+                                 @preview="markDocumentAsRead"
                                  :column_has_stamp="entity.column_has_stamp === 1 ? true:false"/>
             <generic-modal ref="documentModal" table="document" :definition="documentDef"
                            table-definition-key="document"
@@ -595,6 +604,9 @@ export default {
         if (ticket_update_type === 'NEW_EMAIL' && item.id === '3') {
           return true
         }
+        if ((ticket_update_type === 'NEW_TICKET' || ticket_update_type === 'MOVED_TICKET') && item.id === '1') {
+          return true
+        }
         return false
       })
 
@@ -606,8 +618,14 @@ export default {
     getTicketDetails() {
       this.$http.get(`/tickets/update-stats?ticket_id=${this.$route.params.id}`).then(response => {
         const ticketStat = response.data || []
+        console.log({ ticketStat })
+        this.tabTitle = this.tabTitle.map(item => {
+          item.count = 0
+          return item
+        })
+        this.tabDetailsTicket = this.tabTitle
         if (ticketStat.length > 0) {
-          return ticketStat.forEach(item => {
+          ticketStat.forEach(item => {
             this.updateCounter(item.ticket_update_type, item.count)
           })
         }
@@ -615,6 +633,34 @@ export default {
       }).catch(error => {
         console.error(error)
       })
+    },
+    makedAsRead(id) {
+      this.loadingRead = true
+      this.$http.put(`/tickets/mark-status?ticket_id=${id}`).then(async response => {
+        console.log('this is the response', response)
+        await this.loadSingleTicket()
+        this.getTicketDetails()
+      }).catch(error => {
+        console.error(error)
+      }).finally(() => {
+        this.loadingRead = false
+      })
+    },
+    markEmailAsRead(email_id) {
+      this.$http.put(`/tickets/mark-status/email?ticket_id=${this.$route.params.id}&email_id=${email_id}`, {}).then(response => {
+        this.emails = this.emails.map(email => {
+          if (email.email_id === email_id) {
+            email.read = 'READ'
+          }
+          return email
+        })
+        this.getTicketDetails()
+      }).catch(error => {
+        console.error(error)
+      })
+    },
+    markDocumentAsRead() {
+      this.getTicketDetails()
     },
     formatDate,
     async addToPos(document) {
@@ -774,7 +820,7 @@ export default {
         })).data.data
         if (!results.length) return
         this.emails = Object.values(_.groupBy(results, 'email_id'))
-          .map(r => _.pick(r[0], ['email_id', 'email_from', 'email_received_datetime', 'email_to', 'email_cc', 'email_subject', 'email_body', 'documents']))
+          .map(r => _.pick(r[0], ['email_id', 'email_from', 'email_received_datetime', 'email_to', 'email_cc', 'email_subject', 'email_body', 'documents', 'read']))
       } finally {
         this.loadingEmail = false
       }

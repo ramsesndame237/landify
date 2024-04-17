@@ -7,6 +7,10 @@ export default {
       type: Object,
       required: true,
     },
+    nowrap: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     visibleTabs() {
@@ -18,6 +22,15 @@ export default {
     // if (allElements) {
     //   allElements?.[3]?.click?.()
     // }
+    if (this.nowrap) {
+      const activeTabIndex = this.visibleTabs.findIndex(tab => tab.id === this.activeTabItem.id)
+      if (activeTabIndex > -1) {
+        this.$refs.tabItems[activeTabIndex].scrollIntoView({
+          block: 'end',
+          inline: 'nearest',
+        })
+      }
+    }
   },
   methods: {
     activeOrDiseableItemsNavigation(event, item) {
@@ -36,11 +49,11 @@ export default {
 
 <template>
   <div class="tab_container">
-    <ul>
-      <li v-for="(item,index) in visibleTabs" :key="index" class="list-item" :class="{active: activeTabItem && activeTabItem.id === item.id}" @click="(event) =>activeOrDiseableItemsNavigation(event, item)">
+    <ul :class="{ nowrap }">
+      <div class="flex-grow-1" />
+      <li v-for="(item,index) in visibleTabs" ref="tabItems" :key="index" class="list-item" :class="{active: activeTabItem && activeTabItem.id === item.id}" @click="(event) =>activeOrDiseableItemsNavigation(event, item)">
         {{ item.title }}
-
-        <b-spinner small variant="primary" type="grow" v-if="item.count > 0"></b-spinner>
+        <b-spinner small :variant="!(activeTabItem && activeTabItem.id === item.id) ? 'primary' : 'secondary'" type="grow" v-if="item.count > 0"></b-spinner>
       </li>
     </ul>
   </div>
@@ -58,6 +71,9 @@ export default {
   background-color: #FFF;
   transition: all 250ms ease;
 }
+.text-secondary {
+  color: #fff !important;
+}
 .tab_container {
   width: 100%;
   min-width: 400px;
@@ -69,10 +85,19 @@ export default {
   ul {
     margin: 0px;
     padding: 0px;
-    overflow: hidden;
-    float: left;
+    overflow: auto;
     padding-left: 48px;
     list-style-type: none;
+    float: left;
+    display: flex;
+    flex-direction: row-reverse;
+    scrollbar-width: none;
+    flex-wrap: wrap;
+    max-width: 100%;
+  }
+
+  ul.nowrap {
+    flex-wrap: nowrap;
   }
 
   ul * {
@@ -82,7 +107,6 @@ export default {
 
   ul li {
     display: block;
-    float: right;
     padding: 10px 24px 8px;
     background-color: #FFF;
     margin-right: 46px;
@@ -93,6 +117,7 @@ export default {
     text-transform: uppercase;
     font: 600 13px/20px roboto, "Open Sans", Helvetica, sans-serif;
     transition: all 250ms ease;
+    scroll-margin-left: 46px;
 
     &:before{
       @include commonProperty;

@@ -124,14 +124,15 @@ export default {
       this.loading = true
       this.$refs.form.validate().then(success => {
         console.log("this is the success data", success)
+        this.$emit('filter', this.getFinalData())
         if (!success) {
           return Promise.reject(new Error('Invalid Form'))
         }
-        this.$emit('filter', this.getFinalData())
         this.$refs.modal.hide()
       })
     },
     getFinalData() {
+      console.log("this is the data", this.data)
       return Object.keys(this.data)
         .filter(key => this.definition.filters.find(f => f.key === key && f.send !== false))
         .reduce((obj, key) => {
