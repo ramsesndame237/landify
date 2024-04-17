@@ -9,12 +9,12 @@
      <b-modal
       v-model="modalShow"
       :title="$t('Stop~active~option')"
-      :ok-title="$t('Change')"
+      :ok-title="$t('Stop')"
       :ok-disabled="!shareEntity.contract_end_date"
       @ok="stopActiveDeadline"
     >
       <h3>{{ $t('contract~deadline~change~end~date') }}</h3>
-      <p class="mb-1">{{ $t('payment~list~in~which~board~do~you~want~to~move') }}</p>
+      <p class="mb-1">{{ $t('enter the new contrat end date ') }}</p>
       <div class="mb-2">
         <field
           :entity="shareEntity"
@@ -75,7 +75,7 @@ export default {
     },
     modalShow(val) {
       if (!val) {
-        this.paymentListToShare = null
+        this.endDateToShare = null
       }
     },
   },
