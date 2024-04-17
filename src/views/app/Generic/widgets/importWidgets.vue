@@ -12,14 +12,15 @@ const fields = {
     'city_name',
     'contactdetails_email',
   ],
-  customergroup: ['customergroup_name', 'customergroup_description'],
+  customergroup: ['customergroup_id', 'customergroup_name', 'customergroup_description'],
   partnergroup: ['partnergroup_id', 'partnergroup_name', 'partnergroup_is_internal', 'partnergroup_description'],
-  tax_rate: [
+  tax_rates: [
+    'tax_rate_id',
+    'company_id',
     'code',
     'value',
-    'company_name',
   ],
-  company: ['customergroup_id', 'company_name', 'company_shortname', 'company_buchungskreis',
+  company: ['company_id', 'company_name', 'customergroup_id', 'company_shortname', 'company_buchungskreis',
   ],
   contactperson: ['contactperson_id', 'contactsalutation_id', 'contactperson_firstname', 'contactperson_lastname', 'contactdetails_email',
     'contactdetails_phone', 'company_id', 'partnercompany_id',
@@ -95,6 +96,9 @@ export default {
         kreditornumber: this.$route.query.from_detail
           ? ['kreditornumber_id', 'company_id', 'kreditornumber']
           : fields.kreditornumber,
+        tax_rates: this.$route.query.from_detail
+          ? ['tax_rate_id', 'code', 'value']
+          : fields.tax_rates,
       }
     },
   },
@@ -136,7 +140,7 @@ export default {
       formData.append('obj_in', JSON.stringify({
         lines: (all ? this.result : this.getSelected(this.currentEntity)).map(el => el.line),
       }))
-      this.$http.post(`/synchronizations/${this.routeName === 'tax_rate' ? 'tax-rate' : this.routeName}/save`, formData, {
+      this.$http.post(`/synchronizations/${this.routeName === 'tax_rates' ? 'tax-rate' : this.routeName}/save`, formData, {
         headers: {
           'content-type': 'form-data',
         },
@@ -161,15 +165,15 @@ export default {
       formData.append('file', this.file)
       formData.append('leaves', this.routeName)
       this.loading = true
-      const routeName = this.routeName === 'tax_rate' ? 'tax-rate' : this.routeName
+      const routeName = this.routeName === 'tax_rates' ? 'tax-rate' : this.routeName
       this.$http.post(`/synchronizations/${routeName}/checking`, formData, {headers: {'content-type': 'form-data'}})
         .then(({data}) => {
           console.log({data})
           data = data.map(obj => {
-            const missingKeys = this.fields[routeName].filter(key => !obj.columns.some(column => column.name === key))
+            const missingKeys = this.fields[this.routeName].filter(key => !obj.columns.some(column => column.name === key))
 
             const newColumns = missingKeys.map(key => ({
-              column: this.fields[routeName].indexOf(key) + 1,
+              column: this.fields[this.routeName].indexOf(key) + 1,
               name: key,
               action: 'unchanged',
               new_value: '',
@@ -179,8 +183,8 @@ export default {
             const res = {
               ...obj,
               columns: [...obj.columns, ...newColumns]
-                .filter(column => this.fields[routeName].includes(column.name))
-                .sort((a, b) => (this.fields[routeName].indexOf(a.name) > this.fields[routeName].indexOf(b.name) ? 1 : -1)),
+                .filter(column => this.fields[this.routeName].includes(column.name))
+                .sort((a, b) => (this.fields[this.routeName].indexOf(a.name) > this.fields[this.routeName].indexOf(b.name) ? 1 : -1)),
             }
             console.log({ res })
             return res

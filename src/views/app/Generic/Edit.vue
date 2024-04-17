@@ -127,7 +127,7 @@
 
                 {{ $t('translate~key~export') }}
               </b-dropdown-item>
-              <b-dropdown-item @click="()=>$router.push({name:'importView',query: isFunction(visibleRelations[tabIndex].importQueryParams) ? callFunctionWithThis(visibleRelations[tabIndex].importQueryParams) : visibleRelations[tabIndex].importQueryParams, params:{name:visibleRelations[tabIndex].entity === 'tax_rates' ? 'tax_rate' : (visibleRelations[tabIndex].importEntityName || visibleRelations[tabIndex].entity)}})">
+              <b-dropdown-item @click="()=>$router.push({name:'importView',query: isFunction(visibleRelations[tabIndex].importQueryParams) ? callFunctionWithThis(visibleRelations[tabIndex].importQueryParams) : visibleRelations[tabIndex].importQueryParams, params:{name: visibleRelations[tabIndex].importEntityName || visibleRelations[tabIndex].entity}})">
 
                 <FeatherIcon icon="ArrowDownIcon" />
                 {{ $t('translate~key~import') }}
