@@ -1,7 +1,6 @@
 import { ACCESS } from '@/config/config-access'
 import { getContractCriteriaFields } from '@/table/utils'
-import _ from 'lodash'
-import { merge } from 'lodash'
+import _, { merge } from 'lodash'
 
 export default {
   // entity: 'frontend_3_4_1_1',
@@ -59,7 +58,7 @@ export default {
       hideOnUpdate: true,
       handleFieldChange: (newValue, oldValue, entity, vm) => {
         const { selectedValue } = vm
-        vm.$set(entity, 'location_id', selectedValue.location_id)
+        // vm.$set(entity, 'location_id', selectedValue.location_id)
       },
     },
     {
@@ -73,6 +72,14 @@ export default {
       filter_key: 'pos_id',
       hideOnIndex: true,
       hideOnUpdate: true,
+      handleFieldChange: (newValue, oldValue, entity, vm) => {
+        const { selectedValue } = vm
+        console.log('tthis is the location selected', selectedValue)
+        vm.$set(entity, 'owner_name', selectedValue.owner_name)
+        vm.$set(entity, 'owner_id', selectedValue.owner_id)
+        vm.$set(entity, 'manager_name', selectedValue.manager_name)
+        vm.$set(entity, 'manager_id', selectedValue.manager_id)
+      },
     },
     {
       key: 'contracttype_name',
@@ -122,6 +129,7 @@ export default {
       // hideOnForm: true,
       cols: 6,
       category: 'patner',
+      disabled: true,
       formatter: (value, key, item) => {
         const array = item.owners
         const ownersName = array.length > 0 ? array.map(obj => obj.owner_name) : []
@@ -131,10 +139,14 @@ export default {
       },
     },
     {
+      key: 'owner_id', hideOnForm: true, hideOnIndex: true,
+    },
+    {
       key: 'manager_name',
       // hideOnForm: true,
       category: 'patner',
       cols: 6,
+      disabled: true,
       formatter: (value, key, item) => {
         const array = item.managers
         const managerName = array.length > 0 ? array.map(obj => obj.manager_name) : []
@@ -144,14 +156,17 @@ export default {
       },
     },
     {
-      key: 'are_manager',
-      listLabel: 'Are the owner and the manager the same ?',
-      type: 'boolean',
-      category: 'patner',
-      swicth: true,
-      cols: 12,
-      inline: true,
+      key: 'manager_id', hideOnForm: true, hideOnIndex: true,
     },
+    // {
+    //   key: 'are_manager',
+    //   listLabel: 'Are the owner and the manager the same ?',
+    //   type: 'boolean',
+    //   category: 'patner',
+    //   swicth: true,
+    //   cols: 12,
+    //   inline: true,
+    // },
     {
       key: 'company_name',
       hideOnForm: true,
@@ -193,7 +208,7 @@ export default {
       key: 'contract_begin_date', type: 'date', category: 'date', hideOnIndex: true,
     }, // La clé category  permet de classer les champs dans les tabs en function de sa categorie
     {
-      key: 'contract_end_date', type: 'date', hideOnIndex: true, category: 'date',
+      key: 'contract_end_date', type: 'date', hideOnIndex: true, category: 'date', minDate:'contract_begin_date'
     },
     {
       key: 'contract_first_possible_end_date',

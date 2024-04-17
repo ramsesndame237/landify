@@ -128,7 +128,7 @@ export const isAbleTo = (action, permissions) => {
 
   const userRoleCode = userData?.roles?.[0]?.role_code
   if (userRoleCode === 'admin') {
-    return true
+    return  true
   }
 
   const userTeams = userData?.team_id ?? []

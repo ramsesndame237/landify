@@ -13,25 +13,27 @@ export default {
       sortable: true,
       formatter: (value, key, item) => {
         const obj = item.address
-        const city_name = `${obj['address_city_name']}`
+        const city_name = `${obj.address_city_name}`
         return city_name
       },
       hideOnForm: true,
     },
-    { key: 'address_country_name',
+    {
+      key: 'address_country_name',
       hideOnForm: true,
       formatter: (value, key, item) => {
         const obj = item.address
-        const country_name = `${obj['address_country_name']}`
+        const country_name = `${obj.address_country_name}`
         return country_name
-
       },
     },
     { key: 'area_count', hideOnForm: true },
     {
       key: 'location_objectdescription', type: 'textarea', hideOnIndex: true, required: false,
     },
-    { key: 'location_total_area', type: 'number', required: false, hideOnIndex: true },
+    {
+      key: 'location_total_area', type: 'number', required: false, hideOnIndex: true,
+    },
     {
       key: 'location_start_date', type: 'date', hideOnIndex: true, required: false,
     },
@@ -71,7 +73,7 @@ export default {
       change: (entity, vm) => {
         let cityState
         if (entity.address_city_zip_code) {
-          const accessToken = localStorage.getItem('accessToken').split(" ")[1]
+          const accessToken = localStorage.getItem('accessToken').split(' ')[1]
           const debounced = _.debounce(
             () => vm.$http
               .get(`/users/state/${entity.address_city_zip_code}?Authorization=${accessToken}`)
@@ -153,10 +155,13 @@ export default {
     // },
     {
       title: 'Partner Companies',
-      entity: 'frontend_3_3_3_3',
-      entityForm: 'location_partnercompany_partnertype_rel',
+      // entity: 'locations',
+      entityEndpoint: vm => `/locations/${vm.$route.params.id}/partnercompanies`,
+      newEndpointCreate: 'locations/partnercompany',
       entityView: 'partnercompany',
       primaryKey: 'partnercompany_id',
+      create: true,
+      delete: true,
       fields: [
         {
           key: 'partnercompany_id',
@@ -168,6 +173,7 @@ export default {
         { key: 'partnercompany_name', hideOnForm: true },
         { key: 'partnergroup_name', hideOnForm: true },
         { key: 'partnertype_name', hideOnForm: true },
+        { key: 'location_partnercompany_partnertype_uuid', hideOnIndex: true, hideOnForm: true },
         {
           key: 'partnertype_id',
           hideOnIndex: true,
@@ -186,7 +192,7 @@ export default {
           composite: true,
           disableOnUpdate: true,
         },
-        { key: 'location_partnercompany_partnertype_valid_to_date', type: 'date' },
+        { key: 'location_partnercompany_partnertype_valid_to_date', type: 'date', minDate: 'location_partnercompany_partnertype_valid_from_date' },
       ],
     },
   ],

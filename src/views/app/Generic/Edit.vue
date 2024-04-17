@@ -79,11 +79,12 @@
                          :per-page="perPage" :total-rows="totalRows" :primary-key-column="relation.primaryKey"
                          :entity="relation.entity" :search="search" :entity-form="relation.entityForm"
                          :entity-view="relation.entityView" :with-view="relation.view!==false" :fields="relation.fields"
-                         :on-edit-element="editElement" :with-edit="relation.update!==false"
-                         :opacity="relation.primaryKey === 'ticket_id'" :items="itemsData"
-                         :with-delete="relation.delete!==false" :custom-request="relation.customRequest"
-                         :entity-endpoint="relation.entityEndpoint" :on-view-element="relation.onViewElement"
-                         :is-loading-data="isLoadingDataFetch" :permissions="relation.permissions"/>
+                         :on-edit-element="editElement" :with-edit="relation.update!==false" :can-make-delete-call="!(relation.entityView === 'partnercompany')"
+                         :opacity="relation.primaryKey === 'ticket_id'"
+                         :items="itemsData" :with-delete="relation.delete!==false"
+                         :custom-request="relation.customRequest" :entity-endpoint="relation.entityEndpoint"
+                         :on-view-element="relation.onViewElement" :is-loading-data="isLoadingDataFetch"
+                         :permissions="relation.permissions" @delete-items="deleteAction"/>
             <generic-modal :cache-key="relation.entity+'-'" title="Test" :table="relation.entityForm || relation.entity"
                            :definition="relation" is-relation
                            :table-definition-key="relation.entityForm || relation.entity"
@@ -100,11 +101,11 @@
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
             <component :is="currentTool()" v-if="currentTool() && showTool"/>
-            <b-button v-if="currentRelation && canCreateCurrent" class="mr-1" size="sm" variant="info"
+            <b-button v-if="currentRelation.entityView === 'partnercompany' ? currentRelation.create : (currentRelation && canCreateCurrent)" class="mr-1" size="sm" variant="info"
                       @click="newElement">
               {{ $t('button~new') }}
             </b-button>
-            <b-button v-if="currentRelation && canDeleteCurrent" class="mr-1" size="sm" variant="primary"
+            <b-button v-if="currentRelation.entityView === 'partnercompany' ? currentRelation.delete : (currentRelation && canDeleteCurrent)" class="mr-1" size="sm" variant="primary"
                       @click="deleteSelected">
               {{ $t('button~delete') }}
             </b-button>
@@ -235,11 +236,9 @@ export default {
       return this.visibleRelations[this.$refs.tabs?.currentTab]?.filters != null
     },
     canDeleteCurrent() {
-      // return this.$can('delete', this.visibleRelations[this.$refs.tabs?.currentTab]?.entityForm)
       return this.$isAbleTo('remove', this.currentRelation.permissions)
     },
     canCreateCurrent() {
-      // return this.$can('create', this.visibleRelations[this.$refs.tabs?.currentTab]?.entityForm)
       return this.$isAbleTo('create', this.currentRelation.permissions)
     },
     visibleRelations() {
@@ -323,6 +322,18 @@ export default {
     currentHasNew() {
       if (!this.$refs.tabs) return false
       return this.visibleRelations[this.$refs.tabs.currentTab]?.create !== false
+    },
+    deleteAction(items) {
+      console.log(items[0].location_partnercompany_partnertype_uuid)
+      console.log('this is the data ', this.currentRelation)
+      if (this.currentRelation.entityView === 'partnercompany') {
+        this.$http.delete(`locations/${items[0].location_partnercompany_partnertype_uuid}/partnercompany`).then(response => {
+          this.reloadRelatedTable()
+          console.log(response)
+        }).catch(error => {
+          console.log(error)
+        })
+      }
     },
     currentHasDelete() {
       if (!this.$refs.tabs) return false
