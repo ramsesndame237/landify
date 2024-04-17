@@ -9,10 +9,10 @@
               Back
             </b-button>
           </b-card-text>
-          <b-card-text class="d-flex align-items-center">
+          <b-card-text  v-b-toggle.available-options class="d-flex align-items-center" @click="collapseVisible = !collapseVisible">
             <b-button  class="my-1" size="sm" variant="info" >
               See Available Options
-               <feather-icon :icon="collapseVisible ? 'ChevronsDownIcon' : 'ChevronsUpIcon'" /> <!--v-b-toggle.available-options -->
+              <feather-icon :icon="collapseVisible ? 'ChevronsDownIcon' : 'ChevronsUpIcon'" /> <!--v-b-toggle.available-options -->
             </b-button>
           </b-card-text>
         </div>
@@ -20,7 +20,7 @@
         <b-collapse id="available-options" >
           <b-card no-body>
             <b-card-text>
-              <h3>Active Options</h3>
+              <h3>Available Options</h3>
               <data-tables
                 :fields="unactiveDeadlinesFieldsToShow"
                 :multi-select="false" :with-actions="false"
@@ -37,7 +37,7 @@
             </b-card-text>
           </b-card>
         </b-collapse>
-        <!-- <b-card-text>
+       <b-card-text>
           <h3>Active Options</h3>
           <data-tables
             :fields="deadlinesFieldsToShow"
@@ -48,7 +48,7 @@
             :selectable="false"
             @table-refreshed="getActions"
           />
-        </b-card-text> -->
+        </b-card-text>
       </b-overlay>
     </template>
 
@@ -69,7 +69,7 @@
           @table-refreshed="getActions"
           @delete-items="deleteAction"
         />
-         <b-collapse id="available-options" v-show="isOptionsVisible">
+        <!-- <b-collapse id="available-options" v-show="isOptionsVisible">
           <b-card no-body >
             <b-card-text>
               <h3>Available Options</h3>
@@ -89,9 +89,9 @@
               />
             </b-card-text>
           </b-card>
-        </b-collapse>
+        </b-collapse> -->
         <b-card-text class="text-right">
-           <b-button v-if="canViewAllOptions" v-b-toggle.available-options variant="primary" @click="showOptions" > <!--@click="collapseVisible = !collapseVisible" -->
+          <b-button v-if="canViewAllOptions" variant="primary" @click="showOptions" > <!--@click="collapseVisible = !collapseVisible" -->
             viewed all Options
           </b-button>
         </b-card-text>
@@ -580,8 +580,7 @@ export default {
       if (this.deadlines.length <= 0) {
         await this.getDeadlines()
       }
-      this.collapseVisible = !this.collapseVisible
-      // this.loadingDeadline = true
+      this.loadingDeadline = false
       this.isOptionsVisible = true
       this.loadingAction = false
     },
