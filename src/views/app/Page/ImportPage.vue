@@ -57,19 +57,19 @@
                                     size="20" @click="()=> row.show_old = !row.show_old"/>
                       <span class="ml-1">{{ row.line }}</span>
                     </b-td>
-                    <template v-for="(column,i) in fields[entity]">
-                      <b-td v-if="row[column]" :key="i" :title="row[column].reason"
+                    <template v-for="(column,j) in fields[entity]">
+                      <b-td v-if="row[column]" :key="`${i}-${j}`" :title="row[column].reason"
                             :style="{background: row[column].color}">
                         {{ row[column].new_value }}
                       </b-td>
-                      <b-td v-else :key="i"/>
+                      <b-td v-else :key="`${i}-${j}`"/>
                     </template>
                   </b-tr>
                   <!--                  Old Values-->
                   <b-tr v-if="row.show_old" :key="i+'n'" class="table-secondary">
                     <b-td/>
                     <b-td/>
-                    <b-td v-for="(column,i) in fields[entity]" :key="i">
+                    <b-td v-for="(column,j) in fields[entity]" :key="`${i}-${j}-n`">
                       {{ row[column] ? row[column].old_value : '' }}
                     </b-td>
                   </b-tr>

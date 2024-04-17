@@ -1,6 +1,50 @@
 <script>
 import ticket from '@/table/tables/ticket'
 
+const fields = {
+  partnercompany: [
+    'partnercompany_id',
+    'partnercompany_name',
+    'partnergroup_id',
+    'address_street',
+    'address_house_number',
+    'city_zip',
+    'city_name',
+    'contactdetails_email',
+  ],
+  customergroup: ['customergroup_id', 'customergroup_name', 'customergroup_description'],
+  partnergroup: ['partnergroup_id', 'partnergroup_name', 'partnergroup_is_internal', 'partnergroup_description'],
+  tax_rates: [
+    'tax_rate_id',
+    'company_id',
+    'code',
+    'value',
+  ],
+  company: ['company_id', 'company_name', 'customergroup_id', 'company_shortname', 'company_buchungskreis',
+  ],
+  contactperson: ['contactperson_id', 'contactsalutation_id', 'contactperson_firstname', 'contactperson_lastname', 'contactdetails_email',
+    'contactdetails_phone', 'company_id', 'partnercompany_id',
+  ],
+  bankdata: ['bankdata_id', 'partnercompany_id', 'bankdata_iban', 'iban_id', 'bankdata_bank_name'],
+  kreditornumber: ['kreditornumber_id', 'partnercompany_id', 'company_id', 'kreditornumber'],
+  location: ['address_street', 'address_house_number', 'address_extra', 'location_name',
+    'location_objectdescription', 'location_total_area',
+    'location_start_date', 'partnercompany_name',
+    'location_partnercompany_partnertype_valid_from_date', 'location_partnercompany_partnertype_valid_to_date',
+    'partnertype_name',
+    'partnercompany_name',
+    'location_partnercompany_partnertype_valid_from_date',
+    'location_partnercompany_partnertype_valid_to_date',
+    'partnertype_name',
+    'locationtype_name',
+    'country_name',
+    'city_name',
+    'city_zip',
+  ],
+  pos: ['pos_name', 'pos_branchnumber', 'pos_name_external', 'pos_first_year', 'company_name'],
+  area: ['area_name', 'area_name_external', 'area_space_value', 'usagetype_name','area_usagetype_valid_from_date','area_usagetype_valid_to_date'],
+}
+
 export default {
   name: 'ImportWidgets',
   data: () => ({
@@ -23,47 +67,6 @@ export default {
       pos: 'Pos',
       areas: 'Area',
     },
-    fields: {
-      partnercompany: [
-        'partnercompany_name',
-        'address_street',
-        'address_house_number',
-        'city_zip',
-        'city_name',
-        'contactdetails_email',
-      ],
-      customergroup: ['customergroup_name', 'customergroup_description'],
-      partnergroup: ['partnergroup_name', 'partnergroup_is_internal', 'partnergroup_description'],
-      tax_rate: [
-        'code',
-        'value',
-        'company_name',
-      ],
-      company: ['company_name', 'company_shortname', 'company_template_coverletter_subject',
-        'company_template_coverletter_text', 'customergroup_name',
-      ],
-      contactperson: ['contactperson_firstname', 'contactperson_lastname', 'contactdetails_email',
-        'contactdetails_phone', 'company_name', 'contactsalutation_name',
-      ],
-      bankdata: ['bankdata_iban', 'iban_id', 'bankdata_bank_name', 'partnercompany_name'],
-      kreditornumber: ['kreditornumber', 'company_name'],
-      location: ['address_street', 'address_house_number', 'address_extra', 'location_name',
-        'location_objectdescription', 'location_total_area',
-        'location_start_date', 'partnercompany_name',
-        'location_partnercompany_partnertype_valid_from_date', 'location_partnercompany_partnertype_valid_to_date',
-        'partnertype_name',
-        'partnercompany_name',
-        'location_partnercompany_partnertype_valid_from_date',
-        'location_partnercompany_partnertype_valid_to_date',
-        'partnertype_name',
-        'locationtype_name',
-        'country_name',
-        'city_name',
-        'city_zip',
-      ],
-      pos: ['pos_name', 'pos_branchnumber', 'pos_name_external', 'pos_first_year', 'company_name'],
-      area: ['area_name', 'area_name_external', 'area_space_value', 'usagetype_name','area_usagetype_valid_from_date','area_usagetype_valid_to_date'],
-    },
     statusList: [
       {text: 'All', value: 'all'},
       {text: 'Added', value: 'added'},
@@ -75,8 +78,28 @@ export default {
     importAll: false,
   }),
   computed: {
+    routeName() {
+      return this.$route.query.entity || this.$route.params.name
+    },
     ticket() {
       return ticket
+    },
+    fields() {
+      return {
+        ...fields,
+        contactperson: this.$route.query.from_detail
+          ? ['contactperson_id', 'contactsalutation_id', 'contactperson_firstname', 'contactperson_lastname', 'contactdetails_email', 'contactdetails_phone']
+          : fields.contactperson,
+        bankdata: this.$route.query.from_detail
+          ? ['bankdata_id', 'bankdata_iban', 'iban_id', 'bankdata_bank_name']
+          : fields.bankdata,
+        kreditornumber: this.$route.query.from_detail
+          ? ['kreditornumber_id', 'company_id', 'kreditornumber']
+          : fields.kreditornumber,
+        tax_rates: this.$route.query.from_detail
+          ? ['tax_rate_id', 'code', 'value']
+          : fields.tax_rates,
+      }
     },
   },
   watch: {
@@ -104,14 +127,29 @@ export default {
       if (this.loading) return
       this.importAll = all
       this.loading = true
+      let params
+      const pk = this.$route.query.primary_key
+      const pk_value = this.$route.query.primary_key_value
+      if (pk && pk_value) {
+        params = {
+          [pk]: pk_value,
+        }
+      }
       const formData = new FormData()
       formData.append('file', this.file)
       formData.append('obj_in', JSON.stringify({
         lines: (all ? this.result : this.getSelected(this.currentEntity)).map(el => el.line),
       }))
-      this.$http.post(`/synchronizations/${this.$route.params.name === 'tax_rate' ? 'tax-rate' : this.$route.params.name}/save`, formData, {headers: {'content-type': 'form-data'}})
+      this.$http.post(`/synchronizations/${this.routeName === 'tax_rates' ? 'tax-rate' : this.routeName}/save`, formData, {
+        headers: {
+          'content-type': 'form-data',
+        },
+        params,
+      })
         .then(({data}) => {
           this.$successToast('Import Done.')
+          this.upload()
+
           // add __imported attribute to lines
         })
         .catch(e => {
@@ -122,31 +160,35 @@ export default {
 
     async upload() {
       if (!this.file) return this.$errorToast('Please insert a file')
-      if (!this.$route.params.name) return this.$errorToast('Please select a table')
+      if (!this.routeName) return this.$errorToast('Please select a table')
       const formData = new FormData()
       formData.append('file', this.file)
-      formData.append('leaves', this.$route.params.name)
+      formData.append('leaves', this.routeName)
       this.loading = true
-      this.$http.post(`/synchronizations/${this.$route.params.name === 'tax_rate' ? 'tax-rate' : this.$route.params.name}/checking`, formData, {headers: {'content-type': 'form-data'}})
+      const routeName = this.routeName === 'tax_rates' ? 'tax-rate' : this.routeName
+      this.$http.post(`/synchronizations/${routeName}/checking`, formData, {headers: {'content-type': 'form-data'}})
         .then(({data}) => {
           console.log({data})
           data = data.map(obj => {
-            const missingKeys = this.fields[this.$route.params.name].filter(key => !obj.columns.some(column => column.name === key))
+            const missingKeys = this.fields[this.routeName].filter(key => !obj.columns.some(column => column.name === key))
 
             const newColumns = missingKeys.map(key => ({
-              column: obj.columns.length + 1,
+              column: this.fields[this.routeName].indexOf(key) + 1,
               name: key,
               action: 'unchanged',
-              new_value: '---/---',
-              old_value: '---/---',
+              new_value: '',
+              old_value: '',
             }))
 
-            return {
+            const res = {
               ...obj,
-              columns: [...obj.columns, ...newColumns],
+              columns: [...obj.columns, ...newColumns]
+                .filter(column => this.fields[this.routeName].includes(column.name))
+                .sort((a, b) => (this.fields[this.routeName].indexOf(a.name) > this.fields[this.routeName].indexOf(b.name) ? 1 : -1)),
             }
+            console.log({ res })
+            return res
           })
-          console.log('this is the data new', data)
           this.result = data.map(row => Object.assign(row, {
             show_old: false,
             __selected: false,
@@ -238,20 +280,20 @@ export default {
                               size="20" @click="()=> row.show_old = !row.show_old"/>
                 <span class="ml-1">{{ row.line }}</span>
               </b-td>
-              <template v-for="(item,i) in row.columns">
-                <b-td v-if="item" :key="i" :title="item.new_value"
-                      :style="{background: item.action === 'changed' ? 'yellow':item.action ==='failed' ? 'red' :item.action ==='added' ? 'greenyellow' :'' }">
-                  {{ item.new_value === 0 ? 'is external' : item.new_value === 1 ? 'is internal' : item.new_value }}
+              <template v-for="(item,j) in row.columns">
+                <b-td v-if="item" :key="`${i}-${j}`" :title="item.new_value"
+                      :style="{color: item.action ==='failed' ? 'white' : 'inherit', background: item.action === 'changed' ? 'yellow':item.action ==='failed' ? 'red' :item.action ==='added' ? 'greenyellow' :'' }">
+                  {{ item.name === 'partnergroup_is_internal' && item.new_value === 0 ? 'is external' : item.name === 'partnergroup_is_internal' && item.new_value === 1 ? 'is internal' : (item.reason || item.new_value) }}
                 </b-td>
-                <b-td v-else :key="i"/>
+                <b-td v-else :key="`${i}-${j}`"/>
               </template>
             </b-tr>
             <!--                                  Old Values-->
             <b-tr v-if="row.show_old" :key="i+'n'" class="table-secondary">
               <b-td/>
               <b-td/>
-              <b-td v-for="(column,i) in row.columns" :key="i">
-                {{ column ? column.old_value : '' }}
+              <b-td v-for="(column,j) in row.columns" :key="`${i}-${j}-n`">
+                {{ column && column.name === 'partnergroup_is_internal' && column.old_value === 0 ? 'is external' : column && column.name === 'partnergroup_is_internal' && column.old_value === 1 ? 'is internal' : column ? column.old_value : '' }}
               </b-td>
             </b-tr>
           </template>

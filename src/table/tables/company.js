@@ -227,6 +227,13 @@ export default {
       entityView: 'contactperson',
       permissions: ACCESS.tableAccess.company.relations.contact_person,
       update: false,
+      importQueryParams: vm => ({
+        from_detail: true,
+        primary_key: 'company_id',
+        primary_key_value: vm.$route.params.id,
+        entity: 'contactperson',
+      }),
+      importEntityName: 'contactperson',
       fields: [
         {
           key: 'contactperson_id',
@@ -324,6 +331,11 @@ export default {
       entity: 'tax_rates',
       permissions: ACCESS.tableAccess.company.relations.tax_rates,
       entityEndpoint: vm => `/companies/${vm.$route.params.id}/tax-rates`,
+      importQueryParams: vm => ({
+        from_detail: true,
+        primary_key: 'company_id',
+        primary_key_value: vm.$route.params.id,
+      }),
       view: false,
       update: true,
       customRequest: {

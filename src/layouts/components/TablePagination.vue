@@ -24,7 +24,7 @@
         <feather-icon icon="FilterIcon" :badge="filterBadge"/>
       </b-button>
 
-      <!-- <b-dropdown v-if="canImport && importFunctionnality.includes(entity) && showInput" size="sm" variant="default"
+      <b-dropdown v-if="canImport && importFunctionnality.includes(entity) && showInput" size="sm" variant="default"
                   toggle-class="text-decoration-none" no-caret >
         <template #button-content>
           <b-button variant="success">
@@ -52,7 +52,7 @@
         <b-dropdown-item v-for="(item,index) in arrayItem" :key="index" @click="()=>handleChooseItem(item)">
           {{ item.entity }}
         </b-dropdown-item>
-      </b-dropdown> -->
+      </b-dropdown>
       <b-button v-if="onNewElement!=null && canCreate" size="sm" variant="info" class="mr-1" @click="onNewElement">
         <feather-icon icon="PlusCircleIcon" class="mr-50"/>
         <span>{{ $t('button~new') }}</span>

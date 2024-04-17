@@ -112,7 +112,7 @@
                       @click="$emit('filter')">
               <feather-icon icon="FilterIcon"/>
             </b-button>
-            <!-- <b-dropdown v-if="canImportOrExport.includes(visibleRelations[tabIndex].entity)" size="lg" variant="link"
+            <b-dropdown v-if="canImportOrExport.includes(visibleRelations[tabIndex].importEntityName || visibleRelations[tabIndex].entity)" size="lg" variant="link"
                         toggle-class="text-decoration-none" no-caret>
               <template #button-content>
                 <b-button id="popover-button-variant" size="sm" variant="success" class="mr-1 btn-icon">
@@ -122,12 +122,12 @@
                   </span>
                 </b-button>
               </template>
-              <b-dropdown-item @click="fetchExportData(visibleRelations[tabIndex].entity === 'tax_rates' ? 'tax-rate' : visibleRelations[tabIndex].entity,{name:definition.primaryKey,value:$route.params.id})">
+              <b-dropdown-item @click="fetchExportData(visibleRelations[tabIndex].entity === 'tax_rates' ? 'tax-rate' : (visibleRelations[tabIndex].importEntityName || visibleRelations[tabIndex].entity),{name:definition.primaryKey,value:$route.params.id})">
                 <FeatherIcon icon="ArrowUpIcon" />
 
                 {{ $t('translate~key~export') }}
               </b-dropdown-item>
-              <b-dropdown-item @click="()=>$router.push({name:'importView',params:{name:visibleRelations[tabIndex].entity === 'tax_rates' ? 'tax_rate' : visibleRelations[tabIndex].entity}})">
+              <b-dropdown-item @click="()=>$router.push({name:'importView',query: isFunction(visibleRelations[tabIndex].importQueryParams) ? callFunctionWithThis(visibleRelations[tabIndex].importQueryParams) : visibleRelations[tabIndex].importQueryParams, params:{name: visibleRelations[tabIndex].importEntityName || visibleRelations[tabIndex].entity}})">
 
                 <FeatherIcon icon="ArrowDownIcon" />
                 {{ $t('translate~key~import') }}
@@ -217,7 +217,7 @@ export default {
       isLoading: true,
       isLoadingDataFetch: false,
       itemsData: [],
-      canImportOrExport: ['tax_rates', 'bankdata', 'kreditornumber'],
+      canImportOrExport:['tax_rates','bankdata','kreditornumber', 'contactperson'],
       totalRows: 0,
       formLoaded: false,
       noBody: false,
@@ -275,6 +275,12 @@ export default {
     this.filterDataSearch()
   },
   methods: {
+    callFunctionWithThis(func) {
+      return func(this)
+    },
+    isFunction(func) {
+      return func instanceof Function
+    },
     removeBody(val = false) {
       return this.noBody = val
     },
