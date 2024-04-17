@@ -99,8 +99,8 @@
               <div>
                 <b-img :src="getFileThumbnail(file.type)" width="16px" class="mr-50"/>
                 <span class="text-muted font-weight-bolder align-text-top">{{
-                    file.name
-                  }}</span>
+                  file.name
+                }}</span>
                 <span class="text-muted font-small-2 ml-25">({{ file.size }})</span>
               </div>
               <feather-icon class="cursor-pointer" icon="XIcon" size="14" @click="removeFile(index, validate)"/>
@@ -144,7 +144,7 @@
                           :end-date="entity.end_date" @input-start-date="entity.start_date = $event"
                           @input-end-date="entity.end_date = $event"/>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
-                    :config="dateConfig" :state="errors.length > 0 ? false:null" :placeholder="field.key"
+                    :config="{...(field.minDate ? {dateConfig,minDate:entity[field.minDate]} : {dateConfig})}" :state="errors.length > 0 ? false:null" :placeholder="field.key"
                     class="form-control"/>
         <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :value="1" :unchecked-value="0"
@@ -295,7 +295,7 @@ export default {
         locale: {
           firstDayOfWeek: 1,
         },
-        minDate: this.field.minDate,
+        minDate: this.entity[this.field.minDate] || this.field.minDate,
         onReady(selectedDates, dateStr, instance) {
           instance.isOpen = true
         },
@@ -364,6 +364,7 @@ export default {
     },
     listItems() {
       if (this.field.filter && typeof this.field.filter === 'function') {
+        console.log('this is the item ', this.list.filter(item => this.field.filter(item, this)))
         return this.list.filter(item => this.field.filter(item, this))
       }
       let new_list = this.list
@@ -929,10 +930,13 @@ export default {
             newData = newData.data
           }
           this.hasNext = response.current_page < response.pages
-          console.log({ response }, this.field.useWholeResponse, this.hasNext)
+          console.log({ response }, this.field.useWholeResponse, this.hasNext, this.field)
         } else {
-          const { links, data } = response
-          newData = data
+          const {
+            links, data, owners, managers,
+          } = response
+          newData = (this.field.key === 'owner_name' ? owners : this.field.key === 'manager_name' ? managers : data)
+          console.log("this is the newData", newData)
           const { pagination } = links
           this.hasNext = pagination.current_page < pagination.last_page
         }

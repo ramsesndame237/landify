@@ -191,6 +191,7 @@ export default {
       }
     },
     createNewEntities(fieldComponents, formFields, entity, originalEntity) {
+
       if (!Array.isArray(fieldComponents)) return Promise.resolve()
       return Promise.all(formFields.filter(field => {
         const component = fieldComponents.find(f => f.field === field)
@@ -228,6 +229,7 @@ export default {
     },
     saveEntity(entity, originalEntity, formFields, fieldComponents, table, definition, primaryKey, create) {
       console.log({ s: this.definition })
+
       if (this.definition?.beforeSubmit) {
         const success = this.definition.beforeSubmit(this, entity)
         if (!success) {
