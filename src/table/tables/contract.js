@@ -74,11 +74,17 @@ export default {
       hideOnUpdate: true,
       handleFieldChange: (newValue, oldValue, entity, vm) => {
         const { selectedValue } = vm
-        console.log('tthis is the location selected', selectedValue)
-        vm.$set(entity, 'owner_name', selectedValue.owner_name || 'No owner')
-        vm.$set(entity, 'owner_id', selectedValue.owner_id)
-        vm.$set(entity, 'manager_name', selectedValue.manager_name || 'No manager')
-        vm.$set(entity, 'manager_id', selectedValue.manager_id)
+        console.log("this is the selected value", { selectedValue })
+        vm.$http.get(`locations/${selectedValue.location_id}/owner-partnercompany`).then(response => {
+          console.log(response)
+          vm.$set(entity, 'owner_name', response.data.owner.owner_name || 'No owner')
+          vm.$set(entity, 'owner_id', response.data.owner.owner_id)
+          vm.$set(entity, 'manager_name', response.data.manager.manager_name || 'No manager')
+          vm.$set(entity, 'manager_id', response.data.manager.manager_id)
+        }).catch((error)=>{
+          console.log(error)
+        })
+
       },
     },
     {
