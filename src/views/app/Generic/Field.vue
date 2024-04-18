@@ -144,7 +144,7 @@
                           :end-date="entity.end_date" @input-start-date="entity.start_date = $event"
                           @input-end-date="entity.end_date = $event"/>
         <flat-pickr v-else-if="field.type==='date'" v-model="entity[field.key]" :disabled="disabled"
-                    :config="{...(field.minDate ? {dateConfig,minDate:entity[field.minDate]} : {dateConfig})}" :state="errors.length > 0 ? false:null" :placeholder="field.key"
+                    :config="{...(field.minDate ? {...dateConfig, minDate:entity[field.minDate]} : {...dateConfig})}" :state="errors.length > 0 ? false:null" :placeholder="field.key"
                     class="form-control"/>
         <b-form-checkbox v-else-if="field.type==='boolean'" v-model="entity[field.key]" :disabled="disabled"
                          :state="errors.length > 0 ? false:null" :value="1" :unchecked-value="0"
