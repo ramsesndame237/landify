@@ -55,7 +55,7 @@ export default {
     * afin d'être retiré en premier s'il le faut
      */
     isStopableAddedDeadline () {
-      console.log({deadline: this.deadline})
+      return true
       return this.deadline.contractdeadline_type === "active_option" && this.deadline.contractdeadline_status === "active" && !this.deadline.contractdeadline_is_stopped
     },
     isRecentAddedDeadline() {
@@ -104,13 +104,11 @@ export default {
       }
     },
     async stopActiveDeadline() {
-      this.data.reload(true)
       try {
+        this.data.reload(true)
         await this.$http.put(`/contracts/deadline/${this.deadline.contractdeadline_id}/stop`,  this.shareEntity)
         this.$successToast('Deadline Successful Stop !!!')
-
         await this.deadlineTableComponent.getDeadlines()
-        this.data.reload(false)
         await this.contractFormComponent.loadEntity()
         await this.deadlineTableComponent.getActions(true)
       } catch (error) {
@@ -120,6 +118,8 @@ export default {
           this.$errorToast(error.message)
         }
         console.log({ error })
+      } finally {
+        this.data.reload(false)
       }
     },
 
