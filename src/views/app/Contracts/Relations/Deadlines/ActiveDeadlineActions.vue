@@ -55,7 +55,7 @@ export default {
     * afin d'être retiré en premier s'il le faut
      */
     isStopableAddedDeadline () {
-      return this.deadline.contractdeadline_type === "active_option" && this.deadline.contractdeadline_status === "active" && !this.deadline.contractdeadline_is_stopped
+      return this.deadline.contractdeadline_status === "active" && !this.deadline.contractdeadline_is_stopped
     },
     isRecentAddedDeadline() {
       const { contractdeadline_expected_from } = this.deadline
