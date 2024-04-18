@@ -101,7 +101,7 @@
         <template #tabs-end>
           <div class="first-bloc ml-auto d-flex align-items-center">
             <component :is="currentTool()" v-if="currentTool() && showTool"/>
-            <b-button v-if="currentRelation.entityView === 'partnercompany' ? currentRelation.create : (currentRelation && canCreateCurrent)" class="mr-1" size="sm" variant="info"
+            <b-button v-if="currentRelation.entityView === 'partnercompany' || currentRelation.entity === 'contractaction' ? currentRelation.create : (currentRelation && canCreateCurrent)" class="mr-1" size="sm" variant="info"
                       @click="newElement">
               {{ $t('button~new') }}
             </b-button>
@@ -133,7 +133,7 @@
                 <FeatherIcon icon="ArrowDownIcon" />
                 {{ $t('translate~key~import') }}
               </b-dropdown-item>
-            </b-dropdown> -->
+            </b-dropdown>
 
             <b-form-input v-if="currentHasSearch()" id="filterInput" v-model="search" debounce="500" type="search"
                           placeholder="Search..."/>

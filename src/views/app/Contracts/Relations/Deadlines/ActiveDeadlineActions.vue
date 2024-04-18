@@ -1,9 +1,9 @@
 <template>
-  <div v-if="isExpectedFromDateNotArrived">
-    <b-button variant="primary mr-1" :disabled="!isRecentAddedDeadline" size="sm" @click="removeActiveDeadline">
+  <div>
+    <b-button  v-if="isExpectedFromDateNotArrived" variant="primary mr-1" :disabled="!isRecentAddedDeadline" size="sm" @click="removeActiveDeadline">
       Remove
     </b-button>
-    <b-button variant="info mt-0.5 " :disabled="!isRecentAddedDeadline" size="sm" @click="endDateToShare=deadline">
+    <b-button variant="info mt-0.5 " :disabled="!isStopableAddedDeadline" size="sm" @click="endDateToShare=deadline">
       Stop
     </b-button>
      <b-modal
@@ -54,6 +54,10 @@ export default {
     * Cette variable permet de controller la deadline ajouté en dernier dans le tableau des deadline pulled,
     * afin d'être retiré en premier s'il le faut
      */
+    isStopableAddedDeadline () {
+      console.log({deadline: this.deadline})
+      return this.deadline.contractdeadline_type === "active_option" && this.deadline.contractdeadline_status === "active" && !this.deadline.contractdeadline_is_stopped
+    },
     isRecentAddedDeadline() {
       const { contractdeadline_expected_from } = this.deadline
       const itemsExpectedFromDates = this.items.map(item => moment(item.contractdeadline_expected_from))
