@@ -80,9 +80,13 @@ export default ({
     canUpdateDeadlineStatus() {
       // Je récupère les données du contract
       const { action_begin } = this.entityData
+      const { contractdeadline_expected_from, contractdeadline_status } = this.deadline
+
+      console.log({ action_begin, contractdeadline_expected_from, contractdeadline_status })
+
+      // alert(action_begin)
 
       if (!moment(action_begin).isSameOrBefore(moment())) return false
-      const { contractdeadline_expected_from, contractdeadline_status } = this.deadline
 
       if (contractdeadline_status === 'deactivate') return false
 
